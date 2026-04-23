@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TECHNOLOGIE — R.Blanchard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bl:#1F4E79;--bc:#2E75B6;--bp:#DEEAF1;
+  --vt:#1E6B3B;--vc:#2E8B4A;--vp:#E2EFDA;
+  --or:#C55A11;--op:#FCE4D6;
+  --vi:#7B2C8B;--vip:#EAD4F4;
+  --gr:#F4F6F8;--gb:#E2E8F0;
+  --tx:#1A202C;--td:#4A5568;--rg:#C0392B;
+  --r:12px;--sh:0 4px 24px rgba(0,0,0,.08);--shf:0 8px 40px rgba(0,0,0,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);color:var(--tx)}
+.h{display:none!important}
+
+/* LOGIN */
+#login{min-height:100vh;background:linear-gradient(135deg,var(--bl),#0D2B50 50%,#162040);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#login::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(46,117,182,.3),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(30,107,59,.2),transparent 50%)}
+.lcard{background:rgba(255,255,255,.97);border-radius:20px;box-shadow:var(--shf);padding:48px 40px;width:440px;max-width:calc(100vw - 32px);position:relative;z-index:1;animation:fiu .5s ease}
+@keyframes fiu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.lcard .llogo{display:block;margin:0 auto 20px;height:64px;width:auto}
+.lcard h1{text-align:center;font-size:20px;font-weight:700;color:var(--bl);margin-bottom:2px}
+.lcard .sub{text-align:center;font-size:13px;color:var(--td);margin-bottom:28px}
+.ltabs{display:flex;gap:8px;margin-bottom:24px;background:var(--gr);border-radius:10px;padding:4px}
+.ltab{flex:1;padding:8px;border:none;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;background:transparent;color:var(--td);transition:all .2s}
+.ltab.on{background:#fff;color:var(--bl);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:13px;font-weight:600;color:var(--td);margin-bottom:6px}
+.fg input{width:100%;padding:12px 16px;border:2px solid var(--gb);border-radius:10px;font-size:15px;font-family:"DM Sans",sans-serif;outline:none;transition:border-color .2s;background:var(--gr)}
+.fg input:focus{border-color:var(--bc);background:#fff}
+.btnp{width:100%;padding:14px;border:none;border-radius:10px;background:var(--bl);color:#fff;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px}
+.btnp:hover{background:var(--bc);transform:translateY(-1px)}
+.err{background:#FADBD8;border:1px solid #E74C3C;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--rg);margin-top:12px;display:none}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column}
+.hdr{background:var(--bl);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.hbrand{display:flex;align-items:center;gap:10px}
+.hlogo{height:40px;width:auto}
+.htit{font-size:15px;font-weight:700;color:#fff;letter-spacing:.3px}
+.hright{display:flex;align-items:center;gap:10px}
+.huser{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 12px;color:#fff}
+.huname{font-size:13px;font-weight:600}
+.hucls{font-size:11px;opacity:.7}
+.btnout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:12px;font-weight:500;transition:all .2s}
+.btnout:hover{background:rgba(255,255,255,.25)}
+.main{flex:1;padding:24px;max-width:1100px;margin:0 auto;width:100%}
+
+/* DASHBOARD */
+.wbanner{background:linear-gradient(135deg,var(--bl),var(--bc));border-radius:var(--r);padding:24px 28px;color:#fff;margin-bottom:28px;position:relative;overflow:hidden}
+.wbanner::after{content:"\1F9EC";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:56px;opacity:.15}
+.wbanner h2{font-size:20px;font-weight:700;margin-bottom:3px}
+.wbanner p{font-size:13px;opacity:.85;max-width:400px}
+
+.stit{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--gb);display:flex;align-items:center;gap:8px}
+.niveau-section{margin-bottom:28px}
+.niveau-label{font-size:13px;font-weight:700;color:var(--td);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:4px 12px;background:var(--gb);border-radius:6px;display:inline-block}
+
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:8px}
+.scard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:hidden;transition:all .2s;cursor:pointer}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--shf)}
+.scard.locked{cursor:default;opacity:.75}
+.schdr{height:6px}
+.scbody{padding:18px}
+.scbody h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.scbody p{font-size:12px;color:var(--td);margin-bottom:10px}
+.scmeta{display:flex;align-items:center;justify-content:space-between}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.bv{background:var(--vp);color:var(--vt)}.bg{background:var(--gb);color:var(--td)}
+.block-badge{background:#FEF9E7;color:#7D6608;border:1px dashed #D4AC0D}
+
+/* CODE INVITATION */
+.code-gate{background:white;border-radius:var(--r);box-shadow:var(--sh);border:2px dashed var(--gb);padding:32px 24px;text-align:center;max-width:420px;margin:40px auto}
+.code-gate .gate-icon{font-size:48px;margin-bottom:16px}
+.code-gate h3{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--bl)}
+.code-gate p{font-size:14px;color:var(--td);margin-bottom:20px}
+.code-input{width:100%;padding:14px;border:2px solid var(--gb);border-radius:10px;font-size:18px;font-weight:700;text-align:center;letter-spacing:4px;font-family:"DM Mono",monospace;outline:none;text-transform:uppercase;transition:border-color .2s}
+.code-input:focus{border-color:var(--bl)}
+.btn-unlock{margin-top:12px;width:100%;padding:14px;border:none;border-radius:10px;background:var(--bl);color:#fff;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-unlock:hover{background:var(--bc)}
+.code-err{color:var(--rg);font-size:13px;margin-top:8px}
+
+/* CAPSULE */
+.phdr{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.btnbk{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--gb);border-radius:8px;padding:8px 16px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;color:var(--td);transition:all .2s}
+.btnbk:hover{border-color:var(--bl);color:var(--bl)}
+.capwrap{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+@media(max-width:768px){.capwrap{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:24px;margin-bottom:16px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--gb)}
+.cbloc{background:var(--gr);border-radius:10px;padding:18px;margin-bottom:14px}
+.cbloc h4{font-size:13px;font-weight:700;color:var(--bl);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.cbloc p{font-size:14px;line-height:1.7;color:var(--td)}
+
+/* EXEMPLES FONDATEURS avec visuels */
+.egrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+@media(max-width:600px){.egrid{grid-template-columns:1fr}}
+.ecard{background:#fff;border-radius:12px;padding:0;border:1px solid var(--gb);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ecard-img{width:100%;height:90px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;overflow:hidden}
+.ecard-body{padding:10px 12px;text-align:center}
+.eviv{font-weight:700;font-size:12px;color:var(--vt)}
+.earrow{font-size:14px;color:var(--td);margin:2px 0}
+.etec{font-weight:700;font-size:13px;color:var(--bl)}
+.epri{font-size:11px;color:var(--td);margin-top:2px;font-style:italic}
+.efam-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+.tfam{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;font-size:13px}
+.tfam th{background:var(--vt);color:#fff;padding:9px 12px;text-align:left}
+.tfam td{padding:8px 12px;border-bottom:1px solid var(--gb)}
+.tfam tr:nth-child(even) td{background:var(--vp)}
+.vcard{background:var(--bl);border-radius:10px;padding:14px;color:#fff;margin-bottom:10px}
+.vtit{font-weight:700;font-size:14px;margin-bottom:3px}
+.vmet{font-size:12px;opacity:.75}
+.vcard a{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:#fff;text-decoration:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;margin-top:8px;transition:background .2s}
+.vcard a:hover{background:rgba(255,255,255,.35)}
+
+.sbar{position:sticky;top:78px}
+.sicard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:18px;margin-bottom:14px}
+.sitit{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--tx)}
+.cki{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--gb);font-size:13px;color:var(--td)}
+.cki:last-child{border-bottom:none}
+.btnq{width:100%;padding:13px;border:none;border-radius:10px;background:var(--vt);color:#fff;font-family:"DM Sans",sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btnq:hover{background:var(--vc)}
+
+/* QUIZ */
+.qwrap{max-width:640px;margin:0 auto}
+.qprog{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.qpbar{flex:1;height:6px;background:var(--gb);border-radius:3px;overflow:hidden}
+.qpfil{height:100%;background:var(--vt);border-radius:3px;transition:width .4s}
+.qptxt{font-size:13px;font-weight:600;color:var(--td);white-space:nowrap}
+.qcard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:26px;margin-bottom:16px;animation:sli .3s ease}
+@keyframes sli{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.qnum{font-size:12px;font-weight:600;color:var(--vt);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.qques{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:18px}
+.qobl{display:inline-flex;align-items:center;gap:4px;background:var(--op);color:var(--or);font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;border:2px solid var(--gb);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .15s;background:#fff}
+.opt:hover{border-color:var(--bc);background:var(--bp)}
+.opt.sel{border-color:var(--vt);background:var(--vp)}
+.opt.sel .olet{background:var(--vt);color:#fff}
+.olet{width:27px;height:27px;border-radius:50%;background:var(--gb);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all .15s}
+.otxt{font-size:14px;line-height:1.5;padding-top:3px}
+.qta{width:100%;min-height:110px;padding:12px;border:2px solid var(--gb);border-radius:10px;font-family:"DM Sans",sans-serif;font-size:14px;line-height:1.6;resize:vertical;outline:none;transition:border-color .2s;background:var(--gr)}
+.qta:focus{border-color:var(--vt);background:#fff}
+.cct{font-size:12px;color:var(--td);text-align:right;margin-top:4px}
+.cct.ok{color:var(--vt)}.cct.warn{color:var(--or)}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.btnprev{padding:11px 18px;background:#fff;border:2px solid var(--gb);border-radius:10px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;color:var(--td);transition:all .2s}
+.btnprev:hover{border-color:var(--bl);color:var(--bl)}
+.btnnxt{padding:11px 22px;background:var(--vt);border:none;border-radius:10px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:700;color:#fff;transition:all .2s;display:flex;align-items:center;gap:8px}
+.btnnxt:hover{background:var(--vc)}
+.btnnxt:disabled{background:var(--gb);color:var(--td);cursor:not-allowed}
+
+/* CONFIRMATION */
+.cfcard{max-width:540px;margin:40px auto;background:#fff;border-radius:20px;box-shadow:var(--shf);padding:44px;text-align:center;animation:fiu .5s ease}
+.cficon{width:76px;height:76px;background:var(--vp);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 22px;animation:pop .6s .2s both}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.cfcard h2{font-size:22px;font-weight:700;color:var(--vt);margin-bottom:10px}
+.cfcard p{font-size:14px;color:var(--td);line-height:1.6;margin-bottom:8px}
+.spend{background:var(--op);border:1px solid var(--or);border-radius:10px;padding:14px 18px;margin:18px 0;text-align:left}
+.spend .sptit{font-weight:700;color:var(--or);margin-bottom:4px;font-size:14px}
+.spend p{font-size:13px;color:var(--td)}
+
+/* PROF */
+.ptabs{display:flex;gap:4px;margin-bottom:22px;background:#fff;border-radius:10px;padding:4px;box-shadow:var(--sh);border:1px solid var(--gb);width:fit-content}
+.ptab{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;background:transparent;color:var(--td);transition:all .2s}
+.ptab.on{background:var(--bl);color:#fff}
+.sgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
+.stcard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px}
+.stnum{font-size:30px;font-weight:700}
+.stlb{font-size:12px;color:var(--td);margin-top:2px}
+.sv .stnum{color:var(--vt)}.so .stnum{color:var(--or)}.srg .stnum{color:var(--rg)}.sb .stnum{color:var(--bl)}
+.fbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.fsel{padding:7px 11px;border:1px solid var(--gb);border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;background:#fff;cursor:pointer}
+.si{padding:7px 11px;border:1px solid var(--gb);border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;background:#fff;outline:none;transition:border-color .2s;flex:1;min-width:160px}
+.si:focus{border-color:var(--bl)}
+.stbl{width:100%;border-collapse:collapse}
+.stbl th{background:var(--gr);padding:9px 12px;text-align:left;font-size:12px;font-weight:700;color:var(--td);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gb)}
+.stbl td{padding:10px 12px;border-bottom:1px solid var(--gb);font-size:13px}
+.stbl tr:hover td{background:var(--gr)}
+.btnr{background:var(--bp);color:var(--bl);border:1px solid var(--bl);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s}
+.btnr:hover{background:var(--bl);color:#fff}
+.btnv{background:var(--vp);color:var(--vt);border:1px solid var(--vt);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;margin-left:3px}
+.btnv:hover{background:var(--vt);color:#fff}
+.btnx{background:#FADBD8;color:var(--rg);border:1px solid var(--rg);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;margin-left:3px}
+.btnx:hover{background:var(--rg);color:#fff}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000}
+.mcard{background:#fff;border-radius:var(--r);box-shadow:var(--shf);padding:30px;max-width:600px;width:calc(100vw - 32px);max-height:80vh;overflow-y:auto}
+.mcard h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.mrep{background:var(--gr);border-radius:10px;padding:14px;font-size:14px;line-height:1.6;color:var(--tx);border-left:4px solid var(--bl);margin:10px 0}
+.macts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.btnmc{padding:9px 18px;background:#fff;border:2px solid var(--gb);border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;color:var(--td)}
+.btnmv{padding:9px 18px;background:var(--vt);border:none;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;color:#fff}
+.btnmx{padding:9px 18px;background:var(--rg);border:none;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:700;color:#fff}
+
+/* CONFIG */
+.cfsec{margin-bottom:28px}
+.cfsec h3{font-size:15px;font-weight:700;margin-bottom:14px;color:var(--bl)}
+.elgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.elitem{background:var(--gr);border-radius:8px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--gb);font-size:13px}
+.elnm{font-weight:600;font-size:13px}
+.elid{font-size:11px;color:var(--td);font-family:"DM Mono",monospace}
+.elpwd{font-size:11px;color:var(--vt);font-family:"DM Mono",monospace;font-weight:700}
+.pwd-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.pwd-table th{background:var(--bl);color:#fff;padding:8px 10px;text-align:left}
+.pwd-table td{padding:8px 10px;border-bottom:1px solid var(--gb)}
+.pwd-table tr:nth-child(even) td{background:var(--gr)}
+.code-config-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:12px;background:var(--gr);border-radius:8px;border:1px solid var(--gb)}
+.code-config-row input{padding:8px 12px;border:1px solid var(--gb);border-radius:6px;font-family:"DM Mono",monospace;font-size:14px;font-weight:700;letter-spacing:2px;width:130px;text-transform:uppercase;outline:none}
+.code-config-row input:focus{border-color:var(--bl)}
+.btn-save-code{padding:8px 14px;background:var(--vt);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;font-family:"DM Sans",sans-serif}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1A202C;color:#fff;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shf);z-index:2000;transition:transform .3s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:640px){.main{padding:16px}.wbanner{padding:18px}.wbanner::after{display:none}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lcard">
+    <img class="llogo" src="data:image/png;base64,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" alt="Logo Collège Saint-Pierre">
+    <h1>TECHNOLOGIE &mdash; R.Blanchard</h1>
+    <p class="sub">Collège Saint-Pierre &mdash; Les Essarts</p>
+    <div class="ltabs">
+      <button class="ltab on" id="tb-el" onclick="switchTab('el')">Élève</button>
+      <button class="ltab" id="tb-pr" onclick="switchTab('pr')">Professeur</button>
+    </div>
+    <div id="tab-el">
+      <div class="fg"><label>Identifiant (prénom.nom)</label>
+        <input type="text" id="lid" placeholder="ex : emma.dupont" autocomplete="off"
+               onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label>Mot de passe</label>
+        <input type="password" id="lpwd" placeholder="Mot de passe personnel"
+               onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btnp" onclick="doLogin()">Se connecter &#x2192;</button>
+    </div>
+    <div id="tab-pr" class="h">
+      <div class="fg"><label>Identifiant professeur</label>
+        <input type="text" id="pid" autocomplete="off"
+               onkeydown="if(event.key==='Enter')doProfLogin()"></div>
+      <div class="fg"><label>Mot de passe</label>
+        <input type="password" id="ppwd"
+               onkeydown="if(event.key==='Enter')doProfLogin()"></div>
+      <button class="btnp" onclick="doProfLogin()">Accès tableau de bord &#x2192;</button>
+    </div>
+    <div class="err" id="errmsg"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="hdr">
+    <div class="hbrand">
+      <img class="hlogo" src="data:image/png;base64,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" alt="Logo">
+      <span class="htit">TECHNOLOGIE &mdash; R.Blanchard</span>
+    </div>
+    <div class="hright">
+      <div class="huser"><span class="huname" id="uname"></span><span class="hucls" id="ucls"></span></div>
+      <button class="btnout" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </header>
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dash" class="h">
+      <div class="wbanner">
+        <h2 id="wmsg">Bonjour !</h2>
+        <p>Retrouve ici les ressources de tes séquences et les capsules classe inversée.</p>
+      </div>
+      <div class="stit">&#x1F4DA; Mes séquences</div>
+      <div id="sequences-par-niveau"></div>
+      <div id="my-sec" class="h">
+        <div class="stit">&#x1F4CA; Mon suivi classe inversée</div>
+        <div id="my-cards"></div>
+      </div>
+    </div>
+
+    <!-- CODE D'INVITATION -->
+    <div id="pg-gate" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+      </div>
+      <div class="code-gate">
+        <div class="gate-icon">&#x1F512;</div>
+        <h3 id="gate-title">Séquence protégée</h3>
+        <p id="gate-desc">Cette séquence n'est pas encore ouverte, ou tu dois entrer le code d'invitation donné par ton professeur.</p>
+        <input class="code-input" id="code-input" maxlength="8" placeholder="CODE" oninput="this.value=this.value.toUpperCase()">
+        <div class="code-err h" id="code-err">Code incorrect. Vérifie avec ton professeur.</div>
+        <button class="btn-unlock" onclick="tryUnlock()">Déverrouiller &#x1F513;</button>
+      </div>
+    </div>
+
+    <!-- CAPSULE -->
+    <div id="pg-cap" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P13 &mdash; Capsule Classe Inversée n°1</h2>
+      </div>
+      <div class="capwrap">
+        <div>
+          <div class="card">
+            <h3>&#x1F3AF; Objectif de cette capsule</h3>
+            <p style="font-size:14px;color:var(--td);line-height:1.6">Avant la prochaine séance, lis la fiche, regarde <strong>un reportage</strong>, puis réponds aux questions. Si tu réussis &rarr; tu travailles en autonomie sur une mission avancée en classe.</p>
+          </div>
+          <div class="card">
+            <h3>&#x1F4D6; Fiche &mdash; Qu'est-ce que le biomimétisme ?</h3>
+            <div class="cbloc"><h4>Définition</h4>
+              <p>Le <strong>biomimétisme</strong> est une démarche d'innovation qui consiste à s'inspirer du vivant &mdash; animaux, plantes, micro-organismes &mdash; pour concevoir des objets, matériaux ou systèmes techniques.</p>
+              <p style="margin-top:10px;font-style:italic;border-left:3px solid var(--vt);padding-left:12px">&laquo;&nbsp;La nature, c'est 3,8 milliards d'années de R&amp;D gratuite.&nbsp;&raquo; &mdash; Janine Benyus</p>
+            </div>
+
+            <div class="cbloc"><h4>3 exemples fondateurs</h4>
+              <div class="egrid">
+
+                <!-- VELCRO -->
+                <div class="ecard">
+                  <div class="ecard-img" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9)">
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                      <!-- Graine de bardane stylisée -->
+                      <circle cx="40" cy="35" r="16" fill="#4CAF50" opacity=".9"/>
+                      <circle cx="40" cy="35" r="10" fill="#2E7D32"/>
+                      <!-- Crochets autour -->
+                      <g stroke="#1B5E20" stroke-width="2" fill="none">
+                        <path d="M40 16 Q42 12 40 10 Q38 12 40 16"/>
+                        <path d="M55 22 Q58 19 57 16 Q54 18 55 22"/>
+                        <path d="M60 37 Q64 37 65 35 Q63 33 60 37"/>
+                        <path d="M55 51 Q57 55 55 57 Q52 55 55 51"/>
+                        <path d="M40 56 Q40 61 38 62 Q36 60 40 56"/>
+                        <path d="M25 51 Q22 54 20 53 Q21 50 25 51"/>
+                        <path d="M19 37 Q15 36 15 34 Q17 33 19 37"/>
+                        <path d="M24 22 Q21 19 22 17 Q25 18 24 22"/>
+                      </g>
+                      <!-- Velcro en bas -->
+                      <rect x="18" y="62" width="44" height="8" rx="4" fill="#1565C0" opacity=".8"/>
+                      <text x="40" y="69" text-anchor="middle" fill="white" font-size="6" font-weight="bold" font-family="sans-serif">VELCRO</text>
+                    </svg>
+                  </div>
+                  <div class="ecard-body">
+                    <div class="eviv">Graines de bardane</div>
+                    <div class="earrow">&#x2193;</div>
+                    <div class="etec">Velcro</div>
+                    <div class="epri">Forme des crochets</div>
+                    <span class="efam-tag" style="background:var(--vp);color:var(--vt)">FORME</span>
+                  </div>
+                </div>
+
+                <!-- SHINKANSEN -->
+                <div class="ecard">
+                  <div class="ecard-img" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB)">
+                    <svg width="90" height="80" viewBox="0 0 90 80" fill="none">
+                      <!-- Oiseau martin-pêcheur -->
+                      <ellipse cx="45" cy="25" rx="18" ry="9" fill="#0097A7"/>
+                      <path d="M27 25 L18 22 L20 25 L18 28 Z" fill="#FF6F00"/>
+                      <circle cx="57" cy="22" r="3" fill="#001F5B"/>
+                      <circle cx="57.8" cy="21.2" r="1" fill="white"/>
+                      <path d="M32 30 Q35 38 40 32" fill="#4DD0E1" stroke="none"/>
+                      <!-- Train Shinkansen -->
+                      <rect x="10" y="52" width="70" height="14" rx="3" fill="#1565C0"/>
+                      <path d="M10 59 Q15 52 22 52 L10 52 Z" fill="#0D47A1"/>
+                      <rect x="15" y="54" width="8" height="5" rx="1" fill="#BBDEFB" opacity=".8"/>
+                      <rect x="26" y="54" width="8" height="5" rx="1" fill="#BBDEFB" opacity=".8"/>
+                      <rect x="37" y="54" width="8" height="5" rx="1" fill="#BBDEFB" opacity=".8"/>
+                      <rect x="48" y="54" width="8" height="5" rx="1" fill="#BBDEFB" opacity=".8"/>
+                      <rect x="59" y="54" width="8" height="5" rx="1" fill="#BBDEFB" opacity=".8"/>
+                      <!-- Rails -->
+                      <rect x="5" y="67" width="80" height="2" rx="1" fill="#90A4AE"/>
+                      <!-- Arrow -->
+                      <text x="45" y="45" text-anchor="middle" fill="#0097A7" font-size="10">&#x2193;</text>
+                    </svg>
+                  </div>
+                  <div class="ecard-body">
+                    <div class="eviv">Martin-pêcheur</div>
+                    <div class="earrow">&#x2193;</div>
+                    <div class="etec">Shinkansen</div>
+                    <div class="epri">Forme du bec conique</div>
+                    <span class="efam-tag" style="background:var(--bp);color:var(--bl)">FORME</span>
+                  </div>
+                </div>
+
+                <!-- TERMITIÈRE / EASTGATE -->
+                <div class="ecard">
+                  <div class="ecard-img" style="background:linear-gradient(135deg,#FFF8E1,#FFECB3)">
+                    <svg width="90" height="80" viewBox="0 0 90 80" fill="none">
+                      <!-- Termitière -->
+                      <path d="M20 60 Q22 35 30 25 Q35 15 38 18 Q42 15 45 25 Q53 35 55 60 Z" fill="#8D6E63"/>
+                      <path d="M30 45 Q35 40 38 42 Q41 40 45 45" stroke="#5D4037" stroke-width="1.5" fill="none"/>
+                      <path d="M28 55 Q33 48 38 50 Q43 48 47 55" stroke="#5D4037" stroke-width="1.5" fill="none"/>
+                      <circle cx="38" cy="20" r="3" fill="#6D4C41"/>
+                      <!-- Immeuble Eastgate -->
+                      <rect x="62" y="20" width="22" height="40" rx="2" fill="#546E7A"/>
+                      <rect x="64" y="25" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="70" y="25" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="76" y="25" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="64" y="33" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="70" y="33" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="76" y="33" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="64" y="41" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="70" y="41" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <rect x="76" y="41" width="4" height="4" rx=".5" fill="#B0BEC5"/>
+                      <!-- ventilation arrows -->
+                      <path d="M56 30 Q59 30 62 28" stroke="#FF8F00" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+                      <path d="M56 40 Q59 40 62 40" stroke="#FF8F00" stroke-width="2" fill="none"/>
+                      <path d="M56 50 Q59 50 62 52" stroke="#FF8F00" stroke-width="2" fill="none"/>
+                      <!-- sol -->
+                      <rect x="5" y="60" width="80" height="3" rx="1" fill="#795548" opacity=".5"/>
+                    </svg>
+                  </div>
+                  <div class="ecard-body">
+                    <div class="eviv">Termitière</div>
+                    <div class="earrow">&#x2193;</div>
+                    <div class="etec">Immeuble Eastgate</div>
+                    <div class="epri">Système de ventilation</div>
+                    <span class="efam-tag" style="background:var(--vip);color:var(--vi)">SYSTÈME</span>
+                  </div>
+                </div>
+
+              </div><!-- fin egrid -->
+            </div>
+
+            <div class="cbloc"><h4>Les 4 familles du biomimétisme</h4>
+              <table class="tfam">
+                <tr><th>Famille</th><th>Ce qui est copié</th><th>Exemple</th></tr>
+                <tr><td><strong>FORME</strong></td><td>La géométrie, la morphologie</td><td>Bec &#x2192; Shinkansen</td></tr>
+                <tr><td><strong>MATÉRIAU</strong></td><td>Les propriétés physiques</td><td>Nacre &#x2192; céramiques</td></tr>
+                <tr><td><strong>COMPORTEMENT</strong></td><td>Une stratégie, un processus</td><td>Fourmis &#x2192; GPS</td></tr>
+                <tr><td><strong>SYSTÈME</strong></td><td>L'organisation globale</td><td>Termitière &#x2192; Eastgate</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>&#x1F3AC; Ton reportage &mdash; Choisis-en UN</h3>
+            <p style="font-size:13px;color:var(--td);margin-bottom:14px">Recherche le titre exact sur YouTube ou Lumni&nbsp;:</p>
+            <div class="vcard"><div class="vtit">Des algues protectrices</div><div class="vmet">Arte / Lumni &bull; ~4 min &bull; Crèmes solaires bio-inspirées</div><a href="https://www.youtube.com/results?search_query=Des+algues+protectrices+biomimetisme" target="_blank">&#x25B6; Rechercher sur YouTube</a></div>
+            <div class="vcard" style="background:var(--vt)"><div class="vtit">Un papillon solaire</div><div class="vmet">Arte / Lumni &bull; ~4 min &bull; Panneaux solaires inspirés du morpho</div><a href="https://www.youtube.com/results?search_query=papillon+solaire+biomimetisme+morpho" target="_blank">&#x25B6; Rechercher sur YouTube</a></div>
+            <div class="vcard" style="background:var(--or)"><div class="vtit">Des fourmis bien orientées</div><div class="vmet">Arte / Lumni &bull; ~5 min &bull; Algorithmes GPS</div><a href="https://www.youtube.com/results?search_query=fourmis+algorithme+biomimetisme" target="_blank">&#x25B6; Rechercher sur YouTube</a></div>
+            <div class="vcard" style="background:var(--vi)"><div class="vtit">Biomimétisme, le vivant comme modèle</div><div class="vmet">Arte &bull; ~8 min &bull; Vue d'ensemble</div><a href="https://www.youtube.com/results?search_query=biomimetisme+vivant+modele+arte" target="_blank">&#x25B6; Rechercher sur YouTube</a></div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sbar">
+          <div class="sicard">
+            <div class="sitit">&#x1F4CB; Étapes à suivre</div>
+            <div class="cki"><span>&#x2705;</span> Lis la fiche de présentation</div>
+            <div class="cki"><span>&#x1F3AC;</span> Regarde 1 reportage</div>
+            <div class="cki"><span>&#x1F4DD;</span> Réponds aux 10 questions</div>
+            <div class="cki"><span>&#x23F3;</span> Attends la validation</div>
+          </div>
+          <div class="sicard">
+            <div class="sitit">&#x23F1; Durée estimée</div>
+            <p style="font-size:13px;color:var(--td)">&#x1F4D6; Fiche : <strong>5 min</strong><br>&#x1F3AC; Reportage : <strong>4–8 min</strong><br>&#x1F4DD; Quiz : <strong>8 min</strong></p>
+            <div style="margin-top:10px;padding:10px;background:var(--vp);border-radius:8px;font-size:13px;color:var(--vt);font-weight:600">Total : ~20–25 minutes</div>
+          </div>
+          <div class="sicard" id="qstat">
+            <div id="qstat-no">
+              <div class="sitit">&#x1F680; Prêt(e) ?</div>
+              <p style="font-size:13px;color:var(--td);margin-bottom:14px">Lis la fiche et regarde ton reportage, puis passe au quiz.</p>
+              <button class="btnq" onclick="goPage('pg-quiz')">&#x1F4DD; Répondre aux questions</button>
+            </div>
+            <div id="qstat-done" class="h">
+              <div class="sitit">&#x2705; Quiz soumis !</div>
+              <p style="font-size:13px;color:var(--td)">En attente de validation par ton professeur.</p>
+              <div style="margin-top:10px" id="qres"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="pg-quiz" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-cap')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">Quiz de validation &mdash; 10 questions</h2>
+      </div>
+      <div class="qwrap">
+        <div class="qprog">
+          <div class="qpbar"><div class="qpfil" id="qpfil" style="width:0%"></div></div>
+          <div class="qptxt" id="qptxt">1 / 10</div>
+        </div>
+        <div id="qqbox"></div>
+        <div class="qnav">
+          <button class="btnprev h" id="btnprev" onclick="qPrev()">&#x2190; Précédent</button>
+          <div></div>
+          <button class="btnnxt" id="btnnxt" onclick="qNext()">Suivant &#x2192;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRMATION -->
+    <div id="pg-ok" class="h">
+      <div class="cfcard">
+        <div class="cficon">&#x2705;</div>
+        <h2>Quiz soumis !</h2>
+        <p>Tes réponses ont bien été transmises à ton professeur.</p>
+        <div class="spend"><div class="sptit">&#x23F3; En attente de validation</div>
+          <p>Si tu obtiens la validation : tu travailleras en autonomie sur une mission avancée pendant que le cours est dispensé aux autres.</p>
+        </div>
+        <button class="btnp" onclick="goPage('pg-dash')" style="margin-top:8px">&#x2190; Retour à l'accueil</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU DE BORD PROF -->
+    <div id="pg-prof" class="h">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+        <h2 style="font-size:20px;font-weight:700">Tableau de bord professeur</h2>
+        <span class="badge" style="background:var(--bp);color:var(--bl)">&#x1F511; Accès prof</span>
+      </div>
+      <div class="ptabs">
+        <button class="ptab on" id="pt-s" onclick="pTab('s')">&#x1F4CA; Suivi validations</button>
+        <button class="ptab" id="pt-g" onclick="pTab('g')">&#x1F513; Codes accès</button>
+        <button class="ptab" id="pt-c" onclick="pTab('c')">&#x2699;&#xFE0F; Configuration</button>
+      </div>
+
+      <!-- SUIVI -->
+      <div id="psuivi">
+        <div class="sgr" id="stats"></div>
+        <div class="stit">&#x1F4CB; Soumissions</div>
+        <div class="fbar">
+          <select class="fsel" id="fcap" onchange="renderSubs()">
+            <option value="">Toutes les capsules</option>
+            <option value="cap1">Capsule n°1 &mdash; Biomimétisme</option>
+          </select>
+          <select class="fsel" id="fstat" onchange="renderSubs()">
+            <option value="">Tous les statuts</option>
+            <option value="pending">&#x23F3; En attente</option>
+            <option value="validated">&#x2705; Validé</option>
+            <option value="rejected">&#x274C; À revoir</option>
+          </select>
+          <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
+          <button onclick="exportCSV()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Export CSV</button>
+        </div>
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
+          <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Score /9</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="stbody"></tbody></table>
+        </div>
+        <div style="margin-top:22px" class="stit">&#x1F465; Sans soumission</div>
+        <div id="nosub" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+
+      <!-- CODES D'ACCÈS -->
+      <div id="pgates" class="h">
+        <div class="cfsec">
+          <h3>&#x1F513; Codes d'invitation par séquence</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:16px">
+            Chaque séquence peut être verrouillée par un code. Les élèves doivent saisir ce code pour accéder à la capsule.<br>
+            Laisse le champ vide pour désactiver le code (accès libre). Activez un code uniquement quand la séquence est ouverte.
+          </p>
+          <div id="gate-config-list"></div>
+        </div>
+      </div>
+
+      <!-- CONFIG -->
+      <div id="pconfig" class="h">
+        <div class="cfsec">
+          <h3>&#x1F511; Identifiants &amp; mots de passe élèves</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Chaque élève a un mot de passe <strong>individuel</strong>. Imprimez ce tableau et distribuez les feuillets découpés.</p>
+          <button onclick="printPwds()" style="margin-bottom:14px;padding:9px 16px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F5A8; Imprimer la liste des mots de passe</button>
+          <div style="overflow:auto">
+            <table class="pwd-table" id="pwd-table"></table>
+          </div>
+        </div>
+        <div class="cfsec">
+          <h3>&#x1F510; Identifiant professeur</h3>
+          <div style="background:var(--gr);border-radius:10px;padding:14px;font-family:'DM Mono',monospace;font-size:13px">
+            Login : <strong id="plshow"></strong> &nbsp;|&nbsp; MDP : <strong id="pmdpshow"></strong>
+          </div>
+          <p style="font-size:12px;color:var(--td);margin-top:8px">Modifier dans la variable CFG avant de déployer.</p>
+        </div>
+        <div class="cfsec">
+          <h3>&#x1F5D1;&#xFE0F; Données</h3>
+          <button onclick="if(confirm('Effacer toutes les soumissions ?')){localStorage.removeItem('subs');renderSubs();renderStats();toast('Données effacées')}" style="padding:9px 14px;background:var(--rg);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Effacer toutes les soumissions</button>
+          <button onclick="addDemo()" style="margin-left:8px;padding:9px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Données de démo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal h">
+  <div class="mcard">
+    <h3>Réponse ouverte &mdash; Question 10</h3>
+    <p style="font-size:13px;color:var(--td)" id="minfo"></p>
+    <div class="mrep" id="mrep"></div>
+    <p style="font-size:12px;color:var(--td)" id="mscore"></p>
+    <div class="macts">
+      <button class="btnmc" onclick="closeModal()">Fermer</button>
+      <button class="btnmx" onclick="fromModal('rejected')">À revoir</button>
+      <button class="btnmv" onclick="fromModal('validated')">Valider</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ================================================================
+// CONFIGURATION — MODIFIER AVANT DÉPLOIEMENT
+// ================================================================
+var CFG = {
+  PLOGIN: "prof.blanchard",
+  PMDP: "techno@stpierre"
+};
+
+// Chaque élève a son propre mot de passe dans le champ "pwd"
+// Format généré : 3 premières lettres du prénom + 4 chiffres
+var ELEVES = [
+  {id:"nahila.alibangou", p:"Nahila", n:"ALI-BANGOU", c:"4A", niveau:"4ème", pwd:"nah2824"},
+  {id:"rayan.ben", p:"Rayan", n:"BEN YOUSSEF", c:"4A", niveau:"4ème", pwd:"ray1409"},
+  {id:"maxance.benard", p:"Maxance", n:"BENARD", c:"4A", niveau:"4ème", pwd:"max5506"},
+  {id:"emma.birault", p:"Emma", n:"BIRAULT", c:"4A", niveau:"4ème", pwd:"emm5012"},
+  {id:"emmie.bonneau", p:"Emmie", n:"BONNEAU", c:"4A", niveau:"4ème", pwd:"emm4657"},
+  {id:"jules.bremaud", p:"Jules", n:"BREMAUD", c:"4A", niveau:"4ème", pwd:"jul3286"},
+  {id:"suzie.bridonneau", p:"Suzie", n:"BRIDONNEAU", c:"4A", niveau:"4ème", pwd:"suz2679"},
+  {id:"zoe.brossard", p:"Zoé", n:"BROSSARD", c:"4A", niveau:"4ème", pwd:"zoe9935"},
+  {id:"naelle.deschamps", p:"Naëlle", n:"DESCHAMPS", c:"4A", niveau:"4ème", pwd:"nae2424"},
+  {id:"laura.dessomme", p:"Laura", n:"DESSOMME JADAUD", c:"4A", niveau:"4ème", pwd:"lau7912"},
+  {id:"harry.duret", p:"Harry", n:"DURET", c:"4A", niveau:"4ème", pwd:"har1520"},
+  {id:"tania.fonteneau", p:"Tania", n:"FONTENEAU GUINEMENT", c:"4A", niveau:"4ème", pwd:"tan1488"},
+  {id:"manon.gelot", p:"Manon", n:"GELOT", c:"4A", niveau:"4ème", pwd:"man2535"},
+  {id:"zia.gilbert", p:"Zia", n:"GILBERT", c:"4A", niveau:"4ème", pwd:"zia4582"},
+  {id:"celian.louineau", p:"Célian", n:"LOUINEAU", c:"4A", niveau:"4ème", pwd:"cel4811"},
+  {id:"theo.louineau", p:"Theo", n:"LOUINEAU", c:"4A", niveau:"4ème", pwd:"the9279"},
+  {id:"matteo.mandin", p:"Mattéo", n:"MANDIN", c:"4A", niveau:"4ème", pwd:"mat1434"},
+  {id:"lilwenn.marques", p:"Lilwenn", n:"MARQUES", c:"4A", niveau:"4ème", pwd:"lil4257"},
+  {id:"tania.menanteau", p:"Tania", n:"MENANTEAU", c:"4A", niveau:"4ème", pwd:"tan9928"},
+  {id:"enzo.pelle", p:"Enzo", n:"PELLE", c:"4A", niveau:"4ème", pwd:"enz7873"},
+  {id:"maelys.pichereau", p:"Maëlys", n:"PICHEREAU", c:"4A", niveau:"4ème", pwd:"mae4611"},
+  {id:"soline.pubert", p:"Soline", n:"PUBERT", c:"4A", niveau:"4ème", pwd:"sol8359"},
+  {id:"enael.rabaud", p:"Enaël", n:"RABAUD", c:"4A", niveau:"4ème", pwd:"ena5557"},
+  {id:"mahe.rousseau", p:"Mahé", n:"ROUSSEAU", c:"4A", niveau:"4ème", pwd:"mah1106"},
+  {id:"coralie.tridon", p:"Coralie", n:"TRIDON", c:"4A", niveau:"4ème", pwd:"cor3615"},
+  {id:"simon.you", p:"Simon", n:"YOU", c:"4A", niveau:"4ème", pwd:"sim7924"},
+  {id:"alice.auvinet", p:"Alice", n:"AUVINET", c:"4B", niveau:"4ème", pwd:"ali6574"},
+  {id:"quentin.baron", p:"Quentin", n:"BARON", c:"4B", niveau:"4ème", pwd:"que5552"},
+  {id:"hugo.barre", p:"Hugo", n:"BARRÉ", c:"4B", niveau:"4ème", pwd:"hug3547"},
+  {id:"louisa.blanchard", p:"Louisa", n:"BLANCHARD", c:"4B", niveau:"4ème", pwd:"lou4527"},
+  {id:"ines.boucher", p:"Inès", n:"BOUCHER", c:"4B", niveau:"4ème", pwd:"ine6514"},
+  {id:"mael.bremand", p:"Maël", n:"BREMAND", c:"4B", niveau:"4ème", pwd:"mae2674"},
+  {id:"eline.cailleteau", p:"Eline", n:"CAILLETEAU", c:"4B", niveau:"4ème", pwd:"eli2519"},
+  {id:"raphael.carre", p:"Raphaël", n:"CARRE", c:"4B", niveau:"4ème", pwd:"rap7224"},
+  {id:"lola.drapeau", p:"Lola", n:"DRAPEAU", c:"4B", niveau:"4ème", pwd:"lol2584"},
+  {id:"maely.duchateau", p:"Maély", n:"DUCHATEAU", c:"4B", niveau:"4ème", pwd:"mae6881"},
+  {id:"leo.faurefernandez", p:"Leo", n:"FAURE--FERNANDEZ", c:"4B", niveau:"4ème", pwd:"leo6635"},
+  {id:"martin.fumoleau", p:"Martin", n:"FUMOLEAU LOCTEAU", c:"4B", niveau:"4ème", pwd:"mar5333"},
+  {id:"anton.gonzalez", p:"Anton", n:"GONZALEZ", c:"4B", niveau:"4ème", pwd:"ant1711"},
+  {id:"elona.guibert", p:"Elona", n:"GUIBERT", c:"4B", niveau:"4ème", pwd:"elo8527"},
+  {id:"malak.hijab", p:"Malak", n:"HIJAB", c:"4B", niveau:"4ème", pwd:"mal9785"},
+  {id:"thibault.joulin", p:"Thibault", n:"JOULIN", c:"4B", niveau:"4ème", pwd:"thi3045"},
+  {id:"manuela.mallard", p:"Manuela", n:"MALLARD", c:"4B", niveau:"4ème", pwd:"man7201"},
+  {id:"nino.mallard", p:"Nino", n:"MALLARD", c:"4B", niveau:"4ème", pwd:"nin2291"},
+  {id:"clemence.meunier", p:"Clémence", n:"MEUNIER", c:"4B", niveau:"4ème", pwd:"cle5803"},
+  {id:"maxence.papin", p:"Maxence", n:"PAPIN", c:"4B", niveau:"4ème", pwd:"max6925"},
+  {id:"emma.pasquet", p:"Emma", n:"PASQUET", c:"4B", niveau:"4ème", pwd:"emm4150"},
+  {id:"mathis.poireau", p:"Mathis", n:"POIREAU", c:"4B", niveau:"4ème", pwd:"mat2139"},
+  {id:"emy.ripoche", p:"Emy", n:"RIPOCHE", c:"4B", niveau:"4ème", pwd:"emy1750"},
+  {id:"maxence.rouillon", p:"Maxence", n:"ROUILLON", c:"4B", niveau:"4ème", pwd:"max4733"},
+  {id:"melina.selier", p:"Mélina", n:"SELIER", c:"4B", niveau:"4ème", pwd:"mel5741"},
+  {id:"melvin.villemaine", p:"Melvin", n:"VILLEMAINE", c:"4B", niveau:"4ème", pwd:"mel2307"},
+  {id:"leeloo.vital", p:"Leeloo", n:"VITAL", c:"4B", niveau:"4ème", pwd:"lee4814"},
+  {id:"thomas.andre", p:"Thomas", n:"ANDRÉ", c:"4C", niveau:"4ème", pwd:"tho2654"},
+  {id:"lise.andrieux", p:"Lise", n:"ANDRIEUX", c:"4C", niveau:"4ème", pwd:"lis7227"},
+  {id:"nael.blaineau", p:"Naël", n:"BLAINEAU", c:"4C", niveau:"4ème", pwd:"nae5554"},
+  {id:"leo.blanchard", p:"Léo", n:"BLANCHARD", c:"4C", niveau:"4ème", pwd:"leo8428"},
+  {id:"romane.bossard", p:"Romane", n:"BOSSARD", c:"4C", niveau:"4ème", pwd:"rom6977"},
+  {id:"mailane.bretaud", p:"Maïlane", n:"BRETAUD", c:"4C", niveau:"4ème", pwd:"mai3664"},
+  {id:"meline.caillet", p:"Méline", n:"CAILLET", c:"4C", niveau:"4ème", pwd:"mel7065"},
+  {id:"nino.charon", p:"Nino", n:"CHARON", c:"4C", niveau:"4ème", pwd:"nin6820"},
+  {id:"hugo.clemence", p:"Hugo", n:"CLEMENCE", c:"4C", niveau:"4ème", pwd:"hug4432"},
+  {id:"ethan.defaye", p:"Ethan", n:"DEFAYE", c:"4C", niveau:"4ème", pwd:"eth5374"},
+  {id:"jarod.doisy", p:"Jarod", n:"DOISY", c:"4C", niveau:"4ème", pwd:"jar2169"},
+  {id:"cleo.dupont", p:"Cleo", n:"DUPONT", c:"4C", niveau:"4ème", pwd:"cle3803"},
+  {id:"manon.hermouet", p:"Manon", n:"HERMOUET", c:"4C", niveau:"4ème", pwd:"man9751"},
+  {id:"melissa.khima", p:"Mélissa", n:"KHIMA", c:"4C", niveau:"4ème", pwd:"mel5010"},
+  {id:"salome.lhermite", p:"Salomé", n:"LHERMITE", c:"4C", niveau:"4ème", pwd:"sal3677"},
+  {id:"laure.martin", p:"Laure", n:"MARTIN", c:"4C", niveau:"4ème", pwd:"lau8573"},
+  {id:"elina.martineau", p:"Elina", n:"MARTINEAU", c:"4C", niveau:"4ème", pwd:"eli7216"},
+  {id:"paul.michenaud", p:"Paul", n:"MICHENAUD", c:"4C", niveau:"4ème", pwd:"pau5422"},
+  {id:"juliette.moriniere", p:"Juliette", n:"MORINIERE", c:"4C", niveau:"4ème", pwd:"jul4598"},
+  {id:"kevin.prain", p:"Kévin", n:"PRAIN", c:"4C", niveau:"4ème", pwd:"kev6313"},
+  {id:"mael.renaudier", p:"Maël", n:"RENAUDIER", c:"4C", niveau:"4ème", pwd:"mae1916"},
+  {id:"chloe.retailleau", p:"Chloé", n:"RETAILLEAU", c:"4C", niveau:"4ème", pwd:"chl4752"},
+  {id:"enzo.soullard", p:"Enzo", n:"SOULLARD", c:"4C", niveau:"4ème", pwd:"enz1525"},
+  {id:"esteban.torrent", p:"Esteban", n:"TORRENT", c:"4C", niveau:"4ème", pwd:"est6168"},
+  {id:"maena.vandewalle", p:"Maéna", n:"VANDEWALLE", c:"4C", niveau:"4ème", pwd:"mae7572"},
+  {id:"julie.vigneron", p:"Julie", n:"VIGNERON", c:"4C", niveau:"4ème", pwd:"jul5386"},
+  {id:"sarah.vigneron", p:"Sarah", n:"VIGNERON", c:"4C", niveau:"4ème", pwd:"sar2084"},
+  {id:"anae.arrive", p:"Anaë", n:"ARRIVE", c:"4D", niveau:"4ème", pwd:"ana4456"},
+  {id:"ambre.blanloeil", p:"Ambre", n:"BLANLOEIL", c:"4D", niveau:"4ème", pwd:"amb6155"},
+  {id:"theo.boivineau", p:"Théo", n:"BOIVINEAU", c:"4D", niveau:"4ème", pwd:"the4483"},
+  {id:"theo.bossard", p:"Theo", n:"BOSSARD", c:"4D", niveau:"4ème", pwd:"the9179"},
+  {id:"gabriel.chenu", p:"Gabriel", n:"CHENU", c:"4D", niveau:"4ème", pwd:"gab7482"},
+  {id:"raphael.destouches", p:"Raphaël", n:"DESTOUCHES", c:"4D", niveau:"4ème", pwd:"rap8517"},
+  {id:"clovis.duret", p:"Clovis", n:"DURET", c:"4D", niveau:"4ème", pwd:"clo3340"},
+  {id:"lisa-lou.duret", p:"Lisa-lou", n:"DURET", c:"4D", niveau:"4ème", pwd:"lis5339"},
+  {id:"matheo.giroux", p:"Mathéo", n:"GIROUX", c:"4D", niveau:"4ème", pwd:"mat3287"},
+  {id:"timothe.graizeau", p:"Timothé", n:"GRAIZEAU", c:"4D", niveau:"4ème", pwd:"tim5040"},
+  {id:"nathan.jourdain", p:"Nathan", n:"JOURDAIN", c:"4D", niveau:"4ème", pwd:"nat9830"},
+  {id:"lucas.lazzerini", p:"Lucas", n:"LAZZERINI", c:"4D", niveau:"4ème", pwd:"luc5304"},
+  {id:"sacha.marcadet", p:"Sacha", n:"MARCADET", c:"4D", niveau:"4ème", pwd:"sac8019"},
+  {id:"leo.michel", p:"Léo", n:"MICHEL", c:"4D", niveau:"4ème", pwd:"leo7543"},
+  {id:"jeanne.misslin", p:"Jeanne", n:"MISSLIN", c:"4D", niveau:"4ème", pwd:"jea6930"},
+  {id:"clement.moinault", p:"Clement", n:"MOINAULT", c:"4D", niveau:"4ème", pwd:"cle4593"},
+  {id:"adelie.mollet", p:"Adélie", n:"MOLLET", c:"4D", niveau:"4ème", pwd:"ade3266"},
+  {id:"kewan.pagot", p:"Kéwan", n:"PAGOT", c:"4D", niveau:"4ème", pwd:"kew9348"},
+  {id:"gatien.pannetier", p:"Gatien", n:"PANNETIER", c:"4D", niveau:"4ème", pwd:"gat9085"},
+  {id:"tom.penot", p:"Tom", n:"PÉNOT", c:"4D", niveau:"4ème", pwd:"tom2489"},
+  {id:"malia.proud", p:"Malia", n:"PROUD", c:"4D", niveau:"4ème", pwd:"mal1771"},
+  {id:"camille.regnier", p:"Camille", n:"REGNIER", c:"4D", niveau:"4ème", pwd:"cam2796"},
+  {id:"sarah.richard", p:"Sarah", n:"RICHARD", c:"4D", niveau:"4ème", pwd:"sar3504"},
+  {id:"emma.robin", p:"Emma", n:"ROBIN", c:"4D", niveau:"4ème", pwd:"emm3621"},
+  {id:"katell.rouyer", p:"Katell", n:"ROUYER", c:"4D", niveau:"4ème", pwd:"kat7916"},
+  {id:"julien.samin", p:"Julien", n:"SAMIN", c:"4D", niveau:"4ème", pwd:"jul2040"},
+  {id:"lea.seiller", p:"Léa", n:"SEILLER", c:"4D", niveau:"4ème", pwd:"lea7304"},
+  {id:"thais.vequaud", p:"Thais", n:"VEQUAUD", c:"4D", niveau:"4ème", pwd:"tha7252"},
+  {id:"emeline.you", p:"Emeline", n:"YOU", c:"4D", niveau:"4ème", pwd:"eme8668"},
+  {id:"flavie.barteau", p:"Flavie", n:"BARTEAU", c:"4E", niveau:"4ème", pwd:"fla9669"},
+  {id:"zora.billaud", p:"Zora", n:"BILLAUD", c:"4E", niveau:"4ème", pwd:"zor5119"},
+  {id:"camille.bonneau", p:"Camille", n:"BONNEAU", c:"4E", niveau:"4ème", pwd:"cam1188"},
+  {id:"mael.bossis", p:"Maël", n:"BOSSIS", c:"4E", niveau:"4ème", pwd:"mae2876"},
+  {id:"maelie.bouttemy", p:"Maëlie", n:"BOUTTEMY", c:"4E", niveau:"4ème", pwd:"mae9797"},
+  {id:"ellana-rose.carlier", p:"Ellana-rose", n:"CARLIER", c:"4E", niveau:"4ème", pwd:"ell5371"},
+  {id:"louy.chapeleau", p:"Louy", n:"CHAPELEAU", c:"4E", niveau:"4ème", pwd:"lou6573"},
+  {id:"charly.chevallier", p:"Charly", n:"CHEVALLIER", c:"4E", niveau:"4ème", pwd:"cha2827"},
+  {id:"jordan.chevolleau", p:"Jordan", n:"CHEVOLLEAU", c:"4E", niveau:"4ème", pwd:"jor5808"},
+  {id:"teo.gendron", p:"Téo", n:"GENDRON", c:"4E", niveau:"4ème", pwd:"teo8123"},
+  {id:"hanae.housset", p:"Hanaé", n:"HOUSSET LE MEUR", c:"4E", niveau:"4ème", pwd:"han3591"},
+  {id:"jade.huvelin", p:"Jade", n:"HUVELIN", c:"4E", niveau:"4ème", pwd:"jad8433"},
+  {id:"remi.joulin", p:"Rémi", n:"JOULIN", c:"4E", niveau:"4ème", pwd:"rem1053"},
+  {id:"loona.journault", p:"Loona", n:"JOURNAULT", c:"4E", niveau:"4ème", pwd:"loo5315"},
+  {id:"victor.lamouroux", p:"Victor", n:"LAMOUROUX", c:"4E", niveau:"4ème", pwd:"vic9201"},
+  {id:"sacha.lorieau", p:"Sacha", n:"LORIEAU", c:"4E", niveau:"4ème", pwd:"sac3927"},
+  {id:"lucie.loy", p:"Lucie", n:"LOY", c:"4E", niveau:"4ème", pwd:"luc9317"},
+  {id:"come.marszalek", p:"Come", n:"MARSZALEK", c:"4E", niveau:"4ème", pwd:"com2743"},
+  {id:"manon.michenaud", p:"Manon", n:"MICHENAUD", c:"4E", niveau:"4ème", pwd:"man5889"},
+  {id:"elina.navarre", p:"Elina", n:"NAVARRE", c:"4E", niveau:"4ème", pwd:"eli9317"},
+  {id:"gaspard.piveteau", p:"Gaspard", n:"PIVETEAU", c:"4E", niveau:"4ème", pwd:"gas4258"},
+  {id:"rose.rouillon", p:"Rose", n:"ROUILLON", c:"4E", niveau:"4ème", pwd:"ros3504"},
+  {id:"soline.saibron", p:"Soline", n:"SAIBRON", c:"4E", niveau:"4ème", pwd:"sol7126"},
+  {id:"manon.soulard", p:"Manon", n:"SOULARD", c:"4E", niveau:"4ème", pwd:"man3646"},
+  {id:"mahe.texier", p:"Mahé", n:"TEXIER", c:"4E", niveau:"4ème", pwd:"mah9837"},
+  {id:"julia.ziveri", p:"Julia", n:"ZIVERI DUHAMEL", c:"4E", niveau:"4ème", pwd:"jul9689"},
+  {id:"maelys.barry", p:"Maelys", n:"BARRY", c:"4F", niveau:"4ème", pwd:"mae1009"},
+  {id:"ambre.caillaud", p:"Ambre", n:"CAILLAUD", c:"4F", niveau:"4ème", pwd:"amb6310"},
+  {id:"anna.corgnet", p:"Anna", n:"CORGNET", c:"4F", niveau:"4ème", pwd:"ann9005"},
+  {id:"maeline.cougnon", p:"Maëline", n:"COUGNON", c:"4F", niveau:"4ème", pwd:"mae1319"},
+  {id:"ines.declercq", p:"Inès", n:"DECLERCQ", c:"4F", niveau:"4ème", pwd:"ine2832"},
+  {id:"gabriel.deligne", p:"Gabriel", n:"DELIGNÉ", c:"4F", niveau:"4ème", pwd:"gab6947"},
+  {id:"maxine.durand", p:"Maxine", n:"DURAND", c:"4F", niveau:"4ème", pwd:"max6038"},
+  {id:"ezekiel.fauchard", p:"Ezékiel", n:"FAUCHARD", c:"4F", niveau:"4ème", pwd:"eze4923"},
+  {id:"line.freyssac", p:"Line", n:"FREYSSAC", c:"4F", niveau:"4ème", pwd:"lin1949"},
+  {id:"lea.guegeais", p:"Léa", n:"GUEGEAIS", c:"4F", niveau:"4ème", pwd:"lea4946"},
+  {id:"nino.guerin", p:"Nino", n:"GUERIN", c:"4F", niveau:"4ème", pwd:"nin2290"},
+  {id:"jahmeo.guillet", p:"Jahméo", n:"GUILLET", c:"4F", niveau:"4ème", pwd:"jah2403"},
+  {id:"emilien.herbreteau", p:"Emilien", n:"HERBRETEAU", c:"4F", niveau:"4ème", pwd:"emi8962"},
+  {id:"evan.lamirault", p:"Evan", n:"LAMIRAULT", c:"4F", niveau:"4ème", pwd:"eva2133"},
+  {id:"lucian.leroy", p:"Lucian", n:"LEROY", c:"4F", niveau:"4ème", pwd:"luc9727"},
+  {id:"nolan.lorieux", p:"Nolan", n:"LORIEUX", c:"4F", niveau:"4ème", pwd:"nol3060"},
+  {id:"lisa.martin", p:"Lisa", n:"MARTIN", c:"4F", niveau:"4ème", pwd:"lis3103"},
+  {id:"jules.metay", p:"Jules", n:"METAY", c:"4F", niveau:"4ème", pwd:"jul8787"},
+  {id:"capucine.michel", p:"Capucine", n:"MICHEL", c:"4F", niveau:"4ème", pwd:"cap3705"},
+  {id:"enzo.motais", p:"Enzo", n:"MOTAIS", c:"4F", niveau:"4ème", pwd:"enz5342"},
+  {id:"colombe.penaud", p:"Colombe", n:"PENAUD", c:"4F", niveau:"4ème", pwd:"col9645"},
+  {id:"heather.piveteau", p:"Heather", n:"PIVETEAU", c:"4F", niveau:"4ème", pwd:"hea7932"},
+  {id:"eloan.poisbelaud", p:"Eloan", n:"POISBELAUD", c:"4F", niveau:"4ème", pwd:"elo4470"},
+  {id:"julia.rabaud", p:"Julia", n:"RABAUD", c:"4F", niveau:"4ème", pwd:"jul9835"},
+  {id:"yaelle.rousseau", p:"Yaëlle", n:"ROUSSEAU", c:"4F", niveau:"4ème", pwd:"yae4295"},
+  {id:"louis.siret", p:"Louis", n:"SIRET", c:"4F", niveau:"4ème", pwd:"lou6107"},
+  {id:"lou-ann.tesson", p:"Lou-ann", n:"TESSON", c:"4F", niveau:"4ème", pwd:"lou7537"},
+  {id:"camille.arrive", p:"Camille", n:"ARRIVÉ", c:"5F", niveau:"5ème", pwd:"cam7118"},
+  {id:"charlotte.bichon", p:"Charlotte", n:"BICHON MARTINEAU", c:"5F", niveau:"5ème", pwd:"cha8177"},
+  {id:"theo.bregeon", p:"Théo", n:"BREGEON", c:"5F", niveau:"5ème", pwd:"the9479"},
+  {id:"dodji.chabot", p:"Dodji", n:"CHABOT", c:"5F", niveau:"5ème", pwd:"dod8397"},
+  {id:"tess.charrier", p:"Tess", n:"CHARRIER", c:"5F", niveau:"5ème", pwd:"tes2982"},
+  {id:"robin.couturier", p:"Robin", n:"COUTURIER", c:"5F", niveau:"5ème", pwd:"rob5061"},
+  {id:"felicien.de", p:"Félicien", n:"DE PAULE", c:"5F", niveau:"5ème", pwd:"fel4681"},
+  {id:"neo.duong", p:"Néo", n:"DUONG", c:"5F", niveau:"5ème", pwd:"neo2049"},
+  {id:"wendy.forgerit", p:"Wendy", n:"FORGERIT", c:"5F", niveau:"5ème", pwd:"wen6539"},
+  {id:"leane.gautreau", p:"Léane", n:"GAUTREAU", c:"5F", niveau:"5ème", pwd:"lea1344"},
+  {id:"leya.gauvrit", p:"Leya", n:"GAUVRIT", c:"5F", niveau:"5ème", pwd:"ley4770"},
+  {id:"adele.guerin", p:"Adèle", n:"GUERIN", c:"5F", niveau:"5ème", pwd:"ade4608"},
+  {id:"mahydine.joets", p:"Mahydine", n:"JOETS", c:"5F", niveau:"5ème", pwd:"mah1117"},
+  {id:"albin.lamothe", p:"Albin", n:"LAMOTHE", c:"5F", niveau:"5ème", pwd:"alb2163"},
+  {id:"emy.lefebvre", p:"Emy", n:"LEFEBVRE CHENU", c:"5F", niveau:"5ème", pwd:"emy1964"},
+  {id:"meline.lemaitre", p:"Méline", n:"LEMAITRE", c:"5F", niveau:"5ème", pwd:"mel4750"},
+  {id:"jersande.lucas", p:"Jersande", n:"LUCAS", c:"5F", niveau:"5ème", pwd:"jer2104"},
+  {id:"kenzo.martineau", p:"Kenzo", n:"MARTINEAU", c:"5F", niveau:"5ème", pwd:"ken1514"},
+  {id:"mailie.michenaud", p:"Maïlie", n:"MICHENAUD", c:"5F", niveau:"5ème", pwd:"mai6413"},
+  {id:"emma.moreau", p:"Emma", n:"MOREAU", c:"5F", niveau:"5ème", pwd:"emm2160"},
+  {id:"theo.pani", p:"Théo", n:"PANI", c:"5F", niveau:"5ème", pwd:"the9423"},
+  {id:"eden.picard", p:"Eden", n:"PICARD", c:"5F", niveau:"5ème", pwd:"ede4899"},
+  {id:"arthur.renac", p:"Arthur", n:"RENAC", c:"5F", niveau:"5ème", pwd:"art5562"},
+  {id:"mael.retif", p:"Maël", n:"RÉTIF", c:"5F", niveau:"5ème", pwd:"mae8953"},
+  {id:"lucie.robert", p:"Lucie", n:"ROBERT", c:"5F", niveau:"5ème", pwd:"luc4510"},
+  {id:"sarah.robert", p:"Sarah", n:"ROBERT", c:"5F", niveau:"5ème", pwd:"sar9834"},
+  {id:"louis.rondeau", p:"Louis", n:"RONDEAU", c:"5F", niveau:"5ème", pwd:"lou3167"},
+  {id:"zack.wrat", p:"Zack", n:"WRAT", c:"5F", niveau:"5ème", pwd:"zac8744"},
+  {id:"eliana.bonnenfant", p:"Eliana", n:"BONNENFANT", c:"5G", niveau:"5ème", pwd:"eli4981"},
+  {id:"axel.boucard", p:"Axel", n:"BOUCARD", c:"5G", niveau:"5ème", pwd:"axe8749"},
+  {id:"anatole.brochard", p:"Anatole", n:"BROCHARD", c:"5G", niveau:"5ème", pwd:"ana7669"},
+  {id:"alban.crepeau", p:"Alban", n:"CRÉPEAU", c:"5G", niveau:"5ème", pwd:"alb4119"},
+  {id:"maxence.david", p:"Maxence", n:"DAVID", c:"5G", niveau:"5ème", pwd:"max2545"},
+  {id:"tylian.ferre", p:"Tylian", n:"FERRÉ", c:"5G", niveau:"5ème", pwd:"tyl2588"},
+  {id:"ashley.fevre", p:"Ashley", n:"FEVRE", c:"5G", niveau:"5ème", pwd:"ash8062"},
+  {id:"lila.gatelier", p:"Lila", n:"GATELIER", c:"5G", niveau:"5ème", pwd:"lil6804"},
+  {id:"aaron.gnafoua", p:"Aaron", n:"GNAFOUA BOUANCHEAU", c:"5G", niveau:"5ème", pwd:"aar7939"},
+  {id:"romane.gobin", p:"Romane", n:"GOBIN", c:"5G", niveau:"5ème", pwd:"rom7735"},
+  {id:"mael.grelaud", p:"Maël", n:"GRELAUD", c:"5G", niveau:"5ème", pwd:"mae8651"},
+  {id:"romane.jobard", p:"Romane", n:"JOBARD", c:"5G", niveau:"5ème", pwd:"rom1887"},
+  {id:"letty.legas", p:"Létty", n:"LEGAS", c:"5G", niveau:"5ème", pwd:"let2612"},
+  {id:"titouan.lozach", p:"Titouan", n:"LOZACH", c:"5G", niveau:"5ème", pwd:"tit1993"},
+  {id:"lea.mandin", p:"Léa", n:"MANDIN", c:"5G", niveau:"5ème", pwd:"lea7596"},
+  {id:"anna.menanteau", p:"Anna", n:"MENANTEAU", c:"5G", niveau:"5ème", pwd:"ann6559"},
+  {id:"lola.mercier", p:"Lola", n:"MERCIER", c:"5G", niveau:"5ème", pwd:"lol2790"},
+  {id:"baptiste.metais", p:"Baptiste", n:"METAIS", c:"5G", niveau:"5ème", pwd:"bap5073"},
+  {id:"enora.michenaud", p:"Enora", n:"MICHENAUD", c:"5G", niveau:"5ème", pwd:"eno4139"},
+  {id:"antonin.mollet", p:"Antonin", n:"MOLLET", c:"5G", niveau:"5ème", pwd:"ant4116"},
+  {id:"tamara.murs", p:"Tamara", n:"MURS", c:"5G", niveau:"5ème", pwd:"tam9786"},
+  {id:"maelya.pasquier", p:"Maëlya", n:"PASQUIER LAMBERT", c:"5G", niveau:"5ème", pwd:"mae8350"},
+  {id:"mila.prin", p:"Mila", n:"PRIN", c:"5G", niveau:"5ème", pwd:"mil3296"},
+  {id:"marius.robert", p:"Marius", n:"ROBERT", c:"5G", niveau:"5ème", pwd:"mar7912"},
+  {id:"tom.robert", p:"Tom", n:"ROBERT", c:"5G", niveau:"5ème", pwd:"tom4006"},
+  {id:"mathis.teillet", p:"Mathis", n:"TEILLET", c:"5G", niveau:"5ème", pwd:"mat5563"},
+  {id:"lucien.tiger", p:"Lucien", n:"TIGER", c:"5G", niveau:"5ème", pwd:"luc8579"},
+  {id:"chloe.vanden", p:"Chloé", n:"VANDEN OOSTENDE", c:"5G", niveau:"5ème", pwd:"chl5092"},
+  {id:"etan.berthome", p:"Etan", n:"BERTHOMÉ", c:"6A", niveau:"6ème", pwd:"eta2235"},
+  {id:"leonie.birault", p:"Léonie", n:"BIRAULT", c:"6A", niveau:"6ème", pwd:"leo8260"},
+  {id:"jade.bonnet", p:"Jade", n:"BONNET", c:"6A", niveau:"6ème", pwd:"jad2604"},
+  {id:"thais.bordron", p:"Thaïs", n:"BORDRON", c:"6A", niveau:"6ème", pwd:"tha1828"},
+  {id:"quentin.brejon", p:"Quentin", n:"BREJON", c:"6A", niveau:"6ème", pwd:"que9856"},
+  {id:"noah.butrot", p:"Noah", n:"BUTROT", c:"6A", niveau:"6ème", pwd:"noa1241"},
+  {id:"apolline.chiron", p:"Apolline", n:"CHIRON", c:"6A", niveau:"6ème", pwd:"apo2528"},
+  {id:"malicia.daheron", p:"Malicia", n:"DAHERON", c:"6A", niveau:"6ème", pwd:"mal4872"},
+  {id:"seyram.dossa", p:"Seyram", n:"DOSSA", c:"6A", niveau:"6ème", pwd:"sey3724"},
+  {id:"clara.dupond", p:"Clara", n:"DUPOND", c:"6A", niveau:"6ème", pwd:"cla7658"},
+  {id:"alyxia.frappier", p:"Alyxia", n:"FRAPPIER", c:"6A", niveau:"6ème", pwd:"aly8956"},
+  {id:"rosie.gouraud", p:"Rosie", n:"GOURAUD", c:"6A", niveau:"6ème", pwd:"ros8886"},
+  {id:"livia.hatey", p:"Livia", n:"HATEY", c:"6A", niveau:"6ème", pwd:"liv4502"},
+  {id:"eliot.heriteau", p:"Eliot", n:"HERITEAU", c:"6A", niveau:"6ème", pwd:"eli7570"},
+  {id:"marilou.jaunet", p:"Marilou", n:"JAUNET", c:"6A", niveau:"6ème", pwd:"mar1960"},
+  {id:"jules.pelon", p:"Jules", n:"PELON", c:"6A", niveau:"6ème", pwd:"jul3697"},
+  {id:"enora.pierret", p:"Enora", n:"PIERRET", c:"6A", niveau:"6ème", pwd:"eno7209"},
+  {id:"ethan.salicru", p:"Ethan", n:"SALICRU", c:"6A", niveau:"6ème", pwd:"eth1035"},
+  {id:"loan.sans", p:"Loan", n:"SANS BARRIOL", c:"6A", niveau:"6ème", pwd:"loa7396"},
+  {id:"leo.soulard", p:"Léo", n:"SOULARD", c:"6A", niveau:"6ème", pwd:"leo5345"},
+  {id:"clara.soullard", p:"Clara", n:"SOULLARD", c:"6A", niveau:"6ème", pwd:"cla8454"},
+  {id:"baptiste.suaudeau", p:"Baptiste", n:"SUAUDEAU", c:"6A", niveau:"6ème", pwd:"bap5673"},
+  {id:"timeo.suisse", p:"Timéo", n:"SUISSE", c:"6A", niveau:"6ème", pwd:"tim7930"},
+  {id:"isia.thomas", p:"Isia", n:"THOMAS", c:"6A", niveau:"6ème", pwd:"isi8973"},
+  {id:"noah.vequaud", p:"Noah", n:"VEQUAUD", c:"6A", niveau:"6ème", pwd:"noa3536"},
+  {id:"jules.vrignon", p:"Jules", n:"VRIGNON", c:"6A", niveau:"6ème", pwd:"jul4111"},
+  {id:"chris.adou", p:"Chris Marley", n:"ADOU", c:"6B", niveau:"6ème", pwd:"chr5861"},
+  {id:"melia.arrive", p:"Melia", n:"ARRIVÉ", c:"6B", niveau:"6ème", pwd:"mel4566"},
+  {id:"louis.bazante", p:"Louis", n:"BAZANTÉ", c:"6B", niveau:"6ème", pwd:"lou1958"},
+  {id:"sevan.beauvais", p:"Sévan", n:"BEAUVAIS", c:"6B", niveau:"6ème", pwd:"sev9883"},
+  {id:"elie.blanchet", p:"Elie", n:"BLANCHET", c:"6B", niveau:"6ème", pwd:"eli1998"},
+  {id:"adele.brisseau", p:"Adèle", n:"BRISSEAU", c:"6B", niveau:"6ème", pwd:"ade6138"},
+  {id:"zoe.brisseau", p:"Zoé", n:"BRISSEAU", c:"6B", niveau:"6ème", pwd:"zoe1936"},
+  {id:"laure.clemence", p:"Laure", n:"CLEMENCE", c:"6B", niveau:"6ème", pwd:"lau1821"},
+  {id:"mae.connil", p:"Maé", n:"CONNIL", c:"6B", niveau:"6ème", pwd:"mae8811"},
+  {id:"kais.declercq", p:"Kaîs", n:"DECLERCQ", c:"6B", niveau:"6ème", pwd:"kai9238"},
+  {id:"thya.douaud", p:"Thya", n:"DOUAUD", c:"6B", niveau:"6ème", pwd:"thy9701"},
+  {id:"lylou.faure", p:"Lylou", n:"FAURE", c:"6B", niveau:"6ème", pwd:"lyl3579"},
+  {id:"chloe.foinard", p:"Chloé", n:"FOINARD", c:"6B", niveau:"6ème", pwd:"chl1931"},
+  {id:"valentin.fresneau", p:"Valentin", n:"FRESNEAU", c:"6B", niveau:"6ème", pwd:"val9320"},
+  {id:"elie.gaborit", p:"Elie", n:"GABORIT", c:"6B", niveau:"6ème", pwd:"eli2312"},
+  {id:"livia.hermouetherve", p:"Livia", n:"HERMOUET-HERVÉ", c:"6B", niveau:"6ème", pwd:"liv4044"},
+  {id:"oceane.loiseau", p:"Océane", n:"LOISEAU", c:"6B", niveau:"6ème", pwd:"oce2122"},
+  {id:"jeanne.pelletier", p:"Jeanne", n:"PELLETIER", c:"6B", niveau:"6ème", pwd:"jea2113"},
+  {id:"eline.pidoux", p:"Eline", n:"PIDOUX", c:"6B", niveau:"6ème", pwd:"eli4853"},
+  {id:"gatien.quillaud", p:"Gatien", n:"QUILLAUD", c:"6B", niveau:"6ème", pwd:"gat7615"},
+  {id:"elsa.razes", p:"Elsa", n:"RAZÈS", c:"6B", niveau:"6ème", pwd:"els2964"},
+  {id:"andrea.remaud", p:"Andréa", n:"REMAUD", c:"6B", niveau:"6ème", pwd:"and5033"},
+  {id:"jian.tho", p:"Jian", n:"THO", c:"6B", niveau:"6ème", pwd:"jia1651"},
+  {id:"rosie.tricot", p:"Rosie", n:"TRICOT", c:"6B", niveau:"6ème", pwd:"ros2343"},
+  {id:"milan.van", p:"Milan", n:"VAN GORP", c:"6B", niveau:"6ème", pwd:"mil7868"},
+  {id:"roman.van", p:"Roman", n:"VAN GORP", c:"6B", niveau:"6ème", pwd:"rom9565"},
+  {id:"mael.baudin", p:"Maël", n:"BAUDIN", c:"6C", niveau:"6ème", pwd:"mae6183"},
+  {id:"thiago.bizet", p:"Thiago", n:"BIZET", c:"6C", niveau:"6ème", pwd:"thi5272"},
+  {id:"laura.bouron", p:"Laura", n:"BOURON", c:"6C", niveau:"6ème", pwd:"lau4346"},
+  {id:"amandine.bulteau", p:"Amandine", n:"BULTEAU", c:"6C", niveau:"6ème", pwd:"ama6147"},
+  {id:"noelie.coquin", p:"Noélie", n:"COQUIN", c:"6C", niveau:"6ème", pwd:"noe4910"},
+  {id:"tim.crepeau", p:"Tim", n:"CREPEAU", c:"6C", niveau:"6ème", pwd:"tim5351"},
+  {id:"manon.debost", p:"Manon", n:"DEBOST", c:"6C", niveau:"6ème", pwd:"man7484"},
+  {id:"sarah.defaye", p:"Sarah", n:"DEFAYE", c:"6C", niveau:"6ème", pwd:"sar3144"},
+  {id:"manoah.duchateau", p:"Manoah", n:"DUCHATEAU", c:"6C", niveau:"6ème", pwd:"man5915"},
+  {id:"noah.eveille", p:"Noah", n:"EVEILLÉ", c:"6C", niveau:"6ème", pwd:"noa8491"},
+  {id:"chloe.favreau", p:"Chloé", n:"FAVREAU", c:"6C", niveau:"6ème", pwd:"chl6180"},
+  {id:"tom.huguet", p:"Tom", n:"HUGUET", c:"6C", niveau:"6ème", pwd:"tom2188"},
+  {id:"enola.jaud", p:"Énola", n:"JAUD", c:"6C", niveau:"6ème", pwd:"eno1152"},
+  {id:"melyna.joets", p:"Melyna", n:"JOETS", c:"6C", niveau:"6ème", pwd:"mel8508"},
+  {id:"julian.jolly", p:"Julian", n:"JOLLY", c:"6C", niveau:"6ème", pwd:"jul2638"},
+  {id:"gabie.lambert", p:"Gabie", n:"LAMBERT", c:"6C", niveau:"6ème", pwd:"gab2200"},
+  {id:"melisse.lambert", p:"Mélisse", n:"LAMBERT", c:"6C", niveau:"6ème", pwd:"mel9808"},
+  {id:"martin.mabilais", p:"Martin", n:"MABILAIS", c:"6C", niveau:"6ème", pwd:"mar4492"},
+  {id:"bastien.maillard", p:"Bastien", n:"MAILLARD", c:"6C", niveau:"6ème", pwd:"bas9288"},
+  {id:"justine.pelloquin", p:"Justine", n:"PELLOQUIN", c:"6C", niveau:"6ème", pwd:"jus5345"},
+  {id:"lucie.pelloquin", p:"Lucie", n:"PELLOQUIN", c:"6C", niveau:"6ème", pwd:"luc3170"},
+  {id:"zoe.poncelet", p:"Zoé", n:"PONCELET", c:"6C", niveau:"6ème", pwd:"zoe6718"},
+  {id:"juliette.savigny", p:"Juliette", n:"SAVIGNY", c:"6C", niveau:"6ème", pwd:"jul2127"},
+  {id:"izao.selin", p:"Izao", n:"SELIN", c:"6C", niveau:"6ème", pwd:"iza5002"},
+  {id:"lucas.servant", p:"Lucas", n:"SERVANT", c:"6C", niveau:"6ème", pwd:"luc7054"},
+  {id:"mathis.talbot", p:"Mathis", n:"TALBOT", c:"6C", niveau:"6ème", pwd:"mat5669"},
+  {id:"margot.bleteau", p:"Margot", n:"BLÉTEAU", c:"6D", niveau:"6ème", pwd:"mar3584"},
+  {id:"leo.bossis", p:"Léo", n:"BOSSIS", c:"6D", niveau:"6ème", pwd:"leo8179"},
+  {id:"livia.bossy", p:"Livia", n:"BOSSY", c:"6D", niveau:"6ème", pwd:"liv9900"},
+  {id:"mahe.bouron", p:"Mahé", n:"BOURON", c:"6D", niveau:"6ème", pwd:"mah5956"},
+  {id:"kelia.craipeau", p:"Kélia", n:"CRAIPEAU", c:"6D", niveau:"6ème", pwd:"kel9666"},
+  {id:"giulia.croue", p:"Giulia", n:"CROUÉ", c:"6D", niveau:"6ème", pwd:"giu1128"},
+  {id:"matteo.diochet", p:"Mattéo", n:"DIOCHET", c:"6D", niveau:"6ème", pwd:"mat5905"},
+  {id:"margot.gazeau", p:"Margot", n:"GAZEAU", c:"6D", niveau:"6ème", pwd:"mar2697"},
+  {id:"tim.gilbert", p:"Tim", n:"GILBERT", c:"6D", niveau:"6ème", pwd:"tim3200"},
+  {id:"chloe.girardeau", p:"Chloé", n:"GIRARDEAU", c:"6D", niveau:"6ème", pwd:"chl5333"},
+  {id:"ninon.gousseau", p:"Ninon", n:"GOUSSEAU", c:"6D", niveau:"6ème", pwd:"nin2891"},
+  {id:"juliette.guilmineau", p:"Juliette", n:"GUILMINEAU", c:"6D", niveau:"6ème", pwd:"jul2753"},
+  {id:"alexy.guss", p:"Alexy", n:"GUSS CHARPENTIER", c:"6D", niveau:"6ème", pwd:"ale3546"},
+  {id:"teddy.hardy", p:"Teddy", n:"HARDY", c:"6D", niveau:"6ème", pwd:"ted5462"},
+  {id:"anna.jacques", p:"Anna", n:"JACQUES", c:"6D", niveau:"6ème", pwd:"ann5616"},
+  {id:"antonin.jaunet", p:"Antonin", n:"JAUNET", c:"6D", niveau:"6ème", pwd:"ant4450"},
+  {id:"dorian.joly", p:"Dorian", n:"JOLY", c:"6D", niveau:"6ème", pwd:"dor6617"},
+  {id:"capucine.moreau", p:"Capucine", n:"MOREAU", c:"6D", niveau:"6ème", pwd:"cap4335"},
+  {id:"joris.neau", p:"Joris", n:"NEAU", c:"6D", niveau:"6ème", pwd:"jor5325"},
+  {id:"mathis.nicolleau", p:"Mathis", n:"NICOLLEAU", c:"6D", niveau:"6ème", pwd:"mat9280"},
+  {id:"aron.piveteau", p:"Aron", n:"PIVETEAU", c:"6D", niveau:"6ème", pwd:"aro9004"},
+  {id:"noa.potier", p:"Noa", n:"POTIER", c:"6D", niveau:"6ème", pwd:"noa5114"},
+  {id:"lily.poupin", p:"Lily", n:"POUPIN", c:"6D", niveau:"6ème", pwd:"lil1832"},
+  {id:"charline.roullon", p:"Charline", n:"ROULLON", c:"6D", niveau:"6ème", pwd:"cha2512"},
+  {id:"paul.selin", p:"Paul", n:"SELIN", c:"6D", niveau:"6ème", pwd:"pau7939"},
+  {id:"julia.troger", p:"Julia", n:"TROGER", c:"6D", niveau:"6ème", pwd:"jul5533"},
+  {id:"tiago.ardouin", p:"Tiago", n:"ARDOUIN", c:"6E", niveau:"6ème", pwd:"tia1722"},
+  {id:"adele.babu", p:"Adele", n:"BABU", c:"6E", niveau:"6ème", pwd:"ade1058"},
+  {id:"justin.bernard", p:"Justin", n:"BERNARD", c:"6E", niveau:"6ème", pwd:"jus6464"},
+  {id:"luis.chapleau", p:"Luis", n:"CHAPLEAU", c:"6E", niveau:"6ème", pwd:"lui3143"},
+  {id:"lucie.coeurdevey", p:"Lucie", n:"COEURDEVEY", c:"6E", niveau:"6ème", pwd:"luc5291"},
+  {id:"neiyla.cossaischarbonneau", p:"Neïyla", n:"COSSAIS-CHARBONNEAU", c:"6E", niveau:"6ème", pwd:"nei3647"},
+  {id:"jules.destouches", p:"Jules", n:"DESTOUCHES", c:"6E", niveau:"6ème", pwd:"jul8239"},
+  {id:"hanna.dupont", p:"Hanna", n:"DUPONT", c:"6E", niveau:"6ème", pwd:"han8007"},
+  {id:"charlie.fructuoso", p:"Charlie", n:"FRUCTUOSO", c:"6E", niveau:"6ème", pwd:"cha1158"},
+  {id:"emma.gaborieau", p:"Emma", n:"GABORIEAU", c:"6E", niveau:"6ème", pwd:"emm2832"},
+  {id:"loghan.gradi", p:"Loghan", n:"GRADI", c:"6E", niveau:"6ème", pwd:"log2232"},
+  {id:"elsa.herbreteau", p:"Elsa", n:"HERBRETEAU", c:"6E", niveau:"6ème", pwd:"els3442"},
+  {id:"arthur.imperato", p:"Arthur", n:"IMPÉRATO", c:"6E", niveau:"6ème", pwd:"art9938"},
+  {id:"alice.jaud", p:"Alice", n:"JAUD", c:"6E", niveau:"6ème", pwd:"ali1590"},
+  {id:"emma.jaud", p:"Emma", n:"JAUD", c:"6E", niveau:"6ème", pwd:"emm7049"},
+  {id:"louka.metay", p:"Louka", n:"METAY", c:"6E", niveau:"6ème", pwd:"lou3426"},
+  {id:"mathis.miot", p:"Mathis", n:"MIOT", c:"6E", niveau:"6ème", pwd:"mat8041"},
+  {id:"jaaron.mousseau", p:"Jaaron", n:"MOUSSEAU", c:"6E", niveau:"6ème", pwd:"jaa3088"},
+  {id:"jade.paillat", p:"Jade", n:"PAILLAT", c:"6E", niveau:"6ème", pwd:"jad1685"},
+  {id:"clement.papin", p:"Clement", n:"PAPIN", c:"6E", niveau:"6ème", pwd:"cle6050"},
+  {id:"emma.pondevie", p:"Emma", n:"PONDEVIE", c:"6E", niveau:"6ème", pwd:"emm6974"},
+  {id:"lena.rambaud", p:"Léna", n:"RAMBAUD", c:"6E", niveau:"6ème", pwd:"len1653"},
+  {id:"lola.ripaud", p:"Lola", n:"RIPAUD", c:"6E", niveau:"6ème", pwd:"lol6862"},
+  {id:"zita.rouillon", p:"Zita", n:"ROUILLON", c:"6E", niveau:"6ème", pwd:"zit4441"},
+  {id:"gabriel.tonnot", p:"Gabriel", n:"TONNOT", c:"6E", niveau:"6ème", pwd:"gab5088"},
+  {id:"margaux.viarouge", p:"Margaux", n:"VIAROUGE", c:"6E", niveau:"6ème", pwd:"mar2684"},
+  {id:"gabin.blanchard", p:"Gabin", n:"BLANCHARD", c:"6F", niveau:"6ème", pwd:"gab6794"},
+  {id:"nathan.blanchard", p:"Nathan", n:"BLANCHARD", c:"6F", niveau:"6ème", pwd:"nat7658"},
+  {id:"louis.bouin", p:"Louis", n:"BOUIN", c:"6F", niveau:"6ème", pwd:"lou3532"},
+  {id:"ophelie.chevallier", p:"Ophélie", n:"CHEVALLIER GUILBAUD", c:"6F", niveau:"6ème", pwd:"oph4878"},
+  {id:"daphne.de", p:"Daphne", n:"DE FLEURY", c:"6F", niveau:"6ème", pwd:"dap3662"},
+  {id:"anae.ferment", p:"Anaé", n:"FERMENT", c:"6F", niveau:"6ème", pwd:"ana3900"},
+  {id:"quentin.gaborit", p:"Quentin", n:"GABORIT", c:"6F", niveau:"6ème", pwd:"que7755"},
+  {id:"eloise.gaillard", p:"Eloïse", n:"GAILLARD", c:"6F", niveau:"6ème", pwd:"elo1406"},
+  {id:"colombe.gallard", p:"Colombe", n:"GALLARD", c:"6F", niveau:"6ème", pwd:"col3938"},
+  {id:"samuel.gaudin", p:"Samuel", n:"GAUDIN", c:"6F", niveau:"6ème", pwd:"sam6442"},
+  {id:"maelys.hardy", p:"Maëlys", n:"HARDY", c:"6F", niveau:"6ème", pwd:"mae7745"},
+  {id:"alice.hurteau", p:"Alice", n:"HURTEAU", c:"6F", niveau:"6ème", pwd:"ali5065"},
+  {id:"celia.jacquot", p:"Célia", n:"JACQUOT", c:"6F", niveau:"6ème", pwd:"cel5371"},
+  {id:"lola.jaud", p:"Lola", n:"JAUD", c:"6F", niveau:"6ème", pwd:"lol3608"},
+  {id:"noe.jaud", p:"Noé", n:"JAUD", c:"6F", niveau:"6ème", pwd:"noe2771"},
+  {id:"gabin.lamare", p:"Gabin", n:"LAMARE", c:"6F", niveau:"6ème", pwd:"gab7267"},
+  {id:"louis.larsonneur", p:"Louis", n:"LARSONNEUR LECOMTE", c:"6F", niveau:"6ème", pwd:"lou1634"},
+  {id:"cassandra.leclerc", p:"Cassandra", n:"LECLERC", c:"6F", niveau:"6ème", pwd:"cas8711"},
+  {id:"clea.marcinkowski", p:"Cléa", n:"MARCINKOWSKI", c:"6F", niveau:"6ème", pwd:"cle4644"},
+  {id:"mila.mercier", p:"Mila", n:"MERCIER", c:"6F", niveau:"6ème", pwd:"mil4269"},
+  {id:"denilson.minchella", p:"Denilson", n:"MINCHELLA", c:"6F", niveau:"6ème", pwd:"den8541"},
+  {id:"leya.pasquier", p:"Léya", n:"PASQUIER", c:"6F", niveau:"6ème", pwd:"ley6728"},
+  {id:"eliot.raffin", p:"Eliot", n:"RAFFIN", c:"6F", niveau:"6ème", pwd:"eli6000"},
+  {id:"nolan.renaudin", p:"Nolan", n:"RENAUDIN", c:"6F", niveau:"6ème", pwd:"nol4728"},
+  {id:"karelle.ribollet", p:"Karelle", n:"RIBOLLET", c:"6F", niveau:"6ème", pwd:"kar4652"},
+  {id:"tiffanie.sok", p:"Tiffanie", n:"SOK MOUN", c:"6F", niveau:"6ème", pwd:"tif1387"}
+];
+
+// Séquences — activer avec un code d'invitation (vide = accès libre)
+// Le code est stocké dans localStorage et modifiable par le prof depuis l'interface
+var SEQUENCES_DEF = [
+  {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
+  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
+  {id:"seq5a",niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
+  {id:"seq3", niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
+];
+
+// ================================================================
+// QUIZ — 10 QUESTIONS (9 QCM + 1 ouverte)
+// ================================================================
+var QUES = [
+  {id:1, t:"qcm",
+   q:"Le biomimétisme consiste à...",
+   o:["Fabriquer des robots qui ressemblent à des animaux.",
+      "S'inspirer des solutions du vivant pour concevoir des objets techniques.",
+      "Étudier les animaux pour les protéger de l'extinction.",
+      "Utiliser uniquement des matériaux naturels dans l'industrie."],
+   cor:1},
+  {id:2, t:"qcm",
+   q:"Le velcro a été inventé en s'inspirant de...",
+   o:["Les pattes du gecko.",
+      "Les crochets des graines de bardane.",
+      "La peau du requin.",
+      "Les ventouses du poulpe."],
+   cor:1},
+  {id:3, t:"qcm",
+   q:"Dans le biomimétisme, ce qui est généralement copié, c'est...",
+   o:["Uniquement la forme extérieure de l'être vivant.",
+      "Uniquement les matériaux biologiques de l'être vivant.",
+      "Un principe, une fonction ou une structure du vivant.",
+      "Le comportement entier de l'animal."],
+   cor:2},
+  {id:4, t:"qcm",
+   q:"L'immeuble Eastgate s'inspire de la termitière. À quelle famille du biomimétisme appartient cet exemple ?",
+   o:["Forme","Matériau","Comportement","Système"],
+   cor:3},
+  {id:5, t:"qcm",
+   q:"Quelle célèbre phrase résume l'idée du biomimétisme ?",
+   o:['"La technologie dépasse toujours la nature." — Elon Musk',
+      '"La nature, c\'est 3,8 milliards d\'années de R&D gratuite." — Janine Benyus',
+      '"Imiter la nature, c\'est trahir la technologie." — Thomas Edison',
+      '"Les robots seront bientôt meilleurs que les animaux." — Isaac Asimov'],
+   cor:1},
+  {id:6, t:"qcm",
+   q:"La peau du requin a inspiré la conception de... (biomimétisme de matériau)",
+   o:["Combinaisons de natation à très faible résistance à l'eau (Speedo Fastskin).",
+      "Des hélices d'avion incassables.",
+      "Des vitres autonettoyantes.",
+      "Des chaussures antidérapantes."],
+   cor:0},
+  {id:7, t:"qcm",
+   q:"Les fourmis utilisent des phéromones pour trouver leur chemin. Ce principe a inspiré...",
+   o:["Les imprimantes 3D.",
+      "Des algorithmes d'optimisation GPS.",
+      "Les drones militaires.",
+      "Les panneaux solaires."],
+   cor:1},
+  {id:8, t:"qcm",
+   q:"Qu'est-ce qui caractérise la famille 'MATÉRIAU' en biomimétisme ?",
+   o:["On copie la forme globale de l'être vivant.",
+      "On copie l'organisation d'un groupe d'animaux.",
+      "On reproduit les propriétés physiques ou chimiques d'un tissu ou d'une structure biologique.",
+      "On imite le comportement social d'une espèce."],
+   cor:2},
+  {id:9, t:"qcm",
+   q:"La feuille de lotus est couverte de micro-poils qui la rendent superhydrophobe. Cette propriété a inspiré...",
+   o:["Des carburants verts.",
+      "Des peintures et textiles autonettoyants.",
+      "Des bétons ultra-résistants.",
+      "Des accumulateurs solaires."],
+   cor:1},
+  {id:10, t:"open",
+   q:"Dans le reportage que tu as regardé, quel exemple de biomimétisme t'a le plus frappé ?",
+   ins:"Réponds en 3 phrases complètes : 1) nomme l'être vivant source d'inspiration, 2) explique le principe copié, 3) décris le problème concret que cela résout.",
+   min:90}
+];
+
+// ================================================================
+// ÉTAT
+// ================================================================
+var user = null, isProf = false, ans = {}, curQ = 0, modalId = null, pendingSeq = null;
+
+// ================================================================
+// UTILITAIRES LOCALSTORAGE
+// ================================================================
+function getSubs() { try { return JSON.parse(localStorage.getItem("subs")) || []; } catch(e) { return []; } }
+function getUnlocked() { try { return JSON.parse(localStorage.getItem("unlocked")) || {}; } catch(e) { return {}; } }
+function setUnlocked(obj) { localStorage.setItem("unlocked", JSON.stringify(obj)); }
+function getCodes() {
+  var stored = {}; try { stored = JSON.parse(localStorage.getItem("seq_codes")) || {}; } catch(e) {}
+  var result = {};
+  for (var i = 0; i < SEQUENCES_DEF.length; i++) {
+    var s = SEQUENCES_DEF[i];
+    result[s.id] = (s.id in stored) ? stored[s.id] : s.code;
+  }
+  return result;
+}
+function setCodes(obj) { localStorage.setItem("seq_codes", JSON.stringify(obj)); }
+
+// ================================================================
+// AUTH
+// ================================================================
+function switchTab(t) {
+  document.getElementById("tb-el").classList.toggle("on", t === "el");
+  document.getElementById("tb-pr").classList.toggle("on", t === "pr");
+  document.getElementById("tab-el").classList.toggle("h", t !== "el");
+  document.getElementById("tab-pr").classList.toggle("h", t !== "pr");
+  document.getElementById("errmsg").style.display = "none";
+}
+function showErr(m) { var e = document.getElementById("errmsg"); e.textContent = m; e.style.display = "block"; }
+
+function doLogin() {
+  var id = document.getElementById("lid").value.trim().toLowerCase();
+  var pwd = document.getElementById("lpwd").value;
+  if (!id) { showErr("Entre ton identifiant prénom.nom."); return; }
+  var el = null;
+  for (var i = 0; i < ELEVES.length; i++) { if (ELEVES[i].id === id) { el = ELEVES[i]; break; } }
+  if (!el) { showErr("Identifiant non reconnu. Vérifie ton prénom.nom."); return; }
+  if (pwd !== el.pwd) { showErr("Mot de passe incorrect."); return; }
+  user = el; isProf = false; launch();
+}
+function doProfLogin() {
+  var id = document.getElementById("pid").value.trim();
+  var pwd = document.getElementById("ppwd").value;
+  if (id !== CFG.PLOGIN || pwd !== CFG.PMDP) { showErr("Identifiants professeur incorrects."); return; }
+  user = {id:"prof", p:"Prof", n:"Blanchard", c:"", niveau:""}; isProf = true; launch();
+}
+function launch() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("app").style.display = "flex";
+  document.getElementById("uname").textContent = user.p + " " + user.n;
+  document.getElementById("ucls").textContent = user.c ? user.c : "";
+  if (isProf) { goPage("pg-prof"); renderProf(); }
+  else { goPage("pg-dash"); document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !"; renderDash(); updMyStatus(); }
+}
+function doLogout() {
+  user = null; isProf = false; ans = {}; curQ = 0;
+  document.getElementById("login").style.display = "flex";
+  document.getElementById("app").style.display = "none";
+  ["lid","lpwd","pid","ppwd"].forEach(function(id) { document.getElementById(id).value = ""; });
+  document.getElementById("errmsg").style.display = "none";
+}
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function goPage(pid) {
+  var divs = document.querySelectorAll(".main > div");
+  for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
+  document.getElementById(pid).classList.remove("h");
+  if (pid === "pg-quiz") initQuiz();
+  if (pid === "pg-cap") updCapSidebar();
+  window.scrollTo(0, 0);
+}
+
+// ================================================================
+// DASHBOARD — classement par niveau
+// ================================================================
+function renderDash() {
+  var codes = getCodes();
+  var unlocked = getUnlocked();
+  // Regrouper par niveau
+  var niveaux = {};
+  for (var i = 0; i < SEQUENCES_DEF.length; i++) {
+    var s = SEQUENCES_DEF[i];
+    if (!niveaux[s.niveau]) niveaux[s.niveau] = [];
+    niveaux[s.niveau].push(s);
+  }
+  var order = ["4ème","5ème","3ème"];
+  var html = "";
+  for (var ni = 0; ni < order.length; ni++) {
+    var niv = order[ni];
+    if (!niveaux[niv]) continue;
+    html += '<div class="niveau-section"><div class="niveau-label">Niveau ' + niv + '</div><div class="sgrid">';
+    var seqs = niveaux[niv];
+    for (var i = 0; i < seqs.length; i++) {
+      var s = seqs[i];
+      var code = codes[s.id];
+      var isLocked = (code && code.length > 0) && !unlocked[s.id];
+      var isOpen = s.open;
+      var badgeHtml = "";
+      if (!isOpen) {
+        badgeHtml = '<span class="badge block-badge">Bientôt disponible</span>';
+      } else if (isLocked) {
+        badgeHtml = '<span class="badge" style="background:#FEF9E7;color:#7D6608">&#x1F512; Code requis</span>';
+      } else {
+        badgeHtml = '<span class="badge bv">&#x1F680; Classe inversée</span>';
+      }
+      var clickAction = "";
+      if (!isOpen) clickAction = "";
+      else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
+      else if (s.id === "cap1") clickAction = "onclick=\"goPage('pg-cap')\"";
+      html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
+      html += '<div class="schdr" style="background:' + s.couleur + '"></div>';
+      html += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
+      html += '<div class="scmeta">' + badgeHtml + '<span style="font-size:11px;color:var(--td)">' + s.niveau + '</span></div>';
+      html += '</div></div>';
+    }
+    html += '</div></div>';
+  }
+  document.getElementById("sequences-par-niveau").innerHTML = html;
+}
+
+// ================================================================
+// CODE D'INVITATION
+// ================================================================
+function openGate(seqId) {
+  pendingSeq = seqId;
+  var seqDef = null;
+  for (var i = 0; i < SEQUENCES_DEF.length; i++) { if (SEQUENCES_DEF[i].id === seqId) { seqDef = SEQUENCES_DEF[i]; break; } }
+  document.getElementById("gate-title").textContent = seqDef ? seqDef.titre : "Séquence protégée";
+  document.getElementById("gate-desc").textContent = "Entre le code d'invitation donné par ton professeur pour accéder à cette séquence.";
+  document.getElementById("code-input").value = "";
+  document.getElementById("code-err").classList.add("h");
+  goPage("pg-gate");
+}
+function tryUnlock() {
+  var entered = document.getElementById("code-input").value.trim().toUpperCase();
+  var codes = getCodes();
+  var expected = (codes[pendingSeq] || "").toUpperCase();
+  if (entered === expected && entered.length > 0) {
+    var unlocked = getUnlocked();
+    unlocked[pendingSeq] = true;
+    setUnlocked(unlocked);
+    toast("Séquence déverrouillée !");
+    if (pendingSeq === "cap1") goPage("pg-cap");
+    else goPage("pg-dash");
+    renderDash();
+  } else {
+    document.getElementById("code-err").classList.remove("h");
+  }
+}
+
+// ================================================================
+// QUIZ
+// ================================================================
+function initQuiz() { curQ = 0; ans = {}; renderQ(); }
+function renderQ() {
+  var q = QUES[curQ], tot = QUES.length;
+  document.getElementById("qpfil").style.width = ((curQ + 1) / tot * 100) + "%";
+  document.getElementById("qptxt").textContent = (curQ + 1) + " / " + tot;
+  document.getElementById("btnprev").classList.toggle("h", curQ === 0);
+  var nxt = document.getElementById("btnnxt");
+  nxt.innerHTML = curQ === tot - 1 ? "&#x2705; Soumettre" : "Suivant &#x2192;";
+  var html = "";
+  if (q.t === "qcm") {
+    var sel = ans[q.id];
+    html = '<div class="qcard"><div class="qnum">Question ' + (curQ+1) + ' / ' + tot + '</div>';
+    html += '<div class="qques">' + q.q + '</div>';
+    for (var i = 0; i < q.o.length; i++) {
+      html += '<div class="opt' + (sel === i ? ' sel' : '') + '" onclick="selOpt(' + i + ')">';
+      html += '<div class="olet">' + String.fromCharCode(65 + i) + '</div>';
+      html += '<div class="otxt">' + q.o[i] + '</div></div>';
+    }
+    html += '</div>';
+  } else {
+    var v = ans[q.id] || "", cnt = v.length, ok = cnt >= q.min;
+    html = '<div class="qcard"><div class="qnum">Question ' + (curQ+1) + ' / ' + tot + ' <span class="qobl">&#x2B50; Obligatoire</span></div>';
+    html += '<div class="qques">' + q.q + '</div>';
+    html += '<p style="font-size:13px;color:var(--td);margin-bottom:10px;font-style:italic">' + q.ins + '</p>';
+    html += '<textarea class="qta" id="qopen" oninput="updOpen()" placeholder="Écris ta réponse ici...">' + v + '</textarea>';
+    html += '<div class="cct ' + (ok ? 'ok' : cnt > 0 ? 'warn' : '') + '" id="cct">' + cnt + ' caractères ' + (ok ? 'v – Minimum atteint' : '(minimum : ' + q.min + ' caractères)') + '</div></div>';
+  }
+  document.getElementById("qqbox").innerHTML = html;
+  nxt.disabled = !canGo();
+}
+function selOpt(i) { ans[QUES[curQ].id] = i; renderQ(); }
+function updOpen() {
+  var v = document.getElementById("qopen").value;
+  ans[QUES[curQ].id] = v;
+  var cnt = v.length, min = QUES[curQ].min, ok = cnt >= min;
+  var c = document.getElementById("cct");
+  c.className = "cct " + (ok ? "ok" : cnt > 0 ? "warn" : "");
+  c.textContent = cnt + " caractères " + (ok ? "v – Minimum atteint" : "(minimum : " + min + " caractères)");
+  document.getElementById("btnnxt").disabled = !ok;
+}
+function canGo() {
+  var q = QUES[curQ];
+  if (q.t === "qcm") return ans[q.id] !== undefined;
+  return (ans[q.id] || "").length >= q.min;
+}
+function qPrev() { if (curQ > 0) { curQ--; renderQ(); } }
+function qNext() { if (curQ < QUES.length - 1) { curQ++; renderQ(); } else submitQuiz(); }
+function submitQuiz() {
+  var score = 0, qcmTot = 0;
+  for (var i = 0; i < QUES.length; i++) {
+    if (QUES[i].t === "qcm") { qcmTot++; if (ans[QUES[i].id] === QUES[i].cor) score++; }
+  }
+  var sub = {
+    id: Date.now(), eid: user.id, ename: user.p + " " + user.n, ecls: user.c,
+    cap: "cap1", caplbl: "Capsule n°1 – Biomimétisme",
+    score: score, qcmTot: qcmTot, open: ans[10] || "",
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(), status: "pending"
+  };
+  var all = getSubs(), filtered = [];
+  for (var i = 0; i < all.length; i++) { if (!(all[i].eid === user.id && all[i].cap === "cap1")) filtered.push(all[i]); }
+  filtered.push(sub);
+  localStorage.setItem("subs", JSON.stringify(filtered));
+  goPage("pg-ok"); updCapSidebar(); updMyStatus();
+}
+
+// ================================================================
+// STATUT ÉLÈVE
+// ================================================================
+function updCapSidebar() {
+  if (!user) return;
+  var subs = getSubs(), sub = null;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].eid === user.id && subs[i].cap === "cap1") { sub = subs[i]; break; } }
+  var no = document.getElementById("qstat-no"), done = document.getElementById("qstat-done");
+  if (sub) {
+    no.classList.add("h"); done.classList.remove("h");
+    var lbl = {pending:"En attente de validation", validated:"Validé – Mission avancée débloquée !", rejected:"À revoir – Repasse le quiz"};
+    var bg = {pending:"var(--op)", validated:"var(--vp)", rejected:"#FADBD8"};
+    document.getElementById("qres").innerHTML = '<div style="background:' + bg[sub.status] + ';border-radius:8px;padding:11px"><div style="font-weight:700;font-size:13px">' + lbl[sub.status] + '</div><div style="font-size:12px;margin-top:3px;color:var(--td)">Score QCM : ' + sub.score + '/' + sub.qcmTot + '</div></div>';
+    if (sub.status === "rejected") done.innerHTML += '<button class="btnq" style="margin-top:10px" onclick="goPage(\'pg-quiz\')">Recommencer le quiz</button>';
+  } else { no.classList.remove("h"); done.classList.add("h"); }
+}
+function updMyStatus() {
+  if (!user || isProf) return;
+  var subs = getSubs(), mine = [];
+  for (var i = 0; i < subs.length; i++) { if (subs[i].eid === user.id) mine.push(subs[i]); }
+  var sec = document.getElementById("my-sec"), cards = document.getElementById("my-cards");
+  if (!mine.length) { sec.classList.add("h"); return; }
+  sec.classList.remove("h");
+  var ic = {pending:"&#x23F3;", validated:"&#x2705;", rejected:"&#x274C;"};
+  var co = {pending:"var(--or)", validated:"var(--vt)", rejected:"var(--rg)"};
+  var lbl = {pending:"En attente", validated:"Validé", rejected:"À revoir"};
+  var html = "";
+  for (var i = 0; i < mine.length; i++) {
+    var s = mine[i];
+    html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
+    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + s.date + ' – Score QCM : ' + s.score + '/' + s.qcmTot + '</div></div>';
+    html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">' + ic[s.status] + '</span><span style="font-size:13px;font-weight:600;color:' + co[s.status] + '">' + lbl[s.status] + '</span></div></div>';
+  }
+  cards.innerHTML = html;
+}
+
+// ================================================================
+// TABLEAU DE BORD PROF
+// ================================================================
+function pTab(t) {
+  document.getElementById("pt-s").classList.toggle("on", t === "s");
+  document.getElementById("pt-g").classList.toggle("on", t === "g");
+  document.getElementById("pt-c").classList.toggle("on", t === "c");
+  document.getElementById("psuivi").classList.toggle("h", t !== "s");
+  document.getElementById("pgates").classList.toggle("h", t !== "g");
+  document.getElementById("pconfig").classList.toggle("h", t !== "c");
+  if (t === "g") renderGates();
+  if (t === "c") renderConfig();
+}
+function renderProf() { renderStats(); renderSubs(); }
+function renderStats() {
+  var s = getSubs(), p = 0, v = 0, r = 0;
+  for (var i = 0; i < s.length; i++) {
+    if (s[i].status === "pending") p++;
+    else if (s[i].status === "validated") v++;
+    else if (s[i].status === "rejected") r++;
+  }
+  document.getElementById("stats").innerHTML =
+    '<div class="stcard sb"><div class="stnum">' + s.length + '</div><div class="stlb">Total</div></div>' +
+    '<div class="stcard sv"><div class="stnum">' + v + '</div><div class="stlb">Validés</div></div>' +
+    '<div class="stcard so"><div class="stnum">' + p + '</div><div class="stlb">En attente</div></div>' +
+    '<div class="stcard srg"><div class="stnum">' + r + '</div><div class="stlb">À revoir</div></div>';
+}
+function renderSubs() {
+  var cf = document.getElementById("fcap").value;
+  var sf = document.getElementById("fstat").value;
+  var se = document.getElementById("fsearch").value.toLowerCase();
+  var subs = getSubs(), filtered = [];
+  for (var i = 0; i < subs.length; i++) {
+    var s = subs[i];
+    if (cf && s.cap !== cf) continue;
+    if (sf && s.status !== sf) continue;
+    if (se && (s.ename||"").toLowerCase().indexOf(se) < 0 && (s.ecls||"").toLowerCase().indexOf(se) < 0) continue;
+    filtered.push(s);
+  }
+  filtered.sort(function(a,b){return new Date(b.dateISO)-new Date(a.dateISO);});
+  var ic = {pending:"&#x23F3;", validated:"&#x2705;", rejected:"&#x274C;"};
+  var lbl = {pending:"En attente", validated:"Validé", rejected:"À revoir"};
+  var bs = {pending:"background:var(--op);color:var(--or)", validated:"background:var(--vp);color:var(--vt)", rejected:"background:#FADBD8;color:var(--rg)"};
+  var tb = document.getElementById("stbody");
+  if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--td)">Aucune soumission</td></tr>'; }
+  else {
+    var rows = "";
+    for (var i = 0; i < filtered.length; i++) {
+      var s = filtered[i], sid = s.id;
+      var sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
+      rows += '<tr><td><strong>' + s.ename + '</strong></td><td>' + s.ecls + '</td><td>' + sc + '</td>';
+      rows += '<td style="font-size:12px">' + s.date + '</td>';
+      rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
+      rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
+      if (s.status !== "validated") rows += '<button class="btnv" onclick="updSub(' + sid + ', \'validated\')">&#x2705;</button>';
+      if (s.status !== "rejected")  rows += '<button class="btnx" onclick="updSub(' + sid + ', \'rejected\')">&#x274C;</button>';
+      rows += '</td></tr>';
+    }
+    tb.innerHTML = rows;
+  }
+  var ids = [];
+  var all = getSubs();
+  for (var i = 0; i < all.length; i++) ids.push(all[i].eid);
+  var miss = "";
+  for (var i = 0; i < ELEVES.length; i++) {
+    var found = false;
+    for (var j = 0; j < ids.length; j++) { if (ids[j] === ELEVES[i].id) { found = true; break; } }
+    if (!found) miss += '<span style="background:#fff;border:1px solid var(--gb);border-radius:8px;padding:5px 10px;font-size:12px">' + ELEVES[i].p + ' ' + ELEVES[i].n + ' <span style="color:var(--td);font-size:11px">(' + ELEVES[i].c + ')</span></span>';
+  }
+  document.getElementById("nosub").innerHTML = miss;
+}
+
+// ================================================================
+// GESTION DES CODES D'ACCÈS
+// ================================================================
+function renderGates() {
+  var codes = getCodes();
+  var html = "";
+  for (var i = 0; i < SEQUENCES_DEF.length; i++) {
+    var s = SEQUENCES_DEF[i];
+    var currentCode = codes[s.id] || "";
+    html += '<div class="code-config-row">';
+    html += '<div style="flex:1"><div style="font-weight:700;font-size:13px">' + s.titre + '</div>';
+    html += '<div style="font-size:12px;color:var(--td)">' + s.niveau + (s.open ? '' : ' – non ouverte') + '</div></div>';
+    html += '<input id="code-' + s.id + '" value="' + currentCode + '" maxlength="8" placeholder="Code (vide = libre)" style="padding:8px 12px;border:1px solid var(--gb);border-radius:6px;font-family:DM Mono,monospace;font-size:14px;font-weight:700;letter-spacing:2px;width:140px;text-transform:uppercase;outline:none" oninput="this.value=this.value.toUpperCase()">';
+    html += '<button class="btn-save-code" onclick="saveCode(\'' + s.id + '\')">Enregistrer</button></div>';
+  }
+  document.getElementById("gate-config-list").innerHTML = html;
+}
+function saveCode(seqId) {
+  var val = document.getElementById("code-" + seqId).value.trim().toUpperCase();
+  var codes = getCodes();
+  codes[seqId] = val;
+  setCodes(codes);
+  toast("Code mis à jour : " + (val || "accès libre"));
+}
+
+// ================================================================
+// CONFIG — tableau des mots de passe
+// ================================================================
+function renderConfig() {
+  document.getElementById("plshow").textContent = CFG.PLOGIN;
+  document.getElementById("pmdpshow").textContent = CFG.PMDP;
+  var rows = '<tr><th>Prénom</th><th>Nom</th><th>Classe</th><th>Identifiant</th><th>Mot de passe</th></tr>';
+  for (var i = 0; i < ELEVES.length; i++) {
+    var e = ELEVES[i];
+    rows += '<tr><td>' + e.p + '</td><td>' + e.n + '</td><td>' + e.c + '</td><td style="font-family:DM Mono,monospace;font-size:12px">' + e.id + '</td><td style="font-family:DM Mono,monospace;font-size:13px;font-weight:700;color:var(--vt)">' + e.pwd + '</td></tr>';
+  }
+  document.getElementById("pwd-table").innerHTML = rows;
+}
+function printPwds() {
+  var w = window.open('', '_blank');
+  var rows = '';
+  for (var i = 0; i < ELEVES.length; i++) {
+    var e = ELEVES[i];
+    rows += '<tr><td>' + e.p + ' ' + e.n + '</td><td>' + e.c + '</td><td style="font-family:monospace">' + e.id + '</td><td style="font-family:monospace;font-weight:bold;color:#1E6B3B">' + e.pwd + '</td></tr>';
+  }
+  w.document.write('<html><head><title>Mots de passe élèves</title><style>body{font-family:sans-serif;font-size:13px}table{border-collapse:collapse;width:100%}th{background:#1F4E79;color:white;padding:8px}td{padding:8px;border-bottom:1px solid #ddd}@media print{button{display:none}}</style></head><body><h2>TECHNOLOGIE — R.Blanchard — Identifiants élèves</h2><table><tr><th>Élève</th><th>Classe</th><th>Identifiant</th><th>Mot de passe</th></tr>' + rows + '</table><br><button onclick="window.print()">Imprimer</button></body></html>');
+  w.document.close();
+}
+
+// ================================================================
+// MODAL + STATUT
+// ================================================================
+function openModal(sid) {
+  var subs = getSubs(), sub = null;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { sub = subs[i]; break; } }
+  if (!sub) return;
+  modalId = sid;
+  document.getElementById("minfo").textContent = sub.ename + " – " + sub.ecls + " – " + sub.date;
+  document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
+  document.getElementById("mscore").textContent = "Score QCM : " + sub.score + "/" + sub.qcmTot + " – Statut : " + sub.status;
+  document.getElementById("modal").classList.remove("h");
+}
+function closeModal() { document.getElementById("modal").classList.add("h"); modalId = null; }
+function fromModal(st) { if (modalId !== null) updSub(modalId, st); closeModal(); }
+function updSub(sid, st) {
+  var subs = getSubs(), idx = -1;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { idx = i; break; } }
+  if (idx < 0) return;
+  subs[idx].status = st;
+  localStorage.setItem("subs", JSON.stringify(subs));
+  renderStats(); renderSubs();
+  toast(st === "validated" ? "Soumission validée" : "Soumission marquée à revoir");
+}
+
+function exportCSV() {
+  var s = getSubs();
+  if (!s.length) { toast("Aucune donnée à exporter"); return; }
+  var rows = ["Élève;Classe;Score /9;Date;Statut;Réponse ouverte"];
+  for (var i = 0; i < s.length; i++) {
+    rows.push([s[i].ename, s[i].ecls, s[i].score+"/"+s[i].qcmTot, s[i].date, s[i].status, '"'+(s[i].open||"").replace(/"/g,'""')+'"'].join(";"));
+  }
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(rows.join("\n"));
+  a.download = "suivi_CI_P13_" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".csv";
+  a.click(); toast("Export CSV généré");
+}
+function addDemo() {
+  var d = [
+    {id:1001, eid:"martin.lea", ename:"Léa Martin", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:8, qcmTot:9, open:"Le martin-pêcheur a inspiré le Shinkansen. Son bec conique permet de passer d'un milieu dense à un milieu moins dense sans choc sonique. Le train a été redessiné avec cette forme pour éliminer le bang sonique et économiser 15% d'énergie.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"validated"},
+    {id:1002, eid:"dupont.thomas", ename:"Thomas Dupont", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:6, qcmTot:9, open:"Les fourmis m'ont impressionné dans le reportage. Elles laissent des phéromones pour trouver leur chemin. Les informaticiens ont copié ce principe pour créer des algorithmes GPS.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"pending"},
+    {id:1003, eid:"bernard.emma", ename:"Emma Bernard", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:4, qcmTot:9, open:"C'est cool.", date:"20/04/2026", dateISO:new Date(Date.now()-86400000).toISOString(), status:"rejected"}
+  ];
+  var existing = getSubs(), merged = [];
+  for (var i = 0; i < existing.length; i++) {
+    var found = false;
+    for (var j = 0; j < d.length; j++) { if (d[j].eid === existing[i].eid && d[j].cap === existing[i].cap) { found = true; break; } }
+    if (!found) merged.push(existing[i]);
+  }
+  localStorage.setItem("subs", JSON.stringify(merged.concat(d)));
+  renderStats(); renderSubs(); toast("Données de démo ajoutées");
+}
+function toast(m) {
+  var t = document.getElementById("toastEl");
+  t.textContent = m; t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 3000);
+}
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
+document.getElementById("modal").addEventListener("click", function(e) { if (e.target === e.currentTarget) closeModal(); });
+</script>
+</body>
+</html>
