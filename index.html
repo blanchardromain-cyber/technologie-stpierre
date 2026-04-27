@@ -1337,8 +1337,8 @@ var ELEVES = [
 // Le code est stocké dans localStorage et modifiable par le prof depuis l'interface
 var SEQUENCES_DEF = [
   {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
-  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},,
-  {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true}
+  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
+  {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
   {id:"seq5a",niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
   {id:"seq3", niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
@@ -1857,7 +1857,7 @@ function toast(m) {
 // ================================================================
 // APPS SCRIPT URL — remplacer après déploiement
 // ================================================================
-var APPS_SCRIPT_URL = https://script.google.com/macros/s/AKfycbzics06wmY5iIILKx2-HRDIg233yYIpNBPJqveK1qbDPWsa09d3CnA_-N6GgfWiFUzBsg/exec;
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzics06wmY5iIILKx2-HRDIg233yYIpNBPJqveK1qbDPWsa09d3CnA_-N6GgfWiFUzBsg/exec";
 
 // ================================================================
 // 40 QUESTIONS — QUIZ REMÉDIATION
@@ -1972,8 +1972,8 @@ function submitRemQuiz() {
   if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=="VOTRE_URL_APPS_SCRIPT_ICI") resHtml+=' envoy&eacute;s au professeur';
   else resHtml+=' &mdash; &#x26A0;&#xFE0F; Lien Sheets non configur&eacute;, montre ce r&eacute;sultat &agrave; ton prof';
   resHtml+='</div></div>';
-  resHtml+='<button class="btnp" onclick="goPage('pg-dash')" style="margin-top:8px">&#x2190; Retour &agrave; l'accueil</button></div>';
-  document.getElementById("pg-rem-quiz").innerHTML='<div class="phdr"><button class="btnbk" onclick="goPage('pg-rem')">&#x2190; Retour</button><h2 style="font-size:17px;font-weight:700">Quiz de rattrapage</h2></div>'+resHtml;
+  resHtml+='<button class="btnp" onclick="goPage(&quot;pg-dash&quot;)" style="margin-top:8px">&#x2190; Retour &agrave; l&rsquo;accueil</button></div>';
+  document.getElementById("pg-rem-quiz").innerHTML='<div class="phdr"><button class="btnbk" onclick="goPage(&quot;pg-rem&quot;)">&#x2190; Retour</button><h2 style="font-size:17px;font-weight:700">Quiz de rattrapage</h2></div>'+resHtml;
 }
 function submitFiche() {
   var nom=document.getElementById("rf-nom").value.trim();
