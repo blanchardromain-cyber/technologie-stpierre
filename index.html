@@ -532,6 +532,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
             <option value="cap1">Capsule n°1 &mdash; Biomimétisme</option>
+            <option value="rem1">Quiz Rem&eacute;diation P13</option>
           </select>
           <select class="fsel" id="fstat" onchange="renderSubs()">
             <option value="">Tous les statuts</option>
@@ -543,7 +544,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <button onclick="exportCSV()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Export CSV</button>
         </div>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
-          <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Score /9</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+          <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Score</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
             <tbody id="stbody"></tbody></table>
         </div>
         <div style="margin-top:22px" class="stit">&#x1F465; Sans soumission</div>
@@ -887,10 +888,118 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         </div>
 
         <div style="text-align:center;margin:24px 0">
-          <button onclick="submitFiche()" style="padding:16px 40px;background:var(--vt);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700">
-            &#x2705; Soumettre ma fiche de rem&eacute;diation
+          <button onclick="submitFiche()" style="padding:14px 32px;background:var(--vt);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;margin:4px">
+            &#x2705; Soumettre ma fiche
+          </button>
+          <button onclick="exportFichePDF()" style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;margin:4px">
+            &#x1F4C4; Exporter en PDF
           </button>
           <div id="fiche-status" style="margin-top:10px;font-size:13px;color:var(--td)"></div>
+          <!-- bouton quiz (visible après soumission) -->
+          <div id="go-quiz-btn" class="h" style="margin-top:20px;padding:20px;background:var(--vp);border-radius:12px;border:2px solid var(--vt)">
+            <p style="font-size:14px;color:var(--vt);font-weight:700;margin-bottom:12px">&#x1F4DA; Fiche envoy&eacute;e ! Maintenant passe au quiz de rattrapage.</p>
+            <button onclick="goPage('pg-rem-quiz')" style="padding:14px 32px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700">
+              &#x1F4DD; Lancer le quiz de rattrapage (40 questions)
+            </button>
+          </div>
+        </div>
+
+        <!-- CORRIGÉ (affiché après soumission) -->
+        <div id="fiche-corrige" class="h">
+          <div style="background:var(--vt);color:#fff;border-radius:10px;padding:12px 20px;margin-bottom:16px;font-weight:700;font-size:15px">
+            &#x1F4DA; Corrig&eacute; &mdash; v&eacute;rifie tes r&eacute;ponses
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--vt)">Exercice 1 &mdash; Types de dessin</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>Vue &eacute;clat&eacute;e :</strong> Montre toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage</div>
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>Dessin de d&eacute;finition :</strong> Repr&eacute;sente une seule pi&egrave;ce avec ses dimensions pr&eacute;cises</div>
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>Dessin d'ensemble :</strong> Montre l'objet assembl&eacute; avec toutes ses pi&egrave;ces en position</div>
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>Perspective :</strong> Vue en 3D permettant de visualiser l'objet dans l'espace</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--vt)">Exercice 2 &mdash; Cartouche</h3>
+            <p style="font-size:13px;background:var(--vp);padding:12px;border-radius:8px;border-left:4px solid var(--vt)">Les 7 informations : <strong>Nom de la pi&egrave;ce &bull; Num&eacute;ro de plan &bull; &Eacute;chelle &bull; Format &bull; Nom du dessinateur &bull; Date &bull; Mati&egrave;re</strong></p>
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--vt)">Exercice 3 &mdash; &Eacute;chelles et formats</h3>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>a)</strong> 2 m &agrave; l'&eacute;chelle 1:10 &rarr; <strong>20 cm</strong> sur le dessin</div>
+              <div style="padding:8px;background:var(--vp);border-radius:8px;border-left:4px solid var(--vt)"><strong>b)</strong> 420 &times; 297 mm &rarr; Format <strong>A3</strong></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--or)">Exercice 4 &mdash; Proc&eacute;d&eacute; et r&eacute;sultat</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Pi&egrave;ce fixe + foret &rarr; trou cylindrique &rarr; <strong>Per&ccedil;age</strong></div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Pi&egrave;ce tourne + outil &rarr; forme cylindrique &rarr; <strong>Tournage</strong></div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Fraise tourne dans 3 directions &rarr; forme prismatique &rarr; <strong>Fraisage</strong></div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Laser vaporise la mati&egrave;re &rarr; <strong>D&eacute;coupe laser</strong></div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Poin&ccedil;on contour ferm&eacute; &rarr; <strong>Poin&ccedil;onnage</strong></div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)">Lame contours ext&eacute;rieurs &rarr; <strong>Cisaillage</strong></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--or)">Exercice 5 &mdash; Enl&egrave;vement ou d&eacute;formation</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px">
+              <div style="background:var(--op);border-radius:8px;padding:10px"><div style="font-weight:700;color:var(--or);margin-bottom:6px">Enl&egrave;vement (d&eacute;coupe)</div>Cisaillage, Poin&ccedil;onnage, D&eacute;coupe laser</div>
+              <div style="background:var(--op);border-radius:8px;padding:10px"><div style="font-weight:700;color:var(--or);margin-bottom:6px">Enl&egrave;vement (usinage)</div>Per&ccedil;age, Tournage, Fraisage</div>
+              <div style="background:var(--op);border-radius:8px;padding:10px"><div style="font-weight:700;color:var(--or);margin-bottom:6px">D&eacute;formation</div>Thermoformage, Thermopliage, Emboutissage</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:var(--or)">Exercice 6 &mdash; Situation probl&egrave;me</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)"><strong>a)</strong> Per&ccedil;age &mdash; on enl&egrave;ve de la mati&egrave;re par rotation du foret</div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)"><strong>b)</strong> Thermoformage &mdash; feuille plastique chauff&eacute;e d&eacute;form&eacute;e dans un moule</div>
+              <div style="padding:8px;background:var(--op);border-radius:8px;border-left:4px solid var(--or)"><strong>c)</strong> Thermopliage &mdash; plastique chauff&eacute; sur la ligne de pliage puis pli&eacute; &agrave; 90&deg;</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:#7B2C8B">Exercice 7 &mdash; Vocabulaire</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>a)</strong> Un bouton poussoir est un <strong>capteur</strong>. Il transforme en <strong>signal &eacute;lectrique</strong>.</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>b)</strong> Une LED est un <strong>actionneur</strong>. Elle convertit &eacute;nergie <strong>&eacute;lectrique</strong> en <strong>&eacute;nergie lumineuse</strong>.</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>c)</strong> La carte Arduino est une <strong>interface de programmation</strong>. Elle ex&eacute;cute un <strong>programme</strong>.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:#7B2C8B">Exercice 8 &mdash; Lire un bloc</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><code style="background:var(--bl);color:#fff;padding:2px 6px;border-radius:3px;font-size:11px">Capteur temp A0</code> &rarr; Mesure la temp&eacute;rature sur la broche A0</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><code style="background:var(--vt);color:#fff;padding:2px 6px;border-radius:3px;font-size:11px">Moteur D5 ON</code> &rarr; Le ventilateur tourne</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><code style="background:var(--vt);color:#fff;padding:2px 6px;border-radius:3px;font-size:11px">Moteur D5 OFF</code> &rarr; Le ventilateur s'arr&ecirc;te</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><code style="background:var(--or);color:#fff;padding:2px 6px;border-radius:3px;font-size:11px">LED D7 ON</code> &rarr; La LED bleue s'allume</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><code style="background:var(--or);color:#fff;padding:2px 6px;border-radius:3px;font-size:11px">LED D7 OFF</code> &rarr; La LED bleue s'&eacute;teint</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:#7B2C8B">Exercice 9 &mdash; Sc&eacute;nario ventilateur</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>Composant temp&eacute;rature :</strong> Capteur &mdash; broche A0</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>Moteur ventilateur :</strong> Actionneur &mdash; broche D5</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>LED bleue :</strong> Actionneur &mdash; broche D7</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B;margin-top:4px"><strong>Programme :</strong> SI capteur A0 &gt; 30&deg;C ALORS Moteur D5 ON + LED D7 ON &nbsp;|&nbsp; SINON Moteur D5 OFF + LED D7 OFF</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="color:#7B2C8B">Exercice 10 &mdash; Programme erron&eacute;</h3>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>Erreur 1 :</strong> Le programme lit la broche D4 au lieu de D6 (bouton mal r&eacute;f&eacute;renc&eacute;)</div>
+              <div style="padding:8px;background:#EAD4F4;border-radius:8px;border-left:4px solid #7B2C8B"><strong>Erreur 2 :</strong> Le programme commande la broche D6 au lieu de D4 (LED mal r&eacute;f&eacute;renc&eacute;e)</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1729,7 +1838,14 @@ function renderSubs() {
     var rows = "";
     for (var i = 0; i < filtered.length; i++) {
       var s = filtered[i], sid = s.id;
-      var sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
+      var sc;
+      if (s.cap === "rem1") {
+        var pct = Math.round(s.score/s.qcmTot*100);
+        sc = '<div><strong style="color:' + (pct>=70?"var(--vt)":pct>=50?"var(--or)":"var(--rg)") + '">' + s.score + '/40</strong></div>';
+        if (s.scoreDT !== undefined) sc += '<div style="font-size:11px;color:var(--td)">DT:'+s.scoreDT+'/12 PR:'+s.scorePR+'/14 PG:'+s.scorePG+'/14</div>';
+      } else {
+        sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
+      }
       rows += '<tr><td><strong>' + s.ename + '</strong></td><td>' + s.ecls + '</td><td>' + sc + '</td>';
       rows += '<td style="font-size:12px">' + s.date + '</td>';
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
@@ -1965,6 +2081,30 @@ function submitRemQuiz() {
     img.src = APPS_SCRIPT_URL + "?" + qs + "&t=" + Date.now();
     img.onerror = function(){};
   }
+  // Enregistrer aussi dans localStorage pour le tableau de bord prof
+  var remSub = {
+    id: Date.now(),
+    eid: user ? user.id : e1,
+    ename: e1,
+    ename2: e2,
+    ecls: cls,
+    cap: "rem1",
+    caplbl: "Quiz Remédiation P13",
+    score: score,
+    qcmTot: 40,
+    scoreDT: dt,
+    scorePR: pr,
+    scorePG: pg,
+    open: "",
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+  var allSubs = getSubs();
+  // Remplace l'ancienne soumission rem1 du même élève s'il en avait une
+  allSubs = allSubs.filter(function(x){ return !(x.eid === remSub.eid && x.cap === "rem1"); });
+  allSubs.push(remSub);
+  localStorage.setItem("subs", JSON.stringify(allSubs));
   // Afficher résultat
   document.getElementById("rq-body").classList.add("h");
   var col=(score>=28?"var(--vt)":score>=20?"var(--or)":"var(--rg)");
@@ -2022,6 +2162,9 @@ function submitFiche() {
     corrige.classList.remove("h");
     corrige.scrollIntoView({behavior:"smooth", block:"start"});
   }
+  // Afficher le bouton quiz
+  var qbtn = document.getElementById("go-quiz-btn");
+  if (qbtn) qbtn.classList.remove("h");
   toast("Fiche soumise !");
 }
 
