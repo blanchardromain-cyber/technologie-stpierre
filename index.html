@@ -588,6 +588,347 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
   </div>
 </div>
 
+    <!-- REMÉDIATION HUB -->
+    <div id="pg-rem" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">Remédiation &mdash; P13</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--or);margin-bottom:18px;max-width:800px">
+        <h3 style="color:var(--or)">&#x1F4CB; Objectif</h3>
+        <p style="font-size:14px;color:var(--td);line-height:1.7;margin-bottom:14px">Tu as obtenu un score insuffisant. Travaille les 3 domaines ci-dessous puis passe au quiz de rattrapage (40 questions). Tes résultats seront enregistrés automatiquement.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div style="background:var(--gr);border-radius:10px;padding:14px;border-left:3px solid var(--bl)">
+            <div style="font-weight:700;font-size:14px;color:var(--bl);margin-bottom:6px">1&#xFE0F;&#x20E3; Fiche de rem&eacute;diation</div>
+            <p style="font-size:13px;color:var(--td);line-height:1.5">Compl&egrave;te les exercices des 3 domaines. Utilise la ressource Techno-Flash si n&eacute;cessaire.</p>
+          </div>
+          <div style="background:var(--gr);border-radius:10px;padding:14px;border-left:3px solid var(--vt)">
+            <div style="font-weight:700;font-size:14px;color:var(--vt);margin-bottom:6px">2&#xFE0F;&#x20E3; Quiz de rattrapage (40 questions)</div>
+            <p style="font-size:13px;color:var(--td);line-height:1.5">Une fois la fiche compl&eacute;t&eacute;e, lance le quiz. Tes r&eacute;sultats partent directement vers le tableau de suivi.</p>
+          </div>
+        </div>
+        <div style="background:#FFF8E1;border:1px solid #F9A825;border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="font-size:24px">&#x1F4A1;</div>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:13px;color:#7D6608">Ressource — Dessin technique (Techno-Flash)</div>
+            <a href="https://techno-flash.com/animations/dessin_technique/dessin_technique.html" target="_blank"
+               style="display:inline-flex;align-items:center;gap:6px;background:#F9A825;color:#1A202C;text-decoration:none;border-radius:6px;padding:6px 14px;font-size:13px;font-weight:700;margin-top:8px">
+              &#x1F517; Ouvrir techno-flash.com
+            </a>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px">
+        <button onclick="goPage('pg-rem-form')" style="padding:20px;background:var(--bl);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;text-align:left;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:8px">&#x270F;&#xFE0F;</div>
+          Ouvrir la fiche<br>
+          <span style="font-size:12px;font-weight:400;opacity:.8">Exercices &agrave; remplir en ligne</span>
+        </button>
+        <button onclick="goPage('pg-rem-quiz')" style="padding:20px;background:var(--vt);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;text-align:left;transition:all .2s">
+          <div style="font-size:28px;margin-bottom:8px">&#x1F4DD;</div>
+          Lancer le quiz<br>
+          <span style="font-size:12px;font-weight:400;opacity:.8">40 questions &mdash; r&eacute;sultats envoy&eacute;s au prof</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- FICHE REMÉDIATION -->
+    <div id="pg-rem-form" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-rem')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">Fiche de rem&eacute;diation &mdash; P13</h2>
+      </div>
+      <div style="max-width:800px">
+        <div class="card">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="rf-nom" placeholder="Ton nom" style="width:100%;padding:10px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+            <div><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="rf-prenom" placeholder="Ton pr&eacute;nom" style="width:100%;padding:10px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+          </div>
+          <div style="margin-top:12px"><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">Classe</label>
+            <input type="text" id="rf-classe" placeholder="Ex : 4F" style="width:140px;padding:10px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+        </div>
+
+        <div style="background:var(--bp);border-radius:10px;padding:10px 16px;margin-bottom:10px;font-weight:700;font-size:14px;color:var(--bl)">
+          &#x1F4D0; DOMAINE 1 &mdash; DESSIN TECHNIQUE &nbsp;
+          <a href="https://techno-flash.com/animations/dessin_technique/dessin_technique.html" target="_blank" style="color:var(--bl);font-size:12px;font-weight:400">&#x1F517; Ressource</a>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 1 &mdash; Types de dessin (2 pts)</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Relier chaque type de dessin &agrave; sa description (choisir dans la liste) :</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;background:var(--gr);padding:8px;border-radius:8px">
+              <span style="font-size:13px;font-weight:600;width:180px;flex-shrink:0">Dessin en vue &eacute;clat&eacute;e</span>
+              <select id="rf-ex1-a" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-family:'DM Sans',sans-serif;background:white;font-size:13px">
+                <option value="">-- choisir --</option>
+                <option>Montre toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage</option>
+                <option>Repr&eacute;sente une seule pi&egrave;ce avec ses dimensions pr&eacute;cises</option>
+                <option>Montre l'objet assembl&eacute; avec toutes ses pi&egrave;ces en position</option>
+                <option>Vue en 3D permettant de visualiser l'objet dans l'espace</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--gr);padding:8px;border-radius:8px">
+              <span style="font-size:13px;font-weight:600;width:180px;flex-shrink:0">Dessin de d&eacute;finition</span>
+              <select id="rf-ex1-b" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-family:'DM Sans',sans-serif;background:white;font-size:13px">
+                <option value="">-- choisir --</option>
+                <option>Montre toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage</option>
+                <option>Repr&eacute;sente une seule pi&egrave;ce avec ses dimensions pr&eacute;cises</option>
+                <option>Montre l'objet assembl&eacute; avec toutes ses pi&egrave;ces en position</option>
+                <option>Vue en 3D permettant de visualiser l'objet dans l'espace</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--gr);padding:8px;border-radius:8px">
+              <span style="font-size:13px;font-weight:600;width:180px;flex-shrink:0">Dessin d'ensemble</span>
+              <select id="rf-ex1-c" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-family:'DM Sans',sans-serif;background:white;font-size:13px">
+                <option value="">-- choisir --</option>
+                <option>Montre toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage</option>
+                <option>Repr&eacute;sente une seule pi&egrave;ce avec ses dimensions pr&eacute;cises</option>
+                <option>Montre l'objet assembl&eacute; avec toutes ses pi&egrave;ces en position</option>
+                <option>Vue en 3D permettant de visualiser l'objet dans l'espace</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--gr);padding:8px;border-radius:8px">
+              <span style="font-size:13px;font-weight:600;width:180px;flex-shrink:0">Dessin en perspective</span>
+              <select id="rf-ex1-d" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-family:'DM Sans',sans-serif;background:white;font-size:13px">
+                <option value="">-- choisir --</option>
+                <option>Montre toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage</option>
+                <option>Repr&eacute;sente une seule pi&egrave;ce avec ses dimensions pr&eacute;cises</option>
+                <option>Montre l'objet assembl&eacute; avec toutes ses pi&egrave;ces en position</option>
+                <option>Vue en 3D permettant de visualiser l'objet dans l'espace</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 2 &mdash; Le cartouche (3 pts)</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Indique les 7 informations que l'on trouve dans un cartouche :</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><label style="font-size:12px;color:var(--td)">1.</label><input type="text" id="rf-ex2-1" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">2.</label><input type="text" id="rf-ex2-2" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">3.</label><input type="text" id="rf-ex2-3" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">4.</label><input type="text" id="rf-ex2-4" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">5.</label><input type="text" id="rf-ex2-5" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">6.</label><input type="text" id="rf-ex2-6" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+            <div><label style="font-size:12px;color:var(--td)">7.</label><input type="text" id="rf-ex2-7" placeholder="Information..." style="width:100%;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;margin-top:2px"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 3 &mdash; &Eacute;chelles et formats (2 pts)</h3>
+          <div style="margin-bottom:14px"><label style="font-size:13px;font-weight:600;color:var(--td)">a) Un objet mesure 2 m. &Agrave; l'&eacute;chelle 1:10, sa taille sur le dessin sera :</label>
+            <input type="text" id="rf-ex3-a" placeholder="R&eacute;ponse..." style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td)">b) Quel format correspond &agrave; 420 &times; 297 mm ?</label>
+            <div style="display:flex;gap:20px;margin-top:8px">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="rf-ex3-b" value="A2"> A2</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="rf-ex3-b" value="A3"> A3</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="rf-ex3-b" value="A4"> A4</label>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--op);border-radius:10px;padding:10px 16px;margin-bottom:10px;font-weight:700;font-size:14px;color:var(--or)">
+          &#x1F527; DOMAINE 2 &mdash; PROC&Eacute;D&Eacute;S DE FABRICATION
+        </div>
+
+        <div class="card">
+          <h3>Exercice 4 &mdash; Associer proc&eacute;d&eacute; et r&eacute;sultat (3 pts)</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Pi&egrave;ce fixe, foret tourne et descend &rarr; trou cylindrique</span>
+              <input type="text" id="rf-ex4-1" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Pi&egrave;ce tourne, outil se d&eacute;place &rarr; forme cylindrique</span>
+              <input type="text" id="rf-ex4-2" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Fraise tourne dans 3 directions &rarr; forme prismatique</span>
+              <input type="text" id="rf-ex4-3" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Laser vaporise la mati&egrave;re selon une trajectoire programm&eacute;e</span>
+              <input type="text" id="rf-ex4-4" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Poin&ccedil;on descend et d&eacute;coupe un contour ferm&eacute;</span>
+              <input type="text" id="rf-ex4-5" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <span style="font-size:13px;flex:1;color:var(--td)">Lame descend sur pi&egrave;ce fixe &rarr; d&eacute;coupe ext&eacute;rieure</span>
+              <input type="text" id="rf-ex4-6" placeholder="Proc&eacute;d&eacute;..." style="width:140px;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 5 &mdash; Enl&egrave;vement ou d&eacute;formation ? (2 pts)</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Proc&eacute;d&eacute;s : Per&ccedil;age &ndash; Thermoformage &ndash; Fraisage &ndash; Emboutissage &ndash; Tournage &ndash; Thermopliage &ndash; Cisaillage &ndash; Poin&ccedil;onnage</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><div style="font-weight:700;font-size:12px;color:var(--rg);text-align:center;margin-bottom:6px">Enl&egrave;vement (d&eacute;coupe)</div>
+              <textarea id="rf-ex5-dec" rows="3" placeholder="Cisaillage, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+            <div><div style="font-weight:700;font-size:12px;color:var(--or);text-align:center;margin-bottom:6px">Enl&egrave;vement (usinage)</div>
+              <textarea id="rf-ex5-usi" rows="3" placeholder="Per&ccedil;age, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+            <div><div style="font-weight:700;font-size:12px;color:var(--vt);text-align:center;margin-bottom:6px">D&eacute;formation</div>
+              <textarea id="rf-ex5-def" rows="3" placeholder="Thermoformage, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 6 &mdash; Situation probl&egrave;me (3 pts)</h3>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">a) Plaque de m&eacute;tal avec trou rond :</label>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <input type="text" id="rf-ex6-a-p" placeholder="Proc&eacute;d&eacute;" style="width:140px;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+              <input type="text" id="rf-ex6-a-j" placeholder="Justification..." style="flex:1;min-width:200px;padding:8px;border:1px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">b) Pot de yaourt en plastique (forme creuse) :</label>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <input type="text" id="rf-ex6-b-p" placeholder="Proc&eacute;d&eacute;" style="width:140px;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+              <input type="text" id="rf-ex6-b-j" placeholder="Justification..." style="flex:1;min-width:200px;padding:8px;border:1px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td)">c) &Eacute;tui de t&eacute;l&eacute;phone pli&eacute; &agrave; 90&deg; :</label>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <input type="text" id="rf-ex6-c-p" placeholder="Proc&eacute;d&eacute;" style="width:140px;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+              <input type="text" id="rf-ex6-c-j" placeholder="Justification..." style="flex:1;min-width:200px;padding:8px;border:1px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--vip,#EAD4F4);border-radius:10px;padding:10px 16px;margin-bottom:10px;font-weight:700;font-size:14px;color:var(--vi,#7B2C8B)">
+          &#x1F4BB; DOMAINE 3 &mdash; PROGRAMMATION CODECRAFT
+        </div>
+
+        <div class="card">
+          <h3>Exercice 7 &mdash; Vocabulaire (3 pts)</h3>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">a) Un bouton poussoir est un _____ . Il transforme en _____ .</label>
+            <input type="text" id="rf-ex7-a" placeholder="capteur / signal &eacute;lectrique" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">b) Une LED est un _____ . Elle convertit &eacute;nergie _____ en _____ .</label>
+            <input type="text" id="rf-ex7-b" placeholder="actionneur / &eacute;lectrique / &eacute;nergie lumineuse" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td)">c) La carte Arduino est une _____ . Elle ex&eacute;cute un _____ .</label>
+            <input type="text" id="rf-ex7-c" placeholder="interface de programmation / programme" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 8 &mdash; Lire un bloc (3 pts)</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <code style="font-size:11px;background:var(--bl);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D3 &rarr; ON</code>
+              <input type="text" id="rf-ex8-1" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <code style="font-size:11px;background:var(--bl);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D3 &rarr; OFF</code>
+              <input type="text" id="rf-ex8-2" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Bouton D6 press&eacute;=1</code>
+              <input type="text" id="rf-ex8-3" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Servo D2 &rarr; 165&deg;</code>
+              <input type="text" id="rf-ex8-4" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
+              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Servo D2 &rarr; 0&deg;</code>
+              <input type="text" id="rf-ex8-5" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 9 &mdash; Analyser un sc&eacute;nario (4 pts)</h3>
+          <div style="background:var(--gr);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;line-height:1.6;border-left:3px solid var(--vi,#7B2C8B)">
+            Ventilateur (moteur D5) se d&eacute;clenche quand capteur temp&eacute;rature A0 &gt; 30&deg;C. LED bleue D7 s'allume pour indiquer le fonctionnement. Quand temp&eacute;rature redescend, tout s'&eacute;teint.
+          </div>
+          <p style="font-size:13px;font-weight:600;margin-bottom:8px">a) Identifie les composants :</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+            <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:12px;color:var(--td);margin-bottom:4px">Capteur temp&eacute;rature</div>
+              <input type="text" id="rf-ex9-a1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
+              <input type="text" id="rf-ex9-a2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:12px;color:var(--td);margin-bottom:4px">Moteur ventilateur</div>
+              <input type="text" id="rf-ex9-b1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
+              <input type="text" id="rf-ex9-b2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+            <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
+              <div style="font-size:12px;color:var(--td);margin-bottom:4px">LED bleue</div>
+              <input type="text" id="rf-ex9-c1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
+              <input type="text" id="rf-ex9-c2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+            </div>
+          </div>
+          <p style="font-size:13px;font-weight:600;margin-bottom:8px">b) Valeurs manquantes du programme :</p>
+          <div style="background:#1A202C;color:#A8FF78;border-radius:10px;padding:14px;font-family:'DM Mono',monospace;font-size:12px;line-height:2.2">
+            SI capteur temp broche <input type="text" id="rf-p1" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"> &gt; <input type="text" id="rf-p2" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"><br>
+            &nbsp;&nbsp;ALORS Moteur broche <input type="text" id="rf-p3" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"> &eacute;tat <input type="text" id="rf-p4" style="width:45px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"><br>
+            &nbsp;&nbsp;ET LED broche <input type="text" id="rf-p5" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"> &eacute;tat <input type="text" id="rf-p6" style="width:45px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"><br>
+            SINON Moteur broche <input type="text" id="rf-p7" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"> &eacute;tat <input type="text" id="rf-p8" style="width:45px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"><br>
+            &nbsp;&nbsp;ET LED broche <input type="text" id="rf-p9" style="width:38px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none"> &eacute;tat <input type="text" id="rf-p10" style="width:45px;background:rgba(255,255,255,.1);border:none;border-bottom:1px solid #A8FF78;color:#A8FF78;font-family:'DM Mono',monospace;text-align:center;outline:none">
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Exercice 10 &mdash; V&eacute;rifier un programme (2 pts)</h3>
+          <div style="background:#1A202C;color:#fff;border-radius:10px;padding:12px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;margin-bottom:12px">
+            <span style="color:#888">// LED D4 quand bouton D6 appuy&eacute;</span><br>
+            SI Bouton broche <span style="color:#FF6B6B">D4</span> press&eacute; = 1<br>
+            &nbsp;&nbsp;ALORS LED broche <span style="color:#FF6B6B">D6</span> &eacute;tat ON<br>
+            SINON LED broche <span style="color:#FF6B6B">D6</span> &eacute;tat OFF
+          </div>
+          <div style="margin-bottom:10px"><label style="font-size:13px;font-weight:600;color:var(--td)">Erreur 1 :</label>
+            <input type="text" id="rf-ex10-1" placeholder="D&eacute;cris l'erreur..." style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:5px"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td)">Erreur 2 :</label>
+            <input type="text" id="rf-ex10-2" placeholder="D&eacute;cris l'erreur..." style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:5px"></div>
+        </div>
+
+        <div style="text-align:center;margin:24px 0">
+          <button onclick="submitFiche()" style="padding:16px 40px;background:var(--vt);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700">
+            &#x2705; Soumettre ma fiche de rem&eacute;diation
+          </button>
+          <div id="fiche-status" style="margin-top:10px;font-size:13px;color:var(--td)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ REMÉDIATION -->
+    <div id="pg-rem-quiz" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-rem')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">Quiz de rattrapage &mdash; 40 questions</h2>
+      </div>
+      <div id="rq-ident" class="card" style="max-width:640px;margin:0 auto 20px">
+        <h3>&#x1F464; Qui es-tu ?</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+          <div><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">El&egrave;ve 1 (toi)</label>
+            <input type="text" id="rq-eleve1" placeholder="Pr&eacute;nom NOM" style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">El&egrave;ve 2 (facultatif)</label>
+            <input type="text" id="rq-eleve2" placeholder="Pr&eacute;nom NOM" style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:4px">Classe</label>
+            <input type="text" id="rq-classe" placeholder="Ex : 4F" style="width:100%;padding:9px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none"></div>
+        </div>
+        <button onclick="startRemQuiz()" style="width:100%;padding:13px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700">
+          Commencer le quiz &#x2192;
+        </button>
+      </div>
+      <div id="rq-body" class="h" style="max-width:640px;margin:0 auto">
+        <div class="qprog">
+          <div class="qpbar"><div class="qpfil" id="rqpfil" style="width:0%"></div></div>
+          <div class="qptxt" id="rqptxt">1 / 40</div>
+        </div>
+        <div id="rqqbox"></div>
+        <div class="qnav">
+          <button class="btnprev h" id="rqbtnprev" onclick="rqPrev()">&#x2190; Pr&eacute;c&eacute;dent</button>
+          <div></div>
+          <button class="btnnxt" id="rqbtnnxt" onclick="rqNext()">Suivant &#x2192;</button>
+        </div>
+      </div>
+    </div>
+
+
 <!-- MODAL -->
 <div id="modal" class="modal h">
   <div class="mcard">
@@ -996,7 +1337,8 @@ var ELEVES = [
 // Le code est stocké dans localStorage et modifiable par le prof depuis l'interface
 var SEQUENCES_DEF = [
   {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
-  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
+  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},,
+  {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true}
   {id:"seq5a",niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
   {id:"seq3", niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
@@ -1186,6 +1528,7 @@ function renderDash() {
       if (!isOpen) clickAction = "";
       else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
       else if (s.id === "cap1") clickAction = "onclick=\"goPage('pg-cap')\"";
+      else if (s.id === "rem1") clickAction = "onclick=\"goPage('pg-rem')\"";
       html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
       html += '<div class="schdr" style="background:' + s.couleur + '"></div>';
       html += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
@@ -1510,6 +1853,140 @@ function toast(m) {
   t.textContent = m; t.classList.add("show");
   setTimeout(function() { t.classList.remove("show"); }, 3000);
 }
+
+// ================================================================
+// APPS SCRIPT URL — remplacer après déploiement
+// ================================================================
+var APPS_SCRIPT_URL = "VOTRE_URL_APPS_SCRIPT_ICI";
+
+// ================================================================
+// 40 QUESTIONS — QUIZ REMÉDIATION
+// ================================================================
+var QREM = [
+  {id:1,  dom:"DT", q:"Le dessin en vue &eacute;clat&eacute;e montre...", o:["L'objet assembl&eacute; avec toutes ses pi&egrave;ces","Toutes les pi&egrave;ces s&eacute;par&eacute;es et leur ordre d'assemblage","Une seule pi&egrave;ce avec ses dimensions","Une vue en 3D"], cor:1},
+  {id:2,  dom:"DT", q:"Le dessin de d&eacute;finition repr&eacute;sente...", o:["L'objet assembl&eacute;","Toutes les pi&egrave;ces s&eacute;par&eacute;es","Une seule pi&egrave;ce avec ses dimensions pr&eacute;cises","Une vue en perspective"], cor:2},
+  {id:3,  dom:"DT", q:"Le dessin d'ensemble montre...", o:["Une seule pi&egrave;ce avec cotes","L'objet assembl&eacute; avec toutes ses pi&egrave;ces en position","Les pi&egrave;ces s&eacute;par&eacute;es","Une vue &eacute;clat&eacute;e en 3D"], cor:1},
+  {id:4,  dom:"DT", q:"Le dessin en perspective permet...", o:["De coter pr&eacute;cis&eacute;ment","De voir l'ordre d'assemblage","De visualiser l'objet en 3D dans l'espace","De rep&eacute;rer les ar&ecirc;tes cach&eacute;es"], cor:2},
+  {id:5,  dom:"DT", q:"Quelle est la fonction principale du cartouche ?", o:["Indiquer l'&eacute;chelle uniquement","Donner les informations d'identification du dessin et du produit","Repr&eacute;senter les vues de la pi&egrave;ce","Lister les mat&eacute;riaux"], cor:1},
+  {id:6,  dom:"DT", q:"Quelle information retrouve-t-on TOUJOURS dans le cartouche ?", o:["La couleur de la pi&egrave;ce","Le nom du dessinateur","Le prix de fabrication","Le nombre de vis"], cor:1},
+  {id:7,  dom:"DT", q:"Un objet mesure 200 cm. &Agrave; l'&eacute;chelle 1:10, sa repr&eacute;sentation mesure...", o:["2000 cm","200 cm","20 cm","2 cm"], cor:2},
+  {id:8,  dom:"DT", q:"L'&eacute;chelle 2:1 signifie que le dessin est...", o:["2 fois plus petit que l'objet","&Agrave; la m&ecirc;me taille","2 fois plus grand que l'objet","10 fois plus petit"], cor:2},
+  {id:9,  dom:"DT", q:"Le format A3 correspond aux dimensions...", o:["297 &times; 210 mm","594 &times; 420 mm","420 &times; 297 mm","841 &times; 594 mm"], cor:2},
+  {id:10, dom:"DT", q:"Le trait continu fort sur un dessin technique repr&eacute;sente...", o:["Les ar&ecirc;tes cach&eacute;es","Les axes de sym&eacute;trie","Les contours visibles de la pi&egrave;ce","Les cotes"], cor:2},
+  {id:11, dom:"DT", q:"Le trait interrompu (tirets) repr&eacute;sente...", o:["Les contours visibles","Les ar&ecirc;tes et contours cach&eacute;s","Les axes","Les lignes de cote"], cor:1},
+  {id:12, dom:"DT", q:"Le trait mixte fin (point-tiret) repr&eacute;sente...", o:["Les contours visibles","Les ar&ecirc;tes cach&eacute;es","Les axes de sym&eacute;trie et de r&eacute;volution","Les hachures"], cor:2},
+  {id:13, dom:"PR", q:"Pi&egrave;ce fixe, foret tourne et descend &rarr; trou cylindrique. Quel proc&eacute;d&eacute; ?", o:["Tournage","Fraisage","Per&ccedil;age","Cisaillage"], cor:2},
+  {id:14, dom:"PR", q:"Pi&egrave;ce tourne, outil se d&eacute;place &rarr; forme cylindrique. Quel proc&eacute;d&eacute; ?", o:["Per&ccedil;age","Fraisage","Cisaillage","Tournage"], cor:3},
+  {id:15, dom:"PR", q:"Fraise tourne dans 3 directions &rarr; forme prismatique. Quel proc&eacute;d&eacute; ?", o:["Per&ccedil;age","Fraisage","Tournage","Poin&ccedil;onnage"], cor:1},
+  {id:16, dom:"PR", q:"Laser vaporise la mati&egrave;re selon une trajectoire programm&eacute;e. Quel proc&eacute;d&eacute; ?", o:["Poin&ccedil;onnage","Fraisage","D&eacute;coupe laser","Thermoformage"], cor:2},
+  {id:17, dom:"PR", q:"Poin&ccedil;on descend et d&eacute;coupe un contour ferm&eacute;. Quel proc&eacute;d&eacute; ?", o:["Cisaillage","Poin&ccedil;onnage","Emboutissage","Fraisage"], cor:1},
+  {id:18, dom:"PR", q:"Lame descend sur pi&egrave;ce fixe &rarr; d&eacute;coupe ext&eacute;rieure. Quel proc&eacute;d&eacute; ?", o:["Poin&ccedil;onnage","Fraisage","Cisaillage","Tournage"], cor:2},
+  {id:19, dom:"PR", q:"Le per&ccedil;age est un proc&eacute;d&eacute; d'...", o:["D&eacute;formation","Enl&egrave;vement par usinage","Enl&egrave;vement par d&eacute;coupe","Assemblage"], cor:1},
+  {id:20, dom:"PR", q:"Le tournage est un proc&eacute;d&eacute; d'...", o:["D&eacute;formation","Enl&egrave;vement par d&eacute;coupe","Enl&egrave;vement par usinage","Assemblage"], cor:2},
+  {id:21, dom:"PR", q:"Le fraisage est un proc&eacute;d&eacute; d'...", o:["D&eacute;formation","Enl&egrave;vement par usinage","Enl&egrave;vement par d&eacute;coupe","Moulage"], cor:1},
+  {id:22, dom:"PR", q:"Le thermoformage est un proc&eacute;d&eacute; de...", o:["Enl&egrave;vement par usinage","Enl&egrave;vement par d&eacute;coupe","D&eacute;formation","Assemblage"], cor:2},
+  {id:23, dom:"PR", q:"L'emboutissage est un proc&eacute;d&eacute; de...", o:["Enl&egrave;vement par usinage","D&eacute;formation","Enl&egrave;vement par d&eacute;coupe","Moulage"], cor:1},
+  {id:24, dom:"PR", q:"Le cisaillage est un proc&eacute;d&eacute; d'...", o:["D&eacute;formation","Enl&egrave;vement par usinage","Enl&egrave;vement par d&eacute;coupe","Assemblage"], cor:2},
+  {id:25, dom:"PR", q:"Le poin&ccedil;onnage est un proc&eacute;d&eacute; d'...", o:["D&eacute;formation","Enl&egrave;vement par usinage","Enl&egrave;vement par d&eacute;coupe","Thermoformage"], cor:2},
+  {id:26, dom:"PR", q:"Pour fabriquer un pot de yaourt en plastique (forme creuse), le proc&eacute;d&eacute; adapt&eacute; est...", o:["Per&ccedil;age","Tournage","Thermoformage","Cisaillage"], cor:2},
+  {id:27, dom:"PG", q:"Un bouton poussoir est un...", o:["Actionneur","Capteur","Interface","Microcontr&ocirc;leur"], cor:1},
+  {id:28, dom:"PG", q:"Une LED est un...", o:["Capteur","Interface de programmation","Actionneur","Microprocesseur"], cor:2},
+  {id:29, dom:"PG", q:"La carte Arduino Uno est...", o:["Un capteur de lumi&egrave;re","Un actionneur","Une interface de programmation","Un servomoteur"], cor:2},
+  {id:30, dom:"PG", q:"'LED broche D3 &mdash; &eacute;tat ON' signifie concr&egrave;tement...", o:["La LED clignote","La LED s'&eacute;teint","La LED s'allume","La LED change de couleur"], cor:2},
+  {id:31, dom:"PG", q:"'LED broche D3 &mdash; &eacute;tat OFF' signifie concr&egrave;tement...", o:["La LED s'allume","La LED clignote","La LED s'&eacute;teint","La LED diminue"], cor:2},
+  {id:32, dom:"PG", q:"'Bouton broche D6 &mdash; press&eacute; = 1' signifie concr&egrave;tement...", o:["Le bouton n'est pas appuy&eacute;","Le bouton est appuy&eacute;","Le bouton est en attente","La broche D6 est d&eacute;sactiv&eacute;e"], cor:1},
+  {id:33, dom:"PG", q:"'Servo broche D2 &mdash; angle 165&deg;' signifie concr&egrave;tement...", o:["Le servomoteur s'arr&ecirc;te","Le servomoteur tourne &agrave; grande vitesse","Le servomoteur se positionne &agrave; 165 degr&eacute;s","La broche re&ccedil;oit 165 V"], cor:2},
+  {id:34, dom:"PG", q:"Dans le sc&eacute;nario ventilateur, le capteur de temp&eacute;rature est branch&eacute; sur...", o:["D5","D7","A0","D2"], cor:2},
+  {id:35, dom:"PG", q:"Dans le sc&eacute;nario ventilateur, le moteur est branch&eacute; sur...", o:["A0","D7","D2","D5"], cor:3},
+  {id:36, dom:"PG", q:"Dans le sc&eacute;nario ventilateur, la LED bleue est branch&eacute;e sur...", o:["A0","D7","D5","D2"], cor:1},
+  {id:37, dom:"PG", q:"Quelle structure g&egrave;re la condition 'si temp&eacute;rature > 30&deg;C' ?", o:["Une boucle REP&Eacute;TER","Une variable","Un bloc SI...ALORS...SINON","Un bloc ATTENDRE"], cor:2},
+  {id:38, dom:"PG", q:"Dans le programme erron&eacute;, l'erreur sur la lecture du bouton est...", o:["La condition press&eacute;=1 est fausse","Le programme lit la broche D4 au lieu de D6","Il manque un bloc SINON","La broche D6 n'existe pas"], cor:1},
+  {id:39, dom:"PG", q:"Dans le programme erron&eacute;, l'erreur sur la commande de la LED est...", o:["La LED devrait &ecirc;tre OFF","Le programme commande D6 au lieu de D4","La LED n'est pas compatible","Il manque un d&eacute;lai"], cor:1},
+  {id:40, dom:"PG", q:"Un actionneur re&ccedil;oit un signal &eacute;lectrique pour...", o:["Mesurer une grandeur physique","Transmettre une information au programme","Produire une action physique (lumi&egrave;re, mouvement, son)","Stocker des donn&eacute;es"], cor:2}
+];
+
+var rqAnswers = {}, rqCurQ = 0;
+
+function startRemQuiz() {
+  var e1 = document.getElementById("rq-eleve1").value.trim();
+  var cls = document.getElementById("rq-classe").value.trim();
+  if (!e1 || !cls) { alert("Merci de renseigner ton nom et ta classe."); return; }
+  rqAnswers = {}; rqCurQ = 0;
+  document.getElementById("rq-ident").classList.add("h");
+  document.getElementById("rq-body").classList.remove("h");
+  renderRQ();
+}
+function renderRQ() {
+  var q = QREM[rqCurQ], tot = QREM.length;
+  document.getElementById("rqpfil").style.width = ((rqCurQ+1)/tot*100)+"%";
+  document.getElementById("rqptxt").textContent = (rqCurQ+1)+" / "+tot;
+  var domCol = {DT:"var(--bl)", PR:"var(--or)", PG:"var(--vi,#7B2C8B)"};
+  var domLbl = {DT:"Dessin technique", PR:"Proc\u00e9d\u00e9s", PG:"Programmation"};
+  document.getElementById("rqbtnprev").classList.toggle("h", rqCurQ===0);
+  var nxt = document.getElementById("rqbtnnxt");
+  nxt.innerHTML = rqCurQ===tot-1 ? "&#x2705; Soumettre" : "Suivant &#x2192;";
+  var sel = rqAnswers[q.id];
+  var html = '<div class="qcard">';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+  html += '<span class="qnum">Question '+(rqCurQ+1)+' / '+tot+'</span>';
+  html += '<span style="background:'+domCol[q.dom]+';color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">'+domLbl[q.dom]+'</span></div>';
+  html += '<div class="qques">'+q.q+'</div>';
+  for (var i=0; i<q.o.length; i++) {
+    html += '<div class="opt'+(sel===i?' sel':'')+'" onclick="rqSelOpt('+i+')">';
+    html += '<div class="olet">'+String.fromCharCode(65+i)+'</div>';
+    html += '<div class="otxt">'+q.o[i]+'</div></div>';
+  }
+  html += '</div>';
+  document.getElementById("rqqbox").innerHTML = html;
+  nxt.disabled = sel===undefined;
+}
+function rqSelOpt(i) { rqAnswers[QREM[rqCurQ].id]=i; renderRQ(); }
+function rqPrev() { if(rqCurQ>0){rqCurQ--;renderRQ();} }
+function rqNext() { if(rqCurQ<QREM.length-1){rqCurQ++;renderRQ();} else submitRemQuiz(); }
+function submitRemQuiz() {
+  var score=0, dt=0, pr=0, pg=0, details=[];
+  for (var i=0;i<QREM.length;i++) {
+    var q=QREM[i], c=(rqAnswers[q.id]===q.cor)?1:0;
+    score+=c; details.push(c);
+    if(q.dom==="DT") dt+=c; else if(q.dom==="PR") pr+=c; else pg+=c;
+  }
+  var e1=document.getElementById("rq-eleve1").value.trim();
+  var e2=document.getElementById("rq-eleve2").value.trim();
+  var cls=document.getElementById("rq-classe").value.trim();
+  var pct=Math.round(score/40*100)+"%";
+  var qs="eleve1="+encodeURIComponent(e1)+"&eleve2="+encodeURIComponent(e2)+"&classe="+encodeURIComponent(cls)+"&score="+score+"&sur=40&pct="+encodeURIComponent(pct)+"&dt="+dt+"&pr="+pr+"&pg="+pg+"&details="+encodeURIComponent(details.join(";"));
+  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL!=="VOTRE_URL_APPS_SCRIPT_ICI") {
+    fetch(APPS_SCRIPT_URL+"?"+qs,{method:"GET",mode:"no-cors"}).catch(function(){});
+  }
+  // Afficher résultat
+  document.getElementById("rq-body").classList.add("h");
+  var col=(score>=28?"var(--vt)":score>=20?"var(--or)":"var(--rg)");
+  var resHtml='<div class="cfcard"><div class="cficon">&#x1F4CA;</div>';
+  resHtml+='<h2 style="color:var(--bl)">Quiz termin&eacute; !</h2>';
+  resHtml+='<p style="font-size:20px;font-weight:700;color:'+col+'">'+score+' / 40 ('+pct+')</p>';
+  resHtml+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;text-align:center">';
+  resHtml+='<div style="background:var(--bp);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--bl)">DESSIN TECHNIQUE</div><div style="font-size:22px;font-weight:700;color:var(--bl)">'+dt+'/12</div></div>';
+  resHtml+='<div style="background:var(--op);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--or)">PROC&Eacute;D&Eacute;S</div><div style="font-size:22px;font-weight:700;color:var(--or)">'+pr+'/14</div></div>';
+  resHtml+='<div style="background:#EAD4F4;border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:#7B2C8B">PROGRAMMATION</div><div style="font-size:22px;font-weight:700;color:#7B2C8B">'+pg+'/14</div></div>';
+  resHtml+='</div><div class="spend"><div class="sptit">&#x1F4E4; R&eacute;sultats';
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=="VOTRE_URL_APPS_SCRIPT_ICI") resHtml+=' envoy&eacute;s au professeur';
+  else resHtml+=' &mdash; &#x26A0;&#xFE0F; Lien Sheets non configur&eacute;, montre ce r&eacute;sultat &agrave; ton prof';
+  resHtml+='</div></div>';
+  resHtml+='<button class="btnp" onclick="goPage('pg-dash')" style="margin-top:8px">&#x2190; Retour &agrave; l'accueil</button></div>';
+  document.getElementById("pg-rem-quiz").innerHTML='<div class="phdr"><button class="btnbk" onclick="goPage('pg-rem')">&#x2190; Retour</button><h2 style="font-size:17px;font-weight:700">Quiz de rattrapage</h2></div>'+resHtml;
+}
+function submitFiche() {
+  var nom=document.getElementById("rf-nom").value.trim();
+  var prenom=document.getElementById("rf-prenom").value.trim();
+  if(!nom||!prenom){alert("Merci d'indiquer ton nom et pr\u00e9nom.");return;}
+  var ts=new Date().toLocaleString("fr-FR");
+  localStorage.setItem("fiche_rem_"+user.id, JSON.stringify({nom:nom,prenom:prenom,ts:ts}));
+  var st=document.getElementById("fiche-status");
+  st.innerHTML='&#x2705; Fiche sauvegard&eacute;e le '+ts+'. Tu peux maintenant passer au quiz !';
+  st.style.color="var(--vt)";
+  toast("Fiche sauvegard&eacute;e !");
+}
+
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
 document.getElementById("modal").addEventListener("click", function(e) { if (e.target === e.currentTarget) closeModal(); });
 </script>
