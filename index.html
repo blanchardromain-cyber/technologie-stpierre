@@ -218,6 +218,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .btn-save-code{padding:8px 14px;background:var(--vt);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;font-family:"DM Sans",sans-serif}
 
 /* TOAST */
+@media print { body > * { display: none !important; } #app { display: block !important; } .hdr { display: none !important; } .main > div { display: none !important; } #pg-rem-form { display: block !important; } button { display: none !important; } #fiche-corrige { display: block !important; } }
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1A202C;color:#fff;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shf);z-index:2000;transition:transform .3s ease;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 @media(max-width:640px){.main{padding:16px}.wbanner{padding:18px}.wbanner::after{display:none}}
@@ -585,9 +586,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         </div>
       </div>
     </div>
-  </div>
-</div>
-
+  
     <!-- REMÉDIATION HUB -->
     <div id="pg-rem" class="h">
       <div class="phdr">
@@ -596,7 +595,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
       <div class="card" style="border-left:5px solid var(--or);margin-bottom:18px;max-width:800px">
         <h3 style="color:var(--or)">&#x1F4CB; Objectif</h3>
-        <p style="font-size:14px;color:var(--td);line-height:1.7;margin-bottom:14px">Tu as obtenu un score insuffisant. Travaille les 3 domaines ci-dessous puis passe au quiz de rattrapage (40 questions). Tes résultats seront enregistrés automatiquement.</p>
+        <p style="font-size:14px;color:var(--td);line-height:1.7;margin-bottom:14px">Travaille les 3 domaines ci-dessous puis passe au quiz de rattrapage (40 questions). Tes résultats seront enregistrés automatiquement.</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
           <div style="background:var(--gr);border-radius:10px;padding:14px;border-left:3px solid var(--bl)">
             <div style="font-weight:700;font-size:14px;color:var(--bl);margin-bottom:6px">1&#xFE0F;&#x20E3; Fiche de rem&eacute;diation</div>
@@ -768,11 +767,11 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <p style="font-size:13px;color:var(--td);margin-bottom:12px">Proc&eacute;d&eacute;s : Per&ccedil;age &ndash; Thermoformage &ndash; Fraisage &ndash; Emboutissage &ndash; Tournage &ndash; Thermopliage &ndash; Cisaillage &ndash; Poin&ccedil;onnage</p>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
             <div><div style="font-weight:700;font-size:12px;color:var(--rg);text-align:center;margin-bottom:6px">Enl&egrave;vement (d&eacute;coupe)</div>
-              <textarea id="rf-ex5-dec" rows="3" placeholder="Cisaillage, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+              <textarea id="rf-ex5-dec" rows="3" placeholder="" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
             <div><div style="font-weight:700;font-size:12px;color:var(--or);text-align:center;margin-bottom:6px">Enl&egrave;vement (usinage)</div>
-              <textarea id="rf-ex5-usi" rows="3" placeholder="Per&ccedil;age, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+              <textarea id="rf-ex5-usi" rows="3" placeholder="" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
             <div><div style="font-weight:700;font-size:12px;color:var(--vt);text-align:center;margin-bottom:6px">D&eacute;formation</div>
-              <textarea id="rf-ex5-def" rows="3" placeholder="Thermoformage, ..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
+              <textarea id="rf-ex5-def" rows="3" placeholder="" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
           </div>
         </div>
 
@@ -804,36 +803,38 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <div class="card">
           <h3>Exercice 7 &mdash; Vocabulaire (3 pts)</h3>
-          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">a) Un bouton poussoir est un _____ . Il transforme en _____ .</label>
-            <input type="text" id="rf-ex7-a" placeholder="capteur / signal &eacute;lectrique" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
-          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">b) Une LED est un _____ . Elle convertit &eacute;nergie _____ en _____ .</label>
-            <input type="text" id="rf-ex7-b" placeholder="actionneur / &eacute;lectrique / &eacute;nergie lumineuse" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
-          <div><label style="font-size:13px;font-weight:600;color:var(--td)">c) La carte Arduino est une _____ . Elle ex&eacute;cute un _____ .</label>
-            <input type="text" id="rf-ex7-c" placeholder="interface de programmation / programme" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
-        </div>
-
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px"><strong>Consigne :</strong> R&eacute;&eacute;cris chaque phrase en pla&ccedil;ant les mots de la liste au bon endroit. Chaque mot n'est utilis&eacute; qu'une seule fois.</p>
+          <div id="ex7-wordbank" style="display:flex;flex-wrap:wrap;gap:8px;background:var(--bp);border-radius:10px;padding:12px;margin-bottom:16px">
+            <span style="font-size:12px;font-weight:700;color:var(--bl);width:100%;margin-bottom:4px">Mots &agrave; placer :</span>
+          </div>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">a) Un bouton poussoir est un __________ . Il d&eacute;tecte une grandeur physique et la transforme en __________ .</label>
+            <input type="text" id="rf-ex7-a" placeholder="&eacute;cris les 2 mots manquants..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+          <div style="margin-bottom:12px"><label style="font-size:13px;font-weight:600;color:var(--td)">b) Une LED est un __________ . Elle convertit une &eacute;nergie __________ en __________ .</label>
+            <input type="text" id="rf-ex7-b" placeholder="&eacute;cris les 3 mots manquants..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
+          <div><label style="font-size:13px;font-weight:600;color:var(--td)">c) La carte Arduino Uno est une __________ . Elle ex&eacute;cute un __________ pour traiter les informations.</label>
+            <input type="text" id="rf-ex7-c" placeholder="&eacute;cris les 2 mots manquants..." style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;margin-top:6px"></div>
         <div class="card">
           <h3>Exercice 8 &mdash; Lire un bloc (3 pts)</h3>
           <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
-              <code style="font-size:11px;background:var(--bl);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D3 &rarr; ON</code>
-              <input type="text" id="rf-ex8-1" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+              <code style="font-size:11px;background:var(--bl);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Capteur temp&eacute;rature A0</code>
+              <input type="text" id="rf-ex8-1" placeholder="Que mesure ce composant ?" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
-              <code style="font-size:11px;background:var(--bl);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D3 &rarr; OFF</code>
-              <input type="text" id="rf-ex8-2" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Moteur D5 &rarr; &eacute;tat ON</code>
+              <input type="text" id="rf-ex8-2" placeholder="Que fait le ventilateur ?" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
-              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Bouton D6 press&eacute;=1</code>
-              <input type="text" id="rf-ex8-3" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Moteur D5 &rarr; &eacute;tat OFF</code>
+              <input type="text" id="rf-ex8-3" placeholder="Que fait le ventilateur ?" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
-              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Servo D2 &rarr; 165&deg;</code>
-              <input type="text" id="rf-ex8-4" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+              <code style="font-size:11px;background:var(--or);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D7 &rarr; &eacute;tat ON</code>
+              <input type="text" id="rf-ex8-4" placeholder="Que fait la LED bleue ?" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--gr);border-radius:8px">
-              <code style="font-size:11px;background:var(--vt);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">Servo D2 &rarr; 0&deg;</code>
-              <input type="text" id="rf-ex8-5" placeholder="Ce qui se passe..." style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
+              <code style="font-size:11px;background:var(--or);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap">LED D7 &rarr; &eacute;tat OFF</code>
+              <input type="text" id="rf-ex8-5" placeholder="Que fait la LED bleue ?" style="flex:1;padding:7px;border:1px solid var(--gb);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
           </div>
         </div>
@@ -846,17 +847,17 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <p style="font-size:13px;font-weight:600;margin-bottom:8px">a) Identifie les composants :</p>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
             <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
-              <div style="font-size:12px;color:var(--td);margin-bottom:4px">Capteur temp&eacute;rature</div>
+              <div style="font-size:12px;font-weight:700;color:var(--bl);margin-bottom:4px"><strong>Composant temp&eacute;rature</strong></div>
               <input type="text" id="rf-ex9-a1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
               <input type="text" id="rf-ex9-a2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
-              <div style="font-size:12px;color:var(--td);margin-bottom:4px">Moteur ventilateur</div>
+              <div style="font-size:12px;font-weight:700;color:var(--bl);margin-bottom:4px">Composant Moteur ventilateur</div>
               <input type="text" id="rf-ex9-b1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
               <input type="text" id="rf-ex9-b2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
             <div style="background:var(--gr);border-radius:8px;padding:10px;text-align:center">
-              <div style="font-size:12px;color:var(--td);margin-bottom:4px">LED bleue</div>
+              <div style="font-size:12px;font-weight:700;color:var(--bl);margin-bottom:4px">Composant LED bleue</div>
               <input type="text" id="rf-ex9-c1" placeholder="type" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:4px">
               <input type="text" id="rf-ex9-c2" placeholder="broche" style="width:100%;padding:5px;border:1px solid var(--gb);border-radius:4px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
             </div>
@@ -927,6 +928,9 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         </div>
       </div>
     </div>
+
+  </div>
+</div>
 
 
 <!-- MODAL -->
@@ -1488,6 +1492,7 @@ function goPage(pid) {
   document.getElementById(pid).classList.remove("h");
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
+  if (pid === "pg-rem-form") shuffleWordBank();
   window.scrollTo(0, 0);
 }
 
@@ -1652,7 +1657,7 @@ function updCapSidebar() {
     var lbl = {pending:"En attente de validation", validated:"Validé – Mission avancée débloquée !", rejected:"À revoir – Repasse le quiz"};
     var bg = {pending:"var(--op)", validated:"var(--vp)", rejected:"#FADBD8"};
     document.getElementById("qres").innerHTML = '<div style="background:' + bg[sub.status] + ';border-radius:8px;padding:11px"><div style="font-weight:700;font-size:13px">' + lbl[sub.status] + '</div><div style="font-size:12px;margin-top:3px;color:var(--td)">Score QCM : ' + sub.score + '/' + sub.qcmTot + '</div></div>';
-    if (sub.status === "rejected") done.innerHTML += '<button class="btnq" style="margin-top:10px" onclick="goPage(\'pg-quiz\')">Recommencer le quiz</button>';
+    if (sub.status === "rejected") done.innerHTML += '<button class="btnq" style="margin-top:10px" onclick="goPage(&quot;pg-quiz&quot;)">Recommencer le quiz</button>';
   } else { no.classList.remove("h"); done.classList.add("h"); }
 }
 function updMyStatus() {
@@ -1955,8 +1960,10 @@ function submitRemQuiz() {
   var cls=document.getElementById("rq-classe").value.trim();
   var pct=Math.round(score/40*100)+"%";
   var qs="eleve1="+encodeURIComponent(e1)+"&eleve2="+encodeURIComponent(e2)+"&classe="+encodeURIComponent(cls)+"&score="+score+"&sur=40&pct="+encodeURIComponent(pct)+"&dt="+dt+"&pr="+pr+"&pg="+pg+"&details="+encodeURIComponent(details.join(";"));
-  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL!=="VOTRE_URL_APPS_SCRIPT_ICI") {
-    fetch(APPS_SCRIPT_URL+"?"+qs,{method:"GET",mode:"no-cors"}).catch(function(){});
+  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "VOTRE_URL_APPS_SCRIPT_ICI") {
+    var img = new Image();
+    img.src = APPS_SCRIPT_URL + "?" + qs + "&t=" + Date.now();
+    img.onerror = function(){};
   }
   // Afficher résultat
   document.getElementById("rq-body").classList.add("h");
@@ -1975,16 +1982,57 @@ function submitRemQuiz() {
   resHtml+='<button class="btnp" onclick="goPage(&quot;pg-dash&quot;)" style="margin-top:8px">&#x2190; Retour &agrave; l&rsquo;accueil</button></div>';
   document.getElementById("pg-rem-quiz").innerHTML='<div class="phdr"><button class="btnbk" onclick="goPage(&quot;pg-rem&quot;)">&#x2190; Retour</button><h2 style="font-size:17px;font-weight:700">Quiz de rattrapage</h2></div>'+resHtml;
 }
+// ── Mots banque Ex7 (mélangés à l'affichage) ──────────────────
+var EX7_MOTS = ["capteur","actionneur","interface de programmation","programme","énergie lumineuse","signal électrique","électrique"];
+function shuffleWordBank() {
+  var wb = document.getElementById("ex7-wordbank");
+  if (!wb) return;
+  var mots = EX7_MOTS.slice();
+  // Fisher-Yates shuffle
+  for (var i = mots.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = mots[i]; mots[i] = mots[j]; mots[j] = tmp;
+  }
+  // Remove old word pills (keep the label span)
+  var kids = wb.querySelectorAll(".word-pill");
+  kids.forEach(function(k){ k.remove(); });
+  // Add shuffled pills
+  mots.forEach(function(m) {
+    var sp = document.createElement("span");
+    sp.className = "word-pill";
+    sp.textContent = m;
+    sp.style.cssText = "background:#fff;border:2px solid var(--bl);color:var(--bl);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;cursor:default";
+    wb.appendChild(sp);
+  });
+}
+
+// ── submitFiche + affichage corrigé ───────────────────────────
 function submitFiche() {
-  var nom=document.getElementById("rf-nom").value.trim();
-  var prenom=document.getElementById("rf-prenom").value.trim();
-  if(!nom||!prenom){alert("Merci d'indiquer ton nom et pr\u00e9nom.");return;}
-  var ts=new Date().toLocaleString("fr-FR");
-  localStorage.setItem("fiche_rem_"+user.id, JSON.stringify({nom:nom,prenom:prenom,ts:ts}));
-  var st=document.getElementById("fiche-status");
-  st.innerHTML='&#x2705; Fiche sauvegard&eacute;e le '+ts+'. Tu peux maintenant passer au quiz !';
-  st.style.color="var(--vt)";
-  toast("Fiche sauvegard&eacute;e !");
+  var nom = document.getElementById("rf-nom").value.trim();
+  var prenom = document.getElementById("rf-prenom").value.trim();
+  if (!nom || !prenom) { alert("Merci d'indiquer ton nom et prénom."); return; }
+  var ts = new Date().toLocaleString("fr-FR");
+  if (user) localStorage.setItem("fiche_rem_"+user.id, JSON.stringify({nom:nom, prenom:prenom, ts:ts}));
+  var st = document.getElementById("fiche-status");
+  st.innerHTML = "&#x2705; Fiche sauvegardée le " + ts + ". Voici le corrigé pour vérifier tes réponses.";
+  st.style.color = "var(--vt)";
+  // Afficher le corrigé
+  var corrige = document.getElementById("fiche-corrige");
+  if (corrige) {
+    corrige.classList.remove("h");
+    corrige.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  toast("Fiche soumise !");
+}
+
+// ── Export PDF ─────────────────────────────────────────────────
+function exportFichePDF() {
+  var style = document.createElement("style");
+  style.id = "print-style";
+  style.textContent = "@media print { .hdr,.btnbk,.btnq,button,#fiche-status { display:none !important } .main { padding:0 !important } #pg-rem-form { display:block !important } }";
+  document.head.appendChild(style);
+  window.print();
+  setTimeout(function(){ var el = document.getElementById("print-style"); if(el) el.remove(); }, 1000);
 }
 
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
