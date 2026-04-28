@@ -526,6 +526,12 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
       <!-- SUIVI -->
       <div id="psuivi">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <span style="font-size:13px;color:var(--td)">Dernière mise à jour : <span id="last-refresh">—</span></span>
+          <button onclick="refreshProf()" style="padding:7px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">
+            &#x1F504; Rafraîchir
+          </button>
+        </div>
         <div class="sgr" id="stats"></div>
         <div class="stit">&#x1F4CB; Soumissions</div>
         <div class="fbar">
@@ -765,7 +771,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <div class="card">
           <h3>Exercice 5 &mdash; Enl&egrave;vement ou d&eacute;formation ? (2 pts)</h3>
-          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Proc&eacute;d&eacute;s : Per&ccedil;age &ndash; Thermoformage &ndash; Fraisage &ndash; Emboutissage &ndash; Tournage &ndash; Thermopliage &ndash; Cisaillage &ndash; Poin&ccedil;onnage</p>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">Proc&eacute;d&eacute;s : Per&ccedil;age &ndash; Thermoformage &ndash; Fraisage &ndash; Emboutissage &ndash; Tournage &ndash; Thermopliage &ndash; Cisaillage &ndash; Poin&ccedil;onnage &ndash; D&eacute;coupe laser</p>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
             <div><div style="font-weight:700;font-size:12px;color:var(--rg);text-align:center;margin-bottom:6px">Enl&egrave;vement (d&eacute;coupe)</div>
               <textarea id="rf-ex5-dec" rows="3" placeholder="" style="width:100%;padding:8px;border:2px solid var(--gb);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;resize:none"></textarea></div>
@@ -1581,11 +1587,11 @@ function launch() {
   document.getElementById("app").style.display = "flex";
   document.getElementById("uname").textContent = user.p + " " + user.n;
   document.getElementById("ucls").textContent = user.c ? user.c : "";
-  if (isProf) { goPage("pg-prof"); renderProf(); }
+  if (isProf) { goPage("pg-prof"); renderProf(); startProfAutoRefresh(); refreshProf(); }
   else { goPage("pg-dash"); document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !"; renderDash(); updMyStatus(); }
 }
 function doLogout() {
-  user = null; isProf = false; ans = {}; curQ = 0;
+  user = null; isProf = false; ans = {}; curQ = 0; stopProfAutoRefresh();
   document.getElementById("login").style.display = "flex";
   document.getElementById("app").style.display = "none";
   ["lid","lpwd","pid","ppwd"].forEach(function(id) { document.getElementById(id).value = ""; });
@@ -1602,6 +1608,16 @@ function goPage(pid) {
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-rem-form") shuffleWordBank();
+  if (pid === "pg-rem-quiz") {
+    // Remettre le formulaire d'identité visible et cacher le corps + résultat
+    var ri = document.getElementById("rq-ident");
+    var rb = document.getElementById("rq-body");
+    var rr = document.getElementById("rq-result");
+    if (ri) ri.classList.remove("h");
+    if (rb) rb.classList.add("h");
+    if (rr) rr.innerHTML = "";
+    rqAnswers = {}; rqCurQ = 0;
+  }
   window.scrollTo(0, 0);
 }
 
@@ -1969,6 +1985,24 @@ function addDemo() {
   localStorage.setItem("subs", JSON.stringify(merged.concat(d)));
   renderStats(); renderSubs(); toast("Données de démo ajoutées");
 }
+// ── Rafraîchissement tableau de bord prof ────────────────────
+var profRefreshTimer = null;
+function refreshProf() {
+  renderStats();
+  renderSubs();
+  var el = document.getElementById("last-refresh");
+  if (el) el.textContent = new Date().toLocaleTimeString("fr-FR");
+}
+function startProfAutoRefresh() {
+  if (profRefreshTimer) clearInterval(profRefreshTimer);
+  profRefreshTimer = setInterval(function() {
+    if (isProf) refreshProf();
+  }, 10000); // toutes les 10 secondes
+}
+function stopProfAutoRefresh() {
+  if (profRefreshTimer) { clearInterval(profRefreshTimer); profRefreshTimer = null; }
+}
+
 function toast(m) {
   var t = document.getElementById("toastEl");
   t.textContent = m; t.classList.add("show");
@@ -2120,7 +2154,16 @@ function submitRemQuiz() {
   else resHtml+=' &mdash; &#x26A0;&#xFE0F; Lien Sheets non configur&eacute;, montre ce r&eacute;sultat &agrave; ton prof';
   resHtml+='</div></div>';
   resHtml+='<button class="btnp" onclick="goPage(&quot;pg-dash&quot;)" style="margin-top:8px">&#x2190; Retour &agrave; l&rsquo;accueil</button></div>';
-  document.getElementById("pg-rem-quiz").innerHTML='<div class="phdr"><button class="btnbk" onclick="goPage(&quot;pg-rem&quot;)">&#x2190; Retour</button><h2 style="font-size:17px;font-weight:700">Quiz de rattrapage</h2></div>'+resHtml;
+  // Afficher le résultat SANS écraser le HTML (pour permettre un retour/relance)
+  document.getElementById("rq-ident").classList.add("h");
+  document.getElementById("rq-body").classList.add("h");
+  var resDiv = document.getElementById("rq-result");
+  if (!resDiv) {
+    resDiv = document.createElement("div");
+    resDiv.id = "rq-result";
+    document.getElementById("pg-rem-quiz").appendChild(resDiv);
+  }
+  resDiv.innerHTML = resHtml;
 }
 // ── Mots banque Ex7 (mélangés à l'affichage) ──────────────────
 var EX7_MOTS = ["capteur","actionneur","interface de programmation","programme","énergie lumineuse","signal électrique","électrique"];
