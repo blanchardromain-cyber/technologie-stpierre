@@ -222,7 +222,43 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1A202C;color:#fff;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shf);z-index:2000;transition:transform .3s ease;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 @media(max-width:640px){.main{padding:16px}.wbanner{padding:18px}.wbanner::after{display:none}}
+
+/* ── Styles P12 ── */
+.p12-part-hdr{border-radius:10px 10px 0 0;padding:12px 20px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;margin-top:20px;color:#fff}
+.p12-part-body{border-radius:0 0 12px 12px;margin-top:0;border-top:none;background:#fff;box-shadow:var(--sh);border:1px solid var(--gb);padding:24px}
+.p12-phase{border-radius:8px;padding:14px 18px;margin-bottom:16px}
+.p12-input{width:100%;padding:9px 12px;border:2px solid var(--gb);border-radius:8px;font-family:"DM Sans",sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+.p12-input:focus{border-color:var(--bc);background:#fff}
+.p12-ta{width:100%;padding:10px 12px 32px;border:2px solid var(--gb);border-radius:8px;font-family:"DM Sans",sans-serif;font-size:14px;resize:vertical;outline:none;transition:border-color .2s}
+.p12-ta:focus{border-color:var(--bc)}
+.p12-tdinput{width:100%;padding:6px;border:1px solid var(--gb);border-radius:6px;font-family:"DM Sans",sans-serif;font-size:13px;outline:none}
+.p12-tdinput:focus{border-color:var(--vt)}
+.p12-cor-item{padding:9px 14px;border-radius:8px;border-left:4px solid;margin-bottom:6px;font-size:13px}
+/* ── Dictée vocale ── */
+.dictee-wrap{position:relative;display:block}
+.btn-mic{position:absolute;bottom:7px;right:8px;background:var(--bl);color:#fff;border:none;border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px;z-index:2;font-family:"DM Sans",sans-serif}
+.btn-mic:hover{background:var(--bc);transform:scale(1.05)}
+.btn-mic.rec{background:#E74C3C;animation:pulse-mic .9s infinite}
+@keyframes pulse-mic{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.4)}50%{box-shadow:0 0 0 7px rgba(231,76,60,0)}}
+/* ── Contextes d'apparition ── */
+.ctx-card{border-radius:12px;padding:16px;border-left:5px solid;transition:transform .2s,box-shadow .2s}
+.ctx-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.12)}
+.ctx-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px;margin:2px 2px 2px 0}
+.ctx-btn{padding:5px 11px;border:2px solid;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;background:#fff;flex-shrink:0}
+.ctx-btn[data-c="S"]{border-color:#5C6BC0;color:#5C6BC0}.ctx-btn[data-c="S"]:hover,.ctx-btn[data-c="S"].sel{background:#5C6BC0;color:#fff}
+.ctx-btn[data-c="T"]{border-color:var(--vt);color:var(--vt)}.ctx-btn[data-c="T"]:hover,.ctx-btn[data-c="T"].sel{background:var(--vt);color:#fff}
+.ctx-btn[data-c="E"]{border-color:#F57F17;color:#F57F17}.ctx-btn[data-c="E"]:hover,.ctx-btn[data-c="E"].sel{background:#F57F17;color:#fff}
+.ctx-btn[data-c="So"]{border-color:#C2185B;color:#C2185B}.ctx-btn[data-c="So"]:hover,.ctx-btn[data-c="So"].sel{background:#C2185B;color:#fff}
+.ctx-item-row{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;margin-bottom:8px;background:var(--gr);flex-wrap:wrap}
+.ctx-item-row.ok{background:#E8F5E9;border:1px solid var(--vt)}
+.ctx-item-row.ko{background:#FADBD8;border:1px solid var(--rg)}
+@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
 </style>
+<!-- jsPDF (export PDF côté client) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<!-- Ruffle (lecteur Flash SWF) -->
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 </head>
 <body>
 
@@ -243,6 +279,10 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       <div class="fg"><label>Mot de passe</label>
         <input type="password" id="lpwd" placeholder="Mot de passe personnel"
                onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <input type="checkbox" id="rememberme" style="width:16px;height:16px;cursor:pointer;accent-color:var(--bl)">
+        <label for="rememberme" style="font-size:12px;color:var(--td);cursor:pointer;user-select:none">Se souvenir de moi sur cet appareil</label>
+      </div>
       <button class="btnp" onclick="doLogin()">Se connecter &#x2192;</button>
     </div>
     <div id="tab-pr" class="h">
@@ -512,6 +552,493 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- P12 — TECHNOLOGIE ET ALIMENTATION — ACTIVITÉ 1             -->
+    <!-- ============================================================ -->
+    <div id="pg-p12" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Technologie &amp; Alimentation &mdash; Activit&eacute; 1</h2>
+      </div>
+      <div style="max-width:860px">
+
+        <!-- EN-TÊTE IDENTITÉ -->
+        <div style="background:linear-gradient(135deg,var(--or),#E67E22);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <span style="font-size:36px;animation:fiu .6s ease">&#x1F37D;&#xFE0F;</span>
+            <div>
+              <div style="font-size:18px;font-weight:700">P12 &mdash; Comment la technologie facilite-t-elle notre alimentation&nbsp;?</div>
+              <div style="font-size:13px;opacity:.85">Activit&eacute; n&deg;1 &bull; Cycle 4 &mdash; Classe de 4&egrave;me</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label style="font-size:12px;font-weight:600;opacity:.8;display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="p12-nom" placeholder="Ton nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.8;display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="p12-prenom" placeholder="Ton pr&eacute;nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.8;display:block;margin-bottom:4px">Classe</label>
+              <select id="p12-classe" class="p12-input" style="background:#fff;color:var(--tx);cursor:pointer">
+                <option value="">— Choisis —</option>
+                <option value="4A">4A</option>
+                <option value="4B">4B</option>
+                <option value="4C">4C</option>
+                <option value="4D">4D</option>
+                <option value="4E">4E</option>
+                <option value="4F">4F</option>
+              </select></div>
+          </div>
+        </div>
+
+        <!-- PROBLÉMATIQUE -->
+        <div style="background:var(--vip);border:2px dashed var(--vi);border-radius:10px;padding:14px 20px;margin-bottom:22px;display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:20px;flex-shrink:0">&#x2753;</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--vi);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Probl&eacute;matique</div>
+            <div style="font-size:15px;font-weight:600;color:var(--vi);font-style:italic">Pourquoi est-ce que les objets technologiques participent &agrave; l&rsquo;&eacute;volution de notre alimentation&nbsp;?</div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- PARTIE ① — LES OBJETS TECHNOLOGIQUES               -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="p12-part-hdr" style="background:var(--bl)">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">&#x2460;</span>
+          Les objets technologiques et notre alimentation
+        </div>
+        <div class="p12-part-body">
+
+          <!-- Phase 1a -->
+          <div class="p12-phase" style="background:var(--bp)">
+            <div style="font-size:13px;font-weight:700;color:var(--bl);margin-bottom:8px">&#x1F4AD; Phase 1a &mdash; Je me questionne</div>
+            <p style="font-size:13px;color:var(--td);margin-bottom:10px">Cite un objet technique qui facilite ton alimentation et formule sa fonction d&rsquo;usage&nbsp;:</p>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:600">Le</span>
+              <input type="text" id="p12-1a-objet" placeholder="nom de l&apos;objet" class="p12-input" style="flex:1;min-width:150px">
+              <span style="font-size:14px;font-weight:600">sert &agrave;</span>
+              <input type="text" id="p12-1a-fonction" placeholder="d&eacute;crire la fonction d&apos;usage..." class="p12-input" style="flex:2;min-width:200px">
+            </div>
+          </div>
+
+          <!-- Phase 1b -->
+          <div class="p12-phase" style="background:#FFF8E1">
+            <div style="font-size:13px;font-weight:700;color:#7D6608;margin-bottom:8px">&#x1F465; Phase 1b &mdash; J&rsquo;investigue</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+              <span style="font-size:13px;color:var(--td)">Ressource &agrave; consulter&nbsp;:</span>
+              <a href="P12%20Technologie%20et%20Alimentation/Activit%C3%A9%201/Recensement%20d%27objets.pdf" target="_blank"
+                 style="display:inline-flex;align-items:center;gap:6px;background:var(--rg);color:#fff;text-decoration:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700">
+                &#x1F4C4; Recensement d&rsquo;objets.pdf
+              </a>
+            </div>
+            <p style="font-size:13px;color:var(--td);margin-bottom:10px">Compl&egrave;te le tableau (formuler chaque fonction avec &laquo;&nbsp;Le &hellip; sert &agrave; &hellip;&nbsp;&raquo;)&nbsp;:</p>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--bl);color:#fff;padding:8px 10px;text-align:center;width:36px">N&deg;</th>
+                    <th style="background:var(--bl);color:#fff;padding:8px 10px;text-align:left">Objet Technique</th>
+                    <th style="background:var(--bl);color:#fff;padding:8px 10px;text-align:left">Fonction d&rsquo;usage</th>
+                  </tr>
+                </thead>
+                <tbody id="p12-1b-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── APPORT DE CONNAISSANCES — LES 4 CONTEXTES ── -->
+          <div class="p12-phase" style="background:linear-gradient(135deg,#F8F9FF,#EEF2FF);border:2px solid #C5CAE9;padding:20px">
+            <div style="text-align:center;margin-bottom:18px">
+              <div style="font-size:28px;margin-bottom:6px;animation:fiu .5s ease">&#x1F9ED;</div>
+              <div style="font-size:14px;font-weight:700;color:#3949AB;text-transform:uppercase;letter-spacing:.8px">D&eacute;codeur de contextes</div>
+              <div style="font-size:12px;color:var(--td);margin-top:4px">Pourquoi les objets techniques apparaissent-ils et &eacute;voluent-ils&nbsp;? D&eacute;couvre les 4 contextes&nbsp;!</div>
+            </div>
+
+            <!-- 4 cartes contextes -->
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px">
+
+              <!-- Scientifique -->
+              <div class="ctx-card" style="background:#EEF2FF;border-color:#5C6BC0">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font-size:26px">&#x1F52C;</span>
+                  <span style="font-weight:700;font-size:13px;color:#3949AB;flex:1">Contexte Scientifique</span>
+                  <span style="background:#5C6BC0;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">S</span>
+                </div>
+                <div style="font-size:12px;color:#5C6BC0;margin-bottom:10px;line-height:1.5">Nouvelles <strong>d&eacute;couvertes</strong> et <strong>connaissances</strong> qui ouvrent de nouvelles possibilit&eacute;s techniques.</div>
+                <div>
+                  <span class="ctx-badge" style="background:#C5CAE9;color:#283593">&#x1F9EA; D&eacute;couverte du froid artificiel</span>
+                  <span class="ctx-badge" style="background:#C5CAE9;color:#283593">&#x1F9A0; &Eacute;tude des bact&eacute;ries alimentaires</span>
+                </div>
+              </div>
+
+              <!-- Technique -->
+              <div class="ctx-card" style="background:#E8F5E9;border-color:var(--vt)">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font-size:26px">&#x2699;&#xFE0F;</span>
+                  <span style="font-weight:700;font-size:13px;color:var(--vt);flex:1">Contexte Technique</span>
+                  <span style="background:var(--vt);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">T</span>
+                </div>
+                <div style="font-size:12px;color:var(--vt);margin-bottom:10px;line-height:1.5">Nouveaux <strong>mat&eacute;riaux</strong>, <strong>proc&eacute;d&eacute;s</strong> ou <strong>machines</strong> qui permettent de fabriquer de nouveaux objets.</div>
+                <div>
+                  <span class="ctx-badge" style="background:var(--vp);color:var(--vt)">&#x1F527; Moteur &eacute;lectrique miniaturis&eacute;</span>
+                  <span class="ctx-badge" style="background:var(--vp);color:var(--vt)">&#x1F9F1; Plastique alimentaire</span>
+                </div>
+              </div>
+
+              <!-- Économique -->
+              <div class="ctx-card" style="background:#FFF8E1;border-color:#F9A825">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font-size:26px">&#x1F4B0;</span>
+                  <span style="font-weight:700;font-size:13px;color:#F57F17;flex:1">Contexte &Eacute;conomique</span>
+                  <span style="background:#F9A825;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">E</span>
+                </div>
+                <div style="font-size:12px;color:#F57F17;margin-bottom:10px;line-height:1.5">Nouveaux <strong>march&eacute;s</strong>, baisse des <strong>co&ucirc;ts</strong> ou industrialisation qui rendent les objets accessibles au plus grand nombre.</div>
+                <div>
+                  <span class="ctx-badge" style="background:#FFF9C4;color:#E65100">&#x1F4C9; Baisse du prix de l&rsquo;acier</span>
+                  <span class="ctx-badge" style="background:#FFF9C4;color:#E65100">&#x1F3ED; Production industrielle de masse</span>
+                </div>
+              </div>
+
+              <!-- Social -->
+              <div class="ctx-card" style="background:#FCE4EC;border-color:#E91E63">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <span style="font-size:26px">&#x1F46A;</span>
+                  <span style="font-weight:700;font-size:13px;color:#C2185B;flex:1">Contexte Social</span>
+                  <span style="background:#E91E63;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px">So</span>
+                </div>
+                <div style="font-size:12px;color:#C2185B;margin-bottom:10px;line-height:1.5">&Eacute;volution des <strong>modes de vie</strong>, des <strong>besoins</strong> et des habitudes de la soci&eacute;t&eacute;.</div>
+                <div>
+                  <span class="ctx-badge" style="background:#F8BBD9;color:#880E4F">&#x1F3C3;&#x200D;&#x2640;&#xFE0F; Femmes entrant dans le monde du travail</span>
+                  <span class="ctx-badge" style="background:#F8BBD9;color:#880E4F">&#x1F3D9;&#xFE0F; Urbanisation</span>
+                </div>
+              </div>
+            </div><!-- fin grid 4 cartes -->
+
+            <!-- ── Mini-quiz interactif ── -->
+            <div style="background:#fff;border-radius:12px;padding:16px;border:1px solid var(--gb)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <span style="font-size:18px">&#x1F3AF;</span>
+                <span style="font-size:13px;font-weight:700;color:var(--bl)">D&eacute;fi &mdash; Associe chaque situation &agrave; son contexte</span>
+              </div>
+              <div style="font-size:12px;color:var(--td);margin-bottom:14px">Clique sur&nbsp;
+                <span style="background:#5C6BC0;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">S</span>&nbsp;
+                <span style="background:var(--vt);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">T</span>&nbsp;
+                <span style="background:#F9A825;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">E</span>&nbsp;
+                <span style="background:#E91E63;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">So</span>&nbsp;
+                pour chaque situation&nbsp;:
+              </div>
+              <div id="ctx-items"></div>
+              <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+                <button onclick="checkCtxQuiz()" style="padding:9px 20px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700">&#x2705; V&eacute;rifier mes r&eacute;ponses</button>
+                <button onclick="resetCtxQuiz()" style="padding:9px 20px;background:#fff;border:2px solid var(--gb);border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--td)">&#x1F504; Recommencer</button>
+              </div>
+              <div id="ctx-result" style="margin-top:12px;font-size:13px"></div>
+            </div>
+          </div><!-- fin apport contextes -->
+
+          <!-- Phase 1c -->
+          <div class="p12-phase" style="background:var(--vp);margin-bottom:0">
+            <div style="font-size:13px;font-weight:700;color:var(--vt);margin-bottom:10px">&#x1F4A1; Phase 1c &mdash; Mise en commun &bull; Je conclus</div>
+            <div style="margin-bottom:12px">
+              <label style="font-size:13px;font-weight:600;color:var(--tx);display:block;margin-bottom:6px"><strong>Question 1&nbsp;:</strong> Est-ce que les objets techniques apparaissent de mani&egrave;re hasardeuse&nbsp;? Justifie ta r&eacute;ponse&nbsp;:</label>
+              <div class="dictee-wrap">
+                <textarea id="p12-1c-q1" rows="3" class="p12-ta" placeholder="Ta r&eacute;ponse..."></textarea>
+                <button class="btn-mic" id="mic-1c-q1" onclick="toggleDictation('p12-1c-q1','mic-1c-q1')">&#x1F3A4; Dicter</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:600;color:var(--tx);display:block;margin-bottom:6px"><strong>Question 2&nbsp;:</strong> &Agrave; quels contextes (scientifique, technique, &eacute;conomique, social&hellip;) peut-on rattacher l&rsquo;apparition de ces objets&nbsp;? Cite un exemple&nbsp;:</label>
+              <div class="dictee-wrap">
+                <textarea id="p12-1c-q2" rows="3" class="p12-ta" placeholder="Ta r&eacute;ponse..."></textarea>
+                <button class="btn-mic" id="mic-1c-q2" onclick="toggleDictation('p12-1c-q2','mic-1c-q2')">&#x1F3A4; Dicter</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- fin part-body 1 -->
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- PARTIE ② — FONCTIONNEMENT DU RÉFRIGÉRATEUR         -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="p12-part-hdr" style="background:var(--vt)">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">&#x2461;</span>
+          Comment fonctionne un r&eacute;frig&eacute;rateur&nbsp;?
+        </div>
+        <div class="p12-part-body">
+
+          <!-- Phase 2a -->
+          <div class="p12-phase" style="background:var(--bp)">
+            <div style="font-size:13px;font-weight:700;color:var(--bl);margin-bottom:8px">&#x1F914; Phase 2a &mdash; Je me questionne</div>
+            <label style="font-size:13px;color:var(--td);display:block;margin-bottom:8px">D&rsquo;apr&egrave;s toi, quel est le principe physique qui permet &agrave; un r&eacute;frig&eacute;rateur de conserver les aliments au frais&nbsp;?</label>
+            <div class="dictee-wrap">
+              <textarea id="p12-2a" rows="3" class="p12-ta" placeholder="Ta r&eacute;ponse..."></textarea>
+              <button class="btn-mic" id="mic-2a" onclick="toggleDictation('p12-2a','mic-2a')">&#x1F3A4; Dicter</button>
+            </div>
+          </div>
+
+          <!-- Phase 2b — Ressources -->
+          <div class="p12-phase" style="background:#F0FBF5;border:1px solid var(--vt);margin-bottom:0">
+            <div style="font-size:13px;font-weight:700;color:var(--vt);margin-bottom:12px">&#x1F4DA; Phase 2b &mdash; Ressources (10-15 min) &bull; J&rsquo;investigue</div>
+
+            <!-- Animation SWF via Ruffle (<ruffle-embed> — CDN unpkg) -->
+            <div style="margin-bottom:16px">
+              <div style="font-size:13px;font-weight:600;color:var(--td);margin-bottom:8px">&#x1F3AC; Animation interactive &mdash; Conservation des aliments</div>
+              <div style="display:flex;justify-content:center">
+                <ruffle-embed
+                  src="assets/swf/conservation_aliments.swf"
+                  width="800"
+                  height="600"
+                  style="border-radius:10px;overflow:hidden;max-width:100%;box-shadow:var(--sh)">
+                </ruffle-embed>
+              </div>
+              <div style="font-size:11px;color:var(--td);margin-top:6px;font-style:italic;text-align:center">
+                &#x26A0;&#xFE0F; Ruffle Flash Player int&eacute;gr&eacute; &mdash; Placer le fichier <code>conservation_aliments.swf</code> dans <code>assets/swf/</code>
+              </div>
+            </div>
+
+
+            <!-- Principe + Tableau FT/ST -->
+            <div>
+              <label style="font-size:13px;font-weight:600;color:var(--tx);display:block;margin-bottom:6px">Principe de fonctionnement&nbsp;:</label>
+              <div class="dictee-wrap" style="margin-bottom:14px">
+                <textarea id="p12-2b-principe" rows="2" class="p12-ta" placeholder="D&eacute;cris bri&egrave;vement le principe physique..."></textarea>
+                <button class="btn-mic" id="mic-2b" onclick="toggleDictation('p12-2b-principe','mic-2b')">&#x1F3A4; Dicter</button>
+              </div>
+
+              <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px">Tableau Fonctions / Solutions techniques&nbsp;:</div>
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                  <thead>
+                    <tr>
+                      <th style="background:var(--vt);color:#fff;padding:8px 10px;text-align:center;width:38px">N&deg;</th>
+                      <th style="background:var(--vt);color:#fff;padding:8px 10px;text-align:left;width:46%">Fonction Technique (FT)</th>
+                      <th style="background:var(--vt);color:#fff;padding:8px 10px;text-align:left;width:46%">Solution Technique (ST)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="background:#fff">
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vt)">FT1</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-ft1" class="p12-tdinput" placeholder="Fonction technique 1&hellip;"></td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);background:#E8F5E9;font-weight:600;color:var(--vt)">1 &mdash; Condenseur</td>
+                    </tr>
+                    <tr style="background:var(--gr)">
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vt)">FT2</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-ft2" class="p12-tdinput" placeholder="Fonction technique 2&hellip;"></td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-st2" class="p12-tdinput" placeholder="Solution technique 2&hellip;"></td>
+                    </tr>
+                    <tr style="background:#fff">
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vt)">FT3</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-ft3" class="p12-tdinput" placeholder="Fonction technique 3&hellip;"></td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);background:#E8F5E9;font-weight:600;color:var(--vt)">3 &mdash; &Eacute;vaporateur</td>
+                    </tr>
+                    <tr style="background:var(--gr)">
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vt)">FT4</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);font-size:12px;color:var(--td);font-style:italic">D&eacute;clencher le compresseur selon la temp&eacute;rature</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-st4" class="p12-tdinput" placeholder="Solution technique 4&hellip;"></td>
+                    </tr>
+                    <tr style="background:#fff">
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vt)">FT5</td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-ft5" class="p12-tdinput" placeholder="Fonction technique 5&hellip;"></td>
+                      <td style="padding:8px;border-bottom:1px solid var(--gb);background:#E8F5E9;font-weight:600;color:var(--vt)">5 &mdash; Capillaire</td>
+                    </tr>
+                    <tr style="background:var(--gr)">
+                      <td style="padding:8px;text-align:center;font-weight:700;color:var(--vt)">FT6</td>
+                      <td style="padding:8px"><input type="text" id="p12-ft6" class="p12-tdinput" placeholder="Fonction technique 6&hellip;"></td>
+                      <td style="padding:8px"><input type="text" id="p12-st6" class="p12-tdinput" placeholder="Solution technique 6&hellip;"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div><!-- fin part-body 2 -->
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- PARTIE ③ — RÉFRIGÉRATEUR CONNECTÉ                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="p12-part-hdr" style="background:var(--vi)">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">&#x2462;</span>
+          Le r&eacute;frig&eacute;rateur connect&eacute;&nbsp;: une &eacute;volution
+        </div>
+        <div class="p12-part-body">
+
+          <!-- Vidéo frigo connecté -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:var(--td);margin-bottom:8px">&#x25B6;&#xFE0F; Vid&eacute;o &mdash; Le r&eacute;frig&eacute;rateur connect&eacute; Samsung Family Hub</div>
+            <div style="text-align:center;margin-bottom:16px">
+              <a href="https://www.youtube.com/watch?v=dodJu6uLcjU" target="_blank" rel="noopener"
+                 style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#FF0000;color:#fff;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.2)">
+                &#x25B6; Regarder la vid&eacute;o sur YouTube
+              </a>
+            </div>
+          </div>
+
+          <!-- Vidéo Drive : Le Frigo connecté : Révolution ou Gadget -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:var(--td);margin-bottom:8px">&#x25B6;&#xFE0F; Le Frigo connect&eacute;&nbsp;: R&eacute;volution ou Gadget&nbsp;?</div>
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;border-radius:8px;background:#000">
+              <iframe
+                src="https://drive.google.com/file/d/1MHibbTtWk4aCQO7vzioZIqn6-1AT1FMQ/preview"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:8px"
+                frameborder="0"
+                allow="autoplay"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+
+          <!-- Tableau FT7/FT8 -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px">Identifie 2 nouvelles fonctions et leurs solutions techniques&nbsp;:</div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--vi);color:#fff;padding:8px 10px;text-align:center;width:38px">N&deg;</th>
+                    <th style="background:var(--vi);color:#fff;padding:8px 10px;text-align:left;width:50%">Fonction Technique (FT)</th>
+                    <th style="background:var(--vi);color:#fff;padding:8px 10px;text-align:left;width:50%">Solution Technique (ST)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background:#fff">
+                    <td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--vi)">FT7</td>
+                    <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-ft7" class="p12-tdinput" placeholder="Nouvelle fonction 7&hellip;"></td>
+                    <td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-st7" class="p12-tdinput" placeholder="Solution technique 7&hellip;"></td>
+                  </tr>
+                  <tr style="background:var(--gr)">
+                    <td style="padding:8px;text-align:center;font-weight:700;color:var(--vi)">FT8</td>
+                    <td style="padding:8px"><input type="text" id="p12-ft8" class="p12-tdinput" placeholder="Nouvelle fonction 8&hellip;"></td>
+                    <td style="padding:8px"><input type="text" id="p12-st8" class="p12-tdinput" placeholder="Solution technique 8&hellip;"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Contexte -->
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--tx);display:block;margin-bottom:6px">&Agrave; quel(s) contexte(s) peut-on rattacher l&rsquo;apparition du r&eacute;frig&eacute;rateur connect&eacute;&nbsp;? (scientifique, technique, social, &eacute;conomique)</label>
+            <div class="dictee-wrap">
+              <textarea id="p12-3-contexte" rows="3" class="p12-ta" placeholder="Ta r&eacute;ponse..."></textarea>
+              <button class="btn-mic" id="mic-3ctx" onclick="toggleDictation('p12-3-contexte','mic-3ctx')">&#x1F3A4; Dicter</button>
+            </div>
+          </div>
+        </div><!-- fin part-body 3 -->
+
+        <!-- BILAN -->
+        <div class="card" style="margin-top:16px;border-left:5px solid var(--or)">
+          <h3 style="color:var(--or)">&#x1F3AF; Bilan de l&rsquo;activit&eacute;</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:10px">En conclusion, les objets techniques &eacute;voluent car&nbsp;:</p>
+          <div class="dictee-wrap">
+            <textarea id="p12-bilan" rows="4" class="p12-ta" placeholder="R&eacute;dige ton bilan en plusieurs phrases..."></textarea>
+            <button class="btn-mic" id="mic-bilan" onclick="toggleDictation('p12-bilan','mic-bilan')">&#x1F3A4; Dicter</button>
+          </div>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="submitP12Form()"
+                  style="padding:14px 28px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4E4; Soumettre au professeur
+          </button>
+          <button onclick="exportP12PDF()"
+                  style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4C4; Exporter en PDF
+          </button>
+          <div id="p12-status" style="font-size:13px;color:var(--td)"></div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- CORRIGÉ (masqué avant soumission)                   -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div id="p12-corrige" class="h" style="margin-top:24px">
+          <div style="background:var(--vt);color:#fff;border-radius:10px;padding:14px 20px;margin-bottom:16px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px">
+            <span>&#x1F4DA;</span> Corrig&eacute; &mdash; V&eacute;rifie tes r&eacute;ponses
+          </div>
+
+          <!-- Corrigé ① -->
+          <div class="card">
+            <h3 style="color:var(--bl)">&#x2460; Partie 1 &mdash; Les objets technologiques et notre alimentation</h3>
+            <p style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:8px">Phase 1b &mdash; Exemples d&rsquo;objets (r&eacute;ponses possibles)&nbsp;:</p>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>1.</strong> R&eacute;frig&eacute;rateur &mdash; <em>sert &agrave; conserver les aliments au froid</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>2.</strong> Micro-ondes &mdash; <em>sert &agrave; r&eacute;chauffer ou cuire rapidement les aliments</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>3.</strong> Robot culinaire &mdash; <em>sert &agrave; pr&eacute;parer les aliments (hacher, mixer, p&eacute;trir)</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>4.</strong> Lave-vaisselle &mdash; <em>sert &agrave; laver automatiquement la vaisselle</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>5.</strong> Four &eacute;lectrique &mdash; <em>sert &agrave; cuire les aliments par chaleur s&egrave;che</em></div>
+            </div>
+            <p style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:8px">Phase 1c &mdash; R&eacute;ponses attendues&nbsp;:</p>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px">
+              <strong>Q1&nbsp;:</strong> Non, les objets techniques n&rsquo;apparaissent pas de mani&egrave;re hasardeuse. Ils r&eacute;pondent &agrave; des besoins pr&eacute;cis et r&eacute;sultent d&rsquo;une d&eacute;marche de conception organis&eacute;e.
+            </div>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)">
+              <strong>Q2&nbsp;:</strong> Contextes scientifique (d&eacute;couvertes en physique du froid), technique (ma&icirc;trise de la r&eacute;frig&eacute;ration), &eacute;conomique (industrialisation) et social (besoin de commodit&eacute;). Ex&nbsp;: le micro-ondes r&eacute;pond au besoin social de rapidit&eacute;.
+            </div>
+          </div>
+
+          <!-- Corrigé ② -->
+          <div class="card">
+            <h3 style="color:var(--vt)">&#x2461; Partie 2 &mdash; Fonctionnement du r&eacute;frig&eacute;rateur</h3>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:14px">
+              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (évaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur).
+            </div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px;text-align:center">N&deg;</th>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px">Fonction Technique (FT)</th>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px">Solution Technique (ST)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Condenser (liqu&eacute;fier) le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène gazeux</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Vaporiser le fluide et absorber la chaleur int&eacute;rieure</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT4</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">D&eacute;clencher le compresseur selon la temp&eacute;rature</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">4 &mdash; Thermostat</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide et r&eacute;guler le d&eacute;bit (soupape)</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter et c&eacute;der/absorber la chaleur dans le circuit</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Corrigé ③ -->
+          <div class="card">
+            <h3 style="color:var(--vi)">&#x2462; Partie 3 &mdash; R&eacute;frig&eacute;rateur connect&eacute;</h3>
+            <div style="overflow-x:auto;margin-bottom:12px">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px;text-align:center">N&deg;</th>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px">Fonction Technique (FT)</th>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px">Solution Technique (ST)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT7</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vip)">Afficher l&rsquo;inventaire et les dates de p&eacute;remption des aliments</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">Cam&eacute;ra int&eacute;rieure + &eacute;cran tactile</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT8</td><td style="padding:7px 10px;background:var(--vip)">Permettre le contr&ocirc;le et la commande &agrave; distance</td><td style="padding:7px 10px;font-weight:600">Module Wi-Fi / Application smartphone</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="p12-cor-item" style="background:var(--vip);border-color:var(--vi)">
+              <strong>Contextes&nbsp;:</strong> Scientifique (IoT, IA), Technique (miniaturisation, connectivit&eacute;), &Eacute;conomique (nouvelles gammes premium), Social (confort, r&eacute;duction du gaspillage alimentaire).
+            </div>
+          </div>
+
+          <!-- Bilan corrigé -->
+          <div class="card">
+            <h3 style="color:var(--or)">&#x1F3AF; Bilan</h3>
+            <div class="p12-cor-item" style="background:var(--op);border-color:var(--or)">
+              <strong>Les objets techniques &eacute;voluent car&nbsp;:</strong><br>
+              &bull;&nbsp;Les besoins humains changent (modes de vie, confort, sant&eacute;).<br>
+              &bull;&nbsp;Les avanc&eacute;es scientifiques ouvrent de nouvelles possibilit&eacute;s.<br>
+              &bull;&nbsp;Les contraintes &eacute;conomiques poussent &agrave; innover.<br>
+              &bull;&nbsp;Les exigences sociales et environnementales imposent de nouvelles solutions (r&eacute;duction du gaspillage, d&eacute;veloppement durable).
+            </div>
+          </div>
+        </div><!-- fin p12-corrige -->
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p12 -->
+
     <!-- TABLEAU DE BORD PROF -->
     <div id="pg-prof" class="h">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
@@ -539,6 +1066,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="">Toutes les capsules</option>
             <option value="cap1">Capsule n°1 &mdash; Biomimétisme</option>
             <option value="rem1">Quiz Rem&eacute;diation P13</option>
+            <option value="p12">P12 &mdash; Technologie et Alimentation</option>
           </select>
           <select class="fsel" id="fstat" onchange="renderSubs()">
             <option value="">Tous les statuts</option>
@@ -547,10 +1075,20 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="rejected">&#x274C; À revoir</option>
           </select>
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
-          <button onclick="exportCSV()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Export CSV</button>
+          <button onclick="exportCSVAll()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
         </div>
+        <!-- Import cross-machine : l'élève copie son code, le prof colle ici -->
+        <details style="margin:10px 0;background:#fff;border:1px dashed var(--gb);border-radius:var(--r);padding:12px 16px">
+          <summary style="cursor:pointer;font-size:13px;font-weight:700;color:var(--bl);user-select:none">&#x1F4E5; Importer une soumission élève (code de transfert)</summary>
+          <p style="font-size:12px;color:var(--td);margin:8px 0 6px">L'élève clique sur <em>"Copier mon code"</em> après avoir soumis son activité, puis envoie ce code par mail ou messagerie. Colle-le ci-dessous et clique Importer.</p>
+          <div style="display:flex;gap:8px;align-items:flex-start">
+            <textarea id="import-code-area" rows="3" style="flex:1;padding:8px;border:1px solid var(--gb);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;resize:vertical" placeholder="Colle ici le code de l'élève…"></textarea>
+            <button onclick="importSubCode()" style="padding:9px 14px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;white-space:nowrap">&#x2B07; Importer</button>
+          </div>
+          <div id="import-feedback" style="margin-top:6px;font-size:12px;font-weight:600"></div>
+        </details>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
-          <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Score</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+          <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Activité</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
             <tbody id="stbody"></tbody></table>
         </div>
         <div style="margin-top:22px" class="stit">&#x1F465; Sans soumission</div>
@@ -588,8 +1126,11 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         </div>
         <div class="cfsec">
           <h3>&#x1F5D1;&#xFE0F; Données</h3>
-          <button onclick="if(confirm('Effacer toutes les soumissions ?')){localStorage.removeItem('subs');renderSubs();renderStats();toast('Données effacées')}" style="padding:9px 14px;background:var(--rg);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Effacer toutes les soumissions</button>
-          <button onclick="addDemo()" style="margin-left:8px;padding:9px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">Données de démo</button>
+          <button onclick="clearAllSubs()" style="padding:9px 14px;background:var(--rg);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F5D1; Effacer toutes les soumissions</button>
+          <button onclick="addDemo()" style="margin-left:8px;padding:9px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F9EA; Données de démo</button>
+          <div style="margin-top:12px;padding:10px 14px;background:var(--gr);border-radius:8px;font-size:12px;color:var(--td)">
+            <strong>ℹ️ Synchronisation cross-machine :</strong> Les élèves qui soumettent P12 depuis leur propre appareil obtiennent un <em>code de transfert</em> à vous envoyer (mail ou ENT). Collez-le dans la zone d'import ci-dessus dans l'onglet Suivi.
+          </div>
         </div>
       </div>
     </div>
@@ -1053,7 +1594,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
   <div class="mcard">
     <h3>Réponse ouverte &mdash; Question 10</h3>
     <p style="font-size:13px;color:var(--td)" id="minfo"></p>
-    <div class="mrep" id="mrep"></div>
+    <div class="mrep" id="mrep" style="max-height:55vh;overflow-y:auto"></div>
     <p style="font-size:12px;color:var(--td)" id="mscore"></p>
     <div class="macts">
       <button class="btnmc" onclick="closeModal()">Fermer</button>
@@ -1455,6 +1996,7 @@ var ELEVES = [
 // Séquences — activer avec un code d'invitation (vide = accès libre)
 // Le code est stocké dans localStorage et modifiable par le prof depuis l'interface
 var SEQUENCES_DEF = [
+  {id:"p12",  niveau:"4ème", titre:"P12 — Technologie et Alimentation", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
   {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
   {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
   {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
@@ -1574,6 +2116,15 @@ function doLogin() {
   for (var i = 0; i < ELEVES.length; i++) { if (ELEVES[i].id === id) { el = ELEVES[i]; break; } }
   if (!el) { showErr("Identifiant non reconnu. Vérifie ton prénom.nom."); return; }
   if (pwd !== el.pwd) { showErr("Mot de passe incorrect."); return; }
+  // Se souvenir de moi
+  var rem = document.getElementById("rememberme");
+  if (rem && rem.checked) {
+    localStorage.setItem("rem_id", id);
+    localStorage.setItem("rem_pwd", pwd);
+  } else {
+    localStorage.removeItem("rem_id");
+    localStorage.removeItem("rem_pwd");
+  }
   user = el; isProf = false; launch();
 }
 function doProfLogin() {
@@ -1607,6 +2158,17 @@ function goPage(pid) {
   document.getElementById(pid).classList.remove("h");
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
+  if (pid === "pg-p12") {
+    initP12Table(); initRufflePlayer(); renderCtxQuiz();
+    if (user) {
+      var fNom    = document.getElementById("p12-nom");
+      var fPrenom = document.getElementById("p12-prenom");
+      var fClasse = document.getElementById("p12-classe");
+      if (fNom    && !fNom.value)    fNom.value    = user.n;
+      if (fPrenom && !fPrenom.value) fPrenom.value = user.p;
+      if (fClasse && !fClasse.value) fClasse.value = user.c;
+    }
+  }
   if (pid === "pg-rem-form") shuffleWordBank();
   if (pid === "pg-rem-quiz") {
     // Remettre le formulaire d'identité visible et cacher le corps + résultat
@@ -1657,6 +2219,7 @@ function renderDash() {
       var clickAction = "";
       if (!isOpen) clickAction = "";
       else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
+      else if (s.id === "p12")  clickAction = "onclick=\"goPage('pg-p12')\"";
       else if (s.id === "cap1") clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1") clickAction = "onclick=\"goPage('pg-rem')\"";
       html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
@@ -1692,7 +2255,8 @@ function tryUnlock() {
     unlocked[pendingSeq] = true;
     setUnlocked(unlocked);
     toast("Séquence déverrouillée !");
-    if (pendingSeq === "cap1") goPage("pg-cap");
+    if (pendingSeq === "p12")  goPage("pg-p12");
+    else if (pendingSeq === "cap1") goPage("pg-cap");
     else goPage("pg-dash");
     renderDash();
   } else {
@@ -1806,6 +2370,75 @@ function updMyStatus() {
 }
 
 // ================================================================
+// P12 — UTILITAIRES TABLEAU DE BORD
+// ================================================================
+function buildP12OpenSummary(snap) {
+  if (!snap) return "";
+  var parts = [];
+  if (snap["1a-objet"])    parts.push("Objet étudié : " + snap["1a-objet"]);
+  if (snap["1a-fonction"]) parts.push("Fonction : " + snap["1a-fonction"]);
+  if (snap["1c-q1"])       parts.push("Contexte historique : " + snap["1c-q1"]);
+  if (snap["1c-q2"])       parts.push("Contexte d'apparition : " + snap["1c-q2"]);
+  if (snap["2a"])          parts.push("Principe réfrigération : " + snap["2a"]);
+  if (snap["3-contexte"])  parts.push("Contextes réfrigérateur connecté : " + snap["3-contexte"]);
+  if (snap.bilan)          parts.push("Bilan : " + snap.bilan);
+  return parts.join("\n\n");
+}
+function countP12Fields(fields) {
+  if (!fields) return {done:0, total:14};
+  var keys = ["1a-objet","1a-fonction","1c-q1","1c-q2","2a","2b-principe",
+    "ft1","ft2","st2","ft3","ft5","ft6","3-contexte","bilan"];
+  var done = 0;
+  for (var k = 0; k < keys.length; k++) { if ((fields[keys[k]]||"").trim()) done++; }
+  return {done:done, total:keys.length};
+}
+function buildP12ModalHTML(f) {
+  if (!f) return "<em>Aucune donnée</em>";
+  function row(label, val) {
+    return '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + label + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + (f[val]||'<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div></div>';
+  }
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
+    row("Objet étudié","1a-objet") + row("Fonction","1a-fonction") + '</div>' +
+    '<div style="font-weight:700;color:var(--or);font-size:12px;margin:10px 0 4px">PARTIE ① — Historique</div>' +
+    row("Contexte historique","1c-q1") + row("Contexte d'apparition","1c-q2") +
+    '<div style="font-weight:700;color:var(--vt);font-size:12px;margin:10px 0 4px">PARTIE ② — Réfrigération</div>' +
+    row("Principe de réfrigération","2a") + row("Principe du réfrigérateur","2b-principe") +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px">' +
+    row("FT1","ft1") + row("FT2","ft2") + row("FT3","ft3") +
+    row("FT5","ft5") + row("FT6","ft6") + row("ST2","st2") + '</div>' +
+    '<div style="font-weight:700;color:#7B2C8B;font-size:12px;margin:10px 0 4px">PARTIE ③ — Réfrigérateur connecté</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
+    row("FT7","ft7") + row("ST7","st7") + row("FT8","ft8") + row("ST8","st8") + '</div>' +
+    row("Contextes d'apparition","3-contexte") +
+    '<div style="font-weight:700;color:var(--or);font-size:12px;margin:10px 0 4px">BILAN</div>' +
+    row("Bilan personnel","bilan");
+}
+function importSubCode() {
+  var raw = (document.getElementById("import-code-area").value || "").trim();
+  var fb = document.getElementById("import-feedback");
+  if (!raw) { fb.style.color="var(--rg)"; fb.textContent="⚠ Colle d'abord le code de l'élève."; return; }
+  try {
+    var json = decodeURIComponent(escape(atob(raw)));
+    var sub = JSON.parse(json);
+    if (!sub.cap || !sub.ename || !sub.eid) throw new Error("Format invalide");
+    // Forcer id unique si collision
+    sub.id = Date.now() + Math.floor(Math.random()*1000);
+    var allSubs = getSubs();
+    allSubs = allSubs.filter(function(x){ return !(x.eid === sub.eid && x.cap === sub.cap); });
+    allSubs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(allSubs));
+    fb.style.color = "var(--vt)";
+    fb.textContent = "✅ Soumission de " + sub.ename + " importée avec succès.";
+    document.getElementById("import-code-area").value = "";
+    renderStats(); renderSubs();
+  } catch(e) {
+    fb.style.color = "var(--rg)";
+    fb.textContent = "❌ Code invalide. Demande à l'élève de recopier son code entier.";
+  }
+}
+
+// ================================================================
 // TABLEAU DE BORD PROF
 // ================================================================
 function pTab(t) {
@@ -1859,10 +2492,14 @@ function renderSubs() {
         var pct = Math.round(s.score/s.qcmTot*100);
         sc = '<div><strong style="color:' + (pct>=70?"var(--vt)":pct>=50?"var(--or)":"var(--rg)") + '">' + s.score + '/40</strong></div>';
         if (s.scoreDT !== undefined) sc += '<div style="font-size:11px;color:var(--td)">DT:'+s.scoreDT+'/12 PR:'+s.scorePR+'/14 PG:'+s.scorePG+'/14</div>';
+      } else if (s.cap === "p12") {
+        var nf = countP12Fields(s.fields);
+        sc = '<span style="background:var(--op);color:var(--or);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nf.done + '/' + nf.total + ' champs</span>';
       } else {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
-      rows += '<tr><td><strong>' + s.ename + '</strong></td><td>' + s.ecls + '</td><td>' + sc + '</td>';
+      var capTag = s.caplbl ? '<div style="font-size:10px;color:var(--td);margin-top:2px">' + s.caplbl + '</div>' : '';
+      rows += '<tr><td><strong>' + s.ename + '</strong>' + capTag + '</td><td>' + s.ecls + '</td><td>' + sc + '</td>';
       rows += '<td style="font-size:12px">' + s.date + '</td>';
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
       rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
@@ -1942,8 +2579,16 @@ function openModal(sid) {
   if (!sub) return;
   modalId = sid;
   document.getElementById("minfo").textContent = sub.ename + " – " + sub.ecls + " – " + sub.date;
-  document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
-  document.getElementById("mscore").textContent = "Score QCM : " + sub.score + "/" + sub.qcmTot + " – Statut : " + sub.status;
+  var mh3 = document.querySelector("#modal .mcard h3");
+  if (sub.cap === "p12" && sub.fields) {
+    if (mh3) mh3.textContent = "P12 — Activité n°1 : Réponses de l'élève";
+    document.getElementById("mrep").innerHTML = buildP12ModalHTML(sub.fields);
+    document.getElementById("mscore").textContent = "Activité ouverte – Statut : " + sub.status;
+  } else {
+    if (mh3) mh3.textContent = "Réponse ouverte — Question 10";
+    document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
+    document.getElementById("mscore").textContent = "Score QCM : " + sub.score + "/" + sub.qcmTot + " – Statut : " + sub.status;
+  }
   document.getElementById("modal").classList.remove("h");
 }
 function closeModal() { document.getElementById("modal").classList.add("h"); modalId = null; }
@@ -1970,11 +2615,41 @@ function exportCSV() {
   a.download = "suivi_CI_P13_" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".csv";
   a.click(); toast("Export CSV généré");
 }
+function exportCSVAll() {
+  var s = getSubs();
+  if (!s.length) { toast("Aucune donnée à exporter"); return; }
+  var otherRows = ["Eleve;Classe;Capsule;Score;Date;Statut;Reponse ouverte"];
+  var p12Rows = ["Eleve;Classe;Date;Statut;Objet;Fonction;Contextes;FT7;ST7;FT8;ST8;Bilan"];
+  for (var i = 0; i < s.length; i++) {
+    var x = s[i];
+    if (x.cap === "p12") {
+      var f = x.fields || {};
+      p12Rows.push([x.ename, x.ecls, x.date, x.status,
+        '"'+(f["1a-objet"]||"").replace(/"/g,'""')+'"','"'+(f["1a-fonction"]||"").replace(/"/g,'""')+'"',
+        '"'+(f["3-contexte"]||"").replace(/"/g,'""')+'"','"'+(f.ft7||"").replace(/"/g,'""')+'"',
+        '"'+(f.st7||"").replace(/"/g,'""')+'"','"'+(f.ft8||"").replace(/"/g,'""')+'"',
+        '"'+(f.st8||"").replace(/"/g,'""')+'"','"'+(f.bilan||"").replace(/"/g,'""')+'"'
+      ].join(";"));
+    } else {
+      otherRows.push([x.ename, x.ecls, x.caplbl||x.cap, x.score+"/"+x.qcmTot, x.date, x.status, '"'+(x.open||"").replace(/"/g,'""')+'"'].join(";"));
+    }
+  }
+  var csv = otherRows.join("\n");
+  if (p12Rows.length > 1) csv += "\n\n=== P12 Technologie et Alimentation ===\n" + p12Rows.join("\n");
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  a.download = "suivi_Techno_" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".csv";
+  a.click(); toast("Export CSV complet P12 genere");
+}
 function addDemo() {
   var d = [
-    {id:1001, eid:"martin.lea", ename:"Léa Martin", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:8, qcmTot:9, open:"Le martin-pêcheur a inspiré le Shinkansen. Son bec conique permet de passer d'un milieu dense à un milieu moins dense sans choc sonique. Le train a été redessiné avec cette forme pour éliminer le bang sonique et économiser 15% d'énergie.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"validated"},
-    {id:1002, eid:"dupont.thomas", ename:"Thomas Dupont", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:6, qcmTot:9, open:"Les fourmis m'ont impressionné dans le reportage. Elles laissent des phéromones pour trouver leur chemin. Les informaticiens ont copié ce principe pour créer des algorithmes GPS.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"pending"},
-    {id:1003, eid:"bernard.emma", ename:"Emma Bernard", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:4, qcmTot:9, open:"C'est cool.", date:"20/04/2026", dateISO:new Date(Date.now()-86400000).toISOString(), status:"rejected"}
+    {id:1001, eid:"martin.lea", ename:"Léa Martin", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:8, qcmTot:9, open:"Le martin-pêcheur a inspiré le Shinkansen. Son bec conique permet de passer d'un milieu dense à un milieu moins dense sans choc sonique.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"validated"},
+    {id:1002, eid:"dupont.thomas", ename:"Thomas Dupont", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:6, qcmTot:9, open:"Les fourmis laissent des phéromones. Les informaticiens ont copié ce principe pour des algorithmes GPS.", date:"21/04/2026", dateISO:new Date().toISOString(), status:"pending"},
+    {id:1003, eid:"bernard.emma", ename:"Emma Bernard", ecls:"4F", cap:"cap1", caplbl:"Capsule n°1 – Biomimétisme", score:4, qcmTot:9, open:"C'est cool.", date:"20/04/2026", dateISO:new Date(Date.now()-86400000).toISOString(), status:"rejected"},
+    {id:1004, eid:"martin.lea", ename:"Léa Martin", ecls:"4F", cap:"p12", caplbl:"P12 – Technologie et Alimentation",
+     score:0, qcmTot:0, date:"29/04/2026", dateISO:new Date().toISOString(), status:"pending",
+     open:"Objet étudié : Réfrigérateur\n\nFonction : Conserver les aliments à basse température\n\nBilan : J'ai compris que le cycle frigorifique repose sur la compression et la détente d'un fluide frigorigène.",
+     fields:{"1a-objet":"Réfrigérateur","1a-fonction":"Conserver les aliments à basse température grâce au froid","1c-q1":"La réfrigération a été inventée au XIXe siècle. Jacob Perkins dépose le premier brevet en 1834.","1c-q2":"C'est une innovation scientifique car elle repose sur des lois physiques de thermodynamique.","2a":"Le réfrigérateur utilise un fluide frigorigène qui absorbe la chaleur en s'évaporant à basse pression dans l'évaporateur, puis la rejette en se condensant à haute pression dans le condenseur.","2b-principe":"Le compresseur comprime le fluide, le condenseur libère la chaleur, le capillaire détend le fluide et l'évaporateur absorbe la chaleur de l'intérieur.","ft1":"Condenser","ft2":"Comprimer","st2":"le fluide frigorigène","ft3":"Évaporer","st4":"la température","ft5":"Détendre","ft6":"Fluide frigorigène","st6":"transporter la chaleur","ft7":"Connecter le réfrigérateur à Internet","st7":"via WiFi/Bluetooth","ft8":"Gérer les stocks d'aliments","st8":"capteurs + application mobile","3-contexte":"Scientifique : capteurs IoT ; Technique : WiFi intégré ; Économique : économies d'énergie ; Social : simplifier la vie quotidienne","bilan":"J'ai compris que le cycle frigorifique repose sur la compression et la détente d'un fluide frigorigène. Le réfrigérateur connecté ajoute une couche numérique qui apporte de nombreux services."}}
   ];
   var existing = getSubs(), merged = [];
   for (var i = 0; i < existing.length; i++) {
@@ -1984,6 +2659,18 @@ function addDemo() {
   }
   localStorage.setItem("subs", JSON.stringify(merged.concat(d)));
   renderStats(); renderSubs(); toast("Données de démo ajoutées");
+}
+function clearAllSubs() {
+  if (!confirm("Effacer toutes les soumissions ? Cette action est irréversible.")) return;
+  localStorage.removeItem("subs");
+  // Supprimer aussi les snapshots P12 individuels
+  var toRemove = [];
+  for (var k = 0; k < localStorage.length; k++) {
+    var key = localStorage.key(k);
+    if (key && key.indexOf("p12_act1_") === 0) toRemove.push(key);
+  }
+  for (var i = 0; i < toRemove.length; i++) localStorage.removeItem(toRemove[i]);
+  renderSubs(); renderStats(); toast("Toutes les données effacées");
 }
 // ── Rafraîchissement tableau de bord prof ────────────────────
 var profRefreshTimer = null;
@@ -2221,8 +2908,425 @@ function exportFichePDF() {
   setTimeout(function(){ var el = document.getElementById("print-style"); if(el) el.remove(); }, 1000);
 }
 
+// ================================================================
+// P12 — TECHNOLOGIE ET ALIMENTATION — ACTIVITÉ 1
+// ================================================================
+
+// ── Quiz contextes d'apparition ──────────────────────────────
+var CTX_DATA = [
+  {txt:"La découverte que certains gaz absorbent la chaleur en s'évaporant a permis d'inventer le réfrigérateur.", ans:"S",
+   expl:"C'est une avancée <strong>scientifique</strong> : une loi physique nouvelle ouvre la voie à un objet technique."},
+  {txt:"L'invention du moteur électrique miniaturisé a rendu possible la création du robot culinaire.", ans:"T",
+   expl:"C'est un progrès <strong>technique</strong> : un nouveau composant technique permet de concevoir un nouvel objet."},
+  {txt:"La baisse du coût de l'acier inoxydable a permis de produire des réfrigérateurs abordables pour toutes les familles.", ans:"E",
+   expl:"C'est un facteur <strong>économique</strong> : la réduction du coût des matières premières démocratise l'objet."},
+  {txt:"De plus en plus de femmes travaillent en dehors du foyer ; on a besoin d'appareils qui font gagner du temps en cuisine.", ans:"So",
+   expl:"C'est un contexte <strong>social</strong> : l'évolution des modes de vie crée de nouveaux besoins."},
+  {txt:"La mise au point du plastique alimentaire imperméable a permis de créer des boîtes de conservation hermétiques.", ans:"T",
+   expl:"C'est un progrès <strong>technique</strong> : un nouveau matériau génère de nouveaux objets techniques."},
+  {txt:"La croissance des supermarchés et de la grande distribution a poussé à fabriquer des réfrigérateurs plus grands.", ans:"E",
+   expl:"C'est un facteur <strong>économique</strong> : l'organisation du marché influence la conception des objets."}
+];
+var ctxAnswers = {};
+
+function renderCtxQuiz() {
+  var html = "";
+  for (var i = 0; i < CTX_DATA.length; i++) {
+    var d = CTX_DATA[i], sel = ctxAnswers[i] || "";
+    html += '<div class="ctx-item-row" id="ctx-row-'+i+'">';
+    html += '<span style="font-size:13px;flex:1;line-height:1.5;min-width:200px">'+d.txt+'</span>';
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+    var ctxs = [{c:"S",lbl:"🔬 S"},{c:"T",lbl:"⚙️ T"},{c:"E",lbl:"💰 E"},{c:"So",lbl:"👨‍👩‍👧 So"}];
+    for (var j = 0; j < ctxs.length; j++) {
+      var ctx = ctxs[j];
+      html += '<button class="ctx-btn'+(sel===ctx.c?' sel':'')+'" data-c="'+ctx.c+'" onclick="selCtx('+i+',\''+ctx.c+'\')">'+ctx.lbl+'</button>';
+    }
+    html += '</div><div id="ctx-fb-'+i+'" style="font-size:11px;width:100%;margin-top:4px"></div></div>';
+  }
+  document.getElementById("ctx-items").innerHTML = html;
+  document.getElementById("ctx-result").innerHTML = "";
+}
+
+function selCtx(idx, c) {
+  ctxAnswers[idx] = c;
+  var row = document.getElementById("ctx-row-"+idx);
+  if (row) {
+    row.classList.remove("ok","ko");
+    var btns = row.querySelectorAll(".ctx-btn");
+    for (var b = 0; b < btns.length; b++) {
+      btns[b].classList.toggle("sel", btns[b].getAttribute("data-c") === c);
+    }
+  }
+  document.getElementById("ctx-fb-"+idx).innerHTML = "";
+  document.getElementById("ctx-result").innerHTML = "";
+}
+
+function checkCtxQuiz() {
+  var score = 0;
+  for (var i = 0; i < CTX_DATA.length; i++) {
+    var d = CTX_DATA[i], row = document.getElementById("ctx-row-"+i), fb = document.getElementById("ctx-fb-"+i);
+    if (!ctxAnswers[i]) { if (fb) fb.innerHTML = '<span style="color:var(--or)">⚠️ Non répondu</span>'; continue; }
+    var ok = ctxAnswers[i] === d.ans;
+    if (ok) score++;
+    if (row) { row.classList.toggle("ok", ok); row.classList.toggle("ko", !ok); }
+    if (fb) fb.innerHTML = ok
+      ? '<span style="color:var(--vt)">✅ '+d.expl+'</span>'
+      : '<span style="color:var(--rg)">❌ La bonne réponse était <strong>'+d.ans+'</strong>. '+d.expl+'</span>';
+  }
+  var res = document.getElementById("ctx-result");
+  var pct = Math.round(score/CTX_DATA.length*100);
+  var emoji = pct === 100 ? "🏆" : pct >= 67 ? "👍" : "💪";
+  res.innerHTML = '<div style="background:'+(pct>=67?'var(--vp)':'var(--op)')+';border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;color:'+(pct>=67?'var(--vt)':'var(--or)')+'">'+emoji+' Score : '+score+' / '+CTX_DATA.length+' ('+pct+'%)'+(pct===100?' — Parfait, tu maîtrises les 4 contextes !':pct>=67?' — Bien joué ! Relis les erreurs.':' — Continue d\'entraîner-toi !')+' </div>';
+}
+
+function resetCtxQuiz() { ctxAnswers = {}; renderCtxQuiz(); }
+
+// ── Dictée vocale (Web Speech API) ───────────────────────────
+var _micActive = null; // {recog, btnId}
+
+function toggleDictation(targetId, btnId) {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    toast("Dictée non supportée — utilisez Chrome ou Edge !");
+    return;
+  }
+  // Si déjà en cours sur ce bouton → stop
+  if (_micActive && _micActive.btnId === btnId) {
+    _micActive.recog.stop();
+    return;
+  }
+  // Si autre bouton actif → l'arrêter d'abord
+  if (_micActive) { try { _micActive.recog.stop(); } catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR";
+  recog.continuous = true;
+  recog.interimResults = true;
+
+  var btn = document.getElementById(btnId);
+  if (btn) { btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arr&ecirc;ter"; }
+
+  var baseValue = (document.getElementById(targetId) || {}).value || "";
+  var interim = "";
+
+  recog.onresult = function(e) {
+    interim = "";
+    var final = baseValue;
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) { final += (final && !final.endsWith(" ") ? " " : "") + e.results[i][0].transcript; baseValue = final; }
+      else { interim = e.results[i][0].transcript; }
+    }
+    var ta = document.getElementById(targetId);
+    if (ta) ta.value = baseValue + (interim ? " [" + interim + "]" : "");
+  };
+
+  function stopMic() {
+    var ta = document.getElementById(targetId);
+    if (ta && interim) ta.value = baseValue; // nettoie l'intermédiaire
+    _micActive = null;
+    if (btn) { btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+  }
+
+  recog.onerror = function(e) {
+    stopMic();
+    if (e.error !== "aborted") toast("Erreur microphone : " + e.error);
+  };
+  recog.onend = stopMic;
+
+  try {
+    recog.start();
+    _micActive = { recog: recog, btnId: btnId };
+  } catch(e) {
+    stopMic();
+    toast("Impossible de démarrer le micro.");
+  }
+}
+
+// ── Init quiz contextes au chargement de la page P12 ─────────
+/* Génère les 5 lignes éditables du tableau Phase 1b */
+function initP12Table() {
+  var tbody = document.getElementById("p12-1b-tbody");
+  if (!tbody || tbody.children.length > 0) return;
+  var html = "";
+  for (var i = 1; i <= 5; i++) {
+    var bg = i % 2 === 0 ? "var(--gr)" : "#fff";
+    html += '<tr style="background:' + bg + '">';
+    html += '<td style="padding:8px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700;color:var(--bl)">' + i + '</td>';
+    html += '<td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-1b-obj-' + i + '" class="p12-tdinput" placeholder="Objet technique…"></td>';
+    html += '<td style="padding:8px;border-bottom:1px solid var(--gb)"><input type="text" id="p12-1b-fn-'  + i + '" class="p12-tdinput" placeholder="sert à…"></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+/* Initialise le lecteur Ruffle pour l'animation SWF */
+var ruffleInitialized = false;
+function initRufflePlayer() {
+  if (ruffleInitialized) return;
+  ruffleInitialized = true;
+  var msg = document.getElementById("ruffle-msg");
+  if (!window.RufflePlayer) { return; }
+  try {
+    var ruffle   = window.RufflePlayer.newest();
+    var player   = ruffle.createPlayer();
+    var container = document.getElementById("ruffle-player");
+    if (container) {
+      container.innerHTML = "";
+      container.appendChild(player);
+      player.style.cssText = "width:100%;height:100%";
+      player.load("http://www.techmania.fr/conservation_aliments/parent.swf");
+      if (msg) msg.style.display = "none";
+    }
+  } catch(e) {
+    console.warn("Ruffle – impossible de charger le SWF :", e);
+  }
+}
+
+/* Soumission de l'activité P12 → sauvegarde + affichage corrigé */
+function submitP12Form() {
+  var nom    = (document.getElementById("p12-nom").value    || "").trim();
+  var prenom = (document.getElementById("p12-prenom").value || "").trim();
+  if (!nom || !prenom) { alert("Merci d’indiquer ton nom et ton prénom avant de soumettre."); return; }
+  var ts = new Date().toLocaleString("fr-FR");
+  var classe = (document.getElementById("p12-classe").value || "").trim();
+  var snap = { nom:nom, prenom:prenom, classe:classe, ts:ts,
+    "1a-objet":   document.getElementById("p12-1a-objet").value,
+    "1a-fonction":document.getElementById("p12-1a-fonction").value,
+    "1c-q1":      document.getElementById("p12-1c-q1").value,
+    "1c-q2":      document.getElementById("p12-1c-q2").value,
+    "2a":         document.getElementById("p12-2a").value,
+    "2b-principe":document.getElementById("p12-2b-principe").value,
+    "ft1":document.getElementById("p12-ft1").value, "ft2":document.getElementById("p12-ft2").value,
+    "st2":document.getElementById("p12-st2").value, "ft3":document.getElementById("p12-ft3").value,
+    "st4":document.getElementById("p12-st4").value, "ft5":document.getElementById("p12-ft5").value,
+    "ft6":document.getElementById("p12-ft6").value, "st6":document.getElementById("p12-st6").value,
+    "ft7":document.getElementById("p12-ft7").value, "st7":document.getElementById("p12-st7").value,
+    "ft8":document.getElementById("p12-ft8").value, "st8":document.getElementById("p12-st8").value,
+    "3-contexte": document.getElementById("p12-3-contexte").value,
+    "bilan":      document.getElementById("p12-bilan").value };
+  if (user) { localStorage.setItem("p12_act1_" + user.id, JSON.stringify(snap)); }
+  // ── Alimentation du tableau de bord professeur ──────────────
+  var eid = user ? user.id : (prenom.toLowerCase().replace(/\s/g,"") + "." + nom.toLowerCase().replace(/\s/g,""));
+  var p12Sub = {
+    id: Date.now(),
+    eid: eid,
+    ename: prenom + " " + nom,
+    ecls: classe,
+    cap: "p12",
+    caplbl: "P12 — Technologie et Alimentation",
+    score: 0, qcmTot: 0,
+    open: buildP12OpenSummary(snap),
+    fields: snap,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+  var allSubs = getSubs();
+  allSubs = allSubs.filter(function(x){ return !(x.eid === p12Sub.eid && x.cap === "p12"); });
+  allSubs.push(p12Sub);
+  localStorage.setItem("subs", JSON.stringify(allSubs));
+  // ── Envoi Apps Script (fire-and-forget) ─────────────────────
+  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "VOTRE_URL_APPS_SCRIPT_ICI") {
+    try {
+      var img = new Image();
+      img.src = APPS_SCRIPT_URL + "?cap=p12&eleve=" + encodeURIComponent(prenom + " " + nom) +
+        "&classe=" + encodeURIComponent(classe) +
+        "&bilan=" + encodeURIComponent(snap.bilan || "") +
+        "&contexte=" + encodeURIComponent(snap["3-contexte"] || "") +
+        "&t=" + Date.now();
+      img.onerror = function(){};
+    } catch(e){}
+  }
+  // ── Code de transfert pour import manuel par le prof ────────
+  try {
+    var exportCode = btoa(unescape(encodeURIComponent(JSON.stringify(p12Sub))));
+    var stDiv = document.getElementById("p12-code-transfert");
+    if (!stDiv) {
+      stDiv = document.createElement("div");
+      stDiv.id = "p12-code-transfert";
+      stDiv.style.cssText = "margin-top:14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;padding:14px";
+      document.getElementById("p12-status").parentNode.insertBefore(stDiv, document.getElementById("p12-status").nextSibling);
+    }
+    // Construction DOM — évite les guillemets imbriqués
+    var lbl = document.createElement("div");
+    lbl.style.cssText = "font-size:13px;font-weight:700;color:#3730A3;margin-bottom:6px";
+    lbl.innerHTML = "&#x1F4CB; Code de transfert &mdash; envoie ce code &agrave; ton prof&nbsp;:";
+    var ta = document.createElement("textarea");
+    ta.id = "p12-export-code";
+    ta.rows = 3;
+    ta.readOnly = true;
+    ta.value = exportCode;
+    ta.onclick = function(){ this.select(); };
+    ta.style.cssText = "width:100%;box-sizing:border-box;font-family:monospace;font-size:10px;padding:8px;border:1px solid #C7D2FE;border-radius:6px;background:#fff;resize:none;margin-top:4px";
+    var btn = document.createElement("button");
+    btn.style.cssText = "margin-top:6px;padding:7px 14px;background:#4F46E5;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit";
+    btn.innerHTML = "&#x1F4CB; Copier mon code";
+    btn.onclick = function(){ var t=document.getElementById("p12-export-code"); if(t){t.select();document.execCommand("copy");} toast("Code copié !"); };
+    stDiv.innerHTML = "";
+    stDiv.appendChild(lbl);
+    stDiv.appendChild(ta);
+    stDiv.appendChild(btn);
+  } catch(e){}
+  var st = document.getElementById("p12-status");
+  st.innerHTML = "&#x2705; Activité sauvegardée le " + ts + ". Le corrigé est maintenant disponible ci-dessous.";
+  st.style.color = "var(--vt)";
+  var cor = document.getElementById("p12-corrige");
+  if (cor) { cor.classList.remove("h"); setTimeout(function(){ cor.scrollIntoView({behavior:"smooth",block:"start"}); }, 150); }
+  toast("Activité soumise ✅");
+}
+
+/* Export PDF via jsPDF + autoTable */
+function exportP12PDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("jsPDF non chargé. Vérifiez votre connexion internet puis rechargez la page.");
+    return;
+  }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc   = new jsPDF({ unit:"mm", format:"a4" });
+  var W = 210, M = 14, Y = 0;
+  var lh = 5.5;
+
+  /* ── helpers ── */
+  function v(id) { var el = document.getElementById(id); return el ? (el.value || "").trim() || "—" : "—"; }
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; footer(); } }
+  function br(n) { Y += (n || 4); }
+
+  function header() {
+    doc.setFillColor(197, 90, 17);
+    doc.rect(0, 0, W, 28, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(16); doc.setTextColor(255,255,255);
+    doc.text("P12 – Technologie et Alimentation", W/2, 13, {align:"center"});
+    doc.setFontSize(11);
+    doc.text("Activité n°1 — Comment la technologie facilite-t-elle notre alimentation ?", W/2, 21, {align:"center"});
+    Y = 32;
+  }
+  function footer() {
+    var pg = doc.internal.getCurrentPageInfo().pageNumber;
+    doc.setFontSize(8); doc.setFont("helvetica","italic"); doc.setTextColor(150);
+    doc.text("P12 – Technologie et Alimentation – Activité 1", M, 289);
+    doc.text("Page " + pg, W - M, 289, {align:"right"});
+  }
+  function secHdr(label, rgb) {
+    chk(12);
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.rect(M, Y, W - 2*M, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(255,255,255);
+    doc.text(label, M + 3, Y + 6);
+    Y += 11;
+  }
+  function phaseHdr(label, rgb) {
+    chk(8);
+    doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.setTextColor(rgb[0],rgb[1],rgb[2]);
+    doc.text(label, M, Y); Y += 6;
+  }
+  function writeField(label, val, indent) {
+    chk(14);
+    var x = M + (indent || 0);
+    doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.setTextColor(60,60,60);
+    doc.text(label, x, Y); Y += 5;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(26,32,44);
+    var lines = doc.splitTextToSize(val, W - 2*M - (indent || 0) - 6);
+    doc.setFillColor(245,245,245);
+    doc.rect(x, Y - 3, W - M - x, lines.length * lh + 4, "F");
+    doc.text(lines, x + 2, Y + 1);
+    Y += lines.length * lh + 6;
+  }
+
+  /* ══ PAGE 1 ══ */
+  header();
+
+  /* Identité */
+  chk(16);
+  doc.setFillColor(242,242,242); doc.rect(M, Y, W-2*M, 10, "F");
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(26,32,44);
+  doc.text("Nom : " + v("p12-nom") + "     Prénom : " + v("p12-prenom") + "     Classe : " + v("p12-classe") + "     Date : " + new Date().toLocaleDateString("fr-FR"), M+3, Y+7);
+  Y += 14; footer();
+
+  /* ══ PARTIE 1 ══ */
+  secHdr("①  LES OBJETS TECHNOLOGIQUES ET NOTRE ALIMENTATION", [31,78,121]);
+  phaseHdr("Phase 1a – Je me questionne", [31,78,121]);
+  writeField("Objet + fonction d’usage :", "Le " + v("p12-1a-objet") + " sert à " + v("p12-1a-fonction"), 3);
+
+  phaseHdr("Phase 1b – Tableau des objets (binôme)", [31,78,121]);
+  chk(40);
+  var rows1b = [];
+  for (var i = 1; i <= 5; i++) rows1b.push([i, v("p12-1b-obj-"+i), v("p12-1b-fn-"+i)]);
+  doc.autoTable({ startY:Y, head:[["N°","Objet Technique","Fonction d’usage"]], body:rows1b,
+    theme:"grid", margin:{left:M,right:M},
+    headStyles:{fillColor:[31,78,121],textColor:255,fontSize:9,fontStyle:"bold"},
+    bodyStyles:{fontSize:9}, columnStyles:{0:{cellWidth:10,halign:"center"}} });
+  Y = doc.lastAutoTable.finalY + 5;
+
+  phaseHdr("Phase 1c – Je conclus", [31,78,121]);
+  writeField("Q1 – Apparition hasardeuse ?", v("p12-1c-q1"), 3);
+  writeField("Q2 – Contextes d’apparition :", v("p12-1c-q2"), 3);
+
+  /* ══ PARTIE 2 ══ */
+  secHdr("②  COMMENT FONCTIONNE UN RÉFRIGÉRATEUR ?", [30,107,59]);
+  phaseHdr("Phase 2a – Je me questionne", [30,107,59]);
+  writeField("Principe physique (hypothèse) :", v("p12-2a"), 3);
+
+  phaseHdr("Phase 2b – Principe de fonctionnement :", [30,107,59]);
+  writeField("", v("p12-2b-principe"), 3);
+
+  chk(50);
+  var rowsFT = [
+    ["FT1", v("p12-ft1"),  "1 – Condenseur"],
+    ["FT2", v("p12-ft2"),  v("p12-st2")],
+    ["FT3", v("p12-ft3"),  "3 – Évaporateur"],
+    ["FT4", "Déclencher le compresseur selon la température", v("p12-st4")],
+    ["FT5", v("p12-ft5"),  "5 – Capillaire"],
+    ["FT6", v("p12-ft6"),  v("p12-st6")]
+  ];
+  doc.autoTable({ startY:Y, head:[["N°","Fonction Technique (FT)","Solution Technique (ST)"]], body:rowsFT,
+    theme:"grid", margin:{left:M,right:M},
+    headStyles:{fillColor:[30,107,59],textColor:255,fontSize:9,fontStyle:"bold"},
+    bodyStyles:{fontSize:9}, columnStyles:{0:{cellWidth:14,halign:"center"}} });
+  Y = doc.lastAutoTable.finalY + 5;
+
+  /* ══ PARTIE 3 ══ */
+  secHdr("③  LE RÉFRIGÉRATEUR CONNECTÉ : UNE ÉVOLUTION", [123,44,139]);
+  chk(30);
+  var rowsP3 = [["FT7", v("p12-ft7"), v("p12-st7")], ["FT8", v("p12-ft8"), v("p12-st8")]];
+  doc.autoTable({ startY:Y, head:[["N°","Fonction Technique (FT)","Solution Technique (ST)"]], body:rowsP3,
+    theme:"grid", margin:{left:M,right:M},
+    headStyles:{fillColor:[123,44,139],textColor:255,fontSize:9,fontStyle:"bold"},
+    bodyStyles:{fontSize:9}, columnStyles:{0:{cellWidth:14,halign:"center"}} });
+  Y = doc.lastAutoTable.finalY + 5;
+  writeField("Contextes d’évolution :", v("p12-3-contexte"), 3);
+
+  /* ══ BILAN ══ */
+  secHdr("BILAN DE L’ACTIVITÉ", [197,90,17]);
+  writeField("", v("p12-bilan"), 3);
+
+  /* ══ Numérotation finale ══ */
+  var total = doc.internal.getNumberOfPages();
+  for (var p = 1; p <= total; p++) {
+    doc.setPage(p);
+    doc.setFontSize(8); doc.setFont("helvetica","italic"); doc.setTextColor(150);
+    doc.text("Page " + p + " / " + total, W/2, 289, {align:"center"});
+  }
+
+  var nom_ = v("p12-nom").replace(/\s+/g,"_");
+  var prenom_ = v("p12-prenom").replace(/\s+/g,"_");
+  doc.save("P12_Activite1_" + prenom_ + "_" + nom_ + ".pdf");
+  toast("PDF généré ✅");
+}
+
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
 document.getElementById("modal").addEventListener("click", function(e) { if (e.target === e.currentTarget) closeModal(); });
+
+// ── Restauration "Se souvenir de moi" au chargement ──────────
+(function() {
+  var sid  = localStorage.getItem("rem_id");
+  var spwd = localStorage.getItem("rem_pwd");
+  if (sid && spwd) {
+    document.getElementById("lid").value  = sid;
+    document.getElementById("lpwd").value = spwd;
+    var rem = document.getElementById("rememberme");
+    if (rem) rem.checked = true;
+  }
+})();
 </script>
 </body>
 </html>
