@@ -1,0 +1,55 @@
+name: Unlock semaine suivi-paul
+
+# Déverrouille automatiquement la semaine en cours sur suivi-paul/index.html
+# Tourne sur les serveurs GitHub — indépendant du PC de M. Blanchard.
+
+on:
+  schedule:
+    # 05:00 UTC = 07:00 Paris (CEST, été — mai à octobre)
+    - cron: '0 5 * * 1'
+    # 06:00 UTC = 07:00 Paris (CET, hiver — novembre à mars)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:  # bouton "Run workflow" manuel dans l'onglet Actions
+
+permissions:
+  contents: write  # nécessaire pour committer la mise à jour
+
+concurrency:
+  group: unlock-suivi-paul
+  cancel-in-progress: false
+
+jobs:
+  unlock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install jinja2
+
+      - name: Diagnostic (avant)
+        working-directory: suivi-paul
+        run: python generate.py --check
+
+      - name: Régénérer suivi-paul/index.html
+        working-directory: suivi-paul
+        run: python generate.py
+
+      - name: Commit & push si modifié
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- suivi-paul/index.html; then
+            echo "Aucune modification à committer."
+            exit 0
+          fi
+          DATE_FR=$(TZ=Europe/Paris date '+%Y-%m-%d')
+          git add suivi-paul/index.html
+          git commit -m "Auto: mise à jour planning Paul ($DATE_FR)"
+          git push
