@@ -271,6 +271,29 @@
     letter-spacing: 3px;
   }
 
+  .pix-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 16px;
+    background: linear-gradient(135deg, #1a73e8, #0d47a1);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(26,115,232,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .pix-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(26,115,232,0.55);
+  }
+
   .locked-box {
     display: flex;
     align-items: center;
@@ -418,6 +441,10 @@
               <div class="code-box-value">VFFVDG669</div>
             </div>
           </div>
+          <a href="https://pix.fr/" target="_blank" class="pix-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Accéder à PIX.fr
+          </a>
         </div>
 
         <div class="signal-block">
