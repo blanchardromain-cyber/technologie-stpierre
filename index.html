@@ -905,6 +905,7 @@ var dcTimerInterval = null, dcTimerStart = null, dcSubmitted = false;
 function startDCTimer() {
   if (dcSubmitted) return;
   if (dcTimerStart) { updateDCTimerDisplay(); return; } // déjà lancé
+  shuffleDCSelects();
   dcTimerStart = Date.now();
   clearInterval(dcTimerInterval);
   dcTimerInterval = setInterval(function() {
@@ -960,6 +961,25 @@ function startVoice(fieldId) {
   dcVoiceRec.start();
 }
 
+function shuffleDCSelects() {
+  var ids = ["dc-p2q3-a","dc-p2q3-b","dc-p2q3-c",
+             "dc-p2q3-d","dc-p2q3-e","dc-p2q3-f"];
+  ids.forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel || sel.tagName !== "SELECT") return;
+    var opts = Array.prototype.slice.call(sel.options);
+    // Garder l'option vide/placeholder en premier si elle existe
+    var placeholder = (opts[0] && opts[0].value === "") ? opts.shift() : null;
+    // Fisher-Yates shuffle
+    for (var i = opts.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = opts[i]; opts[i] = opts[j]; opts[j] = tmp;
+    }
+    if (placeholder) opts.unshift(placeholder);
+    while (sel.options.length) sel.remove(0);
+    opts.forEach(function(o) { sel.appendChild(o); });
+  });
+}
 function submitDCForm(auto) {
   if (dcSubmitted) return;
   stopDCTimer();
@@ -1161,7 +1181,36 @@ function autoAppreciation(score, sec) {
   return txt;
 }
 
+function injectDCPanelCSS() {
+  if (document.getElementById("dc-panel-css")) return;
+  var s = document.createElement("style");
+  s.id = "dc-panel-css";
+  s.textContent = [
+    ".adj-panel{background:#fff;border:2px solid var(--bl);border-radius:12px;padding:16px;margin-top:14px}",
+    ".adj-panel-title{font-size:14px;font-weight:700;color:var(--bl);margin-bottom:10px;display:flex;align-items:center;gap:6px}",
+    ".adj-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--gb)}",
+    ".adj-row:last-child{border-bottom:none}",
+    ".adj-lbl{flex:1;font-size:12px;font-weight:600;color:var(--tx)}",
+    ".adj-auto{font-size:11px;color:var(--td);min-width:50px;text-align:right}",
+    ".adj-ctrl{display:flex;align-items:center;gap:4px;margin-left:4px}",
+    ".adj-btn{width:28px;height:28px;border:none;border-radius:6px;background:var(--bp);color:var(--bl);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}",
+    ".adj-btn:hover{background:var(--bc);color:#fff}",
+    ".adj-val{width:44px;text-align:center;font-size:14px;font-weight:700;border:2px solid var(--gb);border-radius:6px;padding:3px;background:var(--gr);color:var(--bl)}",
+    ".adj-total-box{background:linear-gradient(135deg,var(--bl),var(--bc));color:#fff;border-radius:10px;padding:12px 16px;text-align:center;margin-top:10px}",
+    ".adj-total-num{font-size:26px;font-weight:700}",
+    ".adj-total-sub{font-size:12px;opacity:.8;margin-top:2px}",
+    ".appr-panel{background:var(--vp);border:2px solid var(--vc);border-radius:12px;padding:14px;margin-top:12px}",
+    ".appr-title{font-size:13px;font-weight:700;color:var(--vt);margin-bottom:8px}",
+    ".appr-ta{width:100%;min-height:80px;border:1.5px solid var(--gb);border-radius:8px;padding:10px;font-size:13px;resize:vertical;background:#fff;color:var(--tx)}",
+    ".appr-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}",
+    ".btn-voice{padding:7px 14px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;transition:background .15s}",
+    ".btn-voice:hover{background:#155a30}",
+    ".btn-voice.recording{background:var(--rg)}"
+  ].join("");
+  document.head.appendChild(s);
+}
 function buildDCTeacherPanel(sub) {
+  injectDCPanelCSS();
   var f = sub.fields||{};
   var sec = scoreDCBySection(f);
   var saved = sub.adjustedPts||{q1:sec.q1,q2a:sec.q2a,q2b:sec.q2b,q2c:sec.q2c,q3:sec.q3,p2q1:sec.p2q1,p2q2:sec.p2q2,p2q3:sec.p2q3};
@@ -1182,7 +1231,13 @@ function buildDCTeacherPanel(sub) {
       +'</div></div>';
   }
 
-  var h = '<div class="adj-panel">';
+  var h = '';
+  h += '<div style="background:#FFF8E1;border:1.5px solid #F9A825;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">';
+  h += '<div style="font-size:20px">🔑</div>';
+  h += '<div><div style="font-size:11px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.5px">Code corrigé à communiquer aux élèves</div>';
+  h += '<div style="font-family:\'DM Mono\',monospace;font-size:22px;font-weight:700;color:#1F4E79;letter-spacing:4px">CODC00</div>';
+  h += '<div style="font-size:11px;color:#888;margin-top:2px">Les élèves saisissent ce code pour accéder au corrigé</div></div></div>';
+  h += '<div class="adj-panel">';
   h += '<div class="adj-panel-title">✏️ Ajustement des points <span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(par palier de 0,5)</span></div>';
 
   h += '<div style="font-size:11px;font-weight:700;color:var(--vi);text-transform:uppercase;margin:6px 0 4px;letter-spacing:.5px">Partie 1 — Cardiofréquencemètre</div>';
@@ -1306,6 +1361,17 @@ function saveDCAdj(sid) {
   if(ms) ms.textContent="Note ajustée : "+tot+"/30 ✅ — Appréciation enregistrée";
   toast("✅ Ajustement enregistré — Note : "+tot+"/30");
 }
+function toggleDCLogCorr(btn) {
+  var d = document.getElementById("dc-log-corr");
+  if (!d) return;
+  if (d.classList.contains("h")) {
+    d.classList.remove("h");
+    btn.textContent = "🙈 Masquer correction";
+  } else {
+    d.classList.add("h");
+    btn.textContent = "📋 Afficher correction";
+  }
+}
 function buildDCModalHTML(f, score) {
   if (!f) return "<em>Aucune donnée</em>";
   function kw(v, ws) { if (!v) return undefined; var vl = v.toLowerCase(); for (var i=0;i<ws.length;i++){if(vl.indexOf(ws[i].toLowerCase())>=0)return true;} return false; }
@@ -1331,7 +1397,7 @@ function buildDCModalHTML(f, score) {
   h += row("Dans quel but ?","dc-p1q1-but",kw(f["dc-p1q1-but"],["fcm","fréquence","rythme","cardiaque","dépasser"]));
   h += '<div style="font-size:12px;font-weight:700;margin:8px 0 6px;color:var(--tx)">② A) Pieuvre — éléments associés aux FS figés (3 pts)</div>';
   h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
-  h += row("FS9 → élément ?","dc-p1q2-pie1",kw(f["dc-p1q2-pie1"],["smartphone","bluetooth","téléphone","mobile","connect"]));
+  h += row("FS9 → élément ?","dc-p1q2-pie1",kw(f["dc-p1q2-pie1"],["communication","connexion","connect","smartphone","bluetooth","téléphone","mobile"]));
   h += row("FS4 → élément ?","dc-p1q2-pie2",kw(f["dc-p1q2-pie2"],["norme","réglementation","europe","état","sécurité","législat"]));
   h += row("FS8 → élément ?","dc-p1q2-pie3",kw(f["dc-p1q2-pie3"],["environnement","recyclage","recycl","écolog"]));
   h += '</div><div style="font-size:12px;font-weight:700;margin:8px 0 4px;color:var(--tx)">② B) Tableau FS — FS1 à compléter (1 pt) <em style="font-weight:400;color:var(--td)">(FS5 et FS8 donnés)</em></div>';
@@ -1344,7 +1410,7 @@ function buildDCModalHTML(f, score) {
   h += '</div>';
   h += '<div style="font-size:12px;font-weight:700;margin:8px 0 6px;color:var(--tx)">③ Matières (4 pts)</div>';
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
-  h += SKIP
+  h += row("Boîtier pile / Électrodes","dc-p1q3-boitier",ex(f["dc-p1q3-boitier"],"Polyuréthane rigide"));
   h += row("Ceinture","dc-p1q3-ceinture",ex(f["dc-p1q3-ceinture"],"Tissu élastique"));
   h += row("Fermoir","dc-p1q3-fermoir",ex(f["dc-p1q3-fermoir"],"Polyuréthane rigide")||ex(f["dc-p1q3-fermoir"],"Acier"));
   h += row("Syst. de réglage","dc-p1q3-reglage",ex(f["dc-p1q3-reglage"],"Polyuréthane rigide")||ex(f["dc-p1q3-reglage"],"Acier"));
@@ -1374,12 +1440,25 @@ function buildDCModalHTML(f, score) {
   h += row("Position ⑤","dc-p2q3-e",ex(f["dc-p2q3-e"],"3"));
   h += row("Position ⑥","dc-p2q3-f",ex(f["dc-p2q3-f"],"6"));
   h += '</div>';
+  h += '<div style="margin-top:6px">';
+  h += '<button onclick="toggleDCLogCorr(this)" style="padding:5px 12px;background:var(--bp);color:var(--bl);border:1px solid var(--bc);border-radius:6px;cursor:pointer;font-size:12px;font-weight:700">📋 Afficher correction</button>';
+  h += '<div id="dc-log-corr" class="h" style="margin-top:8px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:10px;font-size:12px;line-height:1.8">';
+  h += '<strong style="color:#3730A3">✅ Correction Logigramme :</strong><br>';
+  h += '① → <strong>7</strong> &nbsp;|&nbsp; ② → <strong>2</strong> &nbsp;|&nbsp; ③ → <strong>1</strong><br>';
+  h += '④ → <strong>5</strong> &nbsp;|&nbsp; ⑤ → <strong>3</strong> &nbsp;|&nbsp; ⑥ → <strong>6</strong>';
+  h += '</div></div>';
   return h;
 }
 
+var DC_CORRIGE_HTML = ``;
 function unlockDCCorrige() {
   var entered = (document.getElementById("dc-corrige-code").value || "").trim();
-  if (entered === CFG.PMDP || entered === "CORRIGE2026") {
+  if (entered === CFG.PMDP || entered === "CORRIGE2026" || entered === "CODC00") {
+    var cb = document.getElementById("dc-corrige-body");
+    if (cb && !cb.dataset.filled) {
+      cb.innerHTML = DC_CORRIGE_HTML;
+      cb.dataset.filled = "1";
+    }
     document.getElementById("dc-corrige-body").classList.remove("h");
     document.getElementById("dc-corrige-gate").classList.add("h");
     toast("📚 Corrigé déverrouillé !");
