@@ -1888,8 +1888,8 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         <div class="cfsec">
           <h3>&#x1F513; Codes d'invitation par séquence</h3>
           <p style="font-size:13px;color:var(--td);margin-bottom:16px">
-            Chaque séquence peut être verrouillée par un code. Les élèves doivent saisir ce code pour accéder à la capsule.<br>
-            Laisse le champ vide pour désactiver le code (accès libre). Activez un code uniquement quand la séquence est ouverte.
+            Toutes les capsules sont <strong>verrouillées par défaut</strong>. Les élèves doivent saisir le code ci-dessous pour y accéder.<br>
+            Laisse le champ vide pour restaurer le code par défaut de la séquence (le verrouillage reste actif).
           </p>
           <div id="gate-config-list"></div>
         </div>
@@ -2880,7 +2880,9 @@ function getCodes() {
   var result = {};
   for (var i = 0; i < SEQUENCES_DEF.length; i++) {
     var s = SEQUENCES_DEF[i];
-    result[s.id] = (s.id in stored) ? stored[s.id] : s.code;
+    /* Verrouillage par défaut : un code vide retombe sur le code par défaut de la séquence */
+    var saved = (s.id in stored) ? stored[s.id] : null;
+    result[s.id] = (saved && saved.length > 0) ? saved : (s.code || "");
   }
   return result;
 }
@@ -3437,6 +3439,17 @@ function deleteSub(sid) {
   /* Retirer la soumission */
   subs = subs.filter(function(x){ return x.id != sid; });
   localStorage.setItem("subs", JSON.stringify(subs));
+  /* Re-verrouiller la capsule de l'élève (même navigateur/appareil) */
+  if (sub.eid && sub.cap) {
+    try {
+      var unlockedKey = "unlocked_" + sub.eid;
+      var ust = JSON.parse(localStorage.getItem(unlockedKey)) || {};
+      if (ust[sub.cap]) {
+        delete ust[sub.cap];
+        localStorage.setItem(unlockedKey, JSON.stringify(ust));
+      }
+    } catch(e) {}
+  }
   /* Réinitialiser les clés DC de l'élève si c'est un devoir commun */
   if (sub.cap === "dc") {
     /* On ne peut effacer que le localStorage local (même navigateur/appareil) */
@@ -3444,7 +3457,7 @@ function deleteSub(sid) {
     localStorage.removeItem("dcSubmitted");
   }
   renderStats(); renderSubs();
-  toast("Soumission supprimée — travail réinitialisé");
+  toast("Soumission supprimée — capsule re-verrouillée");
 }
 
 function exportCSV() {
@@ -4487,11 +4500,12 @@ function buildDCTeacherPanel(sub) {
   }
 
   var h = '';
+  var dcCode = (getCodes()["dc"] || "").toUpperCase();
   h += '<div style="background:#FFF8E1;border:1.5px solid #F9A825;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">';
   h += '<div style="font-size:20px">🔑</div>';
-  h += '<div><div style="font-size:11px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.5px">Code corrigé à communiquer aux élèves</div>';
-  h += '<div style="font-family:\'DM Mono\',monospace;font-size:22px;font-weight:700;color:#1F4E79;letter-spacing:4px">CODC00</div>';
-  h += '<div style="font-size:11px;color:#888;margin-top:2px">Les élèves saisissent ce code pour accéder au corrigé</div></div></div>';
+  h += '<div><div style="font-size:11px;font-weight:700;color:#E65100;text-transform:uppercase;letter-spacing:.5px">Code Devoir Commun à communiquer aux élèves</div>';
+  h += '<div style="font-family:\'DM Mono\',monospace;font-size:22px;font-weight:700;color:#1F4E79;letter-spacing:4px">' + (dcCode || '—') + '</div>';
+  h += '<div style="font-size:11px;color:#888;margin-top:2px">Les élèves saisissent ce code pour accéder à la capsule Devoir Commun</div></div></div>';
   h += '<div class="adj-panel">';
   h += '<div class="adj-panel-title">✏️ Ajustement des points <span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(par palier de 0,5)</span></div>';
   h += '<div style="font-size:11px;font-weight:700;color:var(--vi);text-transform:uppercase;margin:6px 0 4px;letter-spacing:.5px">Partie 1 — Cardiofréquencemètre</div>';
