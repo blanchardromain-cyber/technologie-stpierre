@@ -5,10 +5,12 @@ name: Unlock semaine suivi-paul
 
 on:
   schedule:
-    # 05:00 UTC = 07:00 Paris (CEST, été — mai à octobre)
-    - cron: '0 5 * * 1'
-    # 06:00 UTC = 07:00 Paris (CET, hiver — novembre à mars)
-    - cron: '0 6 * * 1'
+    # Bascule lundi 07:00 Paris (transitions hebdomadaires standard)
+    - cron: '0 5 * * 1'   # 05:00 UTC = 07:00 Paris CEST (été)
+    - cron: '0 6 * * 1'   # 06:00 UTC = 07:00 Paris CET (hiver)
+    # Bascule mercredi 07:00 Paris (jour du Devoir Commun — semaine 3)
+    - cron: '0 5 * * 3'   # 05:00 UTC = 07:00 Paris CEST (été)
+    - cron: '0 6 * * 3'   # 06:00 UTC = 07:00 Paris CET (hiver)
   workflow_dispatch:  # bouton "Run workflow" manuel dans l'onglet Actions
 
 permissions:
