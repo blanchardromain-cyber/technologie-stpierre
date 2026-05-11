@@ -19,7 +19,7 @@
       "activity_html": "Campagne PIX · <strong>L'essentiel de l'intelligence artificielle</strong><br>Utiliser l'IA générative de façon éclairée et efficace.",
       "link_url": "https://pix.fr/",
       "link_label": "Accéder à PIX.fr",
-      "signal_intro": "✉️ Quand tu as terminé — copie ce message et envoie-le à M.Blanchard via Ecole Directe :",
+      "signal_intro": "✉️ Quand tu as terminé — copie ce message et envoie-le moi via Ecole Directe :",
       "signal_message": "Bonjour M. Blanchard,\nJ'ai terminé l'activité PIX IA (semaine du 27 avril).\n— Paul"
     },
     {
@@ -35,26 +35,26 @@
       "activity_html": "<strong>Capsule P12 — Technologie et Alimentation</strong> (4ème)<br>Accessible via le site Technologie après connexion.",
       "link_url": "https://blanchardromain-cyber.github.io/technologie-stpierre/",
       "link_label": "Accéder au site Technologie",
-      "locked_text": "Le code d'accès te sera communiqué par M. Blanchard en début de semaine.",
+      "locked_text": "Je te communiquerai le code d'accès en début de semaine.",
       "signal_intro": "✉️ Quand tu auras terminé, copie ce message :",
       "signal_message": "Bonjour M. Blanchard,\nJ'ai terminé la Capsule P12 (semaine du 11 mai).\n— Paul"
     },
     {
       "num": 3,
-      "active_from": "2026-05-18",
+      "active_from": "2026-05-20",
       "done_from": "2026-05-25",
       "title": "📝 Devoir Commun",
       "title_locked": "🔒 Devoir Commun",
-      "dates_label": "18 – 22 mai 2026",
+      "dates_label": "Mercredi 20 mai 2026",
       "code": null,
       "code_label": "Code d'accès",
       "activity_label": "📝 Activité",
-      "activity_html": "<strong>Devoir Commun</strong> — les consignes et modalités te seront transmises par M. Blanchard en début de semaine.",
+      "activity_html": "<strong>Devoir Commun</strong> — épreuve en même temps que les élèves du collège. Je te transmettrai les consignes et le code d'accès le mercredi matin.<br><br>⏱️ Une fois le code validé, un <strong>compte à rebours de 30 minutes</strong> se lance automatiquement. À la fin du temps imparti, ta réponse est <strong>enregistrée automatiquement</strong> — pas besoin de cliquer sur « envoyer ».",
       "link_url": null,
       "link_label": null,
-      "locked_text": "Accès et instructions communiqués lundi matin.",
+      "locked_text": "Accès et instructions communiqués mercredi 20 mai au matin.",
       "signal_intro": "✉️ Quand tu auras rendu ton devoir, copie ce message :",
-      "signal_message": "Bonjour M. Blanchard,\nJ'ai rendu le Devoir Commun (semaine du 18 mai).\n— Paul"
+      "signal_message": "Bonjour M. Blanchard,\nJ'ai rendu le Devoir Commun (mercredi 20 mai).\n— Paul"
     },
     {
       "num": 4,
@@ -69,7 +69,7 @@
       "activity_html": null,
       "link_url": null,
       "link_label": null,
-      "soon_text": "Cette semaine sera mise à jour par M. Blanchard. Reviens consulter cette page en début de semaine ! 👀",
+      "soon_text": "Mise à jour à venir. Reviens consulter cette page en début de semaine ! 👀",
       "signal_intro": null,
       "signal_message": null
     },
@@ -86,7 +86,7 @@
       "activity_html": null,
       "link_url": null,
       "link_label": null,
-      "soon_text": "Cette semaine sera mise à jour par M. Blanchard. Reviens consulter cette page en début de semaine ! 👀",
+      "soon_text": "Mise à jour à venir. Reviens consulter cette page en début de semaine ! 👀",
       "signal_intro": null,
       "signal_message": null
     },
@@ -103,7 +103,7 @@
       "activity_html": null,
       "link_url": null,
       "link_label": null,
-      "soon_text": "Cette semaine sera mise à jour par M. Blanchard. Reviens consulter cette page en début de semaine ! 👀",
+      "soon_text": "Mise à jour à venir. Reviens consulter cette page en début de semaine ! 👀",
       "signal_intro": null,
       "signal_message": null
     },
@@ -120,7 +120,7 @@
       "activity_html": null,
       "link_url": null,
       "link_label": null,
-      "soon_text": "Dernière semaine ! 🎉 Le contenu sera mis à jour par M. Blanchard.",
+      "soon_text": "Dernière semaine ! 🎉 Mise à jour à venir.",
       "signal_intro": null,
       "signal_message": null
     }

@@ -112,9 +112,9 @@ def build_week_view(week: dict, today: date) -> dict:
         "link_url": week.get("link_url"),
         "link_label": week.get("link_label") or "Ouvrir",
         "locked_text": week.get("locked_text")
-            or "Le code d'accès te sera communiqué par M. Blanchard en début de semaine.",
+            or "Je te communiquerai le code d'accès en début de semaine.",
         "soon_text": week.get("soon_text")
-            or "Cette semaine sera mise à jour par M. Blanchard.",
+            or "Mise à jour à venir.",
         "signal_intro": week.get("signal_intro"),
         "signal_message_html": message_to_html(week.get("signal_message") or ""),
         "signal_message_js": message_to_js_string(week.get("signal_message") or ""),
