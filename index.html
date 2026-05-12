@@ -470,8 +470,19 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 <!-- jsPDF (export PDF côté client) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<!-- Ruffle (lecteur Flash SWF) -->
-<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<!-- Ruffle (lecteur Flash SWF) — version épinglée pour stabilité -->
+<script>
+  // Config Ruffle AVANT chargement de la lib
+  window.RufflePlayer = window.RufflePlayer || {};
+  window.RufflePlayer.config = {
+    autoplay: "on",
+    unmuteOverlay: "hidden",
+    splashScreen: false,
+    publicPath: "https://unpkg.com/@ruffle-rs/ruffle@0.1.0-nightly.2025.5.5/",
+    polyfills: false   // évite le scan agressif des iframes
+  };
+</script>
+<script src="https://unpkg.com/@ruffle-rs/ruffle@0.1.0-nightly.2025.5.5/ruffle.js"></script>
 </head>
 <body>
 
@@ -1012,19 +1023,18 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <div class="p12-phase" style="background:#F0FBF5;border:1px solid var(--vt);margin-bottom:0">
             <div style="font-size:13px;font-weight:700;color:var(--vt);margin-bottom:12px">&#x1F4DA; Phase 2b &mdash; Ressources (10-15 min) &bull; J&rsquo;investigue</div>
 
-            <!-- Animation SWF via Ruffle (<ruffle-embed> — CDN unpkg) -->
+            <!-- Animation SWF via Ruffle (lecteur WASM, aucune install élève) -->
             <div style="margin-bottom:16px">
               <div style="font-size:13px;font-weight:600;color:var(--td);margin-bottom:8px">&#x1F3AC; Animation interactive &mdash; Conservation des aliments</div>
-              <div style="display:flex;justify-content:center">
-                <ruffle-embed
-                  src="assets/swf/conservation_aliments.swf"
-                  width="800"
-                  height="600"
-                  style="border-radius:10px;overflow:hidden;max-width:100%;box-shadow:var(--sh)">
-                </ruffle-embed>
+              <div id="swf-stage" style="display:flex;justify-content:center">
+                <div id="swf-host" style="width:800px;max-width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#000;box-shadow:var(--sh);position:relative">
+                  <div id="swf-status" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;text-align:center;padding:20px">
+                    &#x23F3; Chargement du lecteur Flash&hellip;
+                  </div>
+                </div>
               </div>
-              <div style="font-size:11px;color:var(--td);margin-top:6px;font-style:italic;text-align:center">
-                &#x26A0;&#xFE0F; Ruffle Flash Player int&eacute;gr&eacute; &mdash; Placer le fichier <code>conservation_aliments.swf</code> dans <code>assets/swf/</code>
+              <div id="swf-fallback" class="h" style="margin-top:10px;background:#FEF9E7;border:1px solid #D4AC0D;border-radius:8px;padding:12px;font-size:13px;color:#7D6608">
+                &#x26A0;&#xFE0F; Le lecteur Flash n'a pas pu d&eacute;marrer. Tu peux malgr&eacute; tout continuer l'activit&eacute; ci-dessous &mdash; ton professeur reprendra ce point en classe.
               </div>
             </div>
 
@@ -1171,7 +1181,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <button onclick="submitP12Form()"
                   style="padding:14px 28px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
-            &#x1F4E4; Soumettre au professeur
+            &#x1F4BE; Enregistrer mon travail
           </button>
           <button onclick="exportP12PDF()"
                   style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
@@ -1696,7 +1706,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         <!-- ══════════════════════════════════════════ -->
         <div id="dc-submit-section" style="margin-top:24px">
           <button onclick="submitDCForm(false)" style="width:100%;padding:16px;border:none;border-radius:10px;background:var(--vi);color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#9B39B0'" onmouseout="this.style.background='var(--vi)'">
-            &#x1F4E4;&nbsp; Soumettre mon devoir
+            &#x1F4BE;&nbsp; Enregistrer mon devoir
           </button>
           <div style="text-align:center;font-size:12px;color:var(--td);margin-top:8px">En soumettant, tu ne pourras plus modifier tes r&eacute;ponses.</div>
         </div>
@@ -1841,9 +1851,12 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       <!-- SUIVI -->
       <div id="psuivi">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-          <span style="font-size:13px;color:var(--td)">Dernière mise à jour : <span id="last-refresh">—</span></span>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span style="font-size:13px;color:var(--td)">Dernière mise à jour : <span id="last-refresh">—</span></span>
+            <span id="sync-indicator" style="font-size:12px;font-weight:600;color:var(--td)">—</span>
+          </div>
           <button onclick="refreshProf()" style="padding:7px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">
-            &#x1F504; Rafraîchir
+            &#x1F504; Synchroniser maintenant
           </button>
         </div>
         <div class="sgr" id="stats"></div>
@@ -1865,16 +1878,6 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
           <button onclick="exportCSVAll()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
         </div>
-        <!-- Import cross-machine : l'élève copie son code, le prof colle ici -->
-        <details style="margin:10px 0;background:#fff;border:1px dashed var(--gb);border-radius:var(--r);padding:12px 16px">
-          <summary style="cursor:pointer;font-size:13px;font-weight:700;color:var(--bl);user-select:none">&#x1F4E5; Importer une soumission élève (code de transfert)</summary>
-          <p style="font-size:12px;color:var(--td);margin:8px 0 6px">L'élève clique sur <em>"Copier mon code"</em> après avoir soumis son activité, puis envoie ce code par mail ou messagerie. Colle-le ci-dessous et clique Importer.</p>
-          <div style="display:flex;gap:8px;align-items:flex-start">
-            <textarea id="import-code-area" rows="3" style="flex:1;padding:8px;border:1px solid var(--gb);border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;resize:vertical" placeholder="Colle ici le code de l'élève…"></textarea>
-            <button onclick="importSubCode()" style="padding:9px 14px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;white-space:nowrap">&#x2B07; Importer</button>
-          </div>
-          <div id="import-feedback" style="margin-top:6px;font-size:12px;font-weight:600"></div>
-        </details>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
           <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Activité</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
             <tbody id="stbody"></tbody></table>
@@ -1917,7 +1920,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <button onclick="clearAllSubs()" style="padding:9px 14px;background:var(--rg);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F5D1; Effacer toutes les soumissions</button>
           <button onclick="addDemo()" style="margin-left:8px;padding:9px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F9EA; Données de démo</button>
           <div style="margin-top:12px;padding:10px 14px;background:var(--gr);border-radius:8px;font-size:12px;color:var(--td)">
-            <strong>ℹ️ Synchronisation cross-machine :</strong> Les élèves qui soumettent P12 depuis leur propre appareil obtiennent un <em>code de transfert</em> à vous envoyer (mail ou ENT). Collez-le dans la zone d'import ci-dessus dans l'onglet Suivi.
+            <strong>ℹ️ Synchronisation automatique :</strong> Les soumissions des élèves arrivent toutes seules dans l'onglet <em>Suivi validations</em> via Google Sheets (Apps Script). Le tableau se rafraîchit toutes les 30 secondes — bouton <em>Synchroniser maintenant</em> pour forcer.
           </div>
         </div>
       </div>
@@ -2960,7 +2963,7 @@ function goPage(pid) {
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
-    initP12Table(); initRufflePlayer(); renderCtxQuiz();
+    initP12Table(); renderCtxQuiz(); initRufflePlayer();
     if (user) {
       var fNom    = document.getElementById("p12-nom");
       var fPrenom = document.getElementById("p12-prenom");
@@ -3150,6 +3153,7 @@ function submitQuiz() {
   for (var i = 0; i < all.length; i++) { if (!(all[i].eid === user.id && all[i].cap === "cap1")) filtered.push(all[i]); }
   filtered.push(sub);
   localStorage.setItem("subs", JSON.stringify(filtered));
+  cloudSync.send(sub);
   goPage("pg-ok"); updCapSidebar(); updMyStatus();
 }
 
@@ -3234,30 +3238,6 @@ function buildP12ModalHTML(f) {
     '<div style="font-weight:700;color:var(--or);font-size:12px;margin:10px 0 4px">BILAN</div>' +
     row("Bilan personnel","bilan");
 }
-function importSubCode() {
-  var raw = (document.getElementById("import-code-area").value || "").trim();
-  var fb = document.getElementById("import-feedback");
-  if (!raw) { fb.style.color="var(--rg)"; fb.textContent="⚠ Colle d'abord le code de l'élève."; return; }
-  try {
-    var json = decodeURIComponent(escape(atob(raw)));
-    var sub = JSON.parse(json);
-    if (!sub.cap || !sub.ename || !sub.eid) throw new Error("Format invalide");
-    // Forcer id unique si collision
-    sub.id = Date.now() + Math.floor(Math.random()*1000);
-    var allSubs = getSubs();
-    allSubs = allSubs.filter(function(x){ return !(x.eid === sub.eid && x.cap === sub.cap); });
-    allSubs.push(sub);
-    localStorage.setItem("subs", JSON.stringify(allSubs));
-    fb.style.color = "var(--vt)";
-    fb.textContent = "✅ Soumission de " + sub.ename + " importée avec succès.";
-    document.getElementById("import-code-area").value = "";
-    renderStats(); renderSubs();
-  } catch(e) {
-    fb.style.color = "var(--rg)";
-    fb.textContent = "❌ Code invalide. Demande à l'élève de recopier son code entier.";
-  }
-}
-
 // ================================================================
 // TABLEAU DE BORD PROF
 // ================================================================
@@ -3531,17 +3511,37 @@ function clearAllSubs() {
 }
 // ── Rafraîchissement tableau de bord prof ────────────────────
 var profRefreshTimer = null;
+var profPulling = false;
 function refreshProf() {
-  renderStats();
-  renderSubs();
-  var el = document.getElementById("last-refresh");
-  if (el) el.textContent = new Date().toLocaleTimeString("fr-FR");
+  // Tire d'abord depuis le cloud (sans bloquer), puis rafraîchit l'affichage
+  if (cloudSync.hasUrl() && !profPulling) {
+    profPulling = true;
+    var ind = document.getElementById("sync-indicator");
+    if (ind) { ind.textContent = "⟳ Synchronisation…"; ind.style.color = "var(--bl)"; }
+    cloudSync.pull(function (ok, info) {
+      profPulling = false;
+      renderStats();
+      renderSubs();
+      var el = document.getElementById("last-refresh");
+      if (el) el.textContent = new Date().toLocaleTimeString("fr-FR");
+      var ind2 = document.getElementById("sync-indicator");
+      if (ind2) {
+        if (ok) { ind2.textContent = "✅ Synchronisé"; ind2.style.color = "var(--vt)"; }
+        else { ind2.textContent = "⚠ Sync indisponible (mode local)"; ind2.style.color = "var(--or)"; }
+      }
+    });
+  } else {
+    renderStats();
+    renderSubs();
+    var el = document.getElementById("last-refresh");
+    if (el) el.textContent = new Date().toLocaleTimeString("fr-FR");
+  }
 }
 function startProfAutoRefresh() {
   if (profRefreshTimer) clearInterval(profRefreshTimer);
   profRefreshTimer = setInterval(function() {
     if (isProf) refreshProf();
-  }, 10000); // toutes les 10 secondes
+  }, 30000); // toutes les 30 secondes (réduit pour ménager les quotas Apps Script)
 }
 function stopProfAutoRefresh() {
   if (profRefreshTimer) { clearInterval(profRefreshTimer); profRefreshTimer = null; }
@@ -3557,6 +3557,105 @@ function toast(m) {
 // APPS SCRIPT URL — remplacer après déploiement
 // ================================================================
 var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzics06wmY5iIILKx2-HRDIg233yYIpNBPJqveK1qbDPWsa09d3CnA_-N6GgfWiFUzBsg/exec";
+// Doit correspondre à SHARED_SECRET dans apps-script-backend.gs
+var SYNC_SECRET = "CHANGE_MOI_EN_2026";
+
+// ================================================================
+// CLOUD SYNC — envoi élève + relecture prof + filet hors-ligne
+// ================================================================
+var cloudSync = (function () {
+  var OFFLINE_KEY = "subs_offline_queue";
+  var hasUrl = function () { return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; };
+
+  function queue(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
+      q = q.filter(function (x) { return !(x.eid === sub.eid && x.cap === sub.cap); });
+      q.push(sub);
+      localStorage.setItem(OFFLINE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function unqueue(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
+      q = q.filter(function (x) { return !(x.eid === sub.eid && x.cap === sub.cap); });
+      localStorage.setItem(OFFLINE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+
+  /* Envoi d'une soumission. Toujours mis en file localement d'abord ;
+     on tente le POST en arrière-plan. mode:no-cors => on ne lit pas la réponse
+     mais on évite le préflight CORS bloquant. */
+  function send(sub, onDone) {
+    queue(sub);
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+      }).then(function () {
+        unqueue(sub);
+        if (onDone) onDone(true);
+      }).catch(function () {
+        if (onDone) onDone(false);
+      });
+    } catch (e) {
+      if (onDone) onDone(false);
+    }
+  }
+
+  /* Rejoue la file d'attente (appelé au démarrage) */
+  function flush() {
+    try {
+      var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
+      if (!q.length || !hasUrl()) return;
+      q.forEach(function (sub) { send(sub); });
+    } catch (e) {}
+  }
+
+  /* Prof : récupère toutes les soumissions du Sheet et merge dans localStorage.
+     On garde la version la plus récente (par dateISO) en cas de conflit. */
+  function pull(onDone) {
+    if (!hasUrl()) { if (onDone) onDone(false, "no-url"); return; }
+    var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.ok || !Array.isArray(data.subs)) {
+          if (onDone) onDone(false, data && data.error);
+          return;
+        }
+        var local = (function () { try { return JSON.parse(localStorage.getItem("subs")) || []; } catch (e) { return []; } })();
+        var byKey = {};
+        function keyOf(s) { return (s.eid || "") + "::" + (s.cap || ""); }
+        // index local
+        local.forEach(function (s) { byKey[keyOf(s)] = s; });
+        // merge serveur — on garde la version locale si elle est plus récente
+        // (le prof a pu valider/rejeter avant que la sync ait lieu)
+        data.subs.forEach(function (s) {
+          var k = keyOf(s);
+          var existing = byKey[k];
+          if (!existing) { byKey[k] = s; return; }
+          var sLocalDt = new Date(existing.dateISO || 0).getTime();
+          var sRemoteDt = new Date(s.dateISO || 0).getTime();
+          // Statut local non-"pending" prime (le prof a déjà tranché)
+          if (existing.status && existing.status !== "pending") return;
+          if (sRemoteDt >= sLocalDt) byKey[k] = s;
+        });
+        var merged = [];
+        for (var k in byKey) if (byKey.hasOwnProperty(k)) merged.push(byKey[k]);
+        localStorage.setItem("subs", JSON.stringify(merged));
+        if (onDone) onDone(true, merged.length);
+      })
+      .catch(function (err) { if (onDone) onDone(false, String(err)); });
+  }
+
+  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl };
+})();
+// Au chargement de la page : on tente de rejouer ce qui n'avait pas pu partir
+try { cloudSync.flush(); } catch (e) {}
 
 // ================================================================
 // 40 QUESTIONS — QUIZ REMÉDIATION
@@ -3653,13 +3752,7 @@ function submitRemQuiz() {
   var e2=document.getElementById("rq-eleve2").value.trim();
   var cls=document.getElementById("rq-classe").value.trim();
   var pct=Math.round(score/40*100)+"%";
-  var qs="eleve1="+encodeURIComponent(e1)+"&eleve2="+encodeURIComponent(e2)+"&classe="+encodeURIComponent(cls)+"&score="+score+"&sur=40&pct="+encodeURIComponent(pct)+"&dt="+dt+"&pr="+pr+"&pg="+pg+"&details="+encodeURIComponent(details.join(";"));
-  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "VOTRE_URL_APPS_SCRIPT_ICI") {
-    var img = new Image();
-    img.src = APPS_SCRIPT_URL + "?" + qs + "&t=" + Date.now();
-    img.onerror = function(){};
-  }
-  // Enregistrer aussi dans localStorage pour le tableau de bord prof
+  // Enregistrer dans localStorage pour le tableau de bord prof
   var remSub = {
     id: Date.now(),
     eid: user ? user.id : e1,
@@ -3683,6 +3776,8 @@ function submitRemQuiz() {
   allSubs = allSubs.filter(function(x){ return !(x.eid === remSub.eid && x.cap === "rem1"); });
   allSubs.push(remSub);
   localStorage.setItem("subs", JSON.stringify(allSubs));
+  // Envoi automatique au prof
+  cloudSync.send(remSub);
   // Afficher résultat
   document.getElementById("rq-body").classList.add("h");
   var col=(score>=28?"var(--vt)":score>=20?"var(--or)":"var(--rg)");
@@ -3693,10 +3788,7 @@ function submitRemQuiz() {
   resHtml+='<div style="background:var(--bp);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--bl)">DESSIN TECHNIQUE</div><div style="font-size:22px;font-weight:700;color:var(--bl)">'+dt+'/12</div></div>';
   resHtml+='<div style="background:var(--op);border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:var(--or)">PROC&Eacute;D&Eacute;S</div><div style="font-size:22px;font-weight:700;color:var(--or)">'+pr+'/14</div></div>';
   resHtml+='<div style="background:#EAD4F4;border-radius:8px;padding:12px"><div style="font-size:11px;font-weight:700;color:#7B2C8B">PROGRAMMATION</div><div style="font-size:22px;font-weight:700;color:#7B2C8B">'+pg+'/14</div></div>';
-  resHtml+='</div><div class="spend"><div class="sptit">&#x1F4E4; R&eacute;sultats';
-  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=="VOTRE_URL_APPS_SCRIPT_ICI") resHtml+=' envoy&eacute;s au professeur';
-  else resHtml+=' &mdash; &#x26A0;&#xFE0F; Lien Sheets non configur&eacute;, montre ce r&eacute;sultat &agrave; ton prof';
-  resHtml+='</div></div>';
+  resHtml+='</div><div class="spend"><div class="sptit">&#x2705; R&eacute;sultats enregistr&eacute;s &mdash; ton professeur les verra automatiquement</div></div>';
   resHtml+='<button class="btnp" onclick="goPage(&quot;pg-dash&quot;)" style="margin-top:8px">&#x2190; Retour &agrave; l&rsquo;accueil</button></div>';
   // Afficher le résultat SANS écraser le HTML (pour permettre un retour/relance)
   document.getElementById("rq-ident").classList.add("h");
@@ -3916,27 +4008,58 @@ function initP12Table() {
   tbody.innerHTML = html;
 }
 
-/* Initialise le lecteur Ruffle pour l'animation SWF */
+/* Lecteur Ruffle (Flash WASM) — aucune installation requise côté élève */
 var ruffleInitialized = false;
 function initRufflePlayer() {
   if (ruffleInitialized) return;
+  var host = document.getElementById("swf-host");
+  if (!host) return;
   ruffleInitialized = true;
-  var msg = document.getElementById("ruffle-msg");
-  if (!window.RufflePlayer) { return; }
-  try {
-    var ruffle   = window.RufflePlayer.newest();
-    var player   = ruffle.createPlayer();
-    var container = document.getElementById("ruffle-player");
-    if (container) {
-      container.innerHTML = "";
-      container.appendChild(player);
-      player.style.cssText = "width:100%;height:100%";
-      player.load("http://www.techmania.fr/conservation_aliments/parent.swf");
-      if (msg) msg.style.display = "none";
+  // Attendre que Ruffle soit prêt (le script charge en async)
+  var tries = 0;
+  function tryLoad() {
+    if (!window.RufflePlayer || !window.RufflePlayer.newest) {
+      if (tries++ < 30) return setTimeout(tryLoad, 200);
+      return showSwfError("La librairie Ruffle n'a pas pu se charger (réseau ?).");
     }
-  } catch(e) {
-    console.warn("Ruffle – impossible de charger le SWF :", e);
+    try {
+      var ruffle = window.RufflePlayer.newest();
+      var player = ruffle.createPlayer();
+      player.style.cssText = "width:100%;height:100%;display:block";
+      var status = document.getElementById("swf-status");
+      if (status) status.remove();
+      host.appendChild(player);
+      // load() retourne une Promise sur les versions récentes
+      var p = player.load({
+        url: "assets/swf/conservation_aliments.swf",
+        autoplay: "on",
+        unmuteOverlay: "hidden"
+      });
+      if (p && p.catch) p.catch(function(err){
+        console.warn("[Ruffle] load() rejected:", err);
+        showSwfError("Le SWF n'a pas pu être lu (" + (err && err.message ? err.message : err) + ").");
+      });
+      // Filet supplémentaire : si rien ne s'affiche après 8s, on montre le fallback
+      setTimeout(function(){
+        if (player.metadata && !player.metadata.width) {
+          showSwfError("L'animation n'a pas démarré (fichier peut-être incomplet).");
+        }
+      }, 8000);
+    } catch (e) {
+      console.warn("[Ruffle] init error:", e);
+      showSwfError("Erreur d'initialisation du lecteur (" + e.message + ").");
+    }
   }
+  tryLoad();
+}
+function showSwfError(msg) {
+  var fb = document.getElementById("swf-fallback");
+  if (fb) {
+    fb.classList.remove("h");
+    fb.innerHTML = "&#x26A0;&#xFE0F; " + msg + " Tu peux continuer l'activit&eacute; ci-dessous &mdash; ton professeur reprendra ce point en classe.";
+  }
+  var status = document.getElementById("swf-status");
+  if (status) status.innerHTML = "&#x274C; Lecteur indisponible";
 }
 
 /* Soumission de l'activité P12 → sauvegarde + affichage corrigé */
@@ -3982,50 +4105,13 @@ function submitP12Form() {
   allSubs = allSubs.filter(function(x){ return !(x.eid === p12Sub.eid && x.cap === "p12"); });
   allSubs.push(p12Sub);
   localStorage.setItem("subs", JSON.stringify(allSubs));
-  // ── Envoi Apps Script (fire-and-forget) ─────────────────────
-  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== "VOTRE_URL_APPS_SCRIPT_ICI") {
-    try {
-      var img = new Image();
-      img.src = APPS_SCRIPT_URL + "?cap=p12&eleve=" + encodeURIComponent(prenom + " " + nom) +
-        "&classe=" + encodeURIComponent(classe) +
-        "&bilan=" + encodeURIComponent(snap.bilan || "") +
-        "&contexte=" + encodeURIComponent(snap["3-contexte"] || "") +
-        "&t=" + Date.now();
-      img.onerror = function(){};
-    } catch(e){}
-  }
-  // ── Code de transfert pour import manuel par le prof ────────
-  try {
-    var exportCode = btoa(unescape(encodeURIComponent(JSON.stringify(p12Sub))));
-    var stDiv = document.getElementById("p12-code-transfert");
-    if (!stDiv) {
-      stDiv = document.createElement("div");
-      stDiv.id = "p12-code-transfert";
-      stDiv.style.cssText = "margin-top:14px;background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;padding:14px";
-      document.getElementById("p12-status").parentNode.insertBefore(stDiv, document.getElementById("p12-status").nextSibling);
-    }
-    // Construction DOM — évite les guillemets imbriqués
-    var lbl = document.createElement("div");
-    lbl.style.cssText = "font-size:13px;font-weight:700;color:#3730A3;margin-bottom:6px";
-    lbl.innerHTML = "&#x1F4CB; Code de transfert &mdash; envoie ce code &agrave; ton prof&nbsp;:";
-    var ta = document.createElement("textarea");
-    ta.id = "p12-export-code";
-    ta.rows = 3;
-    ta.readOnly = true;
-    ta.value = exportCode;
-    ta.onclick = function(){ this.select(); };
-    ta.style.cssText = "width:100%;box-sizing:border-box;font-family:monospace;font-size:10px;padding:8px;border:1px solid #C7D2FE;border-radius:6px;background:#fff;resize:none;margin-top:4px";
-    var btn = document.createElement("button");
-    btn.style.cssText = "margin-top:6px;padding:7px 14px;background:#4F46E5;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit";
-    btn.innerHTML = "&#x1F4CB; Copier mon code";
-    btn.onclick = function(){ var t=document.getElementById("p12-export-code"); if(t){t.select();document.execCommand("copy");} toast("Code copié !"); };
-    stDiv.innerHTML = "";
-    stDiv.appendChild(lbl);
-    stDiv.appendChild(ta);
-    stDiv.appendChild(btn);
-  } catch(e){}
+  // ── Envoi automatique au prof (cloudSync) ───────────────────
+  cloudSync.send(p12Sub);
+  // Nettoyage d'un éventuel ancien bloc "code de transfert"
+  var oldCode = document.getElementById("p12-code-transfert");
+  if (oldCode) oldCode.remove();
   var st = document.getElementById("p12-status");
-  st.innerHTML = "&#x2705; Activité sauvegardée le " + ts + ". Le corrigé est maintenant disponible ci-dessous.";
+  st.innerHTML = "&#x2705; Travail enregistr&eacute; le " + ts + ". Ton professeur le verra automatiquement. Le corrig&eacute; est disponible ci-dessous.";
   st.style.color = "var(--vt)";
   var cor = document.getElementById("p12-corrige");
   if (cor) { cor.classList.remove("h"); setTimeout(function(){ cor.scrollIntoView({behavior:"smooth",block:"start"}); }, 150); }
@@ -4281,16 +4367,13 @@ function submitDCForm(auto) {
     var el = document.getElementById(fids[i]);
     if (el) fields[fids[i]] = el.value || "";
   }
-  var raw = (user ? user.id : prenom + nom) + Date.now();
-  var submitCode = "";
-  try { submitCode = btoa(raw).replace(/[^A-Z0-9]/gi,"").substring(0,10).toUpperCase(); } catch(e) { submitCode = Date.now().toString(36).toUpperCase(); }
   var eid = user ? user.id : (prenom.toLowerCase().replace(/\s/g,".") + "." + nom.toLowerCase().replace(/\s/g,""));
   var autoScore = scoreDC(fields);
   var sub = {
     id: Date.now(), eid: eid, ename: prenom + " " + nom, ecls: classe,
     cap: "dc", caplbl: "Devoir Commun", score: autoScore, qcmTot: 30,
     open: "Devoir Commun soumis le " + ts, fields: fields,
-    submitCode: submitCode, date: new Date().toLocaleDateString("fr-FR"),
+    date: new Date().toLocaleDateString("fr-FR"),
     dateISO: new Date().toISOString(), status: "pending"
   };
   var allSubs = getSubs();
@@ -4300,44 +4383,26 @@ function submitDCForm(auto) {
   // Désactiver tous les champs sauf le code corrigé prof
   var els = document.querySelectorAll("#pg-dc input:not(#dc-corrige-code), #pg-dc select, #pg-dc textarea");
   for (var j = 0; j < els.length; j++) els[j].disabled = true;
-  // Envoi Apps Script
-  if (APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0) {
-    try {
-      var img = new Image();
-      img.src = APPS_SCRIPT_URL + "?cap=dc&eleve=" + encodeURIComponent(prenom + " " + nom) +
-        "&classe=" + encodeURIComponent(classe) + "&code=" + encodeURIComponent(submitCode) + "&t=" + Date.now();
-      img.onerror = function(){};
-    } catch(e){}
-  }
-  // Code de transfert
-  var exportCode = "";
-  try { exportCode = btoa(unescape(encodeURIComponent(JSON.stringify(sub)))); } catch(e){}
+  // ── Envoi automatique au prof (cloudSync) ───────────────────
+  cloudSync.send(sub);
   // Affichage confirmation
   var secDiv = document.getElementById("dc-submit-section");
   if (secDiv) {
     var h = '<div style="background:var(--vp);border:2px solid var(--vt);border-radius:10px;padding:20px">';
     h += '<div style="text-align:center;margin-bottom:14px">';
     h += '<div style="font-size:36px">' + (auto ? "⏱" : "✅") + '</div>';
-    h += '<div style="font-size:16px;font-weight:700;color:var(--vt);margin-top:6px">Devoir ' + (auto ? 'soumis automatiquement' : 'soumis') + ' le ' + ts + '</div>';
+    h += '<div style="font-size:16px;font-weight:700;color:var(--vt);margin-top:6px">Devoir ' + (auto ? 'enregistr&eacute; automatiquement' : 'enregistr&eacute;') + ' le ' + ts + '</div>';
     h += '<div style="font-size:22px;font-weight:700;margin-top:8px;color:' + (autoScore>=24?'var(--vt)':autoScore>=15?'var(--or)':'var(--rg)') + '">' + autoScore + '<span style="font-size:14px">/30</span> pts</div>';
-    h += '<div style="font-size:12px;color:var(--td);margin-top:2px">Note indicative — le professeur peut ajuster.</div></div>';
-    h += '<div style="text-align:center;background:#fff;border-radius:10px;padding:14px;margin-bottom:12px">';
-    h += '<div style="font-size:13px;color:var(--td);margin-bottom:6px">Ton code de soumission — <strong>note-le !</strong></div>';
-    h += '<div style="font-family:\'DM Mono\',monospace;font-size:26px;font-weight:700;color:var(--bl);letter-spacing:4px">' + submitCode + '</div>';
-    h += '<div style="font-size:12px;color:var(--td);margin-top:6px">Communique ce code à ton professeur.</div></div>';
-    if (exportCode) {
-      h += '<div style="background:var(--bp);border-radius:8px;padding:12px">';
-      h += '<div style="font-size:13px;font-weight:700;color:var(--bl);margin-bottom:6px">📋 Code de transfert pour le professeur :</div>';
-      h += '<textarea id="dc-export-code" rows="3" readonly onclick="this.select()" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:10px;padding:8px;border:1px solid var(--gb);border-radius:6px;background:#fff;resize:none">' + exportCode + '</textarea>';
-      h += '<button onclick="var t=document.getElementById(\'dc-export-code\');if(t){t.select();document.execCommand(\'copy\');}toast(\'Code copié !\');" style="margin-top:6px;padding:7px 14px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit">📋 Copier mon code</button>';
-      h += '</div>';
-    }
+    h += '<div style="font-size:12px;color:var(--td);margin-top:2px">Note indicative &mdash; le professeur peut ajuster.</div></div>';
+    h += '<div style="text-align:center;background:#fff;border-radius:10px;padding:14px">';
+    h += '<div style="font-size:13px;color:var(--td)">&#x2705; Ton travail a &eacute;t&eacute; transmis &agrave; ton professeur. Tu peux fermer la page.</div>';
+    h += '</div>';
     h += '</div>';
     secDiv.innerHTML = h;
   }
   var cs = document.getElementById("dc-corrige-section");
   if (cs) cs.classList.remove("h");
-  toast(auto ? "⏱ Temps écoulé — Devoir soumis !" : "✅ Devoir soumis !");
+  toast(auto ? "⏱ Temps écoulé — Devoir enregistré !" : "✅ Devoir enregistré !");
   window.scrollTo(0, 0);
 }
 
