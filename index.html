@@ -4032,6 +4032,7 @@ function initRufflePlayer() {
       // load() retourne une Promise sur les versions récentes
       var p = player.load({
         url: "assets/swf/conservation_aliments.swf",
+        base: "assets/swf/",          // ← résout barres.swf, frigo.swf, son.swf, etc. depuis le bon dossier
         autoplay: "on",
         unmuteOverlay: "hidden"
       });
