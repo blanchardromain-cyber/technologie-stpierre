@@ -2879,6 +2879,14 @@ var user = null, isProf = false, ans = {}, curQ = 0, modalId = null, pendingSeq 
 // UTILITAIRES LOCALSTORAGE
 // ================================================================
 function getSubs() { try { return JSON.parse(localStorage.getItem("subs")) || []; } catch(e) { return []; } }
+/* Format date+heure local : 2026-05-13-15:25:34 (entrée = ISO ou date string FR) */
+function fmtDateTime(iso) {
+  if (!iso) return "";
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return iso; // fallback : on garde tel quel si non parseable
+  function p(n){ return n<10 ? "0"+n : ""+n; }
+  return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"-"+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());
+}
 function getUnlocked() { var k = "unlocked_" + (user ? user.id : "guest"); try { return JSON.parse(localStorage.getItem(k)) || {}; } catch(e) { return {}; } }
 function setUnlocked(obj) { var k = "unlocked_" + (user ? user.id : "guest"); localStorage.setItem(k, JSON.stringify(obj)); }
 function getCodes() {
@@ -3194,7 +3202,7 @@ function updMyStatus() {
   for (var i = 0; i < mine.length; i++) {
     var s = mine[i];
     html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
-    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + s.date + ' – Score QCM : ' + s.score + '/' + s.qcmTot + '</div></div>';
+    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – Score QCM : ' + s.score + '/' + s.qcmTot + '</div></div>';
     html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">' + ic[s.status] + '</span><span style="font-size:13px;font-weight:600;color:' + co[s.status] + '">' + lbl[s.status] + '</span></div></div>';
   }
   cards.innerHTML = html;
@@ -3326,7 +3334,7 @@ function renderSubs() {
       }
       var capTag = s.caplbl ? '<div style="font-size:10px;color:var(--td);margin-top:2px">' + s.caplbl + '</div>' : '';
       rows += '<tr><td><strong>' + s.ename + '</strong>' + capTag + '</td><td>' + s.ecls + '</td><td>' + sc + '</td>';
-      rows += '<td style="font-size:12px">' + s.date + '</td>';
+      rows += '<td style="font-size:12px">' + fmtDateTime(s.dateISO || s.date) + '</td>';
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
       rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
       if (s.status !== "validated") rows += '<button class="btnv" onclick="updSub(' + sid + ', \'validated\')">&#x2705;</button>';
@@ -3405,7 +3413,7 @@ function openModal(sid) {
   for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { sub = subs[i]; break; } }
   if (!sub) return;
   modalId = sid;
-  document.getElementById("minfo").textContent = sub.ename + " – " + sub.ecls + " – " + sub.date;
+  document.getElementById("minfo").textContent = sub.ename + " – " + sub.ecls + " – " + fmtDateTime(sub.dateISO || sub.date);
   var mh3 = document.querySelector("#modal .mcard h3");
   if (sub.cap === "dc" && sub.fields) {
     if (mh3) mh3.textContent = "Devoir Commun : Réponses de l'élève";
@@ -3442,7 +3450,9 @@ function deleteSub(sid) {
   if (idx < 0) return;
   var sub = subs[idx];
   if (!confirm("Supprimer la soumission de " + (sub.ename || "cet élève") + " ?\nCela réinitialisera aussi son travail pour qu'il puisse recommencer.")) return;
-  /* Retirer la soumission */
+  /* Suppression cloud (hard delete via Apps Script) — fire-and-forget */
+  try { if (window.cloudSync && cloudSync["delete"]) cloudSync["delete"](sub); } catch(e) {}
+  /* Retirer la soumission localement */
   subs = subs.filter(function(x){ return x.id != sid; });
   localStorage.setItem("subs", JSON.stringify(subs));
   /* Re-verrouiller la capsule de l'élève (même navigateur/appareil) */
@@ -3678,7 +3688,28 @@ var cloudSync = (function () {
       .catch(function (err) { if (onDone) onDone(false, String(err)); });
   }
 
-  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl };
+  /* Suppression hard côté cloud — POST {action:"delete", id, eid, cap}
+     Apps Script doit avoir un handler doPost qui supprime la ligne correspondante. */
+  function del(sub, onDone) {
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          secret: SYNC_SECRET,
+          action: "delete",
+          id: sub.id,
+          eid: sub.eid,
+          cap: sub.cap
+        })
+      }).then(function () { if (onDone) onDone(true); })
+        .catch(function () { if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+
+  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del };
 })();
 // Au chargement de la page : on tente de rejouer ce qui n'avait pas pu partir
 try { cloudSync.flush(); } catch (e) {}
@@ -4741,6 +4772,11 @@ function saveDCAdj(sid) {
   subs[idx].adjustedScore=tot;
   subs[idx].appreciation=appr;
   subs[idx].status="validated";
+  // ── Fix bug 3c : propager la note ajustée vers le tableau de bord ──
+  subs[idx].score = tot;            // overwrite la note auto par la note ajustée
+  subs[idx].qcmTot = 30;            // DC est noté sur 30
+  // Pousser aussi vers le cloud pour que les autres profs voient la note ajustée
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
   localStorage.setItem("subs",JSON.stringify(subs));
   renderStats(); renderSubs();
   var ms=document.getElementById("mscore");
