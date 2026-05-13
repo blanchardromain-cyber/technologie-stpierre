@@ -1875,6 +1875,9 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="validated">&#x2705; Validé</option>
             <option value="rejected">&#x274C; À revoir</option>
           </select>
+          <select class="fsel" id="fclass" onchange="renderSubs()">
+            <option value="">Toutes les classes</option>
+          </select>
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
           <button onclick="exportCSVAll()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
         </div>
@@ -2957,6 +2960,9 @@ function doLogout() {
 // NAVIGATION
 // ================================================================
 function goPage(pid) {
+  // Couper son SWF P12 si on quitte la page P12
+  var prevP12 = !document.getElementById("pg-p12").classList.contains("h");
+  if (prevP12 && pid !== "pg-p12") pauseP12Swf();
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
@@ -2964,6 +2970,7 @@ function goPage(pid) {
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
     initP12Table(); renderCtxQuiz(); initRufflePlayer();
+    if (window._p12Player) resumeP12Swf(); // remonte le son si l'élève revient
     if (user) {
       var fNom    = document.getElementById("p12-nom");
       var fPrenom = document.getElementById("p12-prenom");
@@ -3270,10 +3277,29 @@ function renderSubs() {
   var sf = document.getElementById("fstat").value;
   var se = document.getElementById("fsearch").value.toLowerCase();
   var subs = getSubs(), filtered = [];
+  // Peupler le select "classe" avec les classes uniques présentes dans les subs (en préservant la sélection)
+  var fclassEl = document.getElementById("fclass");
+  var clf = "";
+  if (fclassEl) {
+    clf = fclassEl.value;
+    var classesSet = {};
+    for (var k = 0; k < subs.length; k++) {
+      if (subs[k].ecls) classesSet[subs[k].ecls] = true;
+    }
+    var classList = Object.keys(classesSet).sort();
+    var opts = '<option value="">Toutes les classes</option>';
+    for (var m = 0; m < classList.length; m++) {
+      var c = classList[m];
+      opts += '<option value="' + c + '"' + (clf === c ? ' selected' : '') + '>' + c + '</option>';
+    }
+    fclassEl.innerHTML = opts;
+    clf = fclassEl.value; // re-lire après réécriture (au cas où la classe sélectionnée a disparu)
+  }
   for (var i = 0; i < subs.length; i++) {
     var s = subs[i];
     if (cf && s.cap !== cf) continue;
     if (sf && s.status !== sf) continue;
+    if (clf && s.ecls !== clf) continue;
     if (se && (s.ename||"").toLowerCase().indexOf(se) < 0 && (s.ecls||"").toLowerCase().indexOf(se) < 0) continue;
     filtered.push(s);
   }
@@ -4025,6 +4051,7 @@ function initRufflePlayer() {
     try {
       var ruffle = window.RufflePlayer.newest();
       var player = ruffle.createPlayer();
+      window._p12Player = player; // ← exposé pour pause/reprise (couper son sur Enregistrer/Retour)
       player.style.cssText = "width:100%;height:100%;display:block";
       var status = document.getElementById("swf-status");
       if (status) status.remove();
@@ -4063,11 +4090,31 @@ function showSwfError(msg) {
   if (status) status.innerHTML = "&#x274C; Lecteur indisponible";
 }
 
+/* Pause + mute du SWF P12 (appelé sur "Enregistrer mon travail" et "Retour") */
+function pauseP12Swf() {
+  var p = window._p12Player;
+  if (!p) return;
+  try {
+    if ("volume" in p) p.volume = 0;             // coupe l'audio immédiatement
+    if (typeof p.pause === "function") p.pause(); // stoppe aussi l'animation (économise CPU)
+  } catch (e) { /* silencieux */ }
+}
+/* Reprise quand l'élève revient sur la page P12 */
+function resumeP12Swf() {
+  var p = window._p12Player;
+  if (!p) return;
+  try {
+    if ("volume" in p) p.volume = 1;
+    if (typeof p.play === "function") p.play();
+  } catch (e) { /* silencieux */ }
+}
+
 /* Soumission de l'activité P12 → sauvegarde + affichage corrigé */
 function submitP12Form() {
   var nom    = (document.getElementById("p12-nom").value    || "").trim();
   var prenom = (document.getElementById("p12-prenom").value || "").trim();
   if (!nom || !prenom) { alert("Merci d’indiquer ton nom et ton prénom avant de soumettre."); return; }
+  pauseP12Swf(); // coupe le son du SWF dès la validation
   var ts = new Date().toLocaleString("fr-FR");
   var classe = (document.getElementById("p12-classe").value || "").trim();
   var snap = { nom:nom, prenom:prenom, classe:classe, ts:ts,
@@ -4595,7 +4642,7 @@ function buildDCTeacherPanel(sub) {
   h += '<textarea class="appr-ta" id="dc-appreciation" placeholder="Saisir l\'appréciation...">'+appr+'</textarea>';
   h += '<div class="appr-actions">';
   h += '<button class="btn-voice" id="btn-voice-appr" onclick="startVoiceAppr()">🎤 Saisie vocale</button>';
-  h += '<button onclick="resetApprAuto('+autoTotal+JSON.stringify(sec).replace(/"/g,'\\"')+')" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Régénérer auto</button>';
+  h += '<button onclick="resetApprAuto()" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700" title="Génère une appréciation à partir de la note actuelle (ajustements inclus)">🔄 Regénérer auto</button>';
   h += '</div></div>';
   h += '<div style="text-align:right;margin-top:12px">';
   h += '<button onclick="saveDCAdj('+sub.id+')" style="padding:10px 22px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer ajustement</button>';
@@ -4661,9 +4708,20 @@ function dcAdjUpdateTotal() {
   }
 }
 
-function resetApprAuto(autoTotal, sec) {
-  var ta=document.getElementById("dc-appreciation");
-  if(ta){ta.value=autoAppreciation(autoTotal, typeof sec==="string"?JSON.parse(sec):sec);}
+/* Régénère l'appréciation à partir des points ACTUELLEMENT affichés (= ajustements pris en compte).
+   Auparavant on passait la note initiale figée ; désormais on lit les inputs adj-* en direct. */
+function resetApprAuto() {
+  var keys = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
+  var sec = {}, total = 0;
+  for (var i = 0; i < keys.length; i++) {
+    var el = document.getElementById("adj-"+keys[i]);
+    var v = el ? (parseFloat(el.value)||0) : 0;
+    sec[keys[i]] = v;
+    total += v;
+  }
+  total = Math.round(Math.min(30, total)*10)/10;
+  var ta = document.getElementById("dc-appreciation");
+  if (ta) ta.value = autoAppreciation(total, sec);
 }
 
 function saveDCAdj(sid) {
