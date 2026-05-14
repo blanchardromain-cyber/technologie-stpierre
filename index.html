@@ -1879,7 +1879,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="">Toutes les classes</option>
           </select>
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
-          <button onclick="exportCSVAll()" style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
+          <button onclick="exportCSVAll()" title="Sélectionne une capsule pour exporter les détails de cette capsule uniquement. Sans filtre, exporte tout. Les filtres classe/statut/recherche sont aussi appliqués." style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
         </div>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
           <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Activité</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
@@ -2954,7 +2954,48 @@ function launch() {
   document.getElementById("uname").textContent = user.p + " " + user.n;
   document.getElementById("ucls").textContent = user.c ? user.c : "";
   if (isProf) { goPage("pg-prof"); renderProf(); startProfAutoRefresh(); refreshProf(); }
-  else { goPage("pg-dash"); document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !"; renderDash(); updMyStatus(); }
+  else {
+    goPage("pg-dash");
+    document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !";
+    renderDash();
+    updMyStatus();
+    checkStudentStatusChanges(); // 2c — détecte les validations / refus depuis le dernier login
+  }
+}
+
+/* 2c — Au login élève, on pull le cloud, on compare avec le dernier statut connu,
+   et on toast pour chaque capsule dont le statut a changé vers validated/rejected. */
+function checkStudentStatusChanges() {
+  if (!user || isProf) return;
+  if (!window.cloudSync || !cloudSync.hasUrl() || !cloudSync.fetchOwn) return;
+
+  var seenKey = "seen_status_" + user.id;
+  var seen = {};
+  try { seen = JSON.parse(localStorage.getItem(seenKey) || "{}"); } catch(e) {}
+
+  cloudSync.fetchOwn(user.id, function(ownSubs) {
+    if (!ownSubs || !ownSubs.length) return;
+    var newSeen = {};
+    var notifs = [];
+    for (var i = 0; i < ownSubs.length; i++) {
+      var s = ownSubs[i];
+      var lbl = s.caplbl || s.cap;
+      newSeen[s.cap] = s.status;
+      // Première détection (jamais vu cette capsule) OU changement de statut → notifier si validated/rejected
+      if (seen[s.cap] !== s.status) {
+        if (s.status === "validated") {
+          notifs.push("🟢 Travail validé sur « " + lbl + " » !");
+        } else if (s.status === "rejected") {
+          notifs.push("🔴 « " + lbl + " » : à retravailler");
+        }
+      }
+    }
+    // Garde aussi les capsules locales déjà vues mais plus retournées par le cloud (cas suppression :
+    // on les retire de newSeen pour qu'à un futur dépôt, le toast se redéclenche normalement)
+    localStorage.setItem(seenKey, JSON.stringify(newSeen));
+    // Empile les toasts (queue gère l'espacement)
+    notifs.forEach(function(m){ toastQ(m, 4000); });
+  });
 }
 function doLogout() {
   user = null; isProf = false; ans = {}; curQ = 0; stopProfAutoRefresh();
@@ -3440,6 +3481,8 @@ function updSub(sid, st) {
   if (idx < 0) return;
   subs[idx].status = st;
   localStorage.setItem("subs", JSON.stringify(subs));
+  // 2c — Propage le nouveau statut au cloud pour que l'élève le voie au prochain login
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
   renderStats(); renderSubs();
   toast(st === "validated" ? "Soumission validée" : "Soumission marquée à revoir");
 }
@@ -3476,6 +3519,83 @@ function deleteSub(sid) {
   toast("Soumission supprimée — capsule re-verrouillée");
 }
 
+/* ── Helpers CSV (2e) ─────────────────────────────────────────────────
+   _csvEscape : protège valeurs contenant ; " ou \n
+   _downloadCSV : déclenche le téléchargement (avec BOM UTF-8 pour Excel) */
+function _csvEscape(v) {
+  if (v === undefined || v === null) return "";
+  v = String(v);
+  if (v.indexOf(";") >= 0 || v.indexOf('"') >= 0 || v.indexOf("\n") >= 0 || v.indexOf("\r") >= 0) {
+    return '"' + v.replace(/"/g, '""') + '"';
+  }
+  return v;
+}
+function _downloadCSV(csv, filename) {
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8,﻿" + encodeURIComponent(csv);
+  a.download = filename;
+  a.click();
+}
+
+/* Schémas d'export détaillé par capsule (2e).
+   Chaque schéma retourne { headers: [...], rows: [[...], [...]] } à partir d'un set filtré. */
+function _buildCapsuleCSV(cap, filtered) {
+  var dateOf = function(x){ return fmtDateTime(x.dateISO || x.date); };
+  if (cap === "p12") {
+    var headers = ["Eleve","Classe","Date","Statut","Objet","Fonction","Q1c-1","Q1c-2","Q2a","Principe","FT1","FT2","ST2","FT3","ST4","FT5","FT6","ST6","FT7","ST7","FT8","ST8","Contextes","Bilan"];
+    var rows = filtered.map(function(x){
+      var f = x.fields || {};
+      return [x.ename, x.ecls, dateOf(x), x.status,
+        f["1a-objet"], f["1a-fonction"], f["1c-q1"], f["1c-q2"], f["2a"], f["2b-principe"],
+        f.ft1, f.ft2, f.st2, f.ft3, f.st4, f.ft5, f.ft6, f.st6, f.ft7, f.st7, f.ft8, f.st8,
+        f["3-contexte"], f.bilan];
+    });
+    return { headers: headers, rows: rows };
+  }
+  if (cap === "dc") {
+    // Devoir Commun : colonnes fixes + colonnes dynamiques pour chaque champ rempli
+    var fieldKeys = {};
+    filtered.forEach(function(x){ if (x.fields) Object.keys(x.fields).forEach(function(k){ fieldKeys[k] = true; }); });
+    var sortedKeys = Object.keys(fieldKeys).sort();
+    var hdr = ["Eleve","Classe","Date","Statut","Note auto","Note ajustee","Appreciation"].concat(sortedKeys);
+    var dcRows = filtered.map(function(x){
+      var f = x.fields || {};
+      var base = [x.ename, x.ecls, dateOf(x), x.status,
+        (x.score !== undefined ? x.score + "/30" : ""),
+        (x.adjustedScore !== undefined ? x.adjustedScore + "/30" : ""),
+        x.appreciation || ""];
+      return base.concat(sortedKeys.map(function(k){ return f[k] === undefined ? "" : f[k]; }));
+    });
+    return { headers: hdr, rows: dcRows };
+  }
+  if (cap === "rem1") {
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Score total","Domaine DT","Domaine PR","Domaine PG"],
+      rows: filtered.map(function(x){
+        return [x.ename, x.ecls, dateOf(x), x.status,
+          (x.score||0) + "/40", x.scoreDT||0, x.scorePR||0, x.scorePG||0];
+      })
+    };
+  }
+  if (cap === "cap1") {
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Score","Reponse ouverte"],
+      rows: filtered.map(function(x){
+        return [x.ename, x.ecls, dateOf(x), x.status,
+          (x.score||0) + "/" + (x.qcmTot||0), x.open || ""];
+      })
+    };
+  }
+  // Capsule inconnue : fallback générique
+  return {
+    headers: ["Eleve","Classe","Date","Statut","Score","Reponse"],
+    rows: filtered.map(function(x){
+      return [x.ename, x.ecls, dateOf(x), x.status,
+        (x.score||0) + "/" + (x.qcmTot||0), x.open || ""];
+    })
+  };
+}
+
 function exportCSV() {
   var s = getSubs();
   if (!s.length) { toast("Aucune donnée à exporter"); return; }
@@ -3488,31 +3608,74 @@ function exportCSV() {
   a.download = "suivi_CI_P13_" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".csv";
   a.click(); toast("Export CSV généré");
 }
+/* 2e — Export CSV contextuel.
+   - Si un filtre capsule est actif → exporte UNIQUEMENT cette capsule avec tous ses détails saisis.
+   - Sinon → export complet, tous types confondus (comportement historique).
+   Dans les deux cas, on respecte AUSSI les filtres classe / statut / recherche actifs. */
 function exportCSVAll() {
-  var s = getSubs();
-  if (!s.length) { toast("Aucune donnée à exporter"); return; }
-  var otherRows = ["Eleve;Classe;Capsule;Score;Date;Statut;Reponse ouverte"];
-  var p12Rows = ["Eleve;Classe;Date;Statut;Objet;Fonction;Contextes;FT7;ST7;FT8;ST8;Bilan"];
-  for (var i = 0; i < s.length; i++) {
-    var x = s[i];
-    if (x.cap === "p12") {
-      var f = x.fields || {};
-      p12Rows.push([x.ename, x.ecls, x.date, x.status,
-        '"'+(f["1a-objet"]||"").replace(/"/g,'""')+'"','"'+(f["1a-fonction"]||"").replace(/"/g,'""')+'"',
-        '"'+(f["3-contexte"]||"").replace(/"/g,'""')+'"','"'+(f.ft7||"").replace(/"/g,'""')+'"',
-        '"'+(f.st7||"").replace(/"/g,'""')+'"','"'+(f.ft8||"").replace(/"/g,'""')+'"',
-        '"'+(f.st8||"").replace(/"/g,'""')+'"','"'+(f.bilan||"").replace(/"/g,'""')+'"'
-      ].join(";"));
-    } else {
-      otherRows.push([x.ename, x.ecls, x.caplbl||x.cap, x.score+"/"+x.qcmTot, x.date, x.status, '"'+(x.open||"").replace(/"/g,'""')+'"'].join(";"));
+  var allSubs = getSubs();
+  if (!allSubs.length) { toast("Aucune donnée à exporter"); return; }
+
+  // Récupère tous les filtres UI actifs
+  var capF   = (document.getElementById("fcap")    || {}).value || "";
+  var statF  = (document.getElementById("fstat")   || {}).value || "";
+  var classF = (document.getElementById("fclass")  || {}).value || "";
+  var searchF = ((document.getElementById("fsearch") || {}).value || "").toLowerCase();
+
+  // Applique les filtres (identique à renderSubs)
+  var filtered = allSubs.filter(function(s){
+    if (capF   && s.cap    !== capF)   return false;
+    if (statF  && s.status !== statF)  return false;
+    if (classF && s.ecls   !== classF) return false;
+    if (searchF && (s.ename||"").toLowerCase().indexOf(searchF) < 0
+                && (s.ecls||"").toLowerCase().indexOf(searchF) < 0) return false;
+    return true;
+  });
+  if (!filtered.length) { toast("Aucune donnée correspondant aux filtres"); return; }
+
+  var datePart = new Date().toLocaleDateString("fr-FR").replace(/\//g,"-");
+
+  // === Cas 1 : un filtre capsule est actif → export détaillé spécifique ===
+  if (capF) {
+    var schema = _buildCapsuleCSV(capF, filtered);
+    var lines = [schema.headers.map(_csvEscape).join(";")];
+    for (var i = 0; i < schema.rows.length; i++) {
+      lines.push(schema.rows[i].map(_csvEscape).join(";"));
     }
+    _downloadCSV(lines.join("\n"), "suivi_" + capF + "_" + datePart + ".csv");
+    toast("Export CSV " + capF + " (" + filtered.length + " élève" + (filtered.length>1?"s":"") + ")");
+    return;
   }
-  var csv = otherRows.join("\n");
-  if (p12Rows.length > 1) csv += "\n\n=== P12 Technologie et Alimentation ===\n" + p12Rows.join("\n");
-  var a = document.createElement("a");
-  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  a.download = "suivi_Techno_" + new Date().toLocaleDateString("fr-FR").replace(/\//g,"-") + ".csv";
-  a.click(); toast("Export CSV complet P12 genere");
+
+  // === Cas 2 : pas de filtre capsule → export mixte (comportement historique) ===
+  // Sépare P12 (format détaillé) du reste (format simple)
+  var p12Set = filtered.filter(function(x){ return x.cap === "p12"; });
+  var otherSet = filtered.filter(function(x){ return x.cap !== "p12"; });
+
+  var csvParts = [];
+  if (otherSet.length) {
+    var oLines = ["Eleve;Classe;Capsule;Score;Date;Statut;Reponse ouverte"];
+    for (var j = 0; j < otherSet.length; j++) {
+      var x = otherSet[j];
+      oLines.push([
+        _csvEscape(x.ename), _csvEscape(x.ecls), _csvEscape(x.caplbl || x.cap),
+        _csvEscape((x.score||0) + "/" + (x.qcmTot||0)),
+        _csvEscape(fmtDateTime(x.dateISO || x.date)),
+        _csvEscape(x.status), _csvEscape(x.open || "")
+      ].join(";"));
+    }
+    csvParts.push(oLines.join("\n"));
+  }
+  if (p12Set.length) {
+    var p12Schema = _buildCapsuleCSV("p12", p12Set);
+    var pLines = [p12Schema.headers.map(_csvEscape).join(";")];
+    for (var k = 0; k < p12Schema.rows.length; k++) {
+      pLines.push(p12Schema.rows[k].map(_csvEscape).join(";"));
+    }
+    csvParts.push("=== P12 Technologie et Alimentation ===\n" + pLines.join("\n"));
+  }
+  _downloadCSV(csvParts.join("\n\n"), "suivi_Techno_" + datePart + ".csv");
+  toast("Export CSV complet généré (" + filtered.length + " soumissions)");
 }
 function addDemo() {
   var d = [
@@ -3587,6 +3750,29 @@ function toast(m) {
   var t = document.getElementById("toastEl");
   t.textContent = m; t.classList.add("show");
   setTimeout(function() { t.classList.remove("show"); }, 3000);
+}
+
+/* 2c — Toast en file d'attente (évite l'écrasement quand plusieurs notifs se déclenchent en cascade).
+   Utiliser pour les notifs élève au login : 1 toast par capsule changée, espacés de 3.5s. */
+var _toastQueue = [];
+var _toastBusy = false;
+function toastQ(m, duration) {
+  _toastQueue.push({ m: m, d: duration || 3500 });
+  _toastDrain();
+}
+function _toastDrain() {
+  if (_toastBusy || !_toastQueue.length) return;
+  _toastBusy = true;
+  var item = _toastQueue.shift();
+  var t = document.getElementById("toastEl");
+  t.textContent = item.m; t.classList.add("show");
+  setTimeout(function() {
+    t.classList.remove("show");
+    setTimeout(function() {
+      _toastBusy = false;
+      _toastDrain();
+    }, 350); // petit gap entre 2 toasts pour la lisibilité
+  }, item.d);
 }
 
 // ================================================================
@@ -3688,6 +3874,21 @@ var cloudSync = (function () {
       .catch(function (err) { if (onDone) onDone(false, String(err)); });
   }
 
+  /* 2c — Récupère uniquement les soumissions d'un élève donné depuis le cloud,
+     sans toucher à localStorage.subs (utilisé pour détecter changements de statut). */
+  function fetchOwn(eid, onDone) {
+    if (!hasUrl() || !eid) { if (onDone) onDone([]); return; }
+    var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+    fetch(url)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data || !data.ok || !Array.isArray(data.subs)) { if (onDone) onDone([]); return; }
+        var own = data.subs.filter(function(s){ return s.eid === eid; });
+        if (onDone) onDone(own);
+      })
+      .catch(function(){ if (onDone) onDone([]); });
+  }
+
   /* Suppression hard côté cloud — POST {action:"delete", id, eid, cap}
      Apps Script doit avoir un handler doPost qui supprime la ligne correspondante. */
   function del(sub, onDone) {
@@ -3709,7 +3910,7 @@ var cloudSync = (function () {
     } catch (e) { if (onDone) onDone(false); }
   }
 
-  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del };
+  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del, fetchOwn: fetchOwn };
 })();
 // Au chargement de la page : on tente de rejouer ce qui n'avait pas pu partir
 try { cloudSync.flush(); } catch (e) {}
@@ -4630,6 +4831,9 @@ function buildDCTeacherPanel(sub) {
   autoTotal = Math.min(autoTotal,30);
   var savedTotal = Math.min(30, (saved.q1||0)+(saved.q2a||0)+(saved.q2b||0)+(saved.q2c||0)+(saved.q3||0)+(saved.p2q1||0)+(saved.p2q2||0)+(saved.p2q3||0));
   var appr = sub.appreciation || autoAppreciation(savedTotal, sec);
+  // Tracking pour auto-régénération silencieuse (3b) : si pas de personnalisation prof,
+  // le texte initial EST l'auto-générée → on s'en souvient pour pouvoir le remplacer.
+  _lastAutoAppr = sub.appreciation ? "" : appr;
 
   function adjRow(key, label, maxPts, autoVal, curVal) {
     var v = (typeof curVal !== "undefined") ? curVal : autoVal;
@@ -4682,6 +4886,11 @@ function buildDCTeacherPanel(sub) {
 }
 
 var _dcVoiceRecog = null;
+/* Mémorise la dernière appréciation auto-générée pour le modal DC ouvert.
+   Sert à savoir si le prof a personnalisé manuellement le texte ou non :
+   - si textarea === _lastAutoAppr → safe de régénérer en silence sur changement de points
+   - sinon → on ne touche pas (le prof a édité, on respecte son texte) */
+var _lastAutoAppr = "";
 function startVoiceAppr() {
   var btn = document.getElementById("btn-voice-appr");
   if(!btn) return;
@@ -4737,11 +4946,21 @@ function dcAdjUpdateTotal() {
     var col=tot>=24?"#2E8B4A":tot>=15?"#C55A11":"#C0392B";
     box.style.background="linear-gradient(135deg,"+col+","+col+"cc)";
   }
+  // 3b — Régénération silencieuse de l'appréciation si pas customisée par le prof
+  dcAutoApprIfUntouched();
 }
 
 /* Régénère l'appréciation à partir des points ACTUELLEMENT affichés (= ajustements pris en compte).
    Auparavant on passait la note initiale figée ; désormais on lit les inputs adj-* en direct. */
 function resetApprAuto() {
+  var ta = document.getElementById("dc-appreciation");
+  if (!ta) return;
+  ta.value = _computeAutoAppr();
+  _lastAutoAppr = ta.value;
+}
+
+/* Helper interne : calcule l'appréciation auto à partir des inputs adj-* courants */
+function _computeAutoAppr() {
   var keys = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
   var sec = {}, total = 0;
   for (var i = 0; i < keys.length; i++) {
@@ -4751,8 +4970,20 @@ function resetApprAuto() {
     total += v;
   }
   total = Math.round(Math.min(30, total)*10)/10;
+  return autoAppreciation(total, sec);
+}
+
+/* 3b — Régénération silencieuse de l'appréciation quand le prof ajuste les points.
+   N'écrase QUE si le texte courant correspond à la dernière auto-générée (= prof n'a pas édité manuellement). */
+function dcAutoApprIfUntouched() {
   var ta = document.getElementById("dc-appreciation");
-  if (ta) ta.value = autoAppreciation(total, sec);
+  if (!ta) return;
+  if (ta.value === _lastAutoAppr) {
+    var newAppr = _computeAutoAppr();
+    ta.value = newAppr;
+    _lastAutoAppr = newAppr;
+  }
+  // sinon : le prof a customisé → on respecte sa rédaction, il faudra cliquer "Regénérer auto" pour reset
 }
 
 function saveDCAdj(sid) {
