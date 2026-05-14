@@ -3792,6 +3792,27 @@ function toast(m) {
   setTimeout(function() { t.classList.remove("show"); }, 3000);
 }
 
+/* Outil de diagnostic GAS — tape simplement `_d()` dans la console pour tester le POST.
+   La réponse est loggée et affichée en alert pour qu'on la voie sans toucher au DOM. */
+window._d = function() {
+  console.log("→ Envoi test POST vers GAS...");
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      secret: SYNC_SECRET,
+      sub: { id: 999999999, eid: "TEST_DEBUG", ename: "Test Diag", ecls: "DBG",
+             cap: "TEST_CAP", caplbl: "Test diag", score: 0, qcmTot: 0,
+             status: "validated", dateISO: new Date().toISOString(),
+             date: new Date().toLocaleDateString("fr-FR"), open: "diag" }
+    })
+  })
+  .then(function(r){ return r.text(); })
+  .then(function(t){ console.log("✅ Réponse GAS :", t); alert("Réponse GAS : " + t); })
+  .catch(function(e){ console.log("❌ Erreur :", e); alert("Erreur : " + e); });
+  return "Test envoyé, attends la réponse...";
+};
+
 /* 2c — Toast en file d'attente (évite l'écrasement quand plusieurs notifs se déclenchent en cascade).
    Utiliser pour les notifs élève au login : 1 toast par capsule changée, espacés de 3.5s. */
 var _toastQueue = [];
