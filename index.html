@@ -3915,6 +3915,9 @@ var cloudSync = (function () {
         function keyOf(s) { return (s.eid || "") + "::" + (s.cap || ""); }
         // index local
         local.forEach(function (s) { byKey[keyOf(s)] = s; });
+        // Index des clés présentes dans le cloud (pour détecter les évictions plus bas)
+        var cloudKeys = {};
+        data.subs.forEach(function (s) { cloudKeys[keyOf(s)] = true; });
         // merge serveur — on garde la version locale si elle est plus récente
         // (le prof a pu valider/rejeter avant que la sync ait lieu)
         data.subs.forEach(function (s) {
@@ -3926,6 +3929,17 @@ var cloudSync = (function () {
           // Statut local non-"pending" prime (le prof a déjà tranché)
           if (existing.status && existing.status !== "pending") return;
           if (sRemoteDt >= sLocalDt) byKey[k] = s;
+        });
+        // ── Éviction des soumissions locales qui n'existent plus dans le cloud ──
+        // Cas typique : prof a supprimé une capsule (côté cloud) → on doit aussi la retirer
+        // localement. On garde toutefois les entrées TRÈS récentes (<60s) au cas où elles
+        // viennent d'être créées et que le cloud n'a pas encore reçu le POST.
+        var now = Date.now();
+        Object.keys(byKey).forEach(function (k) {
+          if (cloudKeys[k]) return; // présent dans cloud → on garde
+          var entry = byKey[k];
+          var ageMs = now - new Date(entry.dateISO || 0).getTime();
+          if (ageMs > 60000) delete byKey[k]; // >1 min et absent cloud → supprimé upstream
         });
         var merged = [];
         for (var k in byKey) if (byKey.hasOwnProperty(k)) merged.push(byKey[k]);
