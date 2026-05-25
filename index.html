@@ -266,7 +266,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .ctx-item-row{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;margin-bottom:8px;background:var(--gr);flex-wrap:wrap}
 .ctx-item-row.ok{background:#E8F5E9;border:1px solid var(--vt)}
 .ctx-item-row.ko{background:#FADBD8;border:1px solid var(--rg)}
-@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
+@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
 /* ═══ DEVOIR COMMUN ═══ */
 .dc-timer-bar{position:sticky;top:58px;z-index:90;background:var(--bl);color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 -24px}
 .dc-timer{font-family:"DM Mono",monospace;font-size:22px;font-weight:700;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px;min-width:92px;text-align:center;display:inline-block;transition:background .3s}
@@ -2273,18 +2273,131 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
     </div><!-- fin pg-p12-act2 -->
 
     <!-- ============================================================ -->
-    <!-- P12 — CORRIGÉ ACTIVITÉS 1 & 2                               -->
     <!-- ============================================================ -->
-    <div id="pg-p12-cor" class="h">
+    <!-- P12 — CORRIGÉ ACTIVITÉ 1                                    -->
+    <!-- ============================================================ -->
+    <div id="pg-p12-cor-a1" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Corrig&eacute; Activit&eacute;s 1 &amp; 2</h2>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Corrig&eacute; Activit&eacute; 1</h2>
       </div>
-      <div style="max-width:860px" id="p12-corrige">
+      <div style="max-width:860px">
 
         <!-- BANDEAU -->
         <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:14px;padding:22px 24px;margin-bottom:20px;color:#fff">
-          <div style="font-size:20px;font-weight:700;margin-bottom:4px">&#x1F4DA; Corrig&eacute; &mdash; P12 Activit&eacute;s 1 &amp; 2</div>
+          <div style="font-size:20px;font-weight:700;margin-bottom:4px">&#x1F4DA; Corrig&eacute; &mdash; P12 Activit&eacute; 1</div>
+          <div style="font-size:13px;opacity:.85">Cycle 4 &mdash; Classe de 4&egrave;me &bull; Coll&egrave;ge Saint-Pierre &mdash; Les Essarts &bull; R. Blanchard</div>
+        </div>
+
+        <!-- ══ CORRIGÉ ACTIVITÉ 1 ══ -->
+        <div style="background:#7c3aed;border-radius:10px 10px 0 0;padding:12px 20px;font-weight:700;font-size:15px;color:#fff;margin-top:20px">
+          &#x1F4DD; Corrig&eacute; Activit&eacute; 1 &mdash; Les objets technologiques et notre alimentation
+        </div>
+        <div style="background:#fff;border-radius:0 0 12px 12px;border:1px solid var(--gb);border-top:none;padding:24px;box-shadow:var(--sh);margin-bottom:20px">
+
+          <div style="background:var(--vt);color:#fff;border-radius:10px;padding:14px 20px;margin-bottom:16px;font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px">
+            <span>&#x1F4DA;</span> Corrig&eacute; &mdash; V&eacute;rifie tes r&eacute;ponses
+          </div>
+
+          <!-- Corrigé ① -->
+          <div class="card">
+            <h3 style="color:var(--bl)">&#x2460; Partie 1 &mdash; Les objets technologiques et notre alimentation</h3>
+            <p style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:8px">Phase 1b &mdash; Exemples d&rsquo;objets (r&eacute;ponses possibles)&nbsp;:</p>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>1.</strong> R&eacute;frig&eacute;rateur &mdash; <em>sert &agrave; conserver les aliments au froid</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>2.</strong> Micro-ondes &mdash; <em>sert &agrave; r&eacute;chauffer ou cuire rapidement les aliments</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>3.</strong> Robot culinaire &mdash; <em>sert &agrave; pr&eacute;parer les aliments (hacher, mixer, p&eacute;trir)</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>4.</strong> Lave-vaisselle &mdash; <em>sert &agrave; laver automatiquement la vaisselle</em></div>
+              <div class="p12-cor-item" style="background:var(--bp);border-color:var(--bc)"><strong>5.</strong> Four &eacute;lectrique &mdash; <em>sert &agrave; cuire les aliments par chaleur s&egrave;che</em></div>
+            </div>
+            <p style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:8px">Phase 1c &mdash; R&eacute;ponses attendues&nbsp;:</p>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px">
+              <strong>Q1&nbsp;:</strong> Non, les objets techniques n&rsquo;apparaissent pas de mani&egrave;re hasardeuse. Ils r&eacute;pondent &agrave; des besoins pr&eacute;cis et r&eacute;sultent d&rsquo;une d&eacute;marche de conception organis&eacute;e.
+            </div>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)">
+              <strong>Q2&nbsp;:</strong> Contextes scientifique (d&eacute;couvertes en physique du froid), technique (ma&icirc;trise de la r&eacute;frig&eacute;ration), &eacute;conomique (industrialisation) et social (besoin de commodit&eacute;). Ex&nbsp;: le micro-ondes r&eacute;pond au besoin social de rapidit&eacute;.
+            </div>
+          </div>
+
+          <!-- Corrigé ② -->
+          <div class="card">
+            <h3 style="color:var(--vt)">&#x2461; Partie 2 &mdash; Fonctionnement du r&eacute;frig&eacute;rateur</h3>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:14px">
+              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (&eacute;vaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur).
+            </div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px;text-align:center">N&deg;</th>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px">Fonction Technique (FT)</th>
+                    <th style="background:var(--vt);color:#fff;padding:7px 10px">Solution Technique (ST)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Condenser (liqu&eacute;fier) le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène gazeux</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Vaporiser le fluide et absorber la chaleur int&eacute;rieure</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT4</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">D&eacute;clencher le compresseur selon la temp&eacute;rature</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">4 &mdash; Thermostat</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide et r&eacute;guler le d&eacute;bit (soupape)</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter et c&eacute;der/absorber la chaleur dans le circuit</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Corrigé ③ -->
+          <div class="card">
+            <h3 style="color:var(--vi)">&#x2462; Partie 3 &mdash; R&eacute;frig&eacute;rateur connect&eacute;</h3>
+            <div style="overflow-x:auto;margin-bottom:12px">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <thead>
+                  <tr>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px;text-align:center">N&deg;</th>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px">Fonction Technique (FT)</th>
+                    <th style="background:var(--vi);color:#fff;padding:7px 10px">Solution Technique (ST)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT7</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vip)">Afficher l&rsquo;inventaire et les dates de p&eacute;remption des aliments</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">Cam&eacute;ra int&eacute;rieure + &eacute;cran tactile</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT8</td><td style="padding:7px 10px;background:var(--vip)">Permettre le contr&ocirc;le et la commande &agrave; distance</td><td style="padding:7px 10px;font-weight:600">Module Wi-Fi / Application smartphone</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="p12-cor-item" style="background:var(--vip);border-color:var(--vi)">
+              <strong>Contextes&nbsp;:</strong> Scientifique (IoT, IA), Technique (miniaturisation, connectivit&eacute;), &Eacute;conomique (nouvelles gammes premium), Social (confort, r&eacute;duction du gaspillage alimentaire).
+            </div>
+          </div>
+
+          <!-- Bilan corrigé -->
+          <div class="card">
+            <h3 style="color:var(--or)">&#x1F3AF; Bilan</h3>
+            <div class="p12-cor-item" style="background:var(--op);border-color:var(--or)">
+              <strong>Les objets techniques &eacute;voluent car&nbsp;:</strong><br>
+              &bull;&nbsp;Les besoins humains changent (modes de vie, confort, sant&eacute;).<br>
+              &bull;&nbsp;Les avanc&eacute;es scientifiques ouvrent de nouvelles possibilit&eacute;s.<br>
+              &bull;&nbsp;Les contraintes &eacute;conomiques poussent &agrave; innover.<br>
+              &bull;&nbsp;Les exigences sociales et environnementales imposent de nouvelles solutions (r&eacute;duction du gaspillage, d&eacute;veloppement durable).
+            </div>
+          </div>
+        </div>
+
+        <div style="height:48px"></div>
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p12-cor-a1 -->
+
+    <!-- P12 — CORRIGÉ ACTIVITÉ 2                                    -->
+    <!-- ============================================================ -->
+    <div id="pg-p12-cor-a2" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Corrig&eacute; Activit&eacute; 2</h2>
+      </div>
+      <div style="max-width:860px">
+
+        <!-- BANDEAU -->
+        <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:14px;padding:22px 24px;margin-bottom:20px;color:#fff">
+          <div style="font-size:20px;font-weight:700;margin-bottom:4px">&#x1F4DA; Corrig&eacute; &mdash; P12 Activit&eacute; 2</div>
           <div style="font-size:13px;opacity:.85">Cycle 4 &mdash; Classe de 4&egrave;me &bull; Coll&egrave;ge Saint-Pierre &mdash; Les Essarts &bull; R. Blanchard</div>
         </div>
 
@@ -2405,7 +2518,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <div style="height:48px"></div>
       </div><!-- fin max-width -->
-    </div><!-- fin pg-p12-cor -->
+    </div><!-- fin pg-p12-cor-a2 -->
 
     <!-- DEVOIR COMMUN                                           -->
     <!-- ═══════════════════════════════════════════════════════ -->
@@ -4032,7 +4145,8 @@ var SEQUENCES_DEF = [
   {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
   {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
   {id:"p12-act2",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
-  {id:"p12-cor", niveau:"4ème", titre:"P12 &mdash; Corrigé Activités 1 &amp; 2", desc:"Corrigé détaillé &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"COR12", open:true},
+  {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
+  {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
   {id:"seq5a",   niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
   {id:"seq3",    niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
@@ -4394,7 +4508,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "p12-act2") {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4DD; Activit&eacute; n&deg;2</span>';
-        } else if (s.id === "p12-cor") {
+        } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
           badgeHtml = "";
@@ -4410,7 +4524,9 @@ function renderDash() {
       else if (s.id === "p12-ex1")  clickAction = "onclick=\"goPage('pg-p12-ex1')\"";
       else if (s.id === "p12-ex1-cor") clickAction = "onclick=\"goPage('pg-p12-ex1-cor')\"";
       else if (s.id === "p12-act2") clickAction = "onclick=\"goPage('pg-p12-act2')\"";
-      else if (s.id === "p12-cor")  clickAction = "onclick=\"goPage('pg-p12-cor')\"";
+      else if (s.id === "p12-cor-a1") clickAction = "onclick=\"goPage('pg-p12-cor-a1')\"";
+      else if (s.id === "p12-cor-a2") clickAction = "onclick=\"goPage('pg-p12-cor-a2')\"";
+      else if (s.id === "dc-corrige") clickAction = "onclick=\"goPage('pg-dc');setTimeout(revealDCCorrigeAfterUnlock,100)\"";
       else if (s.id === "cap1")     clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
       html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
@@ -4450,10 +4566,11 @@ function tryUnlock() {
     else if (pendingSeq === "p12")  goPage("pg-p12");
     else if (pendingSeq === "p12-ex1") goPage("pg-p12-ex1");
     else if (pendingSeq === "p12-ex1-cor") goPage("pg-p12-ex1-cor");
-    else if (pendingSeq === "dc-corrige") { goPage("pg-dc"); revealDCCorrigeAfterUnlock(); }
+    else if (pendingSeq === "dc-corrige") { goPage("pg-dc"); setTimeout(revealDCCorrigeAfterUnlock, 100); }
     else if (pendingSeq === "cap1")     goPage("pg-cap");
     else if (pendingSeq === "p12-act2") goPage("pg-p12-act2");
-    else if (pendingSeq === "p12-cor")  goPage("pg-p12-cor");
+    else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
+    else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
     else goPage("pg-dash");
     renderDash();
   } else {
@@ -7269,7 +7386,6 @@ function buildDCModalHTML(f, score) {
   return h;
 }
 
-var DC_CORRIGE_HTML = ``;
 
 function buildStudentResultBanner() {
   if (!user || isProf) return "";
@@ -7316,6 +7432,9 @@ function unlockDCCorrige() {
 
 /* Affiche le corps du corrigé DC (utilisé soit par le gate intégré, soit après unlock via la dashboard) */
 function revealDCCorrigeAfterUnlock() {
+  stopDCTimer();
+  var bar = document.getElementById("dc-timer-bar");
+  if (bar) bar.classList.add("h");
   var sec = document.getElementById("dc-corrige-section");
   if (sec) sec.classList.remove("h");
   var cb = document.getElementById("dc-corrige-body");
