@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Évaluation formative — P12 Activité n°2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#1a3550 0%,#2d5078 100%);color:#1a3550;min-height:100vh;padding:20px}
+
+/* ===== QUIZ ===== */
+.container{max-width:900px;margin:0 auto;background:#fff;border-radius:16px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+header{text-align:center;border-bottom:3px solid #1a3550;padding-bottom:16px;margin-bottom:24px}
+h1{font-size:26px;color:#1a3550;letter-spacing:.5px}
+.sub{color:#6b7c93;font-size:14px;margin-top:6px}
+.progress-wrap{background:#e0e8f0;border-radius:8px;height:14px;overflow:hidden;margin:18px 0}
+.progress-bar{height:100%;background:linear-gradient(90deg,#5fb8e8,#1a3550);width:0;transition:width .4s}
+.score-pill{display:inline-block;background:#1a3550;color:#fff;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700}
+.question{background:#fafbfc;border-left:5px solid #1a3550;padding:20px;border-radius:8px;margin:18px 0;display:none}
+.question.active{display:block;animation:slideIn .3s}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.q-num{font-size:13px;color:#6b7c93;font-weight:700;margin-bottom:6px}
+.q-text{font-size:17px;font-weight:600;color:#1a3550;margin-bottom:14px;line-height:1.4}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{background:#fff;border:2px solid #d0d8e0;padding:12px 16px;border-radius:8px;cursor:pointer;font-size:15px;transition:all .15s;text-align:left;color:#1a3550}
+.opt:hover:not(.disabled){border-color:#5fb8e8;background:#e8f4fb;transform:translateX(4px)}
+.opt.correct{border-color:#3d7a3d;background:#d4edda;color:#1a4d1a}
+.opt.wrong{border-color:#c0392b;background:#fbeae8;color:#7a1f1f}
+.opt.disabled{cursor:not-allowed;opacity:.7}
+.feedback{margin-top:14px;padding:12px;border-radius:6px;font-size:14px;display:none;line-height:1.4}
+.feedback.show{display:block}
+.feedback.ok{background:#eaf5ea;color:#1a4d1a;border-left:4px solid #3d7a3d}
+.feedback.ko{background:#fbeae8;color:#7a1f1f;border-left:4px solid #c0392b}
+.controls{display:flex;justify-content:space-between;margin-top:24px;gap:12px;flex-wrap:wrap}
+button{background:#1a3550;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
+button:hover:not(:disabled){background:#2d5078;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.results{display:none;text-align:center;padding:32px;background:linear-gradient(135deg,#eaf5ea,#fff7e8);border-radius:12px;margin-top:20px}
+.results.show{display:block}
+.result-score{font-size:64px;font-weight:800;color:#1a3550;margin:8px 0}
+.result-label{font-size:18px;color:#1a3550;margin-bottom:14px}
+.result-msg{font-size:16px;margin:14px 0}
+.medal{font-size:48px;margin:8px 0}
+.btn-restart{background:#3d7a3d;margin-top:16px}
+.btn-sim{background:#d4830a;margin-top:16px;font-size:16px;padding:14px 28px}
+.theme-tag{display:inline-block;background:#fde4c0;color:#8b5a00;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700;margin-right:6px}
+.review{margin-top:18px;text-align:left}
+.review h3{margin:14px 0 8px 0;color:#1a3550;font-size:16px}
+.review-item{font-size:13px;padding:8px;border-radius:6px;margin:5px 0}
+.review-item.ok{background:#eaf5ea;color:#1a4d1a}
+.review-item.ko{background:#fbeae8;color:#7a1f1f}
+@media(max-width:600px){.container{padding:20px;border-radius:8px}h1{font-size:20px}.q-text{font-size:15px}}
+
+/* ===== SIMULATEUR ===== */
+#sim-section{display:none;margin-top:24px}
+#sim-section.visible{display:block;animation:fadeIn .5s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.sim-container{max-width:1400px;margin:0 auto;background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.sim-header{text-align:center;border-bottom:3px solid #1a3550;padding-bottom:14px;margin-bottom:18px}
+.sim-h1{font-size:24px;color:#1a3550;font-weight:700;letter-spacing:.5px}
+.layout{display:grid;grid-template-columns:1fr 380px;gap:18px}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+.algo-panel{background:#fafbfc;border:2px solid #d0d8e0;border-radius:12px;padding:16px;overflow:auto;max-height:760px}
+.thermomix-panel{background:linear-gradient(180deg,#eef3f8,#fff);border:2px solid #d0d8e0;border-radius:12px;padding:18px;text-align:center}
+.sim-h2{font-size:14px;color:#fff;background:#1a3550;padding:6px 10px;border-radius:6px;margin-bottom:12px}
+.bloc{padding:10px 14px;margin:6px auto;border:2px solid #1a3550;text-align:center;font-weight:700;font-size:13px;max-width:340px;transition:all .35s;position:relative}
+.bloc.term{background:#d4edda;border-radius:30px}
+.bloc.proc{background:#d8e8f0;border-radius:4px}
+.bloc.dec{background:#fde4c0;width:280px;height:80px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);margin:14px auto}
+.bloc.active{background:#fff7c2;border-color:#d4830a;box-shadow:0 0 0 4px #ffe680,0 0 18px rgba(212,131,10,.5);transform:scale(1.06)}
+.bloc.done{opacity:.5}
+.bloc.dec.active{background:#ffe680}
+.arrow{text-align:center;color:#1a3550;font-size:18px;line-height:1;margin:0 auto;font-weight:700}
+.branch{display:flex;justify-content:space-around;margin:6px 0;font-size:12px;color:#1a3550;font-weight:700}
+.thermomix{position:relative;width:280px;height:340px;margin:8px auto}
+.tm-base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:240px;height:140px;background:#d0d8e0;border:3px solid #1a3550;border-radius:8px}
+.tm-screen{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:160px;height:46px;background:#1a3550;border:2px solid #1a3550;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#5fb8e8;font-family:monospace;font-weight:700;font-size:13px;text-shadow:0 0 4px #5fb8e8;text-align:center;padding:4px}
+.tm-bowl{position:absolute;top:90px;left:50%;transform:translateX(-50%);width:160px;height:160px;background:linear-gradient(180deg,#e0e8ec,#a8b5be);border:3px solid #1a3550;border-radius:0 0 80px 80px}
+.tm-bowl-content{position:absolute;bottom:8px;left:8px;right:8px;height:90px;background:#f5d4a0;border-radius:0 0 70px 70px;transition:all .5s}
+.tm-bowl-content.empty{opacity:.2}
+.tm-bowl-content.beurre{background:#f5e6a8}
+.tm-bowl-content.oeuf{background:#fde4c0}
+.tm-bowl-content.farine{background:#e8d8c0;height:110px}
+.tm-bowl-content.choco{background:#8b6f4e;height:120px;background-image:radial-gradient(#3a2515 2px,transparent 2px),radial-gradient(#3a2515 2px,transparent 2px);background-size:14px 14px;background-position:0 0,7px 7px}
+.tm-fouet{position:absolute;top:110px;left:50%;transform:translate(-50%,0);width:6px;height:90px;background:#5a5a5a;border-radius:3px;transform-origin:50% 0}
+.tm-fouet::after{content:"";position:absolute;bottom:0;left:-12px;width:30px;height:14px;background:#5a5a5a;border-radius:50%}
+.tm-fouet.on{animation:spin .25s linear infinite}
+@keyframes spin{from{transform:translate(-50%,0) rotate(0deg)}to{transform:translate(-50%,0) rotate(360deg)}}
+.tm-led{position:absolute;top:8px;right:30px;width:10px;height:10px;background:#3a3a3a;border-radius:50%;border:1px solid #1a3550}
+.tm-led.on{background:#3d7a3d;box-shadow:0 0 8px #6ba66b}
+.sim-controls{margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sim-btn{background:#1a3550;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.sim-btn:hover:not(:disabled){background:#2d5078;transform:translateY(-2px)}
+.sim-btn:disabled{opacity:.4;cursor:not-allowed}
+.sim-btn.start{background:#3d7a3d}
+.sim-btn.reset{background:#c0392b}
+.sim-btn.step{background:#d4830a}
+.log{margin-top:14px;background:#1a3550;color:#5fb8e8;font-family:'Consolas',monospace;font-size:12px;padding:12px;border-radius:8px;height:200px;overflow:auto;text-align:left}
+.log-line{margin:2px 0}
+.log-line.action{color:#ffe680}
+.log-line.test{color:#a0e8a0}
+.log-line.wait{color:#5fb8e8}
+.log-line.start,.log-line.end{color:#fff;font-weight:700}
+.sim-note{background:#e8f4fb;border-left:3px solid #5fb8e8;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:12px}
+.legend{font-size:11px;color:#6b7c93;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- ==================== QUIZ ==================== -->
+<div id="quiz-section">
+<div class="container">
+<header>
+  <h1>🧠 Évaluation formative — Activité n°2</h1>
+  <div class="sub">P12 — L'évolution des objets techniques · Cycle 4 / 4ᵉ</div>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar" id="prog"></div></div>
+<div style="text-align:right"><span class="score-pill">Question <span id="qnum">1</span> / <span id="qtot">12</span> · Score : <span id="score">0</span></span></div>
+
+<div id="quiz"></div>
+
+<div class="controls">
+  <button id="btnNext" disabled>Question suivante →</button>
+</div>
+
+<div id="results" class="results"></div>
+</div>
+</div>
+
+<!-- ==================== SIMULATEUR (masqué) ==================== -->
+<div id="sim-section">
+<div class="sim-container">
+
+<div class="sim-header">
+  <p class="sim-h1">🍪 Simulateur d'algorigramme — Cookies au Thermomix</p>
+  <div class="sub">P12 — Activité n°2 · Voir l'algorigramme s'exécuter pas à pas</div>
+</div>
+
+<div class="sim-note">
+  <strong>Comment ça marche ?</strong> Clique sur <em>« Lancer la recette »</em> pour voir le robot exécuter automatiquement chaque bloc de l'algorigramme. Tu peux aussi avancer <em>pas à pas</em> pour bien comprendre chaque étape, ou réinitialiser pour recommencer.
+</div>
+
+<div class="layout">
+
+  <div class="algo-panel">
+    <div class="sim-h2">🧩 Algorigramme de la recette</div>
+
+    <div class="bloc term" id="b0">Début</div>
+    <div class="arrow">↓</div>
+    <div class="bloc dec" id="b1">Beurre ET<br/>Cassonade ?</div>
+    <div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+    <div class="bloc proc" id="b2">Fouetter vitesse 2</div>
+    <div class="arrow">↓</div>
+    <div class="bloc proc" id="b3">Attendre 1 min 30</div>
+    <div class="arrow">↓</div>
+
+    <div class="bloc dec" id="b4">Œufs ET<br/>Sucre vanillé ?</div>
+    <div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+    <div class="bloc proc" id="b5">Mélanger vitesse 2</div>
+    <div class="arrow">↓</div>
+    <div class="bloc proc" id="b6">Attendre 30 secondes</div>
+    <div class="arrow">↓</div>
+
+    <div class="bloc dec" id="b7">Farine ET<br/>Levure ?</div>
+    <div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+    <div class="bloc proc" id="b8">Mélanger vitesse 3</div>
+    <div class="arrow">↓</div>
+    <div class="bloc proc" id="b9">Attendre 2 min</div>
+    <div class="arrow">↓</div>
+
+    <div class="bloc dec" id="b10">Chocolat ?</div>
+    <div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+    <div class="bloc proc" id="b11">Mixer vitesse 4</div>
+    <div class="arrow">↓</div>
+    <div class="bloc proc" id="b12">Attendre 10 secondes</div>
+    <div class="arrow">↓</div>
+    <div class="bloc term" id="b13">Fin</div>
+
+    <p class="legend">3 symboles : ovale (Début/Fin) · losange (test) · rectangle (action)</p>
+  </div>
+
+  <div class="thermomix-panel">
+    <div class="sim-h2">🤖 Le robot exécute</div>
+
+    <div class="thermomix">
+      <div class="tm-base">
+        <div class="tm-screen" id="screen">PRÊT<br/>● cliquer Lancer</div>
+        <div class="tm-led" id="led"></div>
+      </div>
+      <div class="tm-bowl">
+        <div class="tm-bowl-content empty" id="bowl"></div>
+      </div>
+      <div class="tm-fouet" id="fouet"></div>
+    </div>
+
+    <div class="sim-controls">
+      <button class="sim-btn start" id="btnStart">▶ Lancer la recette</button>
+      <button class="sim-btn step"  id="btnStep">⏯ Pas à pas</button>
+      <button class="sim-btn reset" id="btnReset">⟲ Réinitialiser</button>
+    </div>
+
+    <div class="log" id="log">
+      <div class="log-line">// Console du robot — en attente...</div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+/* ==================== QUIZ ==================== */
+(function () {
+  const QUIZ = [
+    {theme:"Évolution",
+     q:"À quel siècle utilisait-on principalement la <strong>glacière en bois</strong> ?",
+     opts:["XIXᵉ siècle","XXᵉ siècle","XXIᵉ siècle","Moyen Âge"],ok:0},
+    {theme:"Évolution",
+     q:"Cite les <strong>4 grands domaines</strong> dans lesquels un objet technique peut évoluer :",
+     opts:["Matériaux · Formes · Fonctionnalités · Énergie","Couleur · Marque · Prix · Pays","Poids · Hauteur · Largeur · Profondeur","Mode d'emploi · Garantie · Notice · Emballage"],ok:0},
+    {theme:"Systèmes",
+     q:"Un <strong>moulin manuel</strong> à café est un système :",
+     opts:["Automatisé","Mécanisé","Non mécanisé","Connecté"],ok:2},
+    {theme:"Systèmes",
+     q:"Un <strong>mixeur électrique</strong> est un système :",
+     opts:["Non mécanisé","Mécanisé","Automatisé","Connecté"],ok:1},
+    {theme:"Systèmes",
+     q:"Un <strong>robot cuiseur intelligent</strong> qui suit une recette tout seul est un système :",
+     opts:["Non mécanisé","Mécanisé","Automatisé","Manuel"],ok:2},
+    {theme:"Vocabulaire",
+     q:"Un <strong>capteur</strong>, c'est :",
+     opts:["Un bouton qu'on appuie","Un composant qui mesure une grandeur (température, présence...)","Une pièce mécanique qui tourne","Un câble qui transporte du courant"],ok:1},
+    {theme:"Algorithme",
+     q:"Un <strong>algorithme</strong>, c'est :",
+     opts:["Un dessin technique en 3D","Une suite d'instructions sous forme de texte pour résoudre un problème","Un schéma électrique","Une formule mathématique"],ok:1},
+    {theme:"Algorigramme",
+     q:"Un <strong>algorigramme</strong>, c'est :",
+     opts:["La représentation graphique normalisée d'un algorithme","La même chose qu'un algorithme","Un programme informatique en code","Une suite de calculs mathématiques"],ok:0},
+    {theme:"Symboles",
+     q:"Quel symbole de l'algorigramme représente un <strong>test (condition oui/non)</strong> ?",
+     opts:["Le rectangle","L'ovale","Le losange","La flèche"],ok:2},
+    {theme:"Symboles",
+     q:"Quel symbole représente <strong>« Début »</strong> ou <strong>« Fin »</strong> dans un algorigramme ?",
+     opts:["Le losange","L'ovale (forme arrondie)","Le rectangle","Le cercle"],ok:1},
+    {theme:"Pratique",
+     q:"Dans la recette des cookies au Thermomix, après <em>« SI beurre ET cassonade ALORS fouetter vitesse 2 »</em>, l'instruction suivante est :",
+     opts:["Attendre 30 secondes","Attendre 1 min 30","Mixer vitesse 4","Sortir les cookies du four"],ok:1},
+    {theme:"Bilan",
+     q:"Une <strong>fonction d'usage</strong> (préparer des aliments) :",
+     opts:["Ne peut être assurée que par un objet automatisé","Peut être assurée par des objets non mécanisés, mécanisés ou automatisés","Ne concerne que les objets connectés","Doit toujours être réalisée à la main"],ok:1}
+  ];
+
+  function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+  shuffle(QUIZ);
+
+  let cur=0, score=0, locked=false, answers=[];
+  const $q = id => document.getElementById(id);
+  const quizEl=$q("quiz"), btn=$q("btnNext"), prog=$q("prog"), qnum=$q("qnum"), qtot=$q("qtot"), scr=$q("score");
+  qtot.textContent = QUIZ.length;
+
+  function render(){
+    if(cur >= QUIZ.length) return showResults();
+    const Q = QUIZ[cur];
+    qnum.textContent = cur+1;
+    scr.textContent  = score;
+    prog.style.width = (cur/QUIZ.length*100)+"%";
+    quizEl.innerHTML = `
+      <div class="question active">
+        <div class="q-num"><span class="theme-tag">${Q.theme}</span>QUESTION ${cur+1}</div>
+        <div class="q-text">${Q.q}</div>
+        <div class="options">${Q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join("")}</div>
+        <div class="feedback" id="fb"></div>
+      </div>`;
+    document.querySelectorAll(".opt").forEach(b => b.addEventListener("click", ()=>pick(b)));
+    locked = false;
+    btn.disabled = true;
+    btn.textContent = cur===QUIZ.length-1 ? "Voir mes résultats →" : "Question suivante →";
+  }
+
+  function pick(b){
+    if(locked) return;
+    locked = true;
+    const i=+b.dataset.i, Q=QUIZ[cur], fb=$q("fb"), ok=(i===Q.ok);
+    document.querySelectorAll(".opt").forEach(o=>{
+      o.classList.add("disabled");
+      if(o===b) o.classList.add(ok?"correct":"wrong");
+    });
+    fb.className = "feedback show "+(ok?"ok":"ko");
+    fb.innerHTML = ok ? "✅ <strong>Bonne réponse !</strong>" : "❌ <strong>Ce n'est pas la bonne réponse.</strong>";
+    if(ok) score++;
+    answers.push({q:Q.q, picked:i, correct:Q.ok, ok});
+    scr.textContent = score;
+    btn.disabled = false;
+  }
+
+  btn.addEventListener("click", ()=>{ cur++; render(); });
+
+  function showResults(){
+    prog.style.width = "100%";
+    quizEl.style.display = "none";
+    btn.style.display   = "none";
+    const pct = Math.round(score/QUIZ.length*100);
+    let medal, msg, msgColor, extra;
+
+    if(score === QUIZ.length){
+      medal="🏆"; msg="Parfait ! Tu maîtrises totalement la séance !"; msgColor="#3d7a3d";
+      extra=`<button class="btn-sim" onclick="openSim()">🚀 Accéder au simulateur d'algorigramme</button>`;
+    } else if(score >= 9){
+      medal="🥈"; msg="Très bon score ! Il te faut 12/12 pour débloquer le simulateur. Recommence !"; msgColor="#d4830a";
+      extra=`<button class="btn-restart" onclick="location.reload()">🔁 Recommencer le quiz</button>`;
+    } else {
+      medal="📚"; msg="Reprends le cours et réessaie : tu vas progresser !"; msgColor="#7a1f1f";
+      extra=`<button class="btn-restart" onclick="location.reload()">🔁 Recommencer le quiz</button>`;
+    }
+
+    const review = `<div class="review"><h3>📋 Détail de mes réponses :</h3>`+
+      answers.map((a,i)=>`<div class="review-item ${a.ok?"ok":"ko"}">${a.ok?"✅":"❌"} Q${i+1} : ${a.q.replace(/<[^>]+>/g,"")}</div>`).join("")+`</div>`;
+
+    $q("results").innerHTML = `
+      <div class="medal">${medal}</div>
+      <div class="result-label">Ton score</div>
+      <div class="result-score">${score} / ${QUIZ.length}</div>
+      <div class="result-label" style="font-size:22px;font-weight:700;color:#1a3550">${pct}%</div>
+      <div class="result-msg" style="color:${msgColor}">${msg}</div>
+      ${extra}
+      ${review}`;
+    $q("results").classList.add("show");
+  }
+
+  render();
+})();
+
+/* ==================== TRANSITION ==================== */
+function openSim(){
+  const s = document.getElementById("sim-section");
+  s.classList.add("visible");
+  setTimeout(()=> s.scrollIntoView({behavior:"smooth"}), 50);
+}
+
+/* ==================== SIMULATEUR ==================== */
+(function(){
+  const STEPS = [
+    {bloc:0,  type:"start",  screen:"DÉBUT",                      log:"▶ Démarrage du programme"},
+    {bloc:1,  type:"test",   screen:"TEST 1\nBeurre + Cassonade ?",log:"❓ Test : beurre ET cassonade dans le bol ?", bowl:"beurre"},
+    {bloc:2,  type:"action", screen:"FOUETTER\nVitesse 2",         log:"🔄 ACTION : fouetter à vitesse 2",            fouet:true},
+    {bloc:3,  type:"wait",   screen:"⏱ 1 min 30",                 log:"⏱ Attendre 1 min 30 (1500 ms simulés)",       duration:1500, fouet:true},
+    {bloc:4,  type:"test",   screen:"TEST 2\nŒuf + Sucre vanillé ?",log:"❓ Test : œuf ET sucre vanillé ajoutés ?",   bowl:"oeuf",  fouet:false},
+    {bloc:5,  type:"action", screen:"MÉLANGER\nVitesse 2",         log:"🔄 ACTION : mélanger à vitesse 2",            fouet:true},
+    {bloc:6,  type:"wait",   screen:"⏱ 30 sec",                   log:"⏱ Attendre 30 secondes (800 ms simulés)",     duration:800,  fouet:true},
+    {bloc:7,  type:"test",   screen:"TEST 3\nFarine + Levure ?",   log:"❓ Test : farine ET levure ajoutées ?",       bowl:"farine", fouet:false},
+    {bloc:8,  type:"action", screen:"MÉLANGER\nVitesse 3",         log:"🔄 ACTION : mélanger à vitesse 3",            fouet:true},
+    {bloc:9,  type:"wait",   screen:"⏱ 2 min",                    log:"⏱ Attendre 2 minutes (1800 ms simulés)",      duration:1800, fouet:true},
+    {bloc:10, type:"test",   screen:"TEST 4\nChocolat ?",          log:"❓ Test : pépites de chocolat ajoutées ?",    bowl:"choco",  fouet:false},
+    {bloc:11, type:"action", screen:"MIXER\nVitesse 4",            log:"🔄 ACTION : mixer à vitesse 4",               fouet:true},
+    {bloc:12, type:"wait",   screen:"⏱ 10 sec",                   log:"⏱ Attendre 10 secondes (500 ms simulés)",     duration:500,  fouet:true},
+    {bloc:13, type:"end",    screen:"✅ TERMINÉ\nFin programme",   log:"✅ FIN : pâte à cookies prête !",             fouet:false}
+  ];
+
+  const $s = id => document.getElementById(id);
+  const screenEl=$s("screen"), led=$s("led"), bowl=$s("bowl"), fouet=$s("fouet"), log=$s("log");
+  const btnStart=$s("btnStart"), btnStep=$s("btnStep"), btnReset=$s("btnReset");
+  let cur=0, running=false;
+
+  function reset(){
+    cur=0; running=false;
+    for(let i=0;i<=13;i++){const b=$s("b"+i);if(b){b.classList.remove("active","done");}}
+    bowl.className = "tm-bowl-content empty";
+    fouet.classList.remove("on");
+    led.classList.remove("on");
+    screenEl.innerHTML = "PRÊT<br/>● cliquer Lancer";
+    log.innerHTML = '<div class="log-line">// Console du robot — réinitialisée</div>';
+    btnStart.disabled=false; btnStep.disabled=false;
+  }
+
+  function logAdd(text,type){
+    const line = document.createElement("div");
+    line.className = "log-line "+(type||"");
+    line.textContent = "["+new Date().toLocaleTimeString()+"] "+text;
+    log.appendChild(line);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  async function runStep(i){
+    const s = STEPS[i];
+    for(let j=0;j<i;j++){const b=$s("b"+STEPS[j].bloc);if(b){b.classList.remove("active");b.classList.add("done");}}
+    const b = $s("b"+s.bloc);
+    if(b){b.classList.add("active");b.scrollIntoView({behavior:"smooth",block:"center"});}
+    screenEl.innerHTML = s.screen.replace(/\n/g,"<br/>");
+    led.classList.add("on");
+    if(s.bowl) bowl.className = "tm-bowl-content "+s.bowl;
+    if(typeof s.fouet==="boolean") fouet.classList.toggle("on",s.fouet);
+    logAdd(s.log, s.type);
+    await sleep(s.duration||700);
+  }
+
+  function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+  async function runAll(){
+    if(running) return;
+    running=true; btnStart.disabled=true; btnStep.disabled=true;
+    for(let i=0;i<STEPS.length;i++) await runStep(i);
+    const lastB = $s("b"+STEPS[STEPS.length-1].bloc);
+    if(lastB){lastB.classList.remove("active");lastB.classList.add("done");}
+    fouet.classList.remove("on");
+    running=false; btnStart.disabled=false; btnStep.disabled=false;
+  }
+
+  async function runStepByStep(){
+    if(cur>=STEPS.length) return;
+    btnStart.disabled=true;
+    await runStep(cur);
+    cur++;
+    if(cur>=STEPS.length){
+      const lastB=$s("b"+STEPS[STEPS.length-1].bloc);
+      if(lastB){lastB.classList.remove("active");lastB.classList.add("done");}
+      fouet.classList.remove("on");
+      btnStep.disabled=true;
+      logAdd("✓ Programme terminé. Réinitialise pour recommencer.","end");
+    }
+  }
+
+  btnStart.addEventListener("click", runAll);
+  btnStep.addEventListener("click",  runStepByStep);
+  btnReset.addEventListener("click", reset);
+  reset();
+})();
+</script>
+</body>
+</html>

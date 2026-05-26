@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Simulateur d'algorigramme — Cookies au Thermomix</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#1a3550 0%,#2d5078 100%);color:#1a3550;min-height:100vh;padding:18px}
+.container{max-width:1400px;margin:0 auto;background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+header{text-align:center;border-bottom:3px solid #1a3550;padding-bottom:14px;margin-bottom:18px}
+h1{font-size:24px;color:#1a3550}
+.sub{color:#6b7c93;font-size:13px;margin-top:4px}
+.layout{display:grid;grid-template-columns:1fr 380px;gap:18px}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}}
+.algo-panel{background:#fafbfc;border:2px solid #d0d8e0;border-radius:12px;padding:16px;overflow:auto;max-height:760px}
+.thermomix-panel{background:linear-gradient(180deg,#eef3f8,#fff);border:2px solid #d0d8e0;border-radius:12px;padding:18px;text-align:center}
+h2{font-size:14px;color:#fff;background:#1a3550;padding:6px 10px;border-radius:6px;margin-bottom:12px}
+/* Algorigramme blocks */
+.bloc{padding:10px 14px;margin:6px auto;border:2px solid #1a3550;text-align:center;font-weight:700;font-size:13px;max-width:340px;transition:all .35s;position:relative}
+.bloc.term{background:#d4edda;border-radius:30px}
+.bloc.proc{background:#d8e8f0;border-radius:4px}
+.bloc.dec{background:#fde4c0;width:280px;height:80px;display:flex;align-items:center;justify-content:center;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);margin:14px auto}
+.bloc.active{background:#fff7c2;border-color:#d4830a;box-shadow:0 0 0 4px #ffe680,0 0 18px rgba(212,131,10,.5);transform:scale(1.06)}
+.bloc.done{opacity:.5}
+.bloc.dec.active{background:#ffe680}
+.arrow{text-align:center;color:#1a3550;font-size:18px;line-height:1;margin:0 auto;font-weight:700}
+.branch{display:flex;justify-content:space-around;margin:6px 0;font-size:12px;color:#1a3550;font-weight:700}
+.row-2{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:center;margin:8px 0}
+.row-2 .lbl{font-size:11px;color:#6b7c93;text-align:right;padding-right:8px}
+/* Thermomix visual */
+.thermomix{position:relative;width:280px;height:340px;margin:8px auto}
+.tm-base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:240px;height:140px;background:#d0d8e0;border:3px solid #1a3550;border-radius:8px}
+.tm-screen{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:160px;height:46px;background:#1a3550;border:2px solid #1a3550;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#5fb8e8;font-family:monospace;font-weight:700;font-size:13px;text-shadow:0 0 4px #5fb8e8;text-align:center;padding:4px}
+.tm-bowl{position:absolute;top:90px;left:50%;transform:translateX(-50%);width:160px;height:160px;background:linear-gradient(180deg,#e0e8ec,#a8b5be);border:3px solid #1a3550;border-radius:0 0 80px 80px}
+.tm-bowl-content{position:absolute;bottom:8px;left:8px;right:8px;height:90px;background:#f5d4a0;border-radius:0 0 70px 70px;transition:all .5s}
+.tm-bowl-content.empty{opacity:.2}
+.tm-bowl-content.beurre{background:#f5e6a8}
+.tm-bowl-content.oeuf{background:#fde4c0}
+.tm-bowl-content.farine{background:#e8d8c0;height:110px}
+.tm-bowl-content.choco{background:#8b6f4e;height:120px;background-image:radial-gradient(#3a2515 2px,transparent 2px),radial-gradient(#3a2515 2px,transparent 2px);background-size:14px 14px;background-position:0 0,7px 7px}
+.tm-fouet{position:absolute;top:110px;left:50%;transform:translate(-50%,0);width:6px;height:90px;background:#5a5a5a;border-radius:3px;transform-origin:50% 0}
+.tm-fouet::after{content:"";position:absolute;bottom:0;left:-12px;width:30px;height:14px;background:#5a5a5a;border-radius:50%}
+.tm-fouet.on{animation:spin .25s linear infinite}
+@keyframes spin{from{transform:translate(-50%,0) rotate(0deg)}to{transform:translate(-50%,0) rotate(360deg)}}
+.tm-led{position:absolute;top:8px;right:30px;width:10px;height:10px;background:#3a3a3a;border-radius:50%;border:1px solid #1a3550}
+.tm-led.on{background:#3d7a3d;box-shadow:0 0 8px #6ba66b}
+.controls{margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+button{background:#1a3550;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+button:hover:not(:disabled){background:#2d5078;transform:translateY(-2px)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.start{background:#3d7a3d}
+button.reset{background:#c0392b}
+button.step{background:#d4830a}
+.log{margin-top:14px;background:#1a3550;color:#5fb8e8;font-family:'Consolas',monospace;font-size:12px;padding:12px;border-radius:8px;height:200px;overflow:auto;text-align:left}
+.log-line{margin:2px 0}
+.log-line.action{color:#ffe680}
+.log-line.test{color:#a0e8a0}
+.log-line.wait{color:#5fb8e8}
+.log-line.start,.log-line.end{color:#fff;font-weight:700}
+.timer{display:inline-block;background:#fff7c2;border:2px solid #d4830a;color:#d4830a;padding:4px 12px;border-radius:20px;font-weight:700;margin-left:8px;font-size:13px}
+.legend{font-size:11px;color:#6b7c93;text-align:center;margin-top:8px}
+.note{background:#e8f4fb;border-left:3px solid #5fb8e8;padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🍪 Simulateur d'algorigramme — Cookies au Thermomix</h1>
+<div class="sub">P12 — Activité n°2 · Voir l'algorigramme s'exécuter pas à pas</div>
+</header>
+
+<div class="note">
+<strong>Comment ça marche ?</strong> Clique sur <em>« Lancer la recette »</em> pour voir le robot exécuter automatiquement chaque bloc de l'algorigramme. Tu peux aussi avancer <em>pas à pas</em> pour bien comprendre chaque étape, ou réinitialiser pour recommencer.
+</div>
+
+<div class="layout">
+
+<!-- ============ ALGORIGRAMME ============ -->
+<div class="algo-panel">
+<h2>🧩 Algorigramme de la recette</h2>
+
+<div class="bloc term" id="b0">Début</div>
+<div class="arrow">↓</div>
+
+<div class="bloc dec" id="b1">Beurre ET<br/>Cassonade ?</div>
+<div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+<div class="bloc proc" id="b2">Fouetter vitesse 2</div>
+<div class="arrow">↓</div>
+<div class="bloc proc" id="b3">Attendre 1 min 30</div>
+<div class="arrow">↓</div>
+
+<div class="bloc dec" id="b4">Œufs ET<br/>Sucre vanillé ?</div>
+<div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+<div class="bloc proc" id="b5">Mélanger vitesse 2</div>
+<div class="arrow">↓</div>
+<div class="bloc proc" id="b6">Attendre 30 secondes</div>
+<div class="arrow">↓</div>
+
+<div class="bloc dec" id="b7">Farine ET<br/>Levure ?</div>
+<div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+<div class="bloc proc" id="b8">Mélanger vitesse 3</div>
+<div class="arrow">↓</div>
+<div class="bloc proc" id="b9">Attendre 2 min</div>
+<div class="arrow">↓</div>
+
+<div class="bloc dec" id="b10">Chocolat ?</div>
+<div class="branch"><span>← non (attendre)</span><span>oui ↓</span></div>
+<div class="bloc proc" id="b11">Mixer vitesse 4</div>
+<div class="arrow">↓</div>
+<div class="bloc proc" id="b12">Attendre 10 secondes</div>
+<div class="arrow">↓</div>
+
+<div class="bloc term" id="b13">Fin</div>
+
+<p class="legend">3 symboles utilisés : ovale (Début/Fin), losange (test), rectangle (action)</p>
+</div>
+
+<!-- ============ THERMOMIX ============ -->
+<div class="thermomix-panel">
+<h2>🤖 Le robot exécute</h2>
+
+<div class="thermomix">
+  <div class="tm-base">
+    <div class="tm-screen" id="screen">PRÊT<br/>● cliquer Lancer</div>
+    <div class="tm-led" id="led"></div>
+  </div>
+  <div class="tm-bowl">
+    <div class="tm-bowl-content empty" id="bowl"></div>
+  </div>
+  <div class="tm-fouet" id="fouet"></div>
+</div>
+
+<div class="controls">
+<button class="start" id="btnStart">▶ Lancer la recette</button>
+<button class="step" id="btnStep">⏯ Pas à pas</button>
+<button class="reset" id="btnReset">⟲ Réinitialiser</button>
+</div>
+
+<div class="log" id="log">
+<div class="log-line">// Console du robot — en attente...</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+const STEPS = [
+  {bloc:0, type:"start", screen:"DÉBUT", log:"▶ Démarrage du programme"},
+  {bloc:1, type:"test", screen:"TEST 1\nBeurre + Cassonade ?", log:"❓ Test : beurre ET cassonade dans le bol ?", bowl:"beurre"},
+  {bloc:2, type:"action", screen:"FOUETTER\nVitesse 2", log:"🔄 ACTION : fouetter à vitesse 2", fouet:true},
+  {bloc:3, type:"wait", screen:"⏱ 1 min 30", log:"⏱ Attendre 1 min 30 (1500 ms simulés)", duration:1500, fouet:true},
+  {bloc:4, type:"test", screen:"TEST 2\nŒuf + Sucre vanillé ?", log:"❓ Test : œuf ET sucre vanillé ajoutés ?", bowl:"oeuf", fouet:false},
+  {bloc:5, type:"action", screen:"MÉLANGER\nVitesse 2", log:"🔄 ACTION : mélanger à vitesse 2", fouet:true},
+  {bloc:6, type:"wait", screen:"⏱ 30 sec", log:"⏱ Attendre 30 secondes (800 ms simulés)", duration:800, fouet:true},
+  {bloc:7, type:"test", screen:"TEST 3\nFarine + Levure ?", log:"❓ Test : farine ET levure ajoutées ?", bowl:"farine", fouet:false},
+  {bloc:8, type:"action", screen:"MÉLANGER\nVitesse 3", log:"🔄 ACTION : mélanger à vitesse 3", fouet:true},
+  {bloc:9, type:"wait", screen:"⏱ 2 min", log:"⏱ Attendre 2 minutes (1800 ms simulés)", duration:1800, fouet:true},
+  {bloc:10, type:"test", screen:"TEST 4\nChocolat ?", log:"❓ Test : pépites de chocolat ajoutées ?", bowl:"choco", fouet:false},
+  {bloc:11, type:"action", screen:"MIXER\nVitesse 4", log:"🔄 ACTION : mixer à vitesse 4", fouet:true},
+  {bloc:12, type:"wait", screen:"⏱ 10 sec", log:"⏱ Attendre 10 secondes (500 ms simulés)", duration:500, fouet:true},
+  {bloc:13, type:"end", screen:"✅ TERMINÉ\nFin programme", log:"✅ FIN : pâte à cookies prête !", fouet:false}
+];
+
+const $ = id => document.getElementById(id);
+const screenEl=$("screen"), led=$("led"), bowl=$("bowl"), fouet=$("fouet"), log=$("log");
+const btnStart=$("btnStart"), btnStep=$("btnStep"), btnReset=$("btnReset");
+
+let cur=0, running=false;
+
+function reset(){
+  cur=0; running=false;
+  for(let i=0;i<=13;i++){
+    const b=$("b"+i);
+    if(b){b.classList.remove("active","done");}
+  }
+  bowl.className="tm-bowl-content empty";
+  fouet.classList.remove("on");
+  led.classList.remove("on");
+  screenEl.innerHTML="PRÊT<br/>● cliquer Lancer";
+  log.innerHTML='<div class="log-line">// Console du robot — réinitialisée</div>';
+  btnStart.disabled=false; btnStep.disabled=false;
+}
+
+function logAdd(text, type){
+  const line=document.createElement("div");
+  line.className="log-line "+(type||"");
+  const t=new Date().toLocaleTimeString();
+  line.textContent="["+t+"] "+text;
+  log.appendChild(line);
+  log.scrollTop=log.scrollHeight;
+}
+
+async function runStep(i){
+  const s=STEPS[i];
+  // Highlight current bloc, mark previous as done
+  for(let j=0;j<i;j++){const b=$("b"+STEPS[j].bloc);if(b){b.classList.remove("active");b.classList.add("done");}}
+  const b=$("b"+s.bloc);
+  if(b){b.classList.add("active"); b.scrollIntoView({behavior:"smooth",block:"center"});}
+  screenEl.innerHTML=s.screen.replace(/\n/g,"<br/>");
+  led.classList.add("on");
+  if(s.bowl){bowl.className="tm-bowl-content "+s.bowl;}
+  if(typeof s.fouet==="boolean"){fouet.classList.toggle("on", s.fouet);}
+  logAdd(s.log, s.type);
+  const dur = s.duration || 700;
+  await sleep(dur);
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+async function runAll(){
+  if(running)return;
+  running=true; btnStart.disabled=true; btnStep.disabled=true;
+  for(let i=0;i<STEPS.length;i++){await runStep(i);}
+  // Final: mark last as done
+  const lastB=$("b"+STEPS[STEPS.length-1].bloc);
+  if(lastB){lastB.classList.remove("active");lastB.classList.add("done");}
+  fouet.classList.remove("on");
+  running=false; btnStart.disabled=false; btnStep.disabled=false;
+}
+
+async function runStepByStep(){
+  if(cur>=STEPS.length){return;}
+  btnStart.disabled=true;
+  await runStep(cur);
+  cur++;
+  if(cur>=STEPS.length){
+    const lastB=$("b"+STEPS[STEPS.length-1].bloc);
+    if(lastB){lastB.classList.remove("active");lastB.classList.add("done");}
+    fouet.classList.remove("on");
+    btnStep.disabled=true;
+    logAdd("✓ Programme terminé. Réinitialise pour recommencer.","end");
+  }
+}
+
+btnStart.addEventListener("click", runAll);
+btnStep.addEventListener("click", runStepByStep);
+btnReset.addEventListener("click", reset);
+
+reset();
+</script>
+</body>
+</html>
