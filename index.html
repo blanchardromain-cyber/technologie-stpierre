@@ -189,6 +189,8 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .btnv:hover{background:var(--vt);color:#fff}
 .btnx{background:#FADBD8;color:var(--rg);border:1px solid var(--rg);border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;margin-left:3px}
 .btnx:hover{background:var(--rg);color:#fff}
+.btni{background:#FFF3CD;color:#856404;border:1px solid #856404;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;margin-left:3px}
+.btni:hover{background:#856404;color:#fff}
 
 /* MODAL */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:1000}
@@ -4814,6 +4816,7 @@ function renderSubs() {
       rows += '<td style="font-size:12px">' + fmtDateTime(s.dateISO || s.date) + '</td>';
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
       rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
+      rows += '<button class="btni" onclick="printSubDirect(' + sid + ')" title="Imprimer ce travail (réponses + note + appréciation)">🖨️</button>';
       if (s.status !== "validated") rows += '<button class="btnv" onclick="updSub(' + sid + ', \'validated\')">&#x2705;</button>';
       if (s.status !== "rejected")  rows += '<button class="btnx" onclick="updSub(' + sid + ', \'rejected\')">&#x274C;</button>';
       rows += '<button class="btnx" style="background:var(--rg,#c0392b);margin-left:4px" title="Supprimer cette soumission" onclick="deleteSub(' + sid + ')">🗑️</button>';
@@ -5147,6 +5150,112 @@ function printModalSub() {
   w.focus();
 }
 
+// ── Impression directe depuis le tableau (sans ouvrir le modal) ──────────
+function printSubDirect(sid) {
+  var subs = getSubs(), sub = null;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { sub = subs[i]; break; } }
+  if (!sub) return;
+
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  /* Titre de la capsule */
+  var capTitles = {
+    "dc":"Devoir Commun", "dc-corrige":"DC — Corrigé",
+    "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
+    "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
+    "p12-act2":"P12 — Activité 2", "p12-cor-a1":"P12 — Corrigé A1",
+    "p12-cor-a2":"P12 — Corrigé A2"
+  };
+  var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
+  var dateStr = fmtDateTime(sub.dateISO || sub.date);
+
+  /* Score */
+  var scoreStr = "";
+  if (sub.cap === "dc") {
+    if (sub.adjustedScore !== undefined) scoreStr = "Note ajustée : " + sub.adjustedScore + "/30";
+    else { var _sec = scoreDCBySection(sub.fields || {}); var _auto = Math.min(30,(_sec.q1||0)+(_sec.q2a||0)+(_sec.q2b||0)+(_sec.q2c||0)+(_sec.q3||0)+(_sec.p2q1||0)+(_sec.p2q2||0)+(_sec.p2q3||0)); scoreStr = "Note auto : " + _auto + "/30 (indicative)"; }
+    scoreStr += " — Statut : " + sub.status;
+  } else if (sub.cap === "rem1") {
+    scoreStr = "Score : " + sub.score + "/40 — Statut : " + sub.status;
+  } else if (sub.cap === "p12") {
+    var nf = countP12Fields(sub.fields||{}); scoreStr = nf.done + "/" + nf.total + " champs — Statut : " + sub.status;
+  } else if (sub.cap === "p12-ex1") {
+    var nfx = countP12Ex1Fields(sub.fields||{}); scoreStr = nfx.done + "/" + nfx.total + " champs — Statut : " + sub.status;
+  } else {
+    scoreStr = "Score QCM : " + sub.score + "/" + sub.qcmTot + " — Statut : " + sub.status;
+  }
+
+  /* Réponses */
+  var answersHTML = "";
+  if (sub.cap === "dc" && sub.fields)         answersHTML = buildDCModalHTML(sub.fields, sub.score);
+  else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
+  else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
+
+  /* Évaluation prof (DC) — depuis données stockées */
+  var evalHTML = "";
+  if (sub.cap === "dc") {
+    var adjKeys  = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
+    var adjMaxes = {q1:3,q2a:3,q2b:1,q2c:3,q3:4,p2q1:4,p2q2:6,p2q3:6};
+    var adjLbls  = {q1:"① Bête à cornes",q2a:"② A) Pieuvre — FS",q2b:"② B) Tableau FS1",q2c:"② C) Numéros de FS",q3:"③ Matières",p2q1:"① Schéma fonctionnel",p2q2:"② Diagramme fonctionnel",p2q3:"③ Logigramme"};
+    var adjParts = {q1:"Partie 1 — Cardiofréquencemètre",q2a:"Partie 1 — Cardiofréquencemètre",q2b:"Partie 1 — Cardiofréquencemètre",q2c:"Partie 1 — Cardiofréquencemètre",q3:"Partie 1 — Cardiofréquencemètre",p2q1:"Partie 2 — Aquaponie",p2q2:"Partie 2 — Aquaponie",p2q3:"Partie 2 — Aquaponie"};
+    var storedPts = sub.adjustedPts || {};
+    var lastPart = "", total = 0;
+    evalHTML += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">';
+    evalHTML += '<thead><tr style="background:#1F4E79;color:#fff"><th style="padding:7px 10px;text-align:left">Critère</th><th style="padding:7px 10px;text-align:center;width:80px">Points</th><th style="padding:7px 10px;text-align:center;width:60px">/ Max</th></tr></thead><tbody>';
+    for (var k = 0; k < adjKeys.length; k++) {
+      var ak = adjKeys[k];
+      var v = Math.round((parseFloat(storedPts[ak])||0)*10)/10;
+      total += v;
+      if (adjParts[ak] !== lastPart) {
+        lastPart = adjParts[ak];
+        evalHTML += '<tr style="background:#DEEAF1"><td colspan="3" style="padding:5px 10px;font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.5px">'+esc(lastPart)+'</td></tr>';
+      }
+      var rowBg = k%2===0?"#f9f9f9":"#fff";
+      var valCss = v>=adjMaxes[ak]?"color:#1E6B3B":v===0?"color:#C0392B":"color:#1F4E79";
+      evalHTML += '<tr style="background:'+rowBg+';border-bottom:1px solid #eee"><td style="padding:6px 10px">'+esc(adjLbls[ak])+'</td><td style="padding:6px 10px;text-align:center;font-weight:700;'+valCss+'">'+v+'</td><td style="padding:6px 10px;text-align:center;color:#999">/'+adjMaxes[ak]+'</td></tr>';
+    }
+    total = Math.min(30, Math.round(total*10)/10);
+    evalHTML += '<tr style="background:#1F4E79;color:#fff;font-weight:700"><td style="padding:9px 10px">NOTE FINALE</td><td style="padding:9px 10px;text-align:center;font-size:17px">'+total+'</td><td style="padding:9px 10px;text-align:center">/ 30</td></tr>';
+    evalHTML += '</tbody></table>';
+    if (sub.appreciation && sub.appreciation.trim()) {
+      evalHTML += '<div style="padding:12px 14px;background:#E2EFDA;border-left:4px solid #2E8B4A;border-radius:6px;margin-top:10px">';
+      evalHTML += '<div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Appréciation pédagogique</div>';
+      evalHTML += '<div style="font-size:13px;line-height:1.6;color:#1A202C">'+esc(sub.appreciation).replace(/\n/g,"<br>")+'</div></div>';
+    }
+  }
+
+  var cssVars = ':root{--bl:#1F4E79;--bc:#2E75B6;--bp:#DEEAF1;--vt:#1E6B3B;--vc:#2E8B4A;--vp:#E2EFDA;--or:#C55A11;--op:#FCE4D6;--vi:#7B2C8B;--vip:#EAD4F4;--gr:#F4F6F8;--gb:#E2E8F0;--tx:#1A202C;--td:#4A5568;--rg:#C0392B}';
+
+  var w = window.open("","_blank","width=860,height=760");
+  if (!w) { toast("Popup bloqué — autorise les popups pour ce site puis réessaie."); return; }
+
+  w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Impression — '+esc(sub.ename)+'<\/title>');
+  w.document.write('<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">');
+  w.document.write('<style>'+cssVars+'*{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",Arial,sans-serif;color:#1A202C;background:#fff}');
+  w.document.write('.ph{background:#1F4E79;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start}');
+  w.document.write('.ph h1{font-size:15px;font-weight:700;margin-bottom:3px}.ph .sub{font-size:11px;opacity:.8}');
+  w.document.write('.ph-r{text-align:right}.ph-r .name{font-size:14px;font-weight:700}.ph-r .cls{font-size:11px;opacity:.8;margin-top:2px}');
+  w.document.write('.pb{padding:16px 20px}.st{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #DEEAF1;padding-bottom:4px;margin:14px 0 10px}');
+  w.document.write('.sc{background:#F4F6F8;border-radius:6px;padding:8px 12px;font-size:12px;color:#4A5568;margin:0 0 10px}');
+  w.document.write('button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}');
+  w.document.write('@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}<\/style><\/head><body>');
+
+  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie 4ᵉ | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
+  w.document.write('<div class="pb">');
+  if (scoreStr) w.document.write('<div class="sc">'+esc(scoreStr)+'<\/div>');
+  w.document.write('<div class="st">Réponses de l’élève<\/div>');
+  w.document.write(answersHTML);
+  if (evalHTML) {
+    w.document.write('<div class="st" style="margin-top:18px">Évaluation du professeur<\/div>');
+    w.document.write(evalHTML);
+  }
+  w.document.write('<\/div>');
+  w.document.write('<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>');
+  w.document.write('<\/body><\/html>');
+  w.document.close();
+  w.focus();
+}
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
   for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { idx = i; break; } }
