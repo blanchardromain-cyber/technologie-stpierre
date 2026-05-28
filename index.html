@@ -3694,6 +3694,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
     <p style="font-size:12px;color:var(--td)" id="mscore"></p>
     <div class="macts">
       <button class="btnmc" onclick="closeModal()">Fermer</button>
+      <button class="btnmc" onclick="printModalSub()" title="Imprimer ce travail">🖨️ Imprimer</button>
       <button class="btnmx" onclick="fromModal('rejected')">À revoir</button>
       <button class="btnmv" onclick="fromModal('validated')">Valider</button>
     </div>
@@ -5060,6 +5061,92 @@ function openModal(sid) {
 }
 function closeModal() { document.getElementById("modal").classList.add("h"); modalId = null; }
 function fromModal(st) { if (modalId !== null) updSub(modalId, st); closeModal(); }
+
+function printModalSub() {
+  if (modalId === null) return;
+  var subs = getSubs(), sub = null;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].id == modalId) { sub = subs[i]; break; } }
+  if (!sub) return;
+
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  var titre    = ((document.querySelector("#modal .mcard h3")||{}).textContent || sub.caplbl || "Travail élève").trim();
+  var dateStr  = fmtDateTime(sub.dateISO || sub.date);
+  var scoreStr = ((document.getElementById("mscore")||{}).textContent || "").trim();
+
+  /* Réponses de l'élève — HTML propre depuis les builders existants */
+  var answersHTML = "";
+  if (sub.cap === "dc" && sub.fields)       answersHTML = buildDCModalHTML(sub.fields, sub.score);
+  else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
+  else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
+
+  /* Évaluation prof (DC uniquement) : points ajustés courants + appréciation */
+  var evalHTML = "";
+  if (sub.cap === "dc") {
+    var adjKeys  = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
+    var adjMaxes = {q1:3,q2a:3,q2b:1,q2c:3,q3:4,p2q1:4,p2q2:6,p2q3:6};
+    var adjLbls  = {q1:"① Bête à cornes",q2a:"② A) Pieuvre — FS",q2b:"② B) Tableau FS1",q2c:"② C) Numéros de FS",q3:"③ Matières",p2q1:"① Schéma fonctionnel",p2q2:"② Diagramme fonctionnel",p2q3:"③ Logigramme"};
+    var adjParts = {q1:"Partie 1 — Cardiofréquencemètre",q2a:"Partie 1 — Cardiofréquencemètre",q2b:"Partie 1 — Cardiofréquencemètre",q2c:"Partie 1 — Cardiofréquencemètre",q3:"Partie 1 — Cardiofréquencemètre",p2q1:"Partie 2 — Aquaponie",p2q2:"Partie 2 — Aquaponie",p2q3:"Partie 2 — Aquaponie"};
+    var lastPart = "", total = 0;
+    evalHTML += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">';
+    evalHTML += '<thead><tr style="background:#1F4E79;color:#fff"><th style="padding:7px 10px;text-align:left">Critère</th><th style="padding:7px 10px;text-align:center;width:80px">Points</th><th style="padding:7px 10px;text-align:center;width:60px">/ Max</th></tr></thead><tbody>';
+    for (var k = 0; k < adjKeys.length; k++) {
+      var ak = adjKeys[k];
+      var elAdj = document.getElementById("adj-"+ak);
+      var v = elAdj ? Math.round((parseFloat(elAdj.value)||0)*10)/10 : 0;
+      total += v;
+      if (adjParts[ak] !== lastPart) {
+        lastPart = adjParts[ak];
+        evalHTML += '<tr style="background:#DEEAF1"><td colspan="3" style="padding:5px 10px;font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.5px">'+esc(lastPart)+'</td></tr>';
+      }
+      var rowBg = k%2===0?"#f9f9f9":"#fff";
+      var valCss = v>=adjMaxes[ak]?"color:#1E6B3B":v===0?"color:#C0392B":"color:#1F4E79";
+      evalHTML += '<tr style="background:'+rowBg+';border-bottom:1px solid #eee"><td style="padding:6px 10px">'+esc(adjLbls[ak])+'</td><td style="padding:6px 10px;text-align:center;font-weight:700;'+valCss+'">'+v+'</td><td style="padding:6px 10px;text-align:center;color:#999">/'+adjMaxes[ak]+'</td></tr>';
+    }
+    total = Math.min(30, Math.round(total*10)/10);
+    evalHTML += '<tr style="background:#1F4E79;color:#fff;font-weight:700"><td style="padding:9px 10px">NOTE FINALE</td><td style="padding:9px 10px;text-align:center;font-size:17px">'+total+'</td><td style="padding:9px 10px;text-align:center">/ 30</td></tr>';
+    evalHTML += '</tbody></table>';
+    var apprEl = document.getElementById("dc-appreciation");
+    if (apprEl && apprEl.value.trim()) {
+      evalHTML += '<div style="padding:12px 14px;background:#E2EFDA;border-left:4px solid #2E8B4A;border-radius:6px;margin-top:10px">';
+      evalHTML += '<div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Appréciation pédagogique</div>';
+      evalHTML += '<div style="font-size:13px;line-height:1.6;color:#1A202C">'+esc(apprEl.value).replace(/\n/g,"<br>")+'</div></div>';
+    }
+  }
+
+  var cssVars = ':root{--bl:#1F4E79;--bc:#2E75B6;--bp:#DEEAF1;--vt:#1E6B3B;--vc:#2E8B4A;--vp:#E2EFDA;--or:#C55A11;--op:#FCE4D6;--vi:#7B2C8B;--vip:#EAD4F4;--gr:#F4F6F8;--gb:#E2E8F0;--tx:#1A202C;--td:#4A5568;--rg:#C0392B}';
+
+  var w = window.open("","_blank","width=860,height=760");
+  if (!w) { toast("Popup bloqué — autorise les popups pour ce site puis réessaie."); return; }
+
+  w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Impression — '+esc(sub.ename)+'<\/title>');
+  w.document.write('<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">');
+  w.document.write('<style>'+cssVars+'*{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",Arial,sans-serif;color:#1A202C;background:#fff}');
+  w.document.write('.ph{background:#1F4E79;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start}');
+  w.document.write('.ph h1{font-size:15px;font-weight:700;margin-bottom:3px}.ph .sub{font-size:11px;opacity:.8}');
+  w.document.write('.ph-r{text-align:right}.ph-r .name{font-size:14px;font-weight:700}.ph-r .cls{font-size:11px;opacity:.8;margin-top:2px}');
+  w.document.write('.pb{padding:16px 20px}.st{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #DEEAF1;padding-bottom:4px;margin:14px 0 10px}');
+  w.document.write('.sc{background:#F4F6F8;border-radius:6px;padding:8px 12px;font-size:12px;color:#4A5568;margin:0 0 10px}');
+  w.document.write('button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}');
+  w.document.write('@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}<\/style><\/head><body>');
+
+  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie 4ᵉ | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
+  w.document.write('<div class="pb">');
+  if (scoreStr) w.document.write('<div class="sc">'+esc(scoreStr)+'<\/div>');
+  w.document.write('<div class="st">Réponses de l’élève<\/div>');
+  w.document.write(answersHTML);
+  if (evalHTML) {
+    w.document.write('<div class="st" style="margin-top:18px">Évaluation du professeur<\/div>');
+    w.document.write(evalHTML);
+  }
+  w.document.write('<\/div>');
+  w.document.write('<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>');
+  w.document.write('<\/body><\/html>');
+  w.document.close();
+  w.focus();
+}
+
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
   for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { idx = i; break; } }
