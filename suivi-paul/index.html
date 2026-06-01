@@ -109,7 +109,7 @@
     height: 100%;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     border-radius: 10px;
-    width: 57.1%;
+    width: 71.4%;
     transition: width 0.6s ease;
   }
   .progress-label {
@@ -402,7 +402,7 @@
       <div class="progress-bar" id="progressBar"></div>
     </div>
     <div class="progress-label">
-      <strong id="doneCount">3</strong> / 7 semaines complétées
+      <strong id="doneCount">4</strong> / 7 semaines complétées
     </div>
 
     <br>
@@ -571,8 +571,8 @@
 
     </div>
 
-    <!-- SEMAINE 4 (ACTIVE) -->
-    <div class="week-card status-active open" id="week4">
+    <!-- SEMAINE 4 (DONE) -->
+    <div class="week-card status-done" id="week4">
       <div class="week-header" onclick="toggleWeek('week4')">
         <div class="week-num">Sem. 4</div>
         <div class="status-dot"></div>
@@ -580,7 +580,7 @@
           <div class="week-dates">25 – 29 mai 2026</div>
           <div class="week-title">🍎 P12 · Activité 2 — Technologie et Alimentation</div>
         </div>
-        <span class="status-pill pill-active">En cours</span>
+        <span class="status-pill pill-done">Terminé ✅</span>
         <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
 
@@ -626,16 +626,16 @@
 
     </div>
 
-    <!-- SEMAINE 5 (LOCKED) -->
-    <div class="week-card status-locked" id="week5">
+    <!-- SEMAINE 5 (ACTIVE) -->
+    <div class="week-card status-active open" id="week5">
       <div class="week-header" onclick="toggleWeek('week5')">
         <div class="week-num">Sem. 5</div>
         <div class="status-dot"></div>
         <div class="week-title-wrap">
           <div class="week-dates">1 – 5 juin 2026</div>
-          <div class="week-title">🔒 P12 · Exercice 1</div>
+          <div class="week-title">🐾 P12 · Exercice 1 — Distributeur de croquettes</div>
         </div>
-        <span class="status-pill pill-locked">Code à venir</span>
+        <span class="status-pill pill-active">En cours</span>
         <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
 
@@ -647,10 +647,19 @@
             <strong>P12 · Exercice 1 — Distributeur de croquettes</strong>.<br>Mise en pratique des algorigrammes : conçois un système qui distribue les croquettes au bon moment.<br>Accessible depuis le site Technologie après connexion.
           </div>
 
-          <div class="locked-box">
-            <div class="locked-box-icon">🔒</div>
-            <div>Je te communiquerai le code d'accès en début de semaine.</div>
+          <div class="code-box">
+            <div class="code-box-icon">🔑</div>
+            <div>
+              <div class="code-box-label">Code d'accès</div>
+              <div class="code-box-value">CHA26</div>
+            </div>
           </div>
+
+          <a href="https://blanchardromain-cyber.github.io/technologie-stpierre/" target="_blank" class="pix-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Accéder au site Technologie
+          </a>
+
 
         </div>
 
@@ -715,7 +724,7 @@
   <div class="footer">
     <p>Collège Saint-Pierre · Technologie · M. Blanchard</p>
     <p style="margin-top:4px"><a href="https://blanchardromain-cyber.github.io/technologie-stpierre/" target="_blank">→ Site Technologie</a></p>
-    <p style="margin-top:8px;font-size:10px;opacity:0.6">Dernière mise à jour automatique : 27 May 2026 à 12h12 (Paris)</p>
+    <p style="margin-top:8px;font-size:10px;opacity:0.6">Dernière mise à jour automatique : 01 June 2026 à 12h17 (Paris)</p>
   </div>
 
 </div><!-- /wrapper -->
