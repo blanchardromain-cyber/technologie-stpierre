@@ -681,21 +681,48 @@
 
     </div>
 
-    <!-- SEMAINE 6 (SOON) -->
-    <div class="week-card status-soon" id="week6">
+    <!-- SEMAINE 6 (LOCKED) -->
+    <div class="week-card status-locked" id="week6">
       <div class="week-header" onclick="toggleWeek('week6')">
         <div class="week-num">Sem. 6</div>
         <div class="status-dot"></div>
         <div class="week-title-wrap">
           <div class="week-dates">8 – 12 juin 2026</div>
-          <div class="week-title">📅 Activité à venir</div>
+          <div class="week-title">🔒 P12 · Exercice 2</div>
         </div>
-        <span class="status-pill pill-soon">À planifier</span>
+        <span class="status-pill pill-locked">Code à venir</span>
         <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
 
-      <div class="soon-content">
-        <div class="soon-text">Mise à jour à venir. Reviens consulter cette page en début de semaine ! 👀</div>
+      <div class="week-body">
+
+        <div class="activity-block">
+          <div class="activity-label">🏖️ Activité</div>
+          <div class="activity-desc">
+            <strong>P12 · Exercice 2 — Bac à sable connecté</strong>.<br>Comment conserver des aliments sans réfrigérateur ?<br>Accessible depuis le site Technologie après connexion.
+          </div>
+
+          <div class="locked-box">
+            <div class="locked-box-icon">🔒</div>
+            <div>Je te communiquerai le code d'accès en début de semaine.</div>
+          </div>
+
+        </div>
+
+
+        <div class="signal-block">
+          <div class="signal-label">
+            ✉️ Quand tu auras terminé, copie ce message :
+          </div>
+          <div class="msg-preview">
+            Bonjour M. Blanchard,<br>J'ai terminé l'Exercice 2 (Bac à sable connecté) de P12.<br>— Paul
+          </div>
+          <button class="copy-btn" onclick="copyMsg(this, 'Bonjour M. Blanchard,\nJ\'ai terminé l\'Exercice 2 (Bac à sable connecté) de P12.\n— Paul')">
+            📋 Copier le message
+          </button>
+          <div class="copy-hint">Puis colle-le dans la messagerie Ecole Directe 📨</div>
+        </div>
+
       </div>
 
     </div>
@@ -724,7 +751,7 @@
   <div class="footer">
     <p>Collège Saint-Pierre · Technologie · M. Blanchard</p>
     <p style="margin-top:4px"><a href="https://blanchardromain-cyber.github.io/technologie-stpierre/" target="_blank">→ Site Technologie</a></p>
-    <p style="margin-top:8px;font-size:10px;opacity:0.6">Dernière mise à jour automatique : 01 June 2026 à 13h25 (Paris)</p>
+    <p style="margin-top:8px;font-size:10px;opacity:0.6">Dernière mise à jour automatique : 02 June 2026 à 23h14 (Paris)</p>
   </div>
 
 </div><!-- /wrapper -->
