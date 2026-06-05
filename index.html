@@ -1195,14 +1195,19 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <!-- BOUTONS D'ACTION -->
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="saveP12Act1Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
           <button onclick="submitP12Form()"
                   style="padding:14px 28px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
-            &#x1F4BE; Enregistrer mon travail
+            &#x1F4E4; Soumettre au professeur
           </button>
           <button onclick="exportP12PDF()"
                   style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
             &#x1F4C4; Exporter en PDF
           </button>
+          <div id="p12-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
           <div id="p12-status" style="font-size:13px;color:var(--td)"></div>
         </div>
 
@@ -1645,9 +1650,13 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <!-- BOUTONS D'ACTION -->
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="saveP12Ex1Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
           <button onclick="submitP12Ex1Form()"
                   style="padding:14px 28px;background:#C2185B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
-            &#x1F4BE; Soumettre mon travail
+            &#x1F4E4; Soumettre au professeur
           </button>
           <button onclick="exportP12Ex1PDF()"
                   style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
@@ -1657,6 +1666,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
                   style="padding:12px 18px;background:#ECEFF1;color:var(--td);border:1px solid var(--gb);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
             &#x21BA; Annuler
           </button>
+          <div id="ex1-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
           <div id="ex1-status" style="font-size:13px;color:var(--td);flex:1;min-width:200px"></div>
         </div>
 
@@ -2068,9 +2078,13 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <!-- BOUTONS D'ACTION -->
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="saveP12Ex2Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
           <button onclick="submitP12Ex2Form()"
                   style="padding:14px 28px;background:#0277BD;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
-            &#x1F4BE; Soumettre mon travail
+            &#x1F4E4; Soumettre au professeur
           </button>
           <button onclick="exportP12Ex2PDF()"
                   style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
@@ -2080,6 +2094,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
                   style="padding:12px 18px;background:#ECEFF1;color:var(--td);border:1px solid var(--gb);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
             &#x21BA; Annuler
           </button>
+          <div id="ex2-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
           <div id="ex2-status" style="font-size:13px;color:var(--td);flex:1;min-width:200px"></div>
         </div>
 
@@ -2553,10 +2568,15 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 
         <!-- BOUTONS D'ACTION -->
         <div id="a2-submit-zone" style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="saveA2Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
           <button onclick="submitA2Form()"
                   style="padding:14px 28px;background:var(--vt);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
             &#x1F4E4; Soumettre au professeur
           </button>
+          <div id="a2-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
         </div>
 
       </div><!-- fin max-width -->
@@ -4700,6 +4720,7 @@ function goPage(pid) {
       if (fPrenom && !fPrenom.value) fPrenom.value = user.p;
       if (fClasse && !fClasse.value) fClasse.value = user.c;
     }
+    restoreP12Act1Draft();
   }
   if (pid === "pg-p12-ex1") {
     if (user) {
@@ -8736,6 +8757,130 @@ function submitA2Form() {
   toast("Activité 2 soumise !");
   renderDash();
 }
+
+// ================================================================
+// BROUILLONS LOCAUX — utilitaires communs
+// ================================================================
+function _draftTs() { return Date.now(); }
+
+function _showDraftStatus(statusId, ts) {
+  var el = document.getElementById(statusId);
+  if (!el) return;
+  if (!ts) { el.innerHTML = ""; return; }
+  var d = new Date(ts);
+  var hm = d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0");
+  el.innerHTML = "&#x1F4BE; Brouillon enregistr&eacute; &agrave; " + hm;
+}
+
+// ── Activité 1 ──────────────────────────────────────────────────
+var P12_ACT1_FIELDS = [
+  "p12-nom","p12-prenom","p12-classe",
+  "p12-1a-objet","p12-1a-fonction",
+  "p12-1c-q1","p12-1c-q2","p12-2a","p12-2b-principe",
+  "p12-ft1","p12-ft2","p12-st2","p12-ft3","p12-st4","p12-ft5",
+  "p12-ft6","p12-st6","p12-ft7","p12-st7","p12-ft8","p12-st8",
+  "p12-3-contexte","p12-bilan"
+];
+function saveP12Act1Draft(showFeedback) {
+  if (!user) return;
+  var data = { _savedAt: _draftTs() };
+  P12_ACT1_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  try { localStorage.setItem("p12_act1_draft_" + user.id, JSON.stringify(data)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("p12-draft-status", data._savedAt);
+}
+function restoreP12Act1Draft() {
+  if (!user) return;
+  var raw = null;
+  try { raw = localStorage.getItem("p12_act1_draft_" + user.id); } catch(e) {}
+  if (!raw) return;
+  var data = {}; try { data = JSON.parse(raw); } catch(e) { return; }
+  P12_ACT1_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && data[id] !== undefined && !el.value) el.value = data[id];
+  });
+  _showDraftStatus("p12-draft-status", data._savedAt || null);
+}
+
+// ── Exercice 1 — enrichissement des fonctions existantes ────────
+var _origSaveP12Ex1Draft = saveP12Ex1Draft;
+saveP12Ex1Draft = function(showFeedback) {
+  if (!user) return;
+  var snap = snapP12Ex1();
+  snap._savedAt = _draftTs();
+  try { localStorage.setItem("p12_ex1_" + user.id, JSON.stringify(snap)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("ex1-draft-status", snap._savedAt);
+};
+var _origRestoreP12Ex1Draft = restoreP12Ex1Draft;
+restoreP12Ex1Draft = function() {
+  _origRestoreP12Ex1Draft();
+  try {
+    var raw = localStorage.getItem("p12_ex1_" + user.id);
+    if (raw) { var d = JSON.parse(raw); _showDraftStatus("ex1-draft-status", d._savedAt || null); }
+  } catch(e) {}
+};
+
+// ── Exercice 2 — enrichissement des fonctions existantes ────────
+var _origSaveP12Ex2Draft = saveP12Ex2Draft;
+saveP12Ex2Draft = function(showFeedback) {
+  if (!user) return;
+  var snap = snapP12Ex2();
+  snap._savedAt = _draftTs();
+  try { localStorage.setItem("p12_ex2_" + user.id, JSON.stringify(snap)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("ex2-draft-status", snap._savedAt);
+};
+var _origRestoreP12Ex2Draft = restoreP12Ex2Draft;
+restoreP12Ex2Draft = function() {
+  _origRestoreP12Ex2Draft();
+  try {
+    var raw = localStorage.getItem("p12_ex2_" + user.id);
+    if (raw) { var d = JSON.parse(raw); _showDraftStatus("ex2-draft-status", d._savedAt || null); }
+  } catch(e) {}
+};
+
+// ── Activité 2 — enrichissement de saveA2Draft ──────────────────
+var _origSaveA2Draft = saveA2Draft;
+saveA2Draft = function(showFeedback) {
+  if (!user) return;
+  var data = { _savedAt: _draftTs() };
+  A2_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  try { localStorage.setItem("p12_act2_draft_" + user.id, JSON.stringify(data)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("a2-draft-status", data._savedAt);
+};
+var _origRestoreA2Draft = restoreA2Draft;
+restoreA2Draft = function() {
+  _origRestoreA2Draft();
+  try {
+    var raw = localStorage.getItem("p12_act2_draft_" + user.id);
+    if (raw) { var d = JSON.parse(raw); _showDraftStatus("a2-draft-status", d._savedAt || null); }
+  } catch(e) {}
+};
+
+// ── Auto-save silencieux sur chaque frappe ───────────────────────
+(function wireAutoSave() {
+  function onInput(saveFn) { return function() { saveFn(false); }; }
+  P12_ACT1_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", onInput(saveP12Act1Draft));
+  });
+  EX1_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", onInput(saveP12Ex1Draft));
+  });
+  ["ex2-q1","ex2-q2","ex2-q3","ex2-q4-c1","ex2-q4-c2","ex2-q4-c3","ex2-classe"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", onInput(saveP12Ex2Draft));
+  });
+  A2_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", onInput(saveA2Draft));
+  });
+})();
 
 </script>
 </body>
