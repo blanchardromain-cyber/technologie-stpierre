@@ -254,8 +254,10 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
   .ex1-bete-grid{grid-template-columns:1fr!important}
   .ex1-algo-grid{grid-template-columns:1fr!important}
   .ex1-legende{order:-1}
+  .ex2-docs-grid{grid-template-columns:1fr!important}
+  .ex2-doc1-grid{grid-template-columns:1fr!important}
 }
-@media print{#pg-p12-ex1,#pg-p12-ex1-cor{display:block!important}.btn-mic{display:none!important}}
+@media print{#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor{display:block!important}.btn-mic{display:none!important}}
 /* ── Contextes d'apparition ── */
 .ctx-card{border-radius:12px;padding:16px;border-left:5px solid;transition:transform .2s,box-shadow .2s}
 .ctx-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.12)}
@@ -268,7 +270,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .ctx-item-row{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;margin-bottom:8px;background:var(--gr);flex-wrap:wrap}
 .ctx-item-row.ok{background:#E8F5E9;border:1px solid var(--vt)}
 .ctx-item-row.ko{background:#FADBD8;border:1px solid var(--rg)}
-@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
+@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
 /* ═══ DEVOIR COMMUN ═══ */
 .dc-timer-bar{position:sticky;top:58px;z-index:90;background:var(--bl);color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 -24px}
 .dc-timer{font-family:"DM Mono",monospace;font-size:22px;font-weight:700;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px;min-width:92px;text-align:center;display:inline-block;transition:background .3s}
@@ -1883,8 +1885,301 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div><!-- fin max-width -->
     </div><!-- fin pg-p12-ex1-cor -->
 
+    <!-- ============================================================ -->
+    <!-- P12 — EXERCICE n°2 — BAC À SABLE CONNECTÉ                    -->
+    <!-- ============================================================ -->
+    <div id="pg-p12-ex2" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Exercice n&deg;2 &mdash; Bac &agrave; sable connect&eacute;</h2>
+      </div>
+      <div style="max-width:920px">
+
+        <!-- EN-TÊTE IDENTITÉ -->
+        <div style="background:linear-gradient(135deg,#0277BD,#039BE5);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+            <span style="font-size:36px;animation:fiu .6s ease">&#x1F33F;</span>
+            <div style="flex:1;min-width:240px">
+              <div style="font-size:18px;font-weight:700">Exercice n&deg;2 &mdash; Comment conserver des aliments sans r&eacute;frig&eacute;rateur&nbsp;?</div>
+              <div style="font-size:13px;opacity:.9">P12 &mdash; Comment la technologie facilite-t-elle notre alimentation&nbsp;? &bull; Cycle 4 &mdash; 4&egrave;me</div>
+            </div>
+            <div id="ex2-progress" style="background:rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;white-space:nowrap">4 questions</div>
+          </div>
+          <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="ex2-nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="ex2-prenom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Classe</label>
+              <select id="ex2-classe" class="p12-input" style="background:#fff;color:var(--tx);cursor:pointer">
+                <option value="">— Choisis —</option>
+                <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option>
+                <option value="4D">4D</option><option value="4E">4E</option><option value="4F">4F</option>
+              </select></div>
+          </div>
+        </div>
+
+        <!-- MISSION -->
+        <div style="background:#E1F5FE;border:2px dashed #0277BD;border-radius:10px;padding:14px 20px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:22px;flex-shrink:0">&#x1F3AF;</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Ta mission</div>
+            <div style="font-size:14px;color:#01579B;line-height:1.55">Vous devez concevoir un <strong>dispositif connect&eacute;</strong> pour conserver des l&eacute;gumes (carottes, navets, betteraves, radis...) <strong>hors du r&eacute;frig&eacute;rateur</strong>. Il conserve les l&eacute;gumes dans du <strong>sable humide</strong> afin de ralentir l'action des micro-organismes. Il doit &ecirc;tre connect&eacute; &agrave; l'application <em>&laquo;&nbsp;mon garde-manger&nbsp;&raquo;</em>, arroser le bac si des l&eacute;gumes y sont pr&eacute;sents, et s'int&eacute;grer &agrave; l'esth&eacute;tique d'une cuisine contemporaine.</div>
+          </div>
+        </div>
+
+        <!-- DOC : APP SMARTPHONE + VIDÉO DE PRÉSENTATION -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
+          <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">&#x1F4F1; Doc 1 &mdash; Application &laquo; mon garde-manger &raquo;</div>
+          <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:center" class="ex2-doc1-grid">
+            <!-- Capture de l'app -->
+            <div style="text-align:center">
+              <img src="assets/p12-ex2/01-app-smartphone.png" alt="Application mon garde-manger sur smartphone" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb);max-height:240px">
+              <div style="font-size:11px;color:var(--td);margin-top:6px;font-style:italic">Capture de l'application</div>
+            </div>
+            <!-- Carte vidéo : description + bouton externe -->
+            <div style="background:linear-gradient(135deg,#E1F5FE,#B3E5FC);border-radius:10px;padding:18px 20px;text-align:center;border:1px solid #81D4FA">
+              <div style="font-size:36px;line-height:1;margin-bottom:8px">&#x1F3A5;</div>
+              <div style="font-size:14px;font-weight:700;color:#01579B;margin-bottom:6px">Vid&eacute;o de pr&eacute;sentation</div>
+              <p style="font-size:13px;color:#0277BD;margin:0 0 14px;line-height:1.5">D&eacute;couvre comment fonctionne l'application &laquo;&nbsp;mon garde-manger&nbsp;&raquo; en regardant cette pr&eacute;sentation.</p>
+              <a href="https://www.youtube.com/watch?v=b12lCYh4J8k" target="_blank" rel="noopener"
+                 style="display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:#FF0000;color:#fff;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 3px 10px rgba(0,0,0,.18);transition:all .2s">
+                &#x25B6; Regarder la vid&eacute;o sur YouTube
+              </a>
+              <div style="font-size:11px;color:var(--td);margin-top:10px;font-style:italic">S'ouvre dans un nouvel onglet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOC : BÊTE À CORNES / CAHIER DES CHARGES -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
+          <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F4CB; Doc 2 &mdash; Pr&eacute;sentation de l'objet technique &amp; cahier des charges</div>
+          <div style="text-align:center">
+            <img src="assets/p12-ex2/02-bete-cornes.png" alt="Bête à cornes du bac à sable de conservation" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+          </div>
+        </div>
+
+        <!-- DOC : COMPOSANTS + TABLEAU CAN -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
+          <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F50C; Doc 3 &mdash; Capteurs &amp; type d'informations transmises</div>
+          <div style="text-align:center">
+            <img src="assets/p12-ex2/03-composants.png" alt="Tableau des capteurs et types d'informations (numérique/analogique) avec table CAN" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+          </div>
+          <div style="font-size:11px;color:var(--td);margin-top:8px;font-style:italic;text-align:center">&#x1F4A1; Le tableau au centre donne la correspondance <strong>humidit&eacute; &harr; valeur CAN</strong> (utile pour la Q3).</div>
+        </div>
+
+        <!-- DOC : ALGORITHME + PROGRAMME PAR BLOCS -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:22px">
+          <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F4DC; Doc 4 &mdash; Algorithme d'arrosage &amp; programme par blocs</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="ex2-docs-grid">
+            <div style="text-align:center">
+              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px">Algorithme texte</div>
+              <img src="assets/p12-ex2/04-algorithme.png" alt="Algorithme texte de l'arrosage" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px">Programme par blocs</div>
+              <img src="assets/p12-ex2/05-programme-blocs.png" alt="Programme par blocs" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- QUESTIONS                                            -->
+        <!-- ═══════════════════════════════════════════════════ -->
+
+        <!-- Q1 -->
+        <div class="p12-part-hdr" style="background:#0277BD">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">1</span>
+          Quelle information doit &ecirc;tre transmise par l'application du smartphone au bac &agrave; sable&nbsp;?
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-phase" style="background:#E1F5FE">
+            <p style="font-size:13px;color:var(--td);margin:0 0 10px;font-style:italic">Aide-toi du Doc 1 (app smartphone) et de la mission.</p>
+            <div class="dictee-wrap">
+              <textarea id="ex2-q1" rows="3" class="p12-ta" placeholder="...&eacute;cris ta r&eacute;ponse ici"></textarea>
+              <button class="btn-mic" id="mic-ex2-q1" onclick="toggleDictation('ex2-q1','mic-ex2-q1')">&#x1F3A4; Dicter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="p12-part-hdr" style="background:#0288D1">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">2</span>
+          Quelle est la nature de l'information transmise par le capteur d'humidit&eacute; au microcontr&ocirc;leur&nbsp;?
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-phase" style="background:#E1F5FE">
+            <p style="font-size:13px;color:var(--td);margin:0 0 10px;font-style:italic">Aide-toi du Doc 3 (capteurs).</p>
+            <div class="dictee-wrap">
+              <textarea id="ex2-q2" rows="2" class="p12-ta" placeholder="Nature de l'information..."></textarea>
+              <button class="btn-mic" id="mic-ex2-q2" onclick="toggleDictation('ex2-q2','mic-ex2-q2')">&#x1F3A4; Dicter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="p12-part-hdr" style="background:#039BE5">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">3</span>
+          &Agrave; quelle valeur num&eacute;rique correspond un taux d'humidit&eacute; de 40&nbsp;%&nbsp;?
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-phase" style="background:#E1F5FE">
+            <p style="font-size:13px;color:var(--td);margin:0 0 12px;font-style:italic">Aide-toi du tableau de conversion humidit&eacute; &harr; valeur CAN dans le Doc 3.</p>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--gb);border-radius:8px;padding:10px 14px;font-size:14px">
+              <span style="font-weight:600">Valeur CAN&nbsp;:</span>
+              <input type="number" id="ex2-q3" min="0" max="1023" class="ex1-num" style="width:90px" placeholder="?">
+              <span style="font-size:12px;color:var(--td);font-style:italic">(entier entre 0 et 1023)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="p12-part-hdr" style="background:#01579B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">4</span>
+          Quelles sont les 3 conditions n&eacute;cessaires pour que l'arrosage du sable soit r&eacute;alis&eacute;&nbsp;?
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-phase" style="background:#E1F5FE">
+            <p style="font-size:13px;color:var(--td);margin:0 0 12px;font-style:italic">Aide-toi du Doc 4 (algorithme). 3 conditions doivent &ecirc;tre toutes vraies en m&ecirc;me temps.</p>
+
+            <div style="margin-bottom:10px">
+              <div style="font-size:12px;font-weight:700;color:#01579B;margin-bottom:4px">Condition 1&nbsp;:</div>
+              <div class="dictee-wrap">
+                <textarea id="ex2-q4-c1" rows="2" class="p12-ta" placeholder="Premi&egrave;re condition..."></textarea>
+                <button class="btn-mic" id="mic-ex2-q4-c1" onclick="toggleDictation('ex2-q4-c1','mic-ex2-q4-c1')">&#x1F3A4;</button>
+              </div>
+            </div>
+            <div style="margin-bottom:10px">
+              <div style="font-size:12px;font-weight:700;color:#01579B;margin-bottom:4px">Condition 2&nbsp;:</div>
+              <div class="dictee-wrap">
+                <textarea id="ex2-q4-c2" rows="2" class="p12-ta" placeholder="Deuxi&egrave;me condition..."></textarea>
+                <button class="btn-mic" id="mic-ex2-q4-c2" onclick="toggleDictation('ex2-q4-c2','mic-ex2-q4-c2')">&#x1F3A4;</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#01579B;margin-bottom:4px">Condition 3&nbsp;:</div>
+              <div class="dictee-wrap">
+                <textarea id="ex2-q4-c3" rows="2" class="p12-ta" placeholder="Troisi&egrave;me condition..."></textarea>
+                <button class="btn-mic" id="mic-ex2-q4-c3" onclick="toggleDictation('ex2-q4-c3','mic-ex2-q4-c3')">&#x1F3A4;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="submitP12Ex2Form()"
+                  style="padding:14px 28px;background:#0277BD;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4BE; Soumettre mon travail
+          </button>
+          <button onclick="exportP12Ex2PDF()"
+                  style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4C4; Exporter en PDF
+          </button>
+          <button onclick="resetP12Ex2Form()"
+                  style="padding:12px 18px;background:#ECEFF1;color:var(--td);border:1px solid var(--gb);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
+            &#x21BA; Annuler
+          </button>
+          <div id="ex2-status" style="font-size:13px;color:var(--td);flex:1;min-width:200px"></div>
+        </div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p12-ex2 -->
+
+    <!-- ============================================================ -->
+    <!-- P12 — CORRIGÉ EXERCICE n°2 — BAC À SABLE CONNECTÉ            -->
+    <!-- ============================================================ -->
+    <div id="pg-p12-ex2-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Corrig&eacute; Exercice n&deg;2</h2>
+      </div>
+      <div style="max-width:920px">
+
+        <!-- EN-TÊTE CORRIGÉ -->
+        <div style="background:linear-gradient(135deg,#1E6B3B,#43A047);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:36px">&#x1F4DA;</span>
+          <div style="flex:1;min-width:240px">
+            <div style="font-size:18px;font-weight:700">Corrig&eacute; &mdash; Bac &agrave; sable connect&eacute;</div>
+            <div style="font-size:13px;opacity:.9">P12 &bull; Exercice n&deg;2 &bull; Cycle 4 &mdash; 4&egrave;me</div>
+          </div>
+          <button onclick="exportP12Ex2CorPDF()" style="padding:11px 22px;background:#fff;color:#1E6B3B;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15)">
+            &#x1F4C4; Exporter en PDF
+          </button>
+        </div>
+
+        <div style="background:#FFF3E0;border-left:4px solid #FB8C00;border-radius:8px;padding:12px 18px;margin-bottom:18px;font-size:13px;color:#5D3A00">
+          &#x26A0;&#xFE0F; Ce corrig&eacute; est r&eacute;serv&eacute; au prof. Le code d'acc&egrave;s est g&eacute;r&eacute; depuis le modal Prof &gt; onglet &laquo;&nbsp;Codes d'acc&egrave;s&nbsp;&raquo;.
+        </div>
+
+        <!-- Q1 corrigée -->
+        <div class="p12-part-hdr" style="background:#0277BD">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">1</span>
+          Information transmise par l'app au bac &agrave; sable
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)">
+            <strong>R&eacute;ponse attendue&nbsp;:</strong> L'application transmet au bac &agrave; sable la <strong>liste des l&eacute;gumes pr&eacute;sents</strong> (ou plus pr&eacute;cis&eacute;ment&nbsp;: <em>l'information &laquo;&nbsp;y a-t-il des l&eacute;gumes dans le garde-manger&nbsp;?&nbsp;&raquo;</em>). Cette information est <strong>logique</strong> (oui / non) et conditionne le d&eacute;clenchement de l'arrosage&nbsp;: pas de l&eacute;gumes &rarr; pas d'arrosage, m&ecirc;me si l'humidit&eacute; baisse.
+          </div>
+        </div>
+
+        <!-- Q2 corrigée -->
+        <div class="p12-part-hdr" style="background:#0288D1">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">2</span>
+          Nature de l'information du capteur d'humidit&eacute;
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)">
+            <strong>R&eacute;ponse attendue&nbsp;:</strong> Le capteur d'humidit&eacute; d&eacute;livre un <strong>signal &eacute;lectrique analogique</strong> (la tension entre les &eacute;lectrodes varie en fonction de l'humidit&eacute; du sable, de 0,07&nbsp;V &agrave; 1,38&nbsp;V environ d'apr&egrave;s le Doc&nbsp;3). Cette tension analogique est ensuite convertie en valeur num&eacute;rique par le <strong>CAN</strong> (Convertisseur Analogique Num&eacute;rique) avant d'&ecirc;tre lue par le microcontr&ocirc;leur.
+          </div>
+        </div>
+
+        <!-- Q3 corrigée -->
+        <div class="p12-part-hdr" style="background:#039BE5">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">3</span>
+          Valeur num&eacute;rique pour 40&nbsp;% d'humidit&eacute;
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);text-align:center;font-size:16px">
+            <strong>Valeur CAN attendue&nbsp;:</strong> <span style="font-family:'DM Mono',monospace;color:#1E6B3B;font-size:24px;font-weight:700">54</span>
+          </div>
+          <div style="background:#FFF8E1;border-left:4px solid #FBC02D;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:13px;color:#7D6608">
+            <strong>D&eacute;marche&nbsp;:</strong> dans le tableau du Doc&nbsp;3, on lit directement la correspondance&nbsp;: <strong>40&nbsp;% RH</strong> &rarr; r&eacute;sistance 840&nbsp;k&Omega; &rarr; tension 0,26&nbsp;V &rarr; <strong>valeur CAN = 54</strong>.
+          </div>
+        </div>
+
+        <!-- Q4 corrigée -->
+        <div class="p12-part-hdr" style="background:#01579B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">4</span>
+          3 conditions pour d&eacute;clencher l'arrosage
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 12px;font-style:italic">D'apr&egrave;s l'algorithme du Doc&nbsp;4, l'arrosage n'est activ&eacute; que si <strong>les trois conditions sont vraies simultan&eacute;ment</strong>&nbsp;:</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin:0">
+              <div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Condition 1</div>
+              <strong>R&eacute;serve d'eau suffisante</strong> (sinon le voyant rouge s'allume et l'arrosage n'a pas lieu).
+            </div>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin:0">
+              <div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Condition 2</div>
+              <strong>Humidit&eacute; &lt; 40&nbsp;%</strong> (soit valeur CAN &lt; 54) &mdash; le sable est devenu trop sec.
+            </div>
+            <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin:0">
+              <div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Condition 3</div>
+              <strong>Pr&eacute;sence de l&eacute;gumes</strong> dans le garde-manger (information envoy&eacute;e par l'application smartphone).
+            </div>
+          </div>
+          <div style="background:#E8F5E9;border-left:4px solid #1E6B3B;border-radius:8px;padding:10px 14px;margin-top:14px;font-size:13px;color:#1B5E20">
+            <strong>Note&nbsp;:</strong> l'arrosage s'arr&ecirc;te d&egrave;s que l'humidit&eacute; d&eacute;passe 50&nbsp;% (valeur CAN &gt; 283), pour ne pas noyer les l&eacute;gumes.
+          </div>
+        </div>
+
+        <div style="height:48px"></div>
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p12-ex2-cor -->
+
     <!-- ═══════════════════════════════════════════════════════ -->
-    
+
     <!-- ============================================================ -->
     <!-- P12 — TECHNOLOGIE ET ALIMENTATION — ACTIVITÉ 2              -->
     <!-- ============================================================ -->
@@ -3122,6 +3417,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="rem1">Quiz Rem&eacute;diation P13</option>
             <option value="p12">P12 &mdash; Activit&eacute; 1 (Technologie et Alimentation)</option>
             <option value="p12-ex1">P12 &mdash; Exercice n&deg;1 (Distributeur de croquettes)</option>
+            <option value="p12-ex2">P12 &mdash; Exercice n&deg;2 (Bac &agrave; sable connect&eacute;)</option>
             <option value="p12-act2">P12 &mdash; Activit&eacute; 2</option>
             <option value="p12-cor-a1">P12 &mdash; Corrig&eacute; Activit&eacute; 1</option>
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
@@ -3151,7 +3447,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <span id="ex1-stats-scope" style="margin-left:auto;background:#fff;color:#C2185B;font-size:12px;font-weight:700;padding:4px 12px;border-radius:14px;border:1px solid #C2185B"></span>
           </div>
           <div id="ex1-stats-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
-          <div style="font-size:12px;font-weight:700;color:#880E4F;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">D&eacute;tail par champ (22)</div>
+          <div id="ex1-stats-fields-title" style="font-size:12px;font-weight:700;color:#880E4F;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">D&eacute;tail par champ</div>
           <div id="ex1-stats-fields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px"></div>
           <div style="font-size:11px;color:var(--td);margin-top:10px;font-style:italic">
             &#x2139;&#xFE0F; Un champ est consid&eacute;r&eacute; comme &laquo;&nbsp;r&eacute;ussi&nbsp;&raquo; s'il est non vide dans la soumission de l'&eacute;l&egrave;ve. Le widget se met &agrave; jour automatiquement en fonction du filtre &laquo;&nbsp;Classe&nbsp;&raquo; ci-dessus.
@@ -4141,6 +4437,8 @@ var SEQUENCES_DEF = [
   {id:"p12",  niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
   {id:"p12-ex1", niveau:"4ème", titre:"P12 — Exercice n°1 — Distributeur de croquettes", desc:"Comment adapter la quantité de nourriture à un animal ?", couleur:"#C2185B", code:"CHA26", open:true},
   {id:"p12-ex1-cor", niveau:"4ème", titre:"P12 — Corrigé Exercice n°1", desc:"Corrigé du distributeur de croquettes. Code d'accès professeur.", couleur:"var(--vt)", code:"CORCHA26", open:true},
+  {id:"p12-ex2", niveau:"4ème", titre:"P12 — Exercice n°2 — Bac à sable connecté", desc:"Comment conserver des aliments sans réfrigérateur ?", couleur:"#0277BD", code:"SAB26", open:true},
+  {id:"p12-ex2-cor", niveau:"4ème", titre:"P12 — Corrigé Exercice n°2", desc:"Corrigé du bac à sable connecté. Code d'accès professeur.", couleur:"var(--vt)", code:"CORSAB26", open:true},
   {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
   {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
   {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
@@ -4415,6 +4713,17 @@ function goPage(pid) {
     /* Restauration d'un brouillon précédent (localStorage) */
     restoreP12Ex1Draft();
   }
+  if (pid === "pg-p12-ex2") {
+    if (user) {
+      var x2Nom    = document.getElementById("ex2-nom");
+      var x2Prenom = document.getElementById("ex2-prenom");
+      var x2Classe = document.getElementById("ex2-classe");
+      if (x2Nom    && !x2Nom.value)    x2Nom.value    = user.n;
+      if (x2Prenom && !x2Prenom.value) x2Prenom.value = user.p;
+      if (x2Classe && !x2Classe.value) x2Classe.value = user.c;
+    }
+    restoreP12Ex2Draft();
+  }
   if (pid === "pg-dc") {
     if (user) {
       var dn = document.getElementById("dc-nom");
@@ -4506,6 +4815,10 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#FCE4EC;color:#C2185B;font-weight:700">&#x1F408; Exercice n&deg;1</span>';
         } else if (s.id === "p12-ex1-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
+        } else if (s.id === "p12-ex2") {
+          badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#0277BD;font-weight:700">&#x1F33F; Exercice n&deg;2</span>';
+        } else if (s.id === "p12-ex2-cor") {
+          badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "p12-act2") {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4DD; Activit&eacute; n&deg;2</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
@@ -4523,6 +4836,8 @@ function renderDash() {
       else if (s.id === "p12")      clickAction = "onclick=\"goPage('pg-p12')\"";
       else if (s.id === "p12-ex1")  clickAction = "onclick=\"goPage('pg-p12-ex1')\"";
       else if (s.id === "p12-ex1-cor") clickAction = "onclick=\"goPage('pg-p12-ex1-cor')\"";
+      else if (s.id === "p12-ex2")  clickAction = "onclick=\"goPage('pg-p12-ex2')\"";
+      else if (s.id === "p12-ex2-cor") clickAction = "onclick=\"goPage('pg-p12-ex2-cor')\"";
       else if (s.id === "p12-act2") clickAction = "onclick=\"goPage('pg-p12-act2')\"";
       else if (s.id === "p12-cor-a1") clickAction = "onclick=\"goPage('pg-p12-cor-a1')\"";
       else if (s.id === "p12-cor-a2") clickAction = "onclick=\"goPage('pg-p12-cor-a2')\"";
@@ -4566,6 +4881,8 @@ function tryUnlock() {
     else if (pendingSeq === "p12")  goPage("pg-p12");
     else if (pendingSeq === "p12-ex1") goPage("pg-p12-ex1");
     else if (pendingSeq === "p12-ex1-cor") goPage("pg-p12-ex1-cor");
+    else if (pendingSeq === "p12-ex2") goPage("pg-p12-ex2");
+    else if (pendingSeq === "p12-ex2-cor") goPage("pg-p12-ex2-cor");
     else if (pendingSeq === "dc-corrige") { goPage("pg-dc"); setTimeout(revealDCCorrigeAfterUnlock, 100); }
     else if (pendingSeq === "cap1")     goPage("pg-cap");
     else if (pendingSeq === "p12-act2") goPage("pg-p12-act2");
@@ -4808,6 +5125,11 @@ function renderSubs() {
       } else if (s.cap === "p12-ex1") {
         var nfx = countP12Ex1Fields(s.fields);
         sc = '<span style="background:#FCE4EC;color:#C2185B;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nfx.done + '/' + nfx.total + ' champs</span>';
+      } else if (s.cap === "p12-ex2") {
+        var nfy = countP12Ex2Fields(s.fields);
+        /* Mention "✓ Q3" si la valeur CAN saisie pour Q3 est correcte (54) */
+        var q3ok = s.fields && String(s.fields["ex2-q3"]||"").trim() === "54";
+        sc = '<span style="background:#E1F5FE;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nfy.done + '/' + nfy.total + ' champs' + (q3ok ? ' ✓Q3' : '') + '</span>';
       } else {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
@@ -5055,6 +5377,12 @@ function openModal(sid) {
     document.getElementById("mrep").innerHTML = buildP12Ex1ModalHTML(sub.fields);
     var nfp = countP12Ex1Fields(sub.fields);
     document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp.done + "/" + nfp.total + " champs remplis — Statut : " + sub.status;
+  } else if (sub.cap === "p12-ex2" && sub.fields) {
+    if (mh3) mh3.textContent = "P12 — Exercice n°2 : Réponses de l'élève";
+    document.getElementById("mrep").innerHTML = buildP12Ex2ModalHTML(sub.fields);
+    var nfp2 = countP12Ex2Fields(sub.fields);
+    var q3okM = String(sub.fields["ex2-q3"]||"").trim() === "54";
+    document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
   } else {
     if (mh3) mh3.textContent = "Réponse ouverte — Question 10";
     document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
@@ -5082,6 +5410,7 @@ function printModalSub() {
   if (sub.cap === "dc" && sub.fields)       answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
+  else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC uniquement) : points ajustés courants + appréciation */
@@ -5181,6 +5510,10 @@ function printSubDirect(sid) {
     var nf = countP12Fields(sub.fields||{}); scoreStr = nf.done + "/" + nf.total + " champs — Statut : " + sub.status;
   } else if (sub.cap === "p12-ex1") {
     var nfx = countP12Ex1Fields(sub.fields||{}); scoreStr = nfx.done + "/" + nfx.total + " champs — Statut : " + sub.status;
+  } else if (sub.cap === "p12-ex2") {
+    var nfy = countP12Ex2Fields(sub.fields||{});
+    var q3ok = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
+    scoreStr = nfy.done + "/" + nfy.total + " champs" + (q3ok ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
   } else {
     scoreStr = "Score QCM : " + sub.score + "/" + sub.qcmTot + " — Statut : " + sub.status;
   }
@@ -5190,6 +5523,7 @@ function printSubDirect(sid) {
   if (sub.cap === "dc" && sub.fields)         answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
+  else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC) — depuis données stockées */
@@ -5350,6 +5684,19 @@ function _buildCapsuleCSV(cap, filtered) {
         f["ex1-e-dec1"], f["ex1-e-act1"], f["ex1-e-act2"], f["ex1-e-act3"], f["ex1-e-decFin"]];
     });
     return { headers: hdrEx1, rows: rowsEx1 };
+  }
+  if (cap === "p12-ex2") {
+    var hdrEx2 = ["Eleve","Classe","Date","Statut",
+      "Q1-InfoAppBac","Q2-NatureInfoCapteur","Q3-ValeurCAN40","Q3-Correct",
+      "Q4-Condition1","Q4-Condition2","Q4-Condition3"];
+    var rowsEx2 = filtered.map(function(x){
+      var f = x.fields || {};
+      var q3v = String(f["ex2-q3"]||"").trim();
+      return [x.ename, x.ecls, dateOf(x), x.status,
+        f["ex2-q1"], f["ex2-q2"], q3v, (q3v === "54" ? "OUI" : (q3v ? "NON" : "")),
+        f["ex2-q4-c1"], f["ex2-q4-c2"], f["ex2-q4-c3"]];
+    });
+    return { headers: hdrEx2, rows: rowsEx2 };
   }
   if (cap === "dc") {
     // Devoir Commun : colonnes fixes + colonnes dynamiques pour chaque champ rempli
@@ -6474,15 +6821,31 @@ function renderEx1Stats() {
   var widget = document.getElementById("ex1-stats-widget");
   if (!widget) return;
   var capF = (document.getElementById("fcap") || {}).value || "";
-  /* Masque le widget si on n'est pas sur la capsule Ex1 */
-  if (capF !== "p12-ex1") { widget.classList.add("h"); return; }
+  /* Configuration par capsule supportée (Ex1, Ex2) */
+  var CFG_STATS = {
+    "p12-ex1": { fields: EX1_FIELDS, labels: EX1_FIELD_LABELS, label: "Exercice n°1 — Distributeur" },
+    "p12-ex2": { fields: EX2_FIELDS, labels: EX2_FIELD_LABELS, label: "Exercice n°2 — Bac à sable" }
+  };
+  var cfg = CFG_STATS[capF];
+  /* Masque le widget si capsule non supportée */
+  if (!cfg) { widget.classList.add("h"); return; }
   widget.classList.remove("h");
+
+  /* Met à jour le titre du widget avec le nom de la capsule */
+  var titleEl = widget.querySelector(":scope > div:first-child > div:nth-child(2)");
+  if (titleEl) titleEl.textContent = "Statistiques " + cfg.label + " — Taux de réussite par champ";
+
+  var FIELDS = cfg.fields;
+  var LABELS = cfg.labels;
+
+  /* Met à jour le titre "Détail par champ (N)" */
+  var fldsTitle = document.getElementById("ex1-stats-fields-title");
+  if (fldsTitle) fldsTitle.textContent = "Détail par champ (" + FIELDS.length + ")";
 
   var classF = (document.getElementById("fclass") || {}).value || "";
   var allSubs = getSubs();
-  /* Filtrer : seulement les soumissions p12-ex1 + filtre classe optionnel */
   var subs = allSubs.filter(function(s){
-    if (s.cap !== "p12-ex1") return false;
+    if (s.cap !== capF) return false;
     if (classF && s.ecls !== classF) return false;
     return true;
   });
@@ -6504,11 +6867,11 @@ function renderEx1Stats() {
   }
 
   /* Calcul taux de réussite par champ + agrégat global */
-  var perField = {};   // { fieldId: count_filled }
+  var perField = {};
   var totalFilled = 0;
-  var totalPossible = n * EX1_FIELDS.length;
-  for (var i = 0; i < EX1_FIELDS.length; i++) {
-    var fid = EX1_FIELDS[i];
+  var totalPossible = n * FIELDS.length;
+  for (var i = 0; i < FIELDS.length; i++) {
+    var fid = FIELDS[i];
     var c = 0;
     for (var j = 0; j < n; j++) {
       var f = subs[j].fields || {};
@@ -6563,11 +6926,11 @@ function renderEx1Stats() {
   /* Détail par champ avec barre de progression */
   if (fieldsEl) {
     var html = "";
-    for (var m = 0; m < EX1_FIELDS.length; m++) {
-      var fid2 = EX1_FIELDS[m];
+    for (var m = 0; m < FIELDS.length; m++) {
+      var fid2 = FIELDS[m];
       var cnt = perField[fid2] || 0;
       var pct = Math.round(cnt / n * 100);
-      var lbl = EX1_FIELD_LABELS[fid2] || fid2;
+      var lbl = LABELS[fid2] || fid2;
       html += '<div style="background:#fff;border-radius:6px;padding:8px 10px;border-left:3px solid ' + color(pct) + '">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
           '<span style="font-size:11.5px;font-weight:600;color:#333">' + lbl + '</span>' +
@@ -6702,12 +7065,10 @@ function submitP12Ex1Form() {
 
   var st = document.getElementById("ex1-status");
   if (st) {
-    st.innerHTML = "&#x2705; Travail soumis le " + new Date().toLocaleString("fr-FR") + ". Le PDF va être généré...";
+    st.innerHTML = "&#x2705; Travail soumis le " + new Date().toLocaleString("fr-FR") + ". Ton professeur le verra automatiquement. Tu peux cliquer sur &laquo;&nbsp;Exporter en PDF&nbsp;&raquo; si tu souhaites une copie.";
     st.style.color = "var(--vt)";
   }
   toast("Exercice soumis ✅");
-  /* Génère automatiquement le PDF, comme demandé dans la spec */
-  try { exportP12Ex1PDF(); } catch(e) { console.warn("Export PDF a échoué :", e); }
   /* Rafraîchit le badge sur la dashboard si l'élève y retourne */
   try { updMyStatus(); } catch(e) {}
 }
@@ -6864,6 +7225,341 @@ function exportP12Ex1PDF() {
   var prenom_ = v("ex1-prenom").replace(/\s+/g,"_");
   doc.save("P12_Exercice1_" + prenom_ + "_" + nom_ + ".pdf");
   toast("PDF généré ✅");
+}
+
+// ================================================================
+// P12 — EXERCICE n°2 — BAC À SABLE CONNECTÉ
+// ================================================================
+/* Liste des IDs des champs de l'exercice 2 */
+var EX2_FIELDS = ["ex2-q1","ex2-q2","ex2-q3","ex2-q4-c1","ex2-q4-c2","ex2-q4-c3"];
+
+/* Libellés humains pour le widget stats Prof */
+var EX2_FIELD_LABELS = {
+  "ex2-q1":"Q1 — Info smartphone → bac",
+  "ex2-q2":"Q2 — Nature info capteur humidité",
+  "ex2-q3":"Q3 — Valeur CAN (40% humidité)",
+  "ex2-q4-c1":"Q4 — Condition 1",
+  "ex2-q4-c2":"Q4 — Condition 2",
+  "ex2-q4-c3":"Q4 — Condition 3"
+};
+
+function snapP12Ex2() {
+  var snap = {};
+  for (var i = 0; i < EX2_FIELDS.length; i++) {
+    var el = document.getElementById(EX2_FIELDS[i]);
+    snap[EX2_FIELDS[i]] = el ? (el.value || "").trim() : "";
+  }
+  return snap;
+}
+
+function saveP12Ex2Draft() {
+  if (!user) return;
+  try { localStorage.setItem("p12_ex2_" + user.id, JSON.stringify(snapP12Ex2())); } catch(e) {}
+}
+
+function restoreP12Ex2Draft() {
+  if (!user) return;
+  var raw = null;
+  try { raw = localStorage.getItem("p12_ex2_" + user.id); } catch(e) {}
+  if (!raw) return;
+  var snap = {};
+  try { snap = JSON.parse(raw) || {}; } catch(e) { return; }
+  for (var k in snap) {
+    if (Object.prototype.hasOwnProperty.call(snap, k)) {
+      var el = document.getElementById(k);
+      if (el && !el.value) el.value = snap[k];
+    }
+  }
+}
+
+function resetP12Ex2Form() {
+  if (!confirm("Effacer toutes tes réponses pour cet exercice ?")) return;
+  for (var i = 0; i < EX2_FIELDS.length; i++) {
+    var el = document.getElementById(EX2_FIELDS[i]);
+    if (el) el.value = "";
+  }
+  if (user) { try { localStorage.removeItem("p12_ex2_" + user.id); } catch(e) {} }
+  var st = document.getElementById("ex2-status");
+  if (st) { st.innerHTML = "Brouillon effacé."; st.style.color = "var(--td)"; }
+  toast("Brouillon effacé");
+}
+
+function countP12Ex2Fields(fields) {
+  if (!fields) return {done:0, total:EX2_FIELDS.length};
+  var done = 0;
+  for (var i = 0; i < EX2_FIELDS.length; i++) {
+    var v = fields[EX2_FIELDS[i]];
+    if (v !== undefined && v !== null && String(v).trim() !== "") done++;
+  }
+  return {done:done, total:EX2_FIELDS.length};
+}
+
+function buildP12Ex2OpenSummary(snap) {
+  if (!snap) return "";
+  var parts = [];
+  if (snap["ex2-q1"]) parts.push("Q1 (Info smartphone → bac) : " + snap["ex2-q1"]);
+  if (snap["ex2-q2"]) parts.push("Q2 (Nature info capteur) : " + snap["ex2-q2"]);
+  if (snap["ex2-q3"]) parts.push("Q3 (Valeur CAN 40%) : " + snap["ex2-q3"]);
+  parts.push("Q4 (3 conditions arrosage) :");
+  if (snap["ex2-q4-c1"]) parts.push("  • " + snap["ex2-q4-c1"]);
+  if (snap["ex2-q4-c2"]) parts.push("  • " + snap["ex2-q4-c2"]);
+  if (snap["ex2-q4-c3"]) parts.push("  • " + snap["ex2-q4-c3"]);
+  return parts.join("\n");
+}
+
+function buildP12Ex2ModalHTML(f) {
+  if (!f) return "<em>Aucune donnée</em>";
+  function row(lbl, key) {
+    var v = (f[key] === undefined || f[key] === null || String(f[key]).trim() === "")
+      ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>'
+      : String(f[key]).replace(/</g,"&lt;");
+    return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + lbl + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + v + '</div></div>';
+  }
+  function q(lbl) {
+    return '<div style="font-weight:700;color:#01579B;font-size:12px;margin:14px 0 6px;border-bottom:2px solid #0277BD;padding-bottom:3px">' + lbl + '</div>';
+  }
+  /* Mise en évidence si Q3 = 54 (bonne réponse) */
+  var q3v = String(f["ex2-q3"] || "").trim();
+  var q3ok = (q3v === "54");
+  var q3html = row("Réponse de l'élève", "ex2-q3");
+  if (q3v) {
+    q3html += '<div style="background:' + (q3ok?'#E8F5E9':'#FFEBEE') + ';border-left:4px solid ' + (q3ok?'#1E6B3B':'#C62828') + ';border-radius:6px;padding:7px 10px;font-size:12px;margin-top:-4px;margin-bottom:10px;color:' + (q3ok?'#1B5E20':'#B71C1C') + '">' + (q3ok ? '✅ Bonne réponse (54)' : '❌ Réponse incorrecte — attendu : 54') + '</div>';
+  }
+  return q("Q1 — Information transmise par l'app smartphone au bac") + row("Réponse de l'élève","ex2-q1") +
+    q("Q2 — Nature de l'information du capteur d'humidité") + row("Réponse de l'élève","ex2-q2") +
+    q("Q3 — Valeur numérique pour 40% d'humidité") + q3html +
+    q("Q4 — 3 conditions pour l'arrosage") +
+    row("Condition 1","ex2-q4-c1") +
+    row("Condition 2","ex2-q4-c2") +
+    row("Condition 3","ex2-q4-c3");
+}
+
+function submitP12Ex2Form() {
+  var nom    = (document.getElementById("ex2-nom").value    || "").trim();
+  var prenom = (document.getElementById("ex2-prenom").value || "").trim();
+  var classe = (document.getElementById("ex2-classe").value || "").trim();
+  if (!nom || !prenom) { alert("Identifiant non détecté — reconnecte-toi."); return; }
+  if (!classe) { alert("Merci de choisir ta classe."); return; }
+
+  var snap = snapP12Ex2();
+  var anyFilled = false;
+  for (var i = 0; i < EX2_FIELDS.length; i++) {
+    if (snap[EX2_FIELDS[i]]) { anyFilled = true; break; }
+  }
+  if (!anyFilled) {
+    alert("Aucune réponse saisie. Remplis l'exercice avant de soumettre.");
+    return;
+  }
+
+  if (user) {
+    try { localStorage.setItem("p12_ex2_" + user.id, JSON.stringify(snap)); } catch(e) {}
+  }
+
+  var eid = user ? user.id : (prenom.toLowerCase().replace(/\s/g,"") + "." + nom.toLowerCase().replace(/\s/g,""));
+  var sub = {
+    id: Date.now(),
+    eid: eid,
+    ename: prenom + " " + nom,
+    ecls: classe,
+    cap: "p12-ex2",
+    caplbl: "P12 — Exercice n°2 (Bac à sable connecté)",
+    score: 0, qcmTot: 0,
+    open: buildP12Ex2OpenSummary(snap),
+    fields: snap,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+  var allSubs = getSubs();
+  allSubs = allSubs.filter(function(x){ return !(x.eid === sub.eid && x.cap === "p12-ex2"); });
+  allSubs.push(sub);
+  localStorage.setItem("subs", JSON.stringify(allSubs));
+
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(sub); } catch(e) {}
+
+  var st = document.getElementById("ex2-status");
+  if (st) {
+    st.innerHTML = "&#x2705; Travail soumis le " + new Date().toLocaleString("fr-FR") + ". Ton professeur le verra automatiquement. Tu peux cliquer sur &laquo;&nbsp;Exporter en PDF&nbsp;&raquo; si tu souhaites une copie.";
+    st.style.color = "var(--vt)";
+  }
+  toast("Exercice soumis ✅");
+  try { updMyStatus(); } catch(e) {}
+}
+
+/* Export PDF du formulaire élève — logo + footer versionné inclus */
+function exportP12Ex2PDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page.");
+    return;
+  }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ unit:"mm", format:"a4" });
+  var W = 210, M = 14, Y = 0, lh = 5.4;
+
+  function v(id) { var el = document.getElementById(id); return el ? ((el.value || "").trim() || "—") : "—"; }
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function header() {
+    doc.setFillColor(2, 119, 189);
+    doc.rect(0, 0, W, 28, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.setTextColor(255,255,255);
+    doc.text("P12 — Exercice n°2 — Bac à sable connecté", W/2, 13, {align:"center"});
+    doc.setFontSize(10);
+    doc.text("Comment conserver des aliments sans réfrigérateur ?", W/2, 21, {align:"center"});
+    addLogoToPdfHeader(doc, M);
+    Y = 32;
+  }
+  function footer(pg, total) {
+    footerWithVersion(doc, M, W, "P12 — Exercice n°2 — Bac à sable connecté", pg, total);
+  }
+  function secHdr(label, rgb) {
+    chk(14);
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.rect(M, Y, W - 2*M, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(255,255,255);
+    doc.text(label, M + 3, Y + 6);
+    Y += 11;
+  }
+  function writeField(label, val, color) {
+    chk(16);
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(color[0],color[1],color[2]);
+    doc.text(label, M + 2, Y); Y += 5;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(26,32,44);
+    var lines = doc.splitTextToSize(val, W - 2*M - 6);
+    doc.setFillColor(247,247,247);
+    doc.rect(M + 2, Y - 3, W - 2*M - 4, lines.length * lh + 4, "F");
+    doc.text(lines, M + 4, Y + 1);
+    Y += lines.length * lh + 5;
+  }
+
+  header();
+
+  /* Identité */
+  chk(14);
+  doc.setFillColor(245,245,245); doc.rect(M, Y, W-2*M, 10, "F");
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(26,32,44);
+  doc.text("Nom : " + v("ex2-nom") + "    Prénom : " + v("ex2-prenom") + "    Classe : " + v("ex2-classe") + "    Date : " + new Date().toLocaleDateString("fr-FR"), M+3, Y+7);
+  Y += 14;
+
+  /* Mission */
+  chk(20);
+  doc.setFont("helvetica","italic"); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+  var missLines = doc.splitTextToSize("Mission : concevoir un dispositif connecté pour conserver des légumes hors du réfrigérateur, dans du sable humide. Le bac est connecté à l'application « mon garde-manger ».", W - 2*M - 4);
+  doc.text(missLines, M+2, Y); Y += missLines.length * lh + 4;
+
+  /* Q1 */
+  secHdr("Q1 — Information transmise par l'app du smartphone au bac à sable", [2,119,189]);
+  writeField("Réponse :", v("ex2-q1"), [2,119,189]);
+
+  /* Q2 */
+  secHdr("Q2 — Nature de l'information du capteur d'humidité", [2,136,209]);
+  writeField("Réponse :", v("ex2-q2"), [2,136,209]);
+
+  /* Q3 */
+  secHdr("Q3 — Valeur numérique pour 40% d'humidité", [3,155,229]);
+  writeField("Valeur CAN saisie :", v("ex2-q3") + (v("ex2-q3") === "54" ? "  ✓ (correct)" : ""), [3,155,229]);
+
+  /* Q4 */
+  secHdr("Q4 — 3 conditions nécessaires pour que l'arrosage soit réalisé", [1,87,155]);
+  writeField("Condition 1 :", v("ex2-q4-c1"), [1,87,155]);
+  writeField("Condition 2 :", v("ex2-q4-c2"), [1,87,155]);
+  writeField("Condition 3 :", v("ex2-q4-c3"), [1,87,155]);
+
+  /* Pied de page + numérotation */
+  var total = doc.internal.getNumberOfPages();
+  for (var p = 1; p <= total; p++) { doc.setPage(p); footer(p, total); }
+
+  var nom_ = v("ex2-nom").replace(/\s+/g,"_");
+  var prenom_ = v("ex2-prenom").replace(/\s+/g,"_");
+  doc.save("P12_Exercice2_" + prenom_ + "_" + nom_ + ".pdf");
+  toast("PDF généré ✅");
+}
+
+/* Export PDF du CORRIGÉ Ex2 */
+function exportP12Ex2CorPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page.");
+    return;
+  }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ unit:"mm", format:"a4" });
+  var W = 210, M = 14, Y = 0, lh = 5.4;
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function header() {
+    doc.setFillColor(30, 107, 59);
+    doc.rect(0, 0, W, 28, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(15); doc.setTextColor(255,255,255);
+    doc.text("P12 — Corrigé Exercice n°2", W/2, 13, {align:"center"});
+    doc.setFontSize(10);
+    doc.text("Bac à sable connecté pour conserver des aliments sans réfrigérateur", W/2, 21, {align:"center"});
+    addLogoToPdfHeader(doc, M);
+    Y = 32;
+  }
+  function footer(pg, total) {
+    footerWithVersion(doc, M, W, "P12 — Corrigé Exercice n°2 — Bac à sable connecté", pg, total);
+  }
+  function secHdr(label, rgb) {
+    chk(14);
+    doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+    doc.rect(M, Y, W - 2*M, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(255,255,255);
+    doc.text(label, M + 3, Y + 6);
+    Y += 11;
+  }
+  function corItem(label, val, rgb) {
+    chk(18);
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(rgb[0],rgb[1],rgb[2]);
+    var labLines = doc.splitTextToSize(label, W - 2*M - 6);
+    doc.text(labLines, M + 2, Y); Y += labLines.length * lh;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(26,32,44);
+    var lines = doc.splitTextToSize(val, W - 2*M - 8);
+    doc.setFillColor(232, 245, 233);
+    doc.rect(M + 2, Y - 3, W - 2*M - 4, lines.length * lh + 4, "F");
+    doc.text(lines, M + 4, Y + 1);
+    Y += lines.length * lh + 5;
+  }
+
+  header();
+  doc.setFillColor(255, 243, 224); doc.rect(M, Y, W-2*M, 12, "F");
+  doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(93,58,0);
+  doc.text("Document réservé au professeur — distribuer aux élèves après correction collective.", W/2, Y+7, {align:"center"});
+  Y += 16;
+
+  secHdr("Q1 — Information transmise par l'app smartphone au bac à sable", [2,119,189]);
+  corItem("Réponse attendue", "L'application transmet au bac la liste des légumes présents (ou l'information « y a-t-il des légumes dans le garde-manger ? »). Cette information conditionne le déclenchement de l'arrosage : pas de légumes → pas d'arrosage.", [2,119,189]);
+
+  secHdr("Q2 — Nature de l'information du capteur d'humidité", [2,136,209]);
+  corItem("Réponse attendue", "Le capteur d'humidité délivre un signal électrique analogique (tension variant de 0,07 V à 1,38 V environ selon l'humidité du sable). Cette tension est convertie en valeur numérique par le CAN (Convertisseur Analogique Numérique) avant d'être lue par le microcontrôleur.", [2,136,209]);
+
+  secHdr("Q3 — Valeur numérique pour 40% d'humidité", [3,155,229]);
+  corItem("Valeur CAN attendue : 54", "D'après le tableau du Doc 3 : 40% RH → résistance 840 kΩ → tension 0,26 V → valeur CAN = 54.", [3,155,229]);
+
+  secHdr("Q4 — 3 conditions nécessaires pour l'arrosage", [1,87,155]);
+  if (doc.autoTable) {
+    chk(40);
+    doc.autoTable({
+      startY: Y,
+      head: [["#", "Condition attendue"]],
+      body: [
+        ["1", "Réserve d'eau suffisante (sinon le voyant rouge s'allume)"],
+        ["2", "Humidité < 40% (valeur CAN < 54) — le sable est trop sec"],
+        ["3", "Présence de légumes dans le garde-manger (info app smartphone)"]
+      ],
+      theme:"grid", margin:{left:M,right:M},
+      headStyles:{fillColor:[1,87,155],textColor:255,fontSize:9,fontStyle:"bold"},
+      bodyStyles:{fontSize:10,valign:"top"},
+      columnStyles:{0:{halign:"center",cellWidth:14,fontStyle:"bold",textColor:[1,87,155]}}
+    });
+    Y = doc.lastAutoTable.finalY + 4;
+  }
+  doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(60,60,60);
+  var noteLines = doc.splitTextToSize("Note : l'arrosage s'arrête dès que l'humidité dépasse 50% (valeur CAN > 283) pour ne pas noyer les légumes.", W - 2*M - 4);
+  doc.text(noteLines, M+2, Y); Y += noteLines.length * lh + 4;
+
+  var total = doc.internal.getNumberOfPages();
+  for (var p = 1; p <= total; p++) { doc.setPage(p); footer(p, total); }
+  doc.save("P12_Corrige_Exercice2_Bac_Sable.pdf");
+  toast("PDF du corrigé Ex2 généré ✅");
 }
 
 /* ───────────────────────────────────────────────────────────────
