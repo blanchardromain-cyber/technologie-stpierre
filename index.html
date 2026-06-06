@@ -4854,6 +4854,35 @@ function goPage(pid) {
       if (a3p && !a3p.value) a3p.value = user.p;
       if (a3c && !a3c.value) a3c.value = user.c;
     }
+    // Auto-démarrer l'atelier : passer l'écran d'identification de l'iframe
+    (function() {
+      var iframe = document.getElementById("a3-iframe");
+      if (!iframe) return;
+      function tryAutoStart() {
+        try {
+          var iw = iframe.contentWindow;
+          var startEl = iw.document.getElementById("start");
+          if (!startEl || startEl.style.display === "none") return; // déjà démarré
+          if (user) {
+            var cls = iw.document.getElementById("cls");
+            var p1  = iw.document.getElementById("p1");
+            var n1  = iw.document.getElementById("n1");
+            if (cls) cls.value = user.c || "";
+            if (p1)  p1.value  = user.p || "";
+            if (n1)  n1.value  = user.n || "";
+          }
+          var btn = iw.document.getElementById("startBtn");
+          if (btn) btn.click();
+        } catch(e) {}
+      }
+      try {
+        if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") {
+          tryAutoStart();
+        } else {
+          iframe.addEventListener("load", tryAutoStart, { once: true });
+        }
+      } catch(e) {}
+    })();
   }
   if (pid === "pg-rem-form") shuffleWordBank();
   if (pid === "pg-rem-quiz") {
