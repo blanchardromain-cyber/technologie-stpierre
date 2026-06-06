@@ -2583,6 +2583,81 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
     </div><!-- fin pg-p12-act2 -->
 
     <!-- ============================================================ -->
+    <!-- P12 — TECHNOLOGIE ET ALIMENTATION — ACTIVITÉ 3              -->
+    <!-- ============================================================ -->
+    <div id="pg-p12-act3" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P12 &mdash; Technologie &amp; Alimentation &mdash; Activit&eacute; 3</h2>
+      </div>
+      <div style="max-width:900px">
+
+        <!-- BANDEAU IDENTITÉ -->
+        <div style="background:linear-gradient(135deg,#4338CA,#6366F1);border-radius:14px;padding:22px 24px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden">
+          <div style="position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:52px;opacity:.12;filter:grayscale(1) brightness(3);user-select:none">&#x1F9E9;</div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+            <span style="font-size:36px">&#x1F4CA;</span>
+            <div>
+              <div style="font-size:18px;font-weight:700">P12 &mdash; Comment la technologie facilite-t-elle notre alimentation&nbsp;?</div>
+              <div style="font-size:13px;opacity:.85">Activit&eacute; n&deg;3 &bull; Atelier Algorigrammes &bull; Cycle 4 &mdash; Classe de 4&egrave;me</div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+            <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;opacity:.8;display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="a3-nom" placeholder="Ton nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;opacity:.8;display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="a3-prenom" placeholder="Ton pr&eacute;nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;opacity:.8;display:block;margin-bottom:4px">Classe</label>
+              <select id="a3-classe" class="p12-input" style="background:#fff;color:var(--tx);cursor:pointer">
+                <option value="">— Choisis —</option>
+                <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option>
+                <option value="4D">4D</option><option value="4E">4E</option><option value="4F">4F</option>
+              </select></div>
+          </div>
+        </div>
+
+        <!-- CONSIGNE -->
+        <div style="background:linear-gradient(135deg,#1e40af,#3b82f6);color:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:14px;font-weight:600">
+          &#x1F3AF; <strong>Objectif&nbsp;:</strong> Construire des algorigrammes pour d&eacute;crire le fonctionnement de syst&egrave;mes automatis&eacute;s li&eacute;s &agrave; l&rsquo;alimentation &mdash; du plus simple au plus complexe.
+        </div>
+
+        <!-- ATELIER IFRAME -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:hidden;margin-bottom:20px">
+          <div style="background:linear-gradient(#F8FAFC,#EEF2FF);border-bottom:1px solid var(--gb);padding:12px 18px;display:flex;align-items:center;gap:10px">
+            <span style="font-size:18px">&#x1F9E9;</span>
+            <span style="font-weight:700;font-size:14px;color:#1e1b4b">Atelier Algorigrammes</span>
+            <span style="font-size:12px;color:#6366F1;margin-left:auto;font-weight:600">8 exercices progressifs + 1 bonus</span>
+          </div>
+          <div style="position:relative;width:100%;border-radius:0;overflow:hidden">
+            <iframe id="a3-iframe"
+                    src="P12%20Technologie%20et%20Alimentation/Activit%C3%A9%203/index.html"
+                    style="width:100%;height:720px;border:none;display:block"
+                    title="Atelier Algorigrammes P12 Activité 3"></iframe>
+          </div>
+        </div>
+
+        <!-- BILAN + SOUMISSION -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-bottom:20px">
+          <div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:14px">&#x1F3AF; Bilan de l&rsquo;atelier</div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:6px">Qu&rsquo;as-tu appris gr&acirc;ce &agrave; cet atelier&nbsp;? Note ici tes r&eacute;flexions ou les exercices qui t&rsquo;ont pos&eacute; des difficult&eacute;s&nbsp;:</label>
+            <textarea id="a3-bilan" rows="4" class="p12-input" style="width:100%;resize:vertical" placeholder="R&eacute;dige ta r&eacute;ponse ici..."></textarea>
+          </div>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div id="a3-submit-zone" style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button onclick="submitA3Form()"
+                  style="padding:14px 28px;background:#4338CA;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:all .2s">
+            &#x1F4E4; Soumettre au professeur
+          </button>
+          <div id="a3-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
+        </div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p12-act3 -->
+
+    <!-- ============================================================ -->
     <!-- ============================================================ -->
     <!-- P12 — CORRIGÉ ACTIVITÉ 1                                    -->
     <!-- ============================================================ -->
@@ -3439,6 +3514,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="p12-ex1">P12 &mdash; Exercice n&deg;1 (Distributeur de croquettes)</option>
             <option value="p12-ex2">P12 &mdash; Exercice n&deg;2 (Bac &agrave; sable connect&eacute;)</option>
             <option value="p12-act2">P12 &mdash; Activit&eacute; 2</option>
+            <option value="p12-act3">P12 &mdash; Activit&eacute; 3 (Algorigrammes)</option>
             <option value="p12-cor-a1">P12 &mdash; Corrig&eacute; Activit&eacute; 1</option>
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
           </select>
@@ -4463,6 +4539,7 @@ var SEQUENCES_DEF = [
   {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
   {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
   {id:"p12-act2",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
+  {id:"p12-act3",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
   {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
   {id:"seq5a",   niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
@@ -4768,6 +4845,16 @@ function goPage(pid) {
     restoreA2Draft();
     setTimeout(initVoiceInputs, 80);
   }
+  if (pid === "pg-p12-act3") {
+    if (user) {
+      var a3n = document.getElementById("a3-nom");
+      var a3p = document.getElementById("a3-prenom");
+      var a3c = document.getElementById("a3-classe");
+      if (a3n && !a3n.value) a3n.value = user.n;
+      if (a3p && !a3p.value) a3p.value = user.p;
+      if (a3c && !a3c.value) a3c.value = user.c;
+    }
+  }
   if (pid === "pg-rem-form") shuffleWordBank();
   if (pid === "pg-rem-quiz") {
     // Remettre le formulaire d'identité visible et cacher le corps + résultat
@@ -4842,6 +4929,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "p12-act2") {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4DD; Activit&eacute; n&deg;2</span>';
+        } else if (s.id === "p12-act3") {
+          badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
@@ -4860,6 +4949,7 @@ function renderDash() {
       else if (s.id === "p12-ex2")  clickAction = "onclick=\"goPage('pg-p12-ex2')\"";
       else if (s.id === "p12-ex2-cor") clickAction = "onclick=\"goPage('pg-p12-ex2-cor')\"";
       else if (s.id === "p12-act2") clickAction = "onclick=\"goPage('pg-p12-act2')\"";
+      else if (s.id === "p12-act3") clickAction = "onclick=\"goPage('pg-p12-act3')\"";
       else if (s.id === "p12-cor-a1") clickAction = "onclick=\"goPage('pg-p12-cor-a1')\"";
       else if (s.id === "p12-cor-a2") clickAction = "onclick=\"goPage('pg-p12-cor-a2')\"";
       else if (s.id === "dc-corrige") clickAction = "onclick=\"goPage('pg-dc');setTimeout(revealDCCorrigeAfterUnlock,100)\"";
@@ -4907,6 +4997,7 @@ function tryUnlock() {
     else if (pendingSeq === "dc-corrige") { goPage("pg-dc"); setTimeout(revealDCCorrigeAfterUnlock, 100); }
     else if (pendingSeq === "cap1")     goPage("pg-cap");
     else if (pendingSeq === "p12-act2") goPage("pg-p12-act2");
+    else if (pendingSeq === "p12-act3") goPage("pg-p12-act3");
     else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
     else goPage("pg-dash");
@@ -5513,7 +5604,7 @@ function printSubDirect(sid) {
     "dc":"Devoir Commun", "dc-corrige":"DC — Corrigé",
     "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
     "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
-    "p12-act2":"P12 — Activité 2", "p12-cor-a1":"P12 — Corrigé A1",
+    "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
     "p12-cor-a2":"P12 — Corrigé A2"
   };
   var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
@@ -5750,6 +5841,15 @@ function _buildCapsuleCSV(cap, filtered) {
       rows: filtered.map(function(x){
         return [x.ename, x.ecls, dateOf(x), x.status,
           (x.score||0) + "/" + (x.qcmTot||0), x.open || ""];
+      })
+    };
+  }
+  if (cap === "p12-act3") {
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Bilan"],
+      rows: filtered.map(function(x){
+        var f = x.fields || {};
+        return [x.ename, x.ecls, dateOf(x), x.status, f.bilan || ""];
       })
     };
   }
@@ -8755,6 +8855,32 @@ function submitA2Form() {
     stDiv.appendChild(lbl); stDiv.appendChild(ta); stDiv.appendChild(btn);
   }
   toast("Activité 2 soumise !");
+  renderDash();
+}
+
+// ================================================================
+// ACTIVITÉ 3 — ALGORIGRAMMES
+// ================================================================
+function submitA3Form() {
+  if (!user) { toast("Connecte-toi d'abord."); return; }
+  var classeEl = document.getElementById("a3-classe");
+  var classe = classeEl ? classeEl.value : (user.c || "");
+  if (!classe) { toast("Choisis ta classe avant de soumettre."); if (classeEl) classeEl.focus(); return; }
+  var bilan = (document.getElementById("a3-bilan") || {}).value || "";
+  var sub = {
+    eid: user.id, enom: user.n, eprenom: user.p, eclasse: classe,
+    cap: "p12-act3", caplbl: "P12 Activité 3",
+    ts: Date.now(), status: "pending", fields: { bilan: bilan }
+  };
+  var subs = getSubs();
+  subs = subs.filter(function(s){ return !(s.eid === user.id && s.cap === "p12-act3"); });
+  subs.push(sub);
+  setSubs(subs);
+  var stDiv = document.getElementById("a3-submit-zone");
+  if (stDiv) {
+    stDiv.innerHTML = '<div style="font-size:13px;font-weight:700;color:#3730A3;width:100%">&#x2705; Activit&eacute; 3 soumise&nbsp;! Ton professeur peut maintenant consulter ta progression.</div>';
+  }
+  toast("Activité 3 soumise !");
   renderDash();
 }
 
