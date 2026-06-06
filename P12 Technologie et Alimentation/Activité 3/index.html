@@ -306,7 +306,7 @@
         state.quizDone[state.idx]=true;
         fb.className='quiz-feedback ok show';
         fb.innerHTML='🎉 Bravo ! <b>'+q.cond+' condition'+(q.cond>1?'s':'')+' et '+q.act+' action'+(q.act>1?'s':'')+'</b>. On passe à l’algorigramme !';
-        setTimeout(()=>{state.phase='algo';render();},1200);
+        beacon('quiz_ok',null,{quizResult:'correct'});setTimeout(()=>{state.phase='algo';render();},1200);
       } else if(state.quizAttempts[state.idx]>=2){
         fb.className='quiz-feedback ok show';
         fb.innerHTML='💡 La réponse est : <b>'+q.cond+' condition'+(q.cond>1?'s':'')+' et '+q.act+' action'+(q.act>1?'s':'')+'</b>. Relis le scénario puis continue.';
@@ -314,7 +314,7 @@
         const btn=document.createElement('button');btn.className='quiz-btn';btn.style.marginTop='10px';
         btn.textContent='Continuer vers l’algorigramme →';
         btn.onclick=()=>{state.phase='algo';render();};
-        card.appendChild(btn);
+        card.appendChild(btn);beacon('quiz_revele',null,{quizResult:'revele'});
         $('qatt').textContent='Réponse révélée après 2 tentatives';
       } else {
         const hint=(vc!==q.cond&&va!==q.act)?'Relis bien le scénario : cherche les « si » et « tant que » (conditions) et les actions concrètes du système.':(vc!==q.cond?'Le nombre de conditions n’est pas correct. Cherche les tests, « si » ou détections dans le scénario.':'Le nombre d’actions n’est pas correct. Cherche ce que le système <em>fait</em> concrètement.');
@@ -390,9 +390,9 @@
     r.innerHTML='<h2>Série terminée 🎉</h2><div class="sub">'+state.names.classe+' · '+nm+'</div><table><tr><td><b>Exercice</b></td><td><b>Essais ratés</b></td></tr>'+rows+'</table><div class="total">Total d’essais ratés : '+tot+'</div><button class="btn next" id="again" style="margin:0 auto">Recommencer<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>';
     board.appendChild(r);beacon('fin',tot);$('again').onclick=restart;}
   function restart(){state.attempts=EXOS.map(()=>0);state.solved=EXOS.map(()=>false);state.quizDone=EXOS.map(()=>false);state.quizAttempts=EXOS.map(()=>0);$('stageBar').style.display='';enter(0);}
-  function beacon(result,total){
+  function beacon(result,total,extra){
     if(!SHEET_URL)return;const ex=EXOS[state.idx]||{};
-    const p=new URLSearchParams({classe:state.names.classe,p1:state.names.p1,n1:state.names.n1,p2:state.names.p2||'',n2:state.names.n2||'',exo:String(ex.exo||''),result:result,attempts:String(state.attempts[state.idx]||0),total:String(total!=null?total:''),timer:timerStr(),t:String(Date.now())});
+    const p=new URLSearchParams({classe:state.names.classe,p1:state.names.p1,n1:state.names.n1,p2:state.names.p2||'',n2:state.names.n2||'',exo:String(ex.exo||''),result:result,attempts:String(state.attempts[state.idx]||0),quizAtt:String(state.quizAttempts[state.idx]||0),quizResult:String((extra&&extra.quizResult)||''),total:String(total!=null?total:''),timer:timerStr(),t:String(Date.now())});
     try{fetch(SHEET_URL+'?'+p.toString(),{method:'GET',mode:'no-cors'}).catch(()=>{new Image().src=SHEET_URL+'?'+p.toString();});}catch(e){new Image().src=SHEET_URL+'?'+p.toString();}
   }
 })();
