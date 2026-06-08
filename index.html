@@ -8923,16 +8923,17 @@ function submitA3Form() {
   } catch(e) {}
 
   var sub = {
+    id: Date.now(),
     eid: user.id,
     ename: user.p + " " + user.n,
     ecls: classe,
     cap: "p12-act3", caplbl: "P12 Activité 3",
-    ts: Date.now(), status: "pending", fields: fields
+    dateISO: new Date().toISOString(), status: "pending", fields: fields
   };
   var subs = getSubs();
   subs = subs.filter(function(s){ return !(s.eid === user.id && s.cap === "p12-act3"); });
   subs.push(sub);
-  setSubs(subs);
+  localStorage.setItem("subs", JSON.stringify(subs));
   var stDiv = document.getElementById("a3-submit-zone");
   if (stDiv) {
     var scoreLabel = fields.score ? " · Score&nbsp;: <strong>" + fields.score + "</strong>" : "";
