@@ -4942,7 +4942,8 @@ function renderDash() {
       } else if (mySub && mySub.status === "rejected") {
         badgeHtml = '<span class="badge" style="background:#FFEBEE;color:#C62828;font-weight:700">&#x1F504; À retravailler</span>';
       } else if (mySub && mySub.status === "pending") {
-        badgeHtml = '<span class="badge" style="background:#FFF8E1;color:#7D6608;font-weight:700">&#x23F3; En attente de correction</span>';
+        var pendingScore = (s.id === "p12-act3" && mySub.fields && mySub.fields.score) ? ' &mdash; ' + mySub.fields.score + ' ex.' : '';
+        badgeHtml = '<span class="badge" style="background:#FFF8E1;color:#7D6608;font-weight:700">&#x23F3; En attente de correction' + pendingScore + '</span>';
       } else if (isLocked) {
         badgeHtml = '<span class="badge" style="background:#FEF9E7;color:#7D6608">&#x1F512; Code requis</span>';
       } else {
@@ -8934,6 +8935,7 @@ function submitA3Form() {
   subs = subs.filter(function(s){ return !(s.eid === user.id && s.cap === "p12-act3"); });
   subs.push(sub);
   localStorage.setItem("subs", JSON.stringify(subs));
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(sub); } catch(e) {}
   var stDiv = document.getElementById("a3-submit-zone");
   if (stDiv) {
     var scoreLabel = fields.score ? " · Score&nbsp;: <strong>" + fields.score + "</strong>" : "";
