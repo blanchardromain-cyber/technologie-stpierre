@@ -194,7 +194,7 @@ function formatSheet() {
   for (var c = 7; c <= 15; c++) sheet.setColumnWidth(c, 100); // Ex
   sheet.setColumnWidth(16, 70);   // Score
   sheet.setColumnWidth(17, 70);   // Temps
-  sheet.setColumnWidth(18, 0);    // Clé (masquée)
+  // colonne 18 (Clé) masquée via hideColumns ci-dessous
 
   // En-tête coloré
   sheet.getRange(1, 1, 1, HEADERS.length)
