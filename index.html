@@ -4846,6 +4846,12 @@ function goPage(pid) {
     setTimeout(initVoiceInputs, 80);
   }
   if (pid === "pg-p12-act3") {
+    // Marquer comme déverrouillé dès le premier accès (même sans saisie de code)
+    // pour qu'une suppression de soumission par le prof ne remette pas "Code requis"
+    if (user) {
+      var _ul = getUnlocked();
+      if (!_ul["p12-act3"]) { _ul["p12-act3"] = true; setUnlocked(_ul); }
+    }
     if (user) {
       var a3n = document.getElementById("a3-nom");
       var a3p = document.getElementById("a3-prenom");
