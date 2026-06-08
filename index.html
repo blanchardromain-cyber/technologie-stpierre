@@ -8909,8 +8909,8 @@ function submitA3Form() {
   var fields = { bilan: bilan };
   try {
     var iw = document.getElementById("a3-iframe").contentWindow;
-    var st = iw.state;
-    var exos = iw.EXOS;
+    var st = iw._a3state;
+    var exos = iw._a3exos;
     if (st && exos) {
       var solvedCount = 0;
       exos.forEach(function(ex, i) {

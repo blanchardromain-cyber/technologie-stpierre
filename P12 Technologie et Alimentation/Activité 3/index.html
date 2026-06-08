@@ -390,6 +390,9 @@
     r.innerHTML='<h2>Série terminée 🎉</h2><div class="sub">'+state.names.classe+' · '+nm+'</div><table><tr><td><b>Exercice</b></td><td><b>Essais ratés</b></td></tr>'+rows+'</table><div class="total">Total d’essais ratés : '+tot+'</div><button class="btn next" id="again" style="margin:0 auto">Recommencer<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>';
     board.appendChild(r);beacon('fin',tot);$('again').onclick=restart;}
   function restart(){state.attempts=EXOS.map(()=>0);state.solved=EXOS.map(()=>false);state.quizDone=EXOS.map(()=>false);state.quizAttempts=EXOS.map(()=>0);$('stageBar').style.display='';enter(0);}
+  // Exposition pour la lecture depuis le site parent (même origine)
+  window._a3state = state;
+  window._a3exos  = EXOS;
   function beacon(result,total,extra){
     if(!SHEET_URL)return;const ex=EXOS[state.idx]||{};
     const p=new URLSearchParams({classe:state.names.classe,p1:state.names.p1,n1:state.names.n1,p2:state.names.p2||'',n2:state.names.n2||'',exo:String(ex.exo||''),result:result,attempts:String(state.attempts[state.idx]||0),quizAtt:String(state.quizAttempts[state.idx]||0),quizResult:String((extra&&extra.quizResult)||''),total:String(total!=null?total:''),timer:timerStr(),t:String(Date.now())});
