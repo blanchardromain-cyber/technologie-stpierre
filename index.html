@@ -5271,6 +5271,9 @@ function renderSubs() {
         /* Mention "✓ Q3" si la valeur CAN saisie pour Q3 est correcte (54) */
         var q3ok = s.fields && String(s.fields["ex2-q3"]||"").trim() === "54";
         sc = '<span style="background:#E1F5FE;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nfy.done + '/' + nfy.total + ' champs' + (q3ok ? ' ✓Q3' : '') + '</span>';
+      } else if (s.cap === "p12-act3") {
+        var a3score = (s.fields && s.fields.score) ? s.fields.score : "—";
+        sc = '<span style="background:#EEF2FF;color:#4338CA;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F4CA; ' + a3score + ' exercices</span>';
       } else {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
@@ -5874,11 +5877,15 @@ function _buildCapsuleCSV(cap, filtered) {
     };
   }
   if (cap === "p12-act3") {
+    var exKeys = ["ex1","ex2","ex3","ex4","ex5","ex6","ex7","ex8","exB"];
+    var exLabels = ["Ex1 TV","Ex2 Radar","Ex3 Escalator","Ex4 Escalator éco","Ex5 Distance","Ex6 Métro","Ex7 Distributeur","Ex8 Écluse","Bonus Croquettes"];
     return {
-      headers: ["Eleve","Classe","Date","Statut","Bilan"],
+      headers: ["Eleve","Classe","Date","Statut","Score"].concat(exLabels).concat(["Bilan"]),
       rows: filtered.map(function(x){
         var f = x.fields || {};
-        return [x.ename, x.ecls, dateOf(x), x.status, f.bilan || ""];
+        var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
+        var exCols = exKeys.map(function(k){ return f[k] || "—"; });
+        return base.concat(exCols).concat([f.bilan || ""]);
       })
     };
   }
@@ -8896,10 +8903,31 @@ function submitA3Form() {
   var classe = classeEl ? classeEl.value : (user.c || "");
   if (!classe) { toast("Choisis ta classe avant de soumettre."); if (classeEl) classeEl.focus(); return; }
   var bilan = (document.getElementById("a3-bilan") || {}).value || "";
+
+  // Capture de la progression depuis l'iframe (même origine)
+  var fields = { bilan: bilan };
+  try {
+    var iw = document.getElementById("a3-iframe").contentWindow;
+    var st = iw.state;
+    var exos = iw.EXOS;
+    if (st && exos) {
+      var solvedCount = 0;
+      exos.forEach(function(ex, i) {
+        var key = "ex" + ex.exo;
+        var ok = st.solved[i] ? "✓" : (st.attempts[i] > 0 ? "✗ (" + st.attempts[i] + " essai" + (st.attempts[i] > 1 ? "s" : "") + ")" : "—");
+        fields[key] = ok;
+        if (st.solved[i]) solvedCount++;
+      });
+      fields["score"] = solvedCount + "/" + exos.length;
+    }
+  } catch(e) {}
+
   var sub = {
-    eid: user.id, enom: user.n, eprenom: user.p, eclasse: classe,
+    eid: user.id,
+    ename: user.p + " " + user.n,
+    ecls: classe,
     cap: "p12-act3", caplbl: "P12 Activité 3",
-    ts: Date.now(), status: "pending", fields: { bilan: bilan }
+    ts: Date.now(), status: "pending", fields: fields
   };
   var subs = getSubs();
   subs = subs.filter(function(s){ return !(s.eid === user.id && s.cap === "p12-act3"); });
@@ -8907,7 +8935,8 @@ function submitA3Form() {
   setSubs(subs);
   var stDiv = document.getElementById("a3-submit-zone");
   if (stDiv) {
-    stDiv.innerHTML = '<div style="font-size:13px;font-weight:700;color:#3730A3;width:100%">&#x2705; Activit&eacute; 3 soumise&nbsp;! Ton professeur peut maintenant consulter ta progression.</div>';
+    var scoreLabel = fields.score ? " · Score&nbsp;: <strong>" + fields.score + "</strong>" : "";
+    stDiv.innerHTML = '<div style="font-size:13px;font-weight:700;color:#3730A3;width:100%">&#x2705; Activit&eacute; 3 soumise&nbsp;!' + scoreLabel + ' — Ton professeur peut consulter ta progression.</div>';
   }
   toast("Activité 3 soumise !");
   renderDash();
