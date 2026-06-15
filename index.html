@@ -3626,6 +3626,20 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
     </div>
   
+    <!-- RÉSEAU 5e — CAPSULE P1 (activité embarquée depuis le dépôt reseau-5e) -->
+    <div id="pg-reseau5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Réseau informatique (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité à réaliser <strong>en binôme</strong> sur PowerShell. Remplissez vos prénoms et noms en haut de la fiche, puis cliquez <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> à la fin : votre travail arrive directement dans le tableau de bord du professeur.
+      </p>
+      <iframe src="https://blanchardromain-cyber.github.io/reseau-5e/" title="Manipulation Réseau 5e (binôme)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#0F1923"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- REMÉDIATION HUB -->
     <div id="pg-rem" class="h">
       <div class="phdr">
@@ -4543,7 +4557,7 @@ var SEQUENCES_DEF = [
   {id:"p12-act3",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
   {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
-  {id:"seq5a",   niveau:"5ème", titre:"P5 — À venir", desc:"Séquence 5ème à venir.", couleur:"var(--gb)", code:"", open:false},
+  {id:"reseau5e", niveau:"5ème", titre:"P1 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"seq3",    niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
 
@@ -4992,6 +5006,7 @@ function renderDash() {
       else if (s.id === "dc-corrige") clickAction = "onclick=\"goPage('pg-dc');setTimeout(revealDCCorrigeAfterUnlock,100)\"";
       else if (s.id === "cap1")     clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
+      else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
       html += '<div class="schdr" style="background:' + s.couleur + '"></div>';
       html += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
@@ -5037,6 +5052,7 @@ function tryUnlock() {
     else if (pendingSeq === "p12-act3") goPage("pg-p12-act3");
     else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
+    else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else goPage("pg-dash");
     renderDash();
   } else {

@@ -596,16 +596,24 @@
   </div>
   <div class="header-right">
     <div class="field-inline">
-      <label>Élève 1 (Prénom Nom)</label>
-      <input type="text" id="inp-nom" placeholder="ex : Marie Dupont" autocomplete="off" oninput="autosave()">
+      <label>Élève 1 — Prénom</label>
+      <input type="text" id="inp-p1" placeholder="ex : Marie" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
     </div>
     <div class="field-inline">
-      <label>Élève 2 (Prénom Nom)</label>
-      <input type="text" id="inp-nom2" placeholder="ex : Lucas Martin" autocomplete="off" oninput="autosave()">
+      <label>Élève 1 — Nom</label>
+      <input type="text" id="inp-n1" placeholder="ex : Dupont" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 2 — Prénom</label>
+      <input type="text" id="inp-p2" placeholder="ex : Lucas" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 2 — Nom</label>
+      <input type="text" id="inp-n2" placeholder="ex : Martin" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
     </div>
     <div class="field-inline">
       <label>Classe</label>
-      <input type="text" id="inp-classe" placeholder="ex : 5A" autocomplete="off" style="width:80px" oninput="autosave()">
+      <input type="text" id="inp-classe" placeholder="ex : 5A" autocomplete="off" style="width:72px" oninput="autosave()">
     </div>
     <div class="field-inline">
       <label>Date</label>
@@ -1058,6 +1066,16 @@
     try { base = base.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
     return base.replace(/[^a-z0-9]+/g, "");
   }
+  function fullName(p, n) { return [String(p||"").trim(), String(n||"").trim()].filter(Boolean).join(" "); }
+  // Majuscule auto : 1re lettre + après espace/trait d'union, sans toucher au reste
+  function capName(el) {
+    var s = el.value.replace(/(^|[\s\-])([a-zà-ÿ])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
+    if (s !== el.value) {
+      var pos = el.selectionStart;
+      el.value = s;
+      try { el.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  }
 
   // ── Progression + statut des pastilles ──
   function updateStatus(key) {
@@ -1094,8 +1112,8 @@
     var fields = {};
     FIELD_IDS.forEach(function(id){ fields[id] = val(id); });
     return {
-      nom:    val('inp-nom'),
-      nom2:   val('inp-nom2'),
+      p1: val('inp-p1'), n1: val('inp-n1'),
+      p2: val('inp-p2'), n2: val('inp-n2'),
       classe: val('inp-classe'),
       date:   val('inp-date'),
       fields: fields
@@ -1109,8 +1127,10 @@
     try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
     if (!raw) return;
     var d; try { d = JSON.parse(raw); } catch (e) { return; }
-    if (d.nom)    document.getElementById('inp-nom').value = d.nom;
-    if (d.nom2)   document.getElementById('inp-nom2').value = d.nom2;
+    if (d.p1) document.getElementById('inp-p1').value = d.p1;
+    if (d.n1) document.getElementById('inp-n1').value = d.n1;
+    if (d.p2) document.getElementById('inp-p2').value = d.p2;
+    if (d.n2) document.getElementById('inp-n2').value = d.n2;
     if (d.classe) document.getElementById('inp-classe').value = d.classe;
     if (d.date)   document.getElementById('inp-date').value = d.date;
     if (d.fields) {
@@ -1133,8 +1153,9 @@
   // ── Résumé lisible (affiché dans le tableau de bord prof) ──
   function buildOpenSummary(state) {
     var lines = [];
-    if (state.nom || state.nom2) {
-      lines.push("Binôme : " + [state.nom, state.nom2].filter(Boolean).join("  &  "));
+    var e1 = fullName(state.p1, state.n1), e2 = fullName(state.p2, state.n2);
+    if (e1 || e2) {
+      lines.push("Binôme : " + [e1, e2].filter(Boolean).join("  &  "));
     }
     QUESTION_GROUPS.forEach(function(g){
       var block = [];
@@ -1151,14 +1172,15 @@
   function makeSub() {
     var state = collect();
     var filled = FIELD_IDS.filter(function(id){ return (state.fields[id]||"").length > 0; }).length;
-    var ename = [state.nom, state.nom2].filter(Boolean).join(" & ") || "Binôme";
+    var e1 = fullName(state.p1, state.n1), e2 = fullName(state.p2, state.n2);
+    var ename = [e1, e2].filter(Boolean).join(" & ") || "Binôme";
     var eid = "reseau5e." + (slug(state.classe) || "5x") + "." +
-              (slug(state.nom) || "e1") + (state.nom2 ? "-" + slug(state.nom2) : "");
+              (slug(e1) || "e1") + (e2 ? "-" + slug(e2) : "");
     return {
       id: Date.now(),
       eid: eid,
       ename: ename,
-      ename2: state.nom2 || "",
+      ename2: e2 || "",
       ecls: state.classe || "",
       cap: CAP_ID,
       caplbl: CAP_LABEL,
@@ -1218,8 +1240,8 @@
   }
 
   function sendToProf() {
-    var nom = val('inp-nom'), classe = val('inp-classe');
-    if (!nom) { setStatus('err', '✋ Entrez d\'abord le <strong>nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById('inp-nom').focus(); return; }
+    var p1 = val('inp-p1'), n1 = val('inp-n1'), classe = val('inp-classe');
+    if (!p1 || !n1) { setStatus('err', '✋ Entrez d\'abord le <strong>prénom et le nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById(p1 ? 'inp-n1' : 'inp-p1').focus(); return; }
     if (!classe) { setStatus('err', '✋ Indiquez votre <strong>classe</strong> en haut de la fiche.'); document.getElementById('inp-classe').focus(); return; }
 
     var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
@@ -1248,7 +1270,7 @@
     var url  = URL.createObjectURL(blob);
     var a    = document.createElement('a');
     a.href = url;
-    a.download = 'reseau_' + (slug(state.nom)||'eleve') + '_' + (slug(state.classe)||'5x') + '.json';
+    a.download = 'reseau_' + (slug(fullName(state.p1,state.n1))||'eleve') + '_' + (slug(state.classe)||'5x') + '.json';
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -1256,7 +1278,7 @@
   // ── Nouveau binôme : on efface tout (et le brouillon) ──
   function clearAll() {
     if (!confirm('Effacer toutes les réponses et repartir de zéro (nouveau binôme) ?')) return;
-    FIELD_IDS.concat(['inp-nom','inp-nom2','inp-classe']).forEach(function(id){
+    FIELD_IDS.concat(['inp-p1','inp-n1','inp-p2','inp-n2','inp-classe']).forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = '';
     });
     var col = document.getElementById('o-couleur');
