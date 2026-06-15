@@ -1327,13 +1327,30 @@
   // ════════════════════════════════════════════════════════════════
   //  INITIALISATION
   // ════════════════════════════════════════════════════════════════
+  // Report auto du nom/prénom de l'élève connecté (Élève 1) quand la capsule
+  // est ouverte depuis le Site Techno (même origine → transmis via localStorage).
+  function applyPrefill() {
+    var pf;
+    try { pf = JSON.parse(localStorage.getItem('reseau5e_prefill') || 'null'); } catch (e) { return; }
+    if (!pf || (Date.now() - (pf.ts || 0) > 5 * 60 * 1000)) return; // ignore un prefill trop ancien
+    if (pf.p) document.getElementById('inp-p1').value = pf.p;
+    if (pf.n) document.getElementById('inp-n1').value = pf.n;
+    if (pf.c) {
+      var L = String(pf.c).toUpperCase().replace(/^5/, '').replace(/[^A-Z]/g, '').slice(0, 1);
+      if (L) document.getElementById('inp-classe-letter').value = L;
+    }
+    try { localStorage.removeItem('reseau5e_prefill'); } catch (e) {}
+  }
+
   (function init(){
     var dEl = document.getElementById('inp-date');
     if (!dEl.value) dEl.value = new Date().toISOString().split('T')[0];
     restoreDraft();
+    applyPrefill(); // l'identité connectée prime sur un éventuel brouillon
     // sauvegarde auto sur toute saisie
     document.addEventListener('input', autosave);
     document.addEventListener('change', autosave);
+    autosave();      // fige le pré-remplissage dans le brouillon
     updateProgress();
     flushQueue(); // rejoue un éventuel envoi resté en attente
   })();

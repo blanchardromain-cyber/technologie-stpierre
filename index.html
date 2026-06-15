@@ -3635,7 +3635,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         Activité à réaliser <strong>en binôme</strong> sur PowerShell. Remplissez vos prénoms et noms en haut de la fiche, puis cliquez <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> à la fin : votre travail arrive directement dans le tableau de bord du professeur.
       </p>
-      <iframe src="https://blanchardromain-cyber.github.io/reseau-5e/" title="Manipulation Réseau 5e (binôme)"
+      <iframe id="reseau5e-frame" data-src="https://blanchardromain-cyber.github.io/reseau-5e/" title="Manipulation Réseau 5e (binôme)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#0F1923"
         loading="lazy"></iframe>
     </div>
@@ -4799,6 +4799,15 @@ function goPage(pid) {
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
+  if (pid === "pg-reseau5e") {
+    // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
+    // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
+    try {
+      if (user) localStorage.setItem("reseau5e_prefill", JSON.stringify({ p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var rIfr = document.getElementById("reseau5e-frame");
+    if (rIfr) rIfr.src = rIfr.getAttribute("data-src"); // (re)charge → l'activité relit le prefill
+  }
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
@@ -5212,6 +5221,29 @@ function buildP12ModalHTML(f) {
     row("Bilan personnel","bilan");
 }
 
+/* Réseau 5e — corrigé type des questions dont la réponse ne dépend pas du réseau local.
+   (Les questions variables — IP, nb de sauts, ms, nombre/couleur de voyants — n'ont pas de corrigé fixe.) */
+var RESEAU_CORRIGE = {
+  "q-1-2": "Non : chaque appareil du réseau a une adresse IP différente (unique).",
+  "q-1-4": "On le lit dans ipconfig : « Carte Ethernet » = câble, « Carte réseau sans fil Wi-Fi » = WiFi.",
+  "q-2-2": "Le serveur DNS public de Google. Il sert de point fiable pour tester la connexion.",
+  "q-2-3": "Avec un nom de site, il y a une étape en plus : la résolution DNS (le nom est traduit en adresse IP).",
+  "q-2-4": "Pas de réponse : « hôte injoignable » ou « délai d'attente dépassé » — l'adresse n'existe pas / ne répond pas.",
+  "q-3-2": "La passerelle = la box (la même adresse qu'à l'étape 1).",
+  "q-3-3": "Chaque routeur reçoit les données et les transmet au routeur suivant, jusqu'à destination.",
+  "q-3-4": "Le routeur est configuré pour ne pas répondre (sécurité / pare-feu) ; il transmet quand même les données.",
+  "q-4-1": "Le clignotement indique que des données circulent sur ce port (échange en cours).",
+  "q-4-2": "Le voyant s'éteint et l'adresse IP est perdue → souvent une adresse en 169.254.x.x (APIPA).",
+  "q-4-3": "La box internet (Livebox, Freebox, SFR Box…) : modem + routeur + switch + borne WiFi à la fois.",
+  "schema-1": "Le switch (commutateur).",
+  "schema-2": "La box / le routeur.",
+  "syn-1": "Tous les PC passent par le switch (point central) → réseau en étoile.",
+  "syn-2": "La passerelle, c'est la box : la porte de sortie vers Internet.",
+  "syn-3": "Chaque appareil possède une adresse IP unique sur le réseau.",
+  "syn-4": "Les données passent par plusieurs routeurs : Internet = réseau de réseaux.",
+  "syn-5": "Certains équipements ne répondent pas au ping (pare-feu), par sécurité."
+};
+
 /* Réseau 5e — rendu des réponses du binôme (manipulation ipconfig/ping/tracert/switch) */
 function buildReseauModalHTML(sub) {
   var f = sub && sub.fields ? sub.fields : null;
@@ -5219,9 +5251,12 @@ function buildReseauModalHTML(sub) {
   function row(label, val) {
     var v = f ? f[val] : "";
     if (val === "o-couleur") { var m = {green:"Vert",orange:"Orange / Jaune",red:"Rouge",mix:"Mixte"}; v = m[v] || v; }
+    var cor = RESEAU_CORRIGE[val]
+      ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Corrigé :</strong> ' + esc(RESEAU_CORRIGE[val]) + '</div>'
+      : '';
     return '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + label + '</div>' +
       '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
-      (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div></div>';
+      (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div>' + cor + '</div>';
   }
   function head(t,c){ return '<div style="font-weight:700;color:'+c+';font-size:12px;margin:12px 0 4px">'+t+'</div>'; }
   var binome = '';
