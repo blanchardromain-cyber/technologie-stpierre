@@ -5227,7 +5227,7 @@ function buildReseauModalHTML(sub) {
     head("ÉTAPE 4 — Observer le switch","#7B2C8B") +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
     row("Voyants allumés","o-voyants") + row("Couleur des voyants","o-couleur") + '</div>' +
-    row("Débrancher le câble 3 s","q-4-1") + row("IP quand câble débranché","q-4-2") +
+    row("Voyant qui clignote : signification","q-4-1") + row("Démo prof : voyant + IP","q-4-2") +
     row("Appareil tout-en-un à la maison","q-4-3") +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
     row("Schéma : réseau local","schema-1") + row("Schéma : sortie Internet","schema-2") + '</div>' +
@@ -5779,7 +5779,7 @@ function printSubDirect(sid) {
   w.document.write('button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}');
   w.document.write('@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}<\/style><\/head><body>');
 
-  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie 4ᵉ | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
+  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie '+((sub.cap==="reseau5e")?"5ᵉ":"4ᵉ")+' | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
   w.document.write('<div class="pb">');
   if (scoreStr) w.document.write('<div class="sc">'+esc(scoreStr)+'<\/div>');
   w.document.write('<div class="st">Réponses de l’élève<\/div>');

@@ -830,6 +830,10 @@
         <span class="tag">💡 Rappel</span>
         <span>Le <strong>commutateur (switch)</strong> gère les connexions entre les PC du réseau local. Chaque port allumé = un appareil connecté. On peut l'observer directement !</span>
       </div>
+      <div class="tip">
+        <span class="tip-ico">👀</span>
+        <span><strong>Observation seulement :</strong> on regarde le switch, <strong>on ne touche à aucun câble</strong>. C'est le professeur qui fera la démonstration de débranchement.</span>
+      </div>
 
       <div class="obs-grid">
         <div class="obs-card">
@@ -856,17 +860,17 @@
           <div class="q-label">
             <span class="q-status" id="s-4-1"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Que se passe-t-il sur le switch quand tu <strong>débrancheś ton câble</strong> pendant 3 secondes ?</span>
+            <span class="q-text">Repère un <strong>voyant qui clignote</strong>. À ton avis, qu'est-ce que ce clignotement indique ?</span>
           </div>
-          <textarea class="q-area" id="q-4-1" placeholder="Le voyant du port ... s'est éteint puis..." rows="2" oninput="updateStatus('4-1')"></textarea>
+          <textarea class="q-area" id="q-4-1" placeholder="Le voyant clignote quand... (des données / un appareil ...)" rows="2" oninput="updateStatus('4-1')"></textarea>
         </div>
         <div class="q-item">
           <div class="q-label">
             <span class="q-status" id="s-4-2"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Que devient ton <strong>adresse IP</strong> dans <code style="font-family:var(--mono);color:var(--accent)">ipconfig</code> quand le câble est débranché ?</span>
+            <span class="q-text">Le professeur <strong>débranche un câble en démonstration</strong> : qu'arrive-t-il au voyant du port ? Et que deviendrait l'<strong>adresse IP</strong> de ce PC (rappelle-toi l'étape 1) ?</span>
           </div>
-          <textarea class="q-area" id="q-4-2" placeholder="Elle disparaît / elle change en 169.254... parce que..." rows="2" oninput="updateStatus('4-2')"></textarea>
+          <textarea class="q-area" id="q-4-2" placeholder="Le voyant s'éteint, et l'adresse IP disparaît / devient 169.254... parce que..." rows="2" oninput="updateStatus('4-2')"></textarea>
         </div>
         <div class="q-item">
           <div class="q-label">
@@ -1005,8 +1009,8 @@
     { titre: "Étape 4 — Observer le switch physique", items: [
       ['o-voyants', "Nombre de voyants allumés"],
       ['o-couleur', "Couleur des voyants"],
-      ['q-4-1', "Débrancher le câble 3 s : effet sur le switch"],
-      ['q-4-2', "IP dans ipconfig quand le câble est débranché"],
+      ['q-4-1', "Voyant qui clignote : ce qu'il indique"],
+      ['q-4-2', "Démo prof (câble débranché) : voyant + IP"],
       ['q-4-3', "Appareil faisant switch + routeur + WiFi à la maison"],
       ['schema-1', "Schéma : appareil du réseau local"],
       ['schema-2', "Schéma : appareil de sortie vers Internet"] ] },
