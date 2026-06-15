@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manipulation Réseau – 5ème</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:        #0F1923;
+    --surface:   #162030;
+    --card:      #1C2B3A;
+    --border:    #253545;
+    --accent:    #00C2FF;
+    --accent2:   #FFB800;
+    --green:     #00E5A0;
+    --red:       #FF5C5C;
+    --text:      #E2EDF5;
+    --muted:     #7A9BB5;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .field-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .field-inline label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .field-inline input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 5px 10px;
+    width: 140px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field-inline input:focus { border-color: var(--accent); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--surface);
+    padding: 10px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-label { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 99px; width: 0%; transition: width .5s ease; }
+  .progress-pct { font-family: var(--mono); font-size: 11px; color: var(--accent); width: 36px; text-align: right; }
+
+  /* ── MAIN ── */
+  main { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .intro-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .intro-card p { color: var(--muted); font-size: 14px; }
+  .intro-card strong { color: var(--text); }
+
+  /* ── STEP ── */
+  .step {
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-header h2 { font-size: 16px; font-weight: 700; flex: 1; }
+  .step-timer {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(255,184,0,.1);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 99px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .step-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── RAPPEL ── */
+  .recall {
+    background: rgba(0,194,255,.06);
+    border: 1px solid rgba(0,194,255,.2);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .recall .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ── COMMAND ── */
+  .cmd-block {
+    background: #0A0F14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .cmd-bar {
+    background: #1A252F;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmd-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cmd-bar span { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: 4px; }
+  .cmd-line {
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: #DCDCAA;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cmd-prompt { color: #4EC9B0; }
+  .cmd-copy {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .cmd-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .cmd-copy.copied { color: var(--green); border-color: var(--green); }
+
+  /* ── TIP (binôme / manip) ── */
+  .tip {
+    background: rgba(255,184,0,.08);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+  }
+  .tip .tip-ico { flex-shrink: 0; }
+  .tip code { font-family: var(--mono); color: var(--accent2); }
+
+  /* ── QUESTIONS ── */
+  .questions { display: flex; flex-direction: column; gap: 14px; }
+
+  .q-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .q-item:focus-within { border-color: var(--accent); }
+
+  .q-label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .q-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .q-text { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+  .q-area {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 60px;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.5;
+  }
+  .q-area:focus { border-color: var(--accent); }
+  .q-area::placeholder { color: var(--border); font-style: italic; }
+
+  /* status dot */
+  .q-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    margin-top: 6px;
+    transition: background .3s;
+  }
+  .q-status.filled { background: var(--green); }
+
+  /* ── OBSERVATION SPÉCIALE (step 4) ── */
+  .obs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .obs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .obs-card label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .obs-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .obs-input:focus { border-color: var(--accent); }
+  .voyant-row { display: flex; gap: 8px; align-items: center; }
+  .voyant-sel {
+    appearance: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 7px 10px;
+    flex: 1;
+    outline: none;
+    cursor: pointer;
+  }
+  .voyant-sel:focus { border-color: var(--accent); }
+  .voyant-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .voyant-dot.green { background: #00E5A0; box-shadow: 0 0 6px #00E5A0; }
+  .voyant-dot.orange { background: #FFB800; box-shadow: 0 0 6px #FFB800; }
+  .voyant-dot.red { background: #FF5C5C; box-shadow: 0 0 6px #FF5C5C; }
+
+  /* ── SCHEMA ── */
+  .schema-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .schema-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .schema-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .schema-node {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+    transition: border-color .3s, background .3s;
+  }
+  .schema-node.active { border-color: var(--accent); background: rgba(0,194,255,.08); }
+  .schema-node .node-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .schema-node .node-label { color: var(--muted); font-size: 10px; }
+  .schema-arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 18px;
+    padding: 0 4px;
+  }
+
+  /* ── SYNTHESE ── */
+  .synthese {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 8px;
+  }
+  .synthese h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--mono);
+    margin-bottom: 16px;
+  }
+  .synthese-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .synthese-table th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .synthese-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .synthese-table tr:last-child td { border-bottom: none; }
+  .synthese-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .tag-notion {
+    background: rgba(0,194,255,.12);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .tag-cmd {
+    background: rgba(0,229,160,.1);
+    color: var(--green);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .synthese-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .synthese-input:focus { border-color: var(--green); }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #33CFFF; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-print { background: var(--surface); color: var(--accent2); border: 1px solid rgba(255,184,0,.3); }
+  .btn-print:hover { background: rgba(255,184,0,.1); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* ── SEND STATUS ── */
+  .send-status {
+    display: none;
+    max-width: 620px;
+    margin: 28px auto 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .send-status.show { display: block; }
+  .send-status.ok    { background: rgba(0,229,160,.12); border: 1px solid var(--green); color: var(--green); }
+  .send-status.wait  { background: rgba(0,194,255,.10); border: 1px solid var(--accent); color: var(--accent); }
+  .send-status.err   { background: rgba(255,92,92,.10); border: 1px solid var(--red); color: var(--red); }
+
+  /* ── COMPLETION ── */
+  .completion-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,194,255,.1));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .completion-banner.show { display: block; }
+  .completion-banner .big-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+  .completion-banner h2 { font-size: 20px; color: var(--green); margin-bottom: 6px; }
+  .completion-banner p { color: var(--muted); font-size: 14px; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; color: #000; font-size: 12px; }
+    header { background: #1F4E79; color: #fff; padding: 12px 20px; }
+    header h1 { color: #fff; font-size: 16px; }
+    .header-badge, .header-right label { color: #BDD7EE; }
+    .header-right input { border: 1px solid #ccc; color: #000; background: #fff; }
+    .progress-wrap { display: none; }
+    .step { border: 1px solid #ccc; background: #fff; break-inside: avoid; margin-bottom: 20px; }
+    .step-header { background: #1F4E79; color: #fff; }
+    .step-num { background: #2E75B6; }
+    .step-header h2 { color: #fff; }
+    .step-timer { color: #FFB800; border-color: #FFB800; background: none; }
+    .recall { background: #EAF4FB; border-color: #2E75B6; color: #333; }
+    .recall .tag { color: #1F4E79; }
+    .cmd-block { background: #1E1E1E; border: 1px solid #444; }
+    .cmd-bar { background: #2D2D2D; }
+    .cmd-bar span { color: #aaa; }
+    .cmd-line { color: #DCDCAA; }
+    .cmd-prompt { color: #4EC9B0; }
+    .cmd-copy { display: none; }
+    .q-item { background: #F9FBFD; border: 1px solid #ccc; }
+    .q-text { color: #000; }
+    .q-area { background: #fff; border: 1px solid #ccc; color: #000; min-height: 50px; }
+    .obs-card { background: #F9FBFD; border: 1px solid #ccc; }
+    .obs-input, .voyant-sel { background: #fff; border: 1px solid #ccc; color: #000; }
+    .schema-node { border: 1px solid #ccc; background: #F9FBFD; color: #000; }
+    .schema-node .node-label { color: #555; }
+    .schema-arrow { color: #1F4E79; }
+    .synthese { background: #F0FBF7; border-color: #00A86B; }
+    .synthese h3 { color: #00A86B; }
+    .synthese-table th { background: #E8F5F0; color: #333; }
+    .synthese-input { background: #fff; border: 1px solid #ccc; color: #000; }
+    .actions { display: none; }
+    .send-status { display: none !important; }
+    .tip { background: #FFF7E6; border: 1px solid #E0A800; color: #333; }
+    .tip code { color: #B8860B; }
+    .completion-banner { display: none !important; }
+    .intro-card { background: #EAF4FB; border-left-color: #1F4E79; }
+    .intro-card p, .intro-card strong { color: #000; }
+    .q-status { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 20px 14px 48px; }
+    .obs-grid { grid-template-columns: 1fr; }
+    .step-header { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="header-badge">Technologie · Cycle 4 · Séquence 1</span>
+    <h1>Manipulation — Le réseau en vrai !</h1>
+  </div>
+  <div class="header-right">
+    <div class="field-inline">
+      <label>Élève 1 (Prénom Nom)</label>
+      <input type="text" id="inp-nom" placeholder="ex : Marie Dupont" autocomplete="off" oninput="autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 2 (Prénom Nom)</label>
+      <input type="text" id="inp-nom2" placeholder="ex : Lucas Martin" autocomplete="off" oninput="autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Classe</label>
+      <input type="text" id="inp-classe" placeholder="ex : 5A" autocomplete="off" style="width:80px" oninput="autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Date</label>
+      <input type="date" id="inp-date" oninput="autosave()">
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <span class="progress-label">Progression</span>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-pct" id="progress-pct">0 %</span>
+</div>
+
+<main>
+
+  <div class="completion-banner" id="completion-banner">
+    <span class="big-icon">🎉</span>
+    <h2>Félicitations ! Fiche complète</h2>
+    <p>Tu as répondu à toutes les questions. Tu peux imprimer ou enregistrer ta fiche.</p>
+  </div>
+
+  <div class="intro-card">
+    <span class="intro-icon">🔬</span>
+    <div>
+      <p><strong>Vous travaillez à deux, sur un seul PC.</strong><br>
+      À chaque étape : <strong>l'un tape la commande</strong> dans PowerShell, <strong>l'autre observe l'écran et complète</strong> les réponses ci-dessous. <em>Échangez les rôles à chaque nouvelle étape</em> pour que chacun manipule.</p>
+      <p style="margin-top:10px">📋 <strong>Ouvrir PowerShell :</strong> bouton <strong>Démarrer</strong> → tapez <code style="font-family:var(--mono);color:var(--accent)">powershell</code> → <em>Entrée</em>. Une fenêtre noire s'ouvre : c'est là qu'on tape les commandes. Le bouton <strong>« Copier »</strong> sous chaque commande la copie : collez-la avec <strong>clic droit</strong> dans PowerShell, puis <em>Entrée</em>.</p>
+      <p style="margin-top:10px">💾 Votre travail est <strong>sauvegardé automatiquement</strong> sur ce PC pendant la séance. À la fin, cliquez sur <strong>« Envoyer au professeur »</strong> : il recevra vos réponses directement.</p>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 1 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <h2>Mon PC dans le réseau</h2>
+      <span class="step-timer">⏱ ~7 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Le modem-routeur distribue une <strong>adresse IP</strong> unique à chaque appareil connecté au réseau. C'est comme un numéro de maison dans une rue.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ipconfig</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ipconfig')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle est ton <strong>adresse IPv4</strong> ? Par quel(s) chiffre(s) commence-t-elle ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-1" placeholder="Ex : 192.168.1.42 — elle commence par 192..." rows="2" oninput="updateStatus('1-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Est-ce que ton voisin a la <strong>même adresse IP</strong> que toi ? Pourquoi ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-2" placeholder="Non, parce que..." rows="2" oninput="updateStatus('1-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Qu'est-ce que la <strong>Passerelle par défaut</strong> ? C'est quel appareil dans la salle ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-3" placeholder="C'est l'adresse du..." rows="2" oninput="updateStatus('1-3')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-4"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Ton PC est-il connecté en <strong>WiFi ou en câble</strong> ? Comment le sais-tu d'après la commande ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-4" placeholder="Je suis en... car j'ai vu écrit..." rows="2" oninput="updateStatus('1-4')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 2 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <h2>Suis-je vraiment connecté ?</h2>
+      <span class="step-timer">⏱ ~7 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Le <strong>ping</strong> envoie un petit message à une adresse et attend la réponse. Comme frapper à une porte et attendre que quelqu'un réponde.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell — commande 1</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping 8.8.8.8</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping 8.8.8.8')">Copier</button>
+        </div>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell — commande 2</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping www.google.fr')">Copier</button>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">⏹️</span>
+        <span>Le <strong>ping</strong> s'arrête tout seul après 4 essais. S'il continue, appuyez sur <code>Ctrl</code> + <code>C</code> pour l'arrêter.</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Le serveur <strong>répond-il</strong> ? Combien de <strong>millisecondes (ms)</strong> pour la réponse ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-1" placeholder="Oui, la réponse prend environ ... ms" rows="2" oninput="updateStatus('2-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">À qui appartient l'adresse <strong>8.8.8.8</strong> ? À quoi sert-elle ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-2" placeholder="C'est le serveur ... de ... Il sert à ..." rows="2" oninput="updateStatus('2-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle <strong>différence</strong> as-tu remarqué entre pinger une adresse IP et pinger un nom de site ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-3" placeholder="Avec le nom, il y a une étape supplémentaire : la résolution..." rows="2" oninput="updateStatus('2-3')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-4"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que se passe-t-il si on <strong>ping une adresse qui n'existe pas</strong> ? Pourquoi ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-4" placeholder="On obtient... parce que..." rows="2" oninput="updateStatus('2-4')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 3 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <h2>Le chemin des données</h2>
+      <span class="step-timer">⏱ ~8 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Internet est un <strong>réseau de réseaux</strong>. Les données ne voyagent pas en ligne droite : elles passent par plusieurs <strong>routeurs</strong> intermédiaires avant d'arriver à destination.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>tracert www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'tracert www.google.fr')">Copier</button>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">⏳</span>
+        <span><strong>Patience :</strong> <code>tracert</code> peut prendre 20 à 40 secondes (les lignes s'affichent une par une). Attendez le message <em>« Itinéraire déterminé »</em>. Pour l'arrêter avant la fin : <code>Ctrl</code> + <code>C</code>.</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Combien d'<strong>étapes (sauts)</strong> comptes-tu entre ton PC et Google ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-1" placeholder="J'ai compté ... sauts" rows="2" oninput="updateStatus('3-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">La <strong>première adresse</strong> qui apparaît, c'est quel appareil ? Tu reconnais ce chiffre ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-2" placeholder="C'est la même adresse que la passerelle vue à l'étape 1, donc c'est le..." rows="2" oninput="updateStatus('3-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que se passe-t-il à chaque étape selon toi ? Quel est le rôle de chaque intermédiaire ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-3" placeholder="Chaque routeur reçoit le message et le transmet vers..." rows="2" oninput="updateStatus('3-3')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-4"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">À ton avis, pourquoi certaines étapes affichent <strong>"* * * Délai d'attente..."</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-4" placeholder="Certains routeurs sont configurés pour ne pas répondre, c'est une mesure de..." rows="2" oninput="updateStatus('3-4')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 4 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--accent2)">4</div>
+      <h2>Observer le switch physique</h2>
+      <span class="step-timer">⏱ ~8 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Le <strong>commutateur (switch)</strong> gère les connexions entre les PC du réseau local. Chaque port allumé = un appareil connecté. On peut l'observer directement !</span>
+      </div>
+
+      <div class="obs-grid">
+        <div class="obs-card">
+          <label>Nombre de voyants allumés sur le switch</label>
+          <input type="number" class="obs-input" id="o-voyants" placeholder="ex : 8" min="0" max="48" oninput="updateStatus('4-obs')">
+        </div>
+        <div class="obs-card">
+          <label>Couleur des voyants</label>
+          <div class="voyant-row">
+            <select class="voyant-sel" id="o-couleur" onchange="updateVoyant(this)">
+              <option value="">— Sélectionne —</option>
+              <option value="green">Vert</option>
+              <option value="orange">Orange / Jaune</option>
+              <option value="red">Rouge</option>
+              <option value="mix">Mixte</option>
+            </select>
+            <div class="voyant-dot" id="voyant-preview"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que se passe-t-il sur le switch quand tu <strong>débrancheś ton câble</strong> pendant 3 secondes ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-1" placeholder="Le voyant du port ... s'est éteint puis..." rows="2" oninput="updateStatus('4-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que devient ton <strong>adresse IP</strong> dans <code style="font-family:var(--mono);color:var(--accent)">ipconfig</code> quand le câble est débranché ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-2" placeholder="Elle disparaît / elle change en 169.254... parce que..." rows="2" oninput="updateStatus('4-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quel appareil réalise à lui seul les fonctions de switch + routeur + borne WiFi <strong>chez toi</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-3" placeholder="Chez moi, c'est la... (Livebox, Freebox, ...)" rows="2" oninput="updateStatus('4-3')"></textarea>
+        </div>
+      </div>
+
+      <!-- Schéma à légender -->
+      <div class="schema-wrap">
+        <div class="schema-label">📌 Schéma — Replace chaque appareil dans le bon ordre :</div>
+        <div class="schema-row">
+          <div class="schema-node active">
+            <span class="node-icon">💻</span>
+            <span>Mon PC</span>
+            <span class="node-label">toi</span>
+          </div>
+          <span class="schema-arrow">→</span>
+          <div class="schema-node">
+            <span class="node-icon">🔀</span>
+            <input type="text" class="obs-input" id="schema-1" placeholder="appareil ?" style="width:90px;font-size:11px;padding:4px 6px;text-align:center" oninput="updateStatus('4-schema')">
+            <span class="node-label">réseau local</span>
+          </div>
+          <span class="schema-arrow">→</span>
+          <div class="schema-node">
+            <span class="node-icon">📡</span>
+            <input type="text" class="obs-input" id="schema-2" placeholder="appareil ?" style="width:90px;font-size:11px;padding:4px 6px;text-align:center" oninput="updateStatus('4-schema')">
+            <span class="node-label">sortie vers Internet</span>
+          </div>
+          <span class="schema-arrow">→</span>
+          <div class="schema-node">
+            <span class="node-icon">🌐</span>
+            <span>Internet</span>
+            <span class="node-label">réseau mondial</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SYNTHÈSE ══ -->
+  <div class="synthese">
+    <h3>✅ Synthèse — Ce que ces manipulations m'ont appris</h3>
+    <table class="synthese-table">
+      <thead>
+        <tr>
+          <th>Notion vue en cours</th>
+          <th>Commande utilisée</th>
+          <th>Ce que j'ai observé / compris</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-notion">Réseau en étoile</span></td>
+          <td><span class="tag-cmd">Switch physique</span></td>
+          <td><input type="text" class="synthese-input" id="syn-1" placeholder="Tous les PC passent par..." oninput="updateStatus('syn-1')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-notion">Modem-routeur</span></td>
+          <td><span class="tag-cmd">ipconfig</span></td>
+          <td><input type="text" class="synthese-input" id="syn-2" placeholder="La passerelle, c'est..." oninput="updateStatus('syn-2')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-notion">Adresse IP</span></td>
+          <td><span class="tag-cmd">ipconfig</span></td>
+          <td><input type="text" class="synthese-input" id="syn-3" placeholder="Chaque PC a une adresse..." oninput="updateStatus('syn-3')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-notion">Internet = réseau de réseaux</span></td>
+          <td><span class="tag-cmd">tracert</span></td>
+          <td><input type="text" class="synthese-input" id="syn-4" placeholder="Les données passent par..." oninput="updateStatus('syn-4')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-notion">Pare-feu / protection</span></td>
+          <td><span class="tag-cmd">ping (bloqué)</span></td>
+          <td><input type="text" class="synthese-input" id="syn-5" placeholder="Certains ping ne répondent pas car..." oninput="updateStatus('syn-5')"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="send-status" class="send-status"></div>
+
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="clearAll()">🗑 Nouveau binôme</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn btn-ghost" onclick="saveToLocalFile()" title="Télécharge une copie de secours sur ce PC (fichier JSON)">⬇ Copie de secours</button>
+    <button class="btn btn-primary" id="btn-send" onclick="sendToProf()">📤 Envoyer au professeur</button>
+  </div>
+
+</main>
+
+<script>
+  // ════════════════════════════════════════════════════════════════
+  //  CONFIGURATION — backend partagé avec le Site Techno (Apps Script)
+  //  Doit correspondre à apps-script-backend.gs et index.html.
+  // ════════════════════════════════════════════════════════════════
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+  var SYNC_SECRET     = "TECHNO-RB-2026-12MAI";
+  var CAP_ID    = "reseau5e";
+  var CAP_LABEL = "Réseau 5e — Manipulation (binôme)";
+  var DRAFT_KEY = "reseau5e_draft";       // brouillon auto sur ce PC
+  var QUEUE_KEY = "reseau5e_offline_queue"; // envois en attente (réseau coupé)
+
+  // ── Champs-réponses suivis (progression + sauvegarde) ──
+  var FIELD_IDS = [
+    'q-1-1','q-1-2','q-1-3','q-1-4',
+    'q-2-1','q-2-2','q-2-3','q-2-4',
+    'q-3-1','q-3-2','q-3-3','q-3-4',
+    'o-voyants','o-couleur',
+    'q-4-1','q-4-2','q-4-3',
+    'schema-1','schema-2',
+    'syn-1','syn-2','syn-3','syn-4','syn-5'
+  ];
+
+  // ── Libellés lisibles (résumé prof) ──
+  var QUESTION_GROUPS = [
+    { titre: "Étape 1 — Mon PC dans le réseau (ipconfig)", items: [
+      ['q-1-1', "Adresse IPv4 (et par quoi commence-t-elle)"],
+      ['q-1-2', "Même IP que le voisin ? Pourquoi"],
+      ['q-1-3', "Passerelle par défaut = quel appareil"],
+      ['q-1-4', "WiFi ou câble ? Comment le sais-tu"] ] },
+    { titre: "Étape 2 — Suis-je vraiment connecté ? (ping)", items: [
+      ['q-2-1', "Le serveur répond-il ? Combien de ms"],
+      ['q-2-2', "À qui appartient 8.8.8.8 ? À quoi sert-elle"],
+      ['q-2-3', "Différence : pinger une IP vs un nom de site"],
+      ['q-2-4', "Ping d'une adresse inexistante : que se passe-t-il"] ] },
+    { titre: "Étape 3 — Le chemin des données (tracert)", items: [
+      ['q-3-1', "Nombre de sauts entre le PC et Google"],
+      ['q-3-2', "Première adresse affichée = quel appareil"],
+      ['q-3-3', "Rôle de chaque intermédiaire"],
+      ['q-3-4', "Pourquoi des « * * * Délai d'attente »"] ] },
+    { titre: "Étape 4 — Observer le switch physique", items: [
+      ['o-voyants', "Nombre de voyants allumés"],
+      ['o-couleur', "Couleur des voyants"],
+      ['q-4-1', "Débrancher le câble 3 s : effet sur le switch"],
+      ['q-4-2', "IP dans ipconfig quand le câble est débranché"],
+      ['q-4-3', "Appareil faisant switch + routeur + WiFi à la maison"],
+      ['schema-1', "Schéma : appareil du réseau local"],
+      ['schema-2', "Schéma : appareil de sortie vers Internet"] ] },
+    { titre: "Synthèse", items: [
+      ['syn-1', "Réseau en étoile (switch)"],
+      ['syn-2', "Modem-routeur (ipconfig)"],
+      ['syn-3', "Adresse IP (ipconfig)"],
+      ['syn-4', "Internet = réseau de réseaux (tracert)"],
+      ['syn-5', "Pare-feu / protection (ping bloqué)"] ] }
+  ];
+  var COULEUR_LBL = { green:"Vert", orange:"Orange / Jaune", red:"Rouge", mix:"Mixte" };
+
+  // ── Helpers ──
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  function slug(s) {
+    // accents -> base (NFD) puis on ne garde que [a-z0-9]
+    var base = String(s||"").toLowerCase();
+    try { base = base.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+    return base.replace(/[^a-z0-9]+/g, "");
+  }
+
+  // ── Progression + statut des pastilles ──
+  function updateStatus(key) {
+    var el = document.getElementById('s-' + key);
+    var field = document.getElementById('q-' + key) || document.getElementById('o-' + key);
+    if (el && field) el.classList.toggle('filled', field.value.trim().length > 0);
+    updateProgress();
+  }
+  function updateProgress() {
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    var pct = Math.round((filled / FIELD_IDS.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + ' %';
+    var banner = document.getElementById('completion-banner');
+    if (pct === 100) { banner.classList.add('show'); }
+    else { banner.classList.remove('show'); }
+  }
+  function updateVoyant(sel) {
+    document.getElementById('voyant-preview').className = 'voyant-dot ' + sel.value;
+    updateProgress();
+  }
+  function copyCmd(btn, cmd) {
+    navigator.clipboard.writeText(cmd).then(function(){
+      btn.textContent = '✓ Copié'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  SAUVEGARDE AUTO (brouillon sur ce PC) — anti-perte en cas de
+  //  rafraîchissement / fermeture accidentelle pendant la séance.
+  // ════════════════════════════════════════════════════════════════
+  function collect() {
+    var fields = {};
+    FIELD_IDS.forEach(function(id){ fields[id] = val(id); });
+    return {
+      nom:    val('inp-nom'),
+      nom2:   val('inp-nom2'),
+      classe: val('inp-classe'),
+      date:   val('inp-date'),
+      fields: fields
+    };
+  }
+  function autosave() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch (e) {}
+  }
+  function restoreDraft() {
+    var raw;
+    try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+    if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch (e) { return; }
+    if (d.nom)    document.getElementById('inp-nom').value = d.nom;
+    if (d.nom2)   document.getElementById('inp-nom2').value = d.nom2;
+    if (d.classe) document.getElementById('inp-classe').value = d.classe;
+    if (d.date)   document.getElementById('inp-date').value = d.date;
+    if (d.fields) {
+      Object.keys(d.fields).forEach(function(id){
+        var el = document.getElementById(id);
+        if (el && d.fields[id]) {
+          el.value = d.fields[id];
+          if (id === 'o-couleur') updateVoyant(el);
+        }
+      });
+    }
+    // re-synchronise les pastilles de statut
+    document.querySelectorAll('.q-status').forEach(function(dot){
+      var id = dot.id.replace(/^s-/, '');
+      var f = document.getElementById('q-' + id) || document.getElementById('o-' + id);
+      if (f) dot.classList.toggle('filled', f.value.trim().length > 0);
+    });
+  }
+
+  // ── Résumé lisible (affiché dans le tableau de bord prof) ──
+  function buildOpenSummary(state) {
+    var lines = [];
+    if (state.nom || state.nom2) {
+      lines.push("Binôme : " + [state.nom, state.nom2].filter(Boolean).join("  &  "));
+    }
+    QUESTION_GROUPS.forEach(function(g){
+      var block = [];
+      g.items.forEach(function(it){
+        var v = state.fields[it[0]] || "";
+        if (it[0] === 'o-couleur' && v) v = COULEUR_LBL[v] || v;
+        block.push("• " + it[1] + " : " + (v || "—"));
+      });
+      lines.push("\n— " + g.titre + " —\n" + block.join("\n"));
+    });
+    return lines.join("\n");
+  }
+
+  function makeSub() {
+    var state = collect();
+    var filled = FIELD_IDS.filter(function(id){ return (state.fields[id]||"").length > 0; }).length;
+    var ename = [state.nom, state.nom2].filter(Boolean).join(" & ") || "Binôme";
+    var eid = "reseau5e." + (slug(state.classe) || "5x") + "." +
+              (slug(state.nom) || "e1") + (state.nom2 ? "-" + slug(state.nom2) : "");
+    return {
+      id: Date.now(),
+      eid: eid,
+      ename: ename,
+      ename2: state.nom2 || "",
+      ecls: state.classe || "",
+      cap: CAP_ID,
+      caplbl: CAP_LABEL,
+      score: filled, qcmTot: FIELD_IDS.length,
+      open: buildOpenSummary(state),
+      fields: state.fields,
+      date: new Date().toLocaleDateString("fr-FR"),
+      dateISO: new Date().toISOString(),
+      status: "pending"
+    };
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  ENVOI AU PROFESSEUR (cloud) + filet hors-ligne
+  // ════════════════════════════════════════════════════════════════
+  function hasUrl() { return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+  function queueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      q.push(sub);
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function unqueueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function postSub(sub, onDone) {
+    queueSub(sub);
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+      }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+        .catch(function(){ if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+  function flushQueue() {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      if (!q.length || !hasUrl()) return;
+      q.forEach(function(sub){ postSub(sub); });
+    } catch (e) {}
+  }
+
+  function setStatus(kind, html) {
+    var box = document.getElementById('send-status');
+    box.className = 'send-status show ' + kind;
+    box.innerHTML = html;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function sendToProf() {
+    var nom = val('inp-nom'), classe = val('inp-classe');
+    if (!nom) { setStatus('err', '✋ Entrez d\'abord le <strong>nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById('inp-nom').focus(); return; }
+    if (!classe) { setStatus('err', '✋ Indiquez votre <strong>classe</strong> en haut de la fiche.'); document.getElementById('inp-classe').focus(); return; }
+
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    if (filled < 5 && !confirm('Vous n\'avez rempli que ' + filled + ' réponse(s). Envoyer quand même au professeur ?')) return;
+
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    setStatus('wait', '⟳ Envoi en cours…');
+    autosave();
+    var sub = makeSub();
+    postSub(sub, function(ok){
+      btn.disabled = false;
+      if (ok) {
+        setStatus('ok', '✅ <strong>Travail envoyé au professeur</strong> le ' +
+          new Date().toLocaleString('fr-FR') + '.<br>Vous pouvez aussi cliquer « Imprimer » pour en garder une trace papier.');
+      } else {
+        setStatus('err', '⚠️ L\'envoi n\'a pas pu aboutir (réseau ?). Pas de panique : votre travail est <strong>gardé sur ce PC</strong> et repartira tout seul. Prévenez le professeur.');
+      }
+    });
+  }
+
+  // ── Copie de secours (fichier JSON téléchargé) ──
+  function saveToLocalFile() {
+    var state = collect();
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = 'reseau_' + (slug(state.nom)||'eleve') + '_' + (slug(state.classe)||'5x') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Nouveau binôme : on efface tout (et le brouillon) ──
+  function clearAll() {
+    if (!confirm('Effacer toutes les réponses et repartir de zéro (nouveau binôme) ?')) return;
+    FIELD_IDS.concat(['inp-nom','inp-nom2','inp-classe']).forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    var col = document.getElementById('o-couleur');
+    if (col) updateVoyant(col);
+    document.querySelectorAll('.q-status').forEach(function(d){ d.classList.remove('filled'); });
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    var box = document.getElementById('send-status'); box.className = 'send-status'; box.innerHTML = '';
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  INITIALISATION
+  // ════════════════════════════════════════════════════════════════
+  (function init(){
+    var dEl = document.getElementById('inp-date');
+    if (!dEl.value) dEl.value = new Date().toISOString().split('T')[0];
+    restoreDraft();
+    // sauvegarde auto sur toute saisie
+    document.addEventListener('input', autosave);
+    document.addEventListener('change', autosave);
+    updateProgress();
+    flushQueue(); // rejoue un éventuel envoi resté en attente
+  })();
+</script>
+
+</body>
+</html>

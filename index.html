@@ -3517,6 +3517,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="p12-act3">P12 &mdash; Activit&eacute; 3 (Algorigrammes)</option>
             <option value="p12-cor-a1">P12 &mdash; Corrig&eacute; Activit&eacute; 1</option>
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
+            <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
           </select>
           <select class="fsel" id="fstat" onchange="renderSubs()">
             <option value="">Tous les statuts</option>
@@ -5194,6 +5195,47 @@ function buildP12ModalHTML(f) {
     '<div style="font-weight:700;color:var(--or);font-size:12px;margin:10px 0 4px">BILAN</div>' +
     row("Bilan personnel","bilan");
 }
+
+/* Réseau 5e — rendu des réponses du binôme (manipulation ipconfig/ping/tracert/switch) */
+function buildReseauModalHTML(sub) {
+  var f = sub && sub.fields ? sub.fields : null;
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function row(label, val) {
+    var v = f ? f[val] : "";
+    if (val === "o-couleur") { var m = {green:"Vert",orange:"Orange / Jaune",red:"Rouge",mix:"Mixte"}; v = m[v] || v; }
+    return '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + label + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
+      (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div></div>';
+  }
+  function head(t,c){ return '<div style="font-weight:700;color:'+c+';font-size:12px;margin:12px 0 4px">'+t+'</div>'; }
+  var binome = '';
+  if (sub && (sub.ename || sub.ename2)) {
+    binome = '<div style="background:#E0F7FF;border:1px solid #7FD3F0;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px"><strong>👥 Binôme :</strong> ' +
+      esc(sub.ename || '') + (sub.ename2 ? ' &amp; ' + esc(sub.ename2) : '') + ' — Classe ' + esc(sub.ecls||'') + '</div>';
+  }
+  if (!f) return binome + "<em>Aucune réponse enregistrée.</em>";
+  return binome +
+    head("ÉTAPE 1 — Mon PC dans le réseau (ipconfig)","var(--bl)") +
+    row("Adresse IPv4 (et début)","q-1-1") + row("Même IP que le voisin ? Pourquoi","q-1-2") +
+    row("Passerelle par défaut","q-1-3") + row("WiFi ou câble ?","q-1-4") +
+    head("ÉTAPE 2 — Suis-je vraiment connecté ? (ping)","var(--or)") +
+    row("Réponse + temps (ms)","q-2-1") + row("À qui appartient 8.8.8.8","q-2-2") +
+    row("Pinger une IP vs un nom","q-2-3") + row("Ping d'une adresse inexistante","q-2-4") +
+    head("ÉTAPE 3 — Le chemin des données (tracert)","var(--vt)") +
+    row("Nombre de sauts","q-3-1") + row("Première adresse = quel appareil","q-3-2") +
+    row("Rôle des intermédiaires","q-3-3") + row("Pourquoi des « * * * »","q-3-4") +
+    head("ÉTAPE 4 — Observer le switch","#7B2C8B") +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
+    row("Voyants allumés","o-voyants") + row("Couleur des voyants","o-couleur") + '</div>' +
+    row("Débrancher le câble 3 s","q-4-1") + row("IP quand câble débranché","q-4-2") +
+    row("Appareil tout-en-un à la maison","q-4-3") +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
+    row("Schéma : réseau local","schema-1") + row("Schéma : sortie Internet","schema-2") + '</div>' +
+    head("SYNTHÈSE","var(--bl)") +
+    row("Réseau en étoile (switch)","syn-1") + row("Modem-routeur (ipconfig)","syn-2") +
+    row("Adresse IP (ipconfig)","syn-3") + row("Internet = réseau de réseaux","syn-4") +
+    row("Pare-feu / protection","syn-5");
+}
 // ================================================================
 // TABLEAU DE BORD PROF
 // ================================================================
@@ -5281,6 +5323,9 @@ function renderSubs() {
       } else if (s.cap === "p12-act3") {
         var a3score = (s.fields && s.fields.score) ? s.fields.score : "—";
         sc = '<span style="background:#EEF2FF;color:#4338CA;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F4CA; ' + a3score + ' exercices</span>';
+      } else if (s.cap === "reseau5e") {
+        var rDone = (s.score !== undefined ? s.score : 0), rTot = (s.qcmTot || 24);
+        sc = '<span style="background:#E0F7FF;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F310; ' + rDone + '/' + rTot + ' réponses</span>';
       } else {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
@@ -5534,6 +5579,10 @@ function openModal(sid) {
     var nfp2 = countP12Ex2Fields(sub.fields);
     var q3okM = String(sub.fields["ex2-q3"]||"").trim() === "54";
     document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+  } else if (sub.cap === "reseau5e") {
+    if (mh3) mh3.textContent = "Réseau 5e — Manipulation (binôme)";
+    document.getElementById("mrep").innerHTML = buildReseauModalHTML(sub);
+    document.getElementById("mscore").textContent = "Activité binôme — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
   } else {
     if (mh3) mh3.textContent = "Réponse ouverte — Question 10";
     document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
@@ -5562,6 +5611,7 @@ function printModalSub() {
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC uniquement) : points ajustés courants + appréciation */
@@ -5644,7 +5694,7 @@ function printSubDirect(sid) {
     "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
     "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
     "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
-    "p12-cor-a2":"P12 — Corrigé A2"
+    "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)"
   };
   var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
   var dateStr = fmtDateTime(sub.dateISO || sub.date);
@@ -5665,6 +5715,8 @@ function printSubDirect(sid) {
     var nfy = countP12Ex2Fields(sub.fields||{});
     var q3ok = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
     scoreStr = nfy.done + "/" + nfy.total + " champs" + (q3ok ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+  } else if (sub.cap === "reseau5e") {
+    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
   } else {
     scoreStr = "Score QCM : " + sub.score + "/" + sub.qcmTot + " — Statut : " + sub.status;
   }
@@ -5675,6 +5727,7 @@ function printSubDirect(sid) {
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC) — depuis données stockées */
