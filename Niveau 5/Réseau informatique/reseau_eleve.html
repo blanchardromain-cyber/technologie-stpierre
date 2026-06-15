@@ -89,6 +89,26 @@
     transition: border-color .2s;
   }
   .field-inline input:focus { border-color: var(--accent); }
+  .classe-row { display: flex; align-items: stretch; }
+  .classe-prefix {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  #inp-classe-letter {
+    width: 46px;
+    border-radius: 0 4px 4px 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
 
   /* ── PROGRESS BAR ── */
   .progress-wrap {
@@ -543,6 +563,7 @@
     header h1 { color: #fff; font-size: 16px; }
     .header-badge, .header-right label { color: #BDD7EE; }
     .header-right input { border: 1px solid #ccc; color: #000; background: #fff; }
+    .classe-prefix { background: #fff; color: #1F4E79; border-color: #ccc; }
     .progress-wrap { display: none; }
     .step { border: 1px solid #ccc; background: #fff; break-inside: avoid; margin-bottom: 20px; }
     .step-header { background: #1F4E79; color: #fff; }
@@ -613,7 +634,10 @@
     </div>
     <div class="field-inline">
       <label>Classe</label>
-      <input type="text" id="inp-classe" placeholder="ex : 5A" autocomplete="off" style="width:72px" oninput="autosave()">
+      <div class="classe-row">
+        <span class="classe-prefix">5</span>
+        <input type="text" id="inp-classe-letter" maxlength="1" placeholder="F" autocomplete="off" oninput="capLetter(this);autosave()" aria-label="Lettre de la classe de 5e">
+      </div>
     </div>
     <div class="field-inline">
       <label>Date</label>
@@ -1067,6 +1091,13 @@
     return base.replace(/[^a-z0-9]+/g, "");
   }
   function fullName(p, n) { return [String(p||"").trim(), String(n||"").trim()].filter(Boolean).join(" "); }
+  // Lettre de classe : une seule lettre, forcée en majuscule
+  function capLetter(el) { el.value = el.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1); }
+  // Classe complète = "5" + lettre (ex : 5F). Vide si pas de lettre saisie.
+  function classeValue() {
+    var L = val('inp-classe-letter').toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    return L ? ("5" + L) : "";
+  }
   // Majuscule auto : 1re lettre + après espace/trait d'union, sans toucher au reste
   function capName(el) {
     var s = el.value.replace(/(^|[\s\-])([a-zà-ÿ])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
@@ -1114,7 +1145,8 @@
     return {
       p1: val('inp-p1'), n1: val('inp-n1'),
       p2: val('inp-p2'), n2: val('inp-n2'),
-      classe: val('inp-classe'),
+      clsLetter: val('inp-classe-letter'),
+      classe: classeValue(),
       date:   val('inp-date'),
       fields: fields
     };
@@ -1131,7 +1163,9 @@
     if (d.n1) document.getElementById('inp-n1').value = d.n1;
     if (d.p2) document.getElementById('inp-p2').value = d.p2;
     if (d.n2) document.getElementById('inp-n2').value = d.n2;
-    if (d.classe) document.getElementById('inp-classe').value = d.classe;
+    var L = d.clsLetter || (d.classe || "").replace(/^5/, "");
+    L = String(L).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    if (L) document.getElementById('inp-classe-letter').value = L;
     if (d.date)   document.getElementById('inp-date').value = d.date;
     if (d.fields) {
       Object.keys(d.fields).forEach(function(id){
@@ -1240,9 +1274,9 @@
   }
 
   function sendToProf() {
-    var p1 = val('inp-p1'), n1 = val('inp-n1'), classe = val('inp-classe');
+    var p1 = val('inp-p1'), n1 = val('inp-n1'), classe = classeValue();
     if (!p1 || !n1) { setStatus('err', '✋ Entrez d\'abord le <strong>prénom et le nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById(p1 ? 'inp-n1' : 'inp-p1').focus(); return; }
-    if (!classe) { setStatus('err', '✋ Indiquez votre <strong>classe</strong> en haut de la fiche.'); document.getElementById('inp-classe').focus(); return; }
+    if (!classe) { setStatus('err', '✋ Indiquez la <strong>lettre de votre classe</strong> (ex : F pour 5F) en haut de la fiche.'); document.getElementById('inp-classe-letter').focus(); return; }
 
     var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
     if (filled < 5 && !confirm('Vous n\'avez rempli que ' + filled + ' réponse(s). Envoyer quand même au professeur ?')) return;
@@ -1278,7 +1312,7 @@
   // ── Nouveau binôme : on efface tout (et le brouillon) ──
   function clearAll() {
     if (!confirm('Effacer toutes les réponses et repartir de zéro (nouveau binôme) ?')) return;
-    FIELD_IDS.concat(['inp-p1','inp-n1','inp-p2','inp-n2','inp-classe']).forEach(function(id){
+    FIELD_IDS.concat(['inp-p1','inp-n1','inp-p2','inp-n2','inp-classe-letter']).forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = '';
     });
     var col = document.getElementById('o-couleur');
