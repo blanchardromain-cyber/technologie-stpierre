@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation Réseau avec Filius – 5ème</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:        #0F1923;
+    --surface:   #162030;
+    --card:      #1C2B3A;
+    --border:    #253545;
+    --accent:    #00C2FF;
+    --accent2:   #FFB800;
+    --green:     #00E5A0;
+    --red:       #FF5C5C;
+    --text:      #E2EDF5;
+    --muted:     #7A9BB5;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .field-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .field-inline label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .field-inline input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 5px 10px;
+    width: 140px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field-inline input:focus { border-color: var(--accent); }
+  .classe-row { display: flex; align-items: stretch; }
+  .classe-prefix {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  #inp-classe-letter {
+    width: 46px;
+    border-radius: 0 4px 4px 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--surface);
+    padding: 10px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 4px 18px rgba(0,0,0,.28);
+  }
+  .progress-label { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 99px; width: 0%; transition: width .5s ease; }
+  .progress-pct { font-family: var(--mono); font-size: 11px; color: var(--accent); width: 36px; text-align: right; }
+
+  /* ── MAIN ── */
+  main { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .intro-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .intro-card p { color: #B7CDDD; font-size: 14.5px; line-height: 1.65; }
+  .intro-card strong { color: var(--text); }
+
+  /* ── STEP ── */
+  .step {
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-header h2 { font-size: 16px; font-weight: 700; flex: 1; }
+  .step-timer {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(255,184,0,.1);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 99px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .step-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── RAPPEL ── */
+  .recall {
+    background: rgba(0,194,255,.06);
+    border: 1px solid rgba(0,194,255,.2);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .recall .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ── COMMAND ── */
+  .cmd-block {
+    background: #0A0F14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .cmd-bar {
+    background: #1A252F;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmd-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cmd-bar span { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: 4px; }
+  .cmd-line {
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: #DCDCAA;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cmd-prompt { color: #4EC9B0; }
+  .cmd-copy {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .cmd-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .cmd-copy.copied { color: var(--green); border-color: var(--green); }
+
+  /* ── TIP (binôme / manip) ── */
+  .tip {
+    background: rgba(255,184,0,.08);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+  }
+  .tip .tip-ico { flex-shrink: 0; }
+  .tip code { font-family: var(--mono); color: var(--accent2); }
+
+  /* ── QUESTIONS ── */
+  .questions { display: flex; flex-direction: column; gap: 14px; }
+
+  .q-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .q-item:focus-within { border-color: var(--accent); }
+
+  .q-label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .q-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .q-text { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+  .q-area {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 60px;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.5;
+  }
+  .q-area:focus { border-color: var(--accent); }
+  .q-area::placeholder { color: var(--border); font-style: italic; }
+
+  /* status dot */
+  .q-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    margin-top: 6px;
+    transition: background .3s;
+  }
+  .q-status.filled { background: var(--green); }
+
+  /* ── OBSERVATION SPÉCIALE (step 4) ── */
+  .obs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .obs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .obs-card label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .obs-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .obs-input:focus { border-color: var(--accent); }
+  .voyant-row { display: flex; gap: 8px; align-items: center; }
+  .voyant-sel {
+    appearance: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 7px 10px;
+    flex: 1;
+    outline: none;
+    cursor: pointer;
+  }
+  .voyant-sel:focus { border-color: var(--accent); }
+  .voyant-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .voyant-dot.green { background: #00E5A0; box-shadow: 0 0 6px #00E5A0; }
+  .voyant-dot.orange { background: #FFB800; box-shadow: 0 0 6px #FFB800; }
+  .voyant-dot.red { background: #FF5C5C; box-shadow: 0 0 6px #FF5C5C; }
+
+  /* ── SCHEMA ── */
+  .schema-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .schema-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .schema-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .schema-node {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+    transition: border-color .3s, background .3s;
+  }
+  .schema-node.active { border-color: var(--accent); background: rgba(0,194,255,.08); }
+  .schema-node .node-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .schema-node .node-label { color: var(--muted); font-size: 10px; }
+  .schema-arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 18px;
+    padding: 0 4px;
+  }
+
+  /* ── SYNTHESE ── */
+  .synthese {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 8px;
+  }
+  .synthese h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--mono);
+    margin-bottom: 16px;
+  }
+  .synthese-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .synthese-table th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .synthese-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .synthese-table tr:last-child td { border-bottom: none; }
+  .synthese-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .tag-notion {
+    background: rgba(0,194,255,.12);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .tag-cmd {
+    background: rgba(0,229,160,.1);
+    color: var(--green);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .synthese-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .synthese-input:focus { border-color: var(--green); }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #33CFFF; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-print { background: var(--surface); color: var(--accent2); border: 1px solid rgba(255,184,0,.3); }
+  .btn-print:hover { background: rgba(255,184,0,.1); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* ── SEND STATUS ── */
+  .send-status {
+    display: none;
+    max-width: 620px;
+    margin: 28px auto 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .send-status.show { display: block; }
+  .send-status.ok    { background: rgba(0,229,160,.12); border: 1px solid var(--green); color: var(--green); }
+  .send-status.wait  { background: rgba(0,194,255,.10); border: 1px solid var(--accent); color: var(--accent); }
+  .send-status.err   { background: rgba(255,92,92,.10); border: 1px solid var(--red); color: var(--red); }
+
+  /* ── COMPLETION ── */
+  .completion-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,194,255,.1));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .completion-banner.show { display: block; }
+  .completion-banner .big-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+  .completion-banner h2 { font-size: 20px; color: var(--green); margin-bottom: 6px; }
+  .completion-banner p { color: var(--muted); font-size: 14px; }
+
+  /* ── POLISH (entrée, focus, glow) ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .step { animation: fadeInUp .5s ease both; }
+  .step:nth-child(2) { animation-delay: .05s; }
+  .step:nth-child(3) { animation-delay: .10s; }
+  .step:nth-child(4) { animation-delay: .15s; }
+  .recall span:not(.tag) { color: #AFC6D8; }
+  .btn-primary { box-shadow: 0 4px 16px rgba(0,194,255,.28); }
+  .btn-primary:hover { box-shadow: 0 6px 22px rgba(0,194,255,.45); }
+  /* Accessibilité : focus clavier bien visible */
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  textarea:focus-visible, select:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .step { animation: none; }
+    .progress-fill { transition: none; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; color: #000; font-size: 12px; }
+    header { background: #1F4E79; color: #fff; padding: 12px 20px; }
+    header h1 { color: #fff; font-size: 16px; }
+    .header-badge, .header-right label { color: #BDD7EE; }
+    .header-right input { border: 1px solid #ccc; color: #000; background: #fff; }
+    .classe-prefix { background: #fff; color: #1F4E79; border-color: #ccc; }
+    .progress-wrap { display: none; }
+    .step { border: 1px solid #ccc; background: #fff; break-inside: avoid; margin-bottom: 20px; }
+    .step-header { background: #1F4E79; color: #fff; }
+    .step-num { background: #2E75B6; }
+    .step-header h2 { color: #fff; }
+    .step-timer { color: #FFB800; border-color: #FFB800; background: none; }
+    .recall { background: #EAF4FB; border-color: #2E75B6; color: #333; }
+    .recall .tag { color: #1F4E79; }
+    .cmd-block { background: #1E1E1E; border: 1px solid #444; }
+    .cmd-bar { background: #2D2D2D; }
+    .cmd-bar span { color: #aaa; }
+    .cmd-line { color: #DCDCAA; }
+    .cmd-prompt { color: #4EC9B0; }
+    .cmd-copy { display: none; }
+    .q-item { background: #F9FBFD; border: 1px solid #ccc; }
+    .q-text { color: #000; }
+    .q-area { background: #fff; border: 1px solid #ccc; color: #000; min-height: 50px; }
+    .obs-card { background: #F9FBFD; border: 1px solid #ccc; }
+    .obs-input, .voyant-sel { background: #fff; border: 1px solid #ccc; color: #000; }
+    .schema-node { border: 1px solid #ccc; background: #F9FBFD; color: #000; }
+    .schema-node .node-label { color: #555; }
+    .schema-arrow { color: #1F4E79; }
+    .synthese { background: #F0FBF7; border-color: #00A86B; }
+    .synthese h3 { color: #00A86B; }
+    .synthese-table th { background: #E8F5F0; color: #333; }
+    .synthese-input { background: #fff; border: 1px solid #ccc; color: #000; }
+    .actions { display: none; }
+    .send-status { display: none !important; }
+    .tip { background: #FFF7E6; border: 1px solid #E0A800; color: #333; }
+    .tip code { color: #B8860B; }
+    .completion-banner { display: none !important; }
+    .intro-card { background: #EAF4FB; border-left-color: #1F4E79; }
+    .intro-card p, .intro-card strong { color: #000; }
+    .q-status { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 20px 14px 48px; }
+    .obs-grid { grid-template-columns: 1fr; }
+    .step-header { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="header-badge">Technologie · Cycle 4 · Simulateur Filius</span>
+    <h1>Je construis un réseau avec Filius</h1>
+  </div>
+  <div class="header-right">
+    <div class="field-inline">
+      <label>Élève 1 — Prénom</label>
+      <input type="text" id="inp-p1" placeholder="ex : Marie" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 1 — Nom</label>
+      <input type="text" id="inp-n1" placeholder="ex : Dupont" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 2 — Prénom</label>
+      <input type="text" id="inp-p2" placeholder="ex : Lucas" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Élève 2 — Nom</label>
+      <input type="text" id="inp-n2" placeholder="ex : Martin" autocomplete="off" style="width:120px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Classe</label>
+      <div class="classe-row">
+        <span class="classe-prefix">5</span>
+        <input type="text" id="inp-classe-letter" maxlength="1" placeholder="F" autocomplete="off" oninput="capLetter(this);autosave()" aria-label="Lettre de la classe de 5e">
+      </div>
+    </div>
+    <div class="field-inline">
+      <label>Date</label>
+      <input type="date" id="inp-date" oninput="autosave()">
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <span class="progress-label">Progression</span>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-pct" id="progress-pct">0 %</span>
+</div>
+
+<main>
+
+  <div class="completion-banner" id="completion-banner">
+    <span class="big-icon">🎉</span>
+    <h2>Félicitations ! Fiche complète</h2>
+    <p>Tu as répondu à toutes les questions. Tu peux imprimer ou enregistrer ta fiche.</p>
+  </div>
+
+  <div class="intro-card">
+    <span class="intro-icon">🖧</span>
+    <div>
+      <p><strong>Vous travaillez à deux, sur un seul PC.</strong> À chaque étape, <strong>l'un manipule dans Filius</strong>, <strong>l'autre observe et complète</strong> les réponses. <em>Échangez les rôles à chaque étape.</em></p>
+      <p style="margin-top:10px">🖧 <strong>Filius</strong> est un <strong>simulateur de réseau</strong> : on y construit un réseau (ordinateurs, switch, routeur, serveurs) puis on le fait fonctionner, <strong>sans matériel réel</strong>. Il a deux modes : <strong>🔨 Conception</strong> (placer et câbler les appareils) et <strong>▶ Simulation</strong> (utiliser les logiciels : ligne de commande, navigateur…). On bascule de l'un à l'autre avec le bouton en haut de Filius.</p>
+      <p style="margin-top:10px">💾 Votre travail est <strong>sauvegardé automatiquement</strong> sur ce PC. À la fin, cliquez sur <strong>« Envoyer au professeur »</strong> : il recevra vos réponses directement.</p>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 1 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <h2>Découvrir Filius</h2>
+      <span class="step-timer">⏱ ~5 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Un <strong>réseau</strong>, ce sont des appareils reliés entre eux pour <strong>échanger des données</strong>. Filius permet d'en construire un « pour de faux » et de voir circuler les informations.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">🖱️</span>
+        <span><strong>À faire :</strong> ouvrez <strong>Filius</strong>. Repérez en haut les deux modes <strong>🔨 Conception</strong> et <strong>▶ Simulation</strong>. Regardez la <strong>barre d'outils</strong> à gauche : elle contient les appareils qu'on peut poser (ordinateur, switch, routeur, câble…).</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Filius a <strong>deux modes</strong>. Comment s'appellent-ils et à quoi sert chacun ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-1" placeholder="Mode ... pour ... / Mode ... pour ..." rows="2" oninput="updateStatus('1-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Cite <strong>3 appareils</strong> que tu peux poser depuis la barre d'outils de Filius.</span>
+          </div>
+          <textarea class="q-area" id="q-1-2" placeholder="Par exemple : ..., ..., ..." rows="2" oninput="updateStatus('1-2')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 2 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <h2>Construire un réseau local en étoile</h2>
+      <span class="step-timer">⏱ ~12 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Dans un <strong>réseau en étoile</strong>, tous les ordinateurs sont reliés à un <strong>switch</strong> central. Chaque appareil reçoit une <strong>adresse IP unique</strong> pour être reconnu sur le réseau.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">🔨</span>
+        <span><strong>Mode 🔨 Conception.</strong> 1) Posez <strong>2 ordinateurs</strong> et <strong>1 switch</strong>. 2) Avec l'outil <strong>câble</strong>, reliez chaque ordinateur au switch. 3) Double-cliquez chaque ordinateur et renseignez : <code>PC1 → 192.168.0.10</code>, <code>PC2 → 192.168.0.11</code>, masque <code>255.255.255.0</code> pour les deux.</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quand tous les ordinateurs sont reliés à un switch central, quelle <strong>topologie</strong> obtiens-tu ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-1" placeholder="C'est un réseau en..." rows="2" oninput="updateStatus('2-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quel <strong>appareil</strong> est au centre et relie tous les ordinateurs du réseau local ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-2" placeholder="C'est le..." rows="2" oninput="updateStatus('2-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelles <strong>adresses IP</strong> as-tu données aux 2 PC ? Pourquoi doivent-elles être <strong>différentes</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-3" placeholder="PC1 : ... / PC2 : ... — elles doivent être différentes car..." rows="2" oninput="updateStatus('2-3')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-4"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">À ton avis, que se passe-t-il si tu donnes la <strong>même adresse IP</strong> aux deux PC ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-4" placeholder="Il y aurait un... et la communication..." rows="2" oninput="updateStatus('2-4')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 3 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <h2>Tester la communication : le ping</h2>
+      <span class="step-timer">⏱ ~10 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Le <strong>ping</strong> envoie un petit message d'un ordinateur à un autre et attend la réponse : c'est le test « est-ce que tu me reçois ? ».</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">▶</span>
+        <span><strong>Mode ▶ Simulation.</strong> Cliquez sur <strong>PC1</strong> → ouvrez la <strong>Ligne de commande</strong> (installez-la si besoin). Tapez la commande ci-dessous puis <em>Entrée</em>, et <strong>observez les paquets</strong> circuler entre les appareils.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>Filius — Ligne de commande de PC1</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping 192.168.0.11</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping 192.168.0.11')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Le <strong>PC2 répond-il</strong> au ping ? Que montrent les <strong>paquets animés</strong> à l'écran ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-1" placeholder="Oui/Non — on voit les paquets aller de ... vers ... puis revenir" rows="2" oninput="updateStatus('3-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Par quel <strong>appareil</strong> passent les paquets entre PC1 et PC2 ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-2" placeholder="Les paquets passent par le..." rows="2" oninput="updateStatus('3-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Reviens en Conception, <strong>supprime le câble</strong> d'un PC, puis refais le ping. Que se passe-t-il ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-3" placeholder="Sans câble, le ping... car..." rows="2" oninput="updateStatus('3-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 4 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <h2>Relier deux réseaux avec un routeur</h2>
+      <span class="step-timer">⏱ ~14 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Un <strong>routeur</strong> relie des <strong>réseaux différents</strong> entre eux (c'est ainsi qu'Internet = un réseau de réseaux). Pour sortir de son réseau local, chaque PC doit connaître sa <strong>passerelle</strong> = l'adresse du routeur.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">🔨</span>
+        <span><strong>Mode 🔨 Conception.</strong> 1) Construisez un <strong>2ᵉ réseau</strong> (un PC3 + un switch) en <code>192.168.1.x</code> — ex : PC3 = <code>192.168.1.10</code>. 2) Posez un <strong>routeur</strong> entre les deux switchs et reliez-le. 3) Configurez ses 2 interfaces : <code>192.168.0.254</code> et <code>192.168.1.254</code>. 4) Sur chaque PC, renseignez la <strong>passerelle</strong> = l'adresse du routeur de SON réseau. 5) En Simulation, faites <code>ping 192.168.1.10</code> depuis PC1.</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Sans routeur, PC1 (réseau <code>192.168.0.x</code>) peut-il joindre PC3 (réseau <code>192.168.1.x</code>) ? Pourquoi ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-1" placeholder="Non, car ce sont deux réseaux..." rows="2" oninput="updateStatus('4-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quel est le <strong>rôle du routeur</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-2" placeholder="Le routeur sert à..." rows="2" oninput="updateStatus('4-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">À quoi sert la <strong>passerelle</strong> configurée sur chaque PC ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-3" placeholder="La passerelle, c'est la porte de sortie vers..." rows="2" oninput="updateStatus('4-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 5 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--accent2)">5</div>
+      <h2>Ajouter un serveur (DNS + Web)</h2>
+      <span class="step-timer">⏱ ~12 min</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>On retient plus facilement un <strong>nom</strong> (college.fr) qu'une adresse IP. Le <strong>serveur DNS</strong> est l'annuaire : il <strong>traduit le nom en adresse IP</strong>. Le <strong>serveur web</strong>, lui, héberge la page.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">🖥️</span>
+        <span><strong>À faire.</strong> 1) Posez un ordinateur <strong>« Serveur »</strong> (ex : <code>192.168.1.20</code>). 2) En Simulation, installez-y un <strong>Serveur Web</strong> et un <strong>Serveur DNS</strong>. 3) Dans le DNS, créez l'enregistrement <code>college.fr → 192.168.1.20</code>. 4) Sur les PC clients, indiquez l'adresse du <strong>serveur DNS</strong>. 5) Ouvrez le <strong>Navigateur Web</strong> de PC1 et tapez <code>college.fr</code>.</span>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-5-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Qu'as-tu tapé dans le <strong>navigateur</strong>, et que s'est-il <strong>affiché</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-5-1" placeholder="J'ai tapé ... et la page ... s'est affichée" rows="2" oninput="updateStatus('5-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-5-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">À quoi sert le <strong>serveur DNS</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-5-2" placeholder="Le DNS traduit..." rows="2" oninput="updateStatus('5-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-5-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que se passe-t-il si le <strong>serveur DNS est éteint</strong> (ou mal configuré) ?</span>
+          </div>
+          <textarea class="q-area" id="q-5-3" placeholder="Le nom ne peut plus être traduit, donc..." rows="2" oninput="updateStatus('5-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SYNTHÈSE ══ -->
+  <div class="synthese">
+    <h3>✅ Synthèse — Ce que Filius m'a appris</h3>
+    <table class="synthese-table">
+      <thead>
+        <tr>
+          <th>Élément dans Filius</th>
+          <th>Notion réseau</th>
+          <th>Ce que j'ai compris</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-cmd">Switch</span></td>
+          <td><span class="tag-notion">Réseau en étoile</span></td>
+          <td><input type="text" class="synthese-input" id="syn-1" placeholder="Il relie tous les PC du..." oninput="updateStatus('syn-1')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Adresse IP</span></td>
+          <td><span class="tag-notion">Identité d'un appareil</span></td>
+          <td><input type="text" class="synthese-input" id="syn-2" placeholder="Chaque appareil a une adresse..." oninput="updateStatus('syn-2')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Routeur</span></td>
+          <td><span class="tag-notion">Internet = réseau de réseaux</span></td>
+          <td><input type="text" class="synthese-input" id="syn-3" placeholder="Il relie deux..." oninput="updateStatus('syn-3')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Passerelle</span></td>
+          <td><span class="tag-notion">Sortie du réseau local</span></td>
+          <td><input type="text" class="synthese-input" id="syn-4" placeholder="C'est l'adresse du..." oninput="updateStatus('syn-4')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Serveur DNS</span></td>
+          <td><span class="tag-notion">Nom → adresse IP</span></td>
+          <td><input type="text" class="synthese-input" id="syn-5" placeholder="Il traduit le nom en..." oninput="updateStatus('syn-5')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Serveur Web</span></td>
+          <td><span class="tag-notion">Héberge les pages</span></td>
+          <td><input type="text" class="synthese-input" id="syn-6" placeholder="Il fournit la page..." oninput="updateStatus('syn-6')"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="send-status" class="send-status"></div>
+
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="clearAll()">🗑 Nouveau binôme</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn btn-ghost" onclick="saveToLocalFile()" title="Télécharge une copie de secours sur ce PC (fichier JSON)">⬇ Copie de secours</button>
+    <button class="btn btn-primary" id="btn-send" onclick="sendToProf()">📤 Envoyer au professeur</button>
+  </div>
+
+</main>
+
+<script>
+  // ════════════════════════════════════════════════════════════════
+  //  CONFIGURATION — backend partagé avec le Site Techno (Apps Script)
+  //  Doit correspondre à apps-script-backend.gs et index.html.
+  // ════════════════════════════════════════════════════════════════
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+  var SYNC_SECRET     = "TECHNO-RB-2026-12MAI";
+  var CAP_ID    = "filius5e";
+  var CAP_LABEL = "Filius 5e — Simulation réseau (binôme)";
+  var DRAFT_KEY = "filius5e_draft";       // brouillon auto sur ce PC
+  var QUEUE_KEY = "filius5e_offline_queue"; // envois en attente (réseau coupé)
+  var PREFILL_KEY = "filius5e_prefill";   // identité reportée depuis le Site Techno
+
+  // ── Champs-réponses suivis (progression + sauvegarde) ──
+  var FIELD_IDS = [
+    'q-1-1','q-1-2',
+    'q-2-1','q-2-2','q-2-3','q-2-4',
+    'q-3-1','q-3-2','q-3-3',
+    'q-4-1','q-4-2','q-4-3',
+    'q-5-1','q-5-2','q-5-3',
+    'syn-1','syn-2','syn-3','syn-4','syn-5','syn-6'
+  ];
+
+  // ── Libellés lisibles (résumé prof) ──
+  var QUESTION_GROUPS = [
+    { titre: "Étape 1 — Découvrir Filius", items: [
+      ['q-1-1', "Les deux modes de Filius et leur rôle"],
+      ['q-1-2', "3 appareils de la barre d'outils"] ] },
+    { titre: "Étape 2 — Construire un réseau local en étoile", items: [
+      ['q-2-1', "Topologie obtenue (PC reliés au switch)"],
+      ['q-2-2', "Appareil central qui relie les PC"],
+      ['q-2-3', "Adresses IP données + pourquoi différentes"],
+      ['q-2-4', "Même IP sur 2 PC : que se passe-t-il"] ] },
+    { titre: "Étape 3 — Tester la communication (ping)", items: [
+      ['q-3-1', "PC2 répond-il ? Ce que montrent les paquets"],
+      ['q-3-2', "Appareil par lequel passent les paquets"],
+      ['q-3-3', "Câble supprimé puis ping : que se passe-t-il"] ] },
+    { titre: "Étape 4 — Relier deux réseaux avec un routeur", items: [
+      ['q-4-1', "Sans routeur, PC1 joint-il PC3 ? Pourquoi"],
+      ['q-4-2', "Rôle du routeur"],
+      ['q-4-3', "Rôle de la passerelle sur chaque PC"] ] },
+    { titre: "Étape 5 — Ajouter un serveur (DNS + Web)", items: [
+      ['q-5-1', "Ce qu'on tape dans le navigateur + résultat"],
+      ['q-5-2', "Rôle du serveur DNS"],
+      ['q-5-3', "Si le serveur DNS est éteint : que se passe-t-il"] ] },
+    { titre: "Synthèse", items: [
+      ['syn-1', "Switch → réseau en étoile"],
+      ['syn-2', "Adresse IP → identité d'un appareil"],
+      ['syn-3', "Routeur → relie deux réseaux"],
+      ['syn-4', "Passerelle → sortie du réseau local"],
+      ['syn-5', "Serveur DNS → nom vers adresse IP"],
+      ['syn-6', "Serveur Web → héberge les pages"] ] }
+  ];
+
+  // ── Helpers ──
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  function slug(s) {
+    // accents -> base (NFD) puis on ne garde que [a-z0-9]
+    var base = String(s||"").toLowerCase();
+    try { base = base.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+    return base.replace(/[^a-z0-9]+/g, "");
+  }
+  function fullName(p, n) { return [String(p||"").trim(), String(n||"").trim()].filter(Boolean).join(" "); }
+  // Lettre de classe : une seule lettre, forcée en majuscule
+  function capLetter(el) { el.value = el.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1); }
+  // Classe complète = "5" + lettre (ex : 5F). Vide si pas de lettre saisie.
+  function classeValue() {
+    var L = val('inp-classe-letter').toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    return L ? ("5" + L) : "";
+  }
+  // Majuscule auto : 1re lettre + après espace/trait d'union, sans toucher au reste
+  function capName(el) {
+    var s = el.value.replace(/(^|[\s\-])([a-zà-ÿ])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
+    if (s !== el.value) {
+      var pos = el.selectionStart;
+      el.value = s;
+      try { el.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  }
+
+  // ── Progression + statut des pastilles ──
+  function updateStatus(key) {
+    var el = document.getElementById('s-' + key);
+    var field = document.getElementById('q-' + key) || document.getElementById('o-' + key);
+    if (el && field) el.classList.toggle('filled', field.value.trim().length > 0);
+    updateProgress();
+  }
+  function updateProgress() {
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    var pct = Math.round((filled / FIELD_IDS.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + ' %';
+    var banner = document.getElementById('completion-banner');
+    if (pct === 100) { banner.classList.add('show'); }
+    else { banner.classList.remove('show'); }
+  }
+  function updateVoyant(sel) {
+    document.getElementById('voyant-preview').className = 'voyant-dot ' + sel.value;
+    updateProgress();
+  }
+  function copyCmd(btn, cmd) {
+    navigator.clipboard.writeText(cmd).then(function(){
+      btn.textContent = '✓ Copié'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  SAUVEGARDE AUTO (brouillon sur ce PC) — anti-perte en cas de
+  //  rafraîchissement / fermeture accidentelle pendant la séance.
+  // ════════════════════════════════════════════════════════════════
+  function collect() {
+    var fields = {};
+    FIELD_IDS.forEach(function(id){ fields[id] = val(id); });
+    return {
+      p1: val('inp-p1'), n1: val('inp-n1'),
+      p2: val('inp-p2'), n2: val('inp-n2'),
+      clsLetter: val('inp-classe-letter'),
+      classe: classeValue(),
+      date:   val('inp-date'),
+      fields: fields
+    };
+  }
+  function autosave() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch (e) {}
+  }
+  function restoreDraft() {
+    var raw;
+    try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+    if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch (e) { return; }
+    if (d.p1) document.getElementById('inp-p1').value = d.p1;
+    if (d.n1) document.getElementById('inp-n1').value = d.n1;
+    if (d.p2) document.getElementById('inp-p2').value = d.p2;
+    if (d.n2) document.getElementById('inp-n2').value = d.n2;
+    var L = d.clsLetter || (d.classe || "").replace(/^5/, "");
+    L = String(L).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    if (L) document.getElementById('inp-classe-letter').value = L;
+    if (d.date)   document.getElementById('inp-date').value = d.date;
+    if (d.fields) {
+      Object.keys(d.fields).forEach(function(id){
+        var el = document.getElementById(id);
+        if (el && d.fields[id]) {
+          el.value = d.fields[id];
+          if (id === 'o-couleur') updateVoyant(el);
+        }
+      });
+    }
+    // re-synchronise les pastilles de statut
+    document.querySelectorAll('.q-status').forEach(function(dot){
+      var id = dot.id.replace(/^s-/, '');
+      var f = document.getElementById('q-' + id) || document.getElementById('o-' + id);
+      if (f) dot.classList.toggle('filled', f.value.trim().length > 0);
+    });
+  }
+
+  // ── Résumé lisible (affiché dans le tableau de bord prof) ──
+  function buildOpenSummary(state) {
+    var lines = [];
+    var e1 = fullName(state.p1, state.n1), e2 = fullName(state.p2, state.n2);
+    if (e1 || e2) {
+      lines.push("Binôme : " + [e1, e2].filter(Boolean).join("  &  "));
+    }
+    QUESTION_GROUPS.forEach(function(g){
+      var block = [];
+      g.items.forEach(function(it){
+        var v = state.fields[it[0]] || "";
+        block.push("• " + it[1] + " : " + (v || "—"));
+      });
+      lines.push("\n— " + g.titre + " —\n" + block.join("\n"));
+    });
+    return lines.join("\n");
+  }
+
+  function makeSub() {
+    var state = collect();
+    var filled = FIELD_IDS.filter(function(id){ return (state.fields[id]||"").length > 0; }).length;
+    var e1 = fullName(state.p1, state.n1), e2 = fullName(state.p2, state.n2);
+    var ename = [e1, e2].filter(Boolean).join(" & ") || "Binôme";
+    var eid = CAP_ID + "." + (slug(state.classe) || "5x") + "." +
+              (slug(e1) || "e1") + (e2 ? "-" + slug(e2) : "");
+    return {
+      id: Date.now(),
+      eid: eid,
+      ename: ename,
+      ename2: e2 || "",
+      ecls: state.classe || "",
+      cap: CAP_ID,
+      caplbl: CAP_LABEL,
+      score: filled, qcmTot: FIELD_IDS.length,
+      open: buildOpenSummary(state),
+      fields: state.fields,
+      date: new Date().toLocaleDateString("fr-FR"),
+      dateISO: new Date().toISOString(),
+      status: "pending"
+    };
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  ENVOI AU PROFESSEUR (cloud) + filet hors-ligne
+  // ════════════════════════════════════════════════════════════════
+  function hasUrl() { return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+  function queueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      q.push(sub);
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function unqueueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function postSub(sub, onDone) {
+    queueSub(sub);
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+      }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+        .catch(function(){ if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+  function flushQueue() {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      if (!q.length || !hasUrl()) return;
+      q.forEach(function(sub){ postSub(sub); });
+    } catch (e) {}
+  }
+
+  function setStatus(kind, html) {
+    var box = document.getElementById('send-status');
+    box.className = 'send-status show ' + kind;
+    box.innerHTML = html;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function sendToProf() {
+    var p1 = val('inp-p1'), n1 = val('inp-n1'), classe = classeValue();
+    if (!p1 || !n1) { setStatus('err', '✋ Entrez d\'abord le <strong>prénom et le nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById(p1 ? 'inp-n1' : 'inp-p1').focus(); return; }
+    if (!classe) { setStatus('err', '✋ Indiquez la <strong>lettre de votre classe</strong> (ex : F pour 5F) en haut de la fiche.'); document.getElementById('inp-classe-letter').focus(); return; }
+
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    if (filled < 5 && !confirm('Vous n\'avez rempli que ' + filled + ' réponse(s). Envoyer quand même au professeur ?')) return;
+
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    setStatus('wait', '⟳ Envoi en cours…');
+    autosave();
+    var sub = makeSub();
+    postSub(sub, function(ok){
+      btn.disabled = false;
+      if (ok) {
+        setStatus('ok', '✅ <strong>Travail envoyé au professeur</strong> le ' +
+          new Date().toLocaleString('fr-FR') + '.<br>Vous pouvez aussi cliquer « Imprimer » pour en garder une trace papier.');
+      } else {
+        setStatus('err', '⚠️ L\'envoi n\'a pas pu aboutir (réseau ?). Pas de panique : votre travail est <strong>gardé sur ce PC</strong> et repartira tout seul. Prévenez le professeur.');
+      }
+    });
+  }
+
+  // ── Copie de secours (fichier JSON téléchargé) ──
+  function saveToLocalFile() {
+    var state = collect();
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = 'reseau_' + (slug(fullName(state.p1,state.n1))||'eleve') + '_' + (slug(state.classe)||'5x') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Nouveau binôme : on efface tout (et le brouillon) ──
+  function clearAll() {
+    if (!confirm('Effacer toutes les réponses et repartir de zéro (nouveau binôme) ?')) return;
+    FIELD_IDS.concat(['inp-p1','inp-n1','inp-p2','inp-n2','inp-classe-letter']).forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    var col = document.getElementById('o-couleur');
+    if (col) updateVoyant(col);
+    document.querySelectorAll('.q-status').forEach(function(d){ d.classList.remove('filled'); });
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    var box = document.getElementById('send-status'); box.className = 'send-status'; box.innerHTML = '';
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  INITIALISATION
+  // ════════════════════════════════════════════════════════════════
+  // Report auto du nom/prénom de l'élève connecté (Élève 1) quand la capsule
+  // est ouverte depuis le Site Techno (même origine → transmis via localStorage).
+  function applyPrefill() {
+    var pf;
+    try { pf = JSON.parse(localStorage.getItem(PREFILL_KEY) || 'null'); } catch (e) { return; }
+    if (!pf || (Date.now() - (pf.ts || 0) > 5 * 60 * 1000)) return; // ignore un prefill trop ancien
+    if (pf.p) document.getElementById('inp-p1').value = pf.p;
+    if (pf.n) document.getElementById('inp-n1').value = pf.n;
+    if (pf.c) {
+      var L = String(pf.c).toUpperCase().replace(/^5/, '').replace(/[^A-Z]/g, '').slice(0, 1);
+      if (L) document.getElementById('inp-classe-letter').value = L;
+    }
+    try { localStorage.removeItem(PREFILL_KEY); } catch (e) {}
+  }
+
+  (function init(){
+    var dEl = document.getElementById('inp-date');
+    if (!dEl.value) dEl.value = new Date().toISOString().split('T')[0];
+    restoreDraft();
+    applyPrefill(); // l'identité connectée prime sur un éventuel brouillon
+    // sauvegarde auto sur toute saisie
+    document.addEventListener('input', autosave);
+    document.addEventListener('change', autosave);
+    autosave();      // fige le pré-remplissage dans le brouillon
+    updateProgress();
+    flushQueue(); // rejoue un éventuel envoi resté en attente
+  })();
+</script>
+
+</body>
+</html>
