@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon réseau à la maison – 5ème</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:        #0F1923;
+    --surface:   #162030;
+    --card:      #1C2B3A;
+    --border:    #253545;
+    --accent:    #00C2FF;
+    --accent2:   #FFB800;
+    --green:     #00E5A0;
+    --red:       #FF5C5C;
+    --text:      #E2EDF5;
+    --muted:     #7A9BB5;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .field-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .field-inline label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .field-inline input {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 5px 10px;
+    width: 140px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .field-inline input:focus { border-color: var(--accent); }
+  .classe-row { display: flex; align-items: stretch; }
+  .classe-prefix {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  #inp-classe-letter {
+    width: 46px;
+    border-radius: 0 4px 4px 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--surface);
+    padding: 10px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 4px 18px rgba(0,0,0,.28);
+  }
+  .progress-label { font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .progress-bar { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 99px; width: 0%; transition: width .5s ease; }
+  .progress-pct { font-family: var(--mono); font-size: 11px; color: var(--accent); width: 36px; text-align: right; }
+
+  /* ── MAIN ── */
+  main { max-width: 860px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* ── INTRO ── */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+  .intro-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .intro-card p { color: #B7CDDD; font-size: 14.5px; line-height: 1.65; }
+  .intro-card strong { color: var(--text); }
+
+  /* ── STEP ── */
+  .step {
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-num {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-header h2 { font-size: 16px; font-weight: 700; flex: 1; }
+  .step-timer {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(255,184,0,.1);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 99px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .step-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* ── RAPPEL ── */
+  .recall {
+    background: rgba(0,194,255,.06);
+    border: 1px solid rgba(0,194,255,.2);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .recall .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* ── COMMAND ── */
+  .cmd-block {
+    background: #0A0F14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .cmd-bar {
+    background: #1A252F;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cmd-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .cmd-bar span { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-left: 4px; }
+  .cmd-line {
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: #DCDCAA;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cmd-prompt { color: #4EC9B0; }
+  .cmd-copy {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .cmd-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .cmd-copy.copied { color: var(--green); border-color: var(--green); }
+
+  /* ── TIP (binôme / manip) ── */
+  .tip {
+    background: rgba(255,184,0,.08);
+    border: 1px solid rgba(255,184,0,.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+  }
+  .tip .tip-ico { flex-shrink: 0; }
+  .tip code { font-family: var(--mono); color: var(--accent2); }
+
+  /* ── QUESTIONS ── */
+  .questions { display: flex; flex-direction: column; gap: 14px; }
+
+  .q-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    transition: border-color .2s;
+  }
+  .q-item:focus-within { border-color: var(--accent); }
+
+  .q-label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .q-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .q-text { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+
+  .q-area {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 60px;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.5;
+  }
+  .q-area:focus { border-color: var(--accent); }
+  .q-area::placeholder { color: var(--border); font-style: italic; }
+
+  /* status dot */
+  .q-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    margin-top: 6px;
+    transition: background .3s;
+  }
+  .q-status.filled { background: var(--green); }
+
+  /* ── OBSERVATION SPÉCIALE (step 4) ── */
+  .obs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .obs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .obs-card label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .obs-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 10px;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .obs-input:focus { border-color: var(--accent); }
+  .voyant-row { display: flex; gap: 8px; align-items: center; }
+  .voyant-sel {
+    appearance: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 7px 10px;
+    flex: 1;
+    outline: none;
+    cursor: pointer;
+  }
+  .voyant-sel:focus { border-color: var(--accent); }
+  .voyant-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+  .voyant-dot.green { background: #00E5A0; box-shadow: 0 0 6px #00E5A0; }
+  .voyant-dot.orange { background: #FFB800; box-shadow: 0 0 6px #FFB800; }
+  .voyant-dot.red { background: #FF5C5C; box-shadow: 0 0 6px #FF5C5C; }
+
+  /* ── SCHEMA ── */
+  .schema-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .schema-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .schema-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .schema-node {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    min-width: 90px;
+    transition: border-color .3s, background .3s;
+  }
+  .schema-node.active { border-color: var(--accent); background: rgba(0,194,255,.08); }
+  .schema-node .node-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .schema-node .node-label { color: var(--muted); font-size: 10px; }
+  .schema-arrow {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-size: 18px;
+    padding: 0 4px;
+  }
+
+  /* ── SYNTHESE ── */
+  .synthese {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 8px;
+  }
+  .synthese h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: var(--mono);
+    margin-bottom: 16px;
+  }
+  .synthese-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .synthese-table th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .synthese-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .synthese-table tr:last-child td { border-bottom: none; }
+  .synthese-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .tag-notion {
+    background: rgba(0,194,255,.12);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .tag-cmd {
+    background: rgba(0,229,160,.1);
+    color: var(--green);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .synthese-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .synthese-input:focus { border-color: var(--green); }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #33CFFF; transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-print { background: var(--surface); color: var(--accent2); border: 1px solid rgba(255,184,0,.3); }
+  .btn-print:hover { background: rgba(255,184,0,.1); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* ── SEND STATUS ── */
+  .send-status {
+    display: none;
+    max-width: 620px;
+    margin: 28px auto 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .send-status.show { display: block; }
+  .send-status.ok    { background: rgba(0,229,160,.12); border: 1px solid var(--green); color: var(--green); }
+  .send-status.wait  { background: rgba(0,194,255,.10); border: 1px solid var(--accent); color: var(--accent); }
+  .send-status.err   { background: rgba(255,92,92,.10); border: 1px solid var(--red); color: var(--red); }
+
+  /* ── COMPLETION ── */
+  .completion-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,194,255,.1));
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .completion-banner.show { display: block; }
+  .completion-banner .big-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+  .completion-banner h2 { font-size: 20px; color: var(--green); margin-bottom: 6px; }
+  .completion-banner p { color: var(--muted); font-size: 14px; }
+
+  /* ── POLISH (entrée, focus, glow) ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .step { animation: fadeInUp .5s ease both; }
+  .step:nth-child(2) { animation-delay: .05s; }
+  .step:nth-child(3) { animation-delay: .10s; }
+  .step:nth-child(4) { animation-delay: .15s; }
+  .recall span:not(.tag) { color: #AFC6D8; }
+  .btn-primary { box-shadow: 0 4px 16px rgba(0,194,255,.28); }
+  .btn-primary:hover { box-shadow: 0 6px 22px rgba(0,194,255,.45); }
+  /* Accessibilité : focus clavier bien visible */
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  textarea:focus-visible, select:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .step { animation: none; }
+    .progress-fill { transition: none; }
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; color: #000; font-size: 12px; }
+    header { background: #1F4E79; color: #fff; padding: 12px 20px; }
+    header h1 { color: #fff; font-size: 16px; }
+    .header-badge, .header-right label { color: #BDD7EE; }
+    .header-right input { border: 1px solid #ccc; color: #000; background: #fff; }
+    .classe-prefix { background: #fff; color: #1F4E79; border-color: #ccc; }
+    .progress-wrap { display: none; }
+    .step { border: 1px solid #ccc; background: #fff; break-inside: avoid; margin-bottom: 20px; }
+    .step-header { background: #1F4E79; color: #fff; }
+    .step-num { background: #2E75B6; }
+    .step-header h2 { color: #fff; }
+    .step-timer { color: #FFB800; border-color: #FFB800; background: none; }
+    .recall { background: #EAF4FB; border-color: #2E75B6; color: #333; }
+    .recall .tag { color: #1F4E79; }
+    .cmd-block { background: #1E1E1E; border: 1px solid #444; }
+    .cmd-bar { background: #2D2D2D; }
+    .cmd-bar span { color: #aaa; }
+    .cmd-line { color: #DCDCAA; }
+    .cmd-prompt { color: #4EC9B0; }
+    .cmd-copy { display: none; }
+    .q-item { background: #F9FBFD; border: 1px solid #ccc; }
+    .q-text { color: #000; }
+    .q-area { background: #fff; border: 1px solid #ccc; color: #000; min-height: 50px; }
+    .obs-card { background: #F9FBFD; border: 1px solid #ccc; }
+    .obs-input, .voyant-sel { background: #fff; border: 1px solid #ccc; color: #000; }
+    .schema-node { border: 1px solid #ccc; background: #F9FBFD; color: #000; }
+    .schema-node .node-label { color: #555; }
+    .schema-arrow { color: #1F4E79; }
+    .synthese { background: #F0FBF7; border-color: #00A86B; }
+    .synthese h3 { color: #00A86B; }
+    .synthese-table th { background: #E8F5F0; color: #333; }
+    .synthese-input { background: #fff; border: 1px solid #ccc; color: #000; }
+    .actions { display: none; }
+    .send-status { display: none !important; }
+    .tip { background: #FFF7E6; border: 1px solid #E0A800; color: #333; }
+    .tip code { color: #B8860B; }
+    .completion-banner { display: none !important; }
+    .intro-card { background: #EAF4FB; border-left-color: #1F4E79; }
+    .intro-card p, .intro-card strong { color: #000; }
+    .q-status { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 20px 14px 48px; }
+    .obs-grid { grid-template-columns: 1fr; }
+    .step-header { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <span class="header-badge">Technologie · Cycle 4 · À la maison</span>
+    <h1>Mon réseau à la maison</h1>
+  </div>
+  <div class="header-right">
+    <div class="field-inline">
+      <label>Prénom</label>
+      <input type="text" id="inp-p1" placeholder="ex : Marie" autocomplete="off" style="width:130px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Nom</label>
+      <input type="text" id="inp-n1" placeholder="ex : Dupont" autocomplete="off" style="width:130px" oninput="capName(this);autosave()">
+    </div>
+    <div class="field-inline">
+      <label>Classe</label>
+      <div class="classe-row">
+        <span class="classe-prefix">5</span>
+        <input type="text" id="inp-classe-letter" maxlength="1" placeholder="F" autocomplete="off" oninput="capLetter(this);autosave()" aria-label="Lettre de la classe de 5e">
+      </div>
+    </div>
+    <div class="field-inline">
+      <label>Date</label>
+      <input type="date" id="inp-date" oninput="autosave()">
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <span class="progress-label">Progression</span>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <span class="progress-pct" id="progress-pct">0 %</span>
+</div>
+
+<main>
+
+  <div class="completion-banner" id="completion-banner">
+    <span class="big-icon">🎉</span>
+    <h2>Félicitations ! Fiche complète</h2>
+    <p>Tu as répondu à toutes les questions. Tu peux imprimer ou enregistrer ta fiche.</p>
+  </div>
+
+  <div class="intro-card">
+    <span class="intro-icon">🏠</span>
+    <div>
+      <p><strong>Cette activité se fait chez toi, seul·e, sur un ordinateur Windows.</strong> Tu vas explorer le <strong>réseau de ta maison</strong> avec de vraies commandes, comme un technicien réseau. <em>Rien à installer : les outils sont déjà dans Windows.</em></p>
+      <p style="margin-top:10px">⌨️ On utilise <strong>PowerShell</strong> <em>ou</em> l'<strong>Invite de commandes (cmd)</strong> — au choix, les deux fonctionnent pareil pour nos commandes. Je t'explique pas à pas comment les ouvrir à l'étape 1.</p>
+      <p style="margin-top:10px">🔒 <strong>Aucun mot de passe</strong> n'est nécessaire — ne le demande pas, ne l'écris nulle part. 💾 Tes réponses sont <strong>sauvegardées automatiquement</strong> ; quand tu as terminé, clique sur <strong>« Envoyer au professeur »</strong> tout en bas.</p>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 1 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <h2>Ouvrir la console et trouver mon adresse</h2>
+      <span class="step-timer">⏱ à ton rythme</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Chez toi, la <strong>box</strong> (Livebox, Freebox, SFR Box…) donne à chaque appareil une <strong>adresse IP</strong>. La commande <code style="font-family:var(--mono);color:var(--accent)">ipconfig</code> affiche la tienne, et l'adresse de ta box appelée <strong>« passerelle par défaut »</strong>.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">⌨️</span>
+        <span><strong>Ouvre PowerShell OU l'Invite de commandes (cmd) — au choix :</strong><br>
+        &bull; <strong>PowerShell</strong> : clique sur le bouton <strong>Démarrer</strong> (le logo Windows &#x229E; tout en bas à gauche de l'écran), tape <code>powershell</code> au clavier, puis clique sur <strong>Windows PowerShell</strong>. Une fenêtre <strong>bleu foncé</strong> s'ouvre.<br>
+        &bull; <strong>Invite de commandes</strong> : clique sur <strong>Démarrer</strong>, tape <code>cmd</code>, puis clique sur <strong>Invite de commandes</strong>. Une fenêtre <strong>noire</strong> s'ouvre.<br>
+        Ensuite : <strong>clique dans la fenêtre</strong>, tape la commande, et appuie sur <strong>Entrée</strong>. Astuce : le bouton <strong>« Copier »</strong> copie la commande ; colle-la avec un <strong>clic droit</strong> dans la fenêtre, puis Entrée.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell ou Invite de commandes</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ipconfig</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ipconfig')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle <strong>console</strong> as-tu ouverte (PowerShell ou Invite de commandes) ? Quelle est la <strong>couleur</strong> de la fenêtre ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-1" placeholder="J'ai ouvert ... ; la fenêtre est de couleur ..." rows="2" oninput="updateStatus('1-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle est ton <strong>adresse IPv4</strong> ? Par quels chiffres commence-t-elle ?</span>
+          </div>
+          <textarea class="q-area" id="q-1-2" placeholder="Ex : 192.168.1.27 — elle commence par 192.168..." rows="2" oninput="updateStatus('1-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-1-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle est ta <strong>« Passerelle par défaut »</strong> ? (c'est l'adresse de ta box)</span>
+          </div>
+          <textarea class="q-area" id="q-1-3" placeholder="Ma passerelle (ma box) est : ..." rows="2" oninput="updateStatus('1-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 2 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <h2>Est-ce que je communique avec ma box ?</h2>
+      <span class="step-timer">⏱ à ton rythme</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>La commande <code style="font-family:var(--mono);color:var(--accent)">ping</code> envoie un petit message à une adresse et attend la réponse : c'est le test « est-ce que tu me reçois ? ».</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">✍️</span>
+        <span><strong>Remplace</strong> l'adresse ci-dessous par <strong>ta passerelle</strong> (l'adresse de ta box notée à l'étape 1). Exemple : si ta passerelle est <code>192.168.1.1</code>, tape <code>ping 192.168.1.1</code>. Le ping s'arrête tout seul après 4 essais (sinon <code>Ctrl</code> + <code>C</code>).</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell ou Invite de commandes</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping <em style="color:var(--muted)">(adresse de ta box)</em></span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping ')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Ta box <strong>répond-elle</strong> ? En combien de <strong>millisecondes (ms)</strong> environ ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-1" placeholder="Oui, elle répond en environ ... ms" rows="2" oninput="updateStatus('2-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-2-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Que <strong>prouve</strong> cette réponse à propos de ton ordinateur et de ta box ?</span>
+          </div>
+          <textarea class="q-area" id="q-2-2" placeholder="Cela prouve que mon PC est bien... à ma box." rows="2" oninput="updateStatus('2-2')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 3 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <h2>Est-ce que j'ai bien Internet ?</h2>
+      <span class="step-timer">⏱ à ton rythme</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>Pour aller sur Internet, les données sortent de ta box vers le réseau mondial. On va « pinger » un serveur très connu, puis un site par son nom.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>Commande 1</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping 8.8.8.8</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping 8.8.8.8')">Copier</button>
+        </div>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>Commande 2</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>ping www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping www.google.fr')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">L'adresse <strong>8.8.8.8</strong> répond-elle ? Qu'est-ce que cela prouve ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-1" placeholder="Oui/Non — cela prouve que j'ai (ou pas) accès à..." rows="2" oninput="updateStatus('3-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quand tu pings <strong>www.google.fr</strong>, une <strong>adresse IP</strong> apparaît à la place du nom. Qui a fait cette traduction nom → adresse ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-2" placeholder="C'est le ... (DNS) qui traduit le nom en adresse IP" rows="2" oninput="updateStatus('3-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-3-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Quelle <strong>différence</strong> vois-tu entre pinger un <strong>nombre</strong> (8.8.8.8) et un <strong>nom</strong> (www.google.fr) ?</span>
+          </div>
+          <textarea class="q-area" id="q-3-3" placeholder="Avec le nom, il y a une étape en plus : ..." rows="2" oninput="updateStatus('3-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ÉTAPE 4 ══ -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--accent2)">4</div>
+      <h2>Le chemin jusqu'à un site, et ma box</h2>
+      <span class="step-timer">⏱ à ton rythme</span>
+    </div>
+    <div class="step-body">
+      <div class="recall">
+        <span class="tag">💡 Rappel</span>
+        <span>La commande <code style="font-family:var(--mono);color:var(--accent)">tracert</code> affiche toutes les <strong>étapes (les routeurs)</strong> que traversent les données pour atteindre un site. La <strong>toute première étape</strong>, c'est ta box.</span>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">⏳</span>
+        <span><strong>Patience :</strong> <code>tracert</code> peut prendre 20 à 40 secondes ; les lignes s'affichent une par une jusqu'au message <em>« Itinéraire déterminé »</em>. Pour l'arrêter avant la fin : <code>Ctrl</code> + <code>C</code>.</span>
+      </div>
+      <div class="cmd-block">
+        <div class="cmd-bar">
+          <div class="cmd-dot" style="background:#FF5C5C"></div>
+          <div class="cmd-dot" style="background:#FFB800"></div>
+          <div class="cmd-dot" style="background:#00E5A0"></div>
+          <span>PowerShell ou Invite de commandes</span>
+        </div>
+        <div class="cmd-line">
+          <span class="cmd-prompt">&gt;</span>
+          <span>tracert www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'tracert www.google.fr')">Copier</button>
+        </div>
+      </div>
+      <div class="questions">
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-1"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Combien d'<strong>étapes</strong> environ ? La <strong>1ʳᵉ adresse</strong> affichée : tu la reconnais ? (compare avec ta passerelle de l'étape 1)</span>
+          </div>
+          <textarea class="q-area" id="q-4-1" placeholder="J'ai compté ... étapes ; la 1ʳᵉ adresse est ma box (passerelle)" rows="2" oninput="updateStatus('4-1')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-2"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Chez toi, <strong>un seul appareil</strong> fait modem + routeur + switch + borne WiFi. Comment s'appelle-t-il et quelle est sa <strong>marque</strong> ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-2" placeholder="C'est la box ; chez moi c'est une ... (Livebox, Freebox, SFR Box, Bbox...)" rows="2" oninput="updateStatus('4-2')"></textarea>
+        </div>
+        <div class="q-item">
+          <div class="q-label">
+            <span class="q-status" id="s-4-3"></span>
+            <span class="q-icon">🔍</span>
+            <span class="q-text">Si la <strong>box est éteinte</strong>, que se passe-t-il pour tous les appareils de la maison ? Pourquoi ?</span>
+          </div>
+          <textarea class="q-area" id="q-4-3" placeholder="Plus aucun appareil ne peut..., car la box est..." rows="2" oninput="updateStatus('4-3')"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SYNTHÈSE ══ -->
+  <div class="synthese">
+    <h3>✅ Synthèse — Ce que j'ai compris sur mon réseau à la maison</h3>
+    <table class="synthese-table">
+      <thead>
+        <tr>
+          <th>Commande / élément</th>
+          <th>Notion</th>
+          <th>Ce que j'ai compris</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag-cmd">ipconfig</span></td>
+          <td><span class="tag-notion">Mon adresse IP</span></td>
+          <td><input type="text" class="synthese-input" id="syn-1" placeholder="Mon PC a une adresse..." oninput="updateStatus('syn-1')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Passerelle</span></td>
+          <td><span class="tag-notion">Ma box</span></td>
+          <td><input type="text" class="synthese-input" id="syn-2" placeholder="La passerelle, c'est..." oninput="updateStatus('syn-2')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">ping</span></td>
+          <td><span class="tag-notion">Test de connexion</span></td>
+          <td><input type="text" class="synthese-input" id="syn-3" placeholder="Le ping sert à vérifier que..." oninput="updateStatus('syn-3')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">Nom de site</span></td>
+          <td><span class="tag-notion">DNS (nom → adresse IP)</span></td>
+          <td><input type="text" class="synthese-input" id="syn-4" placeholder="Un nom de site est traduit en..." oninput="updateStatus('syn-4')"></td>
+        </tr>
+        <tr>
+          <td><span class="tag-cmd">La box</span></td>
+          <td><span class="tag-notion">Modem + routeur + switch + WiFi</span></td>
+          <td><input type="text" class="synthese-input" id="syn-5" placeholder="Chez moi, la box fait à elle seule..." oninput="updateStatus('syn-5')"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="send-status" class="send-status"></div>
+
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="clearAll()">🗑 Tout effacer</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn btn-ghost" onclick="saveToLocalFile()" title="Télécharge une copie de secours sur ce PC (fichier JSON)">⬇ Copie de secours</button>
+    <button class="btn btn-primary" id="btn-send" onclick="sendToProf()">📤 Envoyer au professeur</button>
+  </div>
+
+</main>
+
+<script>
+  // ════════════════════════════════════════════════════════════════
+  //  CONFIGURATION — backend partagé avec le Site Techno (Apps Script)
+  //  Doit correspondre à apps-script-backend.gs et index.html.
+  // ════════════════════════════════════════════════════════════════
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+  var SYNC_SECRET     = "TECHNO-RB-2026-12MAI";
+  var CAP_ID    = "maison5e";
+  var CAP_LABEL = "Maison 5e — Mon réseau à la maison";
+  var DRAFT_KEY = "maison5e_draft";       // brouillon auto sur ce PC
+  var QUEUE_KEY = "maison5e_offline_queue"; // envois en attente (réseau coupé)
+  var PREFILL_KEY = "maison5e_prefill";   // identité reportée depuis le Site Techno
+
+  // ── Champs-réponses suivis (progression + sauvegarde) ──
+  var FIELD_IDS = [
+    'q-1-1','q-1-2','q-1-3',
+    'q-2-1','q-2-2',
+    'q-3-1','q-3-2','q-3-3',
+    'q-4-1','q-4-2','q-4-3',
+    'syn-1','syn-2','syn-3','syn-4','syn-5'
+  ];
+
+  // ── Libellés lisibles (résumé prof) ──
+  var QUESTION_GROUPS = [
+    { titre: "Étape 1 — Ouvrir la console et trouver mon adresse (ipconfig)", items: [
+      ['q-1-1', "Console ouverte (PowerShell / cmd) + couleur"],
+      ['q-1-2', "Adresse IPv4 (et par quoi elle commence)"],
+      ['q-1-3', "Passerelle par défaut (= la box)"] ] },
+    { titre: "Étape 2 — Communiquer avec ma box (ping passerelle)", items: [
+      ['q-2-1', "La box répond-elle ? Combien de ms"],
+      ['q-2-2', "Ce que prouve cette réponse"] ] },
+    { titre: "Étape 3 — Ai-je bien Internet ? (ping 8.8.8.8 / nom)", items: [
+      ['q-3-1', "8.8.8.8 répond-il ? Ce que ça prouve"],
+      ['q-3-2', "Qui traduit le nom en adresse IP (DNS)"],
+      ['q-3-3', "Différence : pinger un nombre vs un nom"] ] },
+    { titre: "Étape 4 — Le chemin (tracert) et ma box", items: [
+      ['q-4-1', "Nombre d'étapes + 1ʳᵉ adresse (= la box)"],
+      ['q-4-2', "Nom et marque de la box (tout-en-un)"],
+      ['q-4-3', "Si la box est éteinte : que se passe-t-il"] ] },
+    { titre: "Synthèse", items: [
+      ['syn-1', "ipconfig → mon adresse IP"],
+      ['syn-2', "Passerelle → ma box"],
+      ['syn-3', "ping → test de connexion"],
+      ['syn-4', "Nom de site → DNS (nom vers IP)"],
+      ['syn-5', "La box → modem + routeur + switch + WiFi"] ] }
+  ];
+
+  // ── Helpers ──
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  function slug(s) {
+    // accents -> base (NFD) puis on ne garde que [a-z0-9]
+    var base = String(s||"").toLowerCase();
+    try { base = base.normalize("NFD").replace(/[̀-ͯ]/g, ""); } catch (e) {}
+    return base.replace(/[^a-z0-9]+/g, "");
+  }
+  function fullName(p, n) { return [String(p||"").trim(), String(n||"").trim()].filter(Boolean).join(" "); }
+  // Lettre de classe : une seule lettre, forcée en majuscule
+  function capLetter(el) { el.value = el.value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1); }
+  // Classe complète = "5" + lettre (ex : 5F). Vide si pas de lettre saisie.
+  function classeValue() {
+    var L = val('inp-classe-letter').toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    return L ? ("5" + L) : "";
+  }
+  // Majuscule auto : 1re lettre + après espace/trait d'union, sans toucher au reste
+  function capName(el) {
+    var s = el.value.replace(/(^|[\s\-])([a-zà-ÿ])/g, function (m, sep, ch) { return sep + ch.toUpperCase(); });
+    if (s !== el.value) {
+      var pos = el.selectionStart;
+      el.value = s;
+      try { el.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  }
+
+  // ── Progression + statut des pastilles ──
+  function updateStatus(key) {
+    var el = document.getElementById('s-' + key);
+    var field = document.getElementById('q-' + key) || document.getElementById('o-' + key);
+    if (el && field) el.classList.toggle('filled', field.value.trim().length > 0);
+    updateProgress();
+  }
+  function updateProgress() {
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    var pct = Math.round((filled / FIELD_IDS.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + ' %';
+    var banner = document.getElementById('completion-banner');
+    if (pct === 100) { banner.classList.add('show'); }
+    else { banner.classList.remove('show'); }
+  }
+  function updateVoyant(sel) {
+    document.getElementById('voyant-preview').className = 'voyant-dot ' + sel.value;
+    updateProgress();
+  }
+  function copyCmd(btn, cmd) {
+    navigator.clipboard.writeText(cmd).then(function(){
+      btn.textContent = '✓ Copié'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  SAUVEGARDE AUTO (brouillon sur ce PC) — anti-perte en cas de
+  //  rafraîchissement / fermeture accidentelle pendant la séance.
+  // ════════════════════════════════════════════════════════════════
+  function collect() {
+    var fields = {};
+    FIELD_IDS.forEach(function(id){ fields[id] = val(id); });
+    return {
+      p1: val('inp-p1'), n1: val('inp-n1'),
+      clsLetter: val('inp-classe-letter'),
+      classe: classeValue(),
+      date:   val('inp-date'),
+      fields: fields
+    };
+  }
+  function autosave() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch (e) {}
+  }
+  function restoreDraft() {
+    var raw;
+    try { raw = localStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+    if (!raw) return;
+    var d; try { d = JSON.parse(raw); } catch (e) { return; }
+    if (d.p1) document.getElementById('inp-p1').value = d.p1;
+    if (d.n1) document.getElementById('inp-n1').value = d.n1;
+    var L = d.clsLetter || (d.classe || "").replace(/^5/, "");
+    L = String(L).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
+    if (L) document.getElementById('inp-classe-letter').value = L;
+    if (d.date)   document.getElementById('inp-date').value = d.date;
+    if (d.fields) {
+      Object.keys(d.fields).forEach(function(id){
+        var el = document.getElementById(id);
+        if (el && d.fields[id]) {
+          el.value = d.fields[id];
+          if (id === 'o-couleur') updateVoyant(el);
+        }
+      });
+    }
+    // re-synchronise les pastilles de statut
+    document.querySelectorAll('.q-status').forEach(function(dot){
+      var id = dot.id.replace(/^s-/, '');
+      var f = document.getElementById('q-' + id) || document.getElementById('o-' + id);
+      if (f) dot.classList.toggle('filled', f.value.trim().length > 0);
+    });
+  }
+
+  // ── Résumé lisible (affiché dans le tableau de bord prof) ──
+  function buildOpenSummary(state) {
+    var lines = [];
+    var e1 = fullName(state.p1, state.n1);
+    if (e1) lines.push("Élève : " + e1);
+    QUESTION_GROUPS.forEach(function(g){
+      var block = [];
+      g.items.forEach(function(it){
+        var v = state.fields[it[0]] || "";
+        block.push("• " + it[1] + " : " + (v || "—"));
+      });
+      lines.push("\n— " + g.titre + " —\n" + block.join("\n"));
+    });
+    return lines.join("\n");
+  }
+
+  function makeSub() {
+    var state = collect();
+    var filled = FIELD_IDS.filter(function(id){ return (state.fields[id]||"").length > 0; }).length;
+    var e1 = fullName(state.p1, state.n1);
+    var ename = e1 || "Élève";
+    var eid = CAP_ID + "." + (slug(state.classe) || "5x") + "." + (slug(e1) || "eleve");
+    return {
+      id: Date.now(),
+      eid: eid,
+      ename: ename,
+      ename2: "",
+      ecls: state.classe || "",
+      cap: CAP_ID,
+      caplbl: CAP_LABEL,
+      score: filled, qcmTot: FIELD_IDS.length,
+      open: buildOpenSummary(state),
+      fields: state.fields,
+      date: new Date().toLocaleDateString("fr-FR"),
+      dateISO: new Date().toISOString(),
+      status: "pending"
+    };
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  ENVOI AU PROFESSEUR (cloud) + filet hors-ligne
+  // ════════════════════════════════════════════════════════════════
+  function hasUrl() { return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+  function queueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      q.push(sub);
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function unqueueSub(sub) {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      q = q.filter(function(x){ return x.eid !== sub.eid; });
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+    } catch (e) {}
+  }
+  function postSub(sub, onDone) {
+    queueSub(sub);
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    try {
+      fetch(APPS_SCRIPT_URL, {
+        method: "POST", mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+      }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+        .catch(function(){ if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+  function flushQueue() {
+    try {
+      var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      if (!q.length || !hasUrl()) return;
+      q.forEach(function(sub){ postSub(sub); });
+    } catch (e) {}
+  }
+
+  function setStatus(kind, html) {
+    var box = document.getElementById('send-status');
+    box.className = 'send-status show ' + kind;
+    box.innerHTML = html;
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function sendToProf() {
+    var p1 = val('inp-p1'), n1 = val('inp-n1'), classe = classeValue();
+    if (!p1 || !n1) { setStatus('err', '✋ Entrez d\'abord le <strong>prénom et le nom de l\'élève 1</strong> en haut de la fiche.'); document.getElementById(p1 ? 'inp-n1' : 'inp-p1').focus(); return; }
+    if (!classe) { setStatus('err', '✋ Indiquez la <strong>lettre de votre classe</strong> (ex : F pour 5F) en haut de la fiche.'); document.getElementById('inp-classe-letter').focus(); return; }
+
+    var filled = FIELD_IDS.filter(function(id){ return val(id).length > 0; }).length;
+    if (filled < 5 && !confirm('Vous n\'avez rempli que ' + filled + ' réponse(s). Envoyer quand même au professeur ?')) return;
+
+    var btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    setStatus('wait', '⟳ Envoi en cours…');
+    autosave();
+    var sub = makeSub();
+    postSub(sub, function(ok){
+      btn.disabled = false;
+      if (ok) {
+        setStatus('ok', '✅ <strong>Travail envoyé au professeur</strong> le ' +
+          new Date().toLocaleString('fr-FR') + '.<br>Vous pouvez aussi cliquer « Imprimer » pour en garder une trace papier.');
+      } else {
+        setStatus('err', '⚠️ L\'envoi n\'a pas pu aboutir (réseau ?). Pas de panique : votre travail est <strong>gardé sur ce PC</strong> et repartira tout seul. Prévenez le professeur.');
+      }
+    });
+  }
+
+  // ── Copie de secours (fichier JSON téléchargé) ──
+  function saveToLocalFile() {
+    var state = collect();
+    var blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url;
+    a.download = 'reseau_' + (slug(fullName(state.p1,state.n1))||'eleve') + '_' + (slug(state.classe)||'5x') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Tout effacer (et le brouillon) ──
+  function clearAll() {
+    if (!confirm('Effacer toutes les réponses et repartir de zéro ?')) return;
+    FIELD_IDS.concat(['inp-p1','inp-n1','inp-classe-letter']).forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.querySelectorAll('.q-status').forEach(function(d){ d.classList.remove('filled'); });
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+    var box = document.getElementById('send-status'); box.className = 'send-status'; box.innerHTML = '';
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  INITIALISATION
+  // ════════════════════════════════════════════════════════════════
+  // Report auto du nom/prénom de l'élève connecté (Élève 1) quand la capsule
+  // est ouverte depuis le Site Techno (même origine → transmis via localStorage).
+  function applyPrefill() {
+    var pf;
+    try { pf = JSON.parse(localStorage.getItem(PREFILL_KEY) || 'null'); } catch (e) { return; }
+    if (!pf || (Date.now() - (pf.ts || 0) > 5 * 60 * 1000)) return; // ignore un prefill trop ancien
+    if (pf.p) document.getElementById('inp-p1').value = pf.p;
+    if (pf.n) document.getElementById('inp-n1').value = pf.n;
+    if (pf.c) {
+      var L = String(pf.c).toUpperCase().replace(/^5/, '').replace(/[^A-Z]/g, '').slice(0, 1);
+      if (L) document.getElementById('inp-classe-letter').value = L;
+    }
+    try { localStorage.removeItem(PREFILL_KEY); } catch (e) {}
+  }
+
+  (function init(){
+    var dEl = document.getElementById('inp-date');
+    if (!dEl.value) dEl.value = new Date().toISOString().split('T')[0];
+    restoreDraft();
+    applyPrefill(); // l'identité connectée prime sur un éventuel brouillon
+    // sauvegarde auto sur toute saisie
+    document.addEventListener('input', autosave);
+    document.addEventListener('change', autosave);
+    autosave();      // fige le pré-remplissage dans le brouillon
+    updateProgress();
+    flushQueue(); // rejoue un éventuel envoi resté en attente
+  })();
+</script>
+
+</body>
+</html>

@@ -3519,6 +3519,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
+            <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
           </select>
           <select class="fsel" id="fstat" onchange="renderSubs()">
             <option value="">Tous les statuts</option>
@@ -3669,6 +3670,20 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         <button onclick="downloadFiliusCorrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x2B07;&#xFE0F; Télécharger le corrigé (PDF)</button>
         <div id="filius-cor-onscreen" style="margin-top:20px"></div>
       </div>
+    </div>
+
+    <!-- MAISON 5e — CAPSULE P3 (activité embarquée depuis le dépôt maison-5e) -->
+    <div id="pg-maison5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P3 &mdash; Mon réseau à la maison (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité <strong>à faire à la maison</strong>, en autonomie, sur un ordinateur. Suis les explications pas à pas (PowerShell ou invite de commandes), réponds, puis clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong>.
+      </p>
+      <iframe id="maison5e-frame" data-src="https://blanchardromain-cyber.github.io/maison-5e/" title="Mon réseau à la maison (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#0F1923"
+        loading="lazy"></iframe>
     </div>
 
     <!-- REMÉDIATION HUB -->
@@ -4591,6 +4606,7 @@ var SEQUENCES_DEF = [
   {id:"reseau5e", niveau:"5ème", titre:"P1 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"filius5e", niveau:"5ème", titre:"P2 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
   {id:"filius5e-cor", niveau:"5ème", titre:"P2 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
+  {id:"maison5e", niveau:"5ème", titre:"P3 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"MAI26", open:true},
   {id:"seq3",    niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
 
@@ -4849,6 +4865,13 @@ function goPage(pid) {
     if (fIfr) fIfr.src = fIfr.getAttribute("data-src");
   }
   if (pid === "pg-filius5e-cor") { try { renderFiliusCorrigeOnscreen(); } catch (e) {} }
+  if (pid === "pg-maison5e") {
+    try {
+      if (user) localStorage.setItem("maison5e_prefill", JSON.stringify({ p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var mIfr = document.getElementById("maison5e-frame");
+    if (mIfr) mIfr.src = mIfr.getAttribute("data-src");
+  }
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
@@ -5059,6 +5082,7 @@ function renderDash() {
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
+      else if (s.id === "maison5e") clickAction = "onclick=\"goPage('pg-maison5e')\"";
       html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
       html += '<div class="schdr" style="background:' + s.couleur + '"></div>';
       html += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
@@ -5107,6 +5131,7 @@ function tryUnlock() {
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
+    else if (pendingSeq === "maison5e") goPage("pg-maison5e");
     else goPage("pg-dash");
     renderDash();
   } else {
@@ -5437,6 +5462,56 @@ function downloadFiliusCorrige() {
   });
   doc.save("Corrige_Filius_5e.pdf");
 }
+
+/* ════════ MAISON 5e — questions + corrigé (vue prof) ════════
+   corrige = "" → réponse personnelle (dépend du réseau de l'élève). */
+var MAISON_GROUPS = [
+  { titre: "Étape 1 — Ouvrir la console et trouver mon adresse (ipconfig)", items: [
+    ["q-1-1", "Console ouverte + couleur", ""],
+    ["q-1-2", "Adresse IPv4 (et début)", "Réponse personnelle — commence en général par 192.168."],
+    ["q-1-3", "Passerelle par défaut (= la box)", "L'adresse de sa box (souvent 192.168.x.1)."] ] },
+  { titre: "Étape 2 — Communiquer avec ma box (ping passerelle)", items: [
+    ["q-2-1", "La box répond-elle ? Combien de ms", "Oui, en quelques millisecondes (la box est tout près)."],
+    ["q-2-2", "Ce que prouve cette réponse", "Que le PC est bien connecté à la box (le réseau local fonctionne)."] ] },
+  { titre: "Étape 3 — Ai-je bien Internet ? (ping 8.8.8.8 / nom)", items: [
+    ["q-3-1", "8.8.8.8 répond-il ? Ce que ça prouve", "Oui : l'élève a bien accès à Internet (au-delà de sa box)."],
+    ["q-3-2", "Qui traduit le nom en adresse IP", "Le serveur DNS."],
+    ["q-3-3", "Différence nombre vs nom", "Avec un nom, il y a une étape en plus : la traduction DNS (nom → adresse IP)."] ] },
+  { titre: "Étape 4 — Le chemin (tracert) et ma box", items: [
+    ["q-4-1", "Nb d'étapes + 1ʳᵉ adresse", "Plusieurs étapes ; la 1ʳᵉ adresse = sa box (la passerelle de l'étape 1)."],
+    ["q-4-2", "Nom et marque de la box", "La box (Livebox, Freebox, SFR Box, Bbox…) — fait modem + routeur + switch + WiFi."],
+    ["q-4-3", "Si la box est éteinte", "Plus aucun appareil n'a accès au réseau ni à Internet : la box est le point central."] ] },
+  { titre: "Synthèse", items: [
+    ["syn-1", "ipconfig → mon adresse IP", "Chaque appareil possède une adresse IP unique sur le réseau."],
+    ["syn-2", "Passerelle → ma box", "La passerelle est l'adresse de la box, porte de sortie du réseau."],
+    ["syn-3", "ping → test de connexion", "Le ping vérifie qu'un appareil est joignable et répond."],
+    ["syn-4", "Nom de site → DNS", "Un nom de site est traduit en adresse IP par le DNS."],
+    ["syn-5", "La box → tout-en-un", "La box fait à elle seule modem + routeur + switch + borne WiFi."] ] }
+];
+
+/* Maison 5e — rendu des réponses de l'élève (vue prof + impression) */
+function buildMaisonModalHTML(sub) {
+  var f = sub && sub.fields ? sub.fields : null;
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  var head = "";
+  if (sub && sub.ename) {
+    head = '<div style="background:#E8F5E9;border:1px solid #9BD3A8;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px"><strong>👤 Élève :</strong> ' +
+      esc(sub.ename) + ' — Classe ' + esc(sub.ecls||'') + '</div>';
+  }
+  if (!f) return head + "<em>Aucune réponse enregistrée.</em>";
+  var html = head;
+  MAISON_GROUPS.forEach(function(g){
+    html += '<div style="font-weight:700;color:#1E6B3B;font-size:12px;margin:12px 0 4px">' + esc(g.titre.toUpperCase()) + '</div>';
+    g.items.forEach(function(it){
+      var v = f[it[0]];
+      var cor = it[2] ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Corrigé :</strong> ' + esc(it[2]) + '</div>' : '';
+      html += '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + esc(it[1]) + '</div>' +
+        '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
+        (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div>' + cor + '</div>';
+    });
+  });
+  return html;
+}
 // ================================================================
 // TABLEAU DE BORD PROF
 // ================================================================
@@ -5530,6 +5605,9 @@ function renderSubs() {
       } else if (s.cap === "filius5e") {
         var flDone = (s.score !== undefined ? s.score : 0), flTot = (s.qcmTot || 21);
         sc = '<span style="background:#EDE7FF;color:#5B34C7;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F5A7; ' + flDone + '/' + flTot + ' réponses</span>';
+      } else if (s.cap === "maison5e") {
+        var maDone = (s.score !== undefined ? s.score : 0), maTot = (s.qcmTot || 16);
+        sc = '<span style="background:#E8F5E9;color:#1E6B3B;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F3E0; ' + maDone + '/' + maTot + ' réponses</span>';
       } else {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
@@ -5791,6 +5869,10 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "Filius 5e — Simulation réseau (binôme)";
     document.getElementById("mrep").innerHTML = buildFiliusModalHTML(sub);
     document.getElementById("mscore").textContent = "Activité Filius — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||21) + " réponses — Statut : " + sub.status;
+  } else if (sub.cap === "maison5e") {
+    if (mh3) mh3.textContent = "Maison 5e — Mon réseau à la maison";
+    document.getElementById("mrep").innerHTML = buildMaisonModalHTML(sub);
+    document.getElementById("mscore").textContent = "Activité maison — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||16) + " réponses — Statut : " + sub.status;
   } else {
     if (mh3) mh3.textContent = "Réponse ouverte — Question 10";
     document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
@@ -5821,6 +5903,7 @@ function printModalSub() {
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
+  else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC uniquement) : points ajustés courants + appréciation */
@@ -5904,7 +5987,8 @@ function printSubDirect(sid) {
     "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
     "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
     "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
-    "filius5e":"Filius 5e — Simulation réseau (binôme)"
+    "filius5e":"Filius 5e — Simulation réseau (binôme)",
+    "maison5e":"Maison 5e — Mon réseau à la maison"
   };
   var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
   var dateStr = fmtDateTime(sub.dateISO || sub.date);
@@ -5929,6 +6013,8 @@ function printSubDirect(sid) {
     scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
   } else if (sub.cap === "filius5e") {
     scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||21) + " réponses — Statut : " + sub.status;
+  } else if (sub.cap === "maison5e") {
+    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||16) + " réponses — Statut : " + sub.status;
   } else {
     scoreStr = "Score QCM : " + sub.score + "/" + sub.qcmTot + " — Statut : " + sub.status;
   }
@@ -5941,6 +6027,7 @@ function printSubDirect(sid) {
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
+  else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
   else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
 
   /* Évaluation prof (DC) — depuis données stockées */
@@ -5992,7 +6079,7 @@ function printSubDirect(sid) {
   w.document.write('button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}');
   w.document.write('@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}<\/style><\/head><body>');
 
-  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie '+((sub.cap==="reseau5e"||sub.cap==="filius5e")?"5ᵉ":"4ᵉ")+' | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
+  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie '+((sub.cap==="reseau5e"||sub.cap==="filius5e"||sub.cap==="maison5e")?"5ᵉ":"4ᵉ")+' | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
   w.document.write('<div class="pb">');
   if (scoreStr) w.document.write('<div class="sc">'+esc(scoreStr)+'<\/div>');
   w.document.write('<div class="st">Réponses de l’élève<\/div>');
