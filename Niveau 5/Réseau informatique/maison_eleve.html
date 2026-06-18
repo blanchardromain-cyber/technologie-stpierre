@@ -827,18 +827,22 @@
           <div class="q-label">
             <span class="q-status" id="s-3-2"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quand tu pings <strong>www.google.fr</strong>, une <strong>adresse IP entre crochets</strong> <code>[ ... ]</code> apparaît juste après le nom (ex. <code>[142.250.179.67]</code>). Qui a fait cette traduction nom → adresse ?</span>
+            <span class="q-text">Regarde bien la 1ʳᵉ ligne : juste après <strong>www.google.fr</strong>, une suite de chiffres apparaît <strong>entre crochets</strong> <code>[ ]</code>. <strong>Recopie</strong> ce qui est écrit entre les crochets.</span>
           </div>
-          <textarea class="q-area" id="q-3-2" placeholder="C'est le ... (DNS) qui traduit le nom en adresse IP" rows="2" oninput="updateStatus('3-2')"></textarea>
+          <textarea class="q-area" id="q-3-2" placeholder="Entre les crochets, c'est écrit : [ ... ]" rows="2" oninput="updateStatus('3-2')"></textarea>
         </div>
         <div class="q-item">
           <div class="q-label">
             <span class="q-status" id="s-3-3"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quelle <strong>différence</strong> vois-tu entre pinger un <strong>nombre</strong> (8.8.8.8) et un <strong>nom</strong> (www.google.fr) ?</span>
+            <span class="q-text">Le nom <strong>www.google.fr</strong> a donc été remplacé par cette suite de chiffres pour voyager sur le réseau. À ton avis, pourquoi est-il plus <strong>pratique pour nous</strong> d'utiliser un nom plutôt que cette suite de chiffres ?</span>
           </div>
-          <textarea class="q-area" id="q-3-3" placeholder="Avec le nom, il y a une étape en plus : ..." rows="2" oninput="updateStatus('3-3')"></textarea>
+          <textarea class="q-area" id="q-3-3" placeholder="Un nom est plus facile à... qu'une suite de chiffres." rows="2" oninput="updateStatus('3-3')"></textarea>
         </div>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">💡</span>
+        <span><strong>Pour info</strong> (tu n'as rien à retenir maintenant, on en reparlera en classe) : ce remplacement du nom par une adresse est fait automatiquement par un service appelé le <strong>DNS</strong>, une sorte d'<strong>annuaire</strong> du réseau — comme un répertoire qui retrouve un numéro à partir d'un nom.</span>
       </div>
     </div>
   </div>
@@ -986,8 +990,8 @@
       ['q-2-2', "Ce que prouve cette réponse"] ] },
     { titre: "Étape 3 — Ai-je bien Internet ? (ping 8.8.8.8 / nom)", items: [
       ['q-3-1', "8.8.8.8 répond-il ? Ce que ça prouve"],
-      ['q-3-2', "Qui traduit le nom en adresse IP (DNS)"],
-      ['q-3-3', "Différence : pinger un nombre vs un nom"] ] },
+      ['q-3-2', "Adresse recopiée (entre crochets) après le nom"],
+      ['q-3-3', "Pourquoi un nom est plus pratique qu'une suite de chiffres"] ] },
     { titre: "Étape 4 — Le chemin (tracert) et ma box", items: [
       ['q-4-1', "Nombre d'étapes + 1ʳᵉ adresse (= la box)"],
       ['q-4-2', "Nom et marque de la box (tout-en-un)"],

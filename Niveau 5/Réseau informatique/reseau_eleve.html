@@ -766,8 +766,8 @@
         </div>
         <div class="cmd-line">
           <span class="cmd-prompt">&gt;</span>
-          <span>ping www.google.fr</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ping www.google.fr')">Copier</button>
+          <span>ping -4 www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping -4 www.google.fr')">Copier</button>
         </div>
       </div>
       <div class="tip">
@@ -795,9 +795,9 @@
           <div class="q-label">
             <span class="q-status" id="s-2-3"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quelle <strong>différence</strong> as-tu remarqué entre pinger une adresse IP et pinger un nom de site ?</span>
+            <span class="q-text">Avec le nom <strong>www.google.fr</strong>, une adresse en chiffres apparaît juste après le nom. D'après toi, qu'a dû faire l'ordinateur <strong>avant</strong> de pouvoir envoyer son message ?</span>
           </div>
-          <textarea class="q-area" id="q-2-3" placeholder="Avec le nom, il y a une étape supplémentaire : la résolution..." rows="2" oninput="updateStatus('2-3')"></textarea>
+          <textarea class="q-area" id="q-2-3" placeholder="Il a d'abord transformé le nom en une adresse en chiffres." rows="2" oninput="updateStatus('2-3')"></textarea>
         </div>
         <div class="q-item">
           <div class="q-label">
@@ -832,8 +832,8 @@
         </div>
         <div class="cmd-line">
           <span class="cmd-prompt">&gt;</span>
-          <span>tracert www.google.fr</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'tracert www.google.fr')">Copier</button>
+          <span>tracert -4 www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'tracert -4 www.google.fr')">Copier</button>
         </div>
       </div>
       <div class="tip">
