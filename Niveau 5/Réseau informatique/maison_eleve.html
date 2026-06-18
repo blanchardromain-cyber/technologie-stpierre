@@ -806,9 +806,13 @@
         </div>
         <div class="cmd-line">
           <span class="cmd-prompt">&gt;</span>
-          <span>ping www.google.fr</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ping www.google.fr')">Copier</button>
+          <span>ping -4 www.google.fr</span>
+          <button class="cmd-copy" onclick="copyCmd(this,'ping -4 www.google.fr')">Copier</button>
         </div>
+      </div>
+      <div class="tip">
+        <span class="tip-ico">💡</span>
+        <span>Le <code>-4</code> demande une adresse au <strong>format habituel</strong> (4 nombres, ex. <code>142.250.179.67</code>). Sans le <code>-4</code>, Windows affiche parfois une adresse plus longue avec des « : » (c'est de l'IPv6, la nouvelle génération d'adresses).</span>
       </div>
       <div class="questions">
         <div class="q-item">
@@ -823,7 +827,7 @@
           <div class="q-label">
             <span class="q-status" id="s-3-2"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quand tu pings <strong>www.google.fr</strong>, une <strong>adresse IP</strong> apparaît à la place du nom. Qui a fait cette traduction nom → adresse ?</span>
+            <span class="q-text">Quand tu pings <strong>www.google.fr</strong>, une <strong>adresse IP entre crochets</strong> <code>[ ... ]</code> apparaît juste après le nom (ex. <code>[142.250.179.67]</code>). Qui a fait cette traduction nom → adresse ?</span>
           </div>
           <textarea class="q-area" id="q-3-2" placeholder="C'est le ... (DNS) qui traduit le nom en adresse IP" rows="2" oninput="updateStatus('3-2')"></textarea>
         </div>
