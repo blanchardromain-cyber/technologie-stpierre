@@ -5495,8 +5495,9 @@ function buildMaisonModalHTML(sub) {
   function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   var head = "";
   if (sub && sub.ename) {
+    var osTxt = f && f._os ? (f._os === 'mac' ? ' — 🍎 Mac' : ' — 🪟 Windows') : '';
     head = '<div style="background:#E8F5E9;border:1px solid #9BD3A8;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px"><strong>👤 Élève :</strong> ' +
-      esc(sub.ename) + ' — Classe ' + esc(sub.ecls||'') + '</div>';
+      esc(sub.ename) + ' — Classe ' + esc(sub.ecls||'') + osTxt + '</div>';
   }
   if (!f) return head + "<em>Aucune réponse enregistrée.</em>";
   var html = head;

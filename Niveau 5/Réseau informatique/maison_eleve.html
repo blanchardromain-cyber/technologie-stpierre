@@ -267,6 +267,34 @@
   .tip .tip-ico { flex-shrink: 0; }
   .tip code { font-family: var(--mono); color: var(--accent2); }
 
+  /* ── CHOIX DE L'ORDINATEUR (visuel, sans jargon) ── */
+  .os-choice {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    margin: 0 0 14px;
+  }
+  .os-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: var(--card); border: 2px solid var(--border); border-radius: 14px;
+    padding: 16px 30px; cursor: pointer; min-width: 150px;
+    color: var(--text); font-family: var(--sans); transition: all .2s;
+  }
+  .os-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .os-btn.active { border-color: var(--accent); background: rgba(0,194,255,.10); box-shadow: 0 0 0 3px rgba(0,194,255,.25); }
+  .os-btn .os-emoji { font-size: 46px; line-height: 1; }
+  .os-btn .os-name { font-weight: 700; font-size: 15px; }
+  .os-btn .os-sub { font-size: 11px; color: var(--muted); }
+  .os-title { text-align: center; font-weight: 700; font-size: 15px; margin-bottom: 12px; color: var(--text); }
+  /* branches : cachées tant qu'aucun choix, puis affichées selon le choix */
+  .only-win, .only-mac { display: none; }
+  body.os-win .only-win { display: revert; }
+  body.os-mac .only-mac { display: revert; }
+  .choose-first {
+    text-align: center; color: var(--accent2);
+    background: rgba(255,184,0,.08); border: 1px solid rgba(255,184,0,.3);
+    border-radius: 8px; padding: 10px 14px; font-size: 14px;
+  }
+  body.os-win .choose-first, body.os-mac .choose-first { display: none; }
+
   /* ── QUESTIONS ── */
   .questions { display: flex; flex-direction: column; gap: 14px; }
 
@@ -655,11 +683,27 @@
   <div class="intro-card">
     <span class="intro-icon">🏠</span>
     <div>
-      <p><strong>Cette activité se fait chez toi, seul·e, sur un ordinateur Windows.</strong> Tu vas explorer le <strong>réseau de ta maison</strong> avec de vraies commandes, comme un technicien réseau. <em>Rien à installer : les outils sont déjà dans Windows.</em></p>
-      <p style="margin-top:10px">⌨️ On utilise <strong>PowerShell</strong> <em>ou</em> l'<strong>Invite de commandes (cmd)</strong> — au choix, les deux fonctionnent pareil pour nos commandes. Je t'explique pas à pas comment les ouvrir à l'étape 1.</p>
+      <p><strong>Cette activité se fait chez toi, seul·e, sur un ordinateur.</strong> Tu vas explorer le <strong>réseau de ta maison</strong> avec de vraies commandes, comme un technicien réseau. <em>Rien à installer : les outils sont déjà sur l'ordinateur.</em></p>
+      <p style="margin-top:10px">⌨️ Tu vas taper des commandes dans une petite fenêtre spéciale. Je t'explique pas à pas comment l'ouvrir, selon ton ordinateur.</p>
       <p style="margin-top:10px">🔒 <strong>Aucun mot de passe</strong> n'est nécessaire — ne le demande pas, ne l'écris nulle part. 💾 Tes réponses sont <strong>sauvegardées automatiquement</strong> ; quand tu as terminé, clique sur <strong>« Envoyer au professeur »</strong> tout en bas.</p>
     </div>
   </div>
+
+  <!-- ══ CHOIX DE L'ORDINATEUR ══ -->
+  <div class="os-title">👉 D'abord, sur quel ordinateur es-tu ?</div>
+  <div class="os-choice">
+    <button type="button" class="os-btn" id="os-btn-win" onclick="setOS('win')">
+      <span class="os-emoji">🪟</span>
+      <span class="os-name">Windows</span>
+      <span class="os-sub">la plupart des PC</span>
+    </button>
+    <button type="button" class="os-btn" id="os-btn-mac" onclick="setOS('mac')">
+      <span class="os-emoji">🍎</span>
+      <span class="os-name">Mac</span>
+      <span class="os-sub">ordinateur Apple</span>
+    </button>
+  </div>
+  <div class="choose-first">👆 Choisis ton ordinateur ci-dessus pour afficher les bonnes instructions.</div>
 
   <!-- ══ ÉTAPE 1 ══ -->
   <div class="step">
@@ -671,26 +715,50 @@
     <div class="step-body">
       <div class="recall">
         <span class="tag">💡 Rappel</span>
-        <span>Chez toi, la <strong>box</strong> (Livebox, Freebox, SFR Box…) donne à chaque appareil une <strong>adresse IP</strong>. La commande <code style="font-family:var(--mono);color:var(--accent)">ipconfig</code> affiche la tienne, et l'adresse de ta box appelée <strong>« passerelle par défaut »</strong>.</span>
+        <span>Chez toi, la <strong>box</strong> (Livebox, Freebox, SFR Box…) donne à chaque appareil une <strong>adresse IP</strong>. La commande ci-dessous affiche <strong>ton adresse</strong> et <strong>l'adresse de ta box</strong> (appelée « passerelle » sur Windows, « Router » sur Mac).</span>
       </div>
-      <div class="tip">
-        <span class="tip-ico">⌨️</span>
-        <span><strong>Ouvre PowerShell OU l'Invite de commandes (cmd) — au choix :</strong><br>
-        &bull; <strong>PowerShell</strong> : clique sur le bouton <strong>Démarrer</strong> (le logo Windows &#x229E; tout en bas à gauche de l'écran), tape <code>powershell</code> au clavier, puis clique sur <strong>Windows PowerShell</strong>. Une fenêtre <strong>bleu foncé</strong> s'ouvre.<br>
-        &bull; <strong>Invite de commandes</strong> : clique sur <strong>Démarrer</strong>, tape <code>cmd</code>, puis clique sur <strong>Invite de commandes</strong>. Une fenêtre <strong>noire</strong> s'ouvre.<br>
-        Ensuite : <strong>clique dans la fenêtre</strong>, tape la commande, et appuie sur <strong>Entrée</strong>. Astuce : le bouton <strong>« Copier »</strong> copie la commande ; colle-la avec un <strong>clic droit</strong> dans la fenêtre, puis Entrée.</span>
-      </div>
-      <div class="cmd-block">
-        <div class="cmd-bar">
-          <div class="cmd-dot" style="background:#FF5C5C"></div>
-          <div class="cmd-dot" style="background:#FFB800"></div>
-          <div class="cmd-dot" style="background:#00E5A0"></div>
-          <span>PowerShell ou Invite de commandes</span>
+      <!-- Branche Windows -->
+      <div class="only-win">
+        <div class="tip">
+          <span class="tip-ico">🪟</span>
+          <span><strong>Sur Windows — ouvre PowerShell OU l'Invite de commandes (cmd), au choix :</strong><br>
+          &bull; clique sur le bouton <strong>Démarrer</strong> (le logo Windows &#x229E; tout en bas à gauche), tape <code>powershell</code> (ou <code>cmd</code>), puis clique sur le résultat. Une fenêtre <strong>bleu foncé</strong> (ou <strong>noire</strong>) s'ouvre.<br>
+          Ensuite : <strong>clique dans la fenêtre</strong>, tape la commande, appuie sur <strong>Entrée</strong>. Astuce : le bouton <strong>« Copier »</strong> copie la commande ; colle-la avec un <strong>clic droit</strong> dans la fenêtre.</span>
         </div>
-        <div class="cmd-line">
-          <span class="cmd-prompt">&gt;</span>
-          <span>ipconfig</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ipconfig')">Copier</button>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div>
+            <div class="cmd-dot" style="background:#FFB800"></div>
+            <div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Windows — PowerShell ou Invite de commandes</span>
+          </div>
+          <div class="cmd-line">
+            <span class="cmd-prompt">&gt;</span>
+            <span>ipconfig</span>
+            <button class="cmd-copy" onclick="copyCmd(this,'ipconfig')">Copier</button>
+          </div>
+        </div>
+      </div>
+      <!-- Branche Mac -->
+      <div class="only-mac">
+        <div class="tip">
+          <span class="tip-ico">🍎</span>
+          <span><strong>Sur Mac — ouvre l'application Terminal :</strong><br>
+          &bull; ouvre le <strong>Launchpad</strong> (la petite fusée 🚀 dans la barre en bas), tape <code>terminal</code>, puis clique sur <strong>Terminal</strong>. <em>(Ou : Finder → Applications → Utilitaires → Terminal.)</em><br>
+          Ensuite : <strong>clique dans la fenêtre</strong>, tape la commande, appuie sur <strong>Entrée</strong>. <em>Si tu es branché par câble, remplace <code>Wi-Fi</code> par <code>Ethernet</code> dans la commande.</em></span>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div>
+            <div class="cmd-dot" style="background:#FFB800"></div>
+            <div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Mac — Terminal</span>
+          </div>
+          <div class="cmd-line">
+            <span class="cmd-prompt">$</span>
+            <span>networksetup -getinfo Wi-Fi</span>
+            <button class="cmd-copy" onclick="copyCmd(this,'networksetup -getinfo Wi-Fi')">Copier</button>
+          </div>
         </div>
       </div>
       <div class="questions">
@@ -698,9 +766,9 @@
           <div class="q-label">
             <span class="q-status" id="s-1-1"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quelle <strong>console</strong> as-tu ouverte (PowerShell ou Invite de commandes) ? Quelle est la <strong>couleur</strong> de la fenêtre ?</span>
+            <span class="q-text">Comment s'appelle la <strong>fenêtre</strong> que tu as ouverte pour taper les commandes ?</span>
           </div>
-          <textarea class="q-area" id="q-1-1" placeholder="J'ai ouvert ... ; la fenêtre est de couleur ..." rows="2" oninput="updateStatus('1-1')"></textarea>
+          <textarea class="q-area" id="q-1-1" rows="2" oninput="updateStatus('1-1')"></textarea>
         </div>
         <div class="q-item">
           <div class="q-label">
@@ -714,9 +782,9 @@
           <div class="q-label">
             <span class="q-status" id="s-1-3"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Quelle est ta <strong>« Passerelle par défaut »</strong> ? (c'est l'adresse de ta box)</span>
+            <span class="q-text">Quelle est l'<strong>adresse de ta box</strong> ? <span class="only-win">(ligne « Passerelle par défaut »)</span><span class="only-mac">(ligne « Router »)</span></span>
           </div>
-          <textarea class="q-area" id="q-1-3" placeholder="Ma passerelle (ma box) est : ..." rows="2" oninput="updateStatus('1-3')"></textarea>
+          <textarea class="q-area" id="q-1-3" rows="2" oninput="updateStatus('1-3')"></textarea>
         </div>
       </div>
     </div>
@@ -736,20 +804,41 @@
       </div>
       <div class="tip">
         <span class="tip-ico">✍️</span>
-        <span><strong>Remplace</strong> l'adresse ci-dessous par <strong>ta passerelle</strong> (l'adresse de ta box notée à l'étape 1). Exemple : si ta passerelle est <code>192.168.1.1</code>, tape <code>ping 192.168.1.1</code>. Le ping s'arrête tout seul après 4 essais (sinon <code>Ctrl</code> + <code>C</code>).</span>
+        <span><strong>Remplace</strong> <code>(adresse de ta box)</code> par <strong>l'adresse de ta box</strong> notée à l'étape 1. Exemple : si c'est <code>192.168.1.1</code>, tu tapes la commande avec <code>192.168.1.1</code> à la place.</span>
       </div>
-      <div class="cmd-block">
-        <div class="cmd-bar">
-          <div class="cmd-dot" style="background:#FF5C5C"></div>
-          <div class="cmd-dot" style="background:#FFB800"></div>
-          <div class="cmd-dot" style="background:#00E5A0"></div>
-          <span>PowerShell ou Invite de commandes</span>
+      <!-- Branche Windows -->
+      <div class="only-win">
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div>
+            <div class="cmd-dot" style="background:#FFB800"></div>
+            <div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Windows — PowerShell ou Invite de commandes</span>
+          </div>
+          <div class="cmd-line">
+            <span class="cmd-prompt">&gt;</span>
+            <span>ping <em style="color:var(--muted)">(adresse de ta box)</em></span>
+            <button class="cmd-copy" onclick="copyCmd(this,'ping ')">Copier</button>
+          </div>
         </div>
-        <div class="cmd-line">
-          <span class="cmd-prompt">&gt;</span>
-          <span>ping <em style="color:var(--muted)">(adresse de ta box)</em></span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ping ')">Copier</button>
+        <div class="tip"><span class="tip-ico">ℹ️</span><span>Sur Windows, le ping s'arrête tout seul après 4 essais.</span></div>
+      </div>
+      <!-- Branche Mac -->
+      <div class="only-mac">
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div>
+            <div class="cmd-dot" style="background:#FFB800"></div>
+            <div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Mac — Terminal</span>
+          </div>
+          <div class="cmd-line">
+            <span class="cmd-prompt">$</span>
+            <span>ping -c 4 <em style="color:var(--muted)">(adresse de ta box)</em></span>
+            <button class="cmd-copy" onclick="copyCmd(this,'ping -c 4 ')">Copier</button>
+          </div>
         </div>
+        <div class="tip"><span class="tip-ico">ℹ️</span><span>Sur Mac, on ajoute <code>-c 4</code> pour faire 4 essais (sinon le ping ne s'arrête pas ; tu pourrais l'arrêter avec <code>Ctrl</code> + <code>C</code>).</span></div>
       </div>
       <div class="questions">
         <div class="q-item">
@@ -784,35 +873,47 @@
         <span class="tag">💡 Rappel</span>
         <span>Pour aller sur Internet, les données sortent de ta box vers le réseau mondial. On va « pinger » un serveur très connu, puis un site par son nom.</span>
       </div>
-      <div class="cmd-block">
-        <div class="cmd-bar">
-          <div class="cmd-dot" style="background:#FF5C5C"></div>
-          <div class="cmd-dot" style="background:#FFB800"></div>
-          <div class="cmd-dot" style="background:#00E5A0"></div>
-          <span>Commande 1</span>
+      <!-- Branche Windows -->
+      <div class="only-win">
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Windows — commande 1</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">&gt;</span><span>ping 8.8.8.8</span><button class="cmd-copy" onclick="copyCmd(this,'ping 8.8.8.8')">Copier</button></div>
         </div>
-        <div class="cmd-line">
-          <span class="cmd-prompt">&gt;</span>
-          <span>ping 8.8.8.8</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ping 8.8.8.8')">Copier</button>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Windows — commande 2</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">&gt;</span><span>ping -4 www.google.fr</span><button class="cmd-copy" onclick="copyCmd(this,'ping -4 www.google.fr')">Copier</button></div>
         </div>
-      </div>
-      <div class="cmd-block">
-        <div class="cmd-bar">
-          <div class="cmd-dot" style="background:#FF5C5C"></div>
-          <div class="cmd-dot" style="background:#FFB800"></div>
-          <div class="cmd-dot" style="background:#00E5A0"></div>
-          <span>Commande 2</span>
-        </div>
-        <div class="cmd-line">
-          <span class="cmd-prompt">&gt;</span>
-          <span>ping -4 www.google.fr</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'ping -4 www.google.fr')">Copier</button>
+        <div class="tip">
+          <span class="tip-ico">💡</span>
+          <span>Le <code>-4</code> demande une adresse au <strong>format habituel</strong> (4 nombres, ex. <code>142.250.179.67</code>). Sans lui, Windows affiche parfois une adresse plus longue avec des « : » (de l'IPv6, la nouvelle génération d'adresses).</span>
         </div>
       </div>
-      <div class="tip">
-        <span class="tip-ico">💡</span>
-        <span>Le <code>-4</code> demande une adresse au <strong>format habituel</strong> (4 nombres, ex. <code>142.250.179.67</code>). Sans le <code>-4</code>, Windows affiche parfois une adresse plus longue avec des « : » (c'est de l'IPv6, la nouvelle génération d'adresses).</span>
+      <!-- Branche Mac -->
+      <div class="only-mac">
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Mac — commande 1</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">$</span><span>ping -c 4 8.8.8.8</span><button class="cmd-copy" onclick="copyCmd(this,'ping -c 4 8.8.8.8')">Copier</button></div>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Mac — commande 2</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">$</span><span>ping -c 4 www.google.fr</span><button class="cmd-copy" onclick="copyCmd(this,'ping -c 4 www.google.fr')">Copier</button></div>
+        </div>
+        <div class="tip">
+          <span class="tip-ico">💡</span>
+          <span>Le <code>-c 4</code> fait 4 essais. Sur Mac, l'adresse du site apparaît <strong>entre parenthèses</strong> <code>( )</code> juste après le nom.</span>
+        </div>
       </div>
       <div class="questions">
         <div class="q-item">
@@ -827,7 +928,7 @@
           <div class="q-label">
             <span class="q-status" id="s-3-2"></span>
             <span class="q-icon">🔍</span>
-            <span class="q-text">Regarde bien la 1ʳᵉ ligne : juste après <strong>www.google.fr</strong>, une suite de chiffres apparaît <strong>entre crochets</strong> <code>[ ]</code>. <strong>Recopie</strong> ce qui est écrit entre les crochets.</span>
+            <span class="q-text">Regarde bien la 1ʳᵉ ligne : juste après <strong>www.google.fr</strong>, une suite de chiffres apparaît <span class="only-win">entre crochets <code>[ ]</code></span><span class="only-mac">entre parenthèses <code>( )</code></span>. <strong>Recopie-la.</strong></span>
           </div>
           <textarea class="q-area" id="q-3-2" placeholder="Entre les crochets, c'est écrit : [ ... ]" rows="2" oninput="updateStatus('3-2')"></textarea>
         </div>
@@ -857,23 +958,34 @@
     <div class="step-body">
       <div class="recall">
         <span class="tag">💡 Rappel</span>
-        <span>La commande <code style="font-family:var(--mono);color:var(--accent)">tracert</code> affiche toutes les <strong>étapes (les routeurs)</strong> que traversent les données pour atteindre un site. La <strong>toute première étape</strong>, c'est ta box.</span>
+        <span>La commande ci-dessous affiche toutes les <strong>étapes (les routeurs)</strong> que traversent les données pour atteindre un site. La <strong>toute première étape</strong>, c'est ta box.</span>
       </div>
-      <div class="tip">
-        <span class="tip-ico">⏳</span>
-        <span><strong>Patience :</strong> <code>tracert</code> peut prendre 20 à 40 secondes ; les lignes s'affichent une par une jusqu'au message <em>« Itinéraire déterminé »</em>. Pour l'arrêter avant la fin : <code>Ctrl</code> + <code>C</code>.</span>
-      </div>
-      <div class="cmd-block">
-        <div class="cmd-bar">
-          <div class="cmd-dot" style="background:#FF5C5C"></div>
-          <div class="cmd-dot" style="background:#FFB800"></div>
-          <div class="cmd-dot" style="background:#00E5A0"></div>
-          <span>PowerShell ou Invite de commandes</span>
+      <!-- Branche Windows -->
+      <div class="only-win">
+        <div class="tip">
+          <span class="tip-ico">⏳</span>
+          <span><strong>Patience :</strong> <code>tracert</code> peut prendre 20 à 40 s ; les lignes s'affichent une par une jusqu'à <em>« Itinéraire déterminé »</em>. Pour l'arrêter avant : <code>Ctrl</code> + <code>C</code>.</span>
         </div>
-        <div class="cmd-line">
-          <span class="cmd-prompt">&gt;</span>
-          <span>tracert www.google.fr</span>
-          <button class="cmd-copy" onclick="copyCmd(this,'tracert www.google.fr')">Copier</button>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Windows — PowerShell ou Invite de commandes</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">&gt;</span><span>tracert -4 www.google.fr</span><button class="cmd-copy" onclick="copyCmd(this,'tracert -4 www.google.fr')">Copier</button></div>
+        </div>
+      </div>
+      <!-- Branche Mac -->
+      <div class="only-mac">
+        <div class="tip">
+          <span class="tip-ico">⏳</span>
+          <span><strong>Patience :</strong> <code>traceroute</code> peut prendre 20 à 40 s ; les lignes s'affichent une par une. Pour l'arrêter avant : <code>Ctrl</code> + <code>C</code>.</span>
+        </div>
+        <div class="cmd-block">
+          <div class="cmd-bar">
+            <div class="cmd-dot" style="background:#FF5C5C"></div><div class="cmd-dot" style="background:#FFB800"></div><div class="cmd-dot" style="background:#00E5A0"></div>
+            <span>Mac — Terminal</span>
+          </div>
+          <div class="cmd-line"><span class="cmd-prompt">$</span><span>traceroute www.google.fr</span><button class="cmd-copy" onclick="copyCmd(this,'traceroute www.google.fr')">Copier</button></div>
         </div>
       </div>
       <div class="questions">
@@ -1057,6 +1169,19 @@
     });
   }
 
+  // ── Choix de l'ordinateur (Windows / Mac) — aiguille les instructions ──
+  var selectedOS = "";
+  function setOS(os) {
+    selectedOS = os;
+    document.body.classList.remove('os-win', 'os-mac');
+    document.body.classList.add('os-' + os);
+    var bw = document.getElementById('os-btn-win'), bm = document.getElementById('os-btn-mac');
+    if (bw) bw.classList.toggle('active', os === 'win');
+    if (bm) bm.classList.toggle('active', os === 'mac');
+    autosave();
+  }
+  function osLabel() { return selectedOS === 'mac' ? 'Mac' : (selectedOS === 'win' ? 'Windows' : '—'); }
+
   // ════════════════════════════════════════════════════════════════
   //  SAUVEGARDE AUTO (brouillon sur ce PC) — anti-perte en cas de
   //  rafraîchissement / fermeture accidentelle pendant la séance.
@@ -1068,6 +1193,7 @@
       p1: val('inp-p1'), n1: val('inp-n1'),
       clsLetter: val('inp-classe-letter'),
       classe: classeValue(),
+      os: selectedOS,
       date:   val('inp-date'),
       fields: fields
     };
@@ -1086,6 +1212,7 @@
     L = String(L).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 1);
     if (L) document.getElementById('inp-classe-letter').value = L;
     if (d.date)   document.getElementById('inp-date').value = d.date;
+    if (d.os === 'win' || d.os === 'mac') setOS(d.os);
     if (d.fields) {
       Object.keys(d.fields).forEach(function(id){
         var el = document.getElementById(id);
@@ -1108,6 +1235,7 @@
     var lines = [];
     var e1 = fullName(state.p1, state.n1);
     if (e1) lines.push("Élève : " + e1);
+    if (state.os) lines.push("Ordinateur : " + (state.os === 'mac' ? 'Mac' : 'Windows'));
     QUESTION_GROUPS.forEach(function(g){
       var block = [];
       g.items.forEach(function(it){
@@ -1121,6 +1249,7 @@
 
   function makeSub() {
     var state = collect();
+    state.fields._os = state.os; // pour l'affichage côté prof (n'entre pas dans le score)
     var filled = FIELD_IDS.filter(function(id){ return (state.fields[id]||"").length > 0; }).length;
     var e1 = fullName(state.p1, state.n1);
     var ename = e1 || "Élève";
@@ -1231,6 +1360,10 @@
       var el = document.getElementById(id); if (el) el.value = '';
     });
     document.querySelectorAll('.q-status').forEach(function(d){ d.classList.remove('filled'); });
+    selectedOS = "";
+    document.body.classList.remove('os-win', 'os-mac');
+    var bw = document.getElementById('os-btn-win'), bm = document.getElementById('os-btn-mac');
+    if (bw) bw.classList.remove('active'); if (bm) bm.classList.remove('active');
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
     var box = document.getElementById('send-status'); box.className = 'send-status'; box.innerHTML = '';
     updateProgress();
@@ -1258,6 +1391,8 @@
   (function init(){
     var dEl = document.getElementById('inp-date');
     if (!dEl.value) dEl.value = new Date().toISOString().split('T')[0];
+    // On efface les exemples affichés en fond des zones de réponse (pas d'indice qui souffle la réponse)
+    document.querySelectorAll('.q-area, .synthese-input').forEach(function(el){ el.placeholder = ''; });
     restoreDraft();
     applyPrefill(); // l'identité connectée prime sur un éventuel brouillon
     // sauvegarde auto sur toute saisie
