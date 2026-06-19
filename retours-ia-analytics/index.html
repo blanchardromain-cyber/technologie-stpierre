@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retours d'expérience IA — Salle des professeurs</title>
+<style>
+  /* ===== Palette & tokens ===== */
+  :root{
+    --accent:#4A90D9;
+    --accent-dark:#2f6fb0;
+    --accent-soft:#eaf3fb;
+    --ink:#1f2530;
+    --text:#363c47;
+    --muted:#717a89;
+    --bg:#eef1f6;
+    --card:#ffffff;
+    --border:#e4e8ef;
+    --teal:#0f9e8e;
+    --teal-soft:#e3f6f3;
+    --violet:#7b5bd6;
+    --violet-soft:#efeafb;
+    --ok:#2e9e5b;       --ok-soft:#e8f6ee;
+    --mid:#c98a16;      --mid-soft:#fdf3df;
+    --bad:#d0584e;      --bad-soft:#fcebe9;
+    --shadow-sm:0 1px 2px rgba(20,30,50,.06);
+    --shadow:0 6px 22px -8px rgba(20,30,50,.18),0 2px 6px rgba(20,30,50,.05);
+    --shadow-lg:0 18px 44px -16px rgba(20,30,50,.30);
+    --radius:18px;
+    --radius-sm:11px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(1100px 460px at 75% -120px, #dce9fb 0%, rgba(220,233,251,0) 70%),
+      var(--bg);
+    color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 18px 70px}
+
+  /* ===== En-tête ===== */
+  header.page{text-align:center;padding:22px 0 6px}
+  header.page a.home-link{text-decoration:none;display:inline-block}
+  header.page .badge{
+    display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-dark);
+    font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:6px 13px;border-radius:999px;margin-bottom:14px;
+  }
+  header.page h1{
+    font-size:2rem;margin:0 0 8px;letter-spacing:-.025em;color:var(--ink);
+    background:linear-gradient(90deg,var(--ink),var(--accent-dark));-webkit-background-clip:text;background-clip:text;
+  }
+  header.page p.sub{color:var(--muted);margin:0 auto;font-size:1.04rem;max-width:620px}
+
+  /* ===== Bannière démo ===== */
+  .demo-banner{
+    display:none;background:var(--mid-soft);border:1px solid #f0d79b;color:#8a5d00;
+    padding:11px 16px;border-radius:var(--radius-sm);font-size:.9rem;margin:18px 0 0;text-align:center;
+  }
+  .demo-banner.show{display:block}
+
+  /* ===== Vues ===== */
+  .view{display:none}
+  .view.active{display:block;animation:fade .28s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ===== Accueil : menu ===== */
+  .home-menu{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
+  .home-card{
+    text-align:left;font:inherit;cursor:pointer;background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);box-shadow:var(--shadow);padding:26px 24px;display:flex;flex-direction:column;gap:6px;
+    transition:transform .18s,box-shadow .18s,border-color .18s;position:relative;overflow:hidden;
+  }
+  .home-card::after{content:"→";position:absolute;right:22px;bottom:20px;font-size:1.5rem;color:var(--accent);
+    opacity:0;transform:translateX(-6px);transition:.18s}
+  .home-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:#cfe0f3}
+  .home-card:hover::after{opacity:1;transform:translateX(0)}
+  .home-card .hc-ic{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;font-size:1.8rem;margin-bottom:8px}
+  .home-card.read .hc-ic{background:var(--teal-soft)}
+  .home-card.write .hc-ic{background:var(--accent-soft)}
+  .home-card h3{margin:0;font-size:1.28rem;color:var(--ink)}
+  .home-card p{margin:0;color:var(--muted);font-size:.95rem}
+  .home-card .hc-count{margin-top:6px;font-size:.82rem;font-weight:700;color:var(--teal)}
+  .home-stat{text-align:center;margin-top:26px;color:var(--muted);font-size:.96rem}
+  .home-stat b{color:var(--ink)}
+
+  /* ===== Barre de vue (retour / actions) ===== */
+  .view-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}
+  .link-back{
+    display:inline-flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;font-weight:600;font-size:.92rem;
+    padding:8px 14px;border-radius:999px;transition:background .15s,color .15s;cursor:pointer;border:none;background:none;font-family:inherit;
+  }
+  .link-back:hover{background:#fff;color:var(--accent-dark);box-shadow:var(--shadow-sm)}
+
+  /* ===== Panneaux ===== */
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;margin-top:18px}
+  .panel-head{display:flex;align-items:center;gap:11px;margin:0 0 4px}
+  .panel-head .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--accent-soft);font-size:1.2rem;flex:none}
+  .panel-head h2{margin:0;font-size:1.2rem;color:var(--ink)}
+  .rgpd{display:flex;gap:9px;align-items:flex-start;background:#f6f8fb;border:1px dashed #cfd8e6;border-radius:var(--radius-sm);padding:10px 13px;margin:14px 0 20px;font-size:.84rem;color:var(--muted)}
+  .rgpd b{color:var(--text)}
+
+  /* ===== Formulaire ===== */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+  .field{margin-bottom:15px;min-width:0}
+  .field.full{grid-column:1 / -1}
+  .field label{display:block;font-weight:600;font-size:.86rem;margin-bottom:6px;color:var(--ink)}
+  .field .hint{font-weight:400;color:var(--muted);font-size:.8rem}
+  input[type=text],input[type=url],select,textarea{
+    width:100%;font:inherit;color:var(--text);padding:11px 13px;border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);background:#fff;transition:border-color .15s,box-shadow .15s;
+  }
+  input::placeholder,textarea::placeholder{color:#aab2c0}
+  input[type=text]:focus,input[type=url]:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3.5px var(--accent-soft)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23717a89' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer}
+  textarea{resize:vertical;min-height:92px}
+  .charcount{font-size:.76rem;color:var(--muted);text-align:right;margin-top:4px}
+
+  .avis-group{display:flex;gap:11px;flex-wrap:wrap}
+  .avis-group input{position:absolute;opacity:0;pointer-events:none}
+  .avis-opt{flex:1;min-width:96px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;background:#fff}
+  .avis-opt .emoji{font-size:1.8rem;display:block;line-height:1}
+  .avis-opt .lbl{font-size:.84rem;font-weight:600;margin-top:6px;display:block;color:var(--text)}
+  .avis-opt:hover{border-color:var(--accent);transform:translateY(-1px)}
+  input[value=positif]:checked + .avis-opt{border-color:var(--ok);background:var(--ok-soft)}
+  input[value=mitige]:checked + .avis-opt{border-color:var(--mid);background:var(--mid-soft)}
+  input[value=negatif]:checked + .avis-opt{border-color:var(--bad);background:var(--bad-soft)}
+  input:focus-visible + .avis-opt{box-shadow:0 0 0 3.5px var(--accent-soft)}
+
+  .dropzone{border:1.5px dashed #c4cedd;border-radius:var(--radius-sm);padding:16px;text-align:center;cursor:pointer;color:var(--muted);font-size:.9rem;transition:all .15s;background:#fbfcfe}
+  .dropzone:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-dark)}
+  .dropzone .dz-ic{font-size:1.5rem;display:block;margin-bottom:4px}
+  .dropzone input{display:none}
+  .preview{margin-top:10px;display:none;position:relative}
+  .preview.show{display:inline-block}
+  .preview img{max-height:130px;max-width:100%;border-radius:10px;border:1px solid var(--border);display:block}
+  .preview .rm{position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;border:none;background:var(--bad);color:#fff;font-size:.9rem;cursor:pointer;line-height:24px;box-shadow:var(--shadow-sm)}
+
+  .btn{background:linear-gradient(180deg,var(--accent),var(--accent-dark));color:#fff;border:none;font:inherit;font-weight:600;font-size:1rem;padding:13px 26px;border-radius:var(--radius-sm);cursor:pointer;transition:filter .15s,transform .05s;box-shadow:0 6px 16px -6px rgba(74,144,217,.7)}
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.55;cursor:default;box-shadow:none}
+  .btn-ghost{background:#fff;color:var(--accent-dark);border:1.5px solid #cfe2f6;font:inherit;font-weight:600;padding:10px 18px;border-radius:var(--radius-sm);cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:7px}
+  .btn-ghost:hover{background:var(--accent-soft)}
+
+  .flash{display:none;margin-top:15px;padding:12px 15px;border-radius:var(--radius-sm);font-size:.92rem}
+  .flash.err{display:block;background:var(--bad-soft);border:1px solid #f3c4bf;color:#a8362c}
+
+  /* ===== Toast ===== */
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-24px);background:var(--ok);color:#fff;
+    font-weight:600;font-size:.95rem;padding:13px 22px;border-radius:999px;box-shadow:var(--shadow-lg);z-index:60;
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:90vw}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== Barre filtres ===== */
+  .toolbar{display:flex;align-items:flex-end;gap:13px;flex-wrap:wrap;margin:18px 0 4px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px 18px}
+  .toolbar .field{margin:0;flex:1;min-width:150px}
+  .toolbar .field.search{flex:2;min-width:200px}
+  .count{margin-left:auto;display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);color:var(--accent-dark);font-size:.88rem;font-weight:600;padding:9px 15px;border-radius:999px;white-space:nowrap}
+
+  /* ===== Cartes ===== */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:18px}
+  .tcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:20px;display:flex;flex-direction:column;gap:11px;position:relative;overflow:hidden;border-left:5px solid var(--accent);transition:transform .18s,box-shadow .18s;animation:rise .35s ease both}
+  .tcard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+  .tcard.a-positif{border-left-color:var(--ok)}
+  .tcard.a-mitige{border-left-color:var(--mid)}
+  .tcard.a-negatif{border-left-color:var(--bad)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .tcard .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .tcard .who{font-weight:700;font-size:1.05rem;color:var(--ink)}
+  .tcard .avis-badge{font-size:1.55rem;line-height:1}
+  .tcard .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:.74rem;padding:4px 10px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .tag.matiere{background:var(--accent-soft);color:var(--accent-dark)}
+  .tag.niveau{background:var(--teal-soft);color:var(--teal)}
+  .tag.contexte{background:var(--violet-soft);color:var(--violet)}
+  .tag.outil{background:#eef0f4;color:#566173}
+  .tcard .usage{font-size:.95rem;color:#374050}
+  .tcard .vigilance{display:flex;gap:8px;align-items:flex-start;background:var(--mid-soft);border:1px solid #f0d79b;border-radius:10px;padding:9px 11px;font-size:.85rem;color:#7a5400}
+  .tcard .cap-wrap img{width:100%;max-height:190px;object-fit:cover;border-radius:10px;border:1px solid var(--border);cursor:zoom-in;transition:opacity .15s}
+  .tcard .cap-wrap img:hover{opacity:.9}
+  .tcard .link-chip{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:.85rem;font-weight:600;color:var(--accent-dark);background:var(--accent-soft);border:1px solid #cfe2f6;padding:7px 13px;border-radius:999px;text-decoration:none;transition:background .15s}
+  .tcard .link-chip:hover{background:#dcecfa}
+  .tcard .date{font-size:.78rem;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+  .tcard .card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:8px}
+
+  .empty,.loading{grid-column:1/-1;text-align:center;color:var(--muted);padding:48px 20px;font-size:.96rem;background:var(--card);border:1px dashed var(--border);border-radius:var(--radius)}
+  .empty .cta{margin-top:14px}
+  .spinner{width:26px;height:26px;border:3px solid var(--accent-soft);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ===== Logo collège ===== */
+  .college-logo{height:78px;width:auto;display:block;margin:0 auto 14px}
+
+  /* ===== Lien Statistiques (accueil) ===== */
+  .stats-link{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:18px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:14px;cursor:pointer;font:inherit;font-weight:600;color:var(--accent-dark);transition:transform .15s,box-shadow .15s}
+  .stats-link:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+
+  /* ===== Bouton Utile ===== */
+  .tcard .actions{display:flex;align-items:center;margin-top:2px}
+  .like-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:.84rem;font-weight:600;color:var(--muted);background:#f4f6fa;border:1px solid var(--border);padding:6px 13px;border-radius:999px;cursor:pointer;transition:all .15s}
+  .like-btn:hover{background:var(--accent-soft);color:var(--accent-dark);border-color:#cfe2f6}
+  .like-btn.liked{background:var(--ok-soft);color:var(--ok);border-color:#bfe6cd;cursor:default}
+  .like-btn .like-n{font-weight:700}
+
+  /* ===== Statistiques ===== */
+  .stat-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-top:16px}
+  .stat-block h3{margin:0 0 14px;font-size:1.05rem;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .stat-total{display:flex;align-items:baseline;gap:10px}
+  .stat-total .big-num{font-size:2.6rem;font-weight:800;color:var(--accent-dark);line-height:1}
+  .stat-total .lbl{color:var(--muted)}
+  .bar-row{display:flex;align-items:center;gap:11px;margin:9px 0}
+  .bar-row .bl{flex:none;width:140px;font-size:.86rem;color:var(--text);display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-track{flex:1;display:block;background:#eef1f6;border-radius:999px;height:15px;overflow:hidden}
+  .bar-fill{display:block;height:100%;border-radius:999px;width:0;transition:width .6s ease}
+  .bar-fill.f-pos{background:var(--ok)} .bar-fill.f-mid{background:var(--mid)} .bar-fill.f-neg{background:var(--bad)}
+  .bar-fill.f-acc{background:var(--accent)} .bar-fill.f-teal{background:var(--teal)}
+  .bar-row .bn{flex:none;width:64px;text-align:right;font-size:.82rem;font-weight:600;color:var(--muted)}
+  @media (max-width:640px){.bar-row .bl{width:104px}}
+
+  footer.page{text-align:center;margin-top:44px;color:var(--muted);font-size:.82rem}
+  footer.page .credit{margin-top:8px;font-size:.78rem;opacity:.85}
+  footer.page .credit b{color:var(--text);font-weight:600}
+
+  @media (max-width:640px){
+    header.page h1{font-size:1.55rem}
+    .home-menu{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
+    .panel{padding:20px}
+    .count{margin-left:0;width:100%;justify-content:center}
+  }
+
+  /* ===== Panneau admin stats visites ===== */
+  #adminPanel{display:none;position:fixed;top:14px;right:14px;z-index:99;background:#fff;border:1.5px solid #c8d8ef;border-radius:14px;box-shadow:0 8px 32px -8px rgba(20,30,50,.22);padding:20px 22px;min-width:270px;max-width:320px;font-size:.88rem}
+  #adminPanel.show{display:block}
+  #adminPanel h4{margin:0 0 12px;font-size:1rem;color:var(--ink);display:flex;align-items:center;gap:7px}
+  .adm-close{margin-left:auto;background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--muted);padding:0 4px;line-height:1}
+  .adm-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);color:var(--text)}
+  .adm-row:last-child{border:none}
+  .adm-n{font-weight:700;color:var(--accent-dark)}
+  .adm-box{background:var(--accent-soft);border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent-dark)}
+  .adm-loading{color:var(--muted);text-align:center;padding:10px 0;font-style:italic}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="wrap">
+
+  <header class="page">
+    <a class="home-link" href="#accueil">
+      <img class="college-logo" src="logo-college.png" alt="Collège Saint Pierre">
+      <span class="badge">💬 Espace enseignants</span>
+      <h1>Retours d'expérience IA</h1>
+    </a>
+    <p class="sub">Partagez vos usages de l'intelligence artificielle en classe — et découvrez ceux de vos collègues.</p>
+  </header>
+
+  <div id="demoBanner" class="demo-banner">
+    🛠️ <b>Mode démonstration</b> — backend non configuré. Les témoignages affichés sont fictifs et les envois ne sont pas enregistrés.
+  </div>
+
+  <!-- ============ VUE ACCUEIL ============ -->
+  <section id="view-accueil" class="view">
+    <div class="home-menu">
+      <button class="home-card read" data-go="consulter">
+        <span class="hc-ic">📖</span>
+        <h3>Consulter les retours</h3>
+        <p>Lire les expériences partagées par vos collègues et filtrer par matière, niveau ou avis.</p>
+        <span class="hc-count" id="homeCount"></span>
+      </button>
+      <button class="home-card write" data-go="partager">
+        <span class="hc-ic">✍️</span>
+        <h3>Partager mon expérience</h3>
+        <p>Décrire en quelques lignes un usage de l'IA en classe, avec un lien ou une capture si vous le souhaitez.</p>
+      </button>
+    </div>
+    <button class="stats-link" data-go="stats">📊 Voir les statistiques</button>
+    <div class="home-stat" id="homeStat"></div>
+  </section>
+
+  <!-- ============ VUE STATISTIQUES ============ -->
+  <section id="view-stats" class="view">
+    <div class="view-bar">
+      <button class="link-back" data-go="accueil">← Accueil</button>
+      <button class="btn-ghost" data-go="consulter">📖 Voir les retours</button>
+    </div>
+    <div id="statsBody"></div>
+  </section>
+
+  <!-- ============ VUE CONSULTER ============ -->
+  <section id="view-consulter" class="view">
+    <div class="view-bar">
+      <button class="link-back" data-go="accueil">← Accueil</button>
+      <button class="btn-ghost" data-go="partager">✍️ Partager mon expérience</button>
+    </div>
+
+    <div class="toolbar">
+      <div class="field search"><label for="fSearch">Rechercher</label><input type="text" id="fSearch" placeholder="Mot-clé, outil, matière…"></div>
+      <div class="field"><label for="fMatiere">Matière</label><select id="fMatiere"><option value="">Toutes</option></select></div>
+      <div class="field"><label for="fNiveau">Niveau</label><select id="fNiveau"><option value="">Tous</option></select></div>
+      <div class="field"><label for="fAvis">Avis</label><select id="fAvis"><option value="">Tous</option><option value="positif">👍 Positif</option><option value="mitige">😐 Mitigé</option><option value="negatif">👎 Négatif</option></select></div>
+      <div class="field"><label for="fSort">Trier</label><select id="fSort"><option value="recent">Plus récents</option><option value="ancien">Plus anciens</option></select></div>
+      <div class="count" id="count">—</div>
+    </div>
+
+    <div id="cards" class="cards"></div>
+    <div id="status" class="loading"><div class="spinner"></div>Chargement des témoignages…</div>
+  </section>
+
+  <!-- ============ VUE PARTAGER ============ -->
+  <section id="view-partager" class="view">
+    <div class="view-bar">
+      <button class="link-back" data-go="accueil">← Accueil</button>
+      <button class="btn-ghost" data-go="consulter">📖 Voir les retours</button>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head"><span class="ic">✍️</span><h2>Partager mon expérience</h2></div>
+      <div class="rgpd"><span>🔒</span><span><b>Confidentialité :</b> ne mentionnez aucune donnée personnelle d'élève (nom, photo identifiable, copie nominative…). Les captures doivent être anonymisées.</span></div>
+
+      <form id="form" autocomplete="off">
+        <div class="grid">
+          <div class="field"><label for="prenom">Prénom + initiale <span class="hint">(ex. : Marie D.)</span></label><input type="text" id="prenom" name="prenom" maxlength="40" required placeholder="Marie D."></div>
+          <div class="field"><label for="matiere">Matière enseignée</label><select id="matiere" name="matiere" required><option value="" disabled selected>Choisir…</option></select></div>
+          <div class="field"><label for="niveau">Niveau / classe</label><select id="niveau" name="niveau" required><option value="" disabled selected>Choisir…</option></select></div>
+          <div class="field"><label for="contexte">Contexte d'usage</label><select id="contexte" name="contexte" required><option value="" disabled selected>Choisir…</option></select></div>
+          <div class="field full"><label for="outil">Outil IA utilisé <span class="hint">(ex. : ChatGPT, Claude, Canva IA…)</span></label><input type="text" id="outil" name="outil" maxlength="60" required placeholder="ChatGPT, Claude, Canva IA…"></div>
+          <div class="field full"><label for="usage">Usage décrit</label><textarea id="usage" name="usage" maxlength="300" required placeholder="Décrivez comment vous avez utilisé cet outil, dans quel cadre, avec quels résultats…"></textarea><div class="charcount"><span id="cc">0</span> / 300</div></div>
+          <div class="field full"><label for="vigilance">Point de vigilance / conseil <span class="hint">(facultatif — RGPD, esprit critique, droits d'auteur…)</span></label><textarea id="vigilance" name="vigilance" maxlength="200" placeholder="Un conseil ou un risque à signaler aux collègues ?"></textarea><div class="charcount"><span id="cv">0</span> / 200</div></div>
+          <div class="field full"><label for="lien">Lien vers une ressource <span class="hint">(facultatif — sera cliquable)</span></label><input type="url" id="lien" name="lien" maxlength="300" placeholder="https://…"></div>
+          <div class="field full">
+            <label>Capture d'écran <span class="hint">(facultatif — image anonymisée)</span></label>
+            <label class="dropzone" id="dropzone"><span class="dz-ic">🖼️</span><span id="dzText">Cliquez pour choisir une image (JPG, PNG…)</span><input type="file" id="capture" accept="image/*"></label>
+            <div class="preview" id="preview"><button type="button" class="rm" id="rmImg" title="Retirer">✕</button><img id="previewImg" alt="Aperçu"></div>
+          </div>
+          <div class="field full">
+            <label>Avis global</label>
+            <div class="avis-group">
+              <label><input type="radio" name="avis" value="positif" required><span class="avis-opt"><span class="emoji">👍</span><span class="lbl">Positif</span></span></label>
+              <label><input type="radio" name="avis" value="mitige"><span class="avis-opt"><span class="emoji">😐</span><span class="lbl">Mitigé</span></span></label>
+              <label><input type="radio" name="avis" value="negatif"><span class="avis-opt"><span class="emoji">👎</span><span class="lbl">Négatif</span></span></label>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn" id="submitBtn">Partager mon retour</button>
+        <div id="flash" class="flash"></div>
+      </form>
+    </section>
+  </section>
+
+  <footer class="page">
+    Espace de partage entre enseignants — aucun compte requis. Merci de rester bienveillant·e et concret·ète.
+    <div class="credit">Collège Saint Pierre · Conçu par <b>Romain Blanchard</b></div>
+  </footer>
+</div>
+
+<div id="adminPanel">
+  <h4>🔐 Stats visites <button class="adm-close" id="admClose" title="Fermer">✕</button></h4>
+  <div id="admContent" class="adm-loading">Chargement…</div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURATION — URL de l'application web Google Apps Script (…/exec).
+   Vide => mode démonstration.
+   ============================================================ */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyls4iDu2ygQym2f2FcAfIUspsl28Fpp3TRgbfRmbAE1F3frQphEc7VKBRIZOs1Kwak/exec";
+
+/* ===== Référentiels ===== */
+const MATIERES = ["Français","Maths","Histoire-Géo","SVT","Sciences Physiques","Technologie","EPS","Arts plastiques","Musique","Anglais","Espagnol","Allemand","Documentation","Vie scolaire","Autre"];
+const NIVEAUX = ["6e","5e","4e","3e","Tous niveaux"];
+const CONTEXTES = ["Préparation de cours","En classe avec élèves","Évaluation","Différenciation","Tâches administratives"];
+const AVIS = {positif:{emoji:"👍",label:"Positif"},mitige:{emoji:"😐",label:"Mitigé"},negatif:{emoji:"👎",label:"Négatif"}};
+
+const DEMO_DATA = [
+  {timestamp:"2026-06-12T09:30:00Z",prenom_initiale:"Marie D.",matiere:"Français",niveau:"4e",contexte:"En classe avec élèves",outil:"ChatGPT",avis:"positif",vigilance:"Toujours faire vérifier les sources par les élèves.",usage:"Génération de textes à corriger pour travailler l'esprit critique : les élèves repèrent les erreurs factuelles et stylistiques produites par l'IA."},
+  {timestamp:"2026-06-10T14:05:00Z",prenom_initiale:"Karim B.",matiere:"Technologie",niveau:"5e",contexte:"Préparation de cours",outil:"Claude",avis:"positif",vigilance:"",usage:"Aide à la rédaction d'algorigrammes et explications pas à pas. Gain de temps réel en préparation de séquences."},
+  {timestamp:"2026-06-08T17:40:00Z",prenom_initiale:"Sophie L.",matiere:"Arts plastiques",niveau:"Tous niveaux",contexte:"Différenciation",outil:"Canva IA",avis:"mitige",vigilance:"Attention aux droits d'auteur et à l'originalité.",usage:"Création d'images d'illustration. Pratique mais soulève des questions à encadrer avec les élèves."}
+];
+
+let DEMO_MODE=false, allT=[], pendingImage=null, loaded=false;
+const SESSION_ID=(sessionStorage.getItem('_sid')||(()=>{const s=Math.random().toString(36).slice(2,10);sessionStorage.setItem('_sid',s);return s;})());
+
+/* ===== Helpers ===== */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+function cleanUrl(u){u=String(u||"").trim();return /^https?:\/\//i.test(u)?u:"";}
+function fmtDate(ts){const d=new Date(ts);if(isNaN(d))return"";return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});}
+function relDate(ts){const d=new Date(ts);if(isNaN(d))return"";const diff=(Date.now()-d)/86400000;if(diff<1)return"aujourd'hui";if(diff<2)return"hier";if(diff<7)return"il y a "+Math.floor(diff)+" jours";return fmtDate(ts);}
+function fillSelect(el,arr){arr.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});}
+function initSelects(){fillSelect(matiere,MATIERES);fillSelect(fMatiere,MATIERES);fillSelect(niveau,NIVEAUX);fillSelect(fNiveau,NIVEAUX);fillSelect(contexte,CONTEXTES);}
+const $=id=>document.getElementById(id);
+
+/* ===== Navigation entre vues ===== */
+const VIEWS=['accueil','consulter','partager','stats'];
+function showView(name){
+  if(!VIEWS.includes(name))name='accueil';
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  $('view-'+name).classList.add('active');
+  if(name==='accueil')updateHomeStat();
+  if(name==='stats')computeStats();
+  trackView(name);
+  window.scrollTo({top:0,behavior:'instant'in document.documentElement.style?'instant':'auto'});
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){e.preventDefault();location.hash=b.dataset.go;}});
+window.addEventListener('hashchange',()=>showView(location.hash.slice(1)));
+
+function updateHomeStat(){
+  const n=allT.length;
+  $('homeCount').textContent = loaded&&n>0 ? `${n} retour${n>1?'s':''} disponible${n>1?'s':''}` : "";
+  $('homeStat').innerHTML = !loaded ? "" : (n>0
+    ? `📋 <b>${n}</b> retour${n>1?'s':''} déjà partagé${n>1?'s':''} par vos collègues`
+    : `✨ Soyez le premier à partager une expérience !`);
+}
+
+/* ===== Statistiques ===== */
+function computeStats(){
+  const body=$('statsBody');
+  if(!loaded){body.innerHTML='<div class="loading"><div class="spinner"></div>Chargement…</div>';return;}
+  const n=allT.length;
+  if(n===0){body.innerHTML='<div class="empty">Aucune donnée pour l\'instant.<div class="cta"><button class="btn-ghost" data-go="partager">✍️ Partager le premier retour</button></div></div>';return;}
+  const av={positif:0,mitige:0,negatif:0}, outils={}, mat={};
+  allT.forEach(t=>{
+    if(av[t.avis]!==undefined)av[t.avis]++;
+    const o=String(t.outil||'').trim(); if(o){const k=o.toLowerCase();(outils[k]||(outils[k]={label:o,c:0})).c++;}
+    const m=String(t.matiere||'').trim(); if(m)mat[m]=(mat[m]||0)+1;
+  });
+  const pct=v=>Math.round(v/n*100);
+  const avRow=(key,cls,emoji,label)=>`<div class="bar-row"><span class="bl">${emoji} ${label}</span><span class="bar-track"><span class="bar-fill ${cls}" style="width:${pct(av[key])}%"></span></span><span class="bn">${av[key]} · ${pct(av[key])}%</span></div>`;
+  const topOutils=Object.values(outils).sort((a,b)=>b.c-a.c).slice(0,6);
+  const maxO=topOutils.length?topOutils[0].c:1;
+  const oRows=topOutils.map(o=>`<div class="bar-row"><span class="bl" title="${esc(o.label)}">${esc(o.label)}</span><span class="bar-track"><span class="bar-fill f-acc" style="width:${Math.round(o.c/maxO*100)}%"></span></span><span class="bn">${o.c}</span></div>`).join('');
+  const topMat=Object.entries(mat).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxM=topMat.length?topMat[0][1]:1;
+  const mRows=topMat.map(([k,v])=>`<div class="bar-row"><span class="bl" title="${esc(k)}">${esc(k)}</span><span class="bar-track"><span class="bar-fill f-teal" style="width:${Math.round(v/maxM*100)}%"></span></span><span class="bn">${v}</span></div>`).join('');
+  body.innerHTML=`
+    <div class="stat-block"><div class="stat-total"><span class="big-num">${n}</span><span class="lbl">retour${n>1?'s':''} partagé${n>1?'s':''} par vos collègues</span></div></div>
+    <div class="stat-block"><h3>🌡️ Répartition des avis</h3>${avRow('positif','f-pos','👍','Positif')}${avRow('mitige','f-mid','😐','Mitigé')}${avRow('negatif','f-neg','👎','Négatif')}</div>
+    <div class="stat-block"><h3>🛠️ Outils les plus cités</h3>${oRows}</div>
+    <div class="stat-block"><h3>📚 Matières les plus actives</h3>${mRows}</div>`;
+}
+
+/* ===== Toast ===== */
+let toastTimer=null;
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4000);}
+
+/* ===== Compteurs caractères ===== */
+$('usage').addEventListener('input',e=>$('cc').textContent=e.target.value.length);
+$('vigilance').addEventListener('input',e=>$('cv').textContent=e.target.value.length);
+
+/* ===== Capture : compression navigateur ===== */
+function compressImage(file,maxDim=1000,quality=0.72){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{const img=new Image();img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>=h&&w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;}else if(h>w&&h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;}
+      const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      const dataUrl=c.toDataURL('image/jpeg',quality);
+      resolve({dataUrl,base64:dataUrl.split(',')[1],mime:'image/jpeg',name:(file.name||'capture').replace(/\.[^.]+$/,'')+'.jpg'});
+    };img.onerror=reject;img.src=e.target.result;};
+    reader.onerror=reject;reader.readAsDataURL(file);
+  });
+}
+$('capture').addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')){alert("Veuillez choisir un fichier image.");e.target.value="";return;}
+  if(file.size>10*1024*1024){alert("Image trop lourde (max 10 Mo).");e.target.value="";return;}
+  $('dzText').textContent="Compression…";
+  try{pendingImage=await compressImage(file);$('previewImg').src=pendingImage.dataUrl;$('preview').classList.add('show');$('dzText').textContent="Changer d'image";}
+  catch(err){console.error(err);alert("Impossible de traiter cette image.");e.target.value="";$('dzText').textContent="Cliquez pour choisir une image (JPG, PNG…)";}
+});
+$('rmImg').addEventListener('click',()=>{pendingImage=null;$('capture').value="";$('preview').classList.remove('show');$('dzText').textContent="Cliquez pour choisir une image (JPG, PNG…)";});
+
+/* ===== Rendu liste ===== */
+function render(){
+  const fMat=fMatiere.value,fNiv=fNiveau.value,fAv=fAvis.value,q=fSearch.value.trim().toLowerCase(),sort=fSort.value;
+  const cards=$('cards');
+  let list=allT.slice().sort((a,b)=>{const d=new Date(b.timestamp)-new Date(a.timestamp);return sort==='ancien'?-d:d;});
+  if(fMat)list=list.filter(t=>t.matiere===fMat);
+  if(fNiv)list=list.filter(t=>t.niveau===fNiv);
+  if(fAv)list=list.filter(t=>t.avis===fAv);
+  if(q)list=list.filter(t=>[t.prenom_initiale,t.matiere,t.niveau,t.contexte,t.outil,t.usage,t.vigilance].map(x=>String(x||"").toLowerCase()).join(" ").includes(q));
+  $('count').innerHTML=`📋 <b>${list.length}</b>&nbsp;témoignage${list.length>1?'s':''}`;
+  cards.innerHTML="";
+  if(list.length===0){
+    const anyData=allT.length>0;
+    cards.innerHTML=`<div class="empty">${anyData?"Aucun témoignage ne correspond à cette recherche.":"Aucun retour pour l'instant."}<div class="cta"><button class="btn-ghost" data-go="partager">✍️ Partager le premier retour</button></div></div>`;
+    updateHomeStat();return;
+  }
+  list.forEach(t=>{
+    const a=AVIS[t.avis]||{emoji:"❓",label:t.avis||""};const lien=cleanUrl(t.lien);const cap=cleanUrl(t.capture);
+    const el=document.createElement('div');el.className='tcard a-'+(t.avis||'');
+    let html=`<div class="top"><span class="who">${esc(t.prenom_initiale)}</span><span class="avis-badge" title="${esc(a.label)}">${a.emoji}</span></div>
+      <div class="tags"><span class="tag matiere">${esc(t.matiere)}</span>${t.niveau?`<span class="tag niveau">${esc(t.niveau)}</span>`:""}${t.contexte?`<span class="tag contexte">${esc(t.contexte)}</span>`:""}<span class="tag outil">${esc(t.outil)}</span></div>
+      <div class="usage">${esc(t.usage)}</div>`;
+    if(t.vigilance)html+=`<div class="vigilance"><span>⚠️</span><span>${esc(t.vigilance)}</span></div>`;
+    if(cap)html+=`<div class="cap-wrap"><a href="${esc(cap)}" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="${esc(cap)}" alt="Capture d'écran" onerror="this.closest('.cap-wrap').style.display='none'"></a></div>`;
+    if(lien)html+=`<a class="link-chip" href="${esc(lien)}" target="_blank" rel="noopener noreferrer">🔗 Voir la ressource</a>`;
+    const id=String(t.timestamp||"");const nLikes=parseInt(t.utiles)||0;const liked=likedSet().has(id);
+    html+=`<div class="card-foot"><span class="date">🕓 ${esc(relDate(t.timestamp))}</span>`+
+      (id?`<button class="like-btn${liked?' liked':''}" data-like="${esc(id)}"${liked?' disabled':''}>👍 Utile <span class="like-n">${nLikes}</span></button>`:"")+
+      `</div>`;
+    el.innerHTML=html;cards.appendChild(el);
+  });
+  updateHomeStat();
+}
+
+/* ===== Chargement ===== */
+async function load(){
+  const status=$('status');
+  if(!APPS_SCRIPT_URL){DEMO_MODE=true;$('demoBanner').classList.add('show');allT=DEMO_DATA.slice();loaded=true;status.style.display='none';render();return;}
+  try{
+    const res=await fetch(APPS_SCRIPT_URL,{method:'GET'});if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();allT=Array.isArray(data)?data:(data.testimonials||data.data||[]);
+    loaded=true;status.style.display='none';render();
+  }catch(err){status.innerHTML="⚠️ Impossible de charger les témoignages pour le moment.";console.error(err);}
+}
+
+/* ===== Soumission ===== */
+$('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const form=e.target,flash=$('flash'),btn=$('submitBtn');flash.className='flash';
+  const entry={timestamp:new Date().toISOString(),prenom_initiale:form.prenom.value.trim(),matiere:form.matiere.value,niveau:form.niveau.value,contexte:form.contexte.value,outil:form.outil.value.trim(),usage:form.usage.value.trim(),vigilance:form.vigilance.value.trim(),lien:cleanUrl(form.lien.value),avis:form.avis.value};
+  btn.disabled=true;btn.textContent="Envoi en cours…";
+  const resetForm=()=>{form.reset();pendingImage=null;$('cc').textContent='0';$('cv').textContent='0';$('preview').classList.remove('show');$('dzText').textContent="Cliquez pour choisir une image (JPG, PNG…)";btn.disabled=false;btn.textContent="Partager mon retour";};
+
+  if(DEMO_MODE||!APPS_SCRIPT_URL){
+    if(pendingImage)entry.capture=pendingImage.dataUrl;
+    allT.push(entry);render();resetForm();
+    toast("✅ (Démo) Votre retour s'affiche mais n'est pas enregistré.");location.hash='consulter';return;
+  }
+  try{
+    const payload={...entry};
+    if(pendingImage){payload.capture_base64=pendingImage.base64;payload.capture_mime=pendingImage.mime;payload.capture_name=pendingImage.name;}
+    await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    resetForm();
+    toast("✅ Merci ! Votre retour a bien été partagé.");
+    location.hash='consulter';
+    await load(); // récupère l'entrée + lien Drive de la capture
+  }catch(err){console.error(err);flash.textContent="❌ L'envoi a échoué. Vérifiez votre connexion et réessayez.";flash.className='flash err';btn.disabled=false;btn.textContent="Partager mon retour";}
+});
+
+/* ===== Bouton "Utile" ===== */
+function likedSet(){try{return new Set(JSON.parse(localStorage.getItem('ria_likes')||'[]'));}catch(e){return new Set();}}
+function markLiked(id){const s=likedSet();s.add(id);try{localStorage.setItem('ria_likes',JSON.stringify([...s]));}catch(e){}}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('.like-btn');if(!b)return;
+  const id=b.dataset.like;if(!id||likedSet().has(id))return;
+  markLiked(id);b.classList.add('liked');b.disabled=true;
+  const span=b.querySelector('.like-n');const newN=(parseInt(span.textContent)||0)+1;span.textContent=newN;
+  const t=allT.find(x=>String(x.timestamp)===id);if(t)t.utiles=newN;
+  if(DEMO_MODE||!APPS_SCRIPT_URL)return;
+  try{await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'like',id})});}catch(err){console.error(err);}
+});
+
+/* ===== Filtres ===== */
+['fMatiere','fNiveau','fAvis','fSort'].forEach(id=>$(id).addEventListener('change',render));
+$('fSearch').addEventListener('input',render);
+
+/* ===== Go ===== */
+initSelects();
+showView(location.hash.slice(1)||'accueil');
+load();
+
+/* ===== Suivi silencieux des visites ===== */
+function trackView(n){
+  if(!APPS_SCRIPT_URL||DEMO_MODE)return;
+  fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'track',view:n,session:SESSION_ID})}).catch(()=>{});
+}
+
+/* ===== Panneau admin — accessible via ?admin dans l'URL ===== */
+const ADM_LABELS={accueil:'🏠 Page d\'accueil',consulter:'📖 Consulter les retours',partager:'✍️ Partager mon expérience',stats:'📊 Statistiques'};
+async function loadAdminPanel(){
+  const panel=$('adminPanel'),body=$('admContent');
+  panel.classList.add('show');
+  if(!APPS_SCRIPT_URL){body.innerHTML='<span>Mode démo — aucune donnée.</span>';return;}
+  try{
+    const res=await fetch(APPS_SCRIPT_URL+'?action=stats');
+    const d=await res.json();
+    const vues=d.vues||{};
+    const rows=Object.entries(ADM_LABELS).map(([k,lbl])=>`<div class="adm-row"><span>${lbl}</span><span class="adm-n">${vues[k]||0}</span></div>`).join('');
+    body.innerHTML=`<div class="adm-box"><span>📈 Pages vues totales</span><span>${d.total||0}</span></div>`+
+      `<div class="adm-box" style="margin-top:-2px"><span>👥 Sessions uniques</span><span>${d.sessions||0}</span></div>${rows}`;
+  }catch(e){body.innerHTML='<span>Erreur de chargement.</span>';}
+}
+$('admClose').addEventListener('click',()=>$('adminPanel').classList.remove('show'));
+if(new URLSearchParams(location.search).has('admin'))loadAdminPanel();
+</script>
+
+<!--
+================================================================================
+  CODE GOOGLE APPS SCRIPT — voir le fichier "apps-script-code.gs" (à jour),
+  fourni à côté de ce index.html.
+================================================================================
+-->
+</body>
+</html>
