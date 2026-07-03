@@ -125,7 +125,8 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 - **Étape 1** — injecter la **liste des élèves** ✅ (2026-07-03, classe **4G**, 26 élèves : 14 F / 12 M, dont 3 dys — détail nominatif **uniquement** dans `donnees/eleves-4G.json`, hors git · profs + e-mails injectés)
 - **Étape 2** ✅ — **Plan de classe** (`outils/plan-de-classe.html`, 🟥 local) : salle techno 30 postes + rangées 1/2, alpha/aléatoire, dys devant, séparations, impression. Vérifié en navigateur. Tableau côté postes 1-8 **confirmé**.
 - **Étape 3** ✅ (code) — **Hub de classe** (`hub-classe/` : `index.html` + `apps-script/Code.gs` + `DEPLOIEMENT.md`). Mode démo par défaut (codes DEMO1/DEMO2/PROF1). Vérifié en navigateur : connexion par code, annonces prof, questions/réponses, 👍, résolu (auteur ou prof seulement), filtre anti-insultes, signalement, modération (masquer/rétablir). **Reste à faire par le prof** : déployer (Sheet + Apps Script + dépôt `hub-4g`) selon `DEPLOIEMENT.md`, après feu vert chef d'établissement. Codes personnels générés dans `donnees/codes-eleves-4G.csv` + cartes imprimables `donnees/cartes-codes-4G.html`.
-- **Étapes suivantes** (ordre à confirmer) — Retenues (mail + Sheet) 🟦 · Inscriptions PSC1 🟩 · Équipes ménage · Workflows appréciations/HVC 🟪.
+- **Étape 4** ✅ (code) — **Retenues** (`retenues/WORKFLOW-RETENUES.md` + registre `donnees/registre-retenues-4G.xlsx` : 3 onglets, listes déroulantes élèves/créneaux/statuts). Connecteur Gmail vérifié (brouillon de test créé). Adresse vie scolaire repérée (viesco@) et ajoutée à la fondation — à confirmer. **Reste à faire par le prof** : importer le registre dans Drive en Google Sheets, le partager à l'équipe, coller le lien dans le workflow.
+- **Étapes suivantes** (ordre à confirmer) — Inscriptions PSC1 🟩 · Équipes ménage (mode « groupes » du moteur d'affectation) · Workflows appréciations/HVC 🟪.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).
@@ -143,5 +144,5 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 - [ ] Confirmer : Anglais (= VACANT 1) et l'orthographe d'un nom d'enseignant EPS (corrigé d'après l'adresse e-mail — détail dans `donnees/`).
 - [ ] Ajustements de la liste à la marge à la rentrée (quelques noms élèves/profs).
 - [ ] Contraintes « X et Y à séparer » — plus tard, au fil des observations.
-- [ ] Vie scolaire : adresses e-mail pour le module Retenues.
-- [ ] Vérifier l'état d'authentification du connecteur Gmail au moment de bâtir le module Retenues.
+- [ ] Confirmer l'adresse vie scolaire (viesco@) ajoutée dans `donnees/` d'après un brouillon Gmail existant.
+- [ ] **Extensions futures du Hub (validées dans le principe, pas maintenant)** : agent IA de modération (lecture du Sheet par Claude, à la demande ou sur rappel programmé : messages douteux, questions sans réponse, signaux faibles) · chatbot d'entraide type « Chatbot Code » / « Chatbot Systèmes » déjà en place sur le site.
