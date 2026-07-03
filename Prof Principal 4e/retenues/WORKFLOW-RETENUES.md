@@ -12,7 +12,7 @@ suivi « travail fourni » dans un **Sheet partagé équipe**.
    `../donnees/eleves-4G.json`), en écriture. **Pas de lien public.**
 3. Copier l'URL du Sheet → la coller dans la variable `LIEN_REGISTRE` ci-dessous (à la main).
 
-`LIEN_REGISTRE = (à compléter après import)`
+`LIEN_REGISTRE = https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit`
 
 ## À chaque retenue (2 minutes)
 

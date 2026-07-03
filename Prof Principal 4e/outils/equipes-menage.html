@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Équipes de ménage 4G — outil local</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  h1 { font-size: 1.15rem; margin-bottom: 2px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
+  input, button { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; }
+  button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
+  button.sec { background: #fff; color: #2c5f8a; }
+  .equipes { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .equipe { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 10px; width: 190px; }
+  .equipe h3 { font-size: .85rem; margin-bottom: 6px; color: #2c5f8a; }
+  .membre { font-size: .8rem; padding: 3px 6px; border-radius: 5px; cursor: pointer; }
+  .membre:hover { background: #eef3f8; }
+  .membre.selectionne { background: #fdf0d5; outline: 2px solid #d97706; }
+  .info { font-size: .74rem; color: #52606d; margin-bottom: 10px; }
+  table { border-collapse: collapse; background: #fff; width: 100%; font-size: .8rem; }
+  th, td { border: 1px solid #d9dee5; padding: 5px 8px; text-align: left; }
+  th { background: #2c5f8a; color: #fff; }
+  tr:nth-child(even) td { background: #f7f9fb; }
+  h2 { font-size: .95rem; margin: 14px 0 6px; }
+  .taches { font-size: .78rem; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .barre, .rgpd, .info, .membre:hover { display: none; }
+    .barre { display: none !important; }
+    @page { margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+<h1>Équipes de ménage 4G</h1>
+<p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur.</p>
+
+<div class="barre">
+  <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
+  <label>1re semaine (lundi) : <input type="date" id="debut"></label>
+  <label>Nb de semaines : <input type="number" id="nbSemaines" value="33" min="1" max="40" style="width:52px"></label>
+  <button id="btnGenerer">Générer les équipes</button>
+  <button id="btnImprimer" class="sec">Imprimer / PDF</button>
+</div>
+<p class="info">Équipes mixtes équilibrées automatiquement. Pour échanger deux élèves : clique sur l'un, puis sur l'autre. Le roulement se recalcule tout seul.</p>
+
+<div class="taches"><b>Tâches de la semaine (équipe de service)</b> : balayage de la salle · vidage des poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel.</div>
+
+<div class="equipes" id="zoneEquipes"></div>
+<h2>Roulement de l'année</h2>
+<table id="tableRoulement"></table>
+
+<script src="../donnees/eleves-4G.js"></script>
+<script>
+const CLE = "equipes-menage-4G";
+let eleves = [], equipes = [], selection = null;
+
+function generer() {
+  const taille = Math.min(5, Math.max(4, +document.getElementById("taille").value));
+  const nb = Math.ceil(eleves.length / taille);
+  // mélange par sexe puis distribution alternée -> mixité équilibrée
+  const melange = liste => { const c = [...liste]; for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; } return c; };
+  const filles = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "F"));
+  const garcons = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "M"));
+  equipes = Array.from({ length: nb }, () => []);
+  let k = 0;
+  [...filles, ...garcons].forEach(idx => { equipes[k % nb].push(idx); k++; });
+  sauvegarder();
+  dessiner();
+}
+
+function clicMembre(equipeIdx, membreIdx) {
+  if (selection === null) { selection = [equipeIdx, membreIdx]; }
+  else {
+    const [e1, m1] = selection;
+    const tmp = equipes[e1][m1];
+    equipes[e1][m1] = equipes[equipeIdx][membreIdx];
+    equipes[equipeIdx][membreIdx] = tmp;
+    selection = null;
+    sauvegarder();
+  }
+  dessiner();
+}
+
+function dessiner() {
+  const zone = document.getElementById("zoneEquipes");
+  zone.innerHTML = "";
+  equipes.forEach((eq, ei) => {
+    const div = document.createElement("div");
+    div.className = "equipe";
+    const nbF = eq.filter(i => eleves[i].sexe === "F").length;
+    div.innerHTML = "<h3>Équipe " + (ei + 1) + " <small style='color:#7b8794'>(" + nbF + "F/" + (eq.length - nbF) + "G)</small></h3>";
+    eq.forEach((idx, mi) => {
+      const m = document.createElement("div");
+      m.className = "membre" + (selection && selection[0] === ei && selection[1] === mi ? " selectionne" : "");
+      m.textContent = eleves[idx].prenom + " " + eleves[idx].nom;
+      m.onclick = () => clicMembre(ei, mi);
+      div.appendChild(m);
+    });
+    zone.appendChild(div);
+  });
+  dessinerRoulement();
+}
+
+function dessinerRoulement() {
+  const table = document.getElementById("tableRoulement");
+  if (!equipes.length) { table.innerHTML = ""; return; }
+  const debut = document.getElementById("debut").value;
+  const nbSemaines = +document.getElementById("nbSemaines").value || 33;
+  let h = "<tr><th>Semaine du</th><th>Équipe de service</th><th>Membres</th></tr>";
+  const date = debut ? new Date(debut + "T12:00") : null;
+  for (let s = 0; s < nbSemaines; s++) {
+    const eq = s % equipes.length;
+    let libelle = "S" + (s + 1);
+    if (date) {
+      const d = new Date(date); d.setDate(d.getDate() + s * 7);
+      libelle = d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+    h += "<tr><td>" + libelle + "</td><td><b>Équipe " + (eq + 1) + "</b></td><td>" +
+      equipes[eq].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ") + "</td></tr>";
+  }
+  table.innerHTML = h;
+}
+
+function sauvegarder() {
+  localStorage.setItem(CLE, JSON.stringify({
+    equipes, taille: document.getElementById("taille").value,
+    debut: document.getElementById("debut").value, nbSemaines: document.getElementById("nbSemaines").value
+  }));
+}
+
+function restaurer() {
+  const brut = localStorage.getItem(CLE);
+  if (!brut) return;
+  try {
+    const s = JSON.parse(brut);
+    equipes = s.equipes || [];
+    if (s.taille) document.getElementById("taille").value = s.taille;
+    if (s.debut) document.getElementById("debut").value = s.debut;
+    if (s.nbSemaines) document.getElementById("nbSemaines").value = s.nbSemaines;
+  } catch (e) { /* stockage corrompu : on repart à vide */ }
+}
+
+document.getElementById("btnGenerer").onclick = generer;
+document.getElementById("btnImprimer").onclick = () => window.print();
+["debut", "nbSemaines"].forEach(id => document.getElementById(id).onchange = () => { sauvegarder(); dessinerRoulement(); });
+
+if (window.DONNEES_4G) {
+  eleves = window.DONNEES_4G.eleves;
+  restaurer();
+  dessiner();
+} else {
+  document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Données introuvables : place ce fichier dans le dossier « outils » à côté de « donnees ».</p>");
+}
+</script>
+</body>
+</html>

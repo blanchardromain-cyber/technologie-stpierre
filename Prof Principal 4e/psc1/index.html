@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSC1 — Inscriptions 4G</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 560px; margin: 0 auto; padding-bottom: 40px; }
+  header { background: #a33b3b; color: #fff; padding: 12px 14px; }
+  header h1 { font-size: 1.05rem; }
+  header .sous { font-size: .72rem; opacity: .88; }
+  #bandeauDemo { background: #d97706; color: #fff; text-align: center; font-size: .75rem; padding: 4px; }
+  main { padding: 12px; }
+  .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+  .carte h3 { font-size: .92rem; margin-bottom: 4px; }
+  .carte.fermee { opacity: .6; }
+  .carte.complete { border-color: #b8c0cc; background: #f5f6f8; }
+  .badge { border-radius: 4px; padding: 1px 7px; font-size: .7rem; margin-left: 6px; }
+  .badge.ouverte { background: #e0f2e9; color: #1e6b47; }
+  .badge.fermee { background: #eceff3; color: #52606d; }
+  .badge.complete { background: #fdecec; color: #a33b3b; }
+  .places { font-size: .78rem; color: #52606d; margin: 4px 0; }
+  .inscrits { font-size: .8rem; margin-top: 6px; }
+  .inscrits span { display: inline-block; background: #e3ecf5; border-radius: 4px; padding: 2px 8px; margin: 2px; }
+  select, input[type="text"], input[type="date"], input[type="number"] { font-size: .9rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; width: 100%; }
+  button.principal { background: #a33b3b; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: .85rem; cursor: pointer; margin-top: 8px; }
+  button.sec { background: #fff; color: #a33b3b; border: 1px solid #a33b3b; border-radius: 6px; padding: 5px 10px; font-size: .75rem; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .bandeau-inscrit { background: #e0f2e9; border: 1px solid #7fbf9e; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: .88rem; }
+  #ecranConnexion { padding: 40px 20px; text-align: center; }
+  #ecranConnexion .boite { background: #fff; border: 1px solid #d9dee5; border-radius: 12px; padding: 24px 18px; max-width: 340px; margin: 0 auto; }
+  #ecranConnexion input { text-align: center; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
+  .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
+  .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
+  .zoneProf { border-top: 3px solid #a33b3b; margin-top: 16px; padding-top: 10px; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; float: right; cursor: pointer; }
+  label { font-size: .78rem; display: block; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
+<header>
+  <button id="btnDeco" style="display:none">Quitter</button>
+  <h1>🚑 PSC1 — Inscriptions 4G</h1>
+  <div class="sous">Formation Prévention et Secours Civiques — le mercredi (8h30-16h00), en binôme.</div>
+</header>
+
+<div id="ecranConnexion">
+  <div class="boite">
+    <h2 style="font-size:1rem;margin-bottom:12px">Entre ton code personnel</h2>
+    <input type="text" id="champCode" maxlength="12" autocomplete="off" placeholder="ex : K7MP2">
+    <button class="principal" id="btnConnexion">Entrer</button>
+    <div class="erreur" id="erreurConnexion"></div>
+    <p class="note">Choisis ton binôme et ta date à deux. <b>Une inscription est définitive</b> :
+    seul M. Blanchard peut la modifier.</p>
+  </div>
+</div>
+
+<div id="appli" style="display:none"><main id="contenu"></main></div>
+
+<script>
+// ============ CONFIGURATION ============
+const BACKEND_URL = ""; // URL Apps Script (vide = mode démo local)
+// =======================================
+let session = null;
+let etat = { sessions: [], inscriptions: [], eleves: [] };
+
+async function api(action, donnees = {}) {
+  if (!BACKEND_URL) return apiDemo(action, donnees);
+  const rep = await fetch(BACKEND_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, code: session ? session.code : donnees.code, ...donnees })
+  });
+  return rep.json();
+}
+
+// ---------- mode démo ----------
+function chargerDemo() {
+  const brut = localStorage.getItem("psc1_demo");
+  if (brut) return JSON.parse(brut);
+  return {
+    codes: { "DEMO1": ["Léa D.", "eleve"], "DEMO2": ["Tom D.", "eleve"], "DEMO3": ["Zoé D.", "eleve"], "PROF1": ["M. Blanchard", "prof"] },
+    sessions: [
+      { id: "s1", date: "2026-10-07", capacite: 2, ouverte: 1 },
+      { id: "s2", date: "2026-11-18", capacite: 2, ouverte: 1 },
+      { id: "s3", date: "2027-01-13", capacite: 2, ouverte: 0 }
+    ],
+    inscriptions: []
+  };
+}
+
+function apiDemo(action, d) {
+  const bdd = chargerDemo();
+  const fini = r => { localStorage.setItem("psc1_demo", JSON.stringify(bdd)); return Promise.resolve(r); };
+  const pseudoDe = c => (bdd.codes[c] || [null])[0];
+  if (action === "login") {
+    const u = bdd.codes[d.code];
+    return fini(u ? { ok: true, pseudo: u[0], role: u[1] } : { ok: false, erreur: "Code inconnu. En démo : DEMO1, DEMO2, DEMO3 ou PROF1." });
+  }
+  if (action === "etat") {
+    return fini({ ok: true, sessions: bdd.sessions, inscriptions: bdd.inscriptions,
+      eleves: Object.values(bdd.codes).filter(c => c[1] === "eleve").map(c => c[0]) });
+  }
+  if (action === "inscrire") {
+    const s = bdd.sessions.find(x => x.id === d.sessionId);
+    if (!s || !s.ouverte) return fini({ ok: false, erreur: "Session fermée." });
+    const dansSession = bdd.inscriptions.filter(i => i.sessionId === d.sessionId).length * 2;
+    if (dansSession + 2 > s.capacite) return fini({ ok: false, erreur: "Plus de place sur cette date." });
+    const dejaInscrits = bdd.inscriptions.flatMap(i => [i.pseudo1, i.pseudo2]);
+    if (dejaInscrits.includes(session.pseudo)) return fini({ ok: false, erreur: "Tu es déjà inscrit(e)." });
+    if (dejaInscrits.includes(d.binome)) return fini({ ok: false, erreur: d.binome + " est déjà inscrit(e)." });
+    if (d.binome === session.pseudo) return fini({ ok: false, erreur: "Choisis un(e) camarade, pas toi-même." });
+    bdd.inscriptions.push({ id: "i" + Date.now(), ts: Date.now(), sessionId: d.sessionId, pseudo1: session.pseudo, pseudo2: d.binome, parQui: session.pseudo });
+    return fini({ ok: true });
+  }
+  if (session && session.role === "prof") {
+    if (action === "ajouterSession") { bdd.sessions.push({ id: "s" + Date.now(), date: d.date, capacite: +d.capacite || 2, ouverte: 1 }); return fini({ ok: true }); }
+    if (action === "basculerSession") { const s = bdd.sessions.find(x => x.id === d.sessionId); if (s) s.ouverte = s.ouverte ? 0 : 1; return fini({ ok: true }); }
+    if (action === "retirer") { bdd.inscriptions = bdd.inscriptions.filter(i => i.id !== d.inscriptionId); return fini({ ok: true }); }
+  }
+  return fini({ ok: false, erreur: "Action non autorisée." });
+}
+
+// ---------- connexion ----------
+async function connecter() {
+  const code = document.getElementById("champCode").value.trim().toUpperCase();
+  if (!code) return;
+  try {
+    const rep = await api("login", { code });
+    if (!rep.ok) { document.getElementById("erreurConnexion").textContent = rep.erreur; return; }
+    session = { code, pseudo: rep.pseudo, role: rep.role };
+    localStorage.setItem("psc1_session", JSON.stringify(session));
+    document.getElementById("ecranConnexion").style.display = "none";
+    document.getElementById("appli").style.display = "block";
+    document.getElementById("btnDeco").style.display = "inline";
+    rafraichir();
+  } catch (e) { document.getElementById("erreurConnexion").textContent = "Connexion impossible."; }
+}
+
+function deconnecter() {
+  localStorage.removeItem("psc1_session");
+  session = null;
+  document.getElementById("appli").style.display = "none";
+  document.getElementById("btnDeco").style.display = "none";
+  document.getElementById("ecranConnexion").style.display = "block";
+}
+
+async function rafraichir() {
+  const rep = await api("etat");
+  if (rep.ok) etat = rep;
+  dessiner();
+}
+
+// ---------- rendu ----------
+function echap(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function dateFr(iso) { return new Date(iso + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }
+function inscritsDe(sessionId) { return etat.inscriptions.filter(i => i.sessionId === sessionId); }
+function monInscription() { return etat.inscriptions.find(i => i.pseudo1 === session.pseudo || i.pseudo2 === session.pseudo); }
+
+function dessiner() {
+  const estProf = session.role === "prof";
+  let h = "";
+
+  if (!estProf) {
+    const mienne = monInscription();
+    if (mienne) {
+      const s = etat.sessions.find(x => x.id === mienne.sessionId);
+      const binome = mienne.pseudo1 === session.pseudo ? mienne.pseudo2 : mienne.pseudo1;
+      h += '<div class="bandeau-inscrit">✅ <b>Tu es inscrit(e)</b> au PSC1 le <b>' + dateFr(s.date) + "</b> (8h30-16h00), en binôme avec <b>" + echap(binome) + "</b>.<div class='note'>Pour toute modification, vois M. Blanchard.</div></div>";
+    } else {
+      h += '<p class="note" style="margin-bottom:10px">Choisis une date <b>avec ton binôme</b> (pensez au retour à la maison le mercredi). Une seule inscription pour vous deux : l\'un de vous deux inscrit le binôme. <b>Définitif.</b></p>';
+    }
+  }
+
+  const sessionsVisibles = estProf ? etat.sessions : etat.sessions.filter(s => s.ouverte);
+  sessionsVisibles.sort((a, b) => a.date.localeCompare(b.date)).forEach(s => {
+    const inscrits = inscritsDe(s.id);
+    const placesPrises = inscrits.length * 2;
+    const complete = placesPrises >= s.capacite;
+    h += '<div class="carte' + (!s.ouverte ? " fermee" : "") + (complete ? " complete" : "") + '">';
+    h += "<h3>" + dateFr(s.date);
+    h += s.ouverte ? (complete ? '<span class="badge complete">complet</span>' : '<span class="badge ouverte">ouvert</span>') : '<span class="badge fermee">fermé</span>';
+    h += "</h3>";
+    h += '<div class="places">' + placesPrises + " / " + s.capacite + " places prises</div>";
+    if (inscrits.length) {
+      h += '<div class="inscrits">' + inscrits.map(i =>
+        "<span>" + echap(i.pseudo1) + " + " + echap(i.pseudo2) +
+        (estProf ? ' <button class="sec" onclick="retirer(\'' + i.id + '\')">retirer</button>' : "") + "</span>").join("") + "</div>";
+    }
+    if (!estProf && s.ouverte && !complete && !monInscription()) {
+      h += '<label>Ton binôme : <select id="binome-' + s.id + '">' +
+        etat.eleves.filter(p => p !== session.pseudo).map(p => "<option>" + echap(p) + "</option>").join("") +
+        "</select></label>";
+      h += '<button class="principal" onclick="inscrire(\'' + s.id + '\')">S\'inscrire à cette date</button>';
+    }
+    if (estProf) h += '<button class="sec" style="margin-top:6px" onclick="basculer(\'' + s.id + '\')">' + (s.ouverte ? "Fermer" : "Ouvrir") + " cette date</button>";
+    h += "</div>";
+  });
+  if (!sessionsVisibles.length) h += '<div class="carte">Aucune date ouverte pour le moment — reviens plus tard !</div>';
+
+  if (estProf) {
+    h += '<div class="zoneProf"><h3 style="font-size:.9rem">Ajouter une date (mercredi)</h3>' +
+      '<label>Date : <input type="date" id="nouvelleDate"></label>' +
+      '<label>Capacité (élèves) : <input type="number" id="nouvelleCapacite" value="2" min="2" step="2"></label>' +
+      '<button class="principal" onclick="ajouterSession()">Ajouter</button>' +
+      '<p class="note">Les dates s\'ouvrent au fil de l\'année (décision D4). Fermer une date la cache aux élèves sans effacer les inscrits.</p></div>';
+  }
+  document.getElementById("contenu").innerHTML = h;
+}
+
+// ---------- actions ----------
+async function inscrire(sessionId) {
+  const binome = document.getElementById("binome-" + sessionId).value;
+  const s = etat.sessions.find(x => x.id === sessionId);
+  if (!confirm("Inscription DÉFINITIVE :\n" + session.pseudo + " + " + binome + "\nle " + dateFr(s.date) + " (8h30-16h00).\n\nVous êtes bien d'accord tous les deux ?")) return;
+  const rep = await api("inscrire", { sessionId, binome });
+  if (!rep.ok) alert(rep.erreur);
+  rafraichir();
+}
+async function retirer(inscriptionId) {
+  if (!confirm("Retirer ce binôme ? (correction prof)")) return;
+  await api("retirer", { inscriptionId });
+  rafraichir();
+}
+async function basculer(sessionId) { await api("basculerSession", { sessionId }); rafraichir(); }
+async function ajouterSession() {
+  const date = document.getElementById("nouvelleDate").value;
+  if (!date) { alert("Choisis une date."); return; }
+  if (new Date(date + "T12:00").getDay() !== 3) { if (!confirm("Ce n'est pas un mercredi. Ajouter quand même ?")) return; }
+  await api("ajouterSession", { date, capacite: document.getElementById("nouvelleCapacite").value });
+  rafraichir();
+}
+
+// ---------- démarrage ----------
+if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+document.getElementById("btnConnexion").onclick = connecter;
+document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
+document.getElementById("btnDeco").onclick = deconnecter;
+const s = localStorage.getItem("psc1_session");
+if (s) {
+  session = JSON.parse(s);
+  document.getElementById("ecranConnexion").style.display = "none";
+  document.getElementById("appli").style.display = "block";
+  document.getElementById("btnDeco").style.display = "inline";
+  rafraichir();
+}
+</script>
+</body>
+</html>
