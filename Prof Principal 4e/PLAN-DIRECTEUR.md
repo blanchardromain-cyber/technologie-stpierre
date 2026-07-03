@@ -144,5 +144,5 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 - [ ] Confirmer : Anglais (= VACANT 1) et l'orthographe d'un nom d'enseignant EPS (corrigé d'après l'adresse e-mail — détail dans `donnees/`).
 - [ ] Ajustements de la liste à la marge à la rentrée (quelques noms élèves/profs).
 - [ ] Contraintes « X et Y à séparer » — plus tard, au fil des observations.
-- [ ] Confirmer l'adresse vie scolaire (viesco@) ajoutée dans `donnees/` d'après un brouillon Gmail existant.
+- [x] Adresse vie scolaire confirmée par le prof (2026-07-03), enregistrée dans `donnees/`.
 - [ ] **Extensions futures du Hub (validées dans le principe, pas maintenant)** : agent IA de modération (lecture du Sheet par Claude, à la demande ou sur rappel programmé : messages douteux, questions sans réponse, signaux faibles) · chatbot d'entraide type « Chatbot Code » / « Chatbot Systèmes » déjà en place sur le site.
