@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Trombinoscope 4G — outil local</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .barre { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
+  button { font-size: .8rem; padding: 4px 10px; border: 1px solid #2c5f8a; border-radius: 5px; background: #2c5f8a; color: #fff; cursor: pointer; }
+  .planche { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 16px; }
+  .titre { background: #cdd9f2; border: 1px solid #9db4dd; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1.05rem; padding: 8px; margin-bottom: 16px; }
+  .grille { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px 8px; }
+  .vignette { text-align: center; }
+  .vignette .cadre { width: 100%; aspect-ratio: 3 / 4; background: #eef1f5; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .vignette img { width: 100%; height: 100%; object-fit: cover; }
+  .vignette .initiales { font-size: 1.3rem; font-weight: bold; color: #98a6b5; }
+  .vignette .etiquette { font-size: .6rem; font-weight: bold; margin-top: 3px; line-height: 1.15; }
+  .vignette .etiquette small { display: block; font-weight: normal; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .barre, .rgpd { display: none !important; }
+    .planche { border: none; padding: 0; }
+    @page { size: A4 landscape; margin: 8mm; }
+  }
+</style>
+</head>
+<body>
+<p class="rgpd">Outil 100 % local — photos et noms ne quittent jamais cet ordinateur (droit à l'image).</p>
+<div class="barre">
+  <span>Photos attendues : <code>donnees/photos/NOM Prénom.jpg</code> (sans photo : initiales).</span>
+  <button onclick="window.print()">Imprimer / PDF</button>
+</div>
+
+<div class="planche">
+  <div class="titre" id="titre">4G</div>
+  <div class="grille" id="grille"></div>
+</div>
+
+<script src="../donnees/eleves-4G.js"></script>
+<script>
+if (window.DONNEES_4G) {
+  const d = window.DONNEES_4G;
+  document.getElementById("titre").textContent = d.classe + " — " + d.annee;
+  const grille = document.getElementById("grille");
+  d.eleves.slice().sort((a, b) => (a.nom + a.prenom).localeCompare(b.nom + b.prenom, "fr")).forEach(e => {
+    const v = document.createElement("div");
+    v.className = "vignette";
+    const initiales = e.prenom[0] + e.nom[0];
+    v.innerHTML = '<div class="cadre"><img src="../donnees/photos/' + encodeURIComponent(e.nom + " " + e.prenom) + '.jpg" ' +
+      'onerror="this.parentNode.innerHTML=\'<span class=&quot;initiales&quot;>' + initiales + '</span>\'"></div>' +
+      '<div class="etiquette">' + e.nom + "<small>" + e.prenom + "</small></div>";
+    grille.appendChild(v);
+  });
+} else {
+  document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Données introuvables (../donnees/eleves-4G.js).</p>");
+}
+</script>
+</body>
+</html>

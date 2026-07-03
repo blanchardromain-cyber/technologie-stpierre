@@ -1,5 +1,7 @@
 # Données nominatives élèves/profs — NE JAMAIS VERSIONNER (RGPD)
 Prof Principal 4e/donnees/
+mots_de_passe_eleves.xlsx
+Codes de connexion.txt
 
 # Fichiers temporaires
 *.tmp

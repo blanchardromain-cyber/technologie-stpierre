@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carnet de bord 4G — Suivi du règlement</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 640px; margin: 0 auto; padding-bottom: 40px; }
+  header { background: #9a6a08; color: #fff; padding: 12px 14px; }
+  header h1 { font-size: 1.05rem; }
+  header .sous { font-size: .72rem; opacity: .88; }
+  #bandeauDemo { background: #d97706; color: #fff; text-align: center; font-size: .75rem; padding: 4px; }
+  main { padding: 12px; }
+  .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 12px; margin-bottom: 10px; font-size: .85rem; }
+  select, input[type="date"], input[type="text"] { width: 100%; font-size: .9rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 4px; }
+  label { font-size: .78rem; display: block; margin-top: 8px; }
+  button.principal { background: #9a6a08; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: .85rem; cursor: pointer; margin-top: 10px; }
+  button.sec { background: #fff; color: #9a6a08; border: 1px solid #9a6a08; border-radius: 6px; padding: 4px 10px; font-size: .74rem; cursor: pointer; }
+  button.alerte { background: #c0392b; color: #fff; border: none; border-radius: 6px; padding: 4px 10px; font-size: .74rem; cursor: pointer; }
+  .jauge { background: #eceff3; border-radius: 6px; height: 14px; overflow: hidden; margin-top: 6px; }
+  .jauge div { height: 100%; background: #d97706; }
+  .jauge.critique div { background: #c0392b; }
+  table { border-collapse: collapse; width: 100%; font-size: .76rem; margin-top: 8px; }
+  th, td { border: 1px solid #d9dee5; padding: 4px 6px; text-align: left; }
+  th { background: #f5f6f8; }
+  tr.seuil td { background: #fdecec; }
+  .badge { border-radius: 4px; padding: 1px 6px; font-size: .68rem; }
+  .badge.travail { background: #e3ecf5; color: #2c5f8a; }
+  .badge.attitude { background: #fdecec; color: #a33b3b; }
+  #ecranConnexion { padding: 40px 20px; text-align: center; }
+  #ecranConnexion .boite { background: #fff; border: 1px solid #d9dee5; border-radius: 12px; padding: 24px 18px; max-width: 340px; margin: 0 auto; }
+  #ecranConnexion input { text-align: center; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
+  .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
+  .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; float: right; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
+<header>
+  <button id="btnDeco" style="display:none">Quitter</button>
+  <h1>📔 Carnet de bord 4G — Suivi du règlement</h1>
+  <div class="sous">Tu as eu une remarque écrite dans ton carnet ? Reporte-la ici : M. Blanchard est prévenu automatiquement.</div>
+</header>
+
+<div id="ecranConnexion">
+  <div class="boite">
+    <h2 style="font-size:1rem;margin-bottom:12px">Entre ton code personnel</h2>
+    <input type="text" id="champCode" maxlength="12" autocomplete="off" placeholder="ex : K7MP2">
+    <button class="principal" id="btnConnexion">Entrer</button>
+    <div class="erreur" id="erreurConnexion"></div>
+    <p class="note">Le même code que pour le Hub. Reporter sa remarque soi-même, c'est assumer — c'est le contraire d'une punition.</p>
+  </div>
+</div>
+
+<div id="appli" style="display:none"><main id="contenu"></main></div>
+
+<script>
+// ============ CONFIGURATION ============
+const BACKEND_URL = ""; // URL Apps Script (vide = mode démo local)
+// =======================================
+const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie scolaire","Autre"];
+const SEUIL = 5;
+let session = null;
+let donnees = { remarques: [] };
+
+async function api(action, d = {}) {
+  if (!BACKEND_URL) return apiDemo(action, d);
+  const rep = await fetch(BACKEND_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, code: session ? session.code : d.code, ...d })
+  });
+  return rep.json();
+}
+
+// ---------- mode démo ----------
+function chargerDemo() {
+  const brut = localStorage.getItem("carnet_demo");
+  if (brut) return JSON.parse(brut);
+  return {
+    codes: { "DEMO1": ["Léa D.", "eleve"], "DEMO2": ["Tom D.", "eleve"], "PROF1": ["M. Blanchard", "prof"] },
+    remarques: [
+      { id: "r1", ts: Date.now() - 12 * 86400000, pseudo: "Tom D.", date: "2026-06-15", matiere: "Français", categorie: "Travail personnel", precision: "Travail non fait", parents: "Oui" },
+      { id: "r2", ts: Date.now() - 5 * 86400000, pseudo: "Tom D.", date: "2026-06-22", matiere: "EPS", categorie: "Attitude au collège", precision: "Bavardages répétés", parents: "Pas encore" }
+    ]
+  };
+}
+
+function apiDemo(action, d) {
+  const bdd = chargerDemo();
+  const fini = r => { localStorage.setItem("carnet_demo", JSON.stringify(bdd)); return Promise.resolve(r); };
+  if (action === "login") {
+    const u = bdd.codes[d.code];
+    return fini(u ? { ok: true, pseudo: u[0], role: u[1] } : { ok: false, erreur: "Code inconnu. En démo : DEMO1, DEMO2 ou PROF1." });
+  }
+  if (action === "liste") {
+    const remarques = session.role === "prof" ? bdd.remarques : bdd.remarques.filter(r => r.pseudo === session.pseudo);
+    return fini({ ok: true, remarques });
+  }
+  if (action === "ajouter") {
+    bdd.remarques.push({ id: "r" + Date.now(), ts: Date.now(), pseudo: session.pseudo, date: d.date, matiere: d.matiere, categorie: d.categorie, precision: d.precision, parents: d.parents });
+    return fini({ ok: true, info: "(démo : en réel, M. Blanchard reçoit un e-mail récapitulatif)" });
+  }
+  if (action === "alerter" && session.role === "prof") return fini({ ok: true, info: "(démo : en réel, l'équipe reçoit l'alerte par e-mail)" });
+  return fini({ ok: false, erreur: "Action non autorisée." });
+}
+
+// ---------- connexion ----------
+async function connecter() {
+  const code = document.getElementById("champCode").value.trim().toUpperCase();
+  if (!code) return;
+  try {
+    const rep = await api("login", { code });
+    if (!rep.ok) { document.getElementById("erreurConnexion").textContent = rep.erreur; return; }
+    session = { code, pseudo: rep.pseudo, role: rep.role };
+    localStorage.setItem("carnet_session", JSON.stringify(session));
+    document.getElementById("ecranConnexion").style.display = "none";
+    document.getElementById("appli").style.display = "block";
+    document.getElementById("btnDeco").style.display = "inline";
+    await rafraichir();
+  } catch (e) { document.getElementById("erreurConnexion").textContent = "Connexion impossible."; }
+}
+
+function deconnecter() {
+  localStorage.removeItem("carnet_session");
+  session = null;
+  document.getElementById("appli").style.display = "none";
+  document.getElementById("btnDeco").style.display = "none";
+  document.getElementById("ecranConnexion").style.display = "block";
+}
+
+async function rafraichir() {
+  const rep = await api("liste");
+  if (rep.ok) donnees.remarques = rep.remarques;
+  dessiner();
+}
+
+// ---------- rendu ----------
+function echap(t) { const d = document.createElement("div"); d.textContent = t || ""; return d.innerHTML; }
+function badge(cat) { return '<span class="badge ' + (cat.startsWith("Travail") ? "travail" : "attitude") + '">' + (cat.startsWith("Travail") ? "Travail" : "Attitude") + "</span>"; }
+
+function dessiner() {
+  let h = "";
+  if (session.role === "eleve") {
+    const miennes = donnees.remarques.slice().sort((a, b) => b.ts - a.ts);
+    const n = miennes.length;
+    h += '<div class="carte"><b>Reporter une remarque écrite</b>' +
+      '<label>Date de la remarque <input type="date" id="fDate" value="' + new Date().toISOString().slice(0, 10) + '"></label>' +
+      '<label>Matière <select id="fMatiere">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select></label>" +
+      '<label>Catégorie <select id="fCategorie"><option>Travail personnel</option><option>Attitude au collège</option></select></label>' +
+      '<label>Précision (recopie le motif du carnet) <input type="text" id="fPrecision" maxlength="140" placeholder="ex : travail non fait, oubli de matériel…"></label>' +
+      '<label>Signée par tes parents ? <select id="fParents"><option>Oui</option><option>Pas encore</option></select></label>' +
+      '<button class="principal" onclick="ajouter()">Reporter</button>' +
+      '<p class="note">Chaque report est transmis à M. Blanchard. Un oubli de report découvert au visa du carnet, c\'est moins bien qu\'un report honnête.</p></div>';
+    h += '<div class="carte"><b>Où j\'en suis : ' + n + " remarque" + (n > 1 ? "s" : "") + " / " + SEUIL + "</b>" +
+      '<div class="jauge' + (n >= SEUIL ? " critique" : "") + '"><div style="width:' + Math.min(100, n / SEUIL * 100) + '%"></div></div>' +
+      (n >= SEUIL ? '<p class="note" style="color:#c0392b"><b>' + SEUIL + ' remarques atteintes :</b> viens voir M. Blanchard pour en parler.</p>'
+                  : '<p class="note">À ' + SEUIL + ' remarques : entretien avec M. Blanchard.</p>');
+    if (n) {
+      h += "<table><tr><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>" +
+        miennes.map(r => "<tr><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table>";
+    }
+    h += "</div>";
+  } else {
+    // vue prof : synthèse par élève
+    const parEleve = {};
+    donnees.remarques.forEach(r => { (parEleve[r.pseudo] = parEleve[r.pseudo] || []).push(r); });
+    const lignes = Object.entries(parEleve).sort((a, b) => b[1].length - a[1].length);
+    h += '<div class="carte"><b>Synthèse par élève</b> <button class="sec" style="float:right" onclick="rafraichir()">🔄 Actualiser</button>' +
+      '<p class="note">Seuil d\'entretien : ' + SEUIL + ' remarques (lignes rouges). « ⚠️ Alerter l\'équipe » envoie un e-mail récapitulatif aux collègues + vie scolaire — action volontaire, à toi de décider.</p>';
+    if (!lignes.length) h += '<p class="note">Aucune remarque reportée.</p>';
+    else {
+      h += "<table><tr><th>Élève</th><th>Total</th><th>Travail</th><th>Attitude</th><th>Dernière</th><th></th></tr>" +
+        lignes.map(([pseudo, rs]) => {
+          const travail = rs.filter(r => r.categorie.startsWith("Travail")).length;
+          const derniere = rs.slice().sort((a, b) => b.ts - a.ts)[0].date;
+          return "<tr" + (rs.length >= SEUIL ? " class='seuil'" : "") + "><td>" + echap(pseudo) + "</td><td><b>" + rs.length + "</b></td><td>" + travail + "</td><td>" + (rs.length - travail) +
+            "</td><td>" + echap(derniere) + "</td><td><button class='alerte' onclick=\"alerter('" + echap(pseudo) + "')\">⚠️ Alerter l'équipe</button></td></tr>";
+        }).join("") + "</table>";
+    }
+    h += "</div>";
+    h += '<div class="carte"><b>Journal complet</b><table><tr><th>Élève</th><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>' +
+      donnees.remarques.slice().sort((a, b) => b.ts - a.ts).map(r =>
+        "<tr><td>" + echap(r.pseudo) + "</td><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table></div>";
+  }
+  document.getElementById("contenu").innerHTML = h;
+}
+
+// ---------- actions ----------
+async function ajouter() {
+  const precision = document.getElementById("fPrecision").value.trim();
+  const rep = await api("ajouter", {
+    date: document.getElementById("fDate").value,
+    matiere: document.getElementById("fMatiere").value,
+    categorie: document.getElementById("fCategorie").value,
+    precision, parents: document.getElementById("fParents").value
+  });
+  if (!rep.ok) { alert(rep.erreur); return; }
+  alert("Remarque reportée. Merci pour ton honnêteté. " + (rep.info || ""));
+  rafraichir();
+}
+
+async function alerter(pseudo) {
+  if (!confirm("Envoyer l'alerte récapitulative concernant " + pseudo + " à l'équipe (profs + vie scolaire) ?")) return;
+  const rep = await api("alerter", { pseudo });
+  alert(rep.ok ? "Alerte envoyée. " + (rep.info || "") : rep.erreur);
+}
+
+// ---------- démarrage ----------
+if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+document.getElementById("btnConnexion").onclick = connecter;
+document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
+document.getElementById("btnDeco").onclick = deconnecter;
+const s = localStorage.getItem("carnet_session");
+if (s) {
+  session = JSON.parse(s);
+  document.getElementById("ecranConnexion").style.display = "none";
+  document.getElementById("appli").style.display = "block";
+  document.getElementById("btnDeco").style.display = "inline";
+  rafraichir();
+}
+</script>
+</body>
+</html>

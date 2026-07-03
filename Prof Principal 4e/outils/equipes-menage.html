@@ -13,22 +13,23 @@
   button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
   button.sec { background: #fff; color: #2c5f8a; }
   .equipes { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-  .equipe { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 10px; width: 190px; }
-  .equipe h3 { font-size: .85rem; margin-bottom: 6px; color: #2c5f8a; }
-  .membre { font-size: .8rem; padding: 3px 6px; border-radius: 5px; cursor: pointer; }
+  .equipe { background: #fff; border: 1px solid #d9dee5; border-top: 5px solid; border-radius: 10px; padding: 10px; width: 190px; }
+  .equipe h3 { font-size: .85rem; margin-bottom: 6px; }
+  .membre { font-size: .8rem; padding: 3px 6px; border-radius: 5px; cursor: grab; }
   .membre:hover { background: #eef3f8; }
   .membre.selectionne { background: #fdf0d5; outline: 2px solid #d97706; }
+  .equipe.survol { outline: 2px dashed #2c5f8a; }
   .info { font-size: .74rem; color: #52606d; margin-bottom: 10px; }
   table { border-collapse: collapse; background: #fff; width: 100%; font-size: .8rem; }
   th, td { border: 1px solid #d9dee5; padding: 5px 8px; text-align: left; }
   th { background: #2c5f8a; color: #fff; }
-  tr:nth-child(even) td { background: #f7f9fb; }
+  td .pastille { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  tr.ferie td { color: #9a6a08; }
   h2 { font-size: .95rem; margin: 14px 0 6px; }
   .taches { font-size: .78rem; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
   @media print {
     body { background: #fff; padding: 0; }
-    .barre, .rgpd, .info, .membre:hover { display: none; }
-    .barre { display: none !important; }
+    .barre, .rgpd, .info { display: none !important; }
     @page { margin: 10mm; }
   }
 </style>
@@ -39,28 +40,54 @@
 
 <div class="barre">
   <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
-  <label>1re semaine (lundi) : <input type="date" id="debut"></label>
-  <label>Nb de semaines : <input type="number" id="nbSemaines" value="33" min="1" max="40" style="width:52px"></label>
+  <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
+  <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
   <button id="btnGenerer">Générer les équipes</button>
+  <button id="btnCopier" class="sec">📋 Copier le planning (pour le Hub)</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
 </div>
-<p class="info">Équipes mixtes équilibrées automatiquement. Pour échanger deux élèves : clique sur l'un, puis sur l'autre. Le roulement se recalcule tout seul.</p>
+<div class="barre">
+  <label><input type="checkbox" id="sauterFeries" checked> ne pas programmer les semaines contenant un jour férié</label>
+  <span style="font-size:.7rem;color:#7b8794">Vacances zone B 2026-2027 et jours fériés intégrés — jamais de ménage sur ces périodes.</span>
+</div>
+<p class="info">Déplacer un élève : glisser-déposer sur un autre élève (interversion) ou sur une équipe (déplacement) — ou clic puis clic.</p>
 
 <div class="taches"><b>Tâches de la semaine (équipe de service)</b> : balayage de la salle · vidage des poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel.</div>
 
 <div class="equipes" id="zoneEquipes"></div>
-<h2>Roulement de l'année</h2>
+<h2>Roulement de l'année <small style="color:#7b8794" id="bilanRoulement"></small></h2>
 <table id="tableRoulement"></table>
 
 <script src="../donnees/eleves-4G.js"></script>
 <script>
 const CLE = "equipes-menage-4G";
+// Calendrier officiel 2026-2027 — zone B (académie de Nantes). Semaines repérées par leur lundi.
+const VACANCES = [
+  ["2026-10-19", "2026-11-01", "Toussaint"],
+  ["2026-12-21", "2027-01-03", "Noël"],
+  ["2027-02-22", "2027-03-07", "Hiver (zone B)"],
+  ["2027-04-19", "2027-05-02", "Printemps (zone B)"],
+  ["2027-07-05", "2027-08-31", "Été"]
+];
+const FERIES = {
+  "2026-11-11": "Armistice", "2027-03-29": "Lundi de Pâques",
+  "2027-05-06": "Ascension", "2027-05-07": "Pont de l'Ascension", "2027-05-17": "Lundi de Pentecôte"
+};
+const COULEURS = ["#2c5f8a", "#2c8a5f", "#d97706", "#8a2c6b", "#5a7a1e", "#a33b3b", "#4a5a9a", "#7a5fb0"];
+
 let eleves = [], equipes = [], selection = null;
+
+function iso(d) { return d.toISOString().slice(0, 10); }
+function estVacances(lundi) { const l = iso(lundi); return VACANCES.find(([a, b]) => l >= a && l <= b); }
+function feriesDe(lundi) {
+  const resultat = [];
+  for (let j = 0; j < 5; j++) { const d = new Date(lundi); d.setDate(d.getDate() + j); if (FERIES[iso(d)]) resultat.push({ date: new Date(d), nom: FERIES[iso(d)] }); }
+  return resultat;
+}
 
 function generer() {
   const taille = Math.min(5, Math.max(4, +document.getElementById("taille").value));
   const nb = Math.ceil(eleves.length / taille);
-  // mélange par sexe puis distribution alternée -> mixité équilibrée
   const melange = liste => { const c = [...liste]; for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; } return c; };
   const filles = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "F"));
   const garcons = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "M"));
@@ -71,16 +98,26 @@ function generer() {
   dessiner();
 }
 
-function clicMembre(equipeIdx, membreIdx) {
-  if (selection === null) { selection = [equipeIdx, membreIdx]; }
-  else {
-    const [e1, m1] = selection;
-    const tmp = equipes[e1][m1];
-    equipes[e1][m1] = equipes[equipeIdx][membreIdx];
-    equipes[equipeIdx][membreIdx] = tmp;
-    selection = null;
-    sauvegarder();
+// ---------- déplacements ----------
+function deplacer(source, cible, interversion) {
+  const [es, ms] = source;
+  if (interversion) {
+    const [ec, mc] = cible;
+    const tmp = equipes[es][ms];
+    equipes[es][ms] = equipes[ec][mc];
+    equipes[ec][mc] = tmp;
+  } else {
+    const idx = equipes[es].splice(ms, 1)[0];
+    equipes[cible].push(idx);
   }
+  selection = null;
+  sauvegarder();
+  dessiner();
+}
+
+function clicMembre(ei, mi) {
+  if (selection === null) selection = [ei, mi];
+  else { deplacer(selection, [ei, mi], true); return; }
   dessiner();
 }
 
@@ -88,15 +125,33 @@ function dessiner() {
   const zone = document.getElementById("zoneEquipes");
   zone.innerHTML = "";
   equipes.forEach((eq, ei) => {
+    const couleur = COULEURS[ei % COULEURS.length];
     const div = document.createElement("div");
     div.className = "equipe";
+    div.style.borderTopColor = couleur;
     const nbF = eq.filter(i => eleves[i].sexe === "F").length;
-    div.innerHTML = "<h3>Équipe " + (ei + 1) + " <small style='color:#7b8794'>(" + nbF + "F/" + (eq.length - nbF) + "G)</small></h3>";
+    div.innerHTML = "<h3 style='color:" + couleur + "'>Équipe " + (ei + 1) + " <small style='color:#7b8794'>(" + nbF + "F/" + (eq.length - nbF) + "G)</small></h3>";
+    div.ondragover = ev => { ev.preventDefault(); div.classList.add("survol"); };
+    div.ondragleave = () => div.classList.remove("survol");
+    div.ondrop = ev => {
+      ev.preventDefault(); div.classList.remove("survol");
+      if (ev.target.classList.contains("membre")) return; // géré par le membre
+      const [es, ms] = JSON.parse(ev.dataTransfer.getData("text"));
+      if (es !== ei) deplacer([es, ms], ei, false);
+    };
     eq.forEach((idx, mi) => {
       const m = document.createElement("div");
       m.className = "membre" + (selection && selection[0] === ei && selection[1] === mi ? " selectionne" : "");
       m.textContent = eleves[idx].prenom + " " + eleves[idx].nom;
+      m.draggable = true;
       m.onclick = () => clicMembre(ei, mi);
+      m.ondragstart = ev => ev.dataTransfer.setData("text", JSON.stringify([ei, mi]));
+      m.ondragover = ev => ev.preventDefault();
+      m.ondrop = ev => {
+        ev.preventDefault(); ev.stopPropagation();
+        const src = JSON.parse(ev.dataTransfer.getData("text"));
+        if (src[0] !== ei || src[1] !== mi) deplacer(src, [ei, mi], true);
+      };
       div.appendChild(m);
     });
     zone.appendChild(div);
@@ -104,30 +159,72 @@ function dessiner() {
   dessinerRoulement();
 }
 
+function calculerRoulement() {
+  if (!equipes.length) return [];
+  const debut = document.getElementById("debut").value;
+  if (!debut) return [];
+  const objectif = +document.getElementById("nbSemaines").value || 30;
+  const sauterFeries = document.getElementById("sauterFeries").checked;
+  const lignes = [];
+  let lundi = new Date(debut + "T12:00");
+  lundi.setDate(lundi.getDate() - ((lundi.getDay() + 6) % 7)); // recale sur le lundi
+  let programmees = 0, garde = 0;
+  while (programmees < objectif && garde++ < 80) {
+    const vac = estVacances(lundi);
+    const feries = feriesDe(lundi);
+    if (vac) {
+      lignes.push({ lundi: new Date(lundi), type: "vacances", nom: vac[2] });
+    } else if (sauterFeries && feries.length) {
+      lignes.push({ lundi: new Date(lundi), type: "ferie-saute", nom: feries.map(f => f.nom).join(" + ") });
+    } else {
+      lignes.push({ lundi: new Date(lundi), type: "menage", equipe: programmees % equipes.length, ferie: feries.map(f => f.nom).join(" + ") });
+      programmees++;
+    }
+    lundi.setDate(lundi.getDate() + 7);
+  }
+  return lignes;
+}
+
 function dessinerRoulement() {
   const table = document.getElementById("tableRoulement");
-  if (!equipes.length) { table.innerHTML = ""; return; }
-  const debut = document.getElementById("debut").value;
-  const nbSemaines = +document.getElementById("nbSemaines").value || 33;
-  let h = "<tr><th>Semaine du</th><th>Équipe de service</th><th>Membres</th></tr>";
-  const date = debut ? new Date(debut + "T12:00") : null;
-  for (let s = 0; s < nbSemaines; s++) {
-    const eq = s % equipes.length;
-    let libelle = "S" + (s + 1);
-    if (date) {
-      const d = new Date(date); d.setDate(d.getDate() + s * 7);
-      libelle = d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const lignes = calculerRoulement();
+  if (!lignes.length) { table.innerHTML = ""; document.getElementById("bilanRoulement").textContent = ""; return; }
+  const nbMenage = lignes.filter(l => l.type === "menage").length;
+  document.getElementById("bilanRoulement").textContent =
+    "— " + nbMenage + " semaines de ménage · " + lignes.filter(l => l.type === "vacances").length + " semaines de vacances écartées · " +
+    lignes.filter(l => l.type === "ferie-saute").length + " semaines fériées écartées";
+  let h = "<tr><th>Semaine du</th><th>Équipe de service</th><th>Membres / remarque</th></tr>";
+  lignes.forEach(l => {
+    const dateFr = l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    if (l.type === "vacances")
+      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Vacances : " + l.nom + "</td></tr>";
+    else if (l.type === "ferie-saute")
+      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Semaine écartée (férié : " + l.nom + ")</td></tr>";
+    else {
+      const couleur = COULEURS[l.equipe % COULEURS.length];
+      h += "<tr><td>" + dateFr + "</td><td><span class='pastille' style='background:" + couleur + "'></span><b style='color:" + couleur + "'>Équipe " + (l.equipe + 1) + "</b></td><td>" +
+        equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ") +
+        (l.ferie ? " <i style='color:#9a6a08'>(férié dans la semaine : " + l.ferie + ")</i>" : "") + "</td></tr>";
     }
-    h += "<tr><td>" + libelle + "</td><td><b>Équipe " + (eq + 1) + "</b></td><td>" +
-      equipes[eq].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ") + "</td></tr>";
-  }
+  });
   table.innerHTML = h;
+}
+
+function copierPlanning() {
+  const lignes = calculerRoulement().filter(l => l.type === "menage");
+  const texte = "🧹 Équipes de ménage 4G — roulement\n" +
+    "Tâches : balayage, poubelles/tri, tableau, rangement.\n\n" +
+    lignes.map(l => "Semaine du " + l.lundi.toLocaleDateString("fr-FR") + " : Équipe " + (l.equipe + 1) + " — " +
+      equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ")).join("\n");
+  navigator.clipboard.writeText(texte).then(() => alert("Planning copié ! Colle-le dans une annonce du Hub."),
+    () => prompt("Copie manuelle :", texte));
 }
 
 function sauvegarder() {
   localStorage.setItem(CLE, JSON.stringify({
     equipes, taille: document.getElementById("taille").value,
-    debut: document.getElementById("debut").value, nbSemaines: document.getElementById("nbSemaines").value
+    debut: document.getElementById("debut").value, nbSemaines: document.getElementById("nbSemaines").value,
+    sauterFeries: document.getElementById("sauterFeries").checked
   }));
 }
 
@@ -140,12 +237,14 @@ function restaurer() {
     if (s.taille) document.getElementById("taille").value = s.taille;
     if (s.debut) document.getElementById("debut").value = s.debut;
     if (s.nbSemaines) document.getElementById("nbSemaines").value = s.nbSemaines;
+    document.getElementById("sauterFeries").checked = s.sauterFeries !== false;
   } catch (e) { /* stockage corrompu : on repart à vide */ }
 }
 
 document.getElementById("btnGenerer").onclick = generer;
+document.getElementById("btnCopier").onclick = copierPlanning;
 document.getElementById("btnImprimer").onclick = () => window.print();
-["debut", "nbSemaines"].forEach(id => document.getElementById(id).onchange = () => { sauvegarder(); dessinerRoulement(); });
+["debut", "nbSemaines", "sauterFeries"].forEach(id => document.getElementById(id).onchange = () => { sauvegarder(); dessinerRoulement(); });
 
 if (window.DONNEES_4G) {
   eleves = window.DONNEES_4G.eleves;
