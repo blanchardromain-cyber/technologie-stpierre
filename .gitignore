@@ -1,0 +1,6 @@
+# Données nominatives élèves/profs — NE JAMAIS VERSIONNER (RGPD)
+Prof Principal 4e/donnees/
+
+# Fichiers temporaires
+*.tmp
+~$*

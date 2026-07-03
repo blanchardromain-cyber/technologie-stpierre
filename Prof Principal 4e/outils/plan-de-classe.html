@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Plan de classe 4G — outil local</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  h1 { font-size: 1.15rem; margin-bottom: 2px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+  .barre label { font-size: .8rem; }
+  select, button, input[type="number"] { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; background: #fff; }
+  button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
+  button.sec { background: #fff; color: #2c5f8a; }
+  button:hover { opacity: .88; }
+  .zone { display: flex; gap: 12px; align-items: flex-start; }
+  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; flex: 1; min-height: 420px; }
+  .tableau-bar { position: absolute; left: 25%; width: 50%; height: 22px; background: #4a5a6a; color: #fff; font-size: .7rem; text-align: center; line-height: 22px; border-radius: 4px; }
+  .place { position: absolute; border: 1.5px solid #8fa3b8; border-radius: 6px; background: #eef3f8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; text-align: center; }
+  .place .num { position: absolute; top: 1px; left: 4px; font-size: .58rem; color: #98a6b5; }
+  .place .prenom { font-size: .72rem; font-weight: 600; line-height: 1.05; }
+  .place .nom { font-size: .58rem; color: #52606d; line-height: 1.05; }
+  .place.vide { background: #fafbfc; border-style: dashed; }
+  .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f; }
+  .place.selectionnee { border-color: #d97706; box-shadow: 0 0 0 2px #d97706; }
+  .place.conflit { box-shadow: inset 0 0 0 2px #c0392b; }
+  #lateral { width: 240px; }
+  .panneau { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: .78rem; }
+  .panneau h2 { font-size: .82rem; margin-bottom: 6px; }
+  .legende span { display: inline-block; margin-right: 8px; }
+  .pastille { display: inline-block; width: 10px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 3px; }
+  #listeSeps div { display: flex; justify-content: space-between; padding: 2px 0; }
+  #listeSeps button { padding: 0 6px; font-size: .7rem; background: #c0392b; border-color: #c0392b; }
+  #nonPlaces span { display: inline-block; background: #fdf0d5; border: 1px solid #e0b84d; border-radius: 4px; padding: 1px 5px; margin: 2px; cursor: pointer; }
+  #chargeur { background: #fff7e6; border: 1px solid #e0b84d; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+  .info { font-size: .74rem; color: #52606d; margin-top: 6px; }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .barre, #lateral, .rgpd, .info, #chargeur { display: none !important; }
+    .place.dys { box-shadow: none; }
+    .place.conflit { box-shadow: none; }
+    #salle { border: none; }
+    @page { size: A4 landscape; margin: 8mm; }
+  }
+</style>
+</head>
+<body>
+<h1 id="titre">Plan de classe 4G</h1>
+<p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur. Ne pas déposer ce dossier « donnees » en ligne.</p>
+
+<div id="chargeur" style="display:none">
+  Données élèves introuvables (<code>../donnees/eleves-4G.js</code>).
+  Sélectionne le fichier <b>eleves-4G.json</b> : <input type="file" id="fichierJson" accept=".json">
+</div>
+
+<div class="barre">
+  <label>Salle :
+    <select id="gabarit">
+      <option value="techno">Salle techno (30 postes)</option>
+      <option value="rangs2">Rangées — tables de 2</option>
+      <option value="rangs1">Rangées — tables de 1</option>
+    </select>
+  </label>
+  <span id="paramsRangs" style="display:none">
+    <label>Rangs : <input type="number" id="nbRangs" value="4" min="1" max="8" style="width:44px"></label>
+    <label>Tables/rang : <input type="number" id="nbTables" value="4" min="1" max="8" style="width:44px"></label>
+  </span>
+  <label>Placement :
+    <select id="mode">
+      <option value="alpha">Alphabétique</option>
+      <option value="alea">Aléatoire</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="dysDevant" checked> dys devant</label>
+  <button id="btnGenerer">Générer</button>
+  <button id="btnVider" class="sec">Vider</button>
+  <button id="btnImprimer" class="sec">Imprimer / PDF</button>
+</div>
+
+<div class="zone">
+  <div id="salle"></div>
+  <div id="lateral">
+    <div class="panneau legende">
+      <h2>Légende (écran seulement)</h2>
+      <span><span class="pastille" style="background:#eef3f8;border:2px solid #2c8a5f"></span>dys</span>
+      <span><span class="pastille" style="background:#eef3f8;border:2px solid #d97706"></span>sélection</span>
+      <span><span class="pastille" style="background:#eef3f8;border:2px solid #c0392b"></span>conflit</span>
+      <p class="info">Échanger deux élèves : cliquer une place, puis une autre (ou glisser-déposer). Les marquages n'apparaissent pas à l'impression.</p>
+    </div>
+    <div class="panneau">
+      <h2>À séparer</h2>
+      <select id="sepA"></select> <select id="sepB"></select>
+      <button id="btnAjouterSep" class="sec" style="margin-top:4px">Ajouter</button>
+      <div id="listeSeps"></div>
+    </div>
+    <div class="panneau">
+      <h2>Non placés</h2>
+      <div id="nonPlaces"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../donnees/eleves-4G.js"></script>
+<script>
+const CLE_STOCKAGE = "plan-de-classe-4G";
+let eleves = [];
+let places = [];            // {id, x, y, rangDevant}  rangDevant: 0 = le plus proche du tableau
+let affectation = {};       // placeId -> index élève
+let separations = [];       // [ [idxA, idxB], ... ]
+let selection = null;
+
+// --- Salle techno : reproduction de la salle réelle (30 postes, 2 blocs en escalier).
+// Tableau côté postes 1-8 (bas). Colonnes 0-3 = bloc gauche, 6-9 = bloc droit.
+const TECHNO = [
+  [25,0,0],[26,1,0],[29,2,0],[30,3,0],
+  [24,2,1],
+  [21,0,2],[22,1,2],[23,2,2],
+  [16,2,3],
+  [13,0,4],[14,1,4],[15,2,4],
+  [8,2,5],
+  [5,0,6],[6,1,6],[7,2,6],
+  [27,7,0],[28,8,0],
+  [20,7,1],
+  [19,7,2],[18,8,2],[17,9,2],
+  [12,7,3],
+  [11,7,4],[10,8,4],[9,9,4],
+  [4,7,5],
+  [3,7,6],[2,8,6],[1,9,6]
+];
+
+function construireGabarit() {
+  const g = document.getElementById("gabarit").value;
+  document.getElementById("paramsRangs").style.display = g === "techno" ? "none" : "inline";
+  places = [];
+  if (g === "techno") {
+    // tableau en bas (ligne 6 = devant)
+    TECHNO.forEach(([num, cx, cy]) => places.push({ id: "p" + num, num, x: cx, y: cy, rangDevant: 6 - cy }));
+  } else {
+    const nbRangs = +document.getElementById("nbRangs").value;
+    const nbTables = +document.getElementById("nbTables").value;
+    const parTable = g === "rangs2" ? 2 : 1;
+    let num = 1;
+    for (let r = 0; r < nbRangs; r++)
+      for (let t = 0; t < nbTables; t++)
+        for (let s = 0; s < parTable; s++) {
+          places.push({ id: "p" + num, num, x: t * (parTable + 0.6) + s, y: r + 1, rangDevant: r });
+          num++;
+        }
+  }
+}
+
+function ordreAlpha(a, b) { return (a.nom + a.prenom).localeCompare(b.nom + b.prenom, "fr"); }
+
+function genererPlan() {
+  const mode = document.getElementById("mode").value;
+  const dysDevant = document.getElementById("dysDevant").checked;
+  affectation = {};
+  // ordre de parcours des places : du tableau vers le fond, puis de gauche à droite
+  const placesTriees = [...places].sort((p, q) => p.rangDevant - q.rangDevant || p.x - q.x);
+  let listeEleves = eleves.map((e, i) => ({ ...e, idx: i }));
+  if (mode === "alpha") listeEleves.sort(ordreAlpha);
+  else for (let i = listeEleves.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [listeEleves[i], listeEleves[j]] = [listeEleves[j], listeEleves[i]]; }
+
+  let restantes = [...placesTriees];
+  if (dysDevant) {
+    const dys = listeEleves.filter(e => e.tags.includes("dys"));
+    listeEleves = listeEleves.filter(e => !e.tags.includes("dys"));
+    dys.forEach(e => { const p = restantes.shift(); if (p) affectation[p.id] = e.idx; });
+  }
+  listeEleves.forEach(e => { const p = restantes.shift(); if (p) affectation[p.id] = e.idx; });
+  reparerSeparations();
+  sauvegarder();
+  afficher();
+}
+
+function voisines(p, q) {
+  const dx = Math.abs(p.x - q.x), dy = Math.abs(p.y - q.y);
+  return dx <= 1 && dy <= 1 && !(dx === 0 && dy === 0);
+}
+
+function conflits() {
+  const résultat = [];
+  separations.forEach(([a, b]) => {
+    const pa = places.find(p => affectation[p.id] === a);
+    const pb = places.find(p => affectation[p.id] === b);
+    if (pa && pb && voisines(pa, pb)) résultat.push([pa.id, pb.id]);
+  });
+  return résultat;
+}
+
+function reparerSeparations() {
+  // échange l'un des deux avec une place non voisine, 50 essais max
+  for (let essai = 0; essai < 50; essai++) {
+    const enConflit = conflits();
+    if (!enConflit.length) return;
+    const [idA] = enConflit[0];
+    const occupees = places.filter(p => affectation[p.id] !== undefined && p.id !== idA);
+    const pa = places.find(p => p.id === idA);
+    const cible = occupees.find(p => !voisines(p, pa) && conflitSiEchange(idA, p.id) === 0);
+    if (!cible) return; // pas de solution simple : le conflit restera signalé en rouge
+    [affectation[idA], affectation[cible.id]] = [affectation[cible.id], affectation[idA]];
+  }
+}
+
+function conflitSiEchange(idA, idB) {
+  const sauve = { a: affectation[idA], b: affectation[idB] };
+  [affectation[idA], affectation[idB]] = [sauve.b, sauve.a];
+  const n = conflits().length;
+  [affectation[idA], affectation[idB]] = [sauve.a, sauve.b];
+  return n;
+}
+
+function afficher() {
+  const salle = document.getElementById("salle");
+  salle.innerHTML = "";
+  const L = 62, H = 46, MX = 18, MY = 40;
+  const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
+  salle.style.height = (MY * 2 + (maxY + 1) * (H + 10)) + "px";
+  salle.style.minWidth = (MX * 2 + (maxX + 1) * (L + 8)) + "px";
+
+  const barre = document.createElement("div");
+  barre.className = "tableau-bar";
+  barre.textContent = "TABLEAU";
+  const technoActif = document.getElementById("gabarit").value === "techno";
+  barre.style[technoActif ? "bottom" : "top"] = "6px";
+  salle.appendChild(barre);
+
+  const enConflit = conflits().flat();
+  places.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "place vide";
+    div.style.left = (MX + p.x * (L + 8)) + "px";
+    div.style.top = (MY + (technoActif ? p.y : p.y - 1) * (H + 10) + (technoActif ? 0 : 20)) + "px";
+    div.style.width = L + "px"; div.style.height = H + "px";
+    div.dataset.place = p.id;
+    div.innerHTML = '<span class="num">' + p.num + "</span>";
+    const idx = affectation[p.id];
+    if (idx !== undefined) {
+      const e = eleves[idx];
+      div.classList.remove("vide");
+      if (e.tags.includes("dys")) div.classList.add("dys");
+      if (enConflit.includes(p.id)) div.classList.add("conflit");
+      div.innerHTML += '<span class="prenom">' + e.prenom + '</span><span class="nom">' + e.nom + "</span>";
+      div.draggable = true;
+    }
+    if (selection === p.id) div.classList.add("selectionnee");
+    div.onclick = () => clicPlace(p.id);
+    div.ondragstart = ev => ev.dataTransfer.setData("text", p.id);
+    div.ondragover = ev => ev.preventDefault();
+    div.ondrop = ev => { ev.preventDefault(); echanger(ev.dataTransfer.getData("text"), p.id); };
+    salle.appendChild(div);
+  });
+
+  const placés = new Set(Object.values(affectation));
+  const bac = document.getElementById("nonPlaces");
+  bac.innerHTML = "";
+  eleves.forEach((e, i) => {
+    if (!placés.has(i)) {
+      const s = document.createElement("span");
+      s.textContent = e.prenom + " " + e.nom;
+      s.onclick = () => { selection = "eleve:" + i; afficher(); };
+      if (selection === "eleve:" + i) s.style.outline = "2px solid #d97706";
+      bac.appendChild(s);
+    }
+  });
+  if (!bac.innerHTML) bac.innerHTML = '<span style="background:none;border:none;cursor:default">— tous placés —</span>';
+  afficherSeparations();
+}
+
+function clicPlace(id) {
+  if (selection === null) { selection = id; }
+  else if (selection === id) { selection = null; }
+  else if (selection.startsWith("eleve:")) {
+    const idx = +selection.slice(6);
+    if (affectation[id] === undefined) { affectation[id] = idx; selection = null; sauvegarder(); }
+    else selection = id;
+  }
+  else { echanger(selection, id); return; }
+  afficher();
+}
+
+function echanger(idA, idB) {
+  if (idA === idB || !idA) return;
+  [affectation[idA], affectation[idB]] = [affectation[idB], affectation[idA]];
+  if (affectation[idA] === undefined) delete affectation[idA];
+  if (affectation[idB] === undefined) delete affectation[idB];
+  selection = null;
+  sauvegarder();
+  afficher();
+}
+
+function afficherSeparations() {
+  const div = document.getElementById("listeSeps");
+  div.innerHTML = "";
+  separations.forEach(([a, b], i) => {
+    const ligne = document.createElement("div");
+    ligne.innerHTML = "<span>" + eleves[a].prenom + " ↔ " + eleves[b].prenom + "</span>";
+    const btn = document.createElement("button");
+    btn.textContent = "×";
+    btn.onclick = () => { separations.splice(i, 1); sauvegarder(); afficher(); };
+    ligne.appendChild(btn);
+    div.appendChild(ligne);
+  });
+}
+
+function remplirSelects() {
+  ["sepA", "sepB"].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = "";
+    eleves.forEach((e, i) => {
+      const o = document.createElement("option");
+      o.value = i; o.textContent = e.prenom + " " + e.nom.slice(0, 3) + ".";
+      sel.appendChild(o);
+    });
+  });
+}
+
+function sauvegarder() {
+  localStorage.setItem(CLE_STOCKAGE, JSON.stringify({
+    gabarit: document.getElementById("gabarit").value,
+    nbRangs: document.getElementById("nbRangs").value,
+    nbTables: document.getElementById("nbTables").value,
+    affectation, separations
+  }));
+}
+
+function restaurer() {
+  const brut = localStorage.getItem(CLE_STOCKAGE);
+  if (!brut) return;
+  try {
+    const s = JSON.parse(brut);
+    document.getElementById("gabarit").value = s.gabarit || "techno";
+    document.getElementById("nbRangs").value = s.nbRangs || 4;
+    document.getElementById("nbTables").value = s.nbTables || 4;
+    affectation = s.affectation || {};
+    separations = s.separations || [];
+  } catch (e) { /* stockage corrompu : on repart à vide */ }
+}
+
+function demarrer(donnees) {
+  eleves = donnees.eleves;
+  document.getElementById("titre").textContent =
+    "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
+  remplirSelects();
+  restaurer();
+  construireGabarit();
+  afficher();
+}
+
+document.getElementById("gabarit").onchange = () => { construireGabarit(); affectation = {}; afficher(); };
+["nbRangs", "nbTables"].forEach(id => document.getElementById(id).onchange = () => { construireGabarit(); affectation = {}; afficher(); });
+document.getElementById("btnGenerer").onclick = genererPlan;
+document.getElementById("btnVider").onclick = () => { affectation = {}; selection = null; sauvegarder(); afficher(); };
+document.getElementById("btnImprimer").onclick = () => window.print();
+document.getElementById("btnAjouterSep").onclick = () => {
+  const a = +document.getElementById("sepA").value, b = +document.getElementById("sepB").value;
+  if (a !== b && !separations.some(([x, y]) => (x === a && y === b) || (x === b && y === a))) {
+    separations.push([a, b]);
+    sauvegarder(); afficher();
+  }
+};
+
+if (window.DONNEES_4G) demarrer(window.DONNEES_4G);
+else {
+  document.getElementById("chargeur").style.display = "block";
+  document.getElementById("fichierJson").onchange = ev => {
+    const lecteur = new FileReader();
+    lecteur.onload = () => { document.getElementById("chargeur").style.display = "none"; demarrer(JSON.parse(lecteur.result)); };
+    lecteur.readAsText(ev.target.files[0], "UTF-8");
+  };
+}
+</script>
+</body>
+</html>
