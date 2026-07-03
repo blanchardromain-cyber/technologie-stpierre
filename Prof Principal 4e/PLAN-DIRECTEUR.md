@@ -123,8 +123,9 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 
 - **Étape 0** — figer ce plan directeur ✅ · définir le **format de la liste élèves** ✅
 - **Étape 1** — injecter la **liste des élèves** ✅ (2026-07-03, classe **4G**, 26 élèves : 14 F / 12 M, dont 3 dys — détail nominatif **uniquement** dans `donnees/eleves-4G.json`, hors git · profs + e-mails injectés)
-- **Étape 2 (en cours)** — **Plan de classe** (🟥 local, sans backend) : gain immédiat + **construit le moteur d'affectation** réutilisé ensuite. Placement **alphabétique pour les 2 premières semaines** (décision D8).
-- **Étapes suivantes** (ordre à confirmer) — Hub de classe 🟩 · Retenues (mail + Sheet) 🟦 · Inscriptions PSC1 🟩 · Équipes ménage · Workflows appréciations/HVC 🟪.
+- **Étape 2** ✅ — **Plan de classe** (`outils/plan-de-classe.html`, 🟥 local) : salle techno 30 postes + rangées 1/2, alpha/aléatoire, dys devant, séparations, impression. Vérifié en navigateur. Tableau côté postes 1-8 **confirmé**.
+- **Étape 3** ✅ (code) — **Hub de classe** (`hub-classe/` : `index.html` + `apps-script/Code.gs` + `DEPLOIEMENT.md`). Mode démo par défaut (codes DEMO1/DEMO2/PROF1). Vérifié en navigateur : connexion par code, annonces prof, questions/réponses, 👍, résolu (auteur ou prof seulement), filtre anti-insultes, signalement, modération (masquer/rétablir). **Reste à faire par le prof** : déployer (Sheet + Apps Script + dépôt `hub-4g`) selon `DEPLOIEMENT.md`, après feu vert chef d'établissement. Codes personnels générés dans `donnees/codes-eleves-4G.csv` + cartes imprimables `donnees/cartes-codes-4G.html`.
+- **Étapes suivantes** (ordre à confirmer) — Retenues (mail + Sheet) 🟦 · Inscriptions PSC1 🟩 · Équipes ménage · Workflows appréciations/HVC 🟪.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).

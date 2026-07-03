@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hub de classe 4G</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 640px; margin: 0 auto; padding-bottom: 40px; }
+  header { background: #2c5f8a; color: #fff; padding: 12px 14px; }
+  header h1 { font-size: 1.05rem; }
+  header .sous { font-size: .72rem; opacity: .85; }
+  #bandeauDemo { background: #d97706; color: #fff; text-align: center; font-size: .75rem; padding: 4px; }
+  nav { display: flex; background: #fff; border-bottom: 2px solid #d9dee5; position: sticky; top: 0; z-index: 5; }
+  nav button { flex: 1; padding: 10px 4px; border: none; background: none; font-size: .85rem; cursor: pointer; color: #52606d; border-bottom: 3px solid transparent; }
+  nav button.actif { color: #2c5f8a; font-weight: 600; border-bottom-color: #2c5f8a; }
+  main { padding: 12px; }
+  .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .carte.resolue { opacity: .75; }
+  .carte.masquee { border-color: #c0392b; background: #fdf3f2; }
+  .meta { font-size: .72rem; color: #7b8794; margin-bottom: 4px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .badge { border-radius: 4px; padding: 1px 6px; font-size: .68rem; }
+  .badge.matiere { background: #e3ecf5; color: #2c5f8a; }
+  .badge.prof { background: #2c8a5f; color: #fff; }
+  .badge.resolu { background: #2c8a5f; color: #fff; }
+  .badge.signale { background: #c0392b; color: #fff; }
+  .texte { font-size: .9rem; white-space: pre-wrap; word-break: break-word; }
+  .actions { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .actions button { font-size: .72rem; padding: 3px 8px; border: 1px solid #b8c0cc; border-radius: 12px; background: #fff; cursor: pointer; color: #3e4c59; }
+  .actions button:hover { background: #eef3f8; }
+  .reponses { margin-top: 8px; border-left: 3px solid #e3ecf5; padding-left: 10px; }
+  .reponse { margin-bottom: 8px; }
+  .reponse.deProf { border-left: 3px solid #2c8a5f; padding-left: 6px; margin-left: -10px; }
+  form.composer { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 10px; margin-bottom: 14px; }
+  textarea, select, input[type="text"], input[type="password"] { width: 100%; font-size: .9rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; font-family: inherit; }
+  textarea { resize: vertical; min-height: 56px; margin-top: 6px; }
+  .ligneBtn { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+  button.principal { background: #2c5f8a; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: .85rem; cursor: pointer; }
+  button.principal:hover { opacity: .9; }
+  .filtres { display: flex; gap: 8px; margin-bottom: 10px; font-size: .78rem; align-items: center; flex-wrap: wrap; }
+  .filtres select { width: auto; padding: 4px; font-size: .78rem; }
+  #ecranConnexion { padding: 40px 20px; text-align: center; }
+  #ecranConnexion .boite { background: #fff; border: 1px solid #d9dee5; border-radius: 12px; padding: 24px 18px; max-width: 340px; margin: 0 auto; }
+  #ecranConnexion h2 { font-size: 1rem; margin-bottom: 12px; }
+  #ecranConnexion input { text-align: center; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
+  .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
+  .vide { text-align: center; color: #7b8794; font-size: .85rem; padding: 24px; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; cursor: pointer; float: right; }
+  .charte { font-size: .72rem; color: #7b8794; margin-top: 14px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
+<header>
+  <button id="btnDeco" style="display:none">Quitter</button>
+  <h1>Hub de classe 4G</h1>
+  <div class="sous">Infos, entraide et questions — un espace lisible par tous, encadré par le professeur principal.</div>
+</header>
+
+<div id="ecranConnexion">
+  <div class="boite">
+    <h2>Entre ton code personnel</h2>
+    <input type="text" id="champCode" maxlength="12" autocomplete="off" placeholder="ex : K7MP2">
+    <div class="ligneBtn" style="justify-content:center">
+      <button class="principal" id="btnConnexion">Entrer</button>
+    </div>
+    <div class="erreur" id="erreurConnexion"></div>
+    <p class="charte">Ton code est personnel : ne le prête pas. Tout ce que tu écris est visible de la classe et du professeur.</p>
+  </div>
+</div>
+
+<div id="appli" style="display:none">
+  <nav>
+    <button data-onglet="annonces" class="actif">📢 Annonces</button>
+    <button data-onglet="entraide">🤝 Entraide</button>
+    <button data-onglet="moderation" id="ongletModeration" style="display:none">🛡️ Modération</button>
+  </nav>
+  <main id="contenu"></main>
+</div>
+
+<script>
+// ============ CONFIGURATION ============
+// URL du déploiement Apps Script (vide = mode démo local).
+const BACKEND_URL = "";
+// =======================================
+
+const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie de classe","Autre"];
+const MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
+let session = null;   // {code, pseudo, role}
+let messages = [];
+let ongletActif = "annonces";
+let filtreMatiere = "", masquerResolues = false;
+
+function contientInsulte(texte) {
+  const t = " " + texte.toLowerCase().replace(/[.,!?;:'"()\n]/g, " ") + " ";
+  return MOTS_BLOQUES.some(m => t.includes(" " + m + " "));
+}
+
+// ---------- accès données : backend réel ou démo locale ----------
+async function api(action, donnees = {}) {
+  if (!BACKEND_URL) return apiDemo(action, donnees);
+  const rep = await fetch(BACKEND_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, code: session ? session.code : donnees.code, ...donnees })
+  });
+  return rep.json();
+}
+
+function chargerDemo() {
+  const brut = localStorage.getItem("hub4g_demo");
+  if (brut) return JSON.parse(brut);
+  const t = Date.now();
+  return {
+    codes: { "DEMO1": ["Léa D.", "eleve"], "DEMO2": ["Tom D.", "eleve"], "PROF1": ["M. Blanchard", "prof"] },
+    messages: [
+      { id: "a1", ts: t - 86400000, pseudo: "M. Blanchard", role: "prof", type: "annonce", parentId: "", matiere: "Vie de classe", texte: "Bienvenue sur le Hub de la 4G ! Ici : les infos de la classe et l'entraide entre vous. Relisez la charte affichée en classe.", resolu: 0, masque: 0, merci: [], signale: 0 },
+      { id: "q1", ts: t - 7200000, pseudo: "Tom D.", role: "eleve", type: "question", parentId: "", matiere: "Technologie", texte: "Quelqu'un a compris l'exercice 3 sur les algorigrammes ? Je bloque sur le losange de condition.", resolu: 0, masque: 0, merci: [], signale: 0 },
+      { id: "r1", ts: t - 3600000, pseudo: "Léa D.", role: "eleve", type: "reponse", parentId: "q1", matiere: "", texte: "Le losange c'est la question qu'on pose : si la réponse est oui tu suis une flèche, sinon l'autre.", resolu: 0, masque: 0, merci: ["DEMO2"], signale: 0 }
+    ]
+  };
+}
+
+function apiDemo(action, d) {
+  const bdd = chargerDemo();
+  const fini = (rep) => { localStorage.setItem("hub4g_demo", JSON.stringify(bdd)); return Promise.resolve(rep); };
+  if (action === "login") {
+    const c = bdd.codes[d.code];
+    return fini(c ? { ok: true, pseudo: c[0], role: c[1] } : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
+  }
+  if (action === "liste") return fini({ ok: true, messages: bdd.messages });
+  if (action === "poster") {
+    bdd.messages.push({ id: "m" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, type: d.type, parentId: d.parentId || "", matiere: d.matiere || "", texte: d.texte, resolu: 0, masque: 0, merci: [], signale: 0 });
+    return fini({ ok: true });
+  }
+  const m = bdd.messages.find(x => x.id === d.id);
+  if (!m) return fini({ ok: false, erreur: "Message introuvable" });
+  if (action === "merci" && !m.merci.includes(session.code)) m.merci.push(session.code);
+  if (action === "resoudre") m.resolu = 1;
+  if (action === "masquer") m.masque = d.retablir ? 0 : 1;
+  if (action === "signaler") m.signale = (m.signale || 0) + 1;
+  return fini({ ok: true });
+}
+
+// ---------- connexion ----------
+async function connecter() {
+  const code = document.getElementById("champCode").value.trim().toUpperCase();
+  if (!code) return;
+  document.getElementById("erreurConnexion").textContent = "";
+  try {
+    const rep = await api("login", { code });
+    if (!rep.ok) { document.getElementById("erreurConnexion").textContent = rep.erreur || "Code inconnu."; return; }
+    session = { code, pseudo: rep.pseudo, role: rep.role };
+    localStorage.setItem("hub4g_session", JSON.stringify(session));
+    afficherAppli();
+  } catch (e) {
+    document.getElementById("erreurConnexion").textContent = "Connexion impossible. Réessaie plus tard.";
+  }
+}
+
+function deconnecter() {
+  localStorage.removeItem("hub4g_session");
+  session = null;
+  document.getElementById("appli").style.display = "none";
+  document.getElementById("btnDeco").style.display = "none";
+  document.getElementById("ecranConnexion").style.display = "block";
+}
+
+async function afficherAppli() {
+  document.getElementById("ecranConnexion").style.display = "none";
+  document.getElementById("appli").style.display = "block";
+  document.getElementById("btnDeco").style.display = "inline";
+  if (session.role === "prof") document.getElementById("ongletModeration").style.display = "block";
+  await rafraichir();
+}
+
+async function rafraichir() {
+  const rep = await api("liste");
+  if (rep.ok) messages = rep.messages;
+  dessiner();
+}
+
+// ---------- rendu ----------
+function echap(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function quand(ts) {
+  const min = Math.round((Date.now() - ts) / 60000);
+  if (min < 1) return "à l'instant";
+  if (min < 60) return "il y a " + min + " min";
+  if (min < 1440) return "il y a " + Math.round(min / 60) + " h";
+  return new Date(ts).toLocaleDateString("fr-FR");
+}
+
+function carteMessage(m, estModeration) {
+  const reponses = messages.filter(r => r.type === "reponse" && r.parentId === m.id && (estModeration || !r.masque))
+    .sort((a, b) => (b.merci.length - a.merci.length) || (a.ts - b.ts));
+  let h = '<div class="carte' + (m.resolu ? " resolue" : "") + (m.masque ? " masquee" : "") + '">';
+  h += '<div class="meta"><b>' + echap(m.pseudo) + "</b>";
+  if (m.role === "prof") h += '<span class="badge prof">prof</span>';
+  if (m.matiere) h += '<span class="badge matiere">' + echap(m.matiere) + "</span>";
+  h += "<span>" + quand(m.ts) + "</span>";
+  if (m.resolu) h += '<span class="badge resolu">✅ Résolu</span>';
+  if (estModeration && m.signale) h += '<span class="badge signale">⚠️ signalé ×' + m.signale + "</span>";
+  if (estModeration && m.masque) h += '<span class="badge signale">masqué</span>';
+  h += '</div><div class="texte">' + echap(m.texte) + "</div>";
+
+  if (reponses.length) {
+    h += '<div class="reponses">';
+    reponses.forEach(r => {
+      h += '<div class="reponse' + (r.role === "prof" ? " deProf" : "") + '"><div class="meta"><b>' + echap(r.pseudo) + "</b>";
+      if (r.role === "prof") h += '<span class="badge prof">réponse du prof</span>';
+      h += "<span>" + quand(r.ts) + "</span>";
+      if (estModeration && r.signale) h += '<span class="badge signale">⚠️ ×' + r.signale + "</span>";
+      if (estModeration && r.masque) h += '<span class="badge signale">masqué</span>';
+      h += '</div><div class="texte">' + echap(r.texte) + "</div>";
+      h += '<div class="actions">';
+      if (!estModeration) {
+        h += '<button onclick="agir(\'merci\',\'' + r.id + '\')">👍 ça m\'a aidé (' + r.merci.length + ")</button>";
+        h += '<button onclick="signalerMsg(\'' + r.id + '\')">⚠️</button>';
+      } else {
+        h += '<button onclick="agir(\'masquer\',\'' + r.id + '\',' + (r.masque ? 1 : 0) + ')">' + (r.masque ? "Rétablir" : "Masquer") + "</button>";
+      }
+      h += "</div></div>";
+    });
+    h += "</div>";
+  }
+
+  h += '<div class="actions">';
+  if (!estModeration) {
+    if (m.type === "question") {
+      h += '<button onclick="repondreA(\'' + m.id + '\')">💬 Répondre</button>';
+      if (!m.resolu && (m.pseudo === session.pseudo || session.role === "prof"))
+        h += '<button onclick="agir(\'resoudre\',\'' + m.id + '\')">✅ Marquer résolu</button>';
+    }
+    h += '<button onclick="signalerMsg(\'' + m.id + '\')">⚠️ Signaler</button>';
+  } else {
+    h += '<button onclick="agir(\'masquer\',\'' + m.id + '\',' + (m.masque ? 1 : 0) + ')">' + (m.masque ? "Rétablir" : "Masquer") + "</button>";
+  }
+  h += "</div>";
+  h += '<div id="zoneReponse-' + m.id + '"></div>';
+  return h + "</div>";
+}
+
+function dessiner() {
+  const zone = document.getElementById("contenu");
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("actif", b.dataset.onglet === ongletActif));
+  let h = "";
+
+  if (ongletActif === "annonces") {
+    if (session.role === "prof")
+      h += '<form class="composer" onsubmit="posterAnnonce(event)"><b style="font-size:.85rem">Nouvelle annonce</b><textarea id="texteAnnonce" placeholder="Info pour la classe…"></textarea><div class="ligneBtn"><button class="principal">Publier</button></div></form>';
+    const annonces = messages.filter(m => m.type === "annonce" && !m.masque).sort((a, b) => b.ts - a.ts);
+    h += annonces.length ? annonces.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune annonce pour le moment.</div>';
+  }
+
+  if (ongletActif === "entraide") {
+    h += '<form class="composer" onsubmit="posterQuestion(event)"><b style="font-size:.85rem">Poser une question à la classe</b>' +
+      '<select id="matiereQuestion" style="margin-top:6px">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select>" +
+      '<textarea id="texteQuestion" placeholder="Ex : exercice 3 p.42, je ne comprends pas la consigne…"></textarea>' +
+      '<div class="ligneBtn"><button class="principal">Publier</button><span style="font-size:.7rem;color:#7b8794">Visible par toute la classe et le prof.</span></div></form>';
+    h += '<div class="filtres"><label>Matière : <select id="filtreMatiere" onchange="filtreMatiere=this.value;dessiner()"><option value="">Toutes</option>' +
+      MATIERES.map(m => '<option' + (filtreMatiere === m ? " selected" : "") + ">" + m + "</option>").join("") + "</select></label>" +
+      '<label><input type="checkbox" onchange="masquerResolues=this.checked;dessiner()"' + (masquerResolues ? " checked" : "") + "> cacher les résolues</label>" +
+      '<button style="margin-left:auto;font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="rafraichir()">🔄 Actualiser</button></div>';
+    let questions = messages.filter(m => m.type === "question" && !m.masque);
+    if (filtreMatiere) questions = questions.filter(m => m.matiere === filtreMatiere);
+    if (masquerResolues) questions = questions.filter(m => !m.resolu);
+    questions.sort((a, b) => (a.resolu - b.resolu) || (b.ts - a.ts));
+    h += questions.length ? questions.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune question. Lance-toi !</div>';
+  }
+
+  if (ongletActif === "moderation") {
+    const tous = messages.filter(m => m.type !== "reponse").sort((a, b) => (b.signale || 0) - (a.signale || 0) || b.ts - a.ts);
+    h += '<p style="font-size:.78rem;color:#52606d;margin-bottom:10px">Vue prof : tout est visible, y compris les messages masqués. Les signalements remontent en premier. La correspondance pseudo → nom complet est dans ton fichier local <b>codes-eleves-4G.csv</b>.</p>';
+    h += tous.length ? tous.map(m => carteMessage(m, true)).join("") : '<div class="vide">Rien à modérer.</div>';
+  }
+
+  zone.innerHTML = h;
+}
+
+// ---------- actions ----------
+async function posterAnnonce(ev) {
+  ev.preventDefault();
+  const texte = document.getElementById("texteAnnonce").value.trim();
+  if (!texte) return;
+  await api("poster", { type: "annonce", matiere: "Vie de classe", texte });
+  rafraichir();
+}
+
+async function posterQuestion(ev) {
+  ev.preventDefault();
+  const texte = document.getElementById("texteQuestion").value.trim();
+  if (!texte) return;
+  if (contientInsulte(texte)) { alert("Ton message contient un mot interdit. Reformule-le."); return; }
+  await api("poster", { type: "question", matiere: document.getElementById("matiereQuestion").value, texte });
+  rafraichir();
+}
+
+function repondreA(id) {
+  const zone = document.getElementById("zoneReponse-" + id);
+  if (zone.innerHTML) { zone.innerHTML = ""; return; }
+  zone.innerHTML = '<form class="composer" style="margin:8px 0 0" onsubmit="envoyerReponse(event,\'' + id + '\')"><textarea id="texteReponse-' + id + '" placeholder="Ta réponse…"></textarea><div class="ligneBtn"><button class="principal">Envoyer</button></div></form>';
+}
+
+async function envoyerReponse(ev, parentId) {
+  ev.preventDefault();
+  const texte = document.getElementById("texteReponse-" + parentId).value.trim();
+  if (!texte) return;
+  if (contientInsulte(texte)) { alert("Ton message contient un mot interdit. Reformule-le."); return; }
+  await api("poster", { type: "reponse", parentId, texte });
+  rafraichir();
+}
+
+async function agir(action, id, retablir) {
+  await api(action, { id, retablir: retablir ? 1 : 0 });
+  rafraichir();
+}
+
+async function signalerMsg(id) {
+  if (!confirm("Signaler ce message au professeur principal ?")) return;
+  await api("signaler", { id });
+  alert("Signalement transmis. Merci.");
+  rafraichir();
+}
+
+// ---------- démarrage ----------
+if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+document.getElementById("btnConnexion").onclick = connecter;
+document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
+document.getElementById("btnDeco").onclick = deconnecter;
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => { ongletActif = b.dataset.onglet; dessiner(); });
+const sessionSauvee = localStorage.getItem("hub4g_session");
+if (sessionSauvee) { session = JSON.parse(sessionSauvee); afficherAppli(); }
+</script>
+</body>
+</html>
