@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Couteau Suisse PP 4G — Portail</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 980px; margin: 0 auto; padding: 18px; }
+  .entete { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  .entete img { height: 56px; }
+  h1 { font-size: 1.3rem; }
+  .sous { font-size: .78rem; color: #52606d; margin-bottom: 16px; }
+  .tiroirs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .tiroir { background: #fff; border: 1px solid #d9dee5; border-top: 5px solid; border-radius: 10px; padding: 12px; }
+  .tiroir h2 { font-size: .92rem; margin-bottom: 2px; }
+  .tiroir .ou { font-size: .7rem; color: #7b8794; margin-bottom: 10px; }
+  .tiroir.vert { border-top-color: #2c8a5f; } .tiroir.vert h2 { color: #1e6b47; }
+  .tiroir.bleu { border-top-color: #2c5f8a; } .tiroir.bleu h2 { color: #2c5f8a; }
+  .tiroir.rouge { border-top-color: #b23b3b; } .tiroir.rouge h2 { color: #a33b3b; }
+  .tiroir.violet { border-top-color: #6d4fa3; } .tiroir.violet h2 { color: #6d4fa3; }
+  .module { display: block; padding: 8px 10px; border: 1px solid #e4e8ee; border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: #1f2933; font-size: .84rem; }
+  a.module:hover { background: #f5f8fb; border-color: #b8c0cc; }
+  .module small { display: block; font-size: .7rem; color: #7b8794; margin-top: 2px; }
+  .chip { float: right; font-size: .64rem; border-radius: 4px; padding: 1px 6px; }
+  .chip.pret { background: #e0f2e9; color: #1e6b47; }
+  .chip.attente { background: #fdf0d5; color: #9a6a08; }
+  .chip.claude { background: #eee9f7; color: #6d4fa3; }
+  .rappel { font-size: .72rem; color: #7b8794; margin-top: 16px; border-top: 1px solid #d9dee5; padding-top: 10px; }
+</style>
+</head>
+<body>
+<div class="entete">
+  <img src="../Logo college/Nouveau logo.png" alt="Logo du collège" onerror="this.style.display='none'">
+  <div>
+    <h1>🇨🇭 Couteau Suisse — Prof Principal 4G</h1>
+    <div class="sous">La couleur d'un module indique où vivent ses données. Rouge = ne quitte jamais cet ordinateur.</div>
+  </div>
+</div>
+
+<div class="tiroirs">
+  <div class="tiroir vert">
+    <h2>🟩 Public élèves</h2>
+    <div class="ou">GitHub Pages + Apps Script — codes personnels</div>
+    <a class="module" id="lienHub" href="hub-classe/index.html">Hub de classe<span class="chip attente" id="chipHub">démo locale</span><small>Annonces · entraide modérée · signalement</small></a>
+    <a class="module" id="lienPsc1" href="psc1/index.html">Inscriptions PSC1<span class="chip attente" id="chipPsc1">démo locale</span><small>Binômes · mercredis · définitif</small></a>
+  </div>
+
+  <div class="tiroir bleu">
+    <h2>🟦 Privé Drive</h2>
+    <div class="ou">Ton compte Google — partagé équipe si besoin</div>
+    <a class="module" id="lienRegistre" href="#" target="_blank">Registre des retenues<span class="chip attente" id="chipRegistre">à configurer</span><small>Suivi + « travail fourni » par les collègues</small></a>
+    <span class="module" style="opacity:.55">Suivi élèves / synthèse conseil<span class="chip attente">à venir</span><small>S'appuiera sur le classeur maître 4G</small></span>
+  </div>
+
+  <div class="tiroir rouge">
+    <h2>🟥 Local RGPD</h2>
+    <div class="ou">100 % sur cet ordinateur — rien ne sort</div>
+    <a class="module" href="outils/plan-de-classe.html">Plan de classe<span class="chip pret">prêt</span><small>Salle techno · rangées · dys devant · séparations</small></a>
+    <a class="module" href="outils/equipes-menage.html">Équipes de ménage<span class="chip pret">prêt</span><small>Équipes mixtes · roulement annuel</small></a>
+    <a class="module" href="donnees/cartes-codes-4G.html">Cartes codes élèves<span class="chip pret">prêt</span><small>À imprimer et distribuer (Hub + PSC1)</small></a>
+    <span class="module" style="opacity:.55">Trombinoscope<span class="chip attente">à venir</span></span>
+  </div>
+
+  <div class="tiroir violet">
+    <h2>🟪 Workflows Claude</h2>
+    <div class="ou">Procédures : ouvre Claude et dis…</div>
+    <span class="module">« Appréciations T1 » (T2, T3)<span class="chip claude">avec Claude</span><small>Dépose l'export EcoleDirecte → synthèses ≤ 400 car. — voir appreciations/</small></span>
+    <span class="module">« Retenue : élève, date, motif »<span class="chip claude">avec Claude</span><small>Brouillon Gmail collègues + message parents — voir retenues/</small></span>
+    <span class="module">« CR réunion parents » · « Séance HVC »<span class="chip claude">avec Claude</span><small>Notes en vrac → document propre</small></span>
+  </div>
+</div>
+
+<p class="rappel">📕 Référence : <b>PLAN-DIRECTEUR.md</b> (dans ce dossier). Données nominatives : dossier <b>donnees/</b> — exclu de git, à sauvegarder par tes soins (clé USB / Drive perso chiffré).</p>
+
+<script src="donnees/config-portail.js"></script>
+<script>
+(function () {
+  const c = window.CONFIG_PORTAIL || {};
+  if (c.hub) { document.getElementById("lienHub").href = c.hub; document.getElementById("chipHub").textContent = "en ligne"; document.getElementById("chipHub").className = "chip pret"; }
+  if (c.psc1) { document.getElementById("lienPsc1").href = c.psc1; document.getElementById("chipPsc1").textContent = "en ligne"; document.getElementById("chipPsc1").className = "chip pret"; }
+  if (c.registreRetenues) { document.getElementById("lienRegistre").href = c.registreRetenues; document.getElementById("chipRegistre").textContent = "en ligne"; document.getElementById("chipRegistre").className = "chip pret"; }
+})();
+</script>
+</body>
+</html>
