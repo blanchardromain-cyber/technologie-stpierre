@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>HVC 4G — Séance 1 : Accueil & lancement</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #1f2933; color: #fff; height: 100vh; overflow: hidden; }
+  .diapo { display: none; height: 100vh; padding: 6vh 8vw; flex-direction: column; justify-content: center; }
+  .diapo.active { display: flex; }
+  .etape { font-size: 1.1rem; color: #7fb2dd; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { font-size: 3rem; line-height: 1.15; margin-bottom: 20px; }
+  h2 { font-size: 2.4rem; line-height: 1.2; margin-bottom: 24px; }
+  ul { font-size: 1.7rem; line-height: 1.7; list-style: none; }
+  ul li::before { content: "→ "; color: #7fb2dd; }
+  .minuteur { position: fixed; top: 14px; right: 18px; font-size: 1rem; color: #98a6b5; }
+  .pied { position: fixed; bottom: 14px; left: 0; right: 0; text-align: center; font-size: .85rem; color: #98a6b5; }
+  .accent { color: #f0b429; }
+  .carte-code { display: inline-block; background: #fff; color: #1f2933; border-radius: 10px; padding: 16px 26px; margin-top: 18px; text-align: center; }
+  .carte-code code { display: block; font-size: 2rem; letter-spacing: 4px; margin-top: 6px; }
+  .regle { background: rgba(240,180,41,.12); border-left: 6px solid #f0b429; padding: 14px 20px; font-size: 1.6rem; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<section class="diapo active">
+  <div class="etape">Séance 1 · Vie de classe</div>
+  <h1>Bienvenue en <span class="accent">4G</span> 👋</h1>
+  <ul>
+    <li>Votre professeur principal : <b>M. Blanchard</b> (Technologie)</li>
+    <li>26 élèves, une équipe de 12 professeurs</li>
+    <li>30 minutes ensemble chaque semaine : la vie de VOTRE classe</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">5 min · L'année de 4e</div>
+  <h2>À quoi sert la 4e ?</h2>
+  <ul>
+    <li>Monter en autonomie (méthodes, organisation)</li>
+    <li>Commencer à réfléchir à <b>l'orientation</b> (on en reparlera)</li>
+    <li>Vivre ensemble correctement — en classe <b>et</b> en ligne</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">10 min · Les outils de la classe</div>
+  <h2>Votre <span class="accent">code personnel</span></h2>
+  <ul>
+    <li>Une carte par personne, à coller dans le carnet</li>
+    <li>Il ouvre : le <b>Hub de classe</b> (infos + entraide), les <b>inscriptions PSC1</b>, le <b>carnet de bord en ligne</b></li>
+    <li><b>Personnel</b> : on ne le prête pas, on ne le perd pas</li>
+  </ul>
+  <div class="carte-code">Hub de classe 4G<br><b>PRÉNOM NOM</b><code>•••••</code></div>
+</section>
+
+<section class="diapo">
+  <div class="etape">Les outils · suite</div>
+  <h2>Le Hub de classe 🤝</h2>
+  <ul>
+    <li><b>Annonces</b> : les infos de la classe, au même endroit</li>
+    <li><b>Entraide</b> : bloqué sur un exercice ? Pose ta question, la classe répond</li>
+    <li>Tout est <b>visible de tous</b> et de M. Blanchard : pas de messages privés</li>
+    <li>Bouton <b>signalement</b> : un souci → le PP est prévenu</li>
+  </ul>
+  <div class="regle">Règle d'or : on n'écrit rien qu'on ne dirait pas devant toute la classe.</div>
+</section>
+
+<section class="diapo">
+  <div class="etape">Les outils · fin</div>
+  <h2>Le carnet de bord 📔</h2>
+  <ul>
+    <li>Remarque écrite dans le carnet → <b>tu la reportes toi-même</b> en ligne</li>
+    <li>Reporter soi-même = <b>assumer</b>, ce n'est pas une punition</li>
+    <li>À 5 remarques : entretien avec M. Blanchard pour trouver des solutions</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">5 min · La semaine prochaine</div>
+  <h2>On écrira <span class="accent">notre charte</span></h2>
+  <ul>
+    <li>Comment on se parle (en classe, sur le Hub, sur vos groupes privés)</li>
+    <li>Photos et droit à l'image</li>
+    <li>Que faire quand ça dérape</li>
+  </ul>
+  <div class="regle">D'ici là : connectez-vous une fois au Hub avec votre code (lien sur EcoleDirecte).</div>
+</section>
+
+<section class="diapo">
+  <div class="etape">Questions</div>
+  <h1>Des questions ? 🙋</h1>
+  <ul>
+    <li>Élection des délégués : dans 3 semaines (pensez-y !)</li>
+    <li>Équipes de ménage : roulement affiché bientôt</li>
+  </ul>
+</section>
+
+<div class="minuteur" id="minuteur">0:00</div>
+<div class="pied">← / → ou clic pour naviguer · <span id="position"></span></div>
+
+<script>
+const diapos = document.querySelectorAll(".diapo");
+let courante = 0;
+function aller(n) {
+  courante = Math.max(0, Math.min(diapos.length - 1, n));
+  diapos.forEach((d, i) => d.classList.toggle("active", i === courante));
+  document.getElementById("position").textContent = (courante + 1) + " / " + diapos.length;
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") aller(courante + 1);
+  if (e.key === "ArrowLeft" || e.key === "PageUp") aller(courante - 1);
+});
+document.addEventListener("click", () => aller(courante + 1));
+const depart = Date.now();
+setInterval(() => {
+  const s = Math.floor((Date.now() - depart) / 1000);
+  document.getElementById("minuteur").textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}, 1000);
+aller(0);
+</script>
+</body>
+</html>
