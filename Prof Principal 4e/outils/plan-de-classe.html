@@ -45,7 +45,8 @@
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
     .place.devant-tag { border-color: #8fa3b8; border-width: 1.5px; }
-    #salle { border: none; transform-origin: top left; }
+    #salle { border: none; transform-origin: top left; transform: scale(var(--echelle-print, 1)); }
+    .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4 landscape; margin: 8mm; }
   }
 </style>
@@ -272,7 +273,8 @@ function afficher() {
   const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY * 2 + (maxY + 1) * (H + 10);
   salle.style.height = hauteurSalle + "px";
   salle.style.minWidth = largeurSalle + "px";
-  salle.dataset.l = largeurSalle; salle.dataset.h = hauteurSalle;
+  // pleine page A4 paysage (~1040 x 640 px utiles à 96 dpi) : échelle appliquée par le CSS @media print
+  salle.style.setProperty("--echelle-print", Math.min(1040 / largeurSalle, 640 / hauteurSalle).toFixed(3));
 
   const barre = document.createElement("div");
   barre.className = "tableau-bar";
@@ -418,14 +420,7 @@ function majEntetePrint() {
     " — imprimé le " + new Date().toLocaleDateString("fr-FR");
 }
 
-window.addEventListener("beforeprint", () => {
-  majEntetePrint();
-  const salle = document.getElementById("salle");
-  // pleine page A4 paysage : ~1040 x 660 px utiles à 96 dpi (marges déduites)
-  const echelle = Math.min(1040 / +salle.dataset.l, 640 / +salle.dataset.h);
-  salle.style.transform = "scale(" + echelle.toFixed(3) + ")";
-});
-window.addEventListener("afterprint", () => { document.getElementById("salle").style.transform = ""; });
+window.addEventListener("beforeprint", majEntetePrint); // rafraîchit la date d'impression ; l'échelle, elle, est en CSS pur
 
 // ---------- sauvegarde auto + plans nommés ----------
 function instantane() {
