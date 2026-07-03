@@ -1,7 +1,7 @@
 # Profil de style — appréciations PP (R. Blanchard, 4G)
 
-> **À relire et corriger une fois** (raye, remplace, complète). Claude applique ce profil
-> à chaque trimestre. Version : 1.0 — pré-remplie par défaut, non encore validée.
+> Profil **validé par le prof le 2026-07-03** (version 1.1). Claude applique ce profil à chaque
+> trimestre. Toute retouche ultérieure : modifier ce fichier, la version suivante s'appliquera.
 
 ## Registre
 
@@ -15,14 +15,14 @@
 1. Vue d'ensemble du trimestre (travail + attitude) — 1 phrase.
 2. Point fort concret (matière ou compétence) — 1 phrase.
 3. Axe de progrès actionnable — 1 phrase.
-4. (Si utile) Encouragement ou mise en garde — courte.
+4. (Si utile) Encouragement ou mise en garde travail ou félicitations sauf si comportement reprochable— courte.
 
 ## Barème de tonalité (à ajuster)
 
 | Situation | Tonalité | Exemple de formule |
 |---|---|---|
 | Résultats + attitude très bons | Félicitations | « Excellent trimestre. Félicitations. » |
-| Bons résultats, peut mieux | Compliments / encouragements | « Bon trimestre. [Prénom] peut viser plus haut en… » |
+| Bons résultats, peut mieux | encouragements | « Bon trimestre. [Prénom] peut viser plus haut en… » |
 | Travail sérieux, résultats moyens | Encouragements | « Le sérieux de [Prénom] doit finir par payer : poursuivre les efforts en… » |
 | Résultats en baisse | Alerte constructive | « Trimestre en retrait. Un ressaisissement est attendu en… » |
 | Attitude problématique | Mise en garde ferme | « L'attitude de [Prénom] pénalise ses apprentissages. Un changement est attendu dès… » |
@@ -30,9 +30,9 @@
 
 ## Mes règles personnelles (à compléter)
 
-- Mentions (félicitations / compliments / encouragements) : suivre le règlement du collège. **[Tes seuils ?]**
+- Mentions (félicitations / encouragements) : suivre le règlement du collège. **[félicitations si moyenne générale > 16,5 sur 20, encouragements si moyenne > 10 sur 20 avec une reconnaissance de travail et d'efforts]**
 - Toujours terminer une appréciation négative par une porte de sortie (« attendu », « possible », « à sa portée »).
 - Ne jamais comparer un élève à un autre.
 - Progression inter-trimestres : la nommer explicitement à partir du T2.
-- Interdits : **[tes mots/formules à bannir ?]**
+- Interdits : aucun pour l'instant (à compléter au fil de l'eau si des formules dérangent).
 - Tics à éviter : « continuez ainsi » plus de 3 fois par classe.

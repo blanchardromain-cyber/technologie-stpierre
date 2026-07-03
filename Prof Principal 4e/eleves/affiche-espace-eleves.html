@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Affiche — Espace élèves 4G</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; text-align: center; padding: 40px 20px; color: #1f2933; }
+  h1 { font-size: 2.4rem; }
+  p.sous { font-size: 1.2rem; color: #52606d; margin: 12px 0 24px; }
+  img.qr { width: 340px; height: 340px; }
+  .modules { display: flex; justify-content: center; gap: 24px; margin-top: 24px; font-size: 1.15rem; }
+  .modules span { display: inline-block; padding: 10px 18px; border-radius: 10px; border: 2px solid; }
+  .hub { border-color: #2c5f8a; color: #2c5f8a; }
+  .psc1 { border-color: #a33b3b; color: #a33b3b; }
+  .carnet { border-color: #9a6a08; color: #9a6a08; }
+  p.code { margin-top: 26px; font-size: 1.1rem; }
+  @page { size: A4 portrait; margin: 12mm; }
+</style>
+</head>
+<body>
+<h1>📱 Espace élèves 4G</h1>
+<p class="sous">Scanne avec ton téléphone — ou lien dans le Post-it EcoleDirecte</p>
+<img class="qr" src="qr-espace-eleves.png" alt="QR code vers l'espace élèves 4G">
+<div class="modules">
+  <span class="hub">🤝 Hub de classe</span>
+  <span class="psc1">🚑 PSC1</span>
+  <span class="carnet">📔 Carnet de bord</span>
+</div>
+<p class="code">🔑 Entrée avec <b>ton code personnel</b> (carte collée dans le carnet)</p>
+</body>
+</html>

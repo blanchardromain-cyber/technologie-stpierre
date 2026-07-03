@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Espace élèves 4G</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 560px; margin: 0 auto; padding: 0 14px 40px; }
+  header { text-align: center; padding: 26px 10px 14px; }
+  header h1 { font-size: 1.5rem; }
+  header p { font-size: .82rem; color: #52606d; margin-top: 6px; }
+  a.tuile { display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid #d9dee5; border-left: 8px solid; border-radius: 12px; padding: 16px; margin-top: 12px; text-decoration: none; color: #1f2933; }
+  a.tuile:active, a.tuile:hover { background: #f5f8fb; }
+  .icone { font-size: 1.9rem; }
+  .tuile b { font-size: 1.05rem; display: block; }
+  .tuile small { font-size: .78rem; color: #52606d; }
+  .hub { border-left-color: #2c5f8a; }
+  .psc1 { border-left-color: #a33b3b; }
+  .carnet { border-left-color: #9a6a08; }
+  .memo { background: #fff7e6; border: 1px solid #e0b84d; border-radius: 10px; padding: 10px 12px; font-size: .8rem; margin-top: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>👋 Espace élèves 4G</h1>
+  <p>Tout ce dont tu as besoin, au même endroit. Ton <b>code personnel</b> (sur ta carte) ouvre les trois portes.</p>
+</header>
+
+<a class="tuile hub" href="../hub-classe/">
+  <span class="icone">🤝</span>
+  <span><b>Hub de classe</b><small>Les annonces de la classe · l'entraide : pose ta question, la classe répond</small></span>
+</a>
+
+<a class="tuile psc1" href="../psc1/">
+  <span class="icone">🚑</span>
+  <span><b>Inscriptions PSC1</b><small>Choisis ton binôme et ton mercredi de formation aux premiers secours</small></span>
+</a>
+
+<a class="tuile carnet" href="../carnet/">
+  <span class="icone">📔</span>
+  <span><b>Carnet de bord</b><small>Une remarque écrite dans ton carnet ? Reporte-la ici</small></span>
+</a>
+
+<div class="memo">🔑 Code perdu ? Vois M. Blanchard. Ton code est personnel : ne le prête pas.
+Tout ce que tu écris est visible du professeur principal.</div>
+</body>
+</html>

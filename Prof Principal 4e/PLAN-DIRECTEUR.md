@@ -139,7 +139,11 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 - **Étape 11** ✅ (2026-07-03) — **Plan de classe multi-classes + impression optimisée** :
   - Impression : **sans `transform`** (Chrome ré-ajustait la page et annulait l'agrandissement — bug constaté sur impression réelle). Toutes les dimensions (cases, polices, photos, positions, barre tableau) passent par des variables CSS `--k` (échelle) et `--ey` (étirement des inter-rangs) activées par `@media print` uniquement. Mesuré : boîte 1050×690 pile, places sur 96-97 % de la largeur et 92 % de la hauteur, écran inchangé.
   - **Multi-classes** : catalogue `donnees/classes.js` (`window.CLASSES`), sélecteur de classe (visible dès 2 classes), stockage séparé par classe (`plan-de-classe-<CLASSE>` / `…-plans`). Pour ajouter une classe de techno : fournir la liste (xlsx comme la 4G) → Claude l'ajoute au catalogue. Vérifié (bascule, isolation des données, non-régression 4G).
-- **Étapes suivantes** — déploiement Hub + PSC1 + Carnet par le prof (guides fournis, feu vert chef à obtenir) · **photos élèves : vers le 15-20 septembre** (`donnees/photos/NOM Prénom.jpg`) · **listes des autres classes de techno** (à fournir, format 4G) · supports HVC suivants à la demande.
+- **Étape 12** ✅ (2026-07-03) — **Mise en production + entrée élèves** :
+  - Hub, PSC1 et Carnet **déployés par le prof** (backends Apps Script branchés, servis par le site Pages sous `/Prof Principal 4e/<module>/`). Portail : chips « en ligne ».
+  - **Profil de style appréciations validé (v1.1)** : workflow opérationnel — déposer l'export EcoleDirecte dans `donnees/appreciations/T1` puis dire « Appréciations T1 ».
+  - **Espace élèves** (`eleves/index.html`) : page d'entrée unique sans login (3 tuiles Hub/PSC1/Carnet, liens relatifs valides en local et en ligne) + **QR code** (`eleves/qr-espace-eleves.png`) + **affiche imprimable** (`eleves/affiche-espace-eleves.html`). Post-it EcoleDirecte = UN seul lien vers cette page (les images à zones cliquables multiples ne sont pas possibles dans l'éditeur ED).
+- **Étapes suivantes** — feu vert chef avant usage élèves réel · codes à coller dans les onglets Codes des Sheets PSC1/Carnet si pas fait + Config emailsEquipe du Carnet · **photos élèves : vers le 15-20 septembre** · **listes des autres classes de techno** (format 4G) · supports HVC à la demande.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).
