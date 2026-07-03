@@ -15,13 +15,13 @@
   button.sec { background: #fff; color: #2c5f8a; }
   button:hover { opacity: .88; }
   .zone { display: flex; gap: 12px; align-items: flex-start; }
-  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; flex: 1; min-height: 420px; --ey: 1; }
-  .tableau-bar { position: absolute; left: 25%; width: 50%; height: 22px; background: #4a5a6a; color: #fff; font-size: .7rem; text-align: center; line-height: 22px; border-radius: 4px; }
+  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; }
+  .tableau-bar { position: absolute; left: 25%; width: 50%; height: calc(22px * var(--k)); background: #4a5a6a; color: #fff; font-size: calc(.7rem * var(--k)); text-align: center; line-height: calc(22px * var(--k)); border-radius: 4px; }
   .place { position: absolute; border: 1.5px solid #8fa3b8; border-radius: 6px; background: #eef3f8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; text-align: center; }
-  .place .num { position: absolute; top: 1px; left: 4px; font-size: .58rem; color: #98a6b5; }
-  .place img.photo { width: 24px; height: 32px; object-fit: cover; border-radius: 3px; margin-bottom: 1px; }
-  .place .prenom { font-size: .7rem; font-weight: 600; line-height: 1.05; }
-  .place .nom { font-size: .56rem; color: #52606d; line-height: 1.05; }
+  .place .num { position: absolute; top: 1px; left: 4px; font-size: calc(.58rem * var(--k)); color: #98a6b5; }
+  .place img.photo { width: calc(24px * var(--k)); height: calc(32px * var(--k)); object-fit: cover; border-radius: 3px; margin-bottom: 1px; }
+  .place .prenom { font-size: calc(.7rem * var(--k)); font-weight: 600; line-height: 1.05; }
+  .place .nom { font-size: calc(.56rem * var(--k)); color: #52606d; line-height: 1.05; }
   .place.vide { background: #fafbfc; border-style: dashed; }
   .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f; }
   .place.devant-tag { border-color: #2c5f8a; border-width: 2px; }
@@ -45,7 +45,7 @@
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
     .place.devant-tag { border-color: #8fa3b8; border-width: 1.5px; }
-    #salle { border: none; transform-origin: top left; transform: scale(var(--echelle-print, 1)); --ey: var(--etirement-y, 1); }
+    #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4 landscape; margin: 8mm; }
   }
@@ -276,19 +276,20 @@ function afficher() {
   const L = avecPhotos ? 66 : 62, H = avecPhotos ? 72 : 46, MX = 18, MY = 40;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
   const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY * 2 + (maxY + 1) * (H + 10);
-  salle.style.height = hauteurSalle + "px";
-  salle.style.minWidth = largeurSalle + "px";
-  // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi) : échelle uniforme pour remplir la
-  // largeur + étirement de l'espacement vertical (--etirement-y) pour remplir la hauteur sans
-  // déformer le texte. Consommés par le CSS @media print uniquement.
+  const estTechno = document.getElementById("gabarit").value === "techno";
+  const decalBase = estTechno ? 0 : 20;
+  const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
+  salle.style.height = "calc(var(--k) * (" + (MY * 2 + H + decalBase) + "px + " + (maxRang * (H + 10)) + "px * var(--ey)))";
+  salle.style.minWidth = "calc(var(--k) * " + largeurSalle + "px)";
+  // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi). Pas de transform (Chrome
+  // ré-ajusterait la page) : tailles réelles via --k (échelle) et --ey (étirement des
+  // inter-rangs), activés uniquement par le CSS @media print.
   const budgetL = 1050, budgetH = 690;
   let echelle = budgetL / largeurSalle, etirement = 1;
   if (echelle * hauteurSalle >= budgetH) {
     echelle = Math.min(echelle, budgetH / hauteurSalle);
   } else {
-    etirement = Math.min(1.75, (budgetH / echelle - MY * 2 - H) / Math.max(1, maxY * (H + 10)));
-    if (document.getElementById("gabarit").value === "techno")
-      etirement = Math.min(etirement, (hauteurSalle - MY - H - 30) / Math.max(1, maxY * (H + 10)));
+    etirement = Math.min(2.5, (budgetH / echelle - MY * 2 - H - decalBase) / Math.max(1, maxRang * (H + 10)));
   }
   salle.style.setProperty("--echelle-print", echelle.toFixed(3));
   salle.style.setProperty("--etirement-y", etirement.toFixed(3));
@@ -304,10 +305,11 @@ function afficher() {
   places.forEach(p => {
     const div = document.createElement("div");
     div.className = "place vide";
-    div.style.left = (MX + p.x * (L + 8)) + "px";
+    div.style.left = "calc(var(--k) * " + (MX + p.x * (L + 8)) + "px)";
     const rangY = technoActif ? p.y : p.y - 1, decalage = MY + (technoActif ? 0 : 20);
-    div.style.top = "calc(" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey, 1))";
-    div.style.width = L + "px"; div.style.height = H + "px";
+    div.style.top = "calc(var(--k) * (" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey)))";
+    div.style.width = "calc(var(--k) * " + L + "px)";
+    div.style.height = "calc(var(--k) * " + H + "px)";
     div.dataset.place = p.id;
     div.innerHTML = '<span class="num">' + p.num + "</span>";
     const idx = affectation[p.id];
