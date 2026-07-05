@@ -1,16 +1,20 @@
 /**
- * Hub de classe 4G — backend Apps Script.
- * Lié à un Google Sheet privé (onglets : Codes, Messages, Signalements).
- * Déploiement : Web App, « Exécuter en tant que : moi », « Accès : tout le monde ».
- * Le classeur n'est JAMAIS partagé : seul ce script y accède.
+ * Hub de classe 4G — backend Apps Script. VERSION 2.
+ * Onglets : Codes, Messages, Signalements + (v2) Infos, Divers.
+ * Nouveautés v2 : horaires d'ouverture (blocage élèves hors plage), casier + référents
+ * absence par élève, plan de classe publié (pseudonymisé).
+ * MISE À JOUR d'un déploiement existant : coller ce code, exécuter initialiser() une fois,
+ * puis Déployer > Gérer les déploiements > ✏️ > Nouvelle version (l'URL ne change pas).
  */
 
 var NOM_FEUILLE_CODES = "Codes";
 var NOM_FEUILLE_MESSAGES = "Messages";
 var NOM_FEUILLE_SIGNALEMENTS = "Signalements";
+var NOM_FEUILLE_INFOS = "Infos";
+var NOM_FEUILLE_DIVERS = "Divers";
 var MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
 
-/** À exécuter UNE FOIS à la main après création du classeur : crée les onglets. */
+/** À exécuter UNE FOIS à la main (ré-exécutable sans risque) : crée les onglets manquants. */
 function initialiser() {
   var classeur = SpreadsheetApp.getActiveSpreadsheet();
   if (!classeur.getSheetByName(NOM_FEUILLE_CODES))
@@ -19,6 +23,15 @@ function initialiser() {
     classeur.insertSheet(NOM_FEUILLE_MESSAGES).appendRow(["id", "ts", "code", "pseudo", "role", "type", "parentId", "matiere", "texte", "resolu", "masque", "merciPar", "signale"]);
   if (!classeur.getSheetByName(NOM_FEUILLE_SIGNALEMENTS))
     classeur.insertSheet(NOM_FEUILLE_SIGNALEMENTS).appendRow(["ts", "codeAuteur", "idMessage", "extrait"]);
+  if (!classeur.getSheetByName(NOM_FEUILLE_INFOS))
+    classeur.insertSheet(NOM_FEUILLE_INFOS).appendRow(["pseudo", "casier", "referent1", "referent2", "maj"]);
+  if (!classeur.getSheetByName(NOM_FEUILLE_DIVERS)) {
+    var d = classeur.insertSheet(NOM_FEUILLE_DIVERS);
+    d.appendRow(["cle", "valeur"]);
+    d.appendRow(["ouverture", "07:30"]);
+    d.appendRow(["fermeture", "21:00"]);
+    d.appendRow(["planClasse", ""]);
+  }
 }
 
 function doPost(e) {
@@ -26,8 +39,11 @@ function doPost(e) {
   try {
     var d = JSON.parse(e.postData.contents);
     var utilisateur = trouverUtilisateur(d.code);
-    if (d.action === "login") {
-      reponse = utilisateur ? { ok: true, pseudo: utilisateur.pseudo, role: utilisateur.role }
+    var horaires = { ouverture: lireDivers("ouverture"), fermeture: lireDivers("fermeture") };
+    if (utilisateur && utilisateur.role === "eleve" && horsPlage(horaires)) {
+      reponse = { ok: false, ferme: true, erreur: "Le Hub est fermé. Ouvert de " + horaires.ouverture + " à " + horaires.fermeture + "." };
+    } else if (d.action === "login") {
+      reponse = utilisateur ? { ok: true, pseudo: utilisateur.pseudo, role: utilisateur.role, horaires: horaires }
                             : { ok: false, erreur: "Code inconnu. Vérifie ta carte." };
     } else if (!utilisateur) {
       reponse = { ok: false, erreur: "Code invalide." };
@@ -41,6 +57,12 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+function horsPlage(horaires) {
+  if (!horaires.ouverture || !horaires.fermeture) return false; // pas configuré = toujours ouvert
+  var maintenant = Utilities.formatDate(new Date(), "Europe/Paris", "HH:mm");
+  return maintenant < horaires.ouverture || maintenant >= horaires.fermeture;
+}
+
 function trouverUtilisateur(code) {
   if (!code) return null;
   var lignes = feuille(NOM_FEUILLE_CODES).getDataRange().getValues();
@@ -48,6 +70,22 @@ function trouverUtilisateur(code) {
     if (String(lignes[i][0]).trim().toUpperCase() === String(code).trim().toUpperCase())
       return { code: lignes[i][0], pseudo: lignes[i][1], role: lignes[i][2] };
   return null;
+}
+
+function lireDivers(cle) {
+  var f = feuille(NOM_FEUILLE_DIVERS);
+  if (!f) return "";
+  var lignes = f.getDataRange().getValues();
+  for (var i = 1; i < lignes.length; i++) if (lignes[i][0] === cle) return String(lignes[i][1]);
+  return "";
+}
+
+function ecrireDivers(cle, valeur) {
+  var f = feuille(NOM_FEUILLE_DIVERS);
+  var lignes = f.getDataRange().getValues();
+  for (var i = 1; i < lignes.length; i++)
+    if (lignes[i][0] === cle) { f.getRange(i + 1, 2).setValue(valeur); return; }
+  f.appendRow([cle, valeur]);
 }
 
 function traiter(d, u) {
@@ -70,6 +108,22 @@ function traiter(d, u) {
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         return modifier(d.id, u, function () { return { masque: d.retablir ? 0 : 1 }; });
       case "signaler": return signaler(d, u);
+      case "infosMoi": return infosMoi(u);
+      case "majInfos": return majInfos(d, u);
+      case "listeInfos":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        return { ok: true, infos: lireInfos(), horaires: { ouverture: lireDivers("ouverture"), fermeture: lireDivers("fermeture") } };
+      case "reglerHoraires":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        ecrireDivers("ouverture", String(d.ouverture || "").slice(0, 5));
+        ecrireDivers("fermeture", String(d.fermeture || "").slice(0, 5));
+        return { ok: true };
+      case "publierPlan":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        ecrireDivers("planClasse", String(d.plan || "").slice(0, 30000));
+        return { ok: true };
+      case "lirePlan":
+        return { ok: true, plan: lireDivers("planClasse") };
       default: return { ok: false, erreur: "Action inconnue." };
     }
   } finally {
@@ -77,13 +131,49 @@ function traiter(d, u) {
   }
 }
 
+// ---------- Infos élèves (casier + référents absence) ----------
+function lireInfos() {
+  return feuille(NOM_FEUILLE_INFOS).getDataRange().getValues().slice(1)
+    .map(function (l) { return { pseudo: l[0], casier: l[1], referent1: l[2], referent2: l[3] }; });
+}
+
+function infosMoi(u) {
+  var mienne = lireInfos().filter(function (x) { return x.pseudo === u.pseudo; })[0] || {};
+  var eleves = feuille(NOM_FEUILLE_CODES).getDataRange().getValues().slice(1)
+    .filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
+  return { ok: true, casier: mienne.casier || "", referent1: mienne.referent1 || "", referent2: mienne.referent2 || "", eleves: eleves };
+}
+
+function majInfos(d, u) {
+  if (u.role !== "eleve") return { ok: false, erreur: "Réservé aux élèves." };
+  var casier = String(d.casier || "").slice(0, 6);
+  var r1 = String(d.referent1 || ""), r2 = String(d.referent2 || "");
+  if (r1 || r2) {
+    var pseudos = feuille(NOM_FEUILLE_CODES).getDataRange().getValues().slice(1)
+      .filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
+    if (r1 && (pseudos.indexOf(r1) === -1 || r1 === u.pseudo)) return { ok: false, erreur: "Référent 1 invalide." };
+    if (r2 && (pseudos.indexOf(r2) === -1 || r2 === u.pseudo || r2 === r1)) return { ok: false, erreur: "Référent 2 invalide." };
+  }
+  var f = feuille(NOM_FEUILLE_INFOS);
+  var lignes = f.getDataRange().getValues();
+  for (var i = 1; i < lignes.length; i++) {
+    if (lignes[i][0] === u.pseudo) {
+      f.getRange(i + 1, 2, 1, 4).setValues([[casier, r1, r2, new Date()]]);
+      return { ok: true };
+    }
+  }
+  f.appendRow([u.pseudo, casier, r1, r2, new Date()]);
+  return { ok: true };
+}
+
+// ---------- Messages (inchangé v1) ----------
 function listerMessages(u) {
   var lignes = feuille(NOM_FEUILLE_MESSAGES).getDataRange().getValues();
   var estProf = u.role === "prof";
   var resultat = [];
   for (var i = 1; i < lignes.length; i++) {
     var l = lignes[i];
-    if (!estProf && l[10]) continue; // masqué → invisible pour les élèves
+    if (!estProf && l[10]) continue;
     resultat.push({
       id: l[0], ts: l[1], pseudo: l[3], role: l[4], type: l[5], parentId: l[6],
       matiere: l[7], texte: l[8], resolu: l[9], masque: l[10],

@@ -29,18 +29,33 @@ Claude fait alors :
 
 ## Modèle A — e-mail collègues (brouillon Gmail)
 
-> **Objet :** Retenue [Prénom NOM] (4G) — [date] · [créneau]
+> ⚠️ Limite technique assumée : **les cases à cocher ne fonctionnent pas dans un e-mail Gmail**
+> (le HTML interactif y est neutralisé). Le pointage OUI/NON se fait donc dans le **registre
+> partagé** (lien dans l'e-mail) — l'e-mail, lui, contient le tableau **pré-rempli par matière
+> et par professeur** pour que chacun se repère d'un coup d'œil. Claude génère ce tableau
+> automatiquement depuis `../donnees/eleves-4G.json`.
+
+> **Objet :** Retenue [Prénom NOM] (4G) — [date] · **[Soir (1h, 17h-18h) / Mercredi matin (4h, 8h30-12h30)]**
 >
 > Bonjour,
 >
-> [Prénom NOM] (4G) est retenu(e) le **[date]**, créneau **[Soir 17h-18h / Mercredi 8h30-12h30]**.
+> [Prénom NOM] (4G) est retenu(e) le **[date]**, créneau **[soir 1h / mercredi matin 4h]**.
 > Motif : [motif].
 >
-> Merci de déposer du travail pour ce créneau dans le registre (colonne « Travail fourni »),
-> au plus tard la veille : [LIEN_REGISTRE]
+> Merci de fournir du travail pour ce créneau (à déposer dans le casier de R. Blanchard)
+> **et** de le pointer dans le registre, au plus tard la veille : [LIEN_REGISTRE]
+>
+> | Matière | Professeur | Travail donné et déposé ? |
+> |---|---|---|
+> | Français | C. ASTOUL | OUI / NON *(à pointer dans le registre)* |
+> | Mathématiques | S. DUBOIS | OUI / NON |
+> | *(… toutes les matières de la classe, pré-remplies automatiquement)* | | |
 >
 > Cordialement,
 > R. Blanchard — PP 4G
+
+Nota : pour une retenue d'**1 h (soir)**, le tableau est réduit aux matières du jour ou aux
+matières concernées par le motif (préciser à Claude) ; pour **4 h (mercredi)**, tableau complet.
 
 ## Modèle B — message parents (EcoleDirecte)
 

@@ -15,6 +15,22 @@ Même montage que le Hub (`../hub-classe/DEPLOIEMENT.md`), en plus court :
 
 Mode démo tant que `BACKEND_URL` est vide : codes `DEMO1/DEMO2/DEMO3` (élèves), `PROF1` (prof).
 
+## Partage avec la responsable de niveau (synchronisation automatique)
+
+Objectif : la responsable voit les inscriptions **en continu**, sans accéder au classeur
+maître (qui contient les codes). Le partage du nouveau Sheet reste **manuel**, comme convenu.
+
+1. Créer dans ton Drive un Sheet **« PSC1 4G — suivi »** (indépendant).
+2. En cellule **A1** de la première feuille, coller (en remplaçant l'URL par celle de TON
+   classeur maître PSC1) :
+   `=IMPORTRANGE("https://docs.google.com/spreadsheets/d/ID_DU_CLASSEUR_PSC1"; "Inscriptions!A:F")`
+3. Cliquer sur **Autoriser l'accès** (demandé une seule fois).
+4. Optionnel — les dates aussi, en feuille 2 : `=IMPORTRANGE("…"; "Sessions!A:D")`.
+5. **Partager ce Sheet-là** (lecture seule) avec la responsable de niveau — et elle seule.
+
+Toute nouvelle inscription apparaît automatiquement (délai Google : quelques secondes à
+quelques minutes). Aucun code élève ne transite : l'onglet Codes n'est pas importé.
+
 ## Règles embarquées (décision D4)
 - Un élève (ou son binôme) **s'inscrit une seule fois** dans l'année ; double inscription bloquée côté serveur.
 - **Aucune désinscription élève** — seul le prof peut retirer un binôme (bouton « retirer »).

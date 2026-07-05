@@ -27,12 +27,22 @@
   tr.ferie td { color: #9a6a08; }
   h2 { font-size: .95rem; margin: 14px 0 6px; }
   .taches { font-size: .78rem; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
+  #vueCompacte { display: none; }
   @media print {
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; padding: 0; }
-    .barre, .rgpd, .info { display: none !important; }
-    @page { margin: 10mm; }
+    .barre, .rgpd, .info, .equipes, #tableRoulement, h2 { display: none !important; }
+    #vueCompacte { display: block; }
+    @page { size: A4 portrait; margin: 10mm; }
   }
+  #vueCompacte h1 { font-size: 1.3rem; margin-bottom: 4px; }
+  #vueCompacte .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  #vueCompacte .bloc { border: 2px solid; border-radius: 10px; padding: 8px 10px; break-inside: avoid; }
+  #vueCompacte .bloc h3 { font-size: 1rem; margin-bottom: 2px; }
+  #vueCompacte .membres { font-size: .82rem; margin-bottom: 6px; }
+  #vueCompacte .dates { font-size: .8rem; line-height: 1.5; }
+  #vueCompacte .dates span { display: inline-block; border: 1px solid #cbd2da; border-radius: 4px; padding: 0 6px; margin: 1px 2px; }
+  #vueCompacte .taches-rappel { font-size: .82rem; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -58,6 +68,7 @@
 <div class="equipes" id="zoneEquipes"></div>
 <h2>Roulement de l'année <small style="color:#7b8794" id="bilanRoulement"></small></h2>
 <table id="tableRoulement"></table>
+<div id="vueCompacte"></div>
 
 <script src="../donnees/eleves-4G.js"></script>
 <script>
@@ -209,6 +220,26 @@ function dessinerRoulement() {
     }
   });
   table.innerHTML = h;
+  dessinerVueCompacte(lignes);
+}
+
+function dessinerVueCompacte(lignes) {
+  // Vue impression : une carte par équipe (couleur, membres, dates de service) — tient sur une page
+  const zone = document.getElementById("vueCompacte");
+  if (!equipes.length) { zone.innerHTML = ""; return; }
+  const datesParEquipe = equipes.map(() => []);
+  lignes.filter(l => l.type === "menage").forEach(l =>
+    datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })));
+  let h = "<h1>🧹 Équipes de ménage 4G — année 2026-2027</h1>" +
+    '<div class="taches-rappel"><b>Chaque semaine, l\'équipe de service :</b> balayage · poubelles au tri · tableau · rangement chaises et matériel. Semaine = du lundi indiqué au vendredi.</div>' +
+    '<div class="grille">';
+  equipes.forEach((eq, ei) => {
+    const couleur = COULEURS[ei % COULEURS.length];
+    h += '<div class="bloc" style="border-color:' + couleur + '"><h3 style="color:' + couleur + '">Équipe ' + (ei + 1) + "</h3>" +
+      '<div class="membres">' + eq.map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(" · ") + "</div>" +
+      '<div class="dates">' + datesParEquipe[ei].map(d => "<span>" + d + "</span>").join("") + "</div></div>";
+  });
+  zone.innerHTML = h + "</div>";
 }
 
 function copierPlanning() {

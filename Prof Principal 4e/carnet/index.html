@@ -62,11 +62,23 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxrK7EP9nZjKKEDCvVF
 // =======================================
 const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie scolaire","Autre"];
 const SEUIL = 5;
+const JOURS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+const CRENEAUX = ["Récréation du matin (10h30)", "Temps du midi (13h30)", "Récréation de l'après-midi (14h45)"];
+const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
 let session = null;
-let donnees = { remarques: [] };
+let donnees = { remarques: [], rdvs: [], config: { finT1: "2026-11-30", finT2: "2027-03-10" } };
+let trimestreActif = null; // onglet T1/T2/T3 sélectionné
+
+function trimestreDe(dateIso) {
+  const d = String(dateIso).slice(0, 10);
+  if (d <= donnees.config.finT1) return "T1";
+  if (d <= donnees.config.finT2) return "T2";
+  return "T3";
+}
+function trimestreCourant() { return trimestreDe(new Date().toISOString()); }
 
 async function api(action, d = {}) {
-  if (!BACKEND_URL) return apiDemo(action, d);
+  if (MODE_DEMO) return apiDemo(action, d);
   const rep = await fetch(BACKEND_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -95,13 +107,30 @@ function apiDemo(action, d) {
     const u = bdd.codes[d.code];
     return fini(u ? { ok: true, pseudo: u[0], role: u[1] } : { ok: false, erreur: "Code inconnu. En démo : DEMO1, DEMO2 ou PROF1." });
   }
+  if (!bdd.rdvs) bdd.rdvs = [];
+  const avecTrimestre = r => ({ ...r, trimestre: trimestreDe(r.date) });
   if (action === "liste") {
-    const remarques = session.role === "prof" ? bdd.remarques : bdd.remarques.filter(r => r.pseudo === session.pseudo);
-    return fini({ ok: true, remarques });
+    const filtre = x => session.role === "prof" || x.pseudo === session.pseudo;
+    return fini({ ok: true, remarques: bdd.remarques.filter(filtre).map(avecTrimestre), rdvs: bdd.rdvs.filter(filtre),
+      config: { finT1: "2026-11-30", finT2: "2027-03-10" } });
   }
   if (action === "ajouter") {
     bdd.remarques.push({ id: "r" + Date.now(), ts: Date.now(), pseudo: session.pseudo, date: d.date, matiere: d.matiere, categorie: d.categorie, precision: d.precision, parents: d.parents });
     return fini({ ok: true, info: "(démo : en réel, M. Blanchard reçoit un e-mail récapitulatif)" });
+  }
+  if (action === "proposerRdv") {
+    const trimestre = trimestreCourant();
+    const n = bdd.remarques.filter(r => r.pseudo === session.pseudo && trimestreDe(r.date) === trimestre).length;
+    if (n < SEUIL) return fini({ ok: false, erreur: "Le rendez-vous se propose à partir de " + SEUIL + " remarques du trimestre." });
+    if (bdd.rdvs.some(r => r.pseudo === session.pseudo && r.trimestre === trimestre)) return fini({ ok: false, erreur: "Une demande existe déjà pour ce trimestre." });
+    bdd.rdvs.push({ id: "v" + Date.now(), ts: Date.now(), pseudo: session.pseudo, trimestre, jourPropose: d.jour, creneauPropose: d.creneau, statut: "propose", jourValide: "", creneauValide: "" });
+    return fini({ ok: true, info: "(démo : en réel, M. Blanchard est prévenu par e-mail)" });
+  }
+  if (action === "validerRdv" && session.role === "prof") {
+    const rdv = bdd.rdvs.find(r => r.id === d.id);
+    if (!rdv) return fini({ ok: false, erreur: "Demande introuvable." });
+    rdv.statut = "valide"; rdv.jourValide = d.jour; rdv.creneauValide = d.creneau;
+    return fini({ ok: true });
   }
   if (action === "alerter" && session.role === "prof") return fini({ ok: true, info: "(démo : en réel, l'équipe reçoit l'alerte par e-mail)" });
   return fini({ ok: false, erreur: "Action non autorisée." });
@@ -133,7 +162,12 @@ function deconnecter() {
 
 async function rafraichir() {
   const rep = await api("liste");
-  if (rep.ok) donnees.remarques = rep.remarques;
+  if (rep.ok) {
+    donnees.remarques = rep.remarques || [];
+    donnees.rdvs = rep.rdvs || [];
+    if (rep.config) donnees.config = rep.config;
+  }
+  if (!trimestreActif) trimestreActif = trimestreCourant();
   dessiner();
 }
 
@@ -141,11 +175,39 @@ async function rafraichir() {
 function echap(t) { const d = document.createElement("div"); d.textContent = t || ""; return d.innerHTML; }
 function badge(cat) { return '<span class="badge ' + (cat.startsWith("Travail") ? "travail" : "attitude") + '">' + (cat.startsWith("Travail") ? "Travail" : "Attitude") + "</span>"; }
 
+function trimDe(r) { return r.trimestre || trimestreDe(r.date); }
+
+function barreTrimestres() {
+  return '<div style="display:flex;gap:6px;margin-bottom:10px">' + ["T1", "T2", "T3"].map(t =>
+    '<button onclick="trimestreActif=\'' + t + '\';dessiner()" style="flex:1;padding:7px;border-radius:8px;cursor:pointer;border:1px solid ' +
+    (t === trimestreActif ? "#9a6a08;background:#9a6a08;color:#fff;font-weight:600" : "#b8c0cc;background:#fff;color:#52606d") + '">Trimestre ' + t[1] +
+    (t === trimestreCourant() ? " •" : "") + "</button>").join("") + "</div>";
+}
+
+function blocRdvEleve(n) {
+  if (trimestreActif !== trimestreCourant()) return "";
+  const rdv = donnees.rdvs.find(r => r.trimestre === trimestreActif);
+  if (rdv && rdv.statut === "valide")
+    return '<div class="carte" style="border-color:#7fbf9e;background:#e0f2e9"><b>✅ Rendez-vous validé par M. Blanchard :</b><br>' +
+      echap(rdv.jourValide) + " — " + echap(rdv.creneauValide) + '<p class="note">Note-le dans ton agenda. En cas d\'empêchement, viens le voir directement.</p></div>';
+  if (rdv)
+    return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>📅 Proposition envoyée :</b> ' +
+      echap(rdv.jourPropose) + " — " + echap(rdv.creneauPropose) + '<p class="note">En attente de validation par M. Blanchard (le créneau confirmé s\'affichera ici).</p></div>';
+  if (n >= SEUIL)
+    return '<div class="carte" style="border-color:#c0392b"><b>📅 ' + SEUIL + ' remarques ce trimestre : propose un rendez-vous</b>' +
+      '<label>Jour <select id="rdvJour">' + JOURS.map(j => "<option>" + j + "</option>").join("") + "</select></label>" +
+      '<label>Créneau <select id="rdvCreneau">' + CRENEAUX.map(c => "<option>" + c + "</option>").join("") + "</select></label>" +
+      '<button class="principal" onclick="proposerRdv()">Proposer ce créneau</button>' +
+      '<p class="note">M. Blanchard validera (ou ajustera) le créneau — tu verras la confirmation ici.</p></div>';
+  return "";
+}
+
 function dessiner() {
-  let h = "";
+  let h = barreTrimestres();
   if (session.role === "eleve") {
-    const miennes = donnees.remarques.slice().sort((a, b) => b.ts - a.ts);
+    const miennes = donnees.remarques.filter(r => trimDe(r) === trimestreActif).sort((a, b) => b.ts - a.ts);
     const n = miennes.length;
+    h += blocRdvEleve(n);
     h += '<div class="carte"><b>Reporter une remarque écrite</b>' +
       '<label>Date de la remarque <input type="date" id="fDate" value="' + new Date().toISOString().slice(0, 10) + '"></label>' +
       '<label>Matière <select id="fMatiere">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select></label>" +
@@ -154,21 +216,37 @@ function dessiner() {
       '<label>Signée par tes parents ? <select id="fParents"><option>Oui</option><option>Pas encore</option></select></label>' +
       '<button class="principal" onclick="ajouter()">Reporter</button>' +
       '<p class="note">Chaque report est transmis à M. Blanchard. Un oubli de report découvert au visa du carnet, c\'est moins bien qu\'un report honnête.</p></div>';
-    h += '<div class="carte"><b>Où j\'en suis : ' + n + " remarque" + (n > 1 ? "s" : "") + " / " + SEUIL + "</b>" +
+    h += '<div class="carte"><b>Où j\'en suis (' + trimestreActif + ') : ' + n + " remarque" + (n > 1 ? "s" : "") + " / " + SEUIL + "</b>" +
       '<div class="jauge' + (n >= SEUIL ? " critique" : "") + '"><div style="width:' + Math.min(100, n / SEUIL * 100) + '%"></div></div>' +
-      (n >= SEUIL ? '<p class="note" style="color:#c0392b"><b>' + SEUIL + ' remarques atteintes :</b> viens voir M. Blanchard pour en parler.</p>'
-                  : '<p class="note">À ' + SEUIL + ' remarques : entretien avec M. Blanchard.</p>');
+      (n >= SEUIL ? '<p class="note" style="color:#c0392b"><b>' + SEUIL + ' remarques atteintes ce trimestre :</b> propose un rendez-vous ci-dessus.</p>'
+                  : '<p class="note">Le compteur repart à zéro à chaque trimestre. À ' + SEUIL + ' : entretien avec M. Blanchard.</p>');
     if (n) {
       h += "<table><tr><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>" +
         miennes.map(r => "<tr><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table>";
     }
     h += "</div>";
   } else {
-    // vue prof : synthèse par élève
+    // vue prof : demandes de rendez-vous du trimestre
+    const demandes = donnees.rdvs.filter(r => r.trimestre === trimestreActif);
+    if (demandes.length) {
+      h += '<div class="carte"><b>📅 Rendez-vous (' + trimestreActif + ')</b>';
+      demandes.forEach(r => {
+        if (r.statut === "valide")
+          h += '<p style="margin-top:6px">✅ <b>' + echap(r.pseudo) + "</b> : " + echap(r.jourValide) + " — " + echap(r.creneauValide) + "</p>";
+        else
+          h += '<div style="margin-top:8px;border-top:1px solid #eceff3;padding-top:6px"><b>' + echap(r.pseudo) + "</b> propose : " + echap(r.jourPropose) + " — " + echap(r.creneauPropose) +
+            '<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">' +
+            '<select id="vJour-' + r.id + '" style="width:auto">' + JOURS.map(j => "<option" + (j === r.jourPropose ? " selected" : "") + ">" + j + "</option>").join("") + "</select>" +
+            '<select id="vCreneau-' + r.id + '" style="width:auto">' + CRENEAUX.map(c => "<option" + (c === r.creneauPropose ? " selected" : "") + ">" + c + "</option>").join("") + "</select>" +
+            '<button class="sec" onclick="validerRdv(\'' + r.id + '\')">Valider ce créneau</button></div></div>';
+      });
+      h += "</div>";
+    }
+    // synthèse par élève (trimestre sélectionné)
     const parEleve = {};
-    donnees.remarques.forEach(r => { (parEleve[r.pseudo] = parEleve[r.pseudo] || []).push(r); });
+    donnees.remarques.filter(r => trimDe(r) === trimestreActif).forEach(r => { (parEleve[r.pseudo] = parEleve[r.pseudo] || []).push(r); });
     const lignes = Object.entries(parEleve).sort((a, b) => b[1].length - a[1].length);
-    h += '<div class="carte"><b>Synthèse par élève</b> <button class="sec" style="float:right" onclick="rafraichir()">🔄 Actualiser</button>' +
+    h += '<div class="carte"><b>Synthèse par élève — ' + trimestreActif + '</b> <button class="sec" style="float:right" onclick="rafraichir()">🔄 Actualiser</button>' +
       '<p class="note">Seuil d\'entretien : ' + SEUIL + ' remarques (lignes rouges). « ⚠️ Alerter l\'équipe » envoie un e-mail récapitulatif aux collègues + vie scolaire — action volontaire, à toi de décider.</p>';
     if (!lignes.length) h += '<p class="note">Aucune remarque reportée.</p>';
     else {
@@ -181,8 +259,8 @@ function dessiner() {
         }).join("") + "</table>";
     }
     h += "</div>";
-    h += '<div class="carte"><b>Journal complet</b><table><tr><th>Élève</th><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>' +
-      donnees.remarques.slice().sort((a, b) => b.ts - a.ts).map(r =>
+    h += '<div class="carte"><b>Journal — ' + trimestreActif + '</b><table><tr><th>Élève</th><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>' +
+      donnees.remarques.filter(r => trimDe(r) === trimestreActif).sort((a, b) => b.ts - a.ts).map(r =>
         "<tr><td>" + echap(r.pseudo) + "</td><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table></div>";
   }
   document.getElementById("contenu").innerHTML = h;
@@ -208,8 +286,23 @@ async function alerter(pseudo) {
   alert(rep.ok ? "Alerte envoyée. " + (rep.info || "") : rep.erreur);
 }
 
+async function proposerRdv() {
+  const jour = document.getElementById("rdvJour").value, creneau = document.getElementById("rdvCreneau").value;
+  if (!confirm("Proposer : " + jour + " — " + creneau + " ?")) return;
+  const rep = await api("proposerRdv", { jour, creneau });
+  alert(rep.ok ? "Proposition envoyée à M. Blanchard. " + (rep.info || "") : rep.erreur || "Envoi impossible (backend à mettre à jour ?).");
+  rafraichir();
+}
+
+async function validerRdv(id) {
+  const jour = document.getElementById("vJour-" + id).value, creneau = document.getElementById("vCreneau-" + id).value;
+  const rep = await api("validerRdv", { id, jour, creneau });
+  alert(rep.ok ? "Créneau validé — l'élève le verra à sa prochaine connexion." : rep.erreur || "Échec.");
+  rafraichir();
+}
+
 // ---------- démarrage ----------
-if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+if (MODE_DEMO) document.getElementById("bandeauDemo").style.display = "block";
 document.getElementById("btnConnexion").onclick = connecter;
 document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
 document.getElementById("btnDeco").onclick = deconnecter;

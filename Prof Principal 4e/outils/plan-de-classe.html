@@ -15,7 +15,7 @@
   button.sec { background: #fff; color: #2c5f8a; }
   button:hover { opacity: .88; }
   .zone { display: flex; gap: 12px; align-items: flex-start; }
-  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; }
+  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; --ex: 1; }
   .tableau-bar { position: absolute; left: 25%; width: 50%; height: calc(22px * var(--k)); background: #4a5a6a; color: #fff; font-size: calc(.7rem * var(--k)); text-align: center; line-height: calc(22px * var(--k)); border-radius: 4px; }
   .place { position: absolute; border: 1.5px solid #8fa3b8; border-radius: 6px; background: #eef3f8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; text-align: center; }
   .place .num { position: absolute; top: 1px; left: 4px; font-size: calc(.58rem * var(--k)); color: #98a6b5; }
@@ -45,7 +45,7 @@
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
     .place.devant-tag { border-color: #8fa3b8; border-width: 1.5px; }
-    #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); }
+    #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1); }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4 landscape; margin: 8mm; }
   }
@@ -64,6 +64,9 @@
   <label id="zoneClasse" style="display:none"><b>Classe :</b>
     <select id="selClasse"></select>
   </label>
+  <button id="btnImporterClasse" class="sec" title="CSV (Nom;Prénom;Sexe) ou JSON">➕ Importer une classe</button>
+  <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Retirer cette classe importée">🗑</button>
+  <input type="file" id="fichierClasse" accept=".csv,.txt,.json" style="display:none">
   <label>Salle :
     <select id="gabarit">
       <option value="techno">Salle techno (30 postes)</option>
@@ -87,6 +90,7 @@
   <button id="btnGenerer">Générer</button>
   <button id="btnVider" class="sec">Vider</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
+  <button id="btnPublier" class="sec" title="Publie ce plan (prénoms + initiale) dans l'onglet Plan du Hub — écrase le précédent">📤 Publier sur le Hub</button>
 </div>
 
 <div class="barre">
@@ -136,6 +140,7 @@
 
 <script src="../donnees/classes.js"></script>
 <script src="../donnees/eleves-4G.js"></script>
+<script src="../donnees/config-portail.js"></script>
 <script>
 let classeActive = null;
 function cleStockage() { return "plan-de-classe-" + classeActive; }
@@ -280,19 +285,22 @@ function afficher() {
   const decalBase = estTechno ? 0 : 20;
   const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
   salle.style.height = "calc(var(--k) * (" + (MY * 2 + H + decalBase) + "px + " + (maxRang * (H + 10)) + "px * var(--ey)))";
-  salle.style.minWidth = "calc(var(--k) * " + largeurSalle + "px)";
+  salle.style.minWidth = "calc(var(--k) * (" + (MX * 2 + L) + "px + " + (maxX * (L + 8)) + "px * var(--ex)))";
   // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi). Pas de transform (Chrome
-  // ré-ajusterait la page) : tailles réelles via --k (échelle) et --ey (étirement des
-  // inter-rangs), activés uniquement par le CSS @media print.
+  // ré-ajusterait la page) : tailles réelles via --k (échelle) + étirement des inter-rangs
+  // --ey (cas limité par la largeur) ou des inter-colonnes --ex (cas limité par la hauteur,
+  // ex : option photos), activés uniquement par le CSS @media print.
   const budgetL = 1050, budgetH = 690;
-  let echelle = budgetL / largeurSalle, etirement = 1;
+  let echelle = budgetL / largeurSalle, etirement = 1, etirementX = 1;
   if (echelle * hauteurSalle >= budgetH) {
     echelle = Math.min(echelle, budgetH / hauteurSalle);
+    etirementX = Math.min(2.5, (budgetL / echelle - MX * 2 - L) / Math.max(1, maxX * (L + 8)));
   } else {
     etirement = Math.min(2.5, (budgetH / echelle - MY * 2 - H - decalBase) / Math.max(1, maxRang * (H + 10)));
   }
   salle.style.setProperty("--echelle-print", echelle.toFixed(3));
   salle.style.setProperty("--etirement-y", etirement.toFixed(3));
+  salle.style.setProperty("--etirement-x", etirementX.toFixed(3));
 
   const barre = document.createElement("div");
   barre.className = "tableau-bar";
@@ -305,7 +313,7 @@ function afficher() {
   places.forEach(p => {
     const div = document.createElement("div");
     div.className = "place vide";
-    div.style.left = "calc(var(--k) * " + (MX + p.x * (L + 8)) + "px)";
+    div.style.left = "calc(var(--k) * (" + MX + "px + " + (p.x * (L + 8)) + "px * var(--ex)))";
     const rangY = technoActif ? p.y : p.y - 1, decalage = MY + (technoActif ? 0 : 20);
     div.style.top = "calc(var(--k) * (" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey)))";
     div.style.width = "calc(var(--k) * " + L + "px)";
@@ -499,6 +507,7 @@ function demarrer(donnees) {
   affectation = {}; separations = []; associations = []; devant = [];
   document.getElementById("titre").textContent =
     "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
+  document.getElementById("btnSupprimerClasse").style.display = lireImports()[classeActive] ? "inline" : "none";
   remplirSelects();
   const brut = localStorage.getItem(cleStockage());
   if (brut) { try { appliquer(JSON.parse(brut)); } catch (e) { construireGabarit(); } }
@@ -507,18 +516,56 @@ function demarrer(donnees) {
   afficher();
 }
 
-function initClasses() {
-  // catalogue multi-classes (classes.js) avec repli sur la 4G seule (eleves-4G.js)
-  if (window.CLASSES) catalogue = window.CLASSES;
-  else if (window.DONNEES_4G) catalogue = {}, catalogue[window.DONNEES_4G.classe] = window.DONNEES_4G;
+const CLE_IMPORTS = "plan-de-classe-classes-importees";
+function lireImports() { try { return JSON.parse(localStorage.getItem(CLE_IMPORTS)) || {}; } catch (e) { return {}; } }
+
+function initClasses(classeADemarrer) {
+  // catalogue = classes.js (repli : 4G seule) + classes importées via l'outil (localStorage)
+  catalogue = {};
+  if (window.CLASSES) Object.assign(catalogue, window.CLASSES);
+  else if (window.DONNEES_4G) catalogue[window.DONNEES_4G.classe] = window.DONNEES_4G;
+  Object.assign(catalogue, lireImports());
   const noms = Object.keys(catalogue);
   if (!noms.length) return false;
   const sel = document.getElementById("selClasse");
   sel.innerHTML = noms.map(n => "<option>" + n + "</option>").join("");
-  if (noms.length > 1) document.getElementById("zoneClasse").style.display = "inline";
+  document.getElementById("zoneClasse").style.display = noms.length > 1 ? "inline" : "none";
   sel.onchange = () => demarrer(catalogue[sel.value]);
-  demarrer(catalogue[noms[0]]);
+  const depart = classeADemarrer && catalogue[classeADemarrer] ? classeADemarrer : noms[0];
+  sel.value = depart;
+  demarrer(catalogue[depart]);
   return true;
+}
+
+function analyserListe(texte, nomClasse) {
+  texte = texte.replace(/^﻿/, "").trim();
+  if (texte.startsWith("{") || texte.startsWith("[")) {
+    const brut = JSON.parse(texte);
+    const eleves = Array.isArray(brut) ? brut : brut.eleves;
+    return { classe: nomClasse, annee: brut.annee || "2026-2027",
+      eleves: eleves.map(e => ({ nom: String(e.nom).toUpperCase(), prenom: e.prenom, sexe: e.sexe === "F" ? "F" : "M", tags: e.tags || [] })) };
+  }
+  const lignes = texte.split(/\r?\n/).filter(l => l.trim());
+  const sep = lignes[0].includes(";") ? ";" : lignes[0].includes("\t") ? "\t" : ",";
+  const eleves = [];
+  lignes.forEach(l => {
+    const c = l.split(sep).map(x => x.trim());
+    if (c.length < 2 || /^nom$/i.test(c[0])) return; // en-tête ou ligne invalide
+    const sexe = (c[2] || "").toUpperCase().startsWith("F") ? "F" : "M";
+    const tags = (c[3] || "").toLowerCase().includes("dys") ? ["dys"] : [];
+    eleves.push({ nom: c[0].toUpperCase(), prenom: c[1], sexe, tags });
+  });
+  if (!eleves.length) throw new Error("aucune ligne élève reconnue");
+  return { classe: nomClasse, annee: "2026-2027", eleves };
+}
+
+function importerClasse(nomClasse, texte) {
+  const donnees = analyserListe(texte, nomClasse);
+  const imports = lireImports();
+  imports[nomClasse] = donnees;
+  localStorage.setItem(CLE_IMPORTS, JSON.stringify(imports));
+  initClasses(nomClasse);
+  return donnees.eleves.length;
 }
 
 document.getElementById("gabarit").onchange = () => { construireGabarit(); affectation = {}; afficher(); };
@@ -527,6 +574,31 @@ document.getElementById("photos").onchange = () => { sauvegarder(); afficher(); 
 document.getElementById("btnGenerer").onclick = genererPlan;
 document.getElementById("btnVider").onclick = () => { affectation = {}; selection = null; sauvegarder(); afficher(); };
 document.getElementById("btnImprimer").onclick = () => window.print();
+document.getElementById("btnPublier").onclick = async () => {
+  const backend = window.CONFIG_PORTAIL && window.CONFIG_PORTAIL.hubBackend;
+  if (!backend) { alert("URL du backend Hub absente : ajoute la clé « hubBackend » dans donnees/config-portail.js."); return; }
+  if (!Object.keys(affectation).length) { alert("Le plan est vide : génère ou place les élèves d'abord."); return; }
+  let codeProf = localStorage.getItem("pdc-code-prof") || "";
+  codeProf = (prompt("Code PROF du Hub (mémorisé ensuite) :", codeProf) || "").trim().toUpperCase();
+  if (!codeProf) return;
+  const g = document.getElementById("gabarit");
+  const plan = {
+    maj: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+    classe: classeActive, salle: g.options[g.selectedIndex].text,
+    barBas: g.value === "techno",
+    places: places.map(p => {
+      const idx = affectation[p.id];
+      // pseudonymisation : prénom + initiale du nom uniquement (jamais le nom complet en ligne)
+      return { num: p.num, x: p.x, y: p.y, nom: idx !== undefined ? eleves[idx].prenom + " " + eleves[idx].nom[0] + "." : "" };
+    })
+  };
+  try {
+    const rep = await fetch(backend, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "publierPlan", code: codeProf, plan: JSON.stringify(plan) }) }).then(r => r.json());
+    if (rep.ok) { localStorage.setItem("pdc-code-prof", codeProf); alert("Plan publié ! Visible dans l'onglet 🪑 Plan du Hub."); }
+    else alert("Refusé : " + (rep.erreur || "backend à mettre à jour (nouvelle version du Code.gs du Hub)."));
+  } catch (e) { alert("Publication impossible (connexion ?)."); }
+};
 document.getElementById("btnAjouterSep").onclick = () => ajouterPaire(separations, "sepA", "sepB");
 document.getElementById("btnAjouterAss").onclick = () => ajouterPaire(associations, "assA", "assB");
 document.getElementById("btnAjouterDevant").onclick = () => {
@@ -554,6 +626,32 @@ document.getElementById("btnSupprimerPlan").onclick = () => {
   delete plans[nom];
   localStorage.setItem(clePlans(), JSON.stringify(plans));
   majListePlans();
+};
+
+document.getElementById("btnImporterClasse").onclick = () => document.getElementById("fichierClasse").click();
+document.getElementById("fichierClasse").onchange = ev => {
+  const fichier = ev.target.files[0];
+  if (!fichier) return;
+  const nom = prompt("Nom de la classe (ex : 5A) :");
+  if (!nom) { ev.target.value = ""; return; }
+  const lecteur = new FileReader();
+  lecteur.onload = () => {
+    try {
+      const n = importerClasse(nom.trim().toUpperCase(), lecteur.result);
+      alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + n + " élèves.");
+    } catch (e) {
+      alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — ou un JSON au format 4G.");
+    }
+    ev.target.value = "";
+  };
+  lecteur.readAsText(fichier, "UTF-8");
+};
+document.getElementById("btnSupprimerClasse").onclick = () => {
+  if (!confirm("Retirer la classe importée « " + classeActive + " » de cet ordinateur ? (ses plans enregistrés localement resteront dans le navigateur)")) return;
+  const imports = lireImports();
+  delete imports[classeActive];
+  localStorage.setItem(CLE_IMPORTS, JSON.stringify(imports));
+  initClasses();
 };
 
 if (!initClasses()) {

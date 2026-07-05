@@ -73,7 +73,10 @@
   <nav>
     <button data-onglet="annonces" class="actif">📢 Annonces</button>
     <button data-onglet="entraide">🤝 Entraide</button>
-    <button data-onglet="moderation" id="ongletModeration" style="display:none">🛡️ Modération</button>
+    <button data-onglet="plan">🪑 Plan</button>
+    <button data-onglet="moi" id="ongletMoi">👤 Moi</button>
+    <button data-onglet="classe" id="ongletClasse" style="display:none">📋 Classe</button>
+    <button data-onglet="moderation" id="ongletModeration" style="display:none">🛡️ Modér.</button>
   </nav>
   <main id="contenu"></main>
 </div>
@@ -86,10 +89,14 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3
 
 const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie de classe","Autre"];
 const MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
-let session = null;   // {code, pseudo, role}
+const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
+let session = null;   // {code, pseudo, role, horaires}
 let messages = [];
 let ongletActif = "annonces";
 let filtreMatiere = "", masquerResolues = false;
+let mesInfos = null;      // {casier, referent1, referent2, eleves} — onglet Moi
+let infosClasse = null;   // {infos, horaires} — onglet Classe (prof)
+let planPublie = null;    // plan de classe publié (chaîne JSON) — onglet Plan
 
 function contientInsulte(texte) {
   const t = " " + texte.toLowerCase().replace(/[.,!?;:'"()\n]/g, " ") + " ";
@@ -98,13 +105,25 @@ function contientInsulte(texte) {
 
 // ---------- accès données : backend réel ou démo locale ----------
 async function api(action, donnees = {}) {
-  if (!BACKEND_URL) return apiDemo(action, donnees);
-  const rep = await fetch(BACKEND_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ action, code: session ? session.code : donnees.code, ...donnees })
-  });
-  return rep.json();
+  let rep;
+  if (MODE_DEMO) rep = await apiDemo(action, donnees);
+  else {
+    const brut = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action, code: session ? session.code : donnees.code, ...donnees })
+    });
+    rep = await brut.json();
+  }
+  if (rep && rep.ferme && session) afficherFerme(rep.erreur);
+  return rep;
+}
+
+function afficherFerme(message) {
+  document.getElementById("contenu").innerHTML =
+    '<div class="carte" style="text-align:center;padding:30px 14px"><div style="font-size:2rem">🌙</div>' +
+    '<b>' + echap(message || "Le Hub est fermé.") + "</b>" +
+    '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">Reviens pendant les horaires d\'ouverture.</p></div>';
 }
 
 function chargerDemo() {
@@ -113,6 +132,8 @@ function chargerDemo() {
   const t = Date.now();
   return {
     codes: { "DEMO1": ["Léa D.", "eleve"], "DEMO2": ["Tom D.", "eleve"], "PROF1": ["M. Blanchard", "prof"] },
+    infos: {},
+    divers: { ouverture: "07:30", fermeture: "21:00", planClasse: "" },
     messages: [
       { id: "a1", ts: t - 86400000, pseudo: "M. Blanchard", role: "prof", type: "annonce", parentId: "", matiere: "Vie de classe", texte: "Bienvenue sur le Hub de la 4G ! Ici : les infos de la classe et l'entraide entre vous. Relisez la charte affichée en classe.", resolu: 0, masque: 0, merci: [], signale: 0 },
       { id: "q1", ts: t - 7200000, pseudo: "Tom D.", role: "eleve", type: "question", parentId: "", matiere: "Technologie", texte: "Quelqu'un a compris l'exercice 3 sur les algorigrammes ? Je bloque sur le losange de condition.", resolu: 0, masque: 0, merci: [], signale: 0 },
@@ -123,12 +144,30 @@ function chargerDemo() {
 
 function apiDemo(action, d) {
   const bdd = chargerDemo();
+  if (!bdd.infos) bdd.infos = {};
+  if (!bdd.divers) bdd.divers = { ouverture: "07:30", fermeture: "21:00", planClasse: "" };
   const fini = (rep) => { localStorage.setItem("hub4g_demo", JSON.stringify(bdd)); return Promise.resolve(rep); };
   if (action === "login") {
     const c = bdd.codes[d.code];
-    return fini(c ? { ok: true, pseudo: c[0], role: c[1] } : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
+    return fini(c ? { ok: true, pseudo: c[0], role: c[1], horaires: { ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture } }
+                  : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
   }
   if (action === "liste") return fini({ ok: true, messages: bdd.messages });
+  if (action === "infosMoi") {
+    const mienne = bdd.infos[session.pseudo] || {};
+    return fini({ ok: true, casier: mienne.casier || "", referent1: mienne.referent1 || "", referent2: mienne.referent2 || "",
+      eleves: Object.values(bdd.codes).filter(c => c[1] === "eleve").map(c => c[0]) });
+  }
+  if (action === "majInfos") {
+    bdd.infos[session.pseudo] = { casier: d.casier, referent1: d.referent1, referent2: d.referent2 };
+    return fini({ ok: true });
+  }
+  if (action === "listeInfos") return fini({ ok: true,
+    infos: Object.entries(bdd.infos).map(([pseudo, x]) => ({ pseudo, ...x })),
+    horaires: { ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture } });
+  if (action === "reglerHoraires") { bdd.divers.ouverture = d.ouverture; bdd.divers.fermeture = d.fermeture; return fini({ ok: true }); }
+  if (action === "publierPlan") { bdd.divers.planClasse = d.plan; return fini({ ok: true }); }
+  if (action === "lirePlan") return fini({ ok: true, plan: bdd.divers.planClasse });
   if (action === "poster") {
     bdd.messages.push({ id: "m" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, type: d.type, parentId: d.parentId || "", matiere: d.matiere || "", texte: d.texte, resolu: 0, masque: 0, merci: [], signale: 0 });
     return fini({ ok: true });
@@ -150,7 +189,7 @@ async function connecter() {
   try {
     const rep = await api("login", { code });
     if (!rep.ok) { document.getElementById("erreurConnexion").textContent = rep.erreur || "Code inconnu."; return; }
-    session = { code, pseudo: rep.pseudo, role: rep.role };
+    session = { code, pseudo: rep.pseudo, role: rep.role, horaires: rep.horaires || null };
     localStorage.setItem("hub4g_session", JSON.stringify(session));
     afficherAppli();
   } catch (e) {
@@ -170,14 +209,39 @@ async function afficherAppli() {
   document.getElementById("ecranConnexion").style.display = "none";
   document.getElementById("appli").style.display = "block";
   document.getElementById("btnDeco").style.display = "inline";
-  if (session.role === "prof") document.getElementById("ongletModeration").style.display = "block";
+  const estProf = session.role === "prof";
+  document.getElementById("ongletModeration").style.display = estProf ? "block" : "none";
+  document.getElementById("ongletClasse").style.display = estProf ? "block" : "none";
+  document.getElementById("ongletMoi").style.display = estProf ? "none" : "block";
   await rafraichir();
 }
 
 async function rafraichir() {
   const rep = await api("liste");
+  if (rep.ferme) return;
   if (rep.ok) messages = rep.messages;
   dessiner();
+}
+
+// chargement paresseux des onglets v2 (avec message clair si le backend n'est pas à jour)
+async function changerOnglet(onglet) {
+  ongletActif = onglet;
+  dessiner();
+  if (onglet === "moi" && !mesInfos) {
+    const rep = await api("infosMoi");
+    mesInfos = rep.ok ? rep : { backendObsolete: true };
+    dessiner();
+  }
+  if (onglet === "classe" && !infosClasse) {
+    const rep = await api("listeInfos");
+    infosClasse = rep.ok ? rep : { backendObsolete: true };
+    dessiner();
+  }
+  if (onglet === "plan" && planPublie === null) {
+    const rep = await api("lirePlan");
+    planPublie = rep.ok ? (rep.plan || "") : "obsolete";
+    dessiner();
+  }
 }
 
 // ---------- rendu ----------
@@ -268,6 +332,49 @@ function dessiner() {
     h += questions.length ? questions.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune question. Lance-toi !</div>';
   }
 
+  if (ongletActif === "plan") {
+    if (planPublie === null) h += '<div class="vide">Chargement…</div>';
+    else if (planPublie === "obsolete") h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
+    else if (!planPublie) h += '<div class="vide">Aucun plan de classe publié pour le moment.</div>';
+    else h += rendrePlan(planPublie);
+  }
+
+  if (ongletActif === "moi") {
+    if (!mesInfos) h += '<div class="vide">Chargement…</div>';
+    else if (mesInfos.backendObsolete) h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour.</div>';
+    else {
+      const autres = mesInfos.eleves.filter(p => p !== session.pseudo);
+      const opt = (choisi) => autres.map(p => "<option" + (p === choisi ? " selected" : "") + ">" + echap(p) + "</option>").join("");
+      h += '<div class="carte"><b>🗄️ Mon casier</b>' +
+        '<div class="ligneBtn"><input type="text" id="monCasier" maxlength="6" placeholder="n°" style="width:90px" value="' + echap(mesInfos.casier) + '"></div>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Consigne : le casier doit être maintenu en bon état, avec un rangement permettant de retrouver rapidement ses affaires.</p></div>';
+      h += '<div class="carte"><b>📚 Si je suis absent(e), qui récupère et transmet mon travail ?</b>' +
+        '<div style="font-size:.78rem;margin-top:6px">Référent 1 (obligatoire) :</div><select id="monRef1"><option value="">— choisir —</option>' + opt(mesInfos.referent1) + "</select>" +
+        '<div style="font-size:.78rem;margin-top:6px">Référent 2 (facultatif) :</div><select id="monRef2"><option value="">— aucun —</option>' + opt(mesInfos.referent2) + "</select>" +
+        '<div class="ligneBtn"><button class="principal" onclick="enregistrerInfos()">Enregistrer</button></div></div>';
+    }
+  }
+
+  if (ongletActif === "classe") {
+    if (!infosClasse) h += '<div class="vide">Chargement…</div>';
+    else if (infosClasse.backendObsolete) h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour.</div>';
+    else {
+      const ho = infosClasse.horaires || {};
+      h += '<div class="carte"><b>🕐 Horaires d\'ouverture du Hub (élèves)</b>' +
+        '<div class="ligneBtn">de <input type="time" id="hOuverture" style="width:110px" value="' + echap(ho.ouverture || "") + '"> à ' +
+        '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '">' +
+        '<button class="principal" style="margin-top:0" onclick="enregistrerHoraires()">Enregistrer</button></div>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors plage, les élèves voient « Hub fermé » (bloqué côté serveur). Champs vides = toujours ouvert. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+      const lignes = (infosClasse.infos || []).sort((a, b) => a.pseudo.localeCompare(b.pseudo, "fr"));
+      h += '<div class="carte"><b>🗄️ Casiers & référents absence</b> <button class="sec" style="float:right;font-size:.7rem;border:1px solid #b8c0cc;border-radius:10px;background:#fff;padding:2px 8px;cursor:pointer" onclick="infosClasse=null;changerOnglet(\'classe\')">🔄</button>';
+      if (!lignes.length) h += '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Aucune saisie pour le moment.</p>';
+      else h += '<table style="border-collapse:collapse;width:100%;font-size:.76rem;margin-top:8px">' +
+        "<tr><th style='border:1px solid #d9dee5;padding:3px 6px'>Élève</th><th style='border:1px solid #d9dee5;padding:3px 6px'>Casier</th><th style='border:1px solid #d9dee5;padding:3px 6px'>Référent 1</th><th style='border:1px solid #d9dee5;padding:3px 6px'>Référent 2</th></tr>" +
+        lignes.map(x => "<tr>" + [x.pseudo, x.casier, x.referent1, x.referent2].map(v => "<td style='border:1px solid #d9dee5;padding:3px 6px'>" + echap(v || "—") + "</td>").join("") + "</tr>").join("") + "</table>";
+      h += "</div>";
+    }
+  }
+
   if (ongletActif === "moderation") {
     const tous = messages.filter(m => m.type !== "reponse").sort((a, b) => (b.signale || 0) - (a.signale || 0) || b.ts - a.ts);
     h += '<p style="font-size:.78rem;color:#52606d;margin-bottom:10px">Vue prof : tout est visible, y compris les messages masqués. Les signalements remontent en premier. La correspondance pseudo → nom complet est dans ton fichier local <b>codes-eleves-4G.csv</b>.</p>';
@@ -322,12 +429,56 @@ async function signalerMsg(id) {
   rafraichir();
 }
 
+async function enregistrerInfos() {
+  const referent1 = document.getElementById("monRef1").value;
+  if (!referent1) { alert("Choisis au moins un référent (référent 1)."); return; }
+  const rep = await api("majInfos", {
+    casier: document.getElementById("monCasier").value.trim(),
+    referent1, referent2: document.getElementById("monRef2").value
+  });
+  if (!rep.ok) { alert(rep.erreur || "Enregistrement impossible."); return; }
+  mesInfos = null;
+  alert("Enregistré ! Merci.");
+  changerOnglet("moi");
+}
+
+async function enregistrerHoraires() {
+  const rep = await api("reglerHoraires", {
+    ouverture: document.getElementById("hOuverture").value,
+    fermeture: document.getElementById("hFermeture").value
+  });
+  alert(rep.ok ? "Horaires enregistrés." : rep.erreur || "Échec.");
+  infosClasse = null;
+  changerOnglet("classe");
+}
+
+// rendu du plan de classe publié (pseudonymisé, lecture seule)
+function rendrePlan(brut) {
+  let plan;
+  try { plan = JSON.parse(brut); } catch (e) { return '<div class="vide">Plan illisible.</div>'; }
+  const L = 52, H = 40, M = 10;
+  const maxX = Math.max(...plan.places.map(p => p.x)), maxY = Math.max(...plan.places.map(p => p.y));
+  const yMin = Math.min(...plan.places.map(p => p.y));
+  const larg = M * 2 + (maxX + 1) * (L + 6), haut = M * 2 + 26 + (maxY - yMin + 1) * (H + 8);
+  let h = '<div class="carte"><b>🪑 Plan de classe — ' + echap(plan.salle || "") + "</b>" +
+    '<span style="font-size:.72rem;color:#7b8794"> · publié le ' + echap(plan.maj || "?") + "</span>" +
+    '<div style="overflow-x:auto"><div style="position:relative;width:' + larg + "px;height:" + haut + 'px;margin-top:8px">';
+  h += '<div style="position:absolute;' + (plan.barBas ? "bottom:0" : "top:0") + ';left:25%;width:50%;height:18px;background:#4a5a6a;color:#fff;font-size:.62rem;text-align:center;line-height:18px;border-radius:4px">TABLEAU</div>';
+  plan.places.forEach(p => {
+    const top = M + (plan.barBas ? (p.y - yMin) : (p.y - yMin) + 0) * (H + 8) + (plan.barBas ? 0 : 24);
+    h += '<div style="position:absolute;left:' + (M + p.x * (L + 6)) + "px;top:" + top + "px;width:" + L + "px;height:" + H + "px;" +
+      'border:1px solid #8fa3b8;border-radius:5px;background:' + (p.nom ? "#eef3f8" : "#fafbfc") + ';font-size:.6rem;text-align:center;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:1px">' +
+      echap(p.nom || "") + "</div>";
+  });
+  return h + "</div></div></div>";
+}
+
 // ---------- démarrage ----------
-if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+if (MODE_DEMO) document.getElementById("bandeauDemo").style.display = "block";
 document.getElementById("btnConnexion").onclick = connecter;
 document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
 document.getElementById("btnDeco").onclick = deconnecter;
-document.querySelectorAll("nav button").forEach(b => b.onclick = () => { ongletActif = b.dataset.onglet; dessiner(); });
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => changerOnglet(b.dataset.onglet));
 const sessionSauvee = localStorage.getItem("hub4g_session");
 if (sessionSauvee) { session = JSON.parse(sessionSauvee); afficherAppli(); }
 </script>
