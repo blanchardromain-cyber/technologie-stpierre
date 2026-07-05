@@ -574,9 +574,12 @@ document.getElementById("photos").onchange = () => { sauvegarder(); afficher(); 
 document.getElementById("btnGenerer").onclick = genererPlan;
 document.getElementById("btnVider").onclick = () => { affectation = {}; selection = null; sauvegarder(); afficher(); };
 document.getElementById("btnImprimer").onclick = () => window.print();
+// URL du backend Hub (non secrète — déjà publique dans le code du Hub ; la protection = le code PROF).
+// Permet la publication depuis la version en ligne de l'outil (usage collègue), sans le dossier donnees/.
+const HUB_BACKEND_DEFAUT = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3NNHJ2ASPhsozt50_3kRNVP7IsCv2Kcnb1J-lW6iJehIjOHag/exec";
 document.getElementById("btnPublier").onclick = async () => {
-  const backend = window.CONFIG_PORTAIL && window.CONFIG_PORTAIL.hubBackend;
-  if (!backend) { alert("URL du backend Hub absente : ajoute la clé « hubBackend » dans donnees/config-portail.js."); return; }
+  const backend = (window.CONFIG_PORTAIL && window.CONFIG_PORTAIL.hubBackend) || HUB_BACKEND_DEFAUT;
+  if (!backend) { alert("URL du backend Hub absente."); return; }
   if (!Object.keys(affectation).length) { alert("Le plan est vide : génère ou place les élèves d'abord."); return; }
   let codeProf = localStorage.getItem("pdc-code-prof") || "";
   codeProf = (prompt("Code PROF du Hub (mémorisé ensuite) :", codeProf) || "").trim().toUpperCase();
