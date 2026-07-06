@@ -19,6 +19,9 @@ ensuite chaque trimestre repart de ce profil, et tes 26 appréciations restent h
    - lecture de l'export + contrôle (« 26 élèves, N matières détectées ») ;
    - à partir du **T2** : lecture aussi du trimestre précédent → formulation de la **progression**
      (« confirme les progrès du T1 », « le fléchissement se poursuit »…) ;
+   - *optionnel* : si tu fournis l'onglet Synthèse du **Tableau de bord 4G** (`../suivi-eleves/`),
+     je m'en sers **en complément** pour ajuster la tonalité — jamais comme source des faits, qui
+     restent les appréciations des professeurs dans EcoleDirecte ;
    - rédaction d'une synthèse par élève selon le profil de style :
      signal dominant + point fort + axe de progrès + tonalité ;
    - **comptage par script** de chaque texte, réécriture automatique de tout dépassement ;

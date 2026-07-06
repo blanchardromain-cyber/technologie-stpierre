@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Réunion de rentrée 4G — parents</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #14202b; color: #fff; height: 100vh; overflow: hidden; }
+  .diapo { display: none; height: 100vh; padding: 6vh 8vw; flex-direction: column; justify-content: center; }
+  .diapo.active { display: flex; }
+  .etape { font-size: 1.05rem; color: #6fb2e0; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+  h1 { font-size: 2.9rem; line-height: 1.15; margin-bottom: 18px; }
+  h2 { font-size: 2.2rem; line-height: 1.2; margin-bottom: 22px; }
+  ul { font-size: 1.55rem; line-height: 1.7; list-style: none; }
+  ul li::before { content: "→ "; color: #6fb2e0; }
+  .accent { color: #f0b429; }
+  table.equipe { font-size: 1.35rem; border-collapse: collapse; }
+  table.equipe td { padding: 4px 22px 4px 0; }
+  table.equipe td:first-child { color: #9db8cc; }
+  .deux { display: flex; gap: 40px; align-items: center; }
+  .qr { background: #fff; padding: 14px; border-radius: 12px; }
+  .qr img { width: 220px; height: 220px; display: block; }
+  .encadre { background: rgba(240,180,41,.12); border-left: 6px solid #f0b429; padding: 14px 20px; font-size: 1.4rem; margin-top: 18px; }
+  .pied { position: fixed; bottom: 14px; left: 0; right: 0; text-align: center; font-size: .85rem; color: #7b93a6; }
+  .pastille { display:inline-block; padding:2px 12px; border-radius:20px; font-size:1.1rem; margin:3px; }
+</style>
+</head>
+<body>
+
+<section class="diapo active">
+  <div class="etape">Réunion de rentrée</div>
+  <h1>Classe de <span class="accent">4G</span><br>Bienvenue aux familles 👋</h1>
+  <ul>
+    <li>Professeur principal : <b id="nomPP">M. Blanchard</b></li>
+    <li>Année scolaire <span id="annee">2026-2027</span></li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">L'année de 4e</div>
+  <h2>Une année charnière</h2>
+  <ul>
+    <li>Montée en <b>autonomie</b> : méthodes, organisation du travail</li>
+    <li>Premiers jalons de l'<b>orientation</b> (Parcours Avenir)</li>
+    <li>Vivre ensemble, en classe <b>et</b> en ligne</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">L'équipe pédagogique</div>
+  <h2>Les professeurs de la 4G</h2>
+  <table class="equipe" id="tableEquipe"><tr><td>Chargement…</td></tr></table>
+</section>
+
+<section class="diapo">
+  <div class="etape">Le rôle du professeur principal</div>
+  <h2>Votre interlocuteur privilégié</h2>
+  <ul>
+    <li>Suivi global de votre enfant et lien avec l'équipe</li>
+    <li>Heure de <b>vie de classe</b> chaque semaine</li>
+    <li>Point de contact pour toute question ou difficulté</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Les outils de la classe</div>
+  <h2>Un espace en ligne pour les élèves</h2>
+  <div class="deux">
+    <div style="flex:1">
+      <ul>
+        <li><b>Hub de classe</b> : les annonces + l'entraide entre élèves (modéré)</li>
+        <li><b>Carnet de bord</b> : le suivi du règlement</li>
+        <li><b>Inscriptions PSC1</b> : la formation aux premiers secours</li>
+      </ul>
+      <div class="encadre">Accès par le <b>code personnel</b> de votre enfant. Lien également sur EcoleDirecte.</div>
+    </div>
+    <div class="qr"><img src="../eleves/qr-espace-eleves.png" alt="QR code espace élèves" onerror="this.parentNode.style.display='none'"></div>
+  </div>
+</section>
+
+<section class="diapo">
+  <div class="etape">Le carnet de bord</div>
+  <h2>Le suivi du règlement, en clair</h2>
+  <ul>
+    <li>Les remarques (travail / attitude) sont notées dans le <b>carnet papier</b>, que vous signez</li>
+    <li>Un <b>tableau de bord</b> permet au PP de suivre l'ensemble</li>
+    <li>À 5 remarques sur un trimestre : <b>entretien</b> avec l'élève pour trouver des solutions</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Le calendrier</div>
+  <h2>Les temps forts de l'année</h2>
+  <ul>
+    <li>3 <b>trimestres</b>, un conseil de classe à la fin de chacun</li>
+    <li>Vacances (zone B) : Toussaint, Noël, hiver, printemps</li>
+    <li>Réunions et rencontres parents-professeurs à venir</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Orientation</div>
+  <h2>Préparer la 3e</h2>
+  <ul>
+    <li>Découverte des <b>métiers et formations</b> (Parcours Avenir)</li>
+    <li>Choix des options et de la LV pour la 3e</li>
+    <li>On en reparlera à chaque étape — rien ne se décide seul</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Nous joindre</div>
+  <h2>Rester en lien</h2>
+  <ul>
+    <li>Messagerie <b>EcoleDirecte</b> (professeurs, vie scolaire, PP)</li>
+    <li>Vie scolaire pour les absences et la vie quotidienne</li>
+    <li>N'hésitez pas : mieux vaut un message tôt qu'un souci installé</li>
+  </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Échanges</div>
+  <h1>Vos questions 🙋</h1>
+  <ul>
+    <li>Merci de votre présence et de votre confiance</li>
+  </ul>
+</section>
+
+<div class="pied">← / → ou clic pour naviguer · <span id="position"></span></div>
+
+<script src="../donnees/eleves-4G.js"></script>
+<script>
+if (window.DONNEES_4G) {
+  const d = window.DONNEES_4G;
+  document.getElementById("annee").textContent = d.annee || "";
+  const pp = (d.professeurs || []).find(p => /principal/i.test(p.matiere));
+  if (pp) document.getElementById("nomPP").textContent = pp.nom;
+  // équipe pédagogique : matières hors "Professeur principal" (doublon), noms sans e-mail
+  const rangs = (d.professeurs || []).filter(p => !/principal/i.test(p.matiere) && p.nom && !/vacant/i.test(p.nom));
+  const t = document.getElementById("tableEquipe");
+  t.innerHTML = rangs.map(p => "<tr><td>" + p.matiere + "</td><td><b>" + p.nom + "</b></td></tr>").join("");
+}
+
+const diapos = document.querySelectorAll(".diapo");
+let courante = 0;
+function aller(n) {
+  courante = Math.max(0, Math.min(diapos.length - 1, n));
+  diapos.forEach((d, i) => d.classList.toggle("active", i === courante));
+  document.getElementById("position").textContent = (courante + 1) + " / " + diapos.length;
+}
+document.addEventListener("keydown", e => {
+  if (["ArrowRight", " ", "PageDown"].includes(e.key)) aller(courante + 1);
+  if (["ArrowLeft", "PageUp"].includes(e.key)) aller(courante - 1);
+});
+document.addEventListener("click", () => aller(courante + 1));
+aller(0);
+</script>
+</body>
+</html>
