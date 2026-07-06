@@ -1,0 +1,27 @@
+name: Relance auto du deploiement Pages
+
+# Le deploiement GitHub Pages ("pages build and deployment") echoue parfois sur une
+# panne transitoire cote GitHub (le build reussit, seul le deploiement plante).
+# Ce workflow relance automatiquement les taches en echec, jusqu'a 3 tentatives.
+
+on:
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
+
+permissions:
+  actions: write
+
+jobs:
+  relance:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.run_attempt < 3
+    steps:
+      - name: Relancer les taches en echec
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Deploiement Pages en echec (tentative ${{ github.event.workflow_run.run_attempt }}/3). Relance des taches en echec..."
+          gh run rerun ${{ github.event.workflow_run.id }} --failed --repo ${{ github.repository }}
