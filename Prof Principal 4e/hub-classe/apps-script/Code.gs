@@ -12,7 +12,29 @@ var NOM_FEUILLE_MESSAGES = "Messages";
 var NOM_FEUILLE_SIGNALEMENTS = "Signalements";
 var NOM_FEUILLE_INFOS = "Infos";
 var NOM_FEUILLE_DIVERS = "Divers";
-var MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
+var INSULTES_SUB = ["connard","connasse","conard","conasse","encule","enculer","enculette","putain","salopard","salope","enfoire","tapette","tarlouze","tantouze","tafiole","pouffiasse","petasse","grognasse","ducon","triso","trisomique","mongolien","niktamere","niquetamere","filsdepute","tagueule","fermelatagueule","ntm","fdp","bougnoule","bamboula","chinetoque","niakoue","negro","negre","youpin","bicot","batard","pedale","branleur","branler","couille","salaud"];
+var INSULTES_MOT = ["con","cons","conne","connes","pute","putes","pd","pede","tg","naze","nase","debile","cretin","abruti","bouffon","tocard","cassos","guignol","gogol","mongol","gouine","merde","merdique","chiant","chieur","bite","zizi","zboub","teub","cul","clochard","raclure","ordure","boloss","bolos","thug"];
+
+function normaliserTexte(t) {
+  return String(t).toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[@4]/g, "a").replace(/0/g, "o").replace(/3/g, "e").replace(/[1!|]/g, "i").replace(/[5$]/g, "s").replace(/7/g, "t")
+    .replace(/(.)\1{2,}/g, "$1")
+    .replace(/[^a-z\s]/g, " ");
+}
+
+function contientInsulte(texte) {
+  var norm = normaliserTexte(texte);
+  var colle = norm.replace(/\s+/g, "");
+  var tokens = norm.split(/\s+/).filter(String);
+  var perso = lireDivers("motsPerso").split(",").map(function (w) { return normaliserTexte(w).replace(/\s+/g, ""); }).filter(String);
+  var sub = INSULTES_SUB.concat(perso.filter(function (w) { return w.length >= 4; }));
+  var mot = INSULTES_MOT.concat(perso.filter(function (w) { return w.length < 4; }));
+  if (sub.some(function (w) { return colle.indexOf(w) !== -1; })) return true;
+  return tokens.some(function (tok) {
+    return mot.some(function (w) { return tok === w || tok === w + "s" || tok === w + "e" || tok === w + "es"; });
+  });
+}
 
 /** À exécuter UNE FOIS à la main (ré-exécutable sans risque) : crée les onglets manquants. */
 function initialiser() {
@@ -31,6 +53,7 @@ function initialiser() {
     d.appendRow(["ouverture", "07:30"]);
     d.appendRow(["fermeture", "21:00"]);
     d.appendRow(["joursOuverts", "1,2,3,4,5,6,7"]);
+    d.appendRow(["motsPerso", ""]);
     d.appendRow(["planClasse", ""]);
   }
   // Colonne des valeurs en TEXTE : empêche Sheets de convertir « 07:30 » en date (bug « samedi »).
@@ -42,7 +65,10 @@ function initialiser() {
 }
 
 function horairesActuels() {
-  return { ouverture: lireHeure("ouverture"), fermeture: lireHeure("fermeture"), jours: lireDivers("joursOuverts") };
+  return {
+    ouverture: lireHeure("ouverture"), fermeture: lireHeure("fermeture"), jours: lireDivers("joursOuverts"),
+    motsPerso: lireDivers("motsPerso").split(",").map(function (s) { return s.trim(); }).filter(String)
+  };
 }
 
 function doPost(e) {
@@ -158,6 +184,10 @@ function traiter(d, u) {
         var jours = String(d.jours || "").split(",").filter(function (j) { return "1234567".indexOf(j) !== -1; }).join(",");
         ecrireDivers("joursOuverts", jours);
         return { ok: true };
+      case "reglerMotsPerso":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        ecrireDivers("motsPerso", (d.motsPerso || []).join(",").slice(0, 2000));
+        return { ok: true };
       case "publierPlan":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         ecrireDivers("planClasse", String(d.plan || "").slice(0, 30000));
@@ -265,11 +295,6 @@ function signaler(d, u) {
     }
   }
   return { ok: false, erreur: "Message introuvable." };
-}
-
-function contientInsulte(texte) {
-  var t = " " + texte.toLowerCase().replace(/[.,!?;:'"()\n]/g, " ") + " ";
-  return MOTS_BLOQUES.some(function (m) { return t.indexOf(" " + m + " ") !== -1; });
 }
 
 function feuille(nom) {

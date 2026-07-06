@@ -96,8 +96,30 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3
 // =======================================
 
 const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie de classe","Autre"];
-const MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
+// Mots longs/non ambigus : détectés même collés dans un autre mot (connards, connardissime…).
+const INSULTES_SUB = ["connard","connasse","conard","conasse","encule","enculer","enculette","putain","salopard","salope","enfoire","tapette","tarlouze","tantouze","tafiole","pouffiasse","petasse","grognasse","ducon","triso","trisomique","mongolien","niktamere","niquetamere","filsdepute","tagueule","fermelatagueule","ntm","fdp","bougnoule","bamboula","chinetoque","niakoue","negro","negre","youpin","bicot","batard","pedale","branleur","branler","couille","salaud"];
+// Mots courts/ambigus : uniquement en mot entier (+ pluriel/féminin) pour éviter les faux positifs.
+const INSULTES_MOT = ["con","cons","conne","connes","pute","putes","pd","pede","tg","naze","nase","debile","cretin","abruti","bouffon","tocard","cassos","guignol","gogol","mongol","gouine","merde","merdique","chiant","chieur","bite","zizi","zboub","teub","cul","clochard","raclure","ordure","boloss","bolos","thug"];
+let MOTS_PERSO = [];  // mots ajoutés par le prof dans l'admin (chargés à la connexion)
 const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
+
+function normaliserTexte(t) {
+  return String(t).toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")        // enlève les accents
+    .replace(/[@4]/g, "a").replace(/0/g, "o").replace(/3/g, "e").replace(/[1!|]/g, "i").replace(/[5$]/g, "s").replace(/7/g, "t")
+    .replace(/(.)\1{2,}/g, "$1")                              // « puuute » -> « pute »
+    .replace(/[^a-z\s]/g, " ");
+}
+function contientInsulte(texte) {
+  const norm = normaliserTexte(texte);
+  const colle = norm.replace(/\s+/g, "");
+  const tokens = norm.split(/\s+/).filter(Boolean);
+  const perso = MOTS_PERSO.map(w => normaliserTexte(w).replace(/\s+/g, "")).filter(Boolean);
+  const sub = INSULTES_SUB.concat(perso.filter(w => w.length >= 4));
+  const mot = INSULTES_MOT.concat(perso.filter(w => w.length < 4));
+  if (sub.some(w => colle.includes(w))) return true;
+  return tokens.some(tok => mot.some(w => tok === w || tok === w + "s" || tok === w + "e" || tok === w + "es"));
+}
 const JOURS_SEMAINE = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 let session = null;   // {code, pseudo, role, horaires}
 let messages = [];
@@ -106,11 +128,6 @@ let filtreMatiere = "", masquerResolues = false;
 let mesInfos = null;      // {casier, referent1, referent2, eleves} — onglet Moi
 let infosClasse = null;   // {infos, horaires} — onglet Classe (prof)
 let planPublie = null;    // plan de classe publié (chaîne JSON) — onglet Plan
-
-function contientInsulte(texte) {
-  const t = " " + texte.toLowerCase().replace(/[.,!?;:'"()\n]/g, " ") + " ";
-  return MOTS_BLOQUES.some(m => t.includes(" " + m + " "));
-}
 
 // ---------- accès données : backend réel ou démo locale ----------
 async function api(action, donnees = {}) {
@@ -156,7 +173,8 @@ function apiDemo(action, d) {
   if (!bdd.infos) bdd.infos = {};
   if (!bdd.divers) bdd.divers = { ouverture: "07:30", fermeture: "21:00", joursOuverts: "1,2,3,4,5,6,7", planClasse: "" };
   if (!bdd.divers.joursOuverts) bdd.divers.joursOuverts = "1,2,3,4,5,6,7";
-  const horaires = () => ({ ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture, jours: bdd.divers.joursOuverts });
+  if (!bdd.divers.motsPerso) bdd.divers.motsPerso = "";
+  const horaires = () => ({ ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture, jours: bdd.divers.joursOuverts, motsPerso: bdd.divers.motsPerso.split(",").map(s => s.trim()).filter(Boolean) });
   const fini = (rep) => { localStorage.setItem("hub4g_demo", JSON.stringify(bdd)); return Promise.resolve(rep); };
   if (action === "login") {
     const c = bdd.codes[d.code];
@@ -177,6 +195,7 @@ function apiDemo(action, d) {
     infos: Object.entries(bdd.infos).map(([pseudo, x]) => ({ pseudo, ...x })),
     horaires: horaires() });
   if (action === "reglerHoraires") { bdd.divers.ouverture = d.ouverture; bdd.divers.fermeture = d.fermeture; bdd.divers.joursOuverts = d.jours; return fini({ ok: true }); }
+  if (action === "reglerMotsPerso") { bdd.divers.motsPerso = (d.motsPerso || []).join(","); return fini({ ok: true }); }
   if (action === "publierPlan") { bdd.divers.planClasse = d.plan; return fini({ ok: true }); }
   if (action === "lirePlan") return fini({ ok: true, plan: bdd.divers.planClasse });
   if (action === "poster") {
@@ -201,6 +220,7 @@ async function connecter() {
     const rep = await api("login", { code });
     if (!rep.ok) { document.getElementById("erreurConnexion").textContent = rep.erreur || "Code inconnu."; return; }
     session = { code, pseudo: rep.pseudo, role: rep.role, horaires: rep.horaires || null };
+    MOTS_PERSO = (rep.horaires && rep.horaires.motsPerso) || [];
     localStorage.setItem("hub4g_session", JSON.stringify(session));
     afficherAppli();
   } catch (e) {
@@ -227,11 +247,30 @@ async function afficherAppli() {
   await rafraichir();
 }
 
+let rafraichirEnCours = false;
 async function rafraichir() {
-  const rep = await api("liste");
-  if (rep.ferme) return;
-  if (rep.ok) messages = rep.messages;
+  if (rafraichirEnCours) return;
+  rafraichirEnCours = true;
+  let ferme = false;
+  try {
+    const rep = await api("liste");
+    if (rep && rep.ferme) ferme = true;
+    else if (rep && rep.ok) messages = rep.messages;
+  } catch (e) { /* réseau : on réessaiera au prochain cycle */ } finally { rafraichirEnCours = false; }
+  if (!ferme) dessiner();
+}
+
+// affiche immédiatement son propre message (réconcilié au prochain rafraîchissement)
+function ajoutOptimiste(msg) {
+  messages.push(Object.assign({ id: "local" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, parentId: "", matiere: "", resolu: 0, masque: 0, merci: [], signale: 0 }, msg));
   dessiner();
+}
+
+// vrai si un élève est en train d'écrire (on ne rafraîchit pas pour ne pas effacer sa saisie)
+function saisieEnCours() {
+  const a = document.activeElement;
+  if (a && (a.tagName === "TEXTAREA" || a.tagName === "INPUT")) return true;
+  return [...document.querySelectorAll("#contenu textarea, #contenu input")].some(el => el.value && el.value.trim());
 }
 
 // chargement paresseux des onglets v2 (avec message clair si le backend n'est pas à jour)
@@ -383,6 +422,11 @@ function dessiner() {
         '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
         '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+      const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
+      h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Une liste d\'insultes et de gros mots est déjà bloquée automatiquement (accents, répétitions et déformations comprises). Ajoute ici tes mots interdits <b>en plus</b>, séparés par des virgules :</p>' +
+        '<textarea id="motsPerso" style="width:100%;min-height:48px;margin-top:6px;font-size:.85rem;padding:8px;border:1px solid #b8c0cc;border-radius:6px">' + echap(persoActuels) + '</textarea>' +
+        '<button class="principal" onclick="enregistrerMotsPerso()">Enregistrer la liste</button></div>';
       if (obsolete) { zone.innerHTML = h; return; } // pas de tableau casiers tant que le backend n'est pas à jour
       const lignes = (infosClasse.infos || []).sort((a, b) => a.pseudo.localeCompare(b.pseudo, "fr"));
       h += '<div class="carte"><b>🗄️ Casiers & référents absence</b> <button class="sec" style="float:right;font-size:.7rem;border:1px solid #b8c0cc;border-radius:10px;background:#fff;padding:2px 8px;cursor:pointer" onclick="infosClasse=null;changerOnglet(\'classe\')">🔄</button>';
@@ -408,6 +452,7 @@ async function posterAnnonce(ev) {
   ev.preventDefault();
   const texte = document.getElementById("texteAnnonce").value.trim();
   if (!texte) return;
+  ajoutOptimiste({ type: "annonce", matiere: "Vie de classe", texte });
   await api("poster", { type: "annonce", matiere: "Vie de classe", texte });
   rafraichir();
 }
@@ -417,7 +462,9 @@ async function posterQuestion(ev) {
   const texte = document.getElementById("texteQuestion").value.trim();
   if (!texte) return;
   if (contientInsulte(texte)) { alert("Ton message contient un mot interdit. Reformule-le."); return; }
-  await api("poster", { type: "question", matiere: document.getElementById("matiereQuestion").value, texte });
+  const matiere = document.getElementById("matiereQuestion").value;
+  ajoutOptimiste({ type: "question", matiere, texte });
+  await api("poster", { type: "question", matiere, texte });
   rafraichir();
 }
 
@@ -432,6 +479,7 @@ async function envoyerReponse(ev, parentId) {
   const texte = document.getElementById("texteReponse-" + parentId).value.trim();
   if (!texte) return;
   if (contientInsulte(texte)) { alert("Ton message contient un mot interdit. Reformule-le."); return; }
+  ajoutOptimiste({ type: "reponse", parentId, texte });
   await api("poster", { type: "reponse", parentId, texte });
   rafraichir();
 }
@@ -474,6 +522,15 @@ async function enregistrerHoraires() {
   changerOnglet("classe");
 }
 
+async function enregistrerMotsPerso() {
+  const mots = document.getElementById("motsPerso").value.split(/[,\n;]/).map(s => s.trim()).filter(Boolean);
+  const rep = await api("reglerMotsPerso", { motsPerso: mots });
+  if (rep.ok) MOTS_PERSO = mots;
+  alert(rep.ok ? "Liste enregistrée." : rep.erreur || "Backend à mettre à jour pour cette fonction.");
+  infosClasse = null;
+  changerOnglet("classe");
+}
+
 // rendu du plan de classe publié (pseudonymisé, lecture seule)
 function rendrePlan(brut) {
   let plan;
@@ -502,7 +559,16 @@ document.getElementById("champCode").addEventListener("keydown", e => { if (e.ke
 document.getElementById("btnDeco").onclick = deconnecter;
 document.querySelectorAll("nav button").forEach(b => b.onclick = () => changerOnglet(b.dataset.onglet));
 const sessionSauvee = localStorage.getItem("hub4g_session");
-if (sessionSauvee) { session = JSON.parse(sessionSauvee); afficherAppli(); }
+if (sessionSauvee) {
+  session = JSON.parse(sessionSauvee);
+  MOTS_PERSO = (session.horaires && session.horaires.motsPerso) || [];
+  afficherAppli();
+}
+
+// rafraîchissement auto (annonces / entraide / modération) — sauf si un élève est en train d'écrire
+setInterval(() => {
+  if (session && !document.hidden && !saisieEnCours() && ["annonces", "entraide", "moderation"].indexOf(ongletActif) !== -1) rafraichir();
+}, 4000);
 </script>
 </body>
 </html>
