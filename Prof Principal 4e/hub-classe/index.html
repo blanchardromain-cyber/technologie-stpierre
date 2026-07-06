@@ -45,14 +45,22 @@
   #ecranConnexion input { text-align: center; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
   .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
   .vide { text-align: center; color: #7b8794; font-size: .85rem; padding: 24px; }
-  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; cursor: pointer; float: right; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; cursor: pointer; }
+  .barreHaut { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .lienAccueil { display: inline-block; text-decoration: none; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; }
+  .jours { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .jours label { font-size: .78rem; border: 1px solid #b8c0cc; border-radius: 6px; padding: 3px 8px; cursor: pointer; user-select: none; }
+  .jours input { margin-right: 3px; }
   .charte { font-size: .72rem; color: #7b8794; margin-top: 14px; text-align: center; }
 </style>
 </head>
 <body>
 <div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
 <header>
-  <button id="btnDeco" style="display:none">Quitter</button>
+  <div class="barreHaut">
+    <a class="lienAccueil" href="../eleves/">🏠 Accueil</a>
+    <button id="btnDeco" style="display:none">Quitter</button>
+  </div>
   <h1>Hub de classe 4G</h1>
   <div class="sous">Infos, entraide et questions — un espace lisible par tous, encadré par le professeur principal.</div>
 </header>
@@ -90,6 +98,7 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3
 const MATIERES = ["Français","Mathématiques","Espagnol","Histoire-Géo","Anglais","Physique-Chimie","SVT","Technologie","EPS","Arts plastiques","Musique","Latin","Vie de classe","Autre"];
 const MOTS_BLOQUES = ["connard","connasse","pute","salope","enculé","fdp","ntm","batard","bâtard","pd","tapette","niquer","nique"];
 const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
+const JOURS_SEMAINE = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 let session = null;   // {code, pseudo, role, horaires}
 let messages = [];
 let ongletActif = "annonces";
@@ -145,11 +154,13 @@ function chargerDemo() {
 function apiDemo(action, d) {
   const bdd = chargerDemo();
   if (!bdd.infos) bdd.infos = {};
-  if (!bdd.divers) bdd.divers = { ouverture: "07:30", fermeture: "21:00", planClasse: "" };
+  if (!bdd.divers) bdd.divers = { ouverture: "07:30", fermeture: "21:00", joursOuverts: "1,2,3,4,5,6,7", planClasse: "" };
+  if (!bdd.divers.joursOuverts) bdd.divers.joursOuverts = "1,2,3,4,5,6,7";
+  const horaires = () => ({ ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture, jours: bdd.divers.joursOuverts });
   const fini = (rep) => { localStorage.setItem("hub4g_demo", JSON.stringify(bdd)); return Promise.resolve(rep); };
   if (action === "login") {
     const c = bdd.codes[d.code];
-    return fini(c ? { ok: true, pseudo: c[0], role: c[1], horaires: { ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture } }
+    return fini(c ? { ok: true, pseudo: c[0], role: c[1], horaires: horaires() }
                   : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
   }
   if (action === "liste") return fini({ ok: true, messages: bdd.messages });
@@ -164,8 +175,8 @@ function apiDemo(action, d) {
   }
   if (action === "listeInfos") return fini({ ok: true,
     infos: Object.entries(bdd.infos).map(([pseudo, x]) => ({ pseudo, ...x })),
-    horaires: { ouverture: bdd.divers.ouverture, fermeture: bdd.divers.fermeture } });
-  if (action === "reglerHoraires") { bdd.divers.ouverture = d.ouverture; bdd.divers.fermeture = d.fermeture; return fini({ ok: true }); }
+    horaires: horaires() });
+  if (action === "reglerHoraires") { bdd.divers.ouverture = d.ouverture; bdd.divers.fermeture = d.fermeture; bdd.divers.joursOuverts = d.jours; return fini({ ok: true }); }
   if (action === "publierPlan") { bdd.divers.planClasse = d.plan; return fini({ ok: true }); }
   if (action === "lirePlan") return fini({ ok: true, plan: bdd.divers.planClasse });
   if (action === "poster") {
@@ -360,11 +371,17 @@ function dessiner() {
     else if (infosClasse.backendObsolete) h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour.</div>';
     else {
       const ho = infosClasse.horaires || {};
-      h += '<div class="carte"><b>🕐 Horaires d\'ouverture du Hub (élèves)</b>' +
-        '<div class="ligneBtn">de <input type="time" id="hOuverture" style="width:110px" value="' + echap(ho.ouverture || "") + '"> à ' +
-        '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '">' +
-        '<button class="principal" style="margin-top:0" onclick="enregistrerHoraires()">Enregistrer</button></div>' +
-        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors plage, les élèves voient « Hub fermé » (bloqué côté serveur). Champs vides = toujours ouvert. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+      const joursOuverts = (ho.jours || "1,2,3,4,5,6,7").split(",");
+      const casesJours = JOURS_SEMAINE.map((nom, i) => {
+        const num = String(i + 1);
+        return '<label><input type="checkbox" class="jourCase" value="' + num + '"' + (joursOuverts.indexOf(num) !== -1 ? " checked" : "") + ">" + nom + "</label>";
+      }).join("");
+      h += '<div class="carte"><b>🕐 Ouverture du Hub pour les élèves</b>' +
+        '<div style="font-size:.78rem;margin-top:8px">Jours d\'ouverture :</div><div class="jours">' + casesJours + "</div>" +
+        '<div class="ligneBtn" style="margin-top:10px">Horaires : de <input type="time" id="hOuverture" style="width:110px" value="' + echap(ho.ouverture || "") + '"> à ' +
+        '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
+        '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
       const lignes = (infosClasse.infos || []).sort((a, b) => a.pseudo.localeCompare(b.pseudo, "fr"));
       h += '<div class="carte"><b>🗄️ Casiers & référents absence</b> <button class="sec" style="float:right;font-size:.7rem;border:1px solid #b8c0cc;border-radius:10px;background:#fff;padding:2px 8px;cursor:pointer" onclick="infosClasse=null;changerOnglet(\'classe\')">🔄</button>';
       if (!lignes.length) h += '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Aucune saisie pour le moment.</p>';
@@ -443,11 +460,14 @@ async function enregistrerInfos() {
 }
 
 async function enregistrerHoraires() {
+  const jours = [...document.querySelectorAll(".jourCase:checked")].map(c => c.value).join(",");
+  if (!jours) { alert("Coche au moins un jour d'ouverture."); return; }
   const rep = await api("reglerHoraires", {
     ouverture: document.getElementById("hOuverture").value,
-    fermeture: document.getElementById("hFermeture").value
+    fermeture: document.getElementById("hFermeture").value,
+    jours
   });
-  alert(rep.ok ? "Horaires enregistrés." : rep.erreur || "Échec.");
+  alert(rep.ok ? "Enregistré." : rep.erreur || "Échec.");
   infosClasse = null;
   changerOnglet("classe");
 }

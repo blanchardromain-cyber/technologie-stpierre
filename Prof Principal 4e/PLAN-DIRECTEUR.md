@@ -151,7 +151,14 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - *Retenues* : modèle A distingue 1h soir / 4h mercredi + tableau matières/profs pré-rempli ; **cases à cocher dans Gmail = impossible** (limite documentée), le pointage OUI/NON reste dans le registre partagé.
   - *PSC1* : synchronisation continue vers un Sheet « suivi » séparé via **IMPORTRANGE** (aucun code exporté), partage manuel à la responsable de niveau (procédure dans DEPLOIEMENT.md).
   - ⚠️ **Backends Hub et Carnet à mettre à jour par le prof** : recoller les Code.gs v2, exécuter `initialiser()`, puis « Gérer les déploiements → Nouvelle version » (l'URL ne change pas). Les nouvelles fonctions affichent « backend à mettre à jour » tant que ce n'est pas fait.
-- **Étapes suivantes** — mise à jour des 2 backends (ci-dessus) · feu vert chef avant usage élèves réel · Config emailsEquipe du Carnet · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables désormais dans l'outil) · supports HVC à la demande.
+- **Étape 14** ✅ (2026-07-05) — **Corrections v2.2** :
+  - *Hub — bug « ouverture samedi/dimanche »* : cause = Sheets convertissait « 07:30 » en objet **Date** (« Sat Dec 30 1899… »), cassant la comparaison horaire et affichant « samedi ». Corrigé : colonne Divers forcée en texte (`setNumberFormat("@")`), lecture des heures Date-safe (`lireHeure`), ré-écriture propre dans `initialiser()`.
+  - *Hub — choix des jours* : onglet Classe, **7 cases à cocher Lun→Dim** + plage horaire ; stocké dans `joursOuverts` (« 1..7 »), blocage serveur par jour ET par heure ; défaut = tous les jours. Message « Hub fermé » listant les jours ouverts.
+  - *Navigation* : **bouton 🏠 Accueil** ajouté dans Hub, PSC1 et Carnet → renvoie à l'**Espace élèves** (`../eleves/`, la page qui liste les 3 outils — meilleur pivot que le Hub seul pour circuler entre outils).
+  - *PSC1 — bug « Invalid Date »* : même cause (dates renvoyées comme objet Date). Corrigé côté page (`dateFr` prend `slice(0,10)`, robuste ISO/Date) **et** côté backend (`etat()` reformate en `yyyy-MM-dd`). PSC1 gagne aussi le mode `?demo`.
+  - ⚠️ **Backend Hub à redéployer** (jours + fix heures) : coller Code.gs, exécuter `initialiser()`, nouvelle version. Backend PSC1 : redéploiement **optionnel** (le fix page suffit à l'affichage).
+- **Réponse EcoleDirecte (notification d'annonce)** : impossible d'automatiser une notif temps réel *dans* ED (ni API, ni push ; le post-it n'accepte qu'un lien statique). Contournement : le post-it pointe vers l'Espace élèves / le Hub, toujours à jour.
+- **Étapes suivantes** — redéployer le backend Hub · feu vert chef avant usage élèves réel · Config emailsEquipe du Carnet · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables dans l'outil) · supports HVC à la demande.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).

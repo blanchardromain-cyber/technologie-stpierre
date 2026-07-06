@@ -34,14 +34,19 @@
   .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
   .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
   .zoneProf { border-top: 3px solid #a33b3b; margin-top: 16px; padding-top: 10px; }
-  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; float: right; cursor: pointer; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; cursor: pointer; }
+  .barreHaut { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .lienAccueil { display: inline-block; text-decoration: none; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; }
   label { font-size: .78rem; display: block; margin-top: 6px; }
 </style>
 </head>
 <body>
 <div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
 <header>
-  <button id="btnDeco" style="display:none">Quitter</button>
+  <div class="barreHaut">
+    <a class="lienAccueil" href="../eleves/">🏠 Accueil</a>
+    <button id="btnDeco" style="display:none">Quitter</button>
+  </div>
   <h1>🚑 PSC1 — Inscriptions 4G</h1>
   <div class="sous">Formation Prévention et Secours Civiques — le mercredi (8h30-16h00), en binôme.</div>
 </header>
@@ -63,11 +68,12 @@
 // ============ CONFIGURATION ============
 const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzgcKzX6ACWfIZpqH1d212FkJikYOWKd19Vg0-o4-fXfsSeHPQ5srFHWeE_L1X7zPpJ/exec"; // URL Apps Script (vide = mode démo local)
 // =======================================
+const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
 let session = null;
 let etat = { sessions: [], inscriptions: [], eleves: [] };
 
 async function api(action, donnees = {}) {
-  if (!BACKEND_URL) return apiDemo(action, donnees);
+  if (MODE_DEMO) return apiDemo(action, donnees);
   const rep = await fetch(BACKEND_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -155,7 +161,12 @@ async function rafraichir() {
 
 // ---------- rendu ----------
 function echap(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
-function dateFr(iso) { return new Date(iso + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }
+function dateFr(iso) {
+  // le backend peut renvoyer une date pleine (Sheets la stocke comme Date) : on garde AAAA-MM-JJ
+  const s = String(iso).slice(0, 10);
+  const d = new Date(s + "T12:00");
+  return isNaN(d) ? String(iso) : d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
 function inscritsDe(sessionId) { return etat.inscriptions.filter(i => i.sessionId === sessionId); }
 function monInscription() { return etat.inscriptions.find(i => i.pseudo1 === session.pseudo || i.pseudo2 === session.pseudo); }
 
@@ -175,7 +186,7 @@ function dessiner() {
   }
 
   const sessionsVisibles = estProf ? etat.sessions : etat.sessions.filter(s => s.ouverte);
-  sessionsVisibles.sort((a, b) => a.date.localeCompare(b.date)).forEach(s => {
+  sessionsVisibles.sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(s => {
     const inscrits = inscritsDe(s.id);
     const placesPrises = inscrits.length * 2;
     const complete = placesPrises >= s.capacite;
@@ -234,7 +245,7 @@ async function ajouterSession() {
 }
 
 // ---------- démarrage ----------
-if (!BACKEND_URL) document.getElementById("bandeauDemo").style.display = "block";
+if (MODE_DEMO) document.getElementById("bandeauDemo").style.display = "block";
 document.getElementById("btnConnexion").onclick = connecter;
 document.getElementById("champCode").addEventListener("keydown", e => { if (e.key === "Enter") connecter(); });
 document.getElementById("btnDeco").onclick = deconnecter;

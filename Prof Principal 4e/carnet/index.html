@@ -33,13 +33,18 @@
   #ecranConnexion input { text-align: center; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
   .erreur { color: #c0392b; font-size: .78rem; margin-top: 8px; min-height: 1em; }
   .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
-  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; float: right; cursor: pointer; }
+  #btnDeco { background: none; border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; cursor: pointer; }
+  .barreHaut { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .lienAccueil { display: inline-block; text-decoration: none; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.5); color: #fff; border-radius: 5px; font-size: .68rem; padding: 2px 8px; }
 </style>
 </head>
 <body>
 <div id="bandeauDemo" style="display:none">MODE DÉMO — données fictives, rien n'est envoyé en ligne</div>
 <header>
-  <button id="btnDeco" style="display:none">Quitter</button>
+  <div class="barreHaut">
+    <a class="lienAccueil" href="../eleves/">🏠 Accueil</a>
+    <button id="btnDeco" style="display:none">Quitter</button>
+  </div>
   <h1>📔 Carnet de bord 4G — Suivi du règlement</h1>
   <div class="sous">Tu as eu une remarque écrite dans ton carnet ? Reporte-la ici : M. Blanchard est prévenu automatiquement.</div>
 </header>

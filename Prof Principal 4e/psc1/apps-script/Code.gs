@@ -64,8 +64,14 @@ function traiter(d, u) {
   }
 }
 
+// Sheets peut renvoyer la date en objet Date : on la reformate en "yyyy-MM-dd".
+function jour(v) {
+  if (v instanceof Date) return Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd");
+  return String(v).slice(0, 10);
+}
+
 function etat(u) {
-  var sessions = lire(F_SESSIONS).map(function (l) { return { id: l[0], date: l[1], capacite: l[2], ouverte: l[3] }; });
+  var sessions = lire(F_SESSIONS).map(function (l) { return { id: l[0], date: jour(l[1]), capacite: l[2], ouverte: l[3] }; });
   var inscriptions = lire(F_INSCRIPTIONS).map(function (l) { return { id: l[0], ts: l[1], sessionId: l[2], pseudo1: l[3], pseudo2: l[4], parQui: l[5] }; });
   var eleves = lire(F_CODES).filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
   return { ok: true, sessions: sessions, inscriptions: inscriptions, eleves: eleves };

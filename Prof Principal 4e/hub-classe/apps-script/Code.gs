@@ -30,8 +30,19 @@ function initialiser() {
     d.appendRow(["cle", "valeur"]);
     d.appendRow(["ouverture", "07:30"]);
     d.appendRow(["fermeture", "21:00"]);
+    d.appendRow(["joursOuverts", "1,2,3,4,5,6,7"]);
     d.appendRow(["planClasse", ""]);
   }
+  // Colonne des valeurs en TEXTE : empêche Sheets de convertir « 07:30 » en date (bug « samedi »).
+  feuille(NOM_FEUILLE_DIVERS).getRange("B:B").setNumberFormat("@");
+  if (!lireDivers("joursOuverts")) ecrireDivers("joursOuverts", "1,2,3,4,5,6,7"); // migration v2 -> v2.2
+  // ré-écrit les heures au propre si elles avaient été converties en date
+  ecrireDivers("ouverture", lireHeure("ouverture") || "07:30");
+  ecrireDivers("fermeture", lireHeure("fermeture") || "21:00");
+}
+
+function horairesActuels() {
+  return { ouverture: lireHeure("ouverture"), fermeture: lireHeure("fermeture"), jours: lireDivers("joursOuverts") };
 }
 
 function doPost(e) {
@@ -39,9 +50,9 @@ function doPost(e) {
   try {
     var d = JSON.parse(e.postData.contents);
     var utilisateur = trouverUtilisateur(d.code);
-    var horaires = { ouverture: lireDivers("ouverture"), fermeture: lireDivers("fermeture") };
+    var horaires = horairesActuels();
     if (utilisateur && utilisateur.role === "eleve" && horsPlage(horaires)) {
-      reponse = { ok: false, ferme: true, erreur: "Le Hub est fermé. Ouvert de " + horaires.ouverture + " à " + horaires.fermeture + "." };
+      reponse = { ok: false, ferme: true, erreur: messageFerme(horaires) };
     } else if (d.action === "login") {
       reponse = utilisateur ? { ok: true, pseudo: utilisateur.pseudo, role: utilisateur.role, horaires: horaires }
                             : { ok: false, erreur: "Code inconnu. Vérifie ta carte." };
@@ -57,10 +68,37 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function horsPlage(horaires) {
-  if (!horaires.ouverture || !horaires.fermeture) return false; // pas configuré = toujours ouvert
+// Lit une heure "HH:mm" en gérant le cas où Sheets l'a stockée comme Date.
+function lireHeure(cle) {
+  var f = feuille(NOM_FEUILLE_DIVERS);
+  if (!f) return "";
+  var lignes = f.getDataRange().getValues();
+  for (var i = 1; i < lignes.length; i++) {
+    if (lignes[i][0] === cle) {
+      var v = lignes[i][1];
+      if (v instanceof Date) return ("0" + v.getHours()).slice(-2) + ":" + ("0" + v.getMinutes()).slice(-2);
+      return String(v).slice(0, 5);
+    }
+  }
+  return "";
+}
+
+function horsPlage(h) {
+  // jour de la semaine (1 = lundi … 7 = dimanche)
+  if (h.jours) {
+    var jourIso = Utilities.formatDate(new Date(), "Europe/Paris", "u");
+    if (h.jours.split(",").indexOf(jourIso) === -1) return true; // jour non ouvert
+  }
+  if (!h.ouverture || !h.fermeture) return false; // heures non configurées = toujours ouvert
   var maintenant = Utilities.formatDate(new Date(), "Europe/Paris", "HH:mm");
-  return maintenant < horaires.ouverture || maintenant >= horaires.fermeture;
+  return maintenant < h.ouverture || maintenant >= h.fermeture;
+}
+
+function messageFerme(h) {
+  var noms = { "1": "lun", "2": "mar", "3": "mer", "4": "jeu", "5": "ven", "6": "sam", "7": "dim" };
+  var jours = (h.jours || "1,2,3,4,5,6,7").split(",").map(function (j) { return noms[j] || j; }).join(", ");
+  var plage = (h.ouverture && h.fermeture) ? " de " + h.ouverture + " à " + h.fermeture : "";
+  return "Le Hub est fermé. Ouvert : " + jours + plage + ".";
 }
 
 function trouverUtilisateur(code) {
@@ -84,7 +122,7 @@ function ecrireDivers(cle, valeur) {
   var f = feuille(NOM_FEUILLE_DIVERS);
   var lignes = f.getDataRange().getValues();
   for (var i = 1; i < lignes.length; i++)
-    if (lignes[i][0] === cle) { f.getRange(i + 1, 2).setValue(valeur); return; }
+    if (lignes[i][0] === cle) { var cell = f.getRange(i + 1, 2); cell.setNumberFormat("@"); cell.setValue(valeur); return; }
   f.appendRow([cle, valeur]);
 }
 
@@ -112,11 +150,13 @@ function traiter(d, u) {
       case "majInfos": return majInfos(d, u);
       case "listeInfos":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
-        return { ok: true, infos: lireInfos(), horaires: { ouverture: lireDivers("ouverture"), fermeture: lireDivers("fermeture") } };
+        return { ok: true, infos: lireInfos(), horaires: horairesActuels() };
       case "reglerHoraires":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         ecrireDivers("ouverture", String(d.ouverture || "").slice(0, 5));
         ecrireDivers("fermeture", String(d.fermeture || "").slice(0, 5));
+        var jours = String(d.jours || "").split(",").filter(function (j) { return "1234567".indexOf(j) !== -1; }).join(",");
+        ecrireDivers("joursOuverts", jours);
         return { ok: true };
       case "publierPlan":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
