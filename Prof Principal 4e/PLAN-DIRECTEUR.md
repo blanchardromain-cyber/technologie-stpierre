@@ -163,7 +163,11 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - Backend rendu **bavard** : `doPost` renvoie désormais « Erreur serveur : <message> » ; `alerter()` rejette les adresses d'exemple avec un message explicite et **entoure l'envoi d'un try/catch** qui remonte la vraie erreur + confirme les destinataires.
   - Bug date d'affichage (`2026-07-05T22:00:00.000Z` en brut) = même conversion Sheets→Date ; corrigé backend (`jour()` dans `remarquesDe`) **et** page (normalisation `slice(0,10)` à la réception, marche sans redéploiement).
   - ⚠️ **Action prof** : mettre les vraies adresses de l'équipe dans Config > emailsEquipe, redéployer le backend Carnet (nouvelle version), et vérifier que l'autorisation d'envoi d'e-mails a bien été accordée.
-- **Étapes suivantes** — redéployer les backends Hub et Carnet · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · supports HVC à la demande.
+- **Étape 16** ✅ (2026-07-05) — **Corrections v2.3** :
+  - *PSC1 dates en anglais (« Fri Jul 24 »)* : le backend renvoyait la date en **texte anglais** ; `dateFr` la découpait puis échouait et affichait le brut. Corrigé par `versDate()` qui essaie `new Date(valeur)` d'abord (gère ISO, « AAAA-MM-JJ » et texte anglais), + tri par valeur de date. **Marche sans redéploiement backend.**
+  - *Hub — réglages jours/horaires « ne s'affichent pas »* : quand le backend renvoyait une erreur (onglets Infos/Divers absents car `initialiser()` non exécutée), tout l'onglet Classe affichait « Fonction indisponible ». Désormais les **réglages s'affichent toujours** (avec un avertissement si le backend n'est pas à jour) ; backend Hub rendu défensif (`lireInfos` ne plante plus si l'onglet manque) et bavard (vraie erreur au lieu de « Requête invalide »).
+  - ⚠️ Pour que l'**enregistrement** des jours/horaires fonctionne : exécuter `initialiser()` sur le Sheet Hub + redéployer une nouvelle version.
+- **Étapes suivantes** — redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · supports HVC à la demande.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).

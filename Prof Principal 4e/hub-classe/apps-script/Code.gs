@@ -62,7 +62,7 @@ function doPost(e) {
       reponse = traiter(d, utilisateur);
     }
   } catch (err) {
-    reponse = { ok: false, erreur: "Requête invalide." };
+    reponse = { ok: false, erreur: "Erreur serveur : " + (err && err.message ? err.message : err) };
   }
   return ContentService.createTextOutput(JSON.stringify(reponse))
     .setMimeType(ContentService.MimeType.JSON);
@@ -173,7 +173,9 @@ function traiter(d, u) {
 
 // ---------- Infos élèves (casier + référents absence) ----------
 function lireInfos() {
-  return feuille(NOM_FEUILLE_INFOS).getDataRange().getValues().slice(1)
+  var f = feuille(NOM_FEUILLE_INFOS);
+  if (!f) return []; // onglet pas encore créé : ne pas planter
+  return f.getDataRange().getValues().slice(1)
     .map(function (l) { return { pseudo: l[0], casier: l[1], referent1: l[2], referent2: l[3] }; });
 }
 

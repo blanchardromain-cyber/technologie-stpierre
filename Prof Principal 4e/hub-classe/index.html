@@ -368,8 +368,9 @@ function dessiner() {
 
   if (ongletActif === "classe") {
     if (!infosClasse) h += '<div class="vide">Chargement…</div>';
-    else if (infosClasse.backendObsolete) h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour.</div>';
     else {
+      const obsolete = !!infosClasse.backendObsolete;
+      if (obsolete) h += '<div class="carte" style="border-color:#e0b84d;background:#fff7e6;font-size:.8rem">⚠️ Le backend du Hub doit être mis à jour : colle le Code.gs à jour dans Apps Script, exécute <b>initialiser()</b>, puis « Gérer les déploiements → Nouvelle version ». Les réglages sont visibles ci-dessous, mais l\'enregistrement ne fonctionnera qu\'après.</div>';
       const ho = infosClasse.horaires || {};
       const joursOuverts = (ho.jours || "1,2,3,4,5,6,7").split(",");
       const casesJours = JOURS_SEMAINE.map((nom, i) => {
@@ -382,6 +383,7 @@ function dessiner() {
         '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
         '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+      if (obsolete) { zone.innerHTML = h; return; } // pas de tableau casiers tant que le backend n'est pas à jour
       const lignes = (infosClasse.infos || []).sort((a, b) => a.pseudo.localeCompare(b.pseudo, "fr"));
       h += '<div class="carte"><b>🗄️ Casiers & référents absence</b> <button class="sec" style="float:right;font-size:.7rem;border:1px solid #b8c0cc;border-radius:10px;background:#fff;padding:2px 8px;cursor:pointer" onclick="infosClasse=null;changerOnglet(\'classe\')">🔄</button>';
       if (!lignes.length) h += '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Aucune saisie pour le moment.</p>';

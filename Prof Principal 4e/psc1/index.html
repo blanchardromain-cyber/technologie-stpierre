@@ -161,11 +161,15 @@ async function rafraichir() {
 
 // ---------- rendu ----------
 function echap(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function versDate(v) {
+  // gère tous les formats renvoyés par le backend : ISO complet, "AAAA-MM-JJ", ou texte anglais "Fri Jul 24 2026"
+  let d = new Date(v);
+  if (isNaN(d)) d = new Date(String(v).slice(0, 10) + "T12:00");
+  return isNaN(d) ? null : d;
+}
 function dateFr(iso) {
-  // le backend peut renvoyer une date pleine (Sheets la stocke comme Date) : on garde AAAA-MM-JJ
-  const s = String(iso).slice(0, 10);
-  const d = new Date(s + "T12:00");
-  return isNaN(d) ? String(iso) : d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const d = versDate(iso);
+  return d ? d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : String(iso);
 }
 function inscritsDe(sessionId) { return etat.inscriptions.filter(i => i.sessionId === sessionId); }
 function monInscription() { return etat.inscriptions.find(i => i.pseudo1 === session.pseudo || i.pseudo2 === session.pseudo); }
@@ -186,7 +190,7 @@ function dessiner() {
   }
 
   const sessionsVisibles = estProf ? etat.sessions : etat.sessions.filter(s => s.ouverte);
-  sessionsVisibles.sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(s => {
+  sessionsVisibles.sort((a, b) => (versDate(a.date) || 0) - (versDate(b.date) || 0)).forEach(s => {
     const inscrits = inscritsDe(s.id);
     const placesPrises = inscrits.length * 2;
     const complete = placesPrises >= s.capacite;
