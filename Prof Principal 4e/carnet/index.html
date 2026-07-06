@@ -168,7 +168,8 @@ function deconnecter() {
 async function rafraichir() {
   const rep = await api("liste");
   if (rep.ok) {
-    donnees.remarques = rep.remarques || [];
+    // normalise la date (Sheets peut la renvoyer en ISO complet) pour l'affichage et le classement par trimestre
+    donnees.remarques = (rep.remarques || []).map(r => ({ ...r, date: String(r.date).slice(0, 10) }));
     donnees.rdvs = rep.rdvs || [];
     if (rep.config) donnees.config = rep.config;
   }

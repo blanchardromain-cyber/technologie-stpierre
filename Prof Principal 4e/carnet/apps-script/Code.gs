@@ -48,9 +48,15 @@ function doPost(e) {
       try { reponse = traiter(d, u); } finally { verrou.releaseLock(); }
     }
   } catch (err) {
-    reponse = { ok: false, erreur: "Requête invalide." };
+    reponse = { ok: false, erreur: "Erreur serveur : " + (err && err.message ? err.message : err) };
   }
   return ContentService.createTextOutput(JSON.stringify(reponse)).setMimeType(ContentService.MimeType.JSON);
+}
+
+// Sheets peut renvoyer une date en objet Date : on la reformate en "yyyy-MM-dd".
+function jour(v) {
+  if (v instanceof Date) return Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd");
+  return String(v).slice(0, 10);
 }
 
 function trouverUtilisateur(code) {
@@ -95,7 +101,7 @@ function traiter(d, u) {
 function remarquesDe(pseudo) {
   return feuille(F_REMARQUES).getDataRange().getValues().slice(1)
     .filter(function (l) { return !pseudo || l[2] === pseudo; })
-    .map(function (l) { return { id: l[0], ts: l[1], pseudo: l[2], date: l[3], matiere: l[4], categorie: l[5], precision: l[6], parents: l[7], trimestre: trimestreDe(l[3]) }; });
+    .map(function (l) { var jj = jour(l[3]); return { id: l[0], ts: l[1], pseudo: l[2], date: jj, matiere: l[4], categorie: l[5], precision: l[6], parents: l[7], trimestre: trimestreDe(jj) }; });
 }
 
 function rdvsDe(pseudo) {
@@ -174,8 +180,10 @@ function notifierProf(pseudo) {
 }
 
 function alerter(pseudo) {
-  var destinataires = config("emailsEquipe").split(",").map(function (s) { return s.trim(); }).filter(String);
-  if (!destinataires.length) return { ok: false, erreur: "Aucune adresse dans Config > emailsEquipe." };
+  var destinataires = config("emailsEquipe").split(/[,;]/).map(function (s) { return s.trim(); })
+    .filter(function (a) { return a && a.indexOf("@") !== -1 && a.indexOf("adresse1@") === -1 && a.indexOf("adresse2@") === -1; });
+  if (!destinataires.length)
+    return { ok: false, erreur: "Renseigne les vraies adresses de l'équipe dans l'onglet Config du Sheet (ligne emailsEquipe) — les exemples adresse1@/adresse2@ sont ignorés." };
   var r = recap(pseudo);
   var sujet = "[Alerte PP 4G] Point de situation — " + pseudo + " (" + r.toutes.length + " remarques)";
   var corps = "Bonjour,\n\nEn tant que PP de la 4G, je vous partage un point de situation concernant " + pseudo + " :\n" +
@@ -183,8 +191,12 @@ function alerter(pseudo) {
     "Détail :\n" + r.texte + "\n\n" +
     "Merci de me signaler tout élément complémentaire. Nous en parlerons en équipe si nécessaire.\n\n" +
     "R. Blanchard — PP 4G";
-  MailApp.sendEmail(destinataires.join(","), sujet, corps, { cc: config("emailProf") });
-  return { ok: true };
+  try {
+    MailApp.sendEmail(destinataires.join(","), sujet, corps, { cc: config("emailProf") });
+  } catch (err) {
+    return { ok: false, erreur: "Envoi impossible (" + (err && err.message ? err.message : err) + "). Vérifie les adresses et l'autorisation d'envoi d'e-mails." };
+  }
+  return { ok: true, info: "Alerte envoyée à : " + destinataires.join(", ") };
 }
 
 function feuille(nom) { return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(nom); }

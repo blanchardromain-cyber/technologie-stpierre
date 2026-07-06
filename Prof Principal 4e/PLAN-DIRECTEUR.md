@@ -158,7 +158,12 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - *PSC1 — bug « Invalid Date »* : même cause (dates renvoyées comme objet Date). Corrigé côté page (`dateFr` prend `slice(0,10)`, robuste ISO/Date) **et** côté backend (`etat()` reformate en `yyyy-MM-dd`). PSC1 gagne aussi le mode `?demo`.
   - ⚠️ **Backend Hub à redéployer** (jours + fix heures) : coller Code.gs, exécuter `initialiser()`, nouvelle version. Backend PSC1 : redéploiement **optionnel** (le fix page suffit à l'affichage).
 - **Réponse EcoleDirecte (notification d'annonce)** : impossible d'automatiser une notif temps réel *dans* ED (ni API, ni push ; le post-it n'accepte qu'un lien statique). Contournement : le post-it pointe vers l'Espace élèves / le Hub, toujours à jour.
-- **Étapes suivantes** — redéployer le backend Hub · feu vert chef avant usage élèves réel · Config emailsEquipe du Carnet · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables dans l'outil) · supports HVC à la demande.
+- **Étape 15** ✅ (2026-07-05) — **Carnet : alerte équipe qui échouait (« Requête invalide »)** :
+  - Cause probable = envoi e-mail vers les adresses d'exemple `adresse1@/adresse2@` encore en place dans Config > emailsEquipe (ou autorisation d'envoi). Le message générique masquait la vraie cause.
+  - Backend rendu **bavard** : `doPost` renvoie désormais « Erreur serveur : <message> » ; `alerter()` rejette les adresses d'exemple avec un message explicite et **entoure l'envoi d'un try/catch** qui remonte la vraie erreur + confirme les destinataires.
+  - Bug date d'affichage (`2026-07-05T22:00:00.000Z` en brut) = même conversion Sheets→Date ; corrigé backend (`jour()` dans `remarquesDe`) **et** page (normalisation `slice(0,10)` à la réception, marche sans redéploiement).
+  - ⚠️ **Action prof** : mettre les vraies adresses de l'équipe dans Config > emailsEquipe, redéployer le backend Carnet (nouvelle version), et vérifier que l'autorisation d'envoi d'e-mails a bien été accordée.
+- **Étapes suivantes** — redéployer les backends Hub et Carnet · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · supports HVC à la demande.
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).
