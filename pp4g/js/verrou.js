@@ -36,15 +36,15 @@
     if (document.getElementById("verrouOverlay")) return;
     var div = document.createElement("div");
     div.id = "verrouOverlay";
-    div.style.cssText = "position:fixed;inset:0;background:#1f2933;color:#fff;z-index:99999;" +
+    div.style.cssText = "position:fixed;inset:0;background:#0f1f3d;color:#f5f1e8;z-index:99999;" +
       "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;" +
       "font-family:'Segoe UI',Arial,sans-serif;padding:20px;text-align:center";
     div.innerHTML =
-      '<div style="font-size:2rem">🔒</div>' +
+      '<img src="' + (location.pathname.indexOf("/outils/") >= 0 ? "../" : "") + 'icons/logo-source.svg" style="width:56px;height:56px" alt="">' +
       '<div>Code de verrouillage</div>' +
       '<input id="verrouPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" ' +
-      'style="font-size:1.3rem;padding:8px 12px;border-radius:8px;border:none;width:140px;text-align:center;letter-spacing:4px">' +
-      '<button id="verrouValider" style="font-size:.9rem;padding:10px 18px;min-height:44px;border:none;border-radius:8px;background:#2c5f8a;color:#fff">Valider</button>' +
+      'style="font-family:\'B612\',monospace;font-size:1.3rem;padding:8px 12px;border-radius:8px;border:none;width:140px;text-align:center;letter-spacing:4px">' +
+      '<button id="verrouValider" style="font-size:.9rem;padding:10px 18px;min-height:44px;border:none;border-radius:8px;background:#e8763a;color:#fff;font-weight:600">Valider</button>' +
       '<div id="verrouErreur" style="color:#f2a5a5;font-size:.82rem;min-height:1.2em"></div>';
     document.body.appendChild(div);
     var input = div.querySelector("#verrouPin"), erreur = div.querySelector("#verrouErreur");

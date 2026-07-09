@@ -1,0 +1,84 @@
+/*
+ * Cockpit PP 4G — système de design (direction artistique validée avec le prof).
+ * Thème aéronautique : glass cockpit épuré + touche rétro-Aéropostale, jamais chasseur militaire.
+ * Feuille centralisée, incluse par toutes les pages pp4g/ (racine + outils/) — un seul fichier
+ * à faire évoluer. Périmètre : app nomade uniquement, ne touche jamais le PC (Prof Principal 4e/).
+ *
+ * Typo : B612 (Airbus, lisibilité cockpit, licence SIL OFL — voir fonts/OFL.txt) auto-hébergée
+ * pour rester utilisable hors-ligne (pas de CDN Google Fonts, l'app doit fonctionner en avion) ;
+ * réservée aux titres/chiffres/données. Le texte courant garde la pile système (déjà une
+ * humaniste sobre : Segoe UI / Roboto selon l'OS).
+ */
+
+@font-face {
+  font-family: "B612";
+  src: url("fonts/B612-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "B612";
+  src: url("fonts/B612-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Ciel / sol — identité du logo horizon, réservée aux fonds de marque */
+  --bleu-nuit: #0f1f3d;
+  --bleu-ciel: #2c5f8a;
+  --sol-brun: #8a5a2c;
+  --sol-orange: #c78a4a;
+  /* Surfaces et accent UI */
+  --altimetre: #f5f1e8;   /* fond crème "cadran" */
+  --surface: #ffffff;
+  --accent: #e8763a;      /* orange manche à air / gilet de piste — visibilité, pas danger */
+  --texte: #1f2933;
+  --texte-att: #52606d;
+  /* Famille de voyants (tiroirs) — inchangée */
+  --voyant-vert: #2c8a5f;
+  --voyant-bleu: #2c5f8a;
+  --voyant-rouge: #b23b3b;
+  --voyant-violet: #6d4fa3;
+}
+
+.typo-cockpit, h1, h2, h3, .chiffre, .valeur {
+  font-family: "B612", "Segoe UI", Arial, sans-serif;
+}
+
+/* En-tête de page : logo horizon + wordmark */
+.entete-cockpit { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.entete-cockpit .logo-horizon { width: 40px; height: 40px; flex-shrink: 0; }
+.entete-cockpit h1 { font-family: "B612", "Segoe UI", Arial, sans-serif; font-size: 1.15rem; color: var(--bleu-nuit); }
+
+/* Cartes-modules traitées comme des instruments : fine lunette, coin arrondi, valeur en gros */
+.carte-instrument {
+  background: var(--surface);
+  border: 1px solid #d9dee5;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(15, 31, 61, .04);
+}
+.carte-instrument .valeur { font-family: "B612", monospace; font-size: 1.2rem; font-weight: 700; }
+
+/* Chips d'état en LED de bord */
+.led { display: inline-flex; align-items: center; gap: 5px; font-size: .66rem; border-radius: 20px; padding: 2px 8px 2px 6px; font-weight: 600; }
+.led::before { content: ""; width: 7px; height: 7px; border-radius: 50%; display: inline-block; box-shadow: 0 0 4px currentColor; }
+.led.led-vert { background: #e0f2e9; color: #1e6b47; }
+.led.led-ambre { background: #fdf0d5; color: #9a6a08; }
+.led.led-violet { background: #eee9f7; color: var(--voyant-violet); }
+
+/* Checklist façon pré-vol (étapes numérotées) */
+.etape-checklist { display: flex; align-items: baseline; gap: 8px; }
+.etape-checklist .num-checklist {
+  font-family: "B612", monospace; font-weight: 700; font-size: .78rem; color: var(--surface);
+  background: var(--bleu-nuit); width: 20px; height: 20px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Ligne d'horizon — signature discrète en pied de page */
+.horizon-footer {
+  height: 4px; border-radius: 2px; margin-top: 18px;
+  background: linear-gradient(90deg, var(--bleu-nuit) 0%, var(--bleu-ciel) 48%, var(--sol-orange) 52%, var(--sol-brun) 100%);
+}

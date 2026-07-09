@@ -3,45 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#2c5f8a">
-<title>Équipes de ménage 4G — nomade</title>
+<meta name="theme-color" content="#0f1f3d">
+<title>Équipes de ménage — Cockpit PP 4G</title>
 <link rel="manifest" href="../manifest.webmanifest">
-<link rel="icon" href="../icons/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icons/logo-source.svg">
+<link rel="icon" href="../icons/favicon-48.png">
+<link rel="stylesheet" href="../cockpit.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
-  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--altimetre); color: var(--texte); padding: 14px; }
+  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: var(--bleu-ciel); text-decoration: none; }
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
-  #semaineCourante { background: #eef3f8; border: 2px solid #2c5f8a; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  #semaineCourante { border: 2px solid var(--bleu-nuit); padding: 12px; margin-bottom: 14px; }
   #semaineCourante .titre { font-size: .78rem; color: #52606d; margin-bottom: 4px; }
-  #semaineCourante .nom-equipe { font-size: 1.1rem; font-weight: bold; }
+  #semaineCourante .nom-equipe { font-family: "B612", monospace; font-size: 1.1rem; font-weight: bold; }
   #semaineCourante .membres { font-size: .84rem; margin-top: 4px; }
   tr.semaine-courante td { background: #fdf0d5; font-weight: 600; }
-  .barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
+  .barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
   input, button { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; }
-  button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
-  button.sec { background: #fff; color: #2c5f8a; }
+  button { cursor: pointer; background: var(--bleu-nuit); color: #fff; border-color: var(--bleu-nuit); }
+  button.sec { background: #fff; color: var(--bleu-nuit); }
   .equipes { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
   .equipe { background: #fff; border: 1px solid #d9dee5; border-top: 5px solid; border-radius: 10px; padding: 10px; width: 190px; }
   .equipe h3 { font-size: .85rem; margin-bottom: 6px; }
   .membre { font-size: .8rem; padding: 3px 6px; border-radius: 5px; cursor: grab; }
   .membre:hover { background: #eef3f8; }
-  .membre.selectionne { background: #fdf0d5; outline: 2px solid #d97706; }
-  .equipe.survol { outline: 2px dashed #2c5f8a; }
+  .membre.selectionne { background: #fdf0d5; outline: 2px solid var(--accent); }
+  .equipe.survol { outline: 2px dashed var(--bleu-ciel); }
   .info { font-size: .74rem; color: #52606d; margin-bottom: 10px; }
   table { border-collapse: collapse; background: #fff; width: 100%; font-size: .8rem; }
   th, td { border: 1px solid #d9dee5; padding: 5px 8px; text-align: left; }
-  th { background: #2c5f8a; color: #fff; }
+  th { background: var(--bleu-nuit); color: #fff; font-family: "B612", monospace; }
   td .pastille { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
   tr.ferie td { color: #9a6a08; }
   h2 { font-size: .95rem; margin: 14px 0 6px; }
-  .taches { font-size: .78rem; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
+  .taches { font-size: .78rem; padding: 8px 10px; margin-bottom: 12px; }
   #vueCompacte { display: none; }
   @media print {
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; padding: 0; }
-    .barre, .rgpd, .info, .equipes, #tableRoulement, h2 { display: none !important; }
+    .barre, .rgpd, .info, .equipes, #tableRoulement, h2, .horizon-footer, #semaineCourante { display: none !important; }
     #vueCompacte { display: block; }
     @page { size: A4 portrait; margin: 10mm; }
   }
@@ -62,16 +64,19 @@
 </head>
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
-<h1>Équipes de ménage 4G</h1>
+<div class="entete-cockpit">
+  <img class="logo-horizon" src="../icons/logo-source.svg" alt="Cockpit PP">
+  <h1>Équipes de ménage 4G</h1>
+</div>
 <p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
-<div id="semaineCourante" style="display:none">
+<div id="semaineCourante" class="carte-instrument" style="display:none">
   <div class="titre">Cette semaine (<span id="dateSemaineCourante"></span>)</div>
   <div class="nom-equipe" id="equipeSemaineCourante"></div>
   <div class="membres" id="membresSemaineCourante"></div>
 </div>
 
-<div class="barre">
+<div class="barre carte-instrument">
   <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
   <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
   <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
@@ -79,18 +84,19 @@
   <button id="btnCopier" class="sec">📋 Copier le planning (pour le Hub)</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
 </div>
-<div class="barre">
+<div class="barre carte-instrument">
   <label><input type="checkbox" id="sauterFeries" checked> ne pas programmer les semaines contenant un jour férié</label>
   <span style="font-size:.7rem;color:#7b8794">Vacances zone B 2026-2027 et jours fériés intégrés — jamais de ménage sur ces périodes.</span>
 </div>
 <p class="info">Déplacer un élève : touche-le puis touche un autre élève (interversion) ou une équipe (déplacement).</p>
 
-<div class="taches"><b>Tâches de la semaine (équipe de service)</b> : balayage de la salle · vidage des poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel.</div>
+<div class="taches carte-instrument"><b>Tâches de la semaine (équipe de service)</b> : balayage de la salle · vidage des poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel.</div>
 
 <div class="equipes" id="zoneEquipes"></div>
 <h2>Roulement de l'année <small style="color:#7b8794" id="bilanRoulement"></small></h2>
 <table id="tableRoulement"></table>
 <div id="vueCompacte"></div>
+<div class="horizon-footer"></div>
 
 <!-- Contexte PWA (pp4g/) : données via IndexedDB (js/donnees.js). -->
 <script src="js/donnees.js"></script>

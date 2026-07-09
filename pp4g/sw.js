@@ -10,18 +10,23 @@
  * CACHE_VERSION : à incrémenter à chaque lot de fichiers ajoutés/modifiés sous pp4g/
  * (N1 = v1 ; N2 ajoutera l'écran données -> v2 ; etc.) pour forcer le renouvellement du cache.
  */
-const CACHE_VERSION = "pp4g-v7";
+const CACHE_VERSION = "pp4g-v8";
 
 const PRECACHE = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./donnees.html",
+  "./cockpit.css",
   "./outils/plan-de-classe.html",
   "./outils/equipes-menage.html",
   "./outils/trombinoscope.html",
   "./outils/js/donnees.js",
   "./js/verrou.js",
+  "./fonts/B612-Regular.ttf",
+  "./fonts/B612-Bold.ttf",
+  "./icons/logo-source.svg",
+  "./icons/favicon-48.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png"

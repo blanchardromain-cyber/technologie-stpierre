@@ -1,6 +1,7 @@
-# Couteau Suisse 4G — nomade — guide d'installation
+# Cockpit PP 4G — nomade — guide d'installation
 
-Version téléphone (Android) du Couteau Suisse du Prof Principal 4e. Une **PWA**
+Version téléphone (Android) du Couteau Suisse du Prof Principal 4e, rebaptisé
+**Cockpit PP**. Une **PWA**
 (pas d'application du Play Store) : elle s'installe depuis Chrome et fonctionne
 ensuite hors connexion. Le PC reste l'atelier (construction des plans) ; le
 téléphone sert à la **consultation et aux retouches d'appoint** (voir
@@ -50,7 +51,7 @@ Consignes complémentaires :
 
 ## 4. Mises à jour
 
-Automatiques : à chaque évolution du Couteau Suisse (poussée sur GitHub), l'app
+Automatiques : à chaque évolution de Cockpit PP (poussée sur GitHub), l'app
 le détecte à l'ouverture suivante et affiche un bandeau « Nouvelle version
 disponible — Recharger ». Un tap suffit. Rien à réinstaller.
 

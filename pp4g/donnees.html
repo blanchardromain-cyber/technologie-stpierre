@@ -3,23 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#2c5f8a">
-<title>⚙️ Données — Couteau Suisse 4G</title>
+<meta name="theme-color" content="#0f1f3d">
+<title>⚙️ Données — Cockpit PP 4G</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="icons/logo-source.svg">
+<link rel="icon" href="icons/favicon-48.png">
+<link rel="stylesheet" href="cockpit.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; padding: 14px; }
-  h1 { font-size: 1.1rem; margin-bottom: 4px; }
-  a.retour { display: inline-block; margin-bottom: 10px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--altimetre); color: var(--texte); padding: 14px; }
+  a.retour { display: inline-block; margin-bottom: 10px; font-size: .82rem; color: var(--bleu-ciel); text-decoration: none; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 14px; }
-  .bloc { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .bloc { padding: 14px; margin-bottom: 14px; }
   .bloc h2 { font-size: .95rem; margin-bottom: 8px; }
   .bloc p { font-size: .82rem; color: #52606d; margin-bottom: 8px; }
   label.champ { display: block; font-size: .84rem; margin: 10px 0 4px; font-weight: 600; }
   input[type="file"] { font-size: .82rem; width: 100%; }
-  button { font-size: .88rem; padding: 10px 14px; min-height: 44px; border: 1px solid #2c5f8a; border-radius: 8px; background: #2c5f8a; color: #fff; cursor: pointer; margin-top: 10px; }
-  button.sec { background: #fff; color: #2c5f8a; }
+  button { font-size: .88rem; padding: 10px 14px; min-height: 44px; border: 1px solid var(--bleu-nuit); border-radius: 8px; background: var(--bleu-nuit); color: #fff; cursor: pointer; margin-top: 10px; }
+  button.sec { background: #fff; color: var(--bleu-nuit); }
   button:disabled { opacity: .5; cursor: default; }
   label.case { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-top: 8px; }
   .recap { font-size: .84rem; background: #eef3f8; border-radius: 8px; padding: 10px; margin-top: 10px; white-space: pre-line; }
@@ -30,16 +31,19 @@
 </head>
 <body>
 <a class="retour" href="index.html">← Retour à l'accueil</a>
-<h1>⚙️ Données</h1>
+<div class="entete-cockpit">
+  <img class="logo-horizon" src="icons/logo-source.svg" alt="Cockpit PP">
+  <h1>⚙️ Données</h1>
+</div>
 <p class="rgpd">Les données importées restent sur ce téléphone (IndexedDB local) — aucun envoi vers un serveur.</p>
 
-<div class="bloc">
+<div class="bloc carte-instrument">
   <h2>État actuel</h2>
   <div class="statut" id="statutActuel">Chargement…</div>
 </div>
 
-<div class="bloc">
-  <h2>1. Importer une classe</h2>
+<div class="bloc carte-instrument">
+  <h2 class="etape-checklist"><span class="num-checklist">1</span> Importer une classe</h2>
   <p>Fichier <code>eleves-4G.json</code> (déposé via le Drive du collège, puis téléchargé sur ce téléphone) ou un CSV <code>Nom;Prénom;Sexe[;dys]</code>.</p>
   <label class="champ" for="fichierEleves">Fichier élèves (.json ou .csv)</label>
   <input type="file" id="fichierEleves" accept=".json,.csv,.txt">
@@ -49,15 +53,15 @@
   <div class="recap" id="recapImport" style="display:none"></div>
 </div>
 
-<div class="bloc">
-  <h2>2. Exporter une sauvegarde</h2>
+<div class="bloc carte-instrument">
+  <h2 class="etape-checklist"><span class="num-checklist">2</span> Exporter une sauvegarde</h2>
   <p>Fichier de secours téléchargé sur ce téléphone — à réimporter ici en cas d'effacement, ou à ramener sur le PC.</p>
   <label class="case"><input type="checkbox" id="avecPhotos"> inclure les photos (fichier plus volumineux — utile si tu changes de téléphone)</label>
   <button id="btnExporter" class="sec">Exporter une sauvegarde</button>
 </div>
 
-<div class="bloc">
-  <h2>3. Sécurité</h2>
+<div class="bloc carte-instrument">
+  <h2 class="etape-checklist"><span class="num-checklist">3</span> Sécurité</h2>
   <p>Code à 4-6 chiffres demandé à l'ouverture de l'app (pas du chiffrement — la vraie protection reste le verrouillage du téléphone).</p>
   <div class="statut" id="statutPin">Chargement…</div>
   <label class="champ" for="nouveauPin">Nouveau code (4-6 chiffres)</label>
@@ -66,6 +70,7 @@
   <button id="btnDesactiverPin" class="sec" style="display:none">Désactiver le verrou</button>
   <div class="recap" id="recapPin" style="display:none"></div>
 </div>
+<div class="horizon-footer"></div>
 
 <script src="outils/js/donnees.js"></script>
 <script src="js/verrou.js"></script>

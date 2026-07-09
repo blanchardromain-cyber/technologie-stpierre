@@ -3,22 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#2c5f8a">
-<title>Plan de classe 4G — nomade</title>
+<meta name="theme-color" content="#0f1f3d">
+<title>Plan de classe — Cockpit PP 4G</title>
 <link rel="manifest" href="../manifest.webmanifest">
-<link rel="icon" href="../icons/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="../icons/logo-source.svg">
+<link rel="icon" href="../icons/favicon-48.png">
+<link rel="stylesheet" href="../cockpit.css">
 <style>
-  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: var(--bleu-ciel); text-decoration: none; }
   #salleScroll { overflow: auto; -webkit-overflow-scrolling: touch; max-width: 100%; border: 1px solid #d9dee5; border-radius: 8px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: var(--altimetre); color: var(--texte); padding: 14px; }
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
-  .barre { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; margin-bottom: 10px; }
   .barre label { font-size: .8rem; }
   select, button, input[type="number"], input[type="text"] { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; background: #fff; }
-  button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
-  button.sec { background: #fff; color: #2c5f8a; }
+  button { cursor: pointer; background: var(--bleu-nuit); color: #fff; border-color: var(--bleu-nuit); }
+  button.sec { background: #fff; color: var(--bleu-nuit); }
   button:hover { opacity: .88; }
   .zone { display: flex; gap: 12px; align-items: flex-start; }
   #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; --ex: 1; }
@@ -46,7 +48,7 @@
   #entetePrint { display: none; }
   @media print {
     body { background: #fff; padding: 0; }
-    .barre, #lateral, .rgpd, .info, #chargeur, h1 { display: none !important; }
+    .barre, #lateral, .rgpd, .info, #chargeur, h1, .entete-cockpit, .horizon-footer { display: none !important; }
     #entetePrint { display: block; font-size: 13px; margin-bottom: 6px; }
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
@@ -69,14 +71,17 @@
 </head>
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
-<h1 id="titre">Plan de classe 4G</h1>
+<div class="entete-cockpit">
+  <img class="logo-horizon" src="../icons/logo-source.svg" alt="Cockpit PP">
+  <h1 id="titre">Plan de classe 4G</h1>
+</div>
 <p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
-<div id="chargeur" style="display:none">
+<div id="chargeur" class="carte-instrument" style="display:none;padding:14px;margin-bottom:10px">
   Aucune donnée importée. Va dans <a href="../donnees.html">⚙️ Données</a> pour importer une classe.
 </div>
 
-<div class="barre">
+<div class="barre carte-instrument">
   <label id="zoneClasse" style="display:none"><b>Classe :</b>
     <select id="selClasse"></select>
   </label>
@@ -109,7 +114,7 @@
   <button id="btnPublier" class="sec" title="Publie ce plan (prénoms + initiale) dans l'onglet Plan du Hub — écrase le précédent">📤 Publier sur le Hub</button>
 </div>
 
-<div class="barre">
+<div class="barre carte-instrument">
   <b style="font-size:.8rem">💾 Plans enregistrés :</b>
   <select id="listePlans"></select>
   <button id="btnCharger" class="sec">Charger</button>
@@ -153,6 +158,7 @@
     </div>
   </div>
 </div>
+<div class="horizon-footer"></div>
 
 <!-- Contexte PWA (pp4g/) : pas de dossier donnees/ (privé, jamais déployé). Les données
      viennent d'IndexedDB via js/donnees.js — voir la copie PC (Prof Principal 4e/outils/)
