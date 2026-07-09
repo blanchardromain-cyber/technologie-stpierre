@@ -55,6 +55,7 @@ function initialiser() {
     d.appendRow(["joursOuverts", "1,2,3,4,5,6,7"]);
     d.appendRow(["motsPerso", ""]);
     d.appendRow(["planClasse", ""]);
+    d.appendRow(["planningMenage", ""]);
   }
   // Colonne des valeurs en TEXTE : empêche Sheets de convertir « 07:30 » en date (bug « samedi »).
   feuille(NOM_FEUILLE_DIVERS).getRange("B:B").setNumberFormat("@");
@@ -194,6 +195,12 @@ function traiter(d, u) {
         return { ok: true };
       case "lirePlan":
         return { ok: true, plan: lireDivers("planClasse") };
+      case "publierMenage":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        ecrireDivers("planningMenage", String(d.planning || "").slice(0, 30000));
+        return { ok: true };
+      case "lireMenage":
+        return { ok: true, planning: lireDivers("planningMenage") };
       default: return { ok: false, erreur: "Action inconnue." };
     }
   } finally {

@@ -54,7 +54,7 @@
   <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
   <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
   <button id="btnGenerer">Générer les équipes</button>
-  <button id="btnCopier" class="sec">📋 Copier le planning (pour le Hub)</button>
+  <button id="btnPublier" class="sec">📤 Publier sur le Hub</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
 </div>
 <div class="barre">
@@ -243,14 +243,37 @@ function dessinerVueCompacte(lignes) {
   zone.innerHTML = h + "</div>";
 }
 
-function copierPlanning() {
+// Publication sur le Hub (même mécanisme que le plan de classe) : structure pseudonymisée
+// (prénom + initiale) reproduisant fidèlement la vue compacte imprimée.
+const HUB_BACKEND_DEFAUT = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3NNHJ2ASPhsozt50_3kRNVP7IsCv2Kcnb1J-lW6iJehIjOHag/exec";
+
+function planningPourHub() {
   const lignes = calculerRoulement().filter(l => l.type === "menage");
-  const texte = "🧹 Équipes de ménage 4G — roulement\n" +
-    "Tâches : balayage, poubelles/tri, tableau, rangement.\n\n" +
-    lignes.map(l => "Semaine du " + l.lundi.toLocaleDateString("fr-FR") + " : Équipe " + (l.equipe + 1) + " — " +
-      equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ")).join("\n");
-  navigator.clipboard.writeText(texte).then(() => alert("Planning copié ! Colle-le dans une annonce du Hub."),
-    () => prompt("Copie manuelle :", texte));
+  const datesParEquipe = equipes.map(() => []);
+  lignes.forEach(l => datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })));
+  return {
+    maj: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+    taches: "balayage · poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel",
+    equipes: equipes.map((eq, ei) => ({
+      couleur: COULEURS[ei % COULEURS.length],
+      membres: eq.map(i => eleves[i].prenom + " " + eleves[i].nom[0] + "."),
+      dates: datesParEquipe[ei]
+    }))
+  };
+}
+
+async function publierSurHub() {
+  if (!equipes.length) { alert("Génère les équipes d'abord."); return; }
+  const backend = (window.CONFIG_PORTAIL && window.CONFIG_PORTAIL.hubBackend) || HUB_BACKEND_DEFAUT;
+  let code = localStorage.getItem("pdc-code-prof") || "";
+  code = (prompt("Code PROF du Hub (mémorisé ensuite) :", code) || "").trim().toUpperCase();
+  if (!code) return;
+  try {
+    const rep = await fetch(backend, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "publierMenage", code, planning: JSON.stringify(planningPourHub()) }) }).then(r => r.json());
+    if (rep.ok) { localStorage.setItem("pdc-code-prof", code); alert("Planning ménage publié ! Visible dans l'onglet 🧹 Ménage du Hub."); }
+    else alert("Refusé : " + (rep.erreur || "backend Hub à mettre à jour."));
+  } catch (e) { alert("Publication impossible (connexion ?)."); }
 }
 
 function sauvegarder() {
@@ -275,7 +298,7 @@ function restaurer() {
 }
 
 document.getElementById("btnGenerer").onclick = generer;
-document.getElementById("btnCopier").onclick = copierPlanning;
+document.getElementById("btnPublier").onclick = publierSurHub;
 document.getElementById("btnImprimer").onclick = () => window.print();
 ["debut", "nbSemaines", "sauterFeries"].forEach(id => document.getElementById(id).onchange = () => { sauvegarder(); dessinerRoulement(); });
 

@@ -82,6 +82,7 @@
     <button data-onglet="annonces" class="actif">📢 Annonces</button>
     <button data-onglet="entraide">🤝 Entraide</button>
     <button data-onglet="plan">🪑 Plan</button>
+    <button data-onglet="menage">🧹 Ménage</button>
     <button data-onglet="moi" id="ongletMoi">👤 Moi</button>
     <button data-onglet="classe" id="ongletClasse" style="display:none">📋 Classe</button>
     <button data-onglet="moderation" id="ongletModeration" style="display:none">🛡️ Modér.</button>
@@ -128,6 +129,7 @@ let filtreMatiere = "", masquerResolues = false;
 let mesInfos = null;      // {casier, referent1, referent2, eleves} — onglet Moi
 let infosClasse = null;   // {infos, horaires} — onglet Classe (prof)
 let planPublie = null;    // plan de classe publié (chaîne JSON) — onglet Plan
+let planningMenage = null; // planning ménage publié (chaîne JSON) — onglet Ménage
 
 // ---------- accès données : backend réel ou démo locale ----------
 async function api(action, donnees = {}) {
@@ -198,6 +200,8 @@ function apiDemo(action, d) {
   if (action === "reglerMotsPerso") { bdd.divers.motsPerso = (d.motsPerso || []).join(","); return fini({ ok: true }); }
   if (action === "publierPlan") { bdd.divers.planClasse = d.plan; return fini({ ok: true }); }
   if (action === "lirePlan") return fini({ ok: true, plan: bdd.divers.planClasse });
+  if (action === "publierMenage") { bdd.divers.planningMenage = d.planning; return fini({ ok: true }); }
+  if (action === "lireMenage") return fini({ ok: true, planning: bdd.divers.planningMenage || "" });
   if (action === "poster") {
     bdd.messages.push({ id: "m" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, type: d.type, parentId: d.parentId || "", matiere: d.matiere || "", texte: d.texte, resolu: 0, masque: 0, merci: [], signale: 0 });
     return fini({ ok: true });
@@ -290,6 +294,11 @@ async function changerOnglet(onglet) {
   if (onglet === "plan" && planPublie === null) {
     const rep = await api("lirePlan");
     planPublie = rep.ok ? (rep.plan || "") : "obsolete";
+    dessiner();
+  }
+  if (onglet === "menage" && planningMenage === null) {
+    const rep = await api("lireMenage");
+    planningMenage = rep.ok ? (rep.planning || "") : "obsolete";
     dessiner();
   }
 }
@@ -387,6 +396,13 @@ function dessiner() {
     else if (planPublie === "obsolete") h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
     else if (!planPublie) h += '<div class="vide">Aucun plan de classe publié pour le moment.</div>';
     else h += rendrePlan(planPublie);
+  }
+
+  if (ongletActif === "menage") {
+    if (planningMenage === null) h += '<div class="vide">Chargement…</div>';
+    else if (planningMenage === "obsolete") h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
+    else if (!planningMenage) h += '<div class="vide">Aucun planning de ménage publié pour le moment.</div>';
+    else h += rendreMenage(planningMenage);
   }
 
   if (ongletActif === "moi") {
@@ -550,6 +566,24 @@ function rendrePlan(brut) {
       echap(p.nom || "") + "</div>";
   });
   return h + "</div></div></div>";
+}
+
+// rendu du planning ménage publié (identique à la vue compacte imprimée : une carte par équipe)
+function rendreMenage(brut) {
+  let p;
+  try { p = JSON.parse(brut); } catch (e) { return '<div class="vide">Planning illisible.</div>'; }
+  let h = '<div class="carte"><b>🧹 Équipes de ménage 4G</b>' +
+    '<span style="font-size:.72rem;color:#7b8794"> · publié le ' + echap(p.maj || "?") + "</span>" +
+    '<p style="font-size:.8rem;margin-top:6px"><b>Chaque semaine, l\'équipe de service :</b> ' + echap(p.taches || "") + "</p></div>";
+  (p.equipes || []).forEach((eq, i) => {
+    h += '<div class="carte" style="border-left:6px solid ' + echap(eq.couleur) + '">' +
+      '<b style="color:' + echap(eq.couleur) + '">Équipe ' + (i + 1) + "</b>" +
+      '<div style="font-size:.85rem;margin:4px 0 6px">' + (eq.membres || []).map(echap).join(" · ") + "</div>" +
+      '<div style="font-size:.8rem;line-height:1.8">' +
+      (eq.dates || []).map(d => '<span style="display:inline-block;border:1px solid #cbd2da;border-radius:4px;padding:0 6px;margin:1px 2px">' + echap(d) + "</span>").join("") +
+      "</div></div>";
+  });
+  return h;
 }
 
 // ---------- démarrage ----------
