@@ -40,7 +40,9 @@
 </div>
 
 <script src="../donnees/eleves-4G.js"></script>
+<script src="js/donnees.js"></script>
 <script>
+PP4G.ready().then(() => {
 if (window.DONNEES_4G) {
   const d = window.DONNEES_4G;
   document.getElementById("titre").textContent = d.classe + " — " + d.annee;
@@ -49,7 +51,7 @@ if (window.DONNEES_4G) {
     const v = document.createElement("div");
     v.className = "vignette";
     const initiales = e.prenom[0] + e.nom[0];
-    v.innerHTML = '<div class="cadre"><img src="../donnees/photos/' + encodeURIComponent(e.nom + " " + e.prenom) + '.jpg" ' +
+    v.innerHTML = '<div class="cadre"><img src="' + PP4G.photoUrl(e.nom, e.prenom) + '" ' +
       'onerror="this.parentNode.innerHTML=\'<span class=&quot;initiales&quot;>' + initiales + '</span>\'"></div>' +
       '<div class="etiquette">' + e.nom + "<small>" + e.prenom + "</small></div>";
     grille.appendChild(v);
@@ -57,6 +59,7 @@ if (window.DONNEES_4G) {
 } else {
   document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Données introuvables (../donnees/eleves-4G.js).</p>");
 }
+});
 </script>
 </body>
 </html>

@@ -2,12 +2,22 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Équipes de ménage 4G — outil local</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2c5f8a">
+<title>Équipes de ménage 4G — nomade</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  #semaineCourante { background: #eef3f8; border: 2px solid #2c5f8a; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  #semaineCourante .titre { font-size: .78rem; color: #52606d; margin-bottom: 4px; }
+  #semaineCourante .nom-equipe { font-size: 1.1rem; font-weight: bold; }
+  #semaineCourante .membres { font-size: .84rem; margin-top: 4px; }
+  tr.semaine-courante td { background: #fdf0d5; font-weight: 600; }
   .barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
   input, button { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; }
   button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
@@ -43,11 +53,23 @@
   #vueCompacte .dates { font-size: .8rem; line-height: 1.5; }
   #vueCompacte .dates span { display: inline-block; border: 1px solid #cbd2da; border-radius: 4px; padding: 0 6px; margin: 1px 2px; }
   #vueCompacte .taches-rappel { font-size: .82rem; margin-top: 4px; }
+  @media (pointer: coarse) {
+    /* Cibles tactiles élargies (téléphone) — placé en dernier pour gagner sur les règles de base. */
+    input, button { min-height: 44px; font-size: .86rem; }
+    .membre { min-height: 32px; display: flex; align-items: center; }
+  }
 </style>
 </head>
 <body>
+<a class="retour" href="../index.html">← Accueil</a>
 <h1>Équipes de ménage 4G</h1>
-<p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur.</p>
+<p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
+
+<div id="semaineCourante" style="display:none">
+  <div class="titre">Cette semaine (<span id="dateSemaineCourante"></span>)</div>
+  <div class="nom-equipe" id="equipeSemaineCourante"></div>
+  <div class="membres" id="membresSemaineCourante"></div>
+</div>
 
 <div class="barre">
   <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
@@ -61,7 +83,7 @@
   <label><input type="checkbox" id="sauterFeries" checked> ne pas programmer les semaines contenant un jour férié</label>
   <span style="font-size:.7rem;color:#7b8794">Vacances zone B 2026-2027 et jours fériés intégrés — jamais de ménage sur ces périodes.</span>
 </div>
-<p class="info">Déplacer un élève : glisser-déposer sur un autre élève (interversion) ou sur une équipe (déplacement) — ou clic puis clic.</p>
+<p class="info">Déplacer un élève : touche-le puis touche un autre élève (interversion) ou une équipe (déplacement).</p>
 
 <div class="taches"><b>Tâches de la semaine (équipe de service)</b> : balayage de la salle · vidage des poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel.</div>
 
@@ -70,8 +92,9 @@
 <table id="tableRoulement"></table>
 <div id="vueCompacte"></div>
 
-<script src="../donnees/eleves-4G.js"></script>
+<!-- Contexte PWA (pp4g/) : données via IndexedDB (js/donnees.js). -->
 <script src="js/donnees.js"></script>
+<script src="../js/verrou.js"></script>
 <script>
 const CLE = "equipes-menage-4G";
 // Calendrier officiel 2026-2027 — zone B (académie de Nantes). Semaines repérées par leur lundi.
@@ -152,6 +175,12 @@ function dessiner() {
       const [es, ms] = JSON.parse(ev.dataTransfer.getData("text"));
       if (es !== ei) deplacer([es, ms], ei, false);
     };
+    // Équivalent tactile du dépôt sur une équipe : touche un élève (sélection) puis
+    // touche un espace vide d'une autre équipe (déplacement, sans échange).
+    div.onclick = ev => {
+      if (ev.target.closest(".membre")) return; // géré par le membre lui-même
+      if (selection && selection[0] !== ei) deplacer(selection, ei, false);
+    };
     eq.forEach((idx, mi) => {
       const m = document.createElement("div");
       m.className = "membre" + (selection && selection[0] === ei && selection[1] === mi ? " selectionne" : "");
@@ -198,10 +227,32 @@ function calculerRoulement() {
   return lignes;
 }
 
+function estSemaineCourante(lundi) {
+  const debut = new Date(lundi); debut.setHours(0, 0, 0, 0);
+  const fin = new Date(debut); fin.setDate(fin.getDate() + 4); fin.setHours(23, 59, 59, 999); // vendredi soir
+  const aujourdhui = new Date();
+  return aujourdhui >= debut && aujourdhui <= fin;
+}
+
+function majSemaineCourante(lignes) {
+  const carte = document.getElementById("semaineCourante");
+  const ligne = lignes.find(l => estSemaineCourante(l.lundi));
+  if (!ligne || ligne.type !== "menage") { carte.style.display = "none"; return; }
+  carte.style.display = "block";
+  document.getElementById("dateSemaineCourante").textContent = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const couleur = COULEURS[ligne.equipe % COULEURS.length];
+  const eqEl = document.getElementById("equipeSemaineCourante");
+  eqEl.textContent = "Équipe " + (ligne.equipe + 1);
+  eqEl.style.color = couleur;
+  document.getElementById("membresSemaineCourante").textContent = equipes[ligne.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ");
+  const ligneEl = document.getElementById("ligneSemaineCourante");
+  if (ligneEl) ligneEl.scrollIntoView({ block: "nearest" });
+}
+
 function dessinerRoulement() {
   const table = document.getElementById("tableRoulement");
   const lignes = calculerRoulement();
-  if (!lignes.length) { table.innerHTML = ""; document.getElementById("bilanRoulement").textContent = ""; return; }
+  if (!lignes.length) { table.innerHTML = ""; document.getElementById("bilanRoulement").textContent = ""; document.getElementById("semaineCourante").style.display = "none"; return; }
   const nbMenage = lignes.filter(l => l.type === "menage").length;
   document.getElementById("bilanRoulement").textContent =
     "— " + nbMenage + " semaines de ménage · " + lignes.filter(l => l.type === "vacances").length + " semaines de vacances écartées · " +
@@ -209,18 +260,22 @@ function dessinerRoulement() {
   let h = "<tr><th>Semaine du</th><th>Équipe de service</th><th>Membres / remarque</th></tr>";
   lignes.forEach(l => {
     const dateFr = l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const courante = estSemaineCourante(l.lundi);
+    const idAttr = courante ? ' id="ligneSemaineCourante"' : "";
+    const classeCourante = courante ? " semaine-courante" : "";
     if (l.type === "vacances")
-      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Vacances : " + l.nom + "</td></tr>";
+      h += "<tr" + idAttr + " class='ferie" + classeCourante + "'><td>" + dateFr + "</td><td>—</td><td>Vacances : " + l.nom + "</td></tr>";
     else if (l.type === "ferie-saute")
-      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Semaine écartée (férié : " + l.nom + ")</td></tr>";
+      h += "<tr" + idAttr + " class='ferie" + classeCourante + "'><td>" + dateFr + "</td><td>—</td><td>Semaine écartée (férié : " + l.nom + ")</td></tr>";
     else {
       const couleur = COULEURS[l.equipe % COULEURS.length];
-      h += "<tr><td>" + dateFr + "</td><td><span class='pastille' style='background:" + couleur + "'></span><b style='color:" + couleur + "'>Équipe " + (l.equipe + 1) + "</b></td><td>" +
+      h += "<tr" + idAttr + (classeCourante ? " class='" + classeCourante.trim() + "'" : "") + "><td>" + dateFr + "</td><td><span class='pastille' style='background:" + couleur + "'></span><b style='color:" + couleur + "'>Équipe " + (l.equipe + 1) + "</b></td><td>" +
         equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ") +
         (l.ferie ? " <i style='color:#9a6a08'>(férié dans la semaine : " + l.ferie + ")</i>" : "") + "</td></tr>";
     }
   });
   table.innerHTML = h;
+  majSemaineCourante(lignes);
   dessinerVueCompacte(lignes);
 }
 
@@ -285,7 +340,7 @@ if (window.DONNEES_4G) {
   restaurer();
   dessiner();
 } else {
-  document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Données introuvables : place ce fichier dans le dossier « outils » à côté de « donnees ».</p>");
+  document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Aucune donnée importée. Va dans <a href='../donnees.html'>⚙️ Données</a> pour importer une classe.</p>");
 }
 });
 </script>

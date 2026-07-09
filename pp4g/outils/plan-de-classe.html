@@ -2,8 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Plan de classe 4G — outil local</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2c5f8a">
+<title>Plan de classe 4G — nomade</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
 <style>
+  a.retour { display: inline-block; margin-bottom: 6px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  #salleScroll { overflow: auto; -webkit-overflow-scrolling: touch; max-width: 100%; border: 1px solid #d9dee5; border-radius: 8px; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
@@ -49,15 +55,25 @@
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4 landscape; margin: 8mm; }
   }
+  @media (pointer: coarse) {
+    /* Cibles tactiles élargies (téléphone) — placé en dernier pour gagner sur les règles de base. */
+    select, button, input[type="number"], input[type="text"] { min-height: 44px; font-size: .88rem; }
+    .panneau .liste button { min-height: 32px; }
+  }
+  @media (max-width: 700px) {
+    /* Écran étroit (téléphone) : la salle passe au-dessus, les panneaux « atelier » en dessous. */
+    .zone { flex-direction: column; }
+    #lateral { width: 100%; }
+  }
 </style>
 </head>
 <body>
+<a class="retour" href="../index.html">← Accueil</a>
 <h1 id="titre">Plan de classe 4G</h1>
-<p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur. Ne pas déposer ce dossier « donnees » en ligne.</p>
+<p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
 <div id="chargeur" style="display:none">
-  Données élèves introuvables (<code>../donnees/eleves-4G.js</code>).
-  Sélectionne le fichier <b>eleves-4G.json</b> : <input type="file" id="fichierJson" accept=".json">
+  Aucune donnée importée. Va dans <a href="../donnees.html">⚙️ Données</a> pour importer une classe.
 </div>
 
 <div class="barre">
@@ -105,13 +121,13 @@
 <div id="entetePrint"></div>
 
 <div class="zone">
-  <div id="salle"></div>
+  <div id="salleScroll"><div id="salle"></div></div>
   <div id="lateral">
     <div class="panneau">
       <h2>Légende (écran seulement)</h2>
       <span style="font-size:.72rem">vert = dys · bleu = « devant » · orange = sélection · rouge = conflit.<br>
-      Échanger : clic puis clic (ou glisser-déposer).<br>
-      Photos : fichiers <code>donnees/photos/NOM Prénom.jpg</code>.</span>
+      Échanger : touche une place puis une autre.<br>
+      Photos : importées via ⚙️ Données.</span>
     </div>
     <div class="panneau">
       <h2>Placer devant (premiers rangs)</h2>
@@ -138,10 +154,11 @@
   </div>
 </div>
 
-<script src="../donnees/classes.js"></script>
-<script src="../donnees/eleves-4G.js"></script>
-<script src="../donnees/config-portail.js"></script>
+<!-- Contexte PWA (pp4g/) : pas de dossier donnees/ (privé, jamais déployé). Les données
+     viennent d'IndexedDB via js/donnees.js — voir la copie PC (Prof Principal 4e/outils/)
+     pour la variante avec les <script src="../donnees/..."> (chargement file://). -->
 <script src="js/donnees.js"></script>
+<script src="../js/verrou.js"></script>
 <script>
 let classeActive = null;
 function cleStockage() { return "plan-de-classe-" + classeActive; }
@@ -661,11 +678,6 @@ document.getElementById("btnSupprimerClasse").onclick = () => {
 PP4G.ready().then(() => {
 if (!initClasses()) {
   document.getElementById("chargeur").style.display = "block";
-  document.getElementById("fichierJson").onchange = ev => {
-    const lecteur = new FileReader();
-    lecteur.onload = () => { document.getElementById("chargeur").style.display = "none"; demarrer(JSON.parse(lecteur.result)); };
-    lecteur.readAsText(ev.target.files[0], "UTF-8");
-  };
 }
 });
 </script>

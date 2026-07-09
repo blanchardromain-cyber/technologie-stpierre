@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2c5f8a">
+<title>Couteau Suisse 4G — nomade</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; padding: 14px; padding-bottom: 40px; }
+  .entete { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .entete img { height: 44px; }
+  h1 { font-size: 1.15rem; }
+  .sous { font-size: .74rem; color: #52606d; margin-bottom: 4px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 16px; }
+  .tiroirs { display: flex; flex-direction: column; gap: 12px; }
+  .tiroir { background: #fff; border: 1px solid #d9dee5; border-top: 5px solid; border-radius: 10px; padding: 12px; }
+  .tiroir h2 { font-size: .95rem; margin-bottom: 2px; }
+  .tiroir .ou { font-size: .72rem; color: #7b8794; margin-bottom: 10px; }
+  .tiroir.vert { border-top-color: #2c8a5f; } .tiroir.vert h2 { color: #1e6b47; }
+  .tiroir.bleu { border-top-color: #2c5f8a; } .tiroir.bleu h2 { color: #2c5f8a; }
+  .tiroir.rouge { border-top-color: #b23b3b; } .tiroir.rouge h2 { color: #a33b3b; }
+  .tiroir.violet { border-top-color: #6d4fa3; } .tiroir.violet h2 { color: #6d4fa3; }
+  .module { display: block; padding: 12px 12px; min-height: 44px; border: 1px solid #e4e8ee; border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: #1f2933; font-size: .9rem; }
+  a.module:active { background: #f5f8fb; border-color: #b8c0cc; }
+  .module small { display: block; font-size: .74rem; color: #7b8794; margin-top: 3px; }
+  .chip { float: right; font-size: .66rem; border-radius: 4px; padding: 2px 7px; }
+  .chip.pret { background: #e0f2e9; color: #1e6b47; }
+  .chip.avenir { background: #eee9f7; color: #6d4fa3; }
+  .avenir-note { font-size: .78rem; color: #7b8794; font-style: italic; }
+  .rappel { font-size: .72rem; color: #7b8794; margin-top: 18px; border-top: 1px solid #d9dee5; padding-top: 10px; }
+  #bandeauMaj { display: none; position: fixed; left: 10px; right: 10px; bottom: 10px; background: #2c5f8a; color: #fff; border-radius: 10px; padding: 10px 12px; font-size: .82rem; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+  #bandeauMaj button { margin-top: 6px; background: #fff; color: #2c5f8a; border: none; border-radius: 6px; padding: 6px 10px; font-size: .78rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="entete">
+  <img src="../Logo%20college/Nouveau%20logo.png" alt="" onerror="this.style.display='none'">
+  <div>
+    <h1>🇨🇭 Couteau Suisse 4G — nomade</h1>
+    <div class="sous">Version téléphone. Le PC reste l'atelier (construction des plans) ; ici : consultation et retouches d'appoint.</div>
+  </div>
+</div>
+<p class="rgpd">Les données importées restent sur ce téléphone (aucun envoi vers un serveur).</p>
+
+<a class="module" href="donnees.html" style="display:block;background:#fff;border:1px solid #d9dee5;margin-bottom:12px">⚙️ Données<small>Importer une classe / des photos · exporter une sauvegarde</small></a>
+
+<div class="tiroirs">
+  <div class="tiroir rouge">
+    <h2>🟥 Local RGPD</h2>
+    <div class="ou">100 % sur ce téléphone — rien ne sort</div>
+    <a class="module" href="outils/trombinoscope.html">Trombinoscope<span class="chip pret">prêt</span><small>Apprendre les prénoms · mode révision</small></a>
+    <a class="module" href="outils/plan-de-classe.html">Plan de classe<span class="chip pret">prêt</span><small>Consultation · échanger deux élèves</small></a>
+    <a class="module" href="outils/equipes-menage.html">Équipes de ménage<span class="chip pret">prêt</span><small>Roulement de la semaine</small></a>
+  </div>
+
+  <div class="tiroir vert">
+    <h2>🟩 Public élèves</h2>
+    <div class="ou">Vue prof — codes personnels</div>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hub-classe/" target="_blank" rel="noopener">Hub de classe<span class="chip pret">en ligne</span><small>Annonces · entraide · modération (code PROF)</small></a>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/psc1/" target="_blank" rel="noopener">Inscriptions PSC1<span class="chip pret">en ligne</span><small>Vue prof : dates, binômes</small></a>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/carnet/" target="_blank" rel="noopener">Carnet de bord<span class="chip pret">en ligne</span><small>Vue prof : suivi, alertes</small></a>
+  </div>
+
+  <div class="tiroir bleu">
+    <h2>🟦 Privé Drive</h2>
+    <div class="ou">Ton compte Google — s'ouvre dans l'appli Sheets</div>
+    <a class="module" href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener">Registre des retenues<span class="chip pret">en ligne</span><small>Suivi + « travail fourni » collègues</small></a>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/suivi-eleves/TABLEAU-DE-BORD.md" target="_blank" rel="noopener">Suivi élèves / synthèse conseil<span class="chip pret">guide</span><small>Tableau de bord (IMPORTRANGE Carnet + Retenues)</small></a>
+  </div>
+
+  <div class="tiroir violet">
+    <h2>🟪 Workflows Claude</h2>
+    <div class="ou">Procédures — ouvre l'appli Claude et dis…</div>
+    <span class="module">« Appréciations T1 » (T2, T3)<small>Dépose l'export EcoleDirecte → synthèses ≤ 400 car.</small></span>
+    <span class="module">« Retenue : élève, date, motif »<small>Brouillon Gmail collègues + message parents</small></span>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hvc/PROGRAMME-HVC.md" target="_blank" rel="noopener">Programme HVC annuel<span class="chip pret">guide</span><small>~18 séances calées zone B</small></a>
+    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/reunion-parents/diaporama-rentree.html" target="_blank" rel="noopener">Diaporama réunion de rentrée<span class="chip pret">prêt</span><small>Projetable aux parents</small></a>
+    <a class="module" href="https://claude.ai/new" target="_blank" rel="noopener">Ouvrir Claude<small>Pour les workflows ci-dessus</small></a>
+  </div>
+</div>
+
+<p class="rappel">📕 Référence PC : <b>Prof Principal 4e/PLAN-DIRECTEUR.md</b> et <b>PLAN-APP-NOMADE.md</b>.</p>
+
+<div id="bandeauMaj">
+  Nouvelle version disponible.
+  <div><button id="btnRecharger">Recharger</button></div>
+</div>
+
+<script src="outils/js/donnees.js"></script>
+<script src="js/verrou.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then((reg) => {
+    reg.addEventListener("updatefound", () => {
+      const nouveau = reg.installing;
+      if (!nouveau) return;
+      nouveau.addEventListener("statechange", () => {
+        if (nouveau.state === "installed" && navigator.serviceWorker.controller) {
+          document.getElementById("bandeauMaj").style.display = "block";
+        }
+      });
+    });
+  });
+  let dejaRecharge = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (dejaRecharge) return;
+    dejaRecharge = true;
+    window.location.reload();
+  });
+  document.getElementById("btnRecharger").onclick = () => {
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (reg && reg.waiting) reg.waiting.postMessage("skipWaiting");
+    });
+  };
+}
+</script>
+</body>
+</html>

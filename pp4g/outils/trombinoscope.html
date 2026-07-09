@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2c5f8a">
+<title>Trombinoscope 4G — nomade</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon-192.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 12px; }
+  a.retour { display: inline-block; margin-bottom: 8px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .barre { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
+  button { font-size: .84rem; padding: 8px 12px; min-height: 44px; border: 1px solid #2c5f8a; border-radius: 6px; background: #2c5f8a; color: #fff; cursor: pointer; }
+  button.actif { background: #d97706; border-color: #d97706; }
+  .planche { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 12px; }
+  .titre { background: #cdd9f2; border: 1px solid #9db4dd; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1.05rem; padding: 8px; margin-bottom: 14px; }
+  .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 10px 8px; }
+  .vignette { text-align: center; min-height: 44px; }
+  .vignette .cadre { width: 100%; aspect-ratio: 3 / 4; background: #eef1f5; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .vignette img { width: 100%; height: 100%; object-fit: cover; }
+  .vignette .initiales { font-size: 1.3rem; font-weight: bold; color: #98a6b5; }
+  .vignette .etiquette { font-size: .68rem; font-weight: bold; margin-top: 3px; line-height: 1.15; min-height: 1.1em; }
+  .vignette .etiquette small { display: block; font-weight: normal; }
+  /* Mode révision : noms masqués, un tap sur la vignette les révèle (individuellement). */
+  .planche.revision .vignette .etiquette { visibility: hidden; }
+  .planche.revision .vignette.revele .etiquette { visibility: visible; }
+  .planche.revision .vignette .cadre { cursor: pointer; box-shadow: inset 0 0 0 2px #d97706; }
+  .planche.revision .vignette.revele .cadre { box-shadow: inset 0 0 0 2px #2c8a5f; }
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; padding: 0; }
+    .barre, .rgpd, a.retour { display: none !important; }
+    .planche { border: none; padding: 0; }
+    .grille { grid-template-columns: repeat(10, 1fr); }
+    .planche.revision .vignette .etiquette { visibility: visible; }
+    @page { size: A4 landscape; margin: 8mm; }
+  }
+</style>
+</head>
+<body>
+<a class="retour" href="../index.html">← Accueil</a>
+<p class="rgpd">Données 100 % locales à ce téléphone — photos et noms ne quittent jamais l'appareil.</p>
+<div class="barre">
+  <button id="btnRevision">🎓 Mode révision</button>
+  <span id="aideRevision" style="display:none;font-size:.74rem;color:#7b8794">Touche une photo pour révéler le nom.</span>
+</div>
+
+<div class="planche" id="planche">
+  <div class="titre" id="titre">4G</div>
+  <div class="grille" id="grille"></div>
+</div>
+
+<!-- Contexte PWA (pp4g/) : données via IndexedDB (js/donnees.js). -->
+<script src="js/donnees.js"></script>
+<script src="../js/verrou.js"></script>
+<script>
+PP4G.ready().then(() => {
+if (window.DONNEES_4G) {
+  const d = window.DONNEES_4G;
+  document.getElementById("titre").textContent = d.classe + " — " + d.annee;
+  const grille = document.getElementById("grille");
+  d.eleves.slice().sort((a, b) => (a.nom + a.prenom).localeCompare(b.nom + b.prenom, "fr")).forEach(e => {
+    const v = document.createElement("div");
+    v.className = "vignette";
+    const initiales = e.prenom[0] + e.nom[0];
+    v.innerHTML = '<div class="cadre"><img src="' + PP4G.photoUrl(e.nom, e.prenom) + '" ' +
+      'onerror="this.parentNode.innerHTML=\'<span class=&quot;initiales&quot;>' + initiales + '</span>\'"></div>' +
+      '<div class="etiquette">' + e.nom + "<small>" + e.prenom + "</small></div>";
+    v.onclick = () => v.classList.toggle("revele");
+    grille.appendChild(v);
+  });
+} else {
+  document.body.insertAdjacentHTML("beforeend", "<p style='color:#c0392b'>Aucune donnée importée. Va dans <a href='../donnees.html'>⚙️ Données</a> pour importer une classe.</p>");
+}
+});
+
+document.getElementById("btnRevision").onclick = () => {
+  const planche = document.getElementById("planche");
+  const actif = planche.classList.toggle("revision");
+  document.getElementById("btnRevision").classList.toggle("actif", actif);
+  document.getElementById("aideRevision").style.display = actif ? "inline" : "none";
+  if (!actif) document.querySelectorAll(".vignette.revele").forEach(v => v.classList.remove("revele"));
+};
+</script>
+</body>
+</html>

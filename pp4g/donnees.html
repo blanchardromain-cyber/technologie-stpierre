@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2c5f8a">
+<title>⚙️ Données — Couteau Suisse 4G</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; padding: 14px; }
+  h1 { font-size: 1.1rem; margin-bottom: 4px; }
+  a.retour { display: inline-block; margin-bottom: 10px; font-size: .82rem; color: #2c5f8a; text-decoration: none; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 14px; }
+  .bloc { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .bloc h2 { font-size: .95rem; margin-bottom: 8px; }
+  .bloc p { font-size: .82rem; color: #52606d; margin-bottom: 8px; }
+  label.champ { display: block; font-size: .84rem; margin: 10px 0 4px; font-weight: 600; }
+  input[type="file"] { font-size: .82rem; width: 100%; }
+  button { font-size: .88rem; padding: 10px 14px; min-height: 44px; border: 1px solid #2c5f8a; border-radius: 8px; background: #2c5f8a; color: #fff; cursor: pointer; margin-top: 10px; }
+  button.sec { background: #fff; color: #2c5f8a; }
+  button:disabled { opacity: .5; cursor: default; }
+  label.case { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin-top: 8px; }
+  .recap { font-size: .84rem; background: #eef3f8; border-radius: 8px; padding: 10px; margin-top: 10px; white-space: pre-line; }
+  .recap.erreur { background: #fdecec; color: #a33b3b; }
+  .recap.ok { background: #e0f2e9; color: #1e6b47; }
+  .statut { font-size: .82rem; color: #52606d; }
+</style>
+</head>
+<body>
+<a class="retour" href="index.html">← Retour à l'accueil</a>
+<h1>⚙️ Données</h1>
+<p class="rgpd">Les données importées restent sur ce téléphone (IndexedDB local) — aucun envoi vers un serveur.</p>
+
+<div class="bloc">
+  <h2>État actuel</h2>
+  <div class="statut" id="statutActuel">Chargement…</div>
+</div>
+
+<div class="bloc">
+  <h2>1. Importer une classe</h2>
+  <p>Fichier <code>eleves-4G.json</code> (déposé via le Drive du collège, puis téléchargé sur ce téléphone) ou un CSV <code>Nom;Prénom;Sexe[;dys]</code>.</p>
+  <label class="champ" for="fichierEleves">Fichier élèves (.json ou .csv)</label>
+  <input type="file" id="fichierEleves" accept=".json,.csv,.txt">
+  <label class="champ" for="fichierPhotos">Photos (optionnel, plusieurs fichiers, nommés « NOM Prénom.jpg »)</label>
+  <input type="file" id="fichierPhotos" accept="image/*" multiple>
+  <button id="btnImporter">Importer</button>
+  <div class="recap" id="recapImport" style="display:none"></div>
+</div>
+
+<div class="bloc">
+  <h2>2. Exporter une sauvegarde</h2>
+  <p>Fichier de secours téléchargé sur ce téléphone — à réimporter ici en cas d'effacement, ou à ramener sur le PC.</p>
+  <label class="case"><input type="checkbox" id="avecPhotos"> inclure les photos (fichier plus volumineux — utile si tu changes de téléphone)</label>
+  <button id="btnExporter" class="sec">Exporter une sauvegarde</button>
+</div>
+
+<div class="bloc">
+  <h2>3. Sécurité</h2>
+  <p>Code à 4-6 chiffres demandé à l'ouverture de l'app (pas du chiffrement — la vraie protection reste le verrouillage du téléphone).</p>
+  <div class="statut" id="statutPin">Chargement…</div>
+  <label class="champ" for="nouveauPin">Nouveau code (4-6 chiffres)</label>
+  <input type="password" id="nouveauPin" inputmode="numeric" pattern="[0-9]*" maxlength="6" style="max-width:140px;letter-spacing:2px">
+  <button id="btnActiverPin">Activer / changer le code</button>
+  <button id="btnDesactiverPin" class="sec" style="display:none">Désactiver le verrou</button>
+  <div class="recap" id="recapPin" style="display:none"></div>
+</div>
+
+<script src="outils/js/donnees.js"></script>
+<script src="js/verrou.js"></script>
+<script>
+function nomCleDepuisFichier(fichier) {
+  return fichier.name.replace(/\.[^.]+$/, "");
+}
+
+function analyserListe(texte, nomClasse) {
+  // Mêmes règles que l'import de classe du plan de classe PC (outils/plan-de-classe.html).
+  texte = texte.replace(/^﻿/, "").trim();
+  if (texte.startsWith("{") || texte.startsWith("[")) {
+    const brut = JSON.parse(texte);
+    if (brut.format === "pp4g-sauvegarde-v1") return brut; // sauvegarde entière, traitée à part
+    const eleves = Array.isArray(brut) ? brut : brut.eleves;
+    return {
+      classe: brut.classe || nomClasse || "4G",
+      annee: brut.annee || "2026-2027",
+      maj: brut.maj,
+      professeurs: brut.professeurs,
+      eleves: eleves.map(e => ({ nom: String(e.nom).toUpperCase(), prenom: e.prenom, sexe: e.sexe === "F" ? "F" : "M", tags: e.tags || [] }))
+    };
+  }
+  const lignes = texte.split(/\r?\n/).filter(l => l.trim());
+  const sep = lignes[0].includes(";") ? ";" : lignes[0].includes("\t") ? "\t" : ",";
+  const eleves = [];
+  lignes.forEach(l => {
+    const c = l.split(sep).map(x => x.trim());
+    if (c.length < 2 || /^nom$/i.test(c[0])) return;
+    const sexe = (c[2] || "").toUpperCase().startsWith("F") ? "F" : "M";
+    const tags = (c[3] || "").toLowerCase().includes("dys") ? ["dys"] : [];
+    eleves.push({ nom: c[0].toUpperCase(), prenom: c[1], sexe, tags });
+  });
+  if (!eleves.length) throw new Error("aucune ligne élève reconnue");
+  return { classe: nomClasse || "4G", annee: "2026-2027", eleves };
+}
+
+function afficherRecap(texte, classe) {
+  const zone = document.getElementById("recapImport");
+  zone.style.display = "block";
+  zone.className = "recap " + classe;
+  zone.textContent = texte;
+}
+
+async function majStatut() {
+  const classes = await PP4G.listerClasses();
+  const zone = document.getElementById("statutActuel");
+  if (!classes.length) { zone.textContent = "Aucune donnée importée pour l'instant."; return; }
+  const dernier = await PP4G.meta.lire("dernierImport");
+  zone.textContent = classes.map(c => {
+    const nbF = c.eleves.filter(e => e.sexe === "F").length;
+    const nbDys = c.eleves.filter(e => (e.tags || []).includes("dys")).length;
+    return c.classe + " : " + c.eleves.length + " élèves (" + nbF + " F / " + (c.eleves.length - nbF) + " G, " + nbDys + " dys)";
+  }).join("\n") + (dernier ? "\nImporté le " + new Date(dernier.date).toLocaleString("fr-FR") + " — " + dernier.nbPhotos + " photo(s)" : "");
+}
+
+document.getElementById("btnImporter").onclick = async () => {
+  const btn = document.getElementById("btnImporter");
+  const fichierEleves = document.getElementById("fichierEleves").files[0];
+  const fichiersPhotos = document.getElementById("fichierPhotos").files;
+  if (!fichierEleves) { afficherRecap("Choisis d'abord un fichier élèves.", "erreur"); return; }
+  btn.disabled = true;
+  try {
+    const texte = await fichierEleves.text();
+    const nomClasse = fichierEleves.name.replace(/\.(json|csv|txt)$/i, "").toUpperCase();
+    const donnees = analyserListe(texte, nomClasse);
+
+    let nbClassesImportees = 0, nbElevesImportes = 0;
+    if (donnees.format === "pp4g-sauvegarde-v1") {
+      // Réimport d'une sauvegarde exportée par cette app (idempotent) : restaure chaque classe + photos.
+      for (const c of donnees.classes) { await PP4G.importerClasse(c); nbClassesImportees++; nbElevesImportes += c.eleves.length; }
+      if (donnees.photos) {
+        for (const [cle, dataUrl] of Object.entries(donnees.photos)) {
+          const blob = await fetch(dataUrl).then(r => r.blob());
+          await PP4G.importerPhoto(cle, blob);
+        }
+      }
+    } else {
+      await PP4G.importerClasse(donnees);
+      nbClassesImportees = 1; nbElevesImportes = donnees.eleves.length;
+    }
+
+    let nbPhotos = 0;
+    for (const f of fichiersPhotos) { await PP4G.importerPhoto(nomCleDepuisFichier(f), f); nbPhotos++; }
+
+    await PP4G.meta.ecrire("dernierImport", { date: new Date().toISOString(), nbPhotos });
+
+    let persistance = "non demandée";
+    if (navigator.storage && navigator.storage.persist) {
+      const accorde = await navigator.storage.persist();
+      persistance = accorde ? "accordée" : "refusée par le navigateur";
+    }
+
+    afficherRecap(
+      (donnees.format === "pp4g-sauvegarde-v1"
+        ? nbClassesImportees + " classe(s) restaurée(s), " + nbElevesImportes + " élève(s) au total"
+        : nbElevesImportes + " élèves importés (" + donnees.classe + ")")
+      + (nbPhotos ? ", " + nbPhotos + " photo(s)" : "")
+      + "\nStockage persistant : " + persistance,
+      "ok"
+    );
+    await majStatut();
+  } catch (e) {
+    afficherRecap("Import impossible : " + e.message, "erreur");
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+document.getElementById("btnExporter").onclick = async () => {
+  const btn = document.getElementById("btnExporter");
+  btn.disabled = true;
+  try {
+    const avecPhotos = document.getElementById("avecPhotos").checked;
+    const donnees = await PP4G.exporterTout(avecPhotos);
+    const paquet = { format: "pp4g-sauvegarde-v1", exporte: new Date().toISOString(), classes: donnees.classes, photos: donnees.photos };
+    const blob = new Blob([JSON.stringify(paquet)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "sauvegarde-pp4g-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+function hacherPin(pin) {
+  const data = new TextEncoder().encode(pin);
+  return crypto.subtle.digest("SHA-256", data).then(buf =>
+    Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join(""));
+}
+
+async function majStatutPin() {
+  const hash = await PP4G.config.lire("pinHash");
+  const zone = document.getElementById("statutPin");
+  const btnDesactiver = document.getElementById("btnDesactiverPin");
+  if (hash) { zone.textContent = "Verrou actif — code demandé à l'ouverture."; btnDesactiver.style.display = "inline"; }
+  else { zone.textContent = "Aucun verrou configuré."; btnDesactiver.style.display = "none"; }
+}
+
+document.getElementById("btnActiverPin").onclick = async () => {
+  const pin = document.getElementById("nouveauPin").value.trim();
+  const zone = document.getElementById("recapPin");
+  zone.style.display = "block";
+  if (!/^\d{4,6}$/.test(pin)) { zone.className = "recap erreur"; zone.textContent = "Le code doit comporter 4 à 6 chiffres."; return; }
+  const hash = await hacherPin(pin);
+  await PP4G.config.ecrire("pinHash", hash);
+  document.getElementById("nouveauPin").value = "";
+  zone.className = "recap ok";
+  zone.textContent = "Code enregistré.";
+  await majStatutPin();
+};
+
+document.getElementById("btnDesactiverPin").onclick = async () => {
+  if (!confirm("Désactiver le verrou ?")) return;
+  await PP4G.config.ecrire("pinHash", null);
+  await majStatutPin();
+  const zone = document.getElementById("recapPin");
+  zone.style.display = "block"; zone.className = "recap ok"; zone.textContent = "Verrou désactivé.";
+};
+
+PP4G.ready().then(() => { majStatut(); majStatutPin(); });
+</script>
+</body>
+</html>
