@@ -1,7 +1,7 @@
-# Cockpit PP 4G — nomade — guide d'installation
+# Cockpit PP — nomade — guide d'installation
 
-Version téléphone (Android) du Couteau Suisse du Prof Principal 4e, rebaptisé
-**Cockpit PP**. Une **PWA**
+Version téléphone (Android) de **Cockpit PP**, l'application du Prof Principal.
+Une **PWA**
 (pas d'application du Play Store) : elle s'installe depuis Chrome et fonctionne
 ensuite hors connexion. Le PC reste l'atelier (construction des plans) ; le
 téléphone sert à la **consultation et aux retouches d'appoint** (voir

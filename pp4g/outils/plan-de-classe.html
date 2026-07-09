@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f1f3d">
-<title>Plan de classe — Cockpit PP 4G</title>
+<title>Plan de classe — Cockpit PP</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="../icons/logo-source.svg">
 <link rel="icon" href="../icons/favicon-48.png">
@@ -73,7 +73,7 @@
 <a class="retour" href="../index.html">← Accueil</a>
 <div class="entete-cockpit">
   <img class="logo-horizon" src="../icons/logo-source.svg" alt="Cockpit PP">
-  <h1 id="titre">Plan de classe 4G</h1>
+  <h1 id="titre">Plan de classe</h1>
 </div>
 <p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
@@ -467,7 +467,7 @@ function majEntetePrint() {
   const nomSalle = g.options[g.selectedIndex].text;
   const d = dateGeneration ? new Date(dateGeneration) : null;
   document.getElementById("entetePrint").innerHTML =
-    "<b>Plan de classe 4G</b> — " + nomSalle +
+    "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR");
 }
@@ -544,7 +544,7 @@ const CLE_IMPORTS = "plan-de-classe-classes-importees";
 function lireImports() { try { return JSON.parse(localStorage.getItem(CLE_IMPORTS)) || {}; } catch (e) { return {}; } }
 
 function initClasses(classeADemarrer) {
-  // catalogue = classes.js (repli : 4G seule) + classes importées via l'outil (localStorage)
+  // catalogue = IndexedDB (via js/donnees.js, une ou plusieurs classes importées) + classes importées via l'outil (localStorage)
   catalogue = {};
   if (window.CLASSES) Object.assign(catalogue, window.CLASSES);
   else if (window.DONNEES_4G) catalogue[window.DONNEES_4G.classe] = window.DONNEES_4G;
@@ -667,7 +667,7 @@ document.getElementById("fichierClasse").onchange = ev => {
       const n = importerClasse(nom.trim().toUpperCase(), lecteur.result);
       alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + n + " élèves.");
     } catch (e) {
-      alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — ou un JSON au format 4G.");
+      alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — ou un JSON au format canonique.");
     }
     ev.target.value = "";
   };

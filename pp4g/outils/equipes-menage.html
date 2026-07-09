@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f1f3d">
-<title>Équipes de ménage — Cockpit PP 4G</title>
+<title>Équipes de ménage — Cockpit PP</title>
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="../icons/logo-source.svg">
 <link rel="icon" href="../icons/favicon-48.png">
@@ -66,7 +66,7 @@
 <a class="retour" href="../index.html">← Accueil</a>
 <div class="entete-cockpit">
   <img class="logo-horizon" src="../icons/logo-source.svg" alt="Cockpit PP">
-  <h1>Équipes de ménage 4G</h1>
+  <h1 id="titre">Équipes de ménage</h1>
 </div>
 <p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
@@ -117,7 +117,7 @@ const FERIES = {
 };
 const COULEURS = ["#2c5f8a", "#2c8a5f", "#d97706", "#8a2c6b", "#5a7a1e", "#a33b3b", "#4a5a9a", "#7a5fb0"];
 
-let eleves = [], equipes = [], selection = null;
+let eleves = [], equipes = [], selection = null, classeActive = "";
 
 function iso(d) { return d.toISOString().slice(0, 10); }
 function estVacances(lundi) { const l = iso(lundi); return VACANCES.find(([a, b]) => l >= a && l <= b); }
@@ -292,7 +292,7 @@ function dessinerVueCompacte(lignes) {
   const datesParEquipe = equipes.map(() => []);
   lignes.filter(l => l.type === "menage").forEach(l =>
     datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })));
-  let h = "<h1>🧹 Équipes de ménage 4G — année 2026-2027</h1>" +
+  let h = "<h1>🧹 Équipes de ménage" + (classeActive ? " " + classeActive : "") + " — année 2026-2027</h1>" +
     '<div class="taches-rappel"><b>Chaque semaine, l\'équipe de service :</b> balayage · poubelles au tri · tableau · rangement chaises et matériel. Semaine = du lundi indiqué au vendredi.</div>' +
     '<div class="grille">';
   equipes.forEach((eq, ei) => {
@@ -306,7 +306,7 @@ function dessinerVueCompacte(lignes) {
 
 function copierPlanning() {
   const lignes = calculerRoulement().filter(l => l.type === "menage");
-  const texte = "🧹 Équipes de ménage 4G — roulement\n" +
+  const texte = "🧹 Équipes de ménage" + (classeActive ? " " + classeActive : "") + " — roulement\n" +
     "Tâches : balayage, poubelles/tri, tableau, rangement.\n\n" +
     lignes.map(l => "Semaine du " + l.lundi.toLocaleDateString("fr-FR") + " : Équipe " + (l.equipe + 1) + " — " +
       equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ")).join("\n");
@@ -343,6 +343,8 @@ document.getElementById("btnImprimer").onclick = () => window.print();
 PP4G.ready().then(() => {
 if (window.DONNEES_4G) {
   eleves = window.DONNEES_4G.eleves;
+  classeActive = window.DONNEES_4G.classe || "";
+  document.getElementById("titre").textContent = "Équipes de ménage" + (classeActive ? " " + classeActive : "");
   restaurer();
   dessiner();
 } else {

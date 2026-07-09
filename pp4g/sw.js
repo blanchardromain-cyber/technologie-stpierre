@@ -1,5 +1,5 @@
 /*
- * Service worker « Couteau Suisse 4G » — stale-while-revalidate, scope isolé à pp4g/.
+ * Service worker « Cockpit PP » — stale-while-revalidate, scope isolé à pp4g/.
  * Enregistré depuis pp4g/index.html avec register("sw.js") -> scope par défaut = pp4g/
  * (aucun autre dossier du site n'est concerné : blast radius nul sur le reste du dépôt).
  *
@@ -10,7 +10,7 @@
  * CACHE_VERSION : à incrémenter à chaque lot de fichiers ajoutés/modifiés sous pp4g/
  * (N1 = v1 ; N2 ajoutera l'écran données -> v2 ; etc.) pour forcer le renouvellement du cache.
  */
-const CACHE_VERSION = "pp4g-v8";
+const CACHE_VERSION = "pp4g-v9";
 
 const PRECACHE = [
   "./",

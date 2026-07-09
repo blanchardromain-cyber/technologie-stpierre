@@ -1,7 +1,7 @@
 {
-  "name": "Cockpit PP 4G",
-  "short_name": "Cockpit 4G",
-  "description": "Version nomade (téléphone) du Couteau Suisse du Prof Principal 4e, rebaptisé Cockpit PP — consultation hors-ligne, données importées localement.",
+  "name": "Cockpit PP",
+  "short_name": "Cockpit PP",
+  "description": "Version nomade (téléphone) de Cockpit PP — consultation hors-ligne, données importées localement.",
   "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",
