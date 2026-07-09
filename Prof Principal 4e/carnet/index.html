@@ -73,9 +73,11 @@ const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo
 let session = null;
 let donnees = { remarques: [], rdvs: [], config: { finT1: "2026-11-30", finT2: "2027-03-10" } };
 let trimestreActif = null; // onglet T1/T2/T3 sélectionné
+let filtreJournal = { eleve: "", matiere: "", categorie: "", texte: "" };
+let triJournal = { col: "date", sens: -1 }; // -1 = décroissant, 1 = croissant
 
 function trimestreDe(dateIso) {
-  const d = String(dateIso).slice(0, 10);
+  const d = isoDe(dateIso); // robuste : ISO, "AAAA-MM-JJ" ou texte anglais
   if (d <= donnees.config.finT1) return "T1";
   if (d <= donnees.config.finT2) return "T2";
   return "T3";
@@ -165,11 +167,24 @@ function deconnecter() {
   document.getElementById("ecranConnexion").style.display = "block";
 }
 
+// Normalise n'importe quelle date (ISO complet, "AAAA-MM-JJ", ou texte anglais "Mon Jul 06 2026") en "AAAA-MM-JJ".
+function isoDe(v) {
+  const s = String(v);
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const d = new Date(v);
+  return isNaN(d) ? s.slice(0, 10) : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+function dateCourte(iso) {
+  const p = String(iso).split("-");
+  return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : String(iso);
+}
+
 async function rafraichir() {
   const rep = await api("liste");
   if (rep.ok) {
-    // normalise la date (Sheets peut la renvoyer en ISO complet) pour l'affichage et le classement par trimestre
-    donnees.remarques = (rep.remarques || []).map(r => ({ ...r, date: String(r.date).slice(0, 10) }));
+    // normalise la date (Sheets peut la renvoyer en objet Date -> texte anglais) et recalcule
+    // le trimestre côté page à partir de cette date normalisée (on ne dépend pas du backend).
+    donnees.remarques = (rep.remarques || []).map(r => { const date = isoDe(r.date); return { ...r, date, trimestre: trimestreDe(date) }; });
     donnees.rdvs = rep.rdvs || [];
     if (rep.config) donnees.config = rep.config;
   }
@@ -182,6 +197,30 @@ function echap(t) { const d = document.createElement("div"); d.textContent = t |
 function badge(cat) { return '<span class="badge ' + (cat.startsWith("Travail") ? "travail" : "attitude") + '">' + (cat.startsWith("Travail") ? "Travail" : "Attitude") + "</span>"; }
 
 function trimDe(r) { return r.trimestre || trimestreDe(r.date); }
+
+// ---------- filtres & tri du journal (vue prof, façon tableur) ----------
+function optSelect(liste, sel) {
+  return '<option value="">tous</option>' + liste.map(v => '<option' + (v === sel ? " selected" : "") + ">" + echap(v) + "</option>").join("");
+}
+function fleche(col) { return triJournal.col === col ? (triJournal.sens < 0 ? " ▼" : " ▲") : ""; }
+function filtreActif() { return filtreJournal.eleve || filtreJournal.matiere || filtreJournal.categorie || filtreJournal.texte; }
+function setFiltre(champ, val) { filtreJournal[champ] = val; dessiner(); }
+function resetFiltre() { filtreJournal = { eleve: "", matiere: "", categorie: "", texte: "" }; dessiner(); }
+function trierJournal(col) {
+  if (triJournal.col === col) triJournal.sens *= -1; else { triJournal.col = col; triJournal.sens = 1; }
+  dessiner();
+}
+function lignesFiltrees(remarques) {
+  const f = filtreJournal;
+  let rows = remarques.filter(r =>
+    (!f.eleve || r.pseudo === f.eleve) &&
+    (!f.matiere || r.matiere === f.matiere) &&
+    (!f.categorie || (f.categorie === "Travail" ? r.categorie.startsWith("Travail") : r.categorie.startsWith("Attitude"))) &&
+    (!f.texte || (r.precision || "").toLowerCase().includes(f.texte.toLowerCase())));
+  const cle = { eleve: "pseudo", date: "date", matiere: "matiere", categorie: "categorie" }[triJournal.col] || "date";
+  rows.sort((a, b) => String(a[cle] || "").localeCompare(String(b[cle] || ""), "fr") * triJournal.sens);
+  return rows;
+}
 
 function barreTrimestres() {
   return '<div style="display:flex;gap:6px;margin-bottom:10px">' + ["T1", "T2", "T3"].map(t =>
@@ -228,7 +267,7 @@ function dessiner() {
                   : '<p class="note">Le compteur repart à zéro à chaque trimestre. À ' + SEUIL + ' : entretien avec M. Blanchard.</p>');
     if (n) {
       h += "<table><tr><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>" +
-        miennes.map(r => "<tr><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table>";
+        miennes.map(r => "<tr><td>" + echap(dateCourte(r.date)) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table>";
     }
     h += "</div>";
   } else {
@@ -261,13 +300,26 @@ function dessiner() {
           const travail = rs.filter(r => r.categorie.startsWith("Travail")).length;
           const derniere = rs.slice().sort((a, b) => b.ts - a.ts)[0].date;
           return "<tr" + (rs.length >= SEUIL ? " class='seuil'" : "") + "><td>" + echap(pseudo) + "</td><td><b>" + rs.length + "</b></td><td>" + travail + "</td><td>" + (rs.length - travail) +
-            "</td><td>" + echap(derniere) + "</td><td><button class='alerte' onclick=\"alerter('" + echap(pseudo) + "')\">⚠️ Alerter l'équipe</button></td></tr>";
+            "</td><td>" + echap(dateCourte(derniere)) + "</td><td><button class='alerte' onclick=\"alerter('" + echap(pseudo) + "')\">⚠️ Alerter l'équipe</button></td></tr>";
         }).join("") + "</table>";
     }
     h += "</div>";
-    h += '<div class="carte"><b>Journal — ' + trimestreActif + '</b><table><tr><th>Élève</th><th>Date</th><th>Matière</th><th>Catégorie</th><th>Précision</th><th>Parents</th></tr>' +
-      donnees.remarques.filter(r => trimDe(r) === trimestreActif).sort((a, b) => b.ts - a.ts).map(r =>
-        "<tr><td>" + echap(r.pseudo) + "</td><td>" + echap(r.date) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") + "</table></div>";
+    const remsTrim = donnees.remarques.filter(r => trimDe(r) === trimestreActif);
+    const elevesJ = [...new Set(remsTrim.map(r => r.pseudo))].sort((a, b) => a.localeCompare(b, "fr"));
+    const matieresJ = [...new Set(remsTrim.map(r => r.matiere))].sort();
+    const rows = lignesFiltrees(remsTrim);
+    const th = (col, lib) => '<th style="cursor:pointer;user-select:none" onclick="trierJournal(\'' + col + '\')">' + lib + fleche(col) + "</th>";
+    h += '<div class="carte"><b>Journal — ' + trimestreActif + '</b>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;font-size:.78rem;align-items:center">' +
+      'Élève <select onchange="setFiltre(\'eleve\',this.value)" style="width:auto;margin-top:0">' + optSelect(elevesJ, filtreJournal.eleve) + "</select>" +
+      'Matière <select onchange="setFiltre(\'matiere\',this.value)" style="width:auto;margin-top:0">' + optSelect(matieresJ, filtreJournal.matiere) + "</select>" +
+      'Catégorie <select onchange="setFiltre(\'categorie\',this.value)" style="width:auto;margin-top:0"><option value="">toutes</option><option' + (filtreJournal.categorie === "Travail" ? " selected" : "") + ">Travail</option><option" + (filtreJournal.categorie === "Attitude" ? " selected" : "") + ">Attitude</option></select>" +
+      '<input type="text" placeholder="rechercher un motif… (Entrée)" value="' + echap(filtreJournal.texte) + '" onchange="setFiltre(\'texte\',this.value)" style="flex:1;min-width:110px;margin-top:0;padding:5px 7px;border:1px solid #b8c0cc;border-radius:6px">' +
+      (filtreActif() ? '<button class="sec" onclick="resetFiltre()">✕ effacer</button>' : "") + "</div>" +
+      '<div style="overflow-x:auto"><table><tr>' + th("eleve", "Élève") + th("date", "Date") + th("matiere", "Matière") + th("categorie", "Catégorie") + "<th>Précision</th><th>Parents</th></tr>" +
+      rows.map(r => "<tr><td>" + echap(r.pseudo) + "</td><td>" + echap(dateCourte(r.date)) + "</td><td>" + echap(r.matiere) + "</td><td>" + badge(r.categorie) + "</td><td>" + echap(r.precision) + "</td><td>" + echap(r.parents) + "</td></tr>").join("") +
+      "</table></div>" +
+      '<p class="note">' + rows.length + " ligne(s) affichée(s)" + (filtreActif() ? " sur " + remsTrim.length + " (filtré)" : "") + ". Clique un en-tête de colonne pour trier.</p></div>";
   }
   document.getElementById("contenu").innerHTML = h;
 }

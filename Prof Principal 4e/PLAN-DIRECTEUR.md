@@ -183,6 +183,10 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - Backend Hub : actions `publierMenage`/`lireMenage` + clé Divers `planningMenage`. Démo `?demo` OK. Vérifié en navigateur (publication + rendu prof & élève).
   - Intégration au refactor **PP4G** (`outils/js/donnees.js`, chantier app nomade/PWA) respectée : l'outil ménage charge via `PP4G.ready()`, la publication utilise `window.DONNEES_4G`.
   - ⚠️ Backend Hub à redéployer pour que la publication fonctionne en réel (les onglets Plan/Ménage lisent le backend).
+- **Étape 20** ✅ (2026-07-09) — **Carnet : filtres/tri façon tableur + dates FR** :
+  - Vue prof, Journal : **filtres** (élève, matière, catégorie Travail/Attitude, recherche texte sur le motif) + **en-têtes de colonnes triables** (Élève/Date/Matière/Catégorie, clic pour asc/desc) + compteur de lignes.
+  - **Bug dates anglaises corrigé** (« Mon Jul 06 ») : `isoDe()` robuste (ISO / AAAA-MM-JJ / texte anglais) utilisé pour l'affichage (`dateCourte` → JJ/MM/AAAA) ET pour `trimestreDe` ; le **trimestre est recalculé côté page** à partir de la date normalisée (les remarques ne tombent plus toutes en T3). Vérifié.
+  - **Propagation Cockpit PP** : le Carnet est un module EN LIGNE (URL unique) → la modif apparaît automatiquement dans Cockpit PP au déploiement. En revanche les outils 🟥 (plan de classe, ménage, trombinoscope) sont **dupliqués** dans `pp4g/outils/` (version restylée Cockpit PP, chantier parallèle) → sync manuelle, copies qui divergent. Ne pas écraser `pp4g/`.
 - **À construire plus tard** — **CR de réunion à partir d'un enregistrement audio** (2A) : faisable = audio → transcription (dictée téléphone / Google Recorder / dictée Word, *hors Claude*) → Claude en fait le CR Word. **Prérequis RGPD : informer et recueillir le consentement des participants avant tout enregistrement.**
 - **Étapes suivantes** — redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · CR réunion audio (plus tard).
 
