@@ -33,7 +33,7 @@
   .place.vide { background: #fafbfc; border-style: dashed; }
   .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f; }
   .place.devant-tag { border-color: #2c5f8a; border-width: 2px; }
-  .place.selectionnee { border-color: #d97706; box-shadow: 0 0 0 2px #d97706; }
+  .place.selectionnee { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
   .place.conflit { box-shadow: inset 0 0 0 2px #c0392b; }
   #lateral { width: 250px; }
   .panneau { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: .78rem; }
@@ -373,7 +373,7 @@ function afficher() {
       const s = document.createElement("span");
       s.textContent = e.prenom + " " + e.nom;
       s.onclick = () => { selection = "eleve:" + i; afficher(); };
-      if (selection === "eleve:" + i) s.style.outline = "2px solid #d97706";
+      if (selection === "eleve:" + i) s.style.outline = "2px solid #e8763a";
       bac.appendChild(s);
     }
   });

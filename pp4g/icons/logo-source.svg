@@ -12,6 +12,8 @@
   <rect width="200" height="200" fill="none"/>
   <path d="M 16.00 100.00 A 84 84 0 0 1 172.75 58.00" fill="none" stroke="url(#ciel)" stroke-width="30" stroke-linecap="butt"/>
   <path d="M 172.75 142.00 A 84 84 0 0 1 16.00 100.00" fill="none" stroke="url(#sol)" stroke-width="30" stroke-linecap="butt"/>
-  <line x1="86" y1="100" x2="114" y2="100" stroke="#f5f1e8" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="100" cy="100" r="4" fill="#f5f1e8"/>
+  <!-- Repère central : orange, comme le symbole avion fixe d'un vrai horizon artificiel
+       (et visible sur fond crème comme sur fond nuit, contrairement à l'ancien crème). -->
+  <line x1="86" y1="100" x2="114" y2="100" stroke="#e8763a" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="100" cy="100" r="4" fill="#e8763a"/>
 </svg>

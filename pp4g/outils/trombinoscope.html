@@ -29,12 +29,12 @@
   /* Mode révision : noms masqués, un tap sur la vignette les révèle (individuellement). */
   .planche.revision .vignette .etiquette { visibility: hidden; }
   .planche.revision .vignette.revele .etiquette { visibility: visible; }
-  .planche.revision .vignette .cadre { cursor: pointer; box-shadow: inset 0 0 0 2px #d97706; }
+  .planche.revision .vignette .cadre { cursor: pointer; box-shadow: inset 0 0 0 2px var(--accent); }
   .planche.revision .vignette.revele .cadre { box-shadow: inset 0 0 0 2px #2c8a5f; }
   @media print {
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; padding: 0; }
-    .barre, .rgpd, a.retour, .horizon-footer { display: none !important; }
+    .barre, .rgpd, a.retour, .horizon-footer, .entete-cockpit { display: none !important; }
     .planche { border: none; padding: 0; }
     .grille { grid-template-columns: repeat(10, 1fr); }
     .planche.revision .vignette .etiquette { visibility: visible; }
@@ -44,6 +44,10 @@
 </head>
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
+<div class="entete-cockpit">
+  <img class="logo-horizon" src="../icons/logo-source.svg" alt="Cockpit PP">
+  <h1>Trombinoscope</h1>
+</div>
 <p class="rgpd">Données 100 % locales à ce téléphone — photos et noms ne quittent jamais l'appareil.</p>
 <div class="barre carte-instrument">
   <button id="btnRevision">🎓 Mode révision</button>
