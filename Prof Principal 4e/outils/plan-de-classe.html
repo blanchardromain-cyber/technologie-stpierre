@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Plan de classe 4G — outil local</title>
+<!-- Identité Cockpit PP (typo B612 des titres) — dégrade proprement si pp4g/ absent. -->
+<link rel="stylesheet" href="../../pp4g/cockpit.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f5f1e8; color: #1f2933; padding: 14px; }
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
   .barre { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
   .barre label { font-size: .8rem; }
   select, button, input[type="number"], input[type="text"] { font-size: .8rem; padding: 4px 6px; border: 1px solid #b8c0cc; border-radius: 5px; background: #fff; }
-  button { cursor: pointer; background: #2c5f8a; color: #fff; border-color: #2c5f8a; }
-  button.sec { background: #fff; color: #2c5f8a; }
+  button { cursor: pointer; background: #0f1f3d; color: #fff; border-color: #0f1f3d; }
+  button.sec { background: #fff; color: #0f1f3d; }
   button:hover { opacity: .88; }
   .zone { display: flex; gap: 12px; align-items: flex-start; }
   #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; --ex: 1; }
@@ -25,7 +27,7 @@
   .place.vide { background: #fafbfc; border-style: dashed; }
   .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f; }
   .place.devant-tag { border-color: #2c5f8a; border-width: 2px; }
-  .place.selectionnee { border-color: #d97706; box-shadow: 0 0 0 2px #d97706; }
+  .place.selectionnee { border-color: #e8763a; box-shadow: 0 0 0 2px #e8763a; }
   .place.conflit { box-shadow: inset 0 0 0 2px #c0392b; }
   #lateral { width: 250px; }
   .panneau { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: .78rem; }
@@ -350,7 +352,7 @@ function afficher() {
       const s = document.createElement("span");
       s.textContent = e.prenom + " " + e.nom;
       s.onclick = () => { selection = "eleve:" + i; afficher(); };
-      if (selection === "eleve:" + i) s.style.outline = "2px solid #d97706";
+      if (selection === "eleve:" + i) s.style.outline = "2px solid #e8763a";
       bac.appendChild(s);
     }
   });

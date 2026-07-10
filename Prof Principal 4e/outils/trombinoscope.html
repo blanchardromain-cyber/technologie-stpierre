@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Trombinoscope 4G — outil local</title>
+<!-- Identité Cockpit PP (typo B612 des titres) — dégrade proprement si pp4g/ absent. -->
+<link rel="stylesheet" href="../../pp4g/cockpit.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; }
+  body { font-family: Arial, sans-serif; background: #f5f1e8; color: #1f2933; padding: 14px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
   .barre { display: flex; gap: 10px; align-items: center; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: .8rem; }
-  button { font-size: .8rem; padding: 4px 10px; border: 1px solid #2c5f8a; border-radius: 5px; background: #2c5f8a; color: #fff; cursor: pointer; }
+  button { font-size: .8rem; padding: 4px 10px; border: 1px solid #0f1f3d; border-radius: 5px; background: #0f1f3d; color: #fff; cursor: pointer; }
   .planche { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 16px; }
-  .titre { background: #cdd9f2; border: 1px solid #9db4dd; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1.05rem; padding: 8px; margin-bottom: 16px; }
+  /* Cadran crème à lunette nuit (imprime léger, contrairement à un bandeau plein). */
+  .titre { background: #f5f1e8; border: 1.5px solid #16294d; color: #0f1f3d; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1.05rem; padding: 8px; margin-bottom: 16px; }
   .grille { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px 8px; }
   .vignette { text-align: center; }
   .vignette .cadre { width: 100%; aspect-ratio: 3 / 4; background: #eef1f5; border-radius: 3px; overflow: hidden; display: flex; align-items: center; justify-content: center; }

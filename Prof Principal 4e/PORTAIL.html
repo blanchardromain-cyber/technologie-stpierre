@@ -2,14 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Couteau Suisse PP 4G — Portail</title>
+<title>Cockpit PP — Portail</title>
+<!-- Identité Cockpit PP partagée avec l'app nomade (B612, bandeau, LED, ligne d'horizon).
+     Si le fichier manque (dossier pp4g/ absent), la page reste lisible : les styles locaux
+     ci-dessous n'utilisent que des couleurs littérales, jamais les variables du thème. -->
+<link rel="stylesheet" href="../pp4g/cockpit.css">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Segoe UI", Arial, sans-serif; background: #f0f3f7; color: #1f2933; max-width: 980px; margin: 0 auto; padding: 18px; }
-  .entete { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
-  .entete img { height: 56px; }
-  h1 { font-size: 1.3rem; }
-  .sous { font-size: .78rem; color: #52606d; margin-bottom: 16px; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f5f1e8; color: #1f2933; max-width: 980px; margin: 0 auto; padding: 18px; }
+  .entete-cockpit h1 { font-size: 1.25rem; }
+  .entete-cockpit .logo-college { margin-left: auto; height: 52px; background: #f5f1e8; border-radius: 8px; padding: 4px 8px; }
+  .sous { font-size: .78rem; }
   .tiroirs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
   .tiroir { background: #fff; border: 1px solid #d9dee5; border-top: 5px solid; border-radius: 10px; padding: 12px; }
   .tiroir h2 { font-size: .92rem; margin-bottom: 2px; }
@@ -21,23 +24,26 @@
   .module { display: block; padding: 8px 10px; border: 1px solid #e4e8ee; border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: #1f2933; font-size: .84rem; }
   a.module:hover { background: #f5f8fb; border-color: #b8c0cc; }
   .module small { display: block; font-size: .7rem; color: #7b8794; margin-top: 2px; }
-  .chip { float: right; font-size: .64rem; border-radius: 4px; padding: 1px 6px; }
+  /* Chips d'état en LED de bord (point lumineux) — même sémantique et mêmes ids qu'avant. */
+  .chip { float: right; display: inline-flex; align-items: center; gap: 5px; font-size: .64rem; font-weight: 600; border-radius: 20px; padding: 2px 8px 2px 6px; }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 4px currentColor; }
   .chip.pret { background: #e0f2e9; color: #1e6b47; }
   .chip.attente { background: #fdf0d5; color: #9a6a08; }
   .chip.claude { background: #eee9f7; color: #6d4fa3; }
-  .rappel { font-size: .72rem; color: #7b8794; margin-top: 16px; border-top: 1px solid #d9dee5; padding-top: 10px; }
-  .nomade { display: block; background: #eef3f8; border: 1px solid #9db4dd; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; text-decoration: none; color: #1f2933; font-size: .84rem; }
-  .nomade b { color: #2c5f8a; }
+  .rappel { font-size: .72rem; color: #7b8794; margin-top: 16px; padding-top: 10px; }
+  .nomade { display: block; background: #fff; border: 1px solid #d9dee5; border-left: 4px solid #e8763a; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; text-decoration: none; color: #1f2933; font-size: .84rem; }
+  .nomade b { color: #0f1f3d; }
   .nomade small { display: block; font-size: .72rem; color: #52606d; margin-top: 2px; }
 </style>
 </head>
 <body>
-<div class="entete">
-  <img src="../Logo college/Nouveau logo.png" alt="Logo du collège" onerror="this.style.display='none'">
+<div class="entete-cockpit">
+  <img class="logo-horizon" src="../pp4g/icons/logo-source.svg" alt="" onerror="this.style.display='none'">
   <div>
-    <h1>🇨🇭 Couteau Suisse — Prof Principal 4G</h1>
+    <h1>Cockpit PP — Prof Principal 4G</h1>
     <div class="sous">La couleur d'un module indique où vivent ses données. Rouge = ne quitte jamais cet ordinateur.</div>
   </div>
+  <img class="logo-college" src="../Logo college/Nouveau logo.png" alt="Logo du collège" onerror="this.style.display='none'">
 </div>
 
 <a class="nomade" href="https://blanchardromain-cyber.github.io/technologie-stpierre/pp4g/" target="_blank">📱 <b>Cockpit PP (téléphone)</b> — trombinoscope, plan de classe, ménage hors-ligne + liens Hub/PSC1/Carnet<small>Installation : voir <code>PLAN-APP-NOMADE.md</code> ou <code>pp4g/INSTALLATION.md</code> — le PC reste l'atelier, le téléphone la consultation.</small></a>
@@ -61,7 +67,7 @@
   <div class="tiroir rouge">
     <h2>🟥 Local RGPD</h2>
     <div class="ou">100 % sur cet ordinateur — rien ne sort</div>
-    <a class="module" href="outils/plan-de-classe.html">Plan de classe<span class="chip pret">prêt</span><small>Salle techno · rangées · dys devant · séparations</small></a>
+    <a class="module" href="outils/plan-de-classe.html">Plan de classe<span class="chip pret">prêt</span><small>Salle techno · rangées · dys devant · séparations· 📤 publiable sur le Hub</small></a>
     <a class="module" href="outils/equipes-menage.html">Équipes de ménage<span class="chip pret">prêt</span><small>Équipes mixtes · roulement annuel · 📤 publiable sur le Hub</small></a>
     <a class="module" href="donnees/cartes-codes-4G.html">Cartes codes élèves<span class="chip pret">prêt</span><small>À imprimer et distribuer (Hub + PSC1)</small></a>
     <a class="module" href="outils/trombinoscope.html">Trombinoscope<span class="chip pret">prêt</span><small>10/rangée · photos donnees/photos/</small></a>
@@ -80,6 +86,7 @@
 </div>
 
 <p class="rappel">📕 Référence : <b>PLAN-DIRECTEUR.md</b> (dans ce dossier). Données nominatives : dossier <b>donnees/</b> — exclu de git, à sauvegarder par tes soins (clé USB / Drive perso chiffré).</p>
+<div class="horizon-footer"></div>
 
 <script src="donnees/config-portail.js"></script>
 <script>
