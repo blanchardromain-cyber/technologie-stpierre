@@ -27,13 +27,18 @@
   th { background: #0f1f3d; color: #fff; }
   td .pastille { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
   tr.ferie td { color: #9a6a08; }
+  tr.semaine-courante td { background: #fdf0d5; font-weight: 600; }
+  #semaineCourante { background: #fff; border: 2px solid #0f1f3d; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  #semaineCourante .titre-sem { font-size: .78rem; color: #52606d; margin-bottom: 4px; }
+  #semaineCourante .nom-equipe { font-family: "B612", monospace; font-size: 1.15rem; font-weight: bold; }
+  #semaineCourante .membres { font-size: .84rem; margin-top: 4px; }
   h2 { font-size: .95rem; margin: 14px 0 6px; }
   .taches { font-size: .78rem; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
   #vueCompacte { display: none; }
   @media print {
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; padding: 0; }
-    .barre, .rgpd, .info, .equipes, #tableRoulement, h2 { display: none !important; }
+    .barre, .rgpd, .info, .equipes, #tableRoulement, h2, #semaineCourante { display: none !important; }
     #vueCompacte { display: block; }
     @page { size: A4 portrait; margin: 10mm; }
   }
@@ -50,6 +55,12 @@
 <body>
 <h1>Équipes de ménage 4G</h1>
 <p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur.</p>
+
+<div id="semaineCourante" style="display:none">
+  <div class="titre-sem">Cette semaine (<span id="dateSemaineCourante"></span>)</div>
+  <div class="nom-equipe" id="equipeSemaineCourante"></div>
+  <div class="membres" id="membresSemaineCourante"></div>
+</div>
 
 <div class="barre">
   <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
@@ -200,10 +211,31 @@ function calculerRoulement() {
   return lignes;
 }
 
+// Semaine courante : la semaine de ménage contenant la date du jour (lundi → vendredi).
+function estSemaineCourante(lundi) {
+  const debut = new Date(lundi); debut.setHours(0, 0, 0, 0);
+  const fin = new Date(debut); fin.setDate(fin.getDate() + 4); fin.setHours(23, 59, 59, 999);
+  const aujourdhui = new Date();
+  return aujourdhui >= debut && aujourdhui <= fin;
+}
+
+function majSemaineCourante(lignes) {
+  const carte = document.getElementById("semaineCourante");
+  const ligne = lignes.find(l => estSemaineCourante(l.lundi));
+  if (!ligne || ligne.type !== "menage") { carte.style.display = "none"; return; }
+  carte.style.display = "block";
+  document.getElementById("dateSemaineCourante").textContent = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const couleur = COULEURS[ligne.equipe % COULEURS.length];
+  const eqEl = document.getElementById("equipeSemaineCourante");
+  eqEl.textContent = "Équipe " + (ligne.equipe + 1);
+  eqEl.style.color = couleur;
+  document.getElementById("membresSemaineCourante").textContent = equipes[ligne.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ");
+}
+
 function dessinerRoulement() {
   const table = document.getElementById("tableRoulement");
   const lignes = calculerRoulement();
-  if (!lignes.length) { table.innerHTML = ""; document.getElementById("bilanRoulement").textContent = ""; return; }
+  if (!lignes.length) { table.innerHTML = ""; document.getElementById("bilanRoulement").textContent = ""; document.getElementById("semaineCourante").style.display = "none"; return; }
   const nbMenage = lignes.filter(l => l.type === "menage").length;
   document.getElementById("bilanRoulement").textContent =
     "— " + nbMenage + " semaines de ménage · " + lignes.filter(l => l.type === "vacances").length + " semaines de vacances écartées · " +
@@ -211,18 +243,20 @@ function dessinerRoulement() {
   let h = "<tr><th>Semaine du</th><th>Équipe de service</th><th>Membres / remarque</th></tr>";
   lignes.forEach(l => {
     const dateFr = l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const cls = estSemaineCourante(l.lundi) ? " semaine-courante" : "";
     if (l.type === "vacances")
-      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Vacances : " + l.nom + "</td></tr>";
+      h += "<tr class='ferie" + cls + "'><td>" + dateFr + "</td><td>—</td><td>Vacances : " + l.nom + "</td></tr>";
     else if (l.type === "ferie-saute")
-      h += "<tr class='ferie'><td>" + dateFr + "</td><td>—</td><td>Semaine écartée (férié : " + l.nom + ")</td></tr>";
+      h += "<tr class='ferie" + cls + "'><td>" + dateFr + "</td><td>—</td><td>Semaine écartée (férié : " + l.nom + ")</td></tr>";
     else {
       const couleur = COULEURS[l.equipe % COULEURS.length];
-      h += "<tr><td>" + dateFr + "</td><td><span class='pastille' style='background:" + couleur + "'></span><b style='color:" + couleur + "'>Équipe " + (l.equipe + 1) + "</b></td><td>" +
+      h += "<tr" + (cls ? " class='" + cls.trim() + "'" : "") + "><td>" + dateFr + "</td><td><span class='pastille' style='background:" + couleur + "'></span><b style='color:" + couleur + "'>Équipe " + (l.equipe + 1) + "</b></td><td>" +
         equipes[l.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ") +
         (l.ferie ? " <i style='color:#9a6a08'>(férié dans la semaine : " + l.ferie + ")</i>" : "") + "</td></tr>";
     }
   });
   table.innerHTML = h;
+  majSemaineCourante(lignes);
   dessinerVueCompacte(lignes);
 }
 
