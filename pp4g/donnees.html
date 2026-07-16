@@ -46,7 +46,10 @@
   <h2 class="etape-checklist"><span class="num-checklist">1</span> Importer une classe</h2>
   <p>Fichier <code>eleves-4G.json</code> (déposé via le Drive du collège, puis téléchargé sur ce téléphone) ou un CSV <code>Nom;Prénom;Sexe[;dys]</code>.</p>
   <label class="champ" for="fichierEleves">Fichier élèves (.json ou .csv)</label>
-  <input type="file" id="fichierEleves" accept=".json,.csv,.txt">
+  <!-- Pas de filtre `accept` : sur Android, Google Drive annonce le CSV avec un type MIME
+       (text/comma-separated-values, octet-stream…) que le filtre par extension grise. Le
+       parseur (analyserListe) valide le contenu de toute façon. -->
+  <input type="file" id="fichierEleves">
   <label class="champ" for="fichierPhotos">Photos (optionnel, plusieurs fichiers, nommés « NOM Prénom.jpg »)</label>
   <input type="file" id="fichierPhotos" accept="image/*" multiple>
   <button id="btnImporter">Importer</button>

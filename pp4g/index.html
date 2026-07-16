@@ -42,10 +42,10 @@
     <div class="tiroir-titre"><i class="ico" data-ico="verrou"></i><h2>Local — à bord</h2></div>
     <div class="ou">100 % sur ce téléphone — rien ne sort</div>
     <div class="tuiles">
-      <a class="tuile" href="donnees.html"><i class="ico" data-ico="donnees"></i><span class="nom">Données</span></a>
-      <a class="tuile" href="outils/trombinoscope.html"><span class="led-dot vert"></span><i class="ico" data-ico="trombinoscope"></i><span class="nom">Trombinoscope</span></a>
-      <a class="tuile" href="outils/plan-de-classe.html"><span class="led-dot vert"></span><i class="ico" data-ico="plan"></i><span class="nom">Plan de classe</span></a>
-      <a class="tuile" href="outils/equipes-menage.html"><span class="led-dot vert"></span><i class="ico" data-ico="menage"></i><span class="nom">Ménage</span></a>
+      <a class="tuile" href="donnees.html"><i class="ico" data-ico="donnees"></i><span class="nom">Données</span><span class="tuile-val" id="valDonnees"></span></a>
+      <a class="tuile" href="outils/trombinoscope.html"><span class="led-dot vert"></span><span class="mini-mosaic" id="mosaiqueTrombi"><i class="ico" data-ico="trombinoscope"></i></span><span class="nom">Trombinoscope</span><span class="tuile-val" id="valTrombi"></span></a>
+      <a class="tuile" href="outils/plan-de-classe.html"><span class="led-dot vert"></span><i class="ico" data-ico="plan"></i><span class="nom">Plan de classe</span><span class="tuile-val" id="valPlan"></span></a>
+      <a class="tuile" href="outils/equipes-menage.html"><span class="led-dot vert"></span><i class="ico" data-ico="menage"></i><span class="nom">Ménage</span><span class="tuile-val" id="valMenage"></span></a>
     </div>
   </div>
 
@@ -111,6 +111,47 @@ if ("serviceWorker" in navigator) {
     });
   };
 }
+</script>
+<script>
+// Instruments vivants : les tuiles affichent l'état réel des données importées.
+PP4G.ready().then(async function () {
+  var classes = await PP4G.listerClasses();
+  var eleves = [];
+  classes.forEach(function (c) { (c.eleves || []).forEach(function (e) { eleves.push(e); }); });
+  var n = eleves.length;
+
+  function set(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+  if (n) {
+    set("valDonnees", n + (n > 1 ? " élèves" : " élève"));
+    set("valTrombi", n + " fiches");
+    set("valPlan", classes.length === 1 ? classes[0].classe : classes.length + " classes");
+  }
+
+  // Mosaïque : 4 premières vignettes (photo si présente, sinon initiales).
+  if (n) {
+    var cible = document.getElementById("mosaiqueTrombi");
+    var quatre = eleves.slice(0, 4);
+    var html = "";
+    quatre.forEach(function (e) {
+      var url = PP4G.photoUrl(e.nom, e.prenom);
+      var ini = ((e.prenom || " ")[0] + (e.nom || " ")[0]).toUpperCase();
+      if (url) html += '<span class="cell"><img src="' + url + '" onerror="this.parentNode.innerHTML=\'<span class=&quot;ini&quot;>' + ini + '</span>\'"></span>';
+      else html += '<span class="cell"><span class="ini">' + ini + '</span></span>';
+    });
+    if (html) { cible.innerHTML = html; cible.classList.add("grille"); }
+  }
+
+  // Ménage : équipe de service de la semaine courante (roulement persisté par l'outil ménage).
+  var roulement = await PP4G.meta.lire("menageRoulement");
+  if (roulement && roulement.length) {
+    var maintenant = new Date(); maintenant.setHours(0, 0, 0, 0);
+    var courante = roulement.find(function (l) {
+      var lundi = new Date(l.d + "T00:00"); var vendredi = new Date(lundi); vendredi.setDate(vendredi.getDate() + 4); vendredi.setHours(23, 59, 59, 999);
+      return maintenant >= lundi && maintenant <= vendredi;
+    });
+    if (courante) set("valMenage", "Équipe " + (courante.e + 1));
+  }
+});
 </script>
 </body>
 </html>

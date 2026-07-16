@@ -283,6 +283,17 @@ function dessinerRoulement() {
   table.innerHTML = h;
   majSemaineCourante(lignes);
   dessinerVueCompacte(lignes);
+  persisterRoulement(lignes);
+}
+
+// Persiste un roulement compact (date du lundi + n° d'équipe) pour la tuile « instrument vivant »
+// de l'accueil nomade. L'accueil recalcule LUI-MÊME quelle semaine correspond à aujourd'hui,
+// donc la valeur reste juste d'une semaine à l'autre sans rouvrir cet outil.
+function persisterRoulement(lignes) {
+  if (!window.PP4G || !PP4G.meta || PP4G.source !== "idb") return; // mobile/PWA uniquement
+  var compact = lignes.filter(function (l) { return l.type === "menage"; })
+    .map(function (l) { return { d: iso(l.lundi), e: l.equipe }; });
+  PP4G.meta.ecrire("menageRoulement", compact).catch(function () {});
 }
 
 function dessinerVueCompacte(lignes) {

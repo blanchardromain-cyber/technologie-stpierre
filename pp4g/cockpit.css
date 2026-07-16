@@ -111,6 +111,16 @@
 .tuile .nom { font-size: .84rem; font-weight: 600; text-align: center; line-height: 1.15; }
 .tuile .led-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%; }
 
+/* Instruments vivants : valeur lue en direct (cadran) sous le label. */
+.tuile-val { font-family: "B612", monospace; font-size: .72rem; font-weight: 700; color: var(--bleu-ciel); line-height: 1; min-height: .72rem; }
+.tuile-val:empty { display: none; }
+/* Mini-mosaïque de visages : remplace l'icône du trombinoscope quand des données sont chargées. */
+.mini-mosaic { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--bleu-nuit); }
+.mini-mosaic.grille { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; }
+.mini-mosaic.grille .cell { border-radius: 3px; overflow: hidden; background: #eef0f5; display: flex; align-items: center; justify-content: center; }
+.mini-mosaic.grille img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mini-mosaic.grille .ini { font-size: 9px; font-weight: 700; color: #5f6b78; font-family: "B612", monospace; }
+
 /* Rangées icône + label : pour les tiroirs de liens (🟩🟦🟪), pas de description. */
 .rangee {
   display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 9px 12px;
