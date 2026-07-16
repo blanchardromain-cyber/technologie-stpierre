@@ -14,19 +14,14 @@
   body { font-family: "Segoe UI", Arial, sans-serif; background: var(--altimetre); color: var(--texte); padding: 14px; padding-bottom: 40px; }
   .sous { font-size: .74rem; color: var(--texte-att); margin-bottom: 4px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 16px; }
-  .tiroirs { display: flex; flex-direction: column; gap: 12px; }
-  .tiroir { border-top: 5px solid; padding: 12px; }
-  .tiroir h2 { font-size: .95rem; margin-bottom: 2px; }
-  .tiroir .ou { font-size: .72rem; color: #7b8794; margin-bottom: 10px; }
-  .tiroir.vert { border-top-color: var(--voyant-vert); } .tiroir.vert h2 { color: #1e6b47; }
-  .tiroir.bleu { border-top-color: var(--voyant-bleu); } .tiroir.bleu h2 { color: var(--voyant-bleu); }
-  .tiroir.rouge { border-top-color: var(--voyant-rouge); } .tiroir.rouge h2 { color: #a33b3b; }
-  .tiroir.violet { border-top-color: var(--voyant-violet); } .tiroir.violet h2 { color: var(--voyant-violet); }
-  .module { display: block; padding: 12px 12px; min-height: 44px; border: 1px solid #e4e8ee; border-radius: 8px; margin-bottom: 8px; text-decoration: none; color: var(--texte); font-size: .9rem; }
-  a.module:active { background: #f5f8fb; border-color: #b8c0cc; }
-  .module small { display: block; font-size: .74rem; color: #7b8794; margin-top: 3px; }
-  .led { margin-left: 6px; }
-  .avenir-note { font-size: .78rem; color: #7b8794; font-style: italic; }
+  .tiroirs { display: flex; flex-direction: column; gap: 18px; }
+  .tiroir { border-top: 4px solid; padding: 10px 2px 0; }
+  .tiroir .ou { font-size: .72rem; color: #7b8794; margin: 1px 0 10px; }
+  .tiroir.vert { border-top-color: var(--voyant-vert); } .tiroir.vert h2, .tiroir.vert .tiroir-titre .ico { color: #1e6b47; }
+  .tiroir.bleu { border-top-color: var(--voyant-bleu); } .tiroir.bleu h2, .tiroir.bleu .tiroir-titre .ico { color: var(--voyant-bleu); }
+  .tiroir.rouge { border-top-color: var(--voyant-rouge); } .tiroir.rouge h2, .tiroir.rouge .tiroir-titre .ico { color: #a33b3b; }
+  .tiroir.violet { border-top-color: var(--voyant-violet); } .tiroir.violet h2, .tiroir.violet .tiroir-titre .ico { color: var(--voyant-violet); }
+  .rappel { font-size: .72rem; }
   .rappel { font-size: .72rem; color: var(--texte-att); margin-top: 18px; padding-top: 10px; }
   #bandeauMaj { display: none; position: fixed; left: 10px; right: 10px; bottom: 10px; background: var(--bleu-nuit); color: #fff; border-radius: 10px; padding: 10px 12px; font-size: .82rem; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
   #bandeauMaj button { margin-top: 6px; background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 6px 10px; font-size: .78rem; font-weight: 600; }
@@ -42,40 +37,41 @@
 </div>
 <p class="rgpd">Les données importées restent sur ce téléphone (aucun envoi vers un serveur).</p>
 
-<a class="module carte-instrument" href="donnees.html" style="display:block;margin-bottom:12px">⚙️ Données<small>Importer une classe / des photos · exporter une sauvegarde</small></a>
-
 <div class="tiroirs">
-  <div class="carte-instrument tiroir rouge">
-    <h2>🟥 Local RGPD</h2>
-    <div class="ou">100 % à bord de ce téléphone — rien ne sort</div>
-    <a class="module" href="outils/trombinoscope.html">Trombinoscope<span class="led led-vert">prêt</span><small>Apprendre les prénoms · mode révision</small></a>
-    <a class="module" href="outils/plan-de-classe.html">Plan de classe<span class="led led-vert">prêt</span><small>Consultation · échanger deux élèves</small></a>
-    <a class="module" href="outils/equipes-menage.html">Équipes de ménage<span class="led led-vert">prêt</span><small>Roulement de la semaine</small></a>
+  <div class="tiroir rouge">
+    <div class="tiroir-titre"><i class="ico" data-ico="verrou"></i><h2>Local — à bord</h2></div>
+    <div class="ou">100 % sur ce téléphone — rien ne sort</div>
+    <div class="tuiles">
+      <a class="tuile" href="donnees.html"><i class="ico" data-ico="donnees"></i><span class="nom">Données</span></a>
+      <a class="tuile" href="outils/trombinoscope.html"><span class="led-dot vert"></span><i class="ico" data-ico="trombinoscope"></i><span class="nom">Trombinoscope</span></a>
+      <a class="tuile" href="outils/plan-de-classe.html"><span class="led-dot vert"></span><i class="ico" data-ico="plan"></i><span class="nom">Plan de classe</span></a>
+      <a class="tuile" href="outils/equipes-menage.html"><span class="led-dot vert"></span><i class="ico" data-ico="menage"></i><span class="nom">Ménage</span></a>
+    </div>
   </div>
 
-  <div class="carte-instrument tiroir vert">
-    <h2>🟩 Public élèves</h2>
+  <div class="tiroir vert">
+    <div class="tiroir-titre"><i class="ico" data-ico="eleves"></i><h2>Public élèves</h2></div>
     <div class="ou">Vue prof — codes personnels</div>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hub-classe/" target="_blank" rel="noopener">Hub de classe<span class="led led-vert">en ligne</span><small>Annonces · entraide · modération (code PROF)</small></a>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/psc1/" target="_blank" rel="noopener">Inscriptions PSC1<span class="led led-vert">en ligne</span><small>Vue prof : dates, binômes</small></a>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/carnet/" target="_blank" rel="noopener">Carnet de bord<span class="led led-vert">en ligne</span><small>Vue prof : suivi, alertes</small></a>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hub-classe/" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="hub"></i></span><span class="nom">Hub de classe</span><span class="led-dot vert"></span></a>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/psc1/" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="psc1"></i></span><span class="nom">Inscriptions PSC1</span><span class="led-dot vert"></span></a>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/carnet/" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="carnet"></i></span><span class="nom">Carnet de bord</span><span class="led-dot vert"></span></a>
   </div>
 
-  <div class="carte-instrument tiroir bleu">
-    <h2>🟦 Privé Drive</h2>
+  <div class="tiroir bleu">
+    <div class="tiroir-titre"><i class="ico" data-ico="drive"></i><h2>Privé Drive</h2></div>
     <div class="ou">Ton compte Google — s'ouvre dans l'appli Sheets</div>
-    <a class="module" href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener">Registre des retenues<span class="led led-vert">en ligne</span><small>Suivi + « travail fourni » collègues</small></a>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/suivi-eleves/TABLEAU-DE-BORD.md" target="_blank" rel="noopener">Suivi élèves / synthèse conseil<span class="led led-ambre">guide</span><small>Tableau de bord (IMPORTRANGE Carnet + Retenues)</small></a>
+    <a class="rangee" href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="retenues"></i></span><span class="nom">Registre des retenues</span><span class="led-dot vert"></span></a>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/suivi-eleves/TABLEAU-DE-BORD.md" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="suivi"></i></span><span class="nom">Suivi élèves / conseil</span><span class="led-dot ambre"></span></a>
   </div>
 
-  <div class="carte-instrument tiroir violet">
-    <h2>🟪 Workflows Claude</h2>
-    <div class="ou">Procédures — ouvre l'appli Claude et dis…</div>
-    <span class="module">« Appréciations T1 » (T2, T3)<small>Dépose l'export EcoleDirecte → synthèses ≤ 400 car.</small></span>
-    <span class="module">« Retenue : élève, date, motif »<small>Brouillon Gmail collègues + message parents</small></span>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hvc/PROGRAMME-HVC.md" target="_blank" rel="noopener">Programme HVC annuel<span class="led led-ambre">guide</span><small>~18 séances calées zone B</small></a>
-    <a class="module" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/reunion-parents/diaporama-rentree.html" target="_blank" rel="noopener">Diaporama réunion de rentrée<span class="led led-vert">prêt</span><small>Projetable aux parents</small></a>
-    <a class="module" href="https://claude.ai/new" target="_blank" rel="noopener">Ouvrir Claude<small>Pour les workflows ci-dessus</small></a>
+  <div class="tiroir violet">
+    <div class="tiroir-titre"><i class="ico" data-ico="claude"></i><h2>Workflows Claude</h2></div>
+    <div class="ou">Ouvre l'appli Claude et dis…</div>
+    <span class="rangee"><span class="cadre-ico"><i class="ico" data-ico="claude"></i></span><span class="nom">« Appréciations T1 »</span></span>
+    <span class="rangee"><span class="cadre-ico"><i class="ico" data-ico="claude"></i></span><span class="nom">« Retenue : élève, motif »</span></span>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/hvc/PROGRAMME-HVC.md" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="hvc"></i></span><span class="nom">Programme HVC</span><span class="led-dot ambre"></span></a>
+    <a class="rangee" href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/reunion-parents/diaporama-rentree.html" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="diaporama"></i></span><span class="nom">Diaporama rentrée</span><span class="led-dot vert"></span></a>
+    <a class="rangee" href="https://claude.ai/new" target="_blank" rel="noopener"><span class="cadre-ico"><i class="ico" data-ico="claude"></i></span><span class="nom">Ouvrir Claude</span></a>
   </div>
 </div>
 
@@ -87,6 +83,7 @@
   <div><button id="btnRecharger">Recharger</button></div>
 </div>
 
+<script src="js/icones.js"></script>
 <script src="outils/js/donnees.js"></script>
 <script src="js/verrou.js"></script>
 <script>

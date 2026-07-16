@@ -91,3 +91,43 @@
   height: 4px; border-radius: 2px; margin-top: 18px;
   background: linear-gradient(90deg, var(--bleu-nuit) 0%, var(--bleu-ciel) 48%, var(--sol-orange) 52%, var(--sol-brun) 100%);
 }
+
+/* Icônes maison (js/icones.js) : héritent couleur + taille du parent. */
+.ico { display: inline-flex; align-items: center; justify-content: center; line-height: 0; }
+.ico svg { display: block; }
+
+/* Refonte visuelle « moins de texte » — direction mixte.
+   Tuiles instrument : grille d'accès rapide (zone 🟥 + Données), grosse icône + label court. */
+.tuiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tuile {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; min-height: 96px; padding: 14px 10px; text-decoration: none;
+  background: var(--surface); border: 1px solid #d9dee5; border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(15, 31, 61, .05), 0 1px 3px rgba(15, 31, 61, .06);
+  color: var(--texte);
+}
+.tuile:active { background: #f5f8fb; }
+.tuile .ico { font-size: 30px; color: var(--bleu-nuit); }
+.tuile .nom { font-size: .84rem; font-weight: 600; text-align: center; line-height: 1.15; }
+.tuile .led-dot { position: absolute; top: 9px; right: 9px; width: 8px; height: 8px; border-radius: 50%; }
+
+/* Rangées icône + label : pour les tiroirs de liens (🟩🟦🟪), pas de description. */
+.rangee {
+  display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 9px 12px;
+  text-decoration: none; color: var(--texte);
+  background: var(--surface); border: 1px solid #e4e8ee; border-radius: 12px; margin-bottom: 8px;
+}
+.rangee:active { background: #f5f8fb; }
+.rangee .cadre-ico {
+  width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; background: #eef0f5;
+  display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--bleu-nuit);
+}
+.rangee .nom { font-size: .9rem; font-weight: 500; }
+.rangee .led-dot { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.led-dot.vert { background: var(--voyant-vert); }
+.led-dot.ambre { background: #d89a2a; }
+
+/* En-tête de tiroir : pastille couleur + icône, plus d'emoji. */
+.tiroir-titre { display: flex; align-items: center; gap: 7px; margin-bottom: 2px; }
+.tiroir-titre .ico { font-size: 17px; }
+.tiroir-titre h2 { font-size: .95rem; }
