@@ -57,7 +57,7 @@
 <p class="rgpd">Outil 100 % local — aucune donnée ne quitte cet ordinateur.</p>
 
 <div id="semaineCourante" style="display:none">
-  <div class="titre-sem">Cette semaine (<span id="dateSemaineCourante"></span>)</div>
+  <div class="titre-sem" id="titreSemaine"></div>
   <div class="nom-equipe" id="equipeSemaineCourante"></div>
   <div class="membres" id="membresSemaineCourante"></div>
 </div>
@@ -219,12 +219,18 @@ function estSemaineCourante(lundi) {
   return aujourdhui >= debut && aujourdhui <= fin;
 }
 
+// Toujours informatif : « Cette semaine » si aujourd'hui tombe dans une semaine de ménage,
+// sinon le PROCHAIN service à venir (hors vacances) — évite une carte vide et muette quand
+// le roulement démarre plus tard (ex. consulté en juillet pour une rentrée en septembre).
 function majSemaineCourante(lignes) {
   const carte = document.getElementById("semaineCourante");
-  const ligne = lignes.find(l => estSemaineCourante(l.lundi));
-  if (!ligne || ligne.type !== "menage") { carte.style.display = "none"; return; }
+  const aujourdhui = new Date(); aujourdhui.setHours(0, 0, 0, 0);
+  const courante = lignes.find(l => l.type === "menage" && estSemaineCourante(l.lundi));
+  const ligne = courante || lignes.find(l => l.type === "menage" && l.lundi >= aujourdhui);
+  if (!ligne) { carte.style.display = "none"; return; }
   carte.style.display = "block";
-  document.getElementById("dateSemaineCourante").textContent = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const d = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  document.getElementById("titreSemaine").textContent = courante ? "Cette semaine (" + d + ")" : "Prochain service — semaine du " + d;
   const couleur = COULEURS[ligne.equipe % COULEURS.length];
   const eqEl = document.getElementById("equipeSemaineCourante");
   eqEl.textContent = "Équipe " + (ligne.equipe + 1);

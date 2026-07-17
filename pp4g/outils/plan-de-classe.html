@@ -87,7 +87,9 @@
   </label>
   <button id="btnImporterClasse" class="sec" title="CSV (Nom;Prénom;Sexe) ou JSON">➕ Importer une classe</button>
   <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Retirer cette classe importée">🗑</button>
-  <input type="file" id="fichierClasse" accept=".csv,.txt,.json" style="display:none">
+  <!-- Pas de filtre `accept` : sur Android, Google Drive annonce CSV/JSON avec un type MIME
+       que le filtre par extension grise (fichier visible mais non sélectionnable). -->
+  <input type="file" id="fichierClasse" style="display:none">
   <label>Salle :
     <select id="gabarit">
       <option value="techno">Salle techno (30 postes)</option>

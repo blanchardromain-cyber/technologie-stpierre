@@ -71,7 +71,7 @@
 <p class="rgpd">Données 100 % locales à ce téléphone — aucune donnée ne quitte l'appareil.</p>
 
 <div id="semaineCourante" class="carte-instrument" style="display:none">
-  <div class="titre">Cette semaine (<span id="dateSemaineCourante"></span>)</div>
+  <div class="titre" id="titreSemaine"></div>
   <div class="nom-equipe" id="equipeSemaineCourante"></div>
   <div class="membres" id="membresSemaineCourante"></div>
 </div>
@@ -81,7 +81,8 @@
   <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
   <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
   <button id="btnGenerer">Générer les équipes</button>
-  <button id="btnCopier" class="sec">📋 Copier le planning (pour le Hub)</button>
+  <button id="btnPublier" class="sec">📤 Publier sur le Hub</button>
+  <button id="btnCopier" class="sec">📋 Copier le texte</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
 </div>
 <div class="barre carte-instrument">
@@ -240,19 +241,25 @@ function estSemaineCourante(lundi) {
   return aujourdhui >= debut && aujourdhui <= fin;
 }
 
+// Toujours informatif : « Cette semaine » si aujourd'hui tombe dans une semaine de ménage,
+// sinon le PROCHAIN service à venir (hors vacances) — évite une carte vide et muette quand
+// le roulement démarre plus tard (ex. consulté en juillet pour une rentrée en septembre).
 function majSemaineCourante(lignes) {
   const carte = document.getElementById("semaineCourante");
-  const ligne = lignes.find(l => estSemaineCourante(l.lundi));
-  if (!ligne || ligne.type !== "menage") { carte.style.display = "none"; return; }
+  const aujourdhui = new Date(); aujourdhui.setHours(0, 0, 0, 0);
+  const courante = lignes.find(l => l.type === "menage" && estSemaineCourante(l.lundi));
+  const ligne = courante || lignes.find(l => l.type === "menage" && l.lundi >= aujourdhui);
+  if (!ligne) { carte.style.display = "none"; return; }
   carte.style.display = "block";
-  document.getElementById("dateSemaineCourante").textContent = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const d = ligne.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  document.getElementById("titreSemaine").textContent = courante ? "Cette semaine (" + d + ")" : "Prochain service — semaine du " + d;
   const couleur = COULEURS[ligne.equipe % COULEURS.length];
   const eqEl = document.getElementById("equipeSemaineCourante");
   eqEl.textContent = "Équipe " + (ligne.equipe + 1);
   eqEl.style.color = couleur;
   document.getElementById("membresSemaineCourante").textContent = equipes[ligne.equipe].map(i => eleves[i].prenom + " " + eleves[i].nom[0] + ".").join(", ");
   const ligneEl = document.getElementById("ligneSemaineCourante");
-  if (ligneEl) ligneEl.scrollIntoView({ block: "nearest" });
+  if (courante && ligneEl) ligneEl.scrollIntoView({ block: "nearest" });
 }
 
 function dessinerRoulement() {
@@ -325,6 +332,40 @@ function copierPlanning() {
     () => prompt("Copie manuelle :", texte));
 }
 
+// Publication sur le Hub — même mécanisme et même format que la version PC (structure
+// pseudonymisée prénom + initiale). C'est CE bouton qui synchronise vers le Hub ;
+// « Copier le texte » ne fait qu'un presse-papiers pour coller dans une annonce.
+const HUB_BACKEND_DEFAUT = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3NNHJ2ASPhsozt50_3kRNVP7IsCv2Kcnb1J-lW6iJehIjOHag/exec";
+
+function planningPourHub() {
+  const lignes = calculerRoulement().filter(l => l.type === "menage");
+  const datesParEquipe = equipes.map(() => []);
+  lignes.forEach(l => datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })));
+  return {
+    maj: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+    taches: "balayage · poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel",
+    equipes: equipes.map((eq, ei) => ({
+      couleur: COULEURS[ei % COULEURS.length],
+      membres: eq.map(i => eleves[i].prenom + " " + eleves[i].nom[0] + "."),
+      dates: datesParEquipe[ei]
+    }))
+  };
+}
+
+async function publierSurHub() {
+  if (!equipes.length) { alert("Génère les équipes d'abord."); return; }
+  const backend = (window.CONFIG_PORTAIL && window.CONFIG_PORTAIL.hubBackend) || HUB_BACKEND_DEFAUT;
+  let code = localStorage.getItem("pdc-code-prof") || "";
+  code = (prompt("Code PROF du Hub (mémorisé ensuite) :", code) || "").trim().toUpperCase();
+  if (!code) return;
+  try {
+    const rep = await fetch(backend, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "publierMenage", code, planning: JSON.stringify(planningPourHub()) }) }).then(r => r.json());
+    if (rep.ok) { localStorage.setItem("pdc-code-prof", code); alert("Planning ménage publié ! Visible dans l'onglet 🧹 Ménage du Hub."); }
+    else alert("Refusé : " + (rep.erreur || "backend Hub à mettre à jour."));
+  } catch (e) { alert("Publication impossible (connexion ?)."); }
+}
+
 function sauvegarder() {
   localStorage.setItem(CLE, JSON.stringify({
     equipes, taille: document.getElementById("taille").value,
@@ -348,6 +389,7 @@ function restaurer() {
 
 document.getElementById("btnGenerer").onclick = generer;
 document.getElementById("btnCopier").onclick = copierPlanning;
+document.getElementById("btnPublier").onclick = publierSurHub;
 document.getElementById("btnImprimer").onclick = () => window.print();
 ["debut", "nbSemaines", "sauterFeries"].forEach(id => document.getElementById(id).onchange = () => { sauvegarder(); dessinerRoulement(); });
 
