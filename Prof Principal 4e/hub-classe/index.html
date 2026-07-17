@@ -568,19 +568,70 @@ function rendrePlan(brut) {
   return h + "</div></div></div>";
 }
 
+// Repère la semaine de service en cours à partir des dates ISO publiées (lundi → vendredi).
+// RECALCULÉ à chaque affichage : le planning publié reste donc juste toute l'année, sans que
+// le prof ait à le republier chaque semaine.
+function estSemaineDeService(iso) {
+  const lundi = new Date(iso + "T00:00");
+  if (isNaN(lundi.getTime())) return false;
+  const fin = new Date(lundi); fin.setDate(fin.getDate() + 4); fin.setHours(23, 59, 59, 999);
+  const auj = new Date(); auj.setHours(0, 0, 0, 0);
+  return auj >= lundi && auj <= fin;
+}
+
+// Assombrit une couleur d'équipe pour garantir la lisibilité du texte blanc par-dessus
+// (l'orange de l'équipe 3 en clair ne passerait pas en contraste).
+function assombrir(hex, facteur) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+  if (!m) return "#2c5f8a";
+  const n = parseInt(m[1], 16);
+  const r = Math.round(((n >> 16) & 255) * facteur), v = Math.round(((n >> 8) & 255) * facteur), b = Math.round((n & 255) * facteur);
+  return "#" + ((1 << 24) + (r << 16) + (v << 8) + b).toString(16).slice(1);
+}
+
 // rendu du planning ménage publié (identique à la vue compacte imprimée : une carte par équipe)
 function rendreMenage(brut) {
   let p;
   try { p = JSON.parse(brut); } catch (e) { return '<div class="vide">Planning illisible.</div>'; }
+  const equipes = p.equipes || [];
+
+  // Quelle équipe est de service cette semaine ? (planning publié avant la mise à jour de
+  // l'outil = pas de datesIso → aucun repère, il suffit de republier une fois.)
+  let courante = -1, dateCourante = -1;
+  equipes.forEach((eq, i) => {
+    const j = (eq.datesIso || []).findIndex(estSemaineDeService);
+    if (j >= 0) { courante = i; dateCourante = j; }
+  });
+
   let h = '<div class="carte"><b>🧹 Équipes de ménage 4G</b>' +
     '<span style="font-size:.72rem;color:#7b8794"> · publié le ' + echap(p.maj || "?") + "</span>" +
     '<p style="font-size:.8rem;margin-top:6px"><b>Chaque semaine, l\'équipe de service :</b> ' + echap(p.taches || "") + "</p></div>";
-  (p.equipes || []).forEach((eq, i) => {
-    h += '<div class="carte" style="border-left:6px solid ' + echap(eq.couleur) + '">' +
+
+  if (courante >= 0) {
+    const eq = equipes[courante];
+    const fond = assombrir(eq.couleur, 0.78);
+    h += '<div class="carte" style="background:' + fond + ';color:#fff;border:none">' +
+      '<div style="font-size:.82rem;font-weight:600">🧹 Cette semaine, c\'est :</div>' +
+      '<b style="font-size:1.35rem">Équipe ' + (courante + 1) + "</b>" +
+      '<div style="font-size:.92rem;margin-top:4px">' + (eq.membres || []).map(echap).join(" · ") + "</div></div>";
+  }
+
+  equipes.forEach((eq, i) => {
+    const active = i === courante;
+    const fondChip = assombrir(eq.couleur, 0.78);
+    h += '<div class="carte" style="border-left:6px solid ' + echap(eq.couleur) +
+      (active ? ";background:" + echap(eq.couleur) + "1f;box-shadow:0 0 0 2px " + echap(eq.couleur) : "") + '">' +
       '<b style="color:' + echap(eq.couleur) + '">Équipe ' + (i + 1) + "</b>" +
+      (active ? '<span style="margin-left:8px;font-size:.68rem;font-weight:700;color:#fff;background:' + fondChip + ';border-radius:20px;padding:2px 8px">cette semaine</span>' : "") +
       '<div style="font-size:.85rem;margin:4px 0 6px">' + (eq.membres || []).map(echap).join(" · ") + "</div>" +
       '<div style="font-size:.8rem;line-height:1.8">' +
-      (eq.dates || []).map(d => '<span style="display:inline-block;border:1px solid #cbd2da;border-radius:4px;padding:0 6px;margin:1px 2px">' + echap(d) + "</span>").join("") +
+      (eq.dates || []).map((d, j) => {
+        const cetteDate = active && j === dateCourante;
+        const style = cetteDate
+          ? "display:inline-block;border:1px solid " + fondChip + ";background:" + fondChip + ";color:#fff;font-weight:700;border-radius:4px;padding:0 6px;margin:1px 2px"
+          : "display:inline-block;border:1px solid #cbd2da;border-radius:4px;padding:0 6px;margin:1px 2px";
+        return '<span style="' + style + '">' + echap(d) + "</span>";
+      }).join("") +
       "</div></div>";
   });
   return h;

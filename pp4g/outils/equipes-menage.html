@@ -340,14 +340,21 @@ const HUB_BACKEND_DEFAUT = "https://script.google.com/macros/s/AKfycbx0E8IP9lbky
 function planningPourHub() {
   const lignes = calculerRoulement().filter(l => l.type === "menage");
   const datesParEquipe = equipes.map(() => []);
-  lignes.forEach(l => datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })));
+  const isoParEquipe = equipes.map(() => []);
+  lignes.forEach(l => {
+    datesParEquipe[l.equipe].push(l.lundi.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }));
+    isoParEquipe[l.equipe].push(iso(l.lundi)); // avec l'année : le Hub s'en sert pour repérer la semaine en cours
+  });
   return {
     maj: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
     taches: "balayage · poubelles au tri · nettoyage du tableau · rangement des chaises et du matériel",
     equipes: equipes.map((eq, ei) => ({
       couleur: COULEURS[ei % COULEURS.length],
       membres: eq.map(i => eleves[i].prenom + " " + eleves[i].nom[0] + "."),
-      dates: datesParEquipe[ei]
+      dates: datesParEquipe[ei],
+      // dates ISO (AAAA-MM-JJ) : le Hub RECALCULE l'équipe de la semaine à chaque affichage,
+      // au lieu de la figer à la publication (sinon faux dès la semaine suivante).
+      datesIso: isoParEquipe[ei]
     }))
   };
 }
