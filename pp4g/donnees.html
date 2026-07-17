@@ -44,8 +44,8 @@
 
 <div class="bloc carte-instrument">
   <h2 class="etape-checklist"><span class="num-checklist">1</span> Importer une classe</h2>
-  <p>Fichier <code>eleves-4G.json</code> (déposé via le Drive du collège, puis téléchargé sur ce téléphone) ou un CSV <code>Nom;Prénom;Sexe[;dys]</code>.</p>
-  <label class="champ" for="fichierEleves">Fichier élèves (.json ou .csv)</label>
+  <p>Fichier <code>eleves-4G.json</code> (déposé via le Drive du collège, puis téléchargé sur ce téléphone), ou un tableau <code>Nom;Prénom;Sexe[;dys]</code> en CSV ou Excel (.xlsx).</p>
+  <label class="champ" for="fichierEleves">Fichier élèves (.json, .csv ou .xlsx)</label>
   <!-- Pas de filtre `accept` : sur Android, Google Drive annonce le CSV avec un type MIME
        (text/comma-separated-values, octet-stream…) que le filtre par extension grise. Le
        parseur (analyserListe) valide le contenu de toute façon. -->
@@ -75,6 +75,7 @@
 </div>
 <div class="horizon-footer"></div>
 
+<script src="js/xlsx-leger.js"></script>
 <script src="outils/js/donnees.js"></script>
 <script src="js/verrou.js"></script>
 <script>
@@ -137,8 +138,8 @@ document.getElementById("btnImporter").onclick = async () => {
   if (!fichierEleves) { afficherRecap("Choisis d'abord un fichier élèves.", "erreur"); return; }
   btn.disabled = true;
   try {
-    const texte = await fichierEleves.text();
-    const nomClasse = fichierEleves.name.replace(/\.(json|csv|txt)$/i, "").toUpperCase();
+    const texte = await PP4G_XLSX.texteDuFichier(fichierEleves);
+    const nomClasse = fichierEleves.name.replace(/\.(json|csv|txt|xlsx)$/i, "").toUpperCase();
     const donnees = analyserListe(texte, nomClasse);
 
     let nbClassesImportees = 0, nbElevesImportes = 0;

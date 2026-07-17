@@ -66,9 +66,9 @@
   <label id="zoneClasse" style="display:none"><b>Classe :</b>
     <select id="selClasse"></select>
   </label>
-  <button id="btnImporterClasse" class="sec" title="CSV (Nom;Prénom;Sexe) ou JSON">➕ Importer une classe</button>
+  <button id="btnImporterClasse" class="sec" title="CSV, Excel (.xlsx) ou JSON — Nom;Prénom;Sexe">➕ Importer une classe</button>
   <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Retirer cette classe importée">🗑</button>
-  <input type="file" id="fichierClasse" accept=".csv,.txt,.json" style="display:none">
+  <input type="file" id="fichierClasse" accept=".csv,.txt,.json,.xlsx" style="display:none">
   <label>Salle :
     <select id="gabarit">
       <option value="techno">Salle techno (30 postes)</option>
@@ -143,6 +143,7 @@
 <script src="../donnees/classes.js"></script>
 <script src="../donnees/eleves-4G.js"></script>
 <script src="../donnees/config-portail.js"></script>
+<script src="../../pp4g/js/xlsx-leger.js"></script>
 <script src="js/donnees.js"></script>
 <script>
 let classeActive = null;
@@ -635,22 +636,20 @@ document.getElementById("btnSupprimerPlan").onclick = () => {
 };
 
 document.getElementById("btnImporterClasse").onclick = () => document.getElementById("fichierClasse").click();
-document.getElementById("fichierClasse").onchange = ev => {
+document.getElementById("fichierClasse").onchange = async ev => {
   const fichier = ev.target.files[0];
   if (!fichier) return;
   const nom = prompt("Nom de la classe (ex : 5A) :");
   if (!nom) { ev.target.value = ""; return; }
-  const lecteur = new FileReader();
-  lecteur.onload = () => {
-    try {
-      const n = importerClasse(nom.trim().toUpperCase(), lecteur.result);
-      alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + n + " élèves.");
-    } catch (e) {
-      alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — ou un JSON au format 4G.");
-    }
-    ev.target.value = "";
-  };
-  lecteur.readAsText(fichier, "UTF-8");
+  try {
+    // texteDuFichier convertit un .xlsx en texte tabulé ; csv/json passent tels quels.
+    const texte = await PP4G_XLSX.texteDuFichier(fichier);
+    const n = importerClasse(nom.trim().toUpperCase(), texte);
+    alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + n + " élèves.");
+  } catch (e) {
+    alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — en CSV, Excel (.xlsx) ou JSON au format 4G.");
+  }
+  ev.target.value = "";
 };
 document.getElementById("btnSupprimerClasse").onclick = () => {
   if (!confirm("Retirer la classe importée « " + classeActive + " » de cet ordinateur ? (ses plans enregistrés localement resteront dans le navigateur)")) return;
