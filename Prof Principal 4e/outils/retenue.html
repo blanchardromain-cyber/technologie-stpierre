@@ -49,7 +49,13 @@
   <button class="gmail" id="btnGmail">✉️ Ouvrir dans Gmail (pré-rempli)</button>
   <button class="sec" onclick="copier('tEmail', this)">📋 Copier le corps</button>
   <button class="sec" id="btnCopierDest">📋 Copier les destinataires</button>
-  <div class="note">Après envoi : ajoute la ligne dans le <a href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener">registre des retenues</a> (10 secondes, menus déroulants).</div>
+  <div style="margin-top:10px;border-top:1px solid #eceff3;padding-top:8px">
+    <button id="btnReporter">📤 Reporter dans le registre (1 ligne par matière)</button>
+    <span class="note" id="etatReport"></span>
+    <div class="note">Écrit automatiquement Date · Créneau · Élève · Motif · Matière · Professeur dans le
+    <a href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener">registre</a> —
+    les collègues n'ont plus qu'à passer « Travail fourni » à OUI. (Code PROF demandé, backend Hub requis.)</div>
+  </div>
 </div>
 
 <div class="carte" id="blocParents" style="display:none">
@@ -68,7 +74,8 @@
 <script src="js/donnees.js"></script>
 <script>
 const LIEN_REGISTRE = "https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit";
-let eleves = [], profs = [], destinataires = [];
+const HUB_BACKEND = "https://script.google.com/macros/s/AKfycbx0E8IP9lbkyyGD7yS3NNHJ2ASPhsozt50_3kRNVP7IsCv2Kcnb1J-lW6iJehIjOHag/exec";
+let eleves = [], profs = [], destinataires = [], derniereGeneration = null;
 
 function chargerFormulaire() {
   const selEleve = document.getElementById("fEleve");
@@ -108,7 +115,8 @@ function genererMessages() {
 "Bonjour,\n\n" +
 eleve + " (4G) est retenu(e) " + creneauTxt + " le " + dateFr(date) + ".\n" +
 "Motif : " + motif + ".\n\n" +
-"Merci de fournir du travail pour ce créneau (à déposer dans mon casier) et de le pointer dans le registre, au plus tard la veille :\n" +
+"Merci de fournir du travail pour ce créneau (à déposer dans mon casier), au plus tard la veille.\n" +
+"Le registre est déjà pré-rempli à votre matière — il ne vous reste qu'à passer « Travail fourni » à OUI :\n" +
 LIEN_REGISTRE + "\n\n" +
 "Matières sollicitées :\n" + tableau + "\n\n" +
 "Cordialement,\nR. Blanchard — PP 4G";
@@ -131,8 +139,32 @@ LIEN_REGISTRE + "\n\n" +
 "6. Conclure sur l'objectif commun ; proposer un point de suivi si besoin.\n" +
 "→ Noter l'appel dans le registre (colonne Notes PP).";
 
+  // mémorise la génération pour le report registre (1 ligne par matière sollicitée)
+  derniereGeneration = {
+    lignes: cochees.map(p => ({
+      date: date, creneau: soir ? "Soir (1h)" : "Mercredi matin (4h)",
+      eleve: eleve, motif: motif, matiere: p.matiere, prof: p.nom
+    }))
+  };
+  document.getElementById("etatReport").textContent = "";
+
   ["blocEmail", "blocParents", "blocTel"].forEach(id => document.getElementById(id).style.display = "block");
   document.getElementById("blocEmail").scrollIntoView({ behavior: "smooth" });
+}
+
+async function reporterRegistre() {
+  if (!derniereGeneration) { alert("Génère d'abord les messages."); return; }
+  let code = localStorage.getItem("pdc-code-prof") || "";
+  code = (prompt("Code PROF du Hub (mémorisé ensuite) :", code) || "").trim().toUpperCase();
+  if (!code) return;
+  const etat = document.getElementById("etatReport");
+  etat.textContent = "envoi…";
+  try {
+    const rep = await fetch(HUB_BACKEND, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "ajouterRetenue", code, lignes: derniereGeneration.lignes }) }).then(r => r.json());
+    if (rep.ok) { localStorage.setItem("pdc-code-prof", code); etat.textContent = "✅ " + rep.nb + " ligne(s) ajoutée(s) au registre."; }
+    else etat.textContent = "❌ " + (rep.erreur || "backend Hub à mettre à jour.");
+  } catch (e) { etat.textContent = "❌ Report impossible (connexion ?)."; }
 }
 
 function copier(id, btn) {
@@ -143,6 +175,7 @@ function copier(id, btn) {
 }
 
 document.getElementById("btnGenerer").onclick = genererMessages;
+document.getElementById("btnReporter").onclick = reporterRegistre;
 document.getElementById("btnToutesMatieres").onclick = () => {
   const cases = [...document.querySelectorAll(".matCase")];
   const tout = cases.every(c => c.checked);

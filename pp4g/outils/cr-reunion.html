@@ -62,6 +62,14 @@
   <p class="note">« Copier le prompt » met dans le presse-papiers tes notes + la consigne : ouvre Claude (PC ou appli mobile), colle, et tu reçois le compte-rendu propre (Word possible sur PC). Le brouillon reste enregistré ici tant que tu ne cliques pas « Nouveau CR ».</p>
 </div>
 
+<div class="carte">
+  <b style="font-size:.9rem">✉️ Message EcoleDirecte d'accompagnement</b>
+  <p class="note">Une fois le CR généré par Claude : génère ce court message, colle-le dans EcoleDirecte et joins le CR en pièce jointe.</p>
+  <button class="sec" onclick="genererMailED()">⚙️ Générer le message</button>
+  <textarea id="tMailED" style="display:none;min-height:150px"></textarea>
+  <button class="sec" id="btnCopierMailED" style="display:none" onclick="copierMailED(this)">📋 Copier</button>
+</div>
+
 <script>
 const CLE = "cr-reunion-brouillon";
 const CHAMPS = ["fType", "fDateCR", "fParticipants", "zPoints", "zDecisions", "zAFaire", "zLibre"];
@@ -120,6 +128,34 @@ function telechargerTxt() {
   a.download = "notes-reunion-" + document.getElementById("fDateCR").value + ".txt";
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function genererMailED() {
+  const type = document.getElementById("fType").value;
+  const date = document.getElementById("fDateCR").value;
+  const dateFr = new Date(date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  const famille = /famille|parents/i.test(type);
+  const texte =
+"Objet : Compte-rendu — " + type.toLowerCase() + " du " + dateFr + "\n\n" +
+(famille ? "Madame, Monsieur,\n\n" : "Bonjour,\n\n") +
+"Veuillez trouver en pièce jointe le compte-rendu de " +
+(famille ? "notre échange" : "la réunion") + " du " + dateFr + ".\n" +
+"Il reprend les points abordés, les décisions prises et les suites convenues.\n\n" +
+(famille ? "N'hésitez pas à me signaler toute précision ou remarque ; je reste à votre disposition pour en reparler.\n\n"
+         : "Merci de me signaler toute correction ou complément.\n\n") +
+"Cordialement,\nR. Blanchard — professeur principal de 4G\n\n" +
+"[📎 Joindre le CR généré par Claude avant l'envoi]";
+  const zone = document.getElementById("tMailED");
+  zone.value = texte;
+  zone.style.display = "block";
+  document.getElementById("btnCopierMailED").style.display = "inline-block";
+}
+
+function copierMailED(btn) {
+  navigator.clipboard.writeText(document.getElementById("tMailED").value.replace(/\n\n\[📎[^\]]*\]$/, "")).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓ (sans le rappel 📎)";
+    btn.after(ok); setTimeout(() => ok.remove(), 2000);
+  });
 }
 
 function nouveauCR() {

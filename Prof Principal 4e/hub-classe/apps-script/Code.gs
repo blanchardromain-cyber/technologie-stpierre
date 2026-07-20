@@ -195,6 +195,9 @@ function traiter(d, u) {
         return { ok: true };
       case "lirePlan":
         return { ok: true, plan: lireDivers("planClasse") };
+      case "ajouterRetenue":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        return ajouterRetenue(d);
       case "publierMenage":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         ecrireDivers("planningMenage", String(d.planning || "").slice(0, 30000));
@@ -206,6 +209,27 @@ function traiter(d, u) {
   } finally {
     verrou.releaseLock();
   }
+}
+
+// ---------- Report des retenues dans le registre partagé (générateur → Sheet) ----------
+// Le registre est un AUTRE classeur (partagé équipe) : openById demandera une autorisation
+// supplémentaire à la première exécution après mise à jour — l'accepter.
+var REGISTRE_RETENUES_ID = "1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ";
+
+function ajouterRetenue(d) {
+  var lignes = (d.lignes || []).slice(0, 20);
+  if (!lignes.length) return { ok: false, erreur: "Aucune ligne à reporter." };
+  var classeur = SpreadsheetApp.openById(REGISTRE_RETENUES_ID);
+  var f = classeur.getSheetByName("Retenues") || classeur.getSheets()[0];
+  lignes.forEach(function (l) {
+    // Colonnes : Date | Créneau | Élève | Motif | Matière | Professeur | Travail fourni | Notes
+    f.appendRow([
+      String(l.date || ""), String(l.creneau || ""), String(l.eleve || "").slice(0, 60),
+      String(l.motif || "").slice(0, 200), String(l.matiere || "").slice(0, 40),
+      String(l.prof || "").slice(0, 40), "", ""
+    ]);
+  });
+  return { ok: true, nb: lignes.length };
 }
 
 // ---------- Infos élèves (casier + référents absence) ----------

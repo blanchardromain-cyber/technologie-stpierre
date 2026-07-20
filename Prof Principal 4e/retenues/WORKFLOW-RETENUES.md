@@ -1,87 +1,83 @@
-# Module Retenues 4G — workflow
+# Module Retenues 4G — mode d'emploi
 
-Tiroir 🟦 (données disciplinaires — accès restreint équipe) + 🟪 (rédaction avec Claude).
-Décision D5 du plan directeur : **e-mails toujours en brouillon** (le PP relit et envoie),
-suivi « travail fourni » dans un **Sheet partagé équipe**.
+Tiroir 🟦 (données disciplinaires — accès restreint équipe).
+Décision D5 : **rien n'est envoyé automatiquement** — le PP relit et envoie lui-même.
 
-## Mise en place (une fois)
+**Le principe, en une phrase :** tu remplis un formulaire une fois, l'outil écrit les lignes
+dans le registre partagé et prépare tes messages ; les collègues n'ont plus qu'à passer
+« Travail fourni » à **OUI**.
 
-1. Importer `../donnees/registre-retenues-4G.xlsx` dans Drive (**ouvrir avec Google Sheets**
-   puis « Enregistrer au format Google Sheets »).
-2. Le partager **uniquement** aux enseignants de la 4G + vie scolaire (adresses dans
-   `../donnees/eleves-4G.json`), en écriture. **Pas de lien public.**
-3. Copier l'URL du Sheet → la coller dans la variable `LIEN_REGISTRE` ci-dessous (à la main).
+---
 
-`LIEN_REGISTRE = https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit`
+## 1. Mise en place (une seule fois)
 
-## À chaque retenue (2 minutes)
+### 1.1 Le registre
+Classeur partagé : `https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit`
+Partagé **en écriture** aux enseignants de la 4G + vie scolaire. **Jamais de lien public.**
 
-Dire à Claude, par exemple :
+### 1.2 Les colonnes de l'onglet `Retenues` (ordre imposé)
 
-> Retenue : [Prénom Nom], mercredi 15/09 matin, motif « refus de travail répété en français ».
+| A | B | C | D | E | F | G | H |
+|---|---|---|---|---|---|---|---|
+| Date | Créneau | Élève | Motif | **Matière** | **Professeur** | **Travail fourni** | Notes PP |
 
-Claude fait alors :
-1. **Brouillon Gmail** aux profs de la classe + vie scolaire (modèle A) — *jamais envoyé
-   directement : tu relis, tu cliques Envoyer*.
-2. **Message parents** prêt à coller dans EcoleDirecte (modèle B) — ou script d'appel (modèle C)
-   si tu préfères téléphoner.
-3. Te rappelle d'ajouter la ligne au registre (10 secondes, menus déroulants).
+> ⚠️ Si ton onglet a encore les anciennes colonnes, remplace la ligne 1 par celle-ci.
+> **Une ligne = une matière sollicitée** (c'est ce qui permet à chaque collègue de pointer la sienne).
 
-## Modèle A — e-mail collègues (brouillon Gmail)
+### 1.3 Le menu déroulant « Travail fourni » (colonne G)
+Sélectionne **G2:G500** → menu **Données → Validation des données** → *Liste d'éléments* :
+`OUI` , `NON` → Enregistrer.
+Ajoute une mise en forme conditionnelle (vert si OUI, rouge si NON) pour lire d'un coup d'œil.
 
-> ⚠️ Limite technique assumée : **les cases à cocher ne fonctionnent pas dans un e-mail Gmail**
-> (le HTML interactif y est neutralisé). Le pointage OUI/NON se fait donc dans le **registre
-> partagé** (lien dans l'e-mail) — l'e-mail, lui, contient le tableau **pré-rempli par matière
-> et par professeur** pour que chacun se repère d'un coup d'œil. Claude génère ce tableau
-> automatiquement depuis `../donnees/eleves-4G.json`.
+### 1.4 Autoriser l'écriture automatique (une fois)
+Le report est réalisé par le **backend du Hub**, qui doit être autorisé à écrire dans ce classeur :
+Sheet **Hub 4G** → Apps Script → coller le `Code.gs` à jour → exécuter **`initialiser`** →
+accepter l'autorisation supplémentaire demandée (accès au registre) → **Déployer → Gérer les
+déploiements → ✏️ → Nouvelle version**.
 
-> **Objet :** Retenue [Prénom NOM] (4G) — [date] · **[Soir (1h, 17h-18h) / Mercredi matin (4h, 8h30-12h30)]**
->
-> Bonjour,
->
-> [Prénom NOM] (4G) est retenu(e) le **[date]**, créneau **[soir 1h / mercredi matin 4h]**.
-> Motif : [motif].
->
-> Merci de fournir du travail pour ce créneau (à déposer dans le casier de R. Blanchard)
-> **et** de le pointer dans le registre, au plus tard la veille : [LIEN_REGISTRE]
->
-> | Matière | Professeur | Travail donné et déposé ? |
-> |---|---|---|
-> | Français | C. ASTOUL | OUI / NON *(à pointer dans le registre)* |
-> | Mathématiques | S. DUBOIS | OUI / NON |
-> | *(… toutes les matières de la classe, pré-remplies automatiquement)* | | |
->
-> Cordialement,
-> R. Blanchard — PP 4G
+---
 
-Nota : pour une retenue d'**1 h (soir)**, le tableau est réduit aux matières du jour ou aux
-matières concernées par le motif (préciser à Claude) ; pour **4 h (mercredi)**, tableau complet.
+## 2. À chaque retenue (≈ 1 minute)
 
-## Modèle B — message parents (EcoleDirecte)
+Ouvre l'outil **⚖️ Retenue** (portail PC ou Cockpit PP) :
 
-> Madame, Monsieur,
->
-> Je vous informe que [Prénom] est retenu(e) le **[date]** de **[horaires]** pour le motif
-> suivant : [motif].
-> Cette retenue est consacrée à du travail scolaire fourni par les enseignants.
-> Merci de prendre vos dispositions pour le retour de [Prénom] à l'issue de la retenue.
-> Je reste à votre disposition pour en parler.
->
-> Cordialement,
-> R. Blanchard — professeur principal de 4G
+1. **Élève**, **date**, **créneau** (Soir 1 h / Mercredi matin 4 h), **motif** (factuel, bref).
+2. **Coche les matières sollicitées** — les professeurs concernés s'affichent.
+   *Soir : 1-2 matières liées au motif. Mercredi : bouton « Tout cocher ».*
+3. **⚙️ Générer les 3 messages**.
+4. **📤 Reporter dans le registre** → une ligne par matière est écrite automatiquement
+   (Date · Créneau · Élève · Motif · Matière · Professeur), colonne « Travail fourni » laissée vide.
+   *Le code PROF t'est demandé la première fois, puis mémorisé.*
+5. **✉️ Ouvrir dans Gmail** → le message est pré-adressé (profs cochés + vie scolaire) et
+   pré-rempli. Tu relis, tu envoies.
+6. **💬 Message parents** → copier, coller dans EcoleDirecte. *(ou 📞 la trame d'appel)*
 
-## Modèle C — script d'appel téléphonique parents
+## 3. Ce que font les collègues
 
-1. Se présenter : PP de 4G. Vérifier qu'on parle bien au responsable légal.
-2. Énoncer les faits (factuel, sans jugement) : « [Prénom] a [faits datés]. »
-3. Annoncer la mesure : retenue le [date], [horaires], avec travail scolaire.
-4. Question logistique : le retour à la maison ce jour-là est-il possible ?
-5. Ouvrir le dialogue : « De votre côté, avez-vous remarqué quelque chose ? »
-6. Conclure : objectif commun, point de suivi si besoin. → Noter l'appel dans le registre (Notes PP).
+Ils reçoivent le mail, ouvrent le lien du registre, trouvent **leur ligne déjà remplie**
+et passent simplement **« Travail fourni » à OUI** après avoir déposé le travail dans ton casier.
+Rien à saisir, rien à créer.
+
+## 4. Ton suivi
+
+Filtre le registre sur `Travail fourni` = vide → tu vois immédiatement qui n'a pas encore fourni,
+la veille de la retenue. La colonne **Notes PP** te sert pour le suivi (appel passé, absence, report).
+
+---
 
 ## Règles
 
-- Motif **factuel et bref** dans les e-mails (données disciplinaires → destinataires limités).
-- Le registre n'est jamais public ; les élèves n'y ont pas accès.
-- Adresses e-mail de l'équipe : `../donnees/eleves-4G.json` (hors git). Vie scolaire : à ajouter.
-- Historique : une ligne par retenue, on ne supprime rien (traçabilité pour conseil/dialogue familles).
+- Motif **factuel et bref** : il est lu par toute l'équipe et écrit dans un classeur partagé.
+- Destinataires limités aux personnels concernés (professeurs cochés + vie scolaire).
+- Aucun envoi automatique : Gmail s'ouvre **pré-rempli**, tu gardes la main.
+- Adresses e-mail de l'équipe : `../donnees/eleves-4G.json` (hors git).
+- Historique : on n'efface pas les lignes (traçabilité conseil / dialogue familles).
+
+## En cas de souci
+
+| Symptôme | Cause probable | Solution |
+|---|---|---|
+| « backend Hub à mettre à jour » | `Code.gs` du Hub pas redéployé | §1.4 |
+| « Réservé au professeur » | mauvais code PROF | code dans `donnees/codes-eleves-4G.csv` |
+| Lignes écrites au mauvais endroit | onglet mal nommé | l'onglet doit s'appeler **`Retenues`** |
+| Pas de professeurs proposés | données importées sans la liste des profs | réimporter le JSON complet |
