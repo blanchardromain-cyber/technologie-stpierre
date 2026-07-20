@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CR de réunion — prise de notes 4G</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 1.15rem; margin-bottom: 2px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  label { font-size: .8rem; display: block; margin-top: 8px; }
+  select, input[type="date"], input[type="text"] { width: 100%; font-size: .9rem; padding: 7px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 3px; }
+  .zone { margin-top: 10px; }
+  .zone .entete { display: flex; justify-content: space-between; align-items: center; }
+  .zone b { font-size: .85rem; }
+  textarea { width: 100%; font-size: .86rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 4px; font-family: inherit; min-height: 84px; resize: vertical; }
+  button { font-size: .8rem; padding: 6px 12px; border: 1px solid #2c5f8a; border-radius: 6px; background: #2c5f8a; color: #fff; cursor: pointer; margin: 6px 6px 0 0; }
+  button.sec { background: #fff; color: #2c5f8a; }
+  button.mini { font-size: .7rem; padding: 2px 8px; margin: 0; }
+  button.danger { background: #fff; color: #c0392b; border-color: #c0392b; }
+  .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
+  .copie-ok { color: #1e6b47; font-size: .78rem; margin-left: 6px; }
+  #etatSauvegarde { font-size: .7rem; color: #7b8794; float: right; }
+</style>
+</head>
+<body>
+<h1>📝 CR de réunion — prise de notes <span id="etatSauvegarde"></span></h1>
+<p class="rgpd">Outil 100 % local — les notes restent sur cet appareil (brouillon auto-enregistré). Prénoms plutôt que noms complets si possible.</p>
+
+<div class="carte">
+  <label>Type de réunion
+    <select id="fType">
+      <option>Réunion parents-professeurs</option>
+      <option>Entretien avec une famille</option>
+      <option>Équipe éducative</option>
+      <option>Réunion d'équipe pédagogique</option>
+      <option>Autre</option>
+    </select>
+  </label>
+  <label>Date <input type="date" id="fDateCR"></label>
+  <label>Participants (rôles suffisent : « les parents de L., la CPE, moi ») <input type="text" id="fParticipants"></label>
+
+  <div class="zone"><div class="entete"><b>📌 Points abordés</b><button class="mini sec" onclick="horodater('zPoints')">⏱ horodater</button></div><textarea id="zPoints" placeholder="Note en vrac, au fil de la réunion — Claude remettra en forme."></textarea></div>
+  <div class="zone"><div class="entete"><b>✅ Décisions prises</b><button class="mini sec" onclick="horodater('zDecisions')">⏱</button></div><textarea id="zDecisions"></textarea></div>
+  <div class="zone"><div class="entete"><b>📋 À faire (qui → quoi → quand)</b><button class="mini sec" onclick="horodater('zAFaire')">⏱</button></div><textarea id="zAFaire"></textarea></div>
+  <div class="zone"><div class="entete"><b>💭 Notes libres / climat</b><button class="mini sec" onclick="horodater('zLibre')">⏱</button></div><textarea id="zLibre"></textarea></div>
+</div>
+
+<div class="carte">
+  <button onclick="copierPrompt(this)">🧠 Copier le prompt pour Claude</button>
+  <button class="sec" onclick="telechargerTxt()">💾 Télécharger .txt</button>
+  <button class="danger" onclick="nouveauCR()">🗑 Nouveau CR</button>
+  <p class="note">« Copier le prompt » met dans le presse-papiers tes notes + la consigne : ouvre Claude (PC ou appli mobile), colle, et tu reçois le compte-rendu propre (Word possible sur PC). Le brouillon reste enregistré ici tant que tu ne cliques pas « Nouveau CR ».</p>
+</div>
+
+<script>
+const CLE = "cr-reunion-brouillon";
+const CHAMPS = ["fType", "fDateCR", "fParticipants", "zPoints", "zDecisions", "zAFaire", "zLibre"];
+
+function horodater(id) {
+  const z = document.getElementById(id);
+  const h = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  z.value += (z.value && !z.value.endsWith("\n") ? "\n" : "") + "[" + h + "] ";
+  z.focus();
+  sauvegarder();
+}
+
+function sauvegarder() {
+  const d = {};
+  CHAMPS.forEach(id => { d[id] = document.getElementById(id).value; });
+  localStorage.setItem(CLE, JSON.stringify(d));
+  const e = document.getElementById("etatSauvegarde");
+  e.textContent = "enregistré " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+
+function restaurer() {
+  try {
+    const d = JSON.parse(localStorage.getItem(CLE) || "{}");
+    CHAMPS.forEach(id => { if (d[id] !== undefined) document.getElementById(id).value = d[id]; });
+  } catch (e) { }
+  if (!document.getElementById("fDateCR").value) document.getElementById("fDateCR").value = new Date().toISOString().slice(0, 10);
+}
+
+function texteNotes() {
+  const v = id => document.getElementById(id).value.trim();
+  return "Type : " + v("fType") + "\nDate : " + v("fDateCR") + "\nParticipants : " + (v("fParticipants") || "—") +
+    "\n\n== POINTS ABORDÉS ==\n" + (v("zPoints") || "—") +
+    "\n\n== DÉCISIONS ==\n" + (v("zDecisions") || "—") +
+    "\n\n== À FAIRE ==\n" + (v("zAFaire") || "—") +
+    "\n\n== NOTES LIBRES ==\n" + (v("zLibre") || "—");
+}
+
+function copierPrompt(btn) {
+  const prompt =
+"Transforme mes notes de réunion ci-dessous en compte-rendu professionnel :\n" +
+"- factuel et neutre (aucun jugement, pas d'interprétation au-delà des notes) ;\n" +
+"- structuré : en-tête (type, date, participants), points abordés, décisions, actions à suivre (qui/quoi/quand) ;\n" +
+"- prêt à archiver ou à envoyer via EcoleDirecte ; propose aussi une version courte (5 lignes) pour information rapide ;\n" +
+"- si tu es sur PC avec mes outils : produis aussi le document Word.\n\n" +
+"MES NOTES :\n" + texteNotes();
+  navigator.clipboard.writeText(prompt).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓ — colle dans Claude";
+    btn.after(ok); setTimeout(() => ok.remove(), 2500);
+  });
+}
+
+function telechargerTxt() {
+  const blob = new Blob([texteNotes()], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "notes-reunion-" + document.getElementById("fDateCR").value + ".txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function nouveauCR() {
+  if (!confirm("Effacer le brouillon actuel et repartir de zéro ?")) return;
+  localStorage.removeItem(CLE);
+  CHAMPS.forEach(id => { document.getElementById(id).value = ""; });
+  restaurer();
+}
+
+CHAMPS.forEach(id => document.getElementById(id).addEventListener("input", sauvegarder));
+restaurer();
+</script>
+</body>
+</html>

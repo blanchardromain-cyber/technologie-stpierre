@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f1f3d">
+<title>Retenue — Cockpit PP</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="../icons/logo-source.svg">
+<link rel="icon" href="../icons/favicon-48.png">
+<link rel="stylesheet" href="../cockpit.css">
+<style>
+  a.retour { display: inline-block; margin-bottom: 8px; font-size: .82rem; color: var(--bleu-ciel); text-decoration: none; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; background: #f2f4f7; color: #1f2933; padding: 14px; max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 1.15rem; margin-bottom: 2px; }
+  .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
+  .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .carte h2 { font-size: .92rem; margin-bottom: 8px; }
+  label { font-size: .8rem; display: block; margin-top: 8px; }
+  select, input[type="date"], input[type="text"] { width: 100%; font-size: .9rem; padding: 7px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 3px; }
+  .creneaux label, .matieres label { display: inline-block; margin: 4px 10px 0 0; font-size: .82rem; cursor: pointer; }
+  button { font-size: .8rem; padding: 6px 12px; border: 1px solid #2c5f8a; border-radius: 6px; background: #2c5f8a; color: #fff; cursor: pointer; margin: 6px 6px 0 0; }
+  button.sec { background: #fff; color: #2c5f8a; }
+  button.gmail { background: #c0392b; border-color: #c0392b; }
+  textarea { width: 100%; font-size: .82rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 6px; font-family: inherit; min-height: 130px; }
+  .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
+  .copie-ok { color: #1e6b47; font-size: .78rem; margin-left: 6px; }
+</style>
+</head>
+<body>
+<a class="retour" href="../index.html">← Accueil</a>
+<h1>⚖️ Retenue — générateur de messages</h1>
+<p class="rgpd">Outil 100 % local — rien n'est envoyé automatiquement : tu relis, tu copies, tu envoies (décision D5).</p>
+
+<div class="carte">
+  <h2>1. La retenue</h2>
+  <label>Élève <select id="fEleve"></select></label>
+  <label>Date de la retenue <input type="date" id="fDate"></label>
+  <div class="creneaux" style="margin-top:8px">
+    <label><input type="radio" name="creneau" value="soir" checked> Soir — 1 h (17h-18h)</label>
+    <label><input type="radio" name="creneau" value="mercredi"> Mercredi matin — 4 h (8h30-12h30)</label>
+  </div>
+  <label>Motif (factuel, bref) <input type="text" id="fMotif" maxlength="180" placeholder="ex : refus de travail répété malgré plusieurs rappels"></label>
+  <label style="margin-top:10px">Matières sollicitées pour fournir du travail :</label>
+  <div class="matieres" id="zoneMatieres"></div>
+  <div class="note">Soir (1 h) : coche 1-2 matières liées au motif. Mercredi (4 h) : tout cocher (bouton).</div>
+  <button class="sec" id="btnToutesMatieres">Tout cocher / décocher</button>
+  <button id="btnGenerer">⚙️ Générer les 3 messages</button>
+</div>
+
+<div class="carte" id="blocEmail" style="display:none">
+  <h2>2. ✉️ E-mail aux collègues + vie scolaire <span class="note">(brouillon — jamais envoyé tout seul)</span></h2>
+  <div class="note" id="destinatairesInfo"></div>
+  <textarea id="tEmail"></textarea>
+  <button class="gmail" id="btnGmail">✉️ Ouvrir dans Gmail (pré-rempli)</button>
+  <button class="sec" onclick="copier('tEmail', this)">📋 Copier le corps</button>
+  <button class="sec" id="btnCopierDest">📋 Copier les destinataires</button>
+  <div class="note">Après envoi : ajoute la ligne dans le <a href="https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit" target="_blank" rel="noopener">registre des retenues</a> (10 secondes, menus déroulants).</div>
+</div>
+
+<div class="carte" id="blocParents" style="display:none">
+  <h2>3. 💬 Message aux parents <span class="note">(à coller dans EcoleDirecte)</span></h2>
+  <textarea id="tParents"></textarea>
+  <button class="sec" onclick="copier('tParents', this)">📋 Copier</button>
+</div>
+
+<div class="carte" id="blocTel" style="display:none">
+  <h2>4. 📞 Si tu préfères téléphoner — trame d'appel</h2>
+  <textarea id="tTel" style="min-height:170px"></textarea>
+  <button class="sec" onclick="copier('tTel', this)">📋 Copier</button>
+</div>
+
+<script src="js/donnees.js"></script>
+<script>
+const LIEN_REGISTRE = "https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit";
+let eleves = [], profs = [], destinataires = [];
+
+function chargerFormulaire() {
+  const selEleve = document.getElementById("fEleve");
+  selEleve.innerHTML = eleves.slice().sort((a, b) => (a.nom + a.prenom).localeCompare(b.nom + b.prenom, "fr"))
+    .map(e => "<option>" + e.prenom + " " + e.nom + "</option>").join("");
+  document.getElementById("fDate").value = new Date().toISOString().slice(0, 10);
+  // matières avec un prof identifié (hors PP doublon et vie scolaire)
+  const zone = document.getElementById("zoneMatieres");
+  const matieres = profs.filter(p => !/principal|vie scolaire/i.test(p.matiere) && p.nom && !/vacant/i.test(p.nom));
+  zone.innerHTML = matieres.map((p, i) =>
+    '<label><input type="checkbox" class="matCase" data-i="' + i + '"> ' + p.matiere + " <span style='color:#7b8794'>(" + p.nom + ")</span></label>").join("");
+  zone.dataset.nb = matieres.length;
+  window._matieres = matieres;
+}
+
+function dateFr(iso) { return new Date(iso + "T12:00").toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }
+
+function genererMessages() {
+  const eleve = document.getElementById("fEleve").value;
+  const prenom = eleve.split(" ")[0];
+  const date = document.getElementById("fDate").value;
+  const motif = document.getElementById("fMotif").value.trim() || "[motif à préciser]";
+  const soir = document.querySelector('input[name="creneau"]:checked').value === "soir";
+  const creneauTxt = soir ? "le soir de 17h à 18h (1 h)" : "le mercredi matin de 8h30 à 12h30 (4 h)";
+  const cochees = [...document.querySelectorAll(".matCase:checked")].map(c => window._matieres[+c.dataset.i]);
+  if (!cochees.length) { alert("Coche au moins une matière sollicitée pour le travail."); return; }
+
+  // destinataires : profs cochés + vie scolaire
+  const viesco = profs.find(p => /vie scolaire/i.test(p.matiere));
+  destinataires = [...new Set(cochees.map(p => p.email).filter(Boolean))];
+  if (viesco && viesco.email) destinataires.push(viesco.email);
+  document.getElementById("destinatairesInfo").textContent = "Destinataires : " + destinataires.join(", ");
+
+  const tableau = cochees.map(p => "  • " + p.matiere + " — " + p.nom).join("\n");
+  document.getElementById("tEmail").value =
+"Objet : Retenue " + eleve + " (4G) — " + dateFr(date) + " · " + (soir ? "soir 1 h" : "mercredi matin 4 h") + "\n\n" +
+"Bonjour,\n\n" +
+eleve + " (4G) est retenu(e) " + creneauTxt + " le " + dateFr(date) + ".\n" +
+"Motif : " + motif + ".\n\n" +
+"Merci de fournir du travail pour ce créneau (à déposer dans mon casier) et de le pointer dans le registre, au plus tard la veille :\n" +
+LIEN_REGISTRE + "\n\n" +
+"Matières sollicitées :\n" + tableau + "\n\n" +
+"Cordialement,\nR. Blanchard — PP 4G";
+
+  document.getElementById("tParents").value =
+"Madame, Monsieur,\n\n" +
+"Je vous informe que " + prenom + " est retenu(e) " + creneauTxt + " le " + dateFr(date) + " pour le motif suivant : " + motif + ".\n" +
+"Cette retenue est consacrée à du travail scolaire fourni par les enseignants.\n" +
+"Merci de prendre vos dispositions pour le retour de " + prenom + " à l'issue de la retenue.\n" +
+"Je reste à votre disposition pour en parler.\n\n" +
+"Cordialement,\nR. Blanchard — professeur principal de 4G";
+
+  document.getElementById("tTel").value =
+"TRAME D'APPEL — " + eleve + " — retenue du " + dateFr(date) + "\n\n" +
+"1. Se présenter : professeur principal de la 4G. Vérifier qu'on parle au responsable légal.\n" +
+"2. Les faits (factuels, sans jugement) : " + motif + ".\n" +
+"3. La mesure : retenue " + creneauTxt + " le " + dateFr(date) + ", avec travail scolaire fourni par les professeurs.\n" +
+"4. Logistique : le retour à la maison ce jour-là est-il possible ?\n" +
+"5. Ouvrir le dialogue : « De votre côté, avez-vous remarqué quelque chose ? »\n" +
+"6. Conclure sur l'objectif commun ; proposer un point de suivi si besoin.\n" +
+"→ Noter l'appel dans le registre (colonne Notes PP).";
+
+  ["blocEmail", "blocParents", "blocTel"].forEach(id => document.getElementById(id).style.display = "block");
+  document.getElementById("blocEmail").scrollIntoView({ behavior: "smooth" });
+}
+
+function copier(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).value).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓";
+    btn.after(ok); setTimeout(() => ok.remove(), 1600);
+  });
+}
+
+document.getElementById("btnGenerer").onclick = genererMessages;
+document.getElementById("btnToutesMatieres").onclick = () => {
+  const cases = [...document.querySelectorAll(".matCase")];
+  const tout = cases.every(c => c.checked);
+  cases.forEach(c => { c.checked = !tout; });
+};
+document.getElementById("btnGmail").onclick = () => {
+  const corps = document.getElementById("tEmail").value;
+  const objet = corps.split("\n")[0].replace(/^Objet : /, "");
+  const texte = corps.split("\n").slice(2).join("\n");
+  window.open("https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(destinataires.join(",")) +
+    "&su=" + encodeURIComponent(objet) + "&body=" + encodeURIComponent(texte), "_blank");
+};
+document.getElementById("btnCopierDest").onclick = function () {
+  navigator.clipboard.writeText(destinataires.join(", ")).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓";
+    this.after(ok); setTimeout(() => ok.remove(), 1600);
+  });
+};
+
+PP4G.ready().then(() => {
+  const d = window.DONNEES_4G;
+  if (!d || !d.eleves) { document.body.insertAdjacentHTML("afterbegin", "<p style='color:#c0392b'>Données introuvables (importe le fichier eleves-4G.json complet, avec les professeurs).</p>"); return; }
+  eleves = d.eleves;
+  profs = d.professeurs || [];
+  if (!profs.length) document.body.insertAdjacentHTML("afterbegin", "<p style='color:#b23b3b;font-size:.8rem'>⚠️ Pas de liste de professeurs dans les données importées — réimporte le JSON complet pour les e-mails pré-adressés.</p>");
+  chargerFormulaire();
+});
+</script>
+</body>
+</html>
