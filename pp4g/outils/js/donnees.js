@@ -25,6 +25,7 @@
  *   PP4G.importerClasse({classe, annee, eleves, ...}) -> Promise
  *   PP4G.importerPhoto(cle, blob)                     -> Promise   (cle = "NOM Prénom")
  *   PP4G.listerClasses()                              -> Promise<[{classe,annee,eleves}]>
+ *   PP4G.supprimerClasses(noms)                       -> Promise<nb>  (nom ou tableau de noms)
  *   PP4G.exporterTout(avecPhotos)                     -> Promise<{classes, photos?}>
  *   PP4G.effacerTout()                                -> Promise  (vide les 4 magasins)
  *   PP4G.meta.lire(cle) / PP4G.meta.ecrire(cle, val)  -> Promise
@@ -149,6 +150,23 @@ window.PP4G = (function () {
     return ecrire("photos", blob, cle);
   }
 
+  // Supprime une ou plusieurs classes du magasin « eleves » (les photos, clés « NOM Prénom »,
+  // ne sont pas liées à une classe : elles restent, et seront écrasées au prochain import).
+  function supprimerClasses(noms) {
+    var liste = Array.isArray(noms) ? noms : [noms];
+    if (!liste.length) return Promise.resolve(0);
+    return ouvrirBase().then(function (db) {
+      if (!db) throw new Error("IndexedDB indisponible sur ce navigateur.");
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction("eleves", "readwrite");
+        var store = tx.objectStore("eleves");
+        liste.forEach(function (n) { store.delete(n); });
+        tx.oncomplete = function () { resolve(liste.length); };
+        tx.onerror = function () { reject(tx.error); };
+      });
+    });
+  }
+
   function listerClasses() {
     return ouvrirBase().then(function (db) {
       if (!db) return [];
@@ -223,6 +241,7 @@ window.PP4G = (function () {
     importerClasse: importerClasse,
     importerPhoto: importerPhoto,
     listerClasses: listerClasses,
+    supprimerClasses: supprimerClasses,
     exporterTout: exporterTout,
     effacerTout: effacerTout,
     meta: meta,

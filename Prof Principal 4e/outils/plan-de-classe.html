@@ -67,8 +67,16 @@
     <select id="selClasse"></select>
   </label>
   <button id="btnImporterClasse" class="sec" title="CSV, Excel (.xlsx) ou JSON — Nom;Prénom;Sexe">➕ Importer une classe</button>
-  <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Retirer cette classe importée">🗑</button>
+  <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Supprimer une ou plusieurs classes importées">🗑 Supprimer…</button>
   <input type="file" id="fichierClasse" accept=".csv,.txt,.json,.xlsx" style="display:none">
+  <div id="panneauClasses" style="display:none;flex-basis:100%;background:#fff7e6;border:1px solid #e0b84d;border-radius:8px;padding:8px 10px;margin-top:6px">
+    <b style="font-size:.8rem">Classes importées à supprimer</b>
+    <div style="font-size:.72rem;color:#7b8794">Coche une ou plusieurs classes. Les classes du dossier <code>donnees/</code> ne sont pas concernées.</div>
+    <div id="listeClassesSuppr" style="margin:6px 0"></div>
+    <button id="btnToutCocher" class="sec" style="font-size:.72rem">Tout cocher</button>
+    <button id="btnConfirmerSuppr" style="background:#c0392b;border-color:#c0392b">Supprimer la sélection</button>
+    <button id="btnAnnulerSuppr" class="sec">Annuler</button>
+  </div>
   <label>Salle :
     <select id="gabarit">
       <option value="techno">Salle techno (30 postes)</option>
@@ -511,7 +519,8 @@ function demarrer(donnees) {
   affectation = {}; separations = []; associations = []; devant = [];
   document.getElementById("titre").textContent =
     "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
-  document.getElementById("btnSupprimerClasse").style.display = lireImports()[classeActive] ? "inline" : "none";
+  document.getElementById("btnSupprimerClasse").style.display = Object.keys(lireImports()).length ? "inline" : "none";
+  document.getElementById("panneauClasses").style.display = "none";
   remplirSelects();
   const brut = localStorage.getItem(cleStockage());
   if (brut) { try { appliquer(JSON.parse(brut)); } catch (e) { construireGabarit(); } }
@@ -651,12 +660,39 @@ document.getElementById("fichierClasse").onchange = async ev => {
   }
   ev.target.value = "";
 };
-document.getElementById("btnSupprimerClasse").onclick = () => {
-  if (!confirm("Retirer la classe importée « " + classeActive + " » de cet ordinateur ? (ses plans enregistrés localement resteront dans le navigateur)")) return;
+// ---------- suppression de classes importées (sélection multiple) ----------
+function ouvrirPanneauSuppression() {
   const imports = lireImports();
-  delete imports[classeActive];
+  const noms = Object.keys(imports).sort((a, b) => a.localeCompare(b, "fr"));
+  if (!noms.length) { alert("Aucune classe importée à supprimer."); return; }
+  document.getElementById("listeClassesSuppr").innerHTML = noms.map(n =>
+    '<label style="display:inline-block;margin:2px 12px 2px 0;font-size:.82rem;cursor:pointer">' +
+    '<input type="checkbox" class="classeSuppr" value="' + n.replace(/"/g, "&quot;") + '"> <b>' + n + "</b> " +
+    '<span style="color:#7b8794">(' + ((imports[n].eleves || []).length) + " él.)</span></label>").join("");
+  document.getElementById("panneauClasses").style.display = "block";
+}
+function fermerPanneauSuppression() { document.getElementById("panneauClasses").style.display = "none"; }
+
+function supprimerClassesSelectionnees() {
+  const choisies = [...document.querySelectorAll(".classeSuppr:checked")].map(c => c.value);
+  if (!choisies.length) { alert("Coche au moins une classe à supprimer."); return; }
+  if (!confirm("Supprimer définitivement " + choisies.length + " classe(s) importée(s) ?\n\n" + choisies.join(", ") +
+    "\n\n(Les plans enregistrés de ces classes restent dans le navigateur.)")) return;
+  const imports = lireImports();
+  choisies.forEach(n => { delete imports[n]; });
   localStorage.setItem(CLE_IMPORTS, JSON.stringify(imports));
+  fermerPanneauSuppression();
   initClasses();
+  alert(choisies.length + " classe(s) supprimée(s).");
+}
+
+document.getElementById("btnSupprimerClasse").onclick = ouvrirPanneauSuppression;
+document.getElementById("btnAnnulerSuppr").onclick = fermerPanneauSuppression;
+document.getElementById("btnConfirmerSuppr").onclick = supprimerClassesSelectionnees;
+document.getElementById("btnToutCocher").onclick = () => {
+  const cases = [...document.querySelectorAll(".classeSuppr")];
+  const tout = cases.every(c => c.checked);
+  cases.forEach(c => { c.checked = !tout; });
 };
 
 PP4G.ready().then(() => {

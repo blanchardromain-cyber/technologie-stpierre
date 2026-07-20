@@ -54,6 +54,13 @@
   <input type="file" id="fichierPhotos" accept="image/*" multiple>
   <button id="btnImporter">Importer</button>
   <div class="recap" id="recapImport" style="display:none"></div>
+
+  <h3 style="font-size:.92rem;margin-top:16px">Classes importées</h3>
+  <p style="font-size:.8rem">Coche une ou plusieurs classes puis supprime-les de ce téléphone.</p>
+  <div id="listeClasses" style="margin:6px 0;font-size:.9rem">Chargement…</div>
+  <button id="btnToutCocherClasses" class="sec" style="font-size:.8rem">Tout cocher</button>
+  <button id="btnSupprimerClasses" class="sec" style="color:#c0392b;border-color:#c0392b">🗑 Supprimer la sélection</button>
+  <div class="recap" id="recapSuppression" style="display:none"></div>
 </div>
 
 <div class="bloc carte-instrument">
@@ -119,6 +126,48 @@ function afficherRecap(texte, classe) {
   zone.textContent = texte;
 }
 
+// Liste des classes importées, avec cases à cocher pour une suppression multiple.
+async function majListeClasses() {
+  const classes = await PP4G.listerClasses();
+  const zone = document.getElementById("listeClasses");
+  const boutons = ["btnToutCocherClasses", "btnSupprimerClasses"];
+  if (!classes.length) {
+    zone.textContent = "Aucune classe importée.";
+    boutons.forEach(id => { document.getElementById(id).style.display = "none"; });
+    return;
+  }
+  boutons.forEach(id => { document.getElementById(id).style.display = "inline-block"; });
+  zone.innerHTML = classes
+    .sort((a, b) => String(a.classe).localeCompare(String(b.classe), "fr"))
+    .map(c => '<label class="case" style="display:block"><input type="checkbox" class="classeCase" value="' +
+      String(c.classe).replace(/"/g, "&quot;") + '"> <b>' + c.classe + "</b> — " + (c.eleves || []).length + " élèves</label>").join("");
+}
+
+document.getElementById("btnToutCocherClasses").onclick = () => {
+  const cases = [...document.querySelectorAll(".classeCase")];
+  const tout = cases.every(c => c.checked);
+  cases.forEach(c => { c.checked = !tout; });
+};
+
+document.getElementById("btnSupprimerClasses").onclick = async () => {
+  const zone = document.getElementById("recapSuppression");
+  const choisies = [...document.querySelectorAll(".classeCase:checked")].map(c => c.value);
+  zone.style.display = "block";
+  if (!choisies.length) { zone.className = "recap erreur"; zone.textContent = "Coche au moins une classe à supprimer."; return; }
+  if (!confirm("Supprimer définitivement de ce téléphone " + choisies.length + " classe(s) ?\n\n" + choisies.join(", "))) return;
+  try {
+    await PP4G.supprimerClasses(choisies);
+    zone.className = "recap ok";
+    zone.textContent = choisies.length + " classe(s) supprimée(s) : " + choisies.join(", ") +
+      ".\nLes données restent disponibles sur le PC (source de référence).";
+    await majListeClasses();
+    await majStatut();
+  } catch (e) {
+    zone.className = "recap erreur";
+    zone.textContent = "Suppression impossible : " + e.message;
+  }
+};
+
 async function majStatut() {
   const classes = await PP4G.listerClasses();
   const zone = document.getElementById("statutActuel");
@@ -177,6 +226,7 @@ document.getElementById("btnImporter").onclick = async () => {
       "ok"
     );
     await majStatut();
+    await majListeClasses();
   } catch (e) {
     afficherRecap("Import impossible : " + e.message, "erreur");
   } finally {
@@ -236,7 +286,7 @@ document.getElementById("btnDesactiverPin").onclick = async () => {
   zone.style.display = "block"; zone.className = "recap ok"; zone.textContent = "Verrou désactivé.";
 };
 
-PP4G.ready().then(() => { majStatut(); majStatutPin(); });
+PP4G.ready().then(() => { majStatut(); majListeClasses(); majStatutPin(); });
 </script>
 </body>
 </html>
