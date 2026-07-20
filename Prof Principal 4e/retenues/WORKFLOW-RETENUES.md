@@ -30,10 +30,22 @@ Sélectionne **G2:G500** → menu **Données → Validation des données** → *
 Ajoute une mise en forme conditionnelle (vert si OUI, rouge si NON) pour lire d'un coup d'œil.
 
 ### 1.4 Autoriser l'écriture automatique (une fois)
-Le report est réalisé par le **backend du Hub**, qui doit être autorisé à écrire dans ce classeur :
-Sheet **Hub 4G** → Apps Script → coller le `Code.gs` à jour → exécuter **`initialiser`** →
-accepter l'autorisation supplémentaire demandée (accès au registre) → **Déployer → Gérer les
-déploiements → ✏️ → Nouvelle version**.
+
+Le report est réalisé par le **backend du Hub**, qui doit être autorisé à écrire dans un **autre
+classeur** que le sien. Cette autorisation n'est demandée que si tu exécutes une fonction qui y
+touche — **`initialiser` n'y touche pas**, d'où la fonction dédiée ci-dessous.
+
+1. Sheet **Hub 4G** → **Extensions → Apps Script** → coller le `Code.gs` à jour → **Ctrl+S**.
+2. Dans la liste des fonctions (à côté de ▷ Exécuter), choisir **`autoriserRegistre`** → **▷ Exécuter**.
+3. Google demande alors l'autorisation → *Examiner les autorisations* → ton compte → *Autoriser*
+   (écran « application non validée » → *Paramètres avancés* → *Accéder à …*). C'est **ton** script.
+4. Regarde le **journal d'exécution** (en bas) : il doit afficher
+   `✅ Accès OK au classeur « … »` et `✅ Onglet « Retenues » trouvé` avec tes en-têtes.
+   Si l'onglet n'est pas trouvé, renomme-le exactement **`Retenues`**.
+5. **Déployer → Gérer les déploiements → ✏️ → Version : Nouvelle version → Déployer.**
+
+> Sans l'étape 2-3, le bouton « Reporter » renverra une erreur de permission et **rien ne
+> s'écrira** dans le registre (symptôme observé le 2026-07-21).
 
 ---
 

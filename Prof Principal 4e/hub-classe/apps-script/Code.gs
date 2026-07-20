@@ -216,6 +216,25 @@ function traiter(d, u) {
 // supplémentaire à la première exécution après mise à jour — l'accepter.
 var REGISTRE_RETENUES_ID = "1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ";
 
+/**
+ * À EXÉCUTER UNE FOIS À LA MAIN après avoir collé ce code (choisir « autoriserRegistre »
+ * dans la liste des fonctions, puis ▷ Exécuter).
+ * C'est CETTE fonction qui déclenche la demande d'autorisation d'accès au registre :
+ * initialiser() ne touche pas au registre, donc elle ne la déclenche jamais.
+ * Elle n'écrit rien — elle vérifie seulement l'accès et affiche les onglets trouvés.
+ */
+function autoriserRegistre() {
+  var classeur = SpreadsheetApp.openById(REGISTRE_RETENUES_ID);
+  var onglets = classeur.getSheets().map(function (f) { return f.getName(); });
+  var cible = classeur.getSheetByName("Retenues");
+  var message = "✅ Accès OK au classeur « " + classeur.getName() + " »." +
+    "\nOnglets : " + onglets.join(", ") +
+    (cible ? "\n✅ Onglet « Retenues » trouvé — en-têtes ligne 1 : " + cible.getRange(1, 1, 1, 8).getValues()[0].join(" | ")
+           : "\n⚠️ Pas d'onglet nommé « Retenues » : les lignes iraient dans « " + onglets[0] + " ». Renomme-le.");
+  Logger.log(message);
+  return message;
+}
+
 function ajouterRetenue(d) {
   var lignes = (d.lignes || []).slice(0, 20);
   if (!lignes.length) return { ok: false, erreur: "Aucune ligne à reporter." };

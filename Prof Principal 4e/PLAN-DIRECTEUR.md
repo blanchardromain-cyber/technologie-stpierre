@@ -205,6 +205,18 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - **CR réunion → EcoleDirecte** : bouton **✉️ Générer le message** produit le mail d'accompagnement à coller dans ED (objet daté, civilité adaptée famille/équipe, rappel « joindre le CR » retiré à la copie). Vérifié sur les 2 cas.
   - **Quiz de rentrée refondu** : `suivi-eleves/QUIZ-RENTREE.md` — questionnaire 2026 (21 questions, 5 sections) + **fiche élève dynamique** (menu déroulant + FILTER, bloc alertes, croisement carnet, suivi de complétude, vue de classe). Principe posé : **ne jamais redemander ce qu'EcoleDirecte possède** (coordonnées/téléphones/professions supprimés = RGPD), toute question doit servir à une décision (placement, HVC, entretien, appréciation). Tuile ajoutée aux 2 portails.
   - ⚠️ **Backend Hub à redéployer** (action `ajouterRetenue` + **nouvelle autorisation** d'accès au classeur registre à accepter).
+- **Étape 24** ✅ (2026-07-21) — **Correctif autorisation registre + fichier de transmission** :
+  - *Symptôme :* rien ne s'écrivait dans le registre et **aucune autorisation n'était demandée**.
+    *Cause :* `initialiser()` ne touche pas au registre → Apps Script n'avait aucune raison de
+    demander le scope inter-classeur ; l'appel `openById` échouait ensuite silencieusement.
+  - *Correctif :* nouvelle fonction **`autoriserRegistre()`** à exécuter une fois dans l'éditeur —
+    elle déclenche l'autorisation **et** vérifie l'accès (nom du classeur, liste des onglets,
+    présence de « Retenues », en-têtes ligne 1). §1.4 du workflow réécrit en conséquence.
+    Côté outil : l'échec du report affiche désormais une **alerte** qui renvoie explicitement vers
+    `autoriserRegistre` (vérifié en simulant un refus de permission).
+  - **`TRANSMISSION.md`** créé (racine `Prof Principal 4e/`) : reprise de session complète —
+    projet, existant, travaux de la conversation, 8 actions en attente, pièges rencontrés,
+    règles de travail (2 copies 🟥, `CACHE_VERSION`, D5, priorité des appréciations), repères techniques.
 - **À construire plus tard** — **CR de réunion à partir d'un enregistrement audio** (2A) : faisable = audio → transcription (dictée téléphone / Google Recorder / dictée Word, *hors Claude*) → Claude en fait le CR Word. **Prérequis RGPD : informer et recueillir le consentement des participants avant tout enregistrement.**
 - **Étapes suivantes** — redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · CR réunion audio (plus tard).
 

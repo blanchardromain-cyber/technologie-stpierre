@@ -162,9 +162,18 @@ async function reporterRegistre() {
   try {
     const rep = await fetch(HUB_BACKEND, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action: "ajouterRetenue", code, lignes: derniereGeneration.lignes }) }).then(r => r.json());
-    if (rep.ok) { localStorage.setItem("pdc-code-prof", code); etat.textContent = "✅ " + rep.nb + " ligne(s) ajoutée(s) au registre."; }
-    else etat.textContent = "❌ " + (rep.erreur || "backend Hub à mettre à jour.");
-  } catch (e) { etat.textContent = "❌ Report impossible (connexion ?)."; }
+    if (rep.ok) {
+      localStorage.setItem("pdc-code-prof", code);
+      etat.textContent = "✅ " + rep.nb + " ligne(s) ajoutée(s) au registre.";
+    } else {
+      etat.textContent = "❌ " + (rep.erreur || "backend Hub à mettre à jour.");
+      alert("Report refusé : " + (rep.erreur || "backend Hub à mettre à jour.") +
+        "\n\nSi le message parle de permission/openById : exécute la fonction « autoriserRegistre » dans Apps Script, accepte l'autorisation, puis redéploie une nouvelle version.");
+    }
+  } catch (e) {
+    etat.textContent = "❌ Report impossible (connexion ?).";
+    alert("Report impossible : " + e.message);
+  }
 }
 
 function copier(id, btn) {
