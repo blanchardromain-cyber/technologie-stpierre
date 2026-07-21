@@ -24,8 +24,9 @@
 
 // Dossier créé à la racine du Drive si DOSSIER_ID est vide.
 const DOSSIER_NOM = "CR réunions — enregistrements";
-// Optionnel : ID d'un dossier Drive existant (dans l'URL du dossier). Vide = utilise DOSSIER_NOM.
-const DOSSIER_ID = "";
+// Dossier Drive cible (celui de la tuile « Enregistrements réunions » du Cockpit).
+// Vide = crée/réutilise un dossier nommé DOSSIER_NOM à la racine.
+const DOSSIER_ID = "1Yeyk50ApziRr6bOrGSW57py4lw86SDTx";
 // Jeton partagé anti-abus : METS LA MÊME VALEUR DANS L'OUTIL. Change-le pour tout invalider.
 const JETON = "change-moi-2026";
 
