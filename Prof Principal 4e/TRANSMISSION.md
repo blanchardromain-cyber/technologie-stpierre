@@ -54,10 +54,20 @@ est exclu par `.gitignore` (dépôt **public** `technologie-stpierre`).
 > OAuth) + `💾 Enregistrer` + `🗑 Retirer de l'appareil`. Transcription en direct optionnelle
 > (Web Speech `fr-FR`, si le navigateur le supporte — Chrome Android ; absente sur iOS Safari →
 > l'audio sert d'archive, dictée possible au micro du clavier). La transcription alimente la zone
-> `🎧 Transcription` et donc le prompt « résumé IA » (Claude). **Deux copies à garder synchrones**
-> (corps + `<script>` identiques) : `pp4g/outils/cr-reunion.html` (PWA) et
-> `Prof Principal 4e/outils/cr-reunion.html` (PC) — seuls l'en-tête et le lien retour diffèrent.
-> Bump du service worker à la clé (`pp4g/sw.js` → `pp4g-v19`).
+> `🎧 Transcription` et donc le prompt « résumé IA » (Claude).
+>
+> **Dépôt Drive automatique (facultatif, 🟦→ Drive du prof).** Bouton `☁️ Déposer sur Drive` par
+> séquence + `⚙️ Dépôt Drive auto` pour la config (URL + jeton, stockés en `localStorage`).
+> Back-end = Google Apps Script `Prof Principal 4e/outils/depot-drive-cr.gs` (déploiement Web App
+> « exécuter en tant que moi / accès tout le monde », jeton partagé anti-abus). Le client POST le
+> fichier en base64 avec un corps `text/plain` (défaut fetch d'une chaîne) → pas de préflight CORS
+> avec Apps Script ; réponse JSON lisible (ACAO:* via redirection googleusercontent). Limite
+> pratique ~40-50 Mo/POST → d'où le découpage en séquences. Sans config, le partage natif 📤 et le
+> téléchargement 💾 restent les voies par défaut.
+>
+> **Deux copies à garder synchrones** (corps + `<script>` identiques) : `pp4g/outils/cr-reunion.html`
+> (PWA) et `Prof Principal 4e/outils/cr-reunion.html` (PC) — seuls l'en-tête et le lien retour
+> diffèrent. Bump du service worker à la clé (`pp4g/sw.js` → `pp4g-v20`).
 
 ### Mobile — « Cockpit PP » (`pp4g/`)
 PWA installable (manifest + service worker, verrou PIN, import/export IndexedDB).

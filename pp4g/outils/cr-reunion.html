@@ -92,6 +92,7 @@
     </label>
   </div>
   <p class="mut" id="recInfo">Coche l'attestation ci-dessus pour activer l'enregistrement.</p>
+  <div style="margin-top:4px"><button class="mini sec" onclick="configurerDrive()">⚙️ Dépôt Drive auto</button><span class="mut" id="depotDriveEtat" style="margin-left:6px"></span></div>
 
   <div id="listeSeq"></div>
 </div>
@@ -398,6 +399,54 @@ function telechargerBlob(blob, nom) {
   a.href = URL.createObjectURL(blob); a.download = nom; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
+
+/* --- Dépôt automatique dans Google Drive (via Apps Script, facultatif) --- */
+const CLE_DRIVE_URL = "cr-reunion-drive-url";
+const CLE_DRIVE_JETON = "cr-reunion-drive-jeton";
+function driveConfigure() { return !!localStorage.getItem(CLE_DRIVE_URL); }
+function majDepotEtat() {
+  const el = document.getElementById("depotDriveEtat");
+  if (el) el.textContent = driveConfigure() ? "configuré ✓" : "non configuré (facultatif)";
+}
+function configurerDrive() {
+  const url = prompt("URL de l'application web Apps Script (elle se termine par /exec) :", localStorage.getItem(CLE_DRIVE_URL) || "");
+  if (url === null) return false;
+  const jeton = prompt("Jeton partagé (identique à celui inscrit dans le script) :", localStorage.getItem(CLE_DRIVE_JETON) || "change-moi-2026");
+  if (jeton === null) return false;
+  if (url.trim()) localStorage.setItem(CLE_DRIVE_URL, url.trim()); else localStorage.removeItem(CLE_DRIVE_URL);
+  localStorage.setItem(CLE_DRIVE_JETON, jeton.trim());
+  majDepotEtat();
+  return driveConfigure();
+}
+function blobEnBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(",")[1] || "");
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+async function deposerDrive(rec, nom, btn) {
+  if (!driveConfigure() && !configurerDrive()) return;
+  if (rec.blob.size > 40 * 1024 * 1024 &&
+      !confirm("Cet enregistrement fait " + Math.round(rec.blob.size / 1048576) + " Mo : le dépôt Apps Script peut échouer au-delà de ~40 Mo. Continuer quand même ?\n(Astuce : enchaîne plutôt des séquences plus courtes.)")) return;
+  const url = localStorage.getItem(CLE_DRIVE_URL);
+  const jeton = localStorage.getItem(CLE_DRIVE_JETON) || "";
+  const txt = btn.textContent;
+  btn.disabled = true; btn.textContent = "⏳ envoi…";
+  try {
+    const base64 = await blobEnBase64(rec.blob);
+    // Corps envoyé en text/plain (défaut fetch pour une chaîne) => pas de préflight CORS avec Apps Script.
+    const rep = await fetch(url, { method: "POST", body: JSON.stringify({ jeton: jeton, nom: nom, mime: rec.mime || "audio/webm", base64: base64 }) });
+    const data = await rep.json();
+    if (!data.ok) throw new Error(data.erreur || "refus du serveur");
+    btn.textContent = "✅ sur Drive";
+    rec.driveUrl = data.url;
+  } catch (e) {
+    btn.disabled = false; btn.textContent = txt;
+    alert("Dépôt Drive impossible : " + (e.message || e) + "\nVérifie l'URL /exec, le jeton et la connexion. (Le partage 📤 et l'enregistrement 💾 restent disponibles.)");
+  }
+}
 async function partagerSeq(rec, nom) {
   const f = new File([rec.blob], nom, { type: rec.mime || "audio/webm" });
   try { await navigator.share({ files: [f], title: nom, text: "Enregistrement de réunion — " + (rec.meetingDate || "") }); }
@@ -422,6 +471,10 @@ function ajouterCarteSeq(rec) {
     bp.onclick = () => partagerSeq(rec, nom);
     actions.appendChild(bp);
   }
+  const bc = boutonMini("☁️ Déposer sur Drive", "sec");
+  bc.onclick = () => deposerDrive(rec, nom, bc);
+  actions.appendChild(bc);
+
   const bd = boutonMini("💾 Enregistrer", "sec");
   bd.onclick = () => telechargerBlob(rec.blob, nom);
   actions.appendChild(bd);
@@ -478,6 +531,7 @@ document.getElementById("chkConsent").addEventListener("change", function () {
 });
 
 if (sttDispo()) document.getElementById("wrapStt").hidden = false;
+majDepotEtat();
 
 CHAMPS.forEach(id => document.getElementById(id).addEventListener("input", sauvegarder));
 restaurer();
