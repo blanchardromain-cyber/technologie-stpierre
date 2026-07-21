@@ -44,6 +44,21 @@ est exclu par `.gitignore` (dépôt **public** `technologie-stpierre`).
 `PORTAIL.html` (point d'entrée, logo du collège) → `outils/plan-de-classe.html`,
 `equipes-menage.html`, `trombinoscope.html`, `retenue.html`, `cr-reunion.html`.
 
+> **`cr-reunion.html` — enregistrement audio + résumé IA (🟥 local).** L'outil « CR de réunion »
+> enregistre désormais l'audio des entretiens en plus des notes. Barrière RGPD obligatoire :
+> le bouton d'enregistrement reste **désactivé** tant que l'enseignant n'a pas coché l'attestation
+> de consentement des participants (annonce à lire + mention RGPD dépliables). Multi-séquences
+> (un entretien = une séquence nommée), enregistrées via `MediaRecorder` au format compressé natif
+> du terminal (`.m4a`/`.webm`, ~1 Mo/min) et **stockées en IndexedDB `cr-reunion-audio`** (survivent
+> à un rechargement). Chaque séquence : lecteur + `📤 Envoyer` (partage natif → Drive/mail, sans
+> OAuth) + `💾 Enregistrer` + `🗑 Retirer de l'appareil`. Transcription en direct optionnelle
+> (Web Speech `fr-FR`, si le navigateur le supporte — Chrome Android ; absente sur iOS Safari →
+> l'audio sert d'archive, dictée possible au micro du clavier). La transcription alimente la zone
+> `🎧 Transcription` et donc le prompt « résumé IA » (Claude). **Deux copies à garder synchrones**
+> (corps + `<script>` identiques) : `pp4g/outils/cr-reunion.html` (PWA) et
+> `Prof Principal 4e/outils/cr-reunion.html` (PC) — seuls l'en-tête et le lien retour diffèrent.
+> Bump du service worker à la clé (`pp4g/sw.js` → `pp4g-v19`).
+
 ### Mobile — « Cockpit PP » (`pp4g/`)
 PWA installable (manifest + service worker, verrou PIN, import/export IndexedDB).
 Elle **duplique** les outils 🟥 et **pointe** vers les modules en ligne.

@@ -16,6 +16,7 @@
   h1 { font-size: 1.15rem; margin-bottom: 2px; }
   .rgpd { font-size: .72rem; color: #b23b3b; margin-bottom: 10px; }
   .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+  .carte > b.titre-carte { font-size: .95rem; display: block; margin-bottom: 4px; }
   label { font-size: .8rem; display: block; margin-top: 8px; }
   select, input[type="date"], input[type="text"] { width: 100%; font-size: .9rem; padding: 7px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 3px; }
   .zone { margin-top: 10px; }
@@ -24,17 +25,76 @@
   textarea { width: 100%; font-size: .86rem; padding: 8px; border: 1px solid #b8c0cc; border-radius: 6px; margin-top: 4px; font-family: inherit; min-height: 84px; resize: vertical; }
   button { font-size: .8rem; padding: 6px 12px; border: 1px solid #2c5f8a; border-radius: 6px; background: #2c5f8a; color: #fff; cursor: pointer; margin: 6px 6px 0 0; }
   button.sec { background: #fff; color: #2c5f8a; }
-  button.mini { font-size: .7rem; padding: 2px 8px; margin: 0; }
+  button.mini { font-size: .7rem; padding: 3px 8px; margin: 4px 4px 0 0; }
   button.danger { background: #fff; color: #c0392b; border-color: #c0392b; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
   .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
   .copie-ok { color: #1e6b47; font-size: .78rem; margin-left: 6px; }
   #etatSauvegarde { font-size: .7rem; color: #7b8794; float: right; }
+
+  /* --- Enregistrement audio --- */
+  .gate { border: 1px solid #e0c36a; background: #fff9e6; border-radius: 10px; padding: 10px; margin: 4px 0 10px; }
+  .gate.ok { border-color: #9cc7ab; background: #eef8f1; }
+  .consent-line { display: flex; gap: 8px; align-items: flex-start; font-size: .82rem; line-height: 1.35; }
+  .consent-line input { width: auto; margin-top: 2px; flex: 0 0 auto; }
+  details.info { margin-top: 8px; font-size: .78rem; }
+  details.info summary { cursor: pointer; color: #2c5f8a; }
+  details.info .corps { margin-top: 6px; color: #3a4550; line-height: 1.45; white-space: pre-wrap; }
+  .rec-barre { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .rec-dot { width: 12px; height: 12px; border-radius: 50%; background: #c0392b; display: inline-block; }
+  .rec-dot.on { animation: pulseRec 1s infinite; }
+  @keyframes pulseRec { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+  .rec-chrono { font-variant-numeric: tabular-nums; font-size: 1.1rem; font-weight: 600; }
+  button.rec { background: #c0392b; border-color: #c0392b; }
+  .seq { border: 1px solid #d9dee5; border-radius: 8px; padding: 8px; margin-top: 8px; background: #fafbfc; }
+  .seq .titre { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .seq .titre b { font-size: .82rem; }
+  .seq .duree { font-size: .72rem; color: #7b8794; white-space: nowrap; }
+  .seq audio { width: 100%; margin-top: 6px; }
+  .mut { font-size: .72rem; color: #7b8794; margin-top: 6px; }
 </style>
 </head>
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
 <h1>📝 CR de réunion — prise de notes <span id="etatSauvegarde"></span></h1>
-<p class="rgpd">Outil 100 % local — les notes restent sur cet appareil (brouillon auto-enregistré). Prénoms plutôt que noms complets si possible.</p>
+<p class="rgpd">Outil 100 % local — notes et enregistrements restent sur cet appareil (rien n'est envoyé sur un serveur). Prénoms plutôt que noms complets si possible.</p>
+
+<div class="carte">
+  <b class="titre-carte">🎙️ Enregistrement audio de la réunion</b>
+
+  <div class="gate" id="gateRgpd">
+    <label class="consent-line">
+      <input type="checkbox" id="chkConsent">
+      <span>J'atteste que <b>tous les participants ont été informés et acceptent l'enregistrement</b> (finalité : rédaction du compte-rendu). L'enregistrement reste sur cet appareil et sera supprimé une fois le CR rédigé.</span>
+    </label>
+    <details class="info">
+      <summary>📢 Annonce à lire avant de lancer</summary>
+      <div class="corps" id="txtAnnonce"></div>
+      <button class="mini sec" onclick="copierTexte('txtAnnonce', this)">📋 Copier l'annonce</button>
+    </details>
+    <details class="info">
+      <summary>ℹ️ Mention RGPD (finalité, conservation, droits)</summary>
+      <div class="corps" id="txtRgpd"></div>
+    </details>
+  </div>
+
+  <label>Intitulé de la séquence (pour retrouver chaque entretien)
+    <input type="text" id="fSeqLabel" placeholder="ex. « Entretien famille L. », « Tour de table 4G »">
+  </label>
+
+  <div class="rec-barre">
+    <button class="rec" id="btnRec" onclick="basculerRec()" disabled>● Démarrer</button>
+    <button class="sec" id="btnPause" onclick="basculerPause()" style="display:none">⏸ Pause</button>
+    <span class="rec-dot" id="recDot" style="display:none"></span>
+    <span class="rec-chrono" id="recChrono" style="display:none">00:00</span>
+    <label id="wrapStt" hidden style="display:inline-flex;align-items:center;gap:5px;margin:0;font-size:.78rem">
+      <input type="checkbox" id="chkStt" style="width:auto"> 📝 transcription en direct
+    </label>
+  </div>
+  <p class="mut" id="recInfo">Coche l'attestation ci-dessus pour activer l'enregistrement.</p>
+
+  <div id="listeSeq"></div>
+</div>
 
 <div class="carte">
   <label>Type de réunion
@@ -49,6 +109,7 @@
   <label>Date <input type="date" id="fDateCR"></label>
   <label>Participants (rôles suffisent : « les parents de L., la CPE, moi ») <input type="text" id="fParticipants"></label>
 
+  <div class="zone"><div class="entete"><b>🎧 Transcription / dictée</b><button class="mini sec" onclick="viderTranscript()">effacer</button></div><textarea id="zTranscript" placeholder="Se remplit tout seul si « transcription en direct » est activée — ou dicte au micro du clavier. C'est la base du résumé IA."></textarea></div>
   <div class="zone"><div class="entete"><b>📌 Points abordés</b><button class="mini sec" onclick="horodater('zPoints')">⏱ horodater</button></div><textarea id="zPoints" placeholder="Note en vrac, au fil de la réunion — Claude remettra en forme."></textarea></div>
   <div class="zone"><div class="entete"><b>✅ Décisions prises</b><button class="mini sec" onclick="horodater('zDecisions')">⏱</button></div><textarea id="zDecisions"></textarea></div>
   <div class="zone"><div class="entete"><b>📋 À faire (qui → quoi → quand)</b><button class="mini sec" onclick="horodater('zAFaire')">⏱</button></div><textarea id="zAFaire"></textarea></div>
@@ -59,7 +120,7 @@
   <button onclick="copierPrompt(this)">🧠 Copier le prompt pour Claude</button>
   <button class="sec" onclick="telechargerTxt()">💾 Télécharger .txt</button>
   <button class="danger" onclick="nouveauCR()">🗑 Nouveau CR</button>
-  <p class="note">« Copier le prompt » met dans le presse-papiers tes notes + la consigne : ouvre Claude (PC ou appli mobile), colle, et tu reçois le compte-rendu propre (Word possible sur PC). Le brouillon reste enregistré ici tant que tu ne cliques pas « Nouveau CR ».</p>
+  <p class="note">« Copier le prompt » met dans le presse-papiers tes notes (+ la transcription si tu en as une) et la consigne : ouvre Claude (PC ou appli mobile), colle, et tu reçois le compte-rendu propre (Word possible sur PC). Le brouillon reste enregistré ici tant que tu ne cliques pas « Nouveau CR » ; les enregistrements ne sont jamais effacés automatiquement (bouton « Retirer » sur chaque séquence).</p>
 </div>
 
 <div class="carte">
@@ -72,8 +133,19 @@
 
 <script>
 const CLE = "cr-reunion-brouillon";
-const CHAMPS = ["fType", "fDateCR", "fParticipants", "zPoints", "zDecisions", "zAFaire", "zLibre"];
+const CHAMPS = ["fType", "fDateCR", "fParticipants", "zTranscript", "zPoints", "zDecisions", "zAFaire", "zLibre"];
 
+const ANNONCE = "« Avant de commencer, je vous informe que je souhaite enregistrer notre échange, dans le seul but d'en rédiger le compte-rendu plus fidèlement qu'avec des notes prises à la main. L'enregistrement reste sur mon appareil, ne sera pas diffusé, et sera supprimé une fois le compte-rendu rédigé. Êtes-vous d'accord ? Vous pouvez refuser, ou demander l'arrêt à tout moment. »";
+const MENTION_RGPD =
+"• Finalité : rédiger le compte-rendu de la réunion.\n" +
+"• Base légale : le consentement des participants, recueilli oralement au début (voir l'annonce).\n" +
+"• Données : l'enregistrement audio des voix des participants.\n" +
+"• Conservation : sur cet appareil uniquement, jusqu'à la rédaction du CR, puis suppression. Aucun envoi vers un serveur.\n" +
+"• Transcription / IA : si tu actives « transcription en direct » ou envoies l'audio ou le texte à une IA (Claude), une partie du contenu est traitée par ce service — les participants doivent en être informés.\n" +
+"• Droits : chacun peut refuser l'enregistrement, en demander l'arrêt ou la suppression immédiate.\n" +
+"• Mineurs : pour un élève mineur, informer et recueillir l'accord des responsables légaux.";
+
+/* ---------------- Notes / brouillon ---------------- */
 function horodater(id) {
   const z = document.getElementById(id);
   const h = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
@@ -98,9 +170,17 @@ function restaurer() {
   if (!document.getElementById("fDateCR").value) document.getElementById("fDateCR").value = new Date().toISOString().slice(0, 10);
 }
 
+function viderTranscript() {
+  if (!confirm("Effacer la transcription ?")) return;
+  document.getElementById("zTranscript").value = "";
+  sauvegarder();
+}
+
 function texteNotes() {
   const v = id => document.getElementById(id).value.trim();
+  const tr = v("zTranscript");
   return "Type : " + v("fType") + "\nDate : " + v("fDateCR") + "\nParticipants : " + (v("fParticipants") || "—") +
+    (tr ? "\n\n== TRANSCRIPTION / DICTÉE (brute) ==\n" + tr : "") +
     "\n\n== POINTS ABORDÉS ==\n" + (v("zPoints") || "—") +
     "\n\n== DÉCISIONS ==\n" + (v("zDecisions") || "—") +
     "\n\n== À FAIRE ==\n" + (v("zAFaire") || "—") +
@@ -109,25 +189,29 @@ function texteNotes() {
 
 function copierPrompt(btn) {
   const prompt =
-"Transforme mes notes de réunion ci-dessous en compte-rendu professionnel :\n" +
-"- factuel et neutre (aucun jugement, pas d'interprétation au-delà des notes) ;\n" +
+"Transforme les éléments de réunion ci-dessous en compte-rendu professionnel :\n" +
+"- si une TRANSCRIPTION est fournie, appuie-toi dessus pour résumer fidèlement la ou les conversations (synthèse, pas de verbatim) ; complète avec mes notes ;\n" +
+"- factuel et neutre (aucun jugement, pas d'interprétation au-delà de ce qui est dit) ;\n" +
 "- structuré : en-tête (type, date, participants), points abordés, décisions, actions à suivre (qui/quoi/quand) ;\n" +
 "- prêt à archiver ou à envoyer via EcoleDirecte ; propose aussi une version courte (5 lignes) pour information rapide ;\n" +
 "- si tu es sur PC avec mes outils : produis aussi le document Word.\n\n" +
-"MES NOTES :\n" + texteNotes();
+"MES ÉLÉMENTS :\n" + texteNotes();
   navigator.clipboard.writeText(prompt).then(() => {
     const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓ — colle dans Claude";
     btn.after(ok); setTimeout(() => ok.remove(), 2500);
   });
 }
 
+function copierTexte(id, btn) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓";
+    btn.after(ok); setTimeout(() => ok.remove(), 2000);
+  });
+}
+
 function telechargerTxt() {
   const blob = new Blob([texteNotes()], { type: "text/plain;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "notes-reunion-" + document.getElementById("fDateCR").value + ".txt";
-  a.click();
-  URL.revokeObjectURL(a.href);
+  telechargerBlob(blob, "notes-reunion-" + document.getElementById("fDateCR").value + ".txt");
 }
 
 function genererMailED() {
@@ -159,14 +243,250 @@ function copierMailED(btn) {
 }
 
 function nouveauCR() {
-  if (!confirm("Effacer le brouillon actuel et repartir de zéro ?")) return;
+  if (!confirm("Effacer le brouillon de notes et repartir de zéro ?\n(Les enregistrements audio ne sont PAS effacés — bouton « Retirer » sur chaque séquence.)")) return;
   localStorage.removeItem(CLE);
   CHAMPS.forEach(id => { document.getElementById(id).value = ""; });
   restaurer();
 }
 
+/* ---------------- Enregistrement audio ---------------- */
+const DB_AUDIO = "cr-reunion-audio";
+let mediaRec = null, flux = null, chunks = [], startTs = 0, pausedAccum = 0, pauseTs = 0, chronoTimer = null, reconnaissance = null;
+
+function dbAudio() {
+  return new Promise((resolve, reject) => {
+    let r;
+    try { r = indexedDB.open(DB_AUDIO, 1); } catch (e) { reject(e); return; }
+    r.onupgradeneeded = () => { r.result.createObjectStore("seq", { keyPath: "id", autoIncrement: true }); };
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  });
+}
+function ajouterSeq(rec) {
+  return dbAudio().then(db => new Promise((res, rej) => {
+    const rq = db.transaction("seq", "readwrite").objectStore("seq").add(rec);
+    rq.onsuccess = () => res(rq.result); rq.onerror = () => rej(rq.error);
+  }));
+}
+function listerSeq() {
+  return dbAudio().then(db => new Promise((res) => {
+    const out = [];
+    db.transaction("seq", "readonly").objectStore("seq").openCursor().onsuccess = e => {
+      const c = e.target.result; if (c) { out.push(c.value); c.continue(); } else res(out);
+    };
+  })).catch(() => []);
+}
+function supprimerSeq(id) {
+  return dbAudio().then(db => new Promise((res) => {
+    const tx = db.transaction("seq", "readwrite");
+    tx.objectStore("seq").delete(id); tx.oncomplete = () => res();
+  }));
+}
+
+function choisirMime() {
+  if (!window.MediaRecorder) return "";
+  const cands = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"];
+  for (const m of cands) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (e) {} }
+  return "";
+}
+function extPour(mime) {
+  if (!mime) return "webm";
+  if (mime.indexOf("mp4") >= 0 || mime.indexOf("aac") >= 0) return "m4a";
+  if (mime.indexOf("ogg") >= 0) return "ogg";
+  return "webm";
+}
+function fmtDuree(s) { const m = Math.floor(s / 60), r = s % 60; return String(m).padStart(2, "0") + ":" + String(r).padStart(2, "0"); }
+
+async function basculerRec() {
+  if (mediaRec && mediaRec.state !== "inactive") { arreterRec(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("Ce navigateur ne permet pas l'accès au micro (il faut une connexion sécurisée https, ou l'app installée)."); return;
+  }
+  try { flux = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) { alert("Micro inaccessible : " + (e && e.message ? e.message : e) + "\nAutorise le micro pour ce site dans les réglages du navigateur."); return; }
+
+  const mime = choisirMime();
+  chunks = [];
+  try { mediaRec = mime ? new MediaRecorder(flux, { mimeType: mime }) : new MediaRecorder(flux); }
+  catch (e) { mediaRec = new MediaRecorder(flux); }
+  mediaRec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mediaRec.onstop = () => finaliserSeq(mediaRec.mimeType || mime);
+  mediaRec.start();
+  startTs = Date.now(); pausedAccum = 0;
+  majUiRec(true);
+  demarrerChrono();
+  if (document.getElementById("chkStt").checked) demarrerStt();
+}
+
+function basculerPause() {
+  if (!mediaRec) return;
+  const dot = document.getElementById("recDot"), btn = document.getElementById("btnPause");
+  if (mediaRec.state === "recording") {
+    mediaRec.pause(); pauseTs = Date.now(); arreterStt();
+    btn.textContent = "▶ Reprendre"; dot.classList.remove("on");
+    document.getElementById("recInfo").textContent = "⏸ En pause.";
+  } else if (mediaRec.state === "paused") {
+    mediaRec.resume(); pausedAccum += Date.now() - pauseTs;
+    if (document.getElementById("chkStt").checked) demarrerStt();
+    btn.textContent = "⏸ Pause"; dot.classList.add("on");
+    document.getElementById("recInfo").textContent = "🔴 Enregistrement en cours…";
+  }
+}
+
+function arreterRec() {
+  if (mediaRec && mediaRec.state !== "inactive") mediaRec.stop();
+  arreterStt();
+  if (flux) { flux.getTracks().forEach(t => t.stop()); flux = null; }
+  arreterChrono();
+  majUiRec(false);
+}
+
+async function finaliserSeq(mime) {
+  const dureeMs = Date.now() - startTs - pausedAccum;
+  const blob = new Blob(chunks, { type: mime || "audio/webm" });
+  chunks = [];
+  if (!blob.size) { document.getElementById("recInfo").textContent = "Aucun son capté — séquence ignorée."; return; }
+  const label = document.getElementById("fSeqLabel").value.trim();
+  const rec = {
+    label: label, blob: blob, mime: blob.type, ext: extPour(blob.type || mime),
+    duree: Math.max(1, Math.round(dureeMs / 1000)), date: new Date().toISOString(),
+    meetingDate: document.getElementById("fDateCR").value
+  };
+  try {
+    const id = await ajouterSeq(rec); rec.id = id;
+  } catch (e) {
+    rec.id = "tmp-" + Date.now();
+    document.getElementById("recInfo").textContent = "⚠️ Sauvegarde locale impossible — enregistre/partage la séquence tout de suite.";
+  }
+  document.getElementById("fSeqLabel").value = "";
+  ajouterCarteSeq(rec);
+}
+
+function demarrerChrono() {
+  const el = document.getElementById("recChrono");
+  chronoTimer = setInterval(() => {
+    const enPause = mediaRec && mediaRec.state === "paused";
+    const s = Math.round((Date.now() - startTs - pausedAccum - (enPause ? Date.now() - pauseTs : 0)) / 1000);
+    el.textContent = fmtDuree(Math.max(0, s));
+  }, 500);
+}
+function arreterChrono() { clearInterval(chronoTimer); chronoTimer = null; document.getElementById("recChrono").textContent = "00:00"; }
+
+function majUiRec(actif) {
+  document.getElementById("btnRec").textContent = actif ? "■ Arrêter" : "● Démarrer";
+  document.getElementById("btnPause").style.display = actif ? "inline-block" : "none";
+  document.getElementById("btnPause").textContent = "⏸ Pause";
+  const dot = document.getElementById("recDot");
+  dot.style.display = actif ? "inline-block" : "none";
+  dot.classList.toggle("on", actif);
+  document.getElementById("recChrono").style.display = actif ? "inline-block" : "none";
+  document.getElementById("recInfo").textContent = actif
+    ? "🔴 Enregistrement en cours…"
+    : "Prêt. Nomme la séquence puis « Démarrer » pour enchaîner un nouvel entretien.";
+}
+
+/* --- Séquences : rendu + partage / téléchargement / suppression --- */
+function echapper(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+function boutonMini(txt, cls) { const b = document.createElement("button"); b.className = "mini " + (cls || ""); b.textContent = txt; return b; }
+function nomFichierSeq(rec) {
+  let base = (rec.meetingDate || "reunion") + (rec.label ? "-" + rec.label : "-seq");
+  base = base.replace(/[^0-9A-Za-zÀ-ÿ]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  return base + "." + rec.ext;
+}
+function telechargerBlob(blob, nom) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function partagerSeq(rec, nom) {
+  const f = new File([rec.blob], nom, { type: rec.mime || "audio/webm" });
+  try { await navigator.share({ files: [f], title: nom, text: "Enregistrement de réunion — " + (rec.meetingDate || "") }); }
+  catch (e) { if (e && e.name !== "AbortError") alert("Partage impossible : " + (e.message || e)); }
+}
+function ajouterCarteSeq(rec) {
+  const url = URL.createObjectURL(rec.blob);
+  const nom = nomFichierSeq(rec);
+  const div = document.createElement("div");
+  div.className = "seq";
+  div.innerHTML =
+    '<div class="titre"><b>' + (rec.label ? echapper(rec.label) : "Séquence sans titre") + '</b>' +
+    '<span class="duree">⏱ ' + fmtDuree(rec.duree) + ' · ' + rec.ext + '</span></div>' +
+    '<audio controls preload="metadata" src="' + url + '"></audio>' +
+    '<div class="actions"></div>';
+  const actions = div.querySelector(".actions");
+
+  let peutPartager = false;
+  try { peutPartager = !!(navigator.canShare && navigator.canShare({ files: [new File([rec.blob], nom, { type: rec.mime || "audio/webm" })] })); } catch (e) {}
+  if (peutPartager) {
+    const bp = boutonMini("📤 Envoyer (Drive, mail…)", "sec");
+    bp.onclick = () => partagerSeq(rec, nom);
+    actions.appendChild(bp);
+  }
+  const bd = boutonMini("💾 Enregistrer", "sec");
+  bd.onclick = () => telechargerBlob(rec.blob, nom);
+  actions.appendChild(bd);
+
+  const bx = boutonMini("🗑 Retirer de l'appareil", "danger");
+  bx.onclick = () => {
+    if (!confirm("Supprimer définitivement cet enregistrement de l'appareil ?")) return;
+    Promise.resolve(typeof rec.id === "number" ? supprimerSeq(rec.id) : null)
+      .then(() => { URL.revokeObjectURL(url); div.remove(); });
+  };
+  actions.appendChild(bx);
+
+  document.getElementById("listeSeq").appendChild(div);
+}
+
+/* --- Transcription en direct (Web Speech, si disponible) --- */
+function sttDispo() { return ("webkitSpeechRecognition" in window) || ("SpeechRecognition" in window); }
+function demarrerStt() {
+  if (!sttDispo()) return;
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+  reconnaissance = new R();
+  reconnaissance.lang = "fr-FR"; reconnaissance.continuous = true; reconnaissance.interimResults = false;
+  reconnaissance.onresult = e => {
+    let t = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) t += e.results[i][0].transcript + " ";
+    if (t.trim()) {
+      const z = document.getElementById("zTranscript");
+      z.value += (z.value && !/\s$/.test(z.value) ? " " : "") + t.trim() + " ";
+      sauvegarder();
+    }
+  };
+  reconnaissance.onend = () => { if (reconnaissance && mediaRec && mediaRec.state === "recording") { try { reconnaissance.start(); } catch (e) {} } };
+  try { reconnaissance.start(); } catch (e) {}
+}
+function arreterStt() {
+  if (!reconnaissance) return;
+  const r = reconnaissance; reconnaissance = null;
+  try { r.onend = null; r.stop(); } catch (e) {}
+}
+
+/* ---------------- Init ---------------- */
+document.getElementById("txtAnnonce").textContent = ANNONCE;
+document.getElementById("txtRgpd").textContent = MENTION_RGPD;
+
+document.getElementById("chkConsent").addEventListener("change", function () {
+  const ok = this.checked;
+  document.getElementById("btnRec").disabled = !ok;
+  document.getElementById("gateRgpd").classList.toggle("ok", ok);
+  if (ok && !(mediaRec && mediaRec.state !== "inactive")) {
+    document.getElementById("recInfo").textContent = "Prêt. Nomme la séquence puis « Démarrer ».";
+  } else if (!ok) {
+    document.getElementById("recInfo").textContent = "Coche l'attestation ci-dessus pour activer l'enregistrement.";
+  }
+});
+
+if (sttDispo()) document.getElementById("wrapStt").hidden = false;
+
 CHAMPS.forEach(id => document.getElementById(id).addEventListener("input", sauvegarder));
 restaurer();
+
+// Recharge les séquences déjà enregistrées (survivent à un rechargement en pleine réunion).
+listerSeq().then(seqs => { seqs.forEach(ajouterCarteSeq); });
+
+// Sécurité : coupe proprement le micro si l'onglet est fermé en cours d'enregistrement.
+window.addEventListener("beforeunload", () => { if (flux) flux.getTracks().forEach(t => t.stop()); });
 </script>
 </body>
 </html>
