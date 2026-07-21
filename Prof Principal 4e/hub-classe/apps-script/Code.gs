@@ -239,7 +239,11 @@ function ajouterRetenue(d) {
   var lignes = (d.lignes || []).slice(0, 20);
   if (!lignes.length) return { ok: false, erreur: "Aucune ligne à reporter." };
   var classeur = SpreadsheetApp.openById(REGISTRE_RETENUES_ID);
-  var f = classeur.getSheetByName("Retenues") || classeur.getSheets()[0];
+  // Échec explicite plutôt qu'écriture silencieuse dans le premier onglet venu :
+  // sinon les lignes atterrissent dans « Mode d'emploi » et paraissent perdues.
+  var f = classeur.getSheetByName("Retenues");
+  if (!f) return { ok: false, erreur: "Onglet « Retenues » introuvable dans le registre (onglets présents : " +
+    classeur.getSheets().map(function (s) { return s.getName(); }).join(", ") + ")." };
   lignes.forEach(function (l) {
     // Colonnes : Date | Créneau | Élève | Motif | Matière | Professeur | Travail fourni | Notes
     f.appendRow([

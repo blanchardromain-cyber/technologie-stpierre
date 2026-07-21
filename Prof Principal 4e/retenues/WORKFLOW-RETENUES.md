@@ -9,6 +9,16 @@ dans le registre partagé et prépare tes messages ; les collègues n'ont plus q
 
 ---
 
+## 0. ⚠️ Ne pas confondre les deux classeurs
+
+| Classeur | Identifiant | Rôle |
+|---|---|---|
+| **Registre des retenues** | `1lfF5yuw…` | **C'est ici que les lignes sont écrites** — onglets *Mode d'emploi · Retenues · Listes* |
+| **Hub 4G** | `1IS3CK4b…` | Le moteur (Apps Script) — onglets *Codes · Infos · Divers · Messages · Signalements* |
+
+Lien direct vers l'onglet à surveiller :
+`https://docs.google.com/spreadsheets/d/1lfF5yuwpLlmfDEDmeFx6NkJ7lK7o0Iln1m4aA5DnBJQ/edit?gid=605512796`
+
 ## 1. Mise en place (une seule fois)
 
 ### 1.1 Le registre
