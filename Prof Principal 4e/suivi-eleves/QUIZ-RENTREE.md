@@ -24,16 +24,30 @@ décision concrète* (un placement, une séance HVC, un entretien, une apprécia
 
 ---
 
-## 2. Le questionnaire (à créer dans Google Forms)
+## 2. Le questionnaire
+
+> ⚙️ **Tu ne le crées pas à la main.** Le script `apps-script/1-CreerQuiz.gs` le fabrique
+> entièrement (sections, listes, grilles, limites « 3 max », réglages du domaine, classeur de
+> réponses). Le contenu ci-dessous est la référence : si tu veux changer une question, modifie
+> le script puis relance-le — c'est plus rapide que de cliquer dans Forms. Voir §7.
+
 
 **Titre :** `4G — Faisons connaissance (rentrée 2026)`
 **Description :** *« Ce questionnaire m'aide à mieux te connaître pour t'accompagner cette année.
 Il n'y a pas de bonne ou de mauvaise réponse, et il ne sera pas noté. Seul M. Blanchard le lit.
 Compte environ 10 minutes. »*
 
-**Réglages** (⚙️ dans Forms) : ✅ *Limiter à 1 réponse* · ✅ *Collecter les adresses e-mail* (compte
-du collège) · ❌ *pas de quiz/notation* · Réponses → **Créer une feuille de calcul** dans ton Sheet
-de suivi.
+**Réglages** (⚙️ dans Forms) — ⚠️ *les élèves de 4G n'ont pas de compte Google du collège* :
+❌ **Collecter les adresses e-mail** · ❌ **Limiter à 1 réponse** · ❌ *pas de quiz/notation*.
+
+> Ces deux premiers réglages **exigent une connexion Google** : les laisser cochés empêcherait
+> purement et simplement les élèves d'envoyer le formulaire. L'identification repose donc
+> uniquement sur la liste déroulante des 26 noms (question 1).
+>
+> Contrepartie assumée : **un élève peut répondre deux fois.** C'est traité, pas subi — la fiche
+> élève affiche toujours la réponse **la plus récente** et signale « la plus récente sur 2 », et
+> l'onglet `Bilan` passe la ligne en ⚠️ ambre. Les indicateurs comptent des **élèves distincts**,
+> jamais des envois. En cas de doublon volontaire, supprime la ligne périmée dans `Reponses`.
 
 ### Section 1 — Qui es-tu ?
 1. **Nom et prénom** · *Liste déroulante* avec les 26 élèves — **obligatoire**
@@ -65,8 +79,11 @@ de suivi.
     - J'ai confiance en mes capacités
     - Je me sens bien dans la classe
     - Je viens au collège avec plaisir
-12. **Cette année, mes matières les plus faciles** · Cases (liste des matières) · max 3
-13. **Cette année, celles où j'ai le plus besoin d'aide** · Cases (mêmes matières) · max 3
+12. **L'an dernier (en 5e), mes matières les plus faciles** · Cases (liste des matières) · max 3
+13. **Cette année en 4e, les matières où je pense avoir le plus besoin d'aide** · Cases (mêmes matières) · max 3
+    *(les deux temporalités sont dissociées volontairement : en septembre, « cette année » est
+    ambigu. Le constat ne peut être que rétrospectif — c'est la seule expérience dont l'élève
+    dispose ; le besoin, lui, est prospectif et c'est celui qui sert à monter les binômes.)*
 
 ### Section 4 — Ton avenir (Parcours Avenir)
 14. **Après la 3e, tu penses plutôt à…** · Choix :
@@ -93,74 +110,65 @@ suivante — vérifie la complétude avec la formule §4.6.
 
 ---
 
-## 4. La fiche élève dynamique (dans ton Sheet de suivi)
+## 4. La fiche d'exploitation (le classeur de réponses)
 
-**Une seule feuille, un menu déroulant, tout s'affiche.** Aucun onglet par élève à maintenir.
+Le script `apps-script/2-Exploitation.gs` construit **trois onglets** par-dessus l'onglet brut
+`Reponses` — qu'il ne modifie jamais. Tout est formule : les onglets se mettent à jour tout seuls
+à chaque nouvelle réponse.
 
-> Hypothèse : les réponses arrivent dans un onglet nommé **`Reponses`**, la question 1
-> (nom/prénom) en **colonne B**. Adapte les lettres si ton formulaire diffère.
+### 4.1 `Fiche élève` — un menu déroulant, tout s'affiche
+Aucun onglet par élève à maintenir. Tu choisis un nom en **B2**, et la fiche entière suit :
+surnom souhaité, fratrie, activités, rythme de vie, méthode de travail, matières, avenir, message
+libre. Les 8 échelles sont affichées **en jauge** (`████░`) avec un dégradé rouge → ambre → vert,
+et la moyenne de l'élève est comparée à celle de la classe.
 
-### 4.1 Créer la feuille
-Nouvelle feuille nommée **`Fiche élève`**.
+En bas, un bloc **⚠️ Signaux à regarder** s'allume tout seul : confiance ≤ 2, mal-être en classe,
+oral difficile, coucher après 23 h, jamais aidé à la maison, moins de 15 min de travail, aucun
+projet d'orientation, message libre écrit. S'il n'y a rien, le bandeau affiche
+« ✅ aucun signal particulier » — c'est l'information la plus rapide à lire du classeur.
 
-### 4.2 Le sélecteur
-En **B1** : menu **Données → Validation des données** → *Liste depuis une plage* → `Reponses!B2:B`
-→ Enregistrer. Tu choisis un élève dans la liste.
+### 4.2 `Vue de classe` — les tendances, pour préparer les séances
+Un bandeau d'indicateurs (réponses reçues, taux, confiance moyenne, élèves sans projet, couchés
+tard), puis les tableaux de fréquence **avec 4 graphiques** : les 8 échelles, les intentions
+d'orientation, l'heure du coucher, les matières où l'on demande de l'aide. Les blocs
+« ce qui aide à comprendre » et « besoins d'information » alimentent directement le **plan de
+classe** et les **séances HVC Parcours Avenir**.
 
-### 4.3 Afficher n'importe quelle réponse
-Formule générique — `colonne` = la lettre de la question voulue :
+### 4.3 `Bilan` — qui doit encore répondre
+Les 26 élèves, ✅ / ❌, la date de réception, et une colonne « 💬 a écrit un message libre ».
+Le menu **🎓 Quiz 4G → Qui n'a pas répondu ?** te donne la liste à relancer en une boîte de
+dialogue.
 
-```
-=IFERROR(FILTER(Reponses!C:C;Reponses!$B:$B=$B$1);"—")
-```
+### 4.4 Le pont avec le carnet de bord
+Un onglet masqué `Ref` fait la correspondance **nom complet (quiz) ⇄ pseudonyme « Prénom N. »
+(carnet)**. La fiche élève récupère ainsi les compteurs de l'onglet `Synthèse` du carnet (voir
+`TABLEAU-DE-BORD.md`) sans que tu aies à harmoniser quoi que ce soit. Si l'onglet `Synthèse`
+n'existe pas encore, les deux lignes affichent simplement « — ».
 
-Exemples concrets (à placer où tu veux, avec un libellé à gauche) :
+### 4.5 « Il n'a pas pris ma modification en compte » → menu 🎓 Quiz 4G → Diagnostic
+Avant toute autre hypothèse, lance le **Diagnostic des colonnes**. Il affiche la ligne d'en-têtes
+réelle de `Reponses`, colonne par colonne, puis la colonne retenue pour chaque question — et, si
+une question n'est pas retrouvée, **le fragment de texte qu'il cherchait**. C'est la seule source
+de vérité ; le reste est de la supposition.
 
-```
-=IFERROR(FILTER(Reponses!F:F;Reponses!$B:$B=$B$1);"—")   → activités
-=IFERROR(FILTER(Reponses!J:J;Reponses!$B:$B=$B$1);"—")   → temps de travail
-=IFERROR(FILTER(Reponses!T:T;Reponses!$B:$B=$B$1);"—")   → orientation envisagée
-=IFERROR(FILTER(Reponses!Y:Y;Reponses!$B:$B=$B$1);"—")   → message libre au PP
-```
+Deux malentendus fréquents que ce diagnostic dissipe :
 
-### 4.4 Le bloc « alertes » (le plus utile)
-Repère en un coup d'œil les signaux faibles :
+- **« La colonne Adresse e-mail est toujours là. »** Normal. Décocher la collecte des e-mails
+  n'efface pas la colonne d'un classeur déjà relié : Google cesse simplement de la remplir. Le
+  script ne touche jamais à `Reponses`, il ignore la colonne. Supprime-la à la main si elle te
+  gêne — rien ne cassera, tout est repéré par libellé.
+- **« J'ai renommé mes questions dans Forms, l'affichage n'a pas bougé. »** Normal aussi : les
+  libellés affichés dans les trois onglets construits sont **écrits en dur dans le script**, pas
+  repris du formulaire (les intitulés réels font 60-70 caractères et déborderaient des cellules).
+  Pour les changer, édite les appels à `champ_()` et `sousBandeau_()` dans `2-Exploitation.gs`,
+  puis relance `construireFiche()`.
 
-```
-=IF(IFERROR(FILTER(Reponses!Q:Q;Reponses!$B:$B=$B$1);5)<=2;"⚠️ Confiance en soi faible";"")
-=IF(IFERROR(FILTER(Reponses!I:I;Reponses!$B:$B=$B$1);"")="après 23 h";"⚠️ Couché tard";"")
-=IF(IFERROR(FILTER(Reponses!L:L;Reponses!$B:$B=$B$1);"")="jamais";"⚠️ Sans aide à la maison";"")
-```
-
-### 4.5 Croiser avec le carnet de bord
-Sur la même fiche, rappelle ses compteurs (si l'onglet `Synthèse` existe — voir
-`TABLEAU-DE-BORD.md`) :
-
-```
-=IFERROR(VLOOKUP($B$1;Synthèse!$A:$G;2;FALSE);0)   → total remarques
-=IFERROR(VLOOKUP($B$1;Synthèse!$A:$G;4;FALSE);0)   → dont attitude
-```
-
-> ⚠️ Le carnet utilise le pseudonyme « Prénom N. » et le quiz le nom complet : garde une colonne
-> de correspondance, ou fais aussi répondre au quiz avec le pseudonyme du carnet.
-
-### 4.6 Suivi de complétude
-Sur une feuille `Bilan`, colonne A = la liste des 26 élèves, puis en B2 (tirer vers le bas) :
-
-```
-=IF(COUNTIF(Reponses!$B:$B;$A2)>0;"✅";"❌ à relancer")
-```
-
-### 4.7 Vue de classe (pour préparer les séances HVC)
-Sur `Bilan`, quelques compteurs globaux :
-
-```
-=COUNTIF(Reponses!T:T;"Je ne sais pas encore")        → nb d'élèves sans projet
-=COUNTIF(Reponses!I:I;"après 23 h")                   → nb couchés tard
-=AVERAGE(Reponses!Q:Q)                                → confiance moyenne de la classe
-```
-
-*(Séparateur `;` en français ; si ton classeur est en anglais, remplace par `,`.)*
+### 4.6 Deux règles d'usage
+- **N'écris rien à la main dans ces trois onglets** : ils sont supprimés et reconstruits à chaque
+  exécution de `construireFiche()`.
+- **Relance `construireFiche()` si tu modifies le formulaire.** Les colonnes sont retrouvées par
+  le *libellé* des questions, jamais par leur position — l'ordre peut donc changer sans rien
+  casser, mais un renommage impose de relancer (et d'aligner la constante `Q` du script).
 
 ---
 
@@ -182,3 +190,51 @@ Sur `Bilan`, quelques compteurs globaux :
   ne partager que des **tendances de classe** si besoin.
 - Questions sensibles (§5) **facultatives**, avec la mention « tu écris seulement si tu veux ».
 - Le questionnaire n'est **pas noté** et le dire dans la consigne : la sincérité en dépend.
+
+---
+
+## 7. Déploiement (une seule fois, ~5 minutes)
+
+Les deux scripts sont dans `suivi-eleves/apps-script/`.
+
+**Étape 1 — créer le formulaire et le classeur**
+1. [script.google.com](https://script.google.com) → **Nouveau projet**, nomme-le « Quiz rentrée 4G »
+2. Colle tout `1-CreerQuiz.gs` dans `Code.gs`
+3. Fonction `creerQuiz` → **Exécuter** (première fois : *Avancé → Autoriser*)
+4. Le **journal d'exécution** affiche 3 liens
+
+**Étape 2 — brancher les DEUX portails**
+
+⚠️ Les liens vivent à **deux endroits**, et c'est structurel : le portail PC lit
+`donnees/config-portail.js`, mais le Cockpit nomade est servi par GitHub Pages depuis une autre
+origine — il n'a **pas accès au dossier `donnees/`** (exclu de git) et code donc ses URLs **en
+dur**.
+
+| Où | Fichier | Comment |
+|---|---|---|
+| PC | `donnees/config-portail.js` | clés `quizForm`, `quizReponses`, `quizEdition` → les chips passent de *à configurer* à *en ligne* |
+| Téléphone | `pp4g/index.html`, tuile « Privé Drive » | URLs écrites en dur dans les deux rangées « Quiz » |
+
+**Si tu recrées un jour le formulaire** (les URLs changent), pense aux deux. Et après toute
+modification de `pp4g/`, **incrémente `CACHE_VERSION` dans `pp4g/sw.js`** — sinon le téléphone
+continue de servir l'ancienne page depuis son cache. La modification n'atteint le téléphone
+qu'**après un push** (le nomade est servi par GitHub Pages, pas depuis ce PC).
+
+**Étape 3 — mettre en page le classeur**
+1. Ouvre le classeur créé (lien `quizReponses`)
+2. **Extensions → Apps Script**, colle tout `2-Exploitation.gs` dans `Code.gs`
+3. Exécute `construireFiche()`
+4. Recharge le classeur : le menu **🎓 Quiz 4G** apparaît
+
+**Étape 4 — vérifier avant la séance**
+Réponds toi-même au formulaire une fois, puis relance `construireFiche()` : tu vois immédiatement
+si les colonnes sont bien retrouvées. Supprime ensuite ta ligne de test dans `Reponses`.
+
+> ⚠️ Si le script s'arrête sur « Colonne introuvable pour … », c'est qu'un intitulé de question a
+> été modifié dans Forms. Aligne la constante `Q` de `2-Exploitation.gs` sur l'intitulé réel, et
+> relance.
+
+**En cas d'arrivée / départ d'élève :** mets à jour la liste `ELEVES` **dans les deux scripts**
+(elle sert à la liste déroulante du formulaire *et* au suivi de complétude), puis relance
+`creerQuiz()` n'est pas nécessaire — il suffit de corriger la liste déroulante dans Forms et de
+relancer `construireFiche()`.
