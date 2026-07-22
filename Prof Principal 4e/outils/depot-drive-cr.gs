@@ -52,8 +52,22 @@ function doGet() {
   return json_({ ok: true, service: "depot-cr-reunion", dossier: obtenirDossier_().getName() });
 }
 
+// ⚙️ À LANCER UNE FOIS dans l'éditeur (menu déroulant des fonctions -> autoriser -> Exécuter).
+// La fenêtre « Autorisation requise » apparaît : Autoriser -> choisir ton compte -> Avancé
+// -> « Accéder à … (non sécurisé) » -> Autoriser l'accès à Google Drive. Sans cette étape,
+// l'appel à DriveApp échoue (c'est la cause de l'erreur « getFolderById »).
+function autoriser() {
+  const d = obtenirDossier_();
+  Logger.log("OK — dossier cible : " + d.getName() + " (" + d.getId() + ")");
+}
+
 function obtenirDossier_() {
-  if (DOSSIER_ID) return DriveApp.getFolderById(DOSSIER_ID);
+  // 1) On tente le dossier précis (celui de la tuile). S'il est inaccessible par CE compte
+  //    (autre propriétaire, ID erroné), on ne plante pas : on bascule sur un dossier par nom.
+  if (DOSSIER_ID) {
+    try { return DriveApp.getFolderById(DOSSIER_ID); }
+    catch (e) { /* ID inaccessible : repli ci-dessous */ }
+  }
   const it = DriveApp.getFoldersByName(DOSSIER_NOM);
   return it.hasNext() ? it.next() : DriveApp.createFolder(DOSSIER_NOM);
 }
