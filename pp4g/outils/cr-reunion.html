@@ -29,6 +29,7 @@
   button.danger { background: #fff; color: #c0392b; border-color: #c0392b; }
   button:disabled { opacity: .45; cursor: not-allowed; }
   .note { font-size: .74rem; color: #7b8794; margin-top: 6px; }
+  .note a { color: #2c5f8a; }
   .copie-ok { color: #1e6b47; font-size: .78rem; margin-left: 6px; }
   #etatSauvegarde { font-size: .7rem; color: #7b8794; float: right; }
 
@@ -57,7 +58,7 @@
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
 <h1>📝 CR de réunion — prise de notes <span id="etatSauvegarde"></span></h1>
-<p class="rgpd">Outil 100 % local — notes et enregistrements restent sur cet appareil (rien n'est envoyé sur un serveur). Prénoms plutôt que noms complets si possible.</p>
+<p class="rgpd">Outil local — notes et enregistrements restent sur cet appareil, sauf action explicite de ta part (dépôt ☁️ Drive, envoi à une IA). Prénoms plutôt que noms complets si possible.</p>
 <div id="banniereEnLigne" style="display:none;background:#eef4fb;border:1px solid #bcd3ea;border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:.8rem;line-height:1.4">
   📄 Tu utilises la copie <b>locale</b>. Pour enregistrer au micro de façon fiable (comme Noota) :
   <a href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/outils/cr-reunion.html" style="color:#2c5f8a;font-weight:600">🌐 ouvrir la version en ligne (toujours à jour) →</a>
@@ -70,7 +71,7 @@
   <div class="gate" id="gateRgpd">
     <label class="consent-line">
       <input type="checkbox" id="chkConsent">
-      <span>J'atteste que <b>tous les participants ont été informés et acceptent l'enregistrement</b> (finalité : rédaction du compte-rendu). L'enregistrement reste sur cet appareil et sera supprimé une fois le CR rédigé.</span>
+      <span>J'atteste que <b>tous les participants ont été informés et acceptent l'enregistrement</b> (finalité : rédaction du compte-rendu). L'enregistrement reste sur mon appareil — ou sur mon Google Drive si je l'y dépose — et sera supprimé une fois le CR rédigé.</span>
     </label>
     <details class="info">
       <summary>📢 Annonce à lire avant de lancer</summary>
@@ -97,7 +98,12 @@
     </label>
   </div>
   <p class="mut" id="recInfo">Coche l'attestation ci-dessus pour activer l'enregistrement.</p>
-  <div style="margin-top:4px"><button class="mini sec" onclick="configurerDrive()">⚙️ Dépôt Drive auto</button><span class="mut" id="depotDriveEtat" style="margin-left:6px"></span></div>
+  <div style="margin-top:4px">
+    <button class="mini sec" onclick="configurerDrive()">⚙️ Dépôt Drive auto</button><span class="mut" id="depotDriveEtat" style="margin-left:6px"></span>
+    <button class="mini sec" onclick="document.getElementById('fImportAudio').click()">📥 Importer un audio (.webm, .m4a…)</button>
+    <input type="file" id="fImportAudio" accept="audio/*,video/webm,.webm,.m4a,.mp3,.wav,.ogg" multiple hidden>
+  </div>
+  <p class="mut">📥 « Importer » reprend un enregistrement existant (téléchargé depuis Drive, reçu du téléphone…) : il rejoint les séquences ci-dessous, prêt pour le CR par IA.</p>
 
   <div id="listeSeq"></div>
 </div>
@@ -130,6 +136,15 @@
 </div>
 
 <div class="carte">
+  <b class="titre-carte">🤖 CR structuré à partir de l'audio (workflow Claude)</b>
+  <p class="note">Pour obtenir le compte-rendu directement depuis l'enregistrement, sans dictée en direct :<br>
+  1️⃣ Récupère le(s) fichier(s) audio : bouton 💾 sur la séquence, ou depuis le <a href="https://drive.google.com/drive/folders/1Yeyk50ApziRr6bOrGSW57py4lw86SDTx" target="_blank" rel="noopener">dossier Drive « Enregistrements réunions »</a>.<br>
+  2️⃣ Ouvre Claude (Cowork sur PC) et glisse le(s) fichier(s) dans la conversation.<br>
+  3️⃣ Colle le prompt ci-dessous : Claude transcrit l'audio puis rédige le CR structuré (+ document Word sur PC).</p>
+  <button onclick="copierPromptAudio(this)">🤖 Copier le prompt « CR depuis l'audio »</button>
+</div>
+
+<div class="carte">
   <b style="font-size:.9rem">✉️ Message d'accompagnement</b>
   <p class="note">Une fois le CR généré par Claude : choisis le destinataire, génère le message, puis envoie-le avec le CR en pièce jointe.</p>
   <button class="sec" onclick="genererMail('ed', this)">👪 EcoleDirecte (familles / élèves)</button>
@@ -145,13 +160,13 @@
 const CLE = "cr-reunion-brouillon";
 const CHAMPS = ["fType", "fDateCR", "fParticipants", "zTranscript", "zPoints", "zDecisions", "zAFaire", "zLibre"];
 
-const ANNONCE = "« Avant de commencer, je vous informe que je souhaite enregistrer notre échange, dans le seul but d'en rédiger le compte-rendu plus fidèlement qu'avec des notes prises à la main. L'enregistrement reste sur mon appareil, ne sera pas diffusé, et sera supprimé une fois le compte-rendu rédigé. Êtes-vous d'accord ? Vous pouvez refuser, ou demander l'arrêt à tout moment. »";
+const ANNONCE = "« Avant de commencer, je vous informe que je souhaite enregistrer notre échange, dans le seul but d'en rédiger le compte-rendu plus fidèlement qu'avec des notes prises à la main. L'enregistrement ne sera pas diffusé, sera traité uniquement pour rédiger le compte-rendu (y compris, le cas échéant, par un outil de transcription), et sera supprimé une fois le compte-rendu rédigé. Êtes-vous d'accord ? Vous pouvez refuser, ou demander l'arrêt à tout moment. »";
 const MENTION_RGPD =
 "• Finalité : rédiger le compte-rendu de la réunion.\n" +
 "• Base légale : le consentement des participants, recueilli oralement au début (voir l'annonce).\n" +
 "• Données : l'enregistrement audio des voix des participants.\n" +
-"• Conservation : sur cet appareil uniquement, jusqu'à la rédaction du CR, puis suppression. Aucun envoi vers un serveur.\n" +
-"• Transcription / IA : si tu actives « transcription en direct » ou envoies l'audio ou le texte à une IA (Claude), une partie du contenu est traitée par ce service — les participants doivent en être informés.\n" +
+"• Conservation : sur cet appareil — et sur le Google Drive du professeur si le dépôt ☁️ est utilisé (dossier privé, non partagé) — jusqu'à la rédaction du CR, puis suppression (appareil ET Drive).\n" +
+"• Transcription / IA : si tu actives « transcription en direct », utilises le dépôt Drive, ou envoies l'audio ou le texte à une IA (Claude) pour transcription ou rédaction du CR, une partie du contenu est traitée par ce service — les participants doivent en être informés (c'est prévu dans l'annonce).\n" +
 "• Droits : chacun peut refuser l'enregistrement, en demander l'arrêt ou la suppression immédiate.\n" +
 "• Mineurs : pour un élève mineur, informer et recueillir l'accord des responsables légaux.";
 
@@ -209,6 +224,26 @@ function copierPrompt(btn) {
   navigator.clipboard.writeText(prompt).then(() => {
     const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓ — colle dans Claude";
     btn.after(ok); setTimeout(() => ok.remove(), 2500);
+  });
+}
+
+function copierPromptAudio(btn) {
+  const v = id => document.getElementById(id).value.trim();
+  const notes = [v("zPoints"), v("zDecisions"), v("zAFaire"), v("zLibre")].some(x => x);
+  const prompt =
+"Je te fournis un ou plusieurs enregistrements audio d'une réunion (fichiers joints à ce message). Produis le compte-rendu structuré de ce qui s'y dit :\n" +
+"1) TRANSCRIS chaque fichier (français) avec ton outil de transcription (ex. Whisper dans ton environnement d'exécution). Si plusieurs fichiers : traite-les dans l'ordre, chaque fichier = une séquence titrée par son nom.\n" +
+"2) RÉDIGE ensuite le compte-rendu professionnel :\n" +
+"- synthèse fidèle des échanges (pas de verbatim), factuel et neutre, aucun jugement ni interprétation au-delà de ce qui est dit ;\n" +
+"- structuré : en-tête (type, date, participants), points abordés (par séquence s'il y en a plusieurs), décisions prises, actions à suivre (qui / quoi / quand) ;\n" +
+"- termine par une version courte (5 lignes) pour information rapide ;\n" +
+"- produis aussi le document Word (.docx) si tu es sur PC avec mes outils.\n" +
+"3) RGPD : les participants ont consenti à l'enregistrement et à son traitement par IA pour rédiger le CR. Désigne les personnes par leur rôle ou leur prénom uniquement ; n'inclus aucune donnée superflue. Ne conserve pas l'audio après traitement.\n\n" +
+"CONTEXTE DE LA RÉUNION :\nType : " + v("fType") + "\nDate : " + v("fDateCR") + "\nParticipants : " + (v("fParticipants") || "—") +
+(notes ? "\n\nMES NOTES PRISES EN SÉANCE (à fusionner avec la transcription) :\n" + texteNotes() : "");
+  navigator.clipboard.writeText(prompt).then(() => {
+    const ok = document.createElement("span"); ok.className = "copie-ok"; ok.textContent = "copié ✓ — joins le(s) fichier(s) audio dans Claude puis colle";
+    btn.after(ok); setTimeout(() => ok.remove(), 3500);
   });
 }
 
@@ -394,6 +429,38 @@ async function finaliserSeq(mime) {
   ajouterCarteSeq(rec);
 }
 
+/* --- Import d'un enregistrement existant (.webm, .m4a, .mp3, .wav, .ogg) --- */
+function dureeBlob(blob) {
+  return new Promise(res => {
+    let fini = false;
+    const url = URL.createObjectURL(blob);
+    const fin = s => { if (fini) return; fini = true; URL.revokeObjectURL(url); res(s); };
+    const a = document.createElement("audio");
+    a.preload = "metadata";
+    a.onloadedmetadata = () => fin(isFinite(a.duration) ? Math.round(a.duration) : 0);
+    a.onerror = () => fin(0);
+    setTimeout(() => fin(0), 3000);
+    a.src = url;
+  });
+}
+async function importerAudio(files) {
+  const EXTS = { webm: "webm", m4a: "m4a", mp4: "m4a", aac: "m4a", mp3: "mp3", wav: "wav", ogg: "ogg", opus: "ogg" };
+  for (const f of files) {
+    if (!f) continue;
+    const ext = EXTS[(f.name.split(".").pop() || "").toLowerCase()] || extPour(f.type);
+    const rec = {
+      label: f.name.replace(/\.[^.]+$/, ""),
+      blob: f, mime: f.type || "audio/webm", ext: ext,
+      duree: await dureeBlob(f), date: new Date().toISOString(),
+      meetingDate: document.getElementById("fDateCR").value, importe: true
+    };
+    try { rec.id = await ajouterSeq(rec); }
+    catch (e) { rec.id = "tmp-" + Date.now(); }
+    ajouterCarteSeq(rec);
+  }
+  document.getElementById("recInfo").textContent = "📥 Import terminé — séquence(s) ajoutée(s) ci-dessous.";
+}
+
 function demarrerChrono() {
   const el = document.getElementById("recChrono");
   chronoTimer = setInterval(() => {
@@ -442,7 +509,7 @@ function majDepotEtat() {
 function configurerDrive() {
   const url = prompt("URL de l'application web Apps Script (elle se termine par /exec) :", localStorage.getItem(CLE_DRIVE_URL) || "");
   if (url === null) return false;
-  const jeton = prompt("Jeton partagé (identique à celui inscrit dans le script) :", localStorage.getItem(CLE_DRIVE_JETON) || "change-moi-2026");
+  const jeton = prompt("Jeton partagé (identique à celui inscrit dans le script) :", localStorage.getItem(CLE_DRIVE_JETON) || "");
   if (jeton === null) return false;
   if (url.trim()) localStorage.setItem(CLE_DRIVE_URL, url.trim()); else localStorage.removeItem(CLE_DRIVE_URL);
   localStorage.setItem(CLE_DRIVE_JETON, jeton.trim());
@@ -490,7 +557,7 @@ function ajouterCarteSeq(rec) {
   div.className = "seq";
   div.innerHTML =
     '<div class="titre"><b>' + (rec.label ? echapper(rec.label) : "Séquence sans titre") + '</b>' +
-    '<span class="duree">⏱ ' + fmtDuree(rec.duree) + ' · ' + rec.ext + '</span></div>' +
+    '<span class="duree">' + (rec.importe ? "📥 importé · " : "") + (rec.duree ? "⏱ " + fmtDuree(rec.duree) + " · " : "") + rec.ext + '</span></div>' +
     '<audio controls preload="metadata" src="' + url + '"></audio>' +
     '<div class="actions"></div>';
   const actions = div.querySelector(".actions");
@@ -559,6 +626,11 @@ document.getElementById("chkConsent").addEventListener("change", function () {
   } else if (!ok) {
     document.getElementById("recInfo").textContent = "Coche l'attestation ci-dessus pour activer l'enregistrement.";
   }
+});
+
+document.getElementById("fImportAudio").addEventListener("change", function () {
+  if (this.files && this.files.length) importerAudio(Array.from(this.files));
+  this.value = "";
 });
 
 if (sttDispo()) document.getElementById("wrapStt").hidden = false;
