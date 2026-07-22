@@ -103,6 +103,7 @@
     <button class="mini sec" onclick="document.getElementById('fImportAudio').click()">📥 Importer un audio (.webm, .m4a…)</button>
     <input type="file" id="fImportAudio" accept="audio/*,video/webm,.webm,.m4a,.mp3,.wav,.ogg" multiple hidden>
   </div>
+  <p class="mut">🎵 Format : .m4a quand le navigateur le permet — directement accepté par NotebookLM/Gemini ; sinon .webm (Claude le convertit en .mp3 avant la synthèse).</p>
   <p class="mut">📥 « Importer » reprend un enregistrement existant (téléchargé depuis Drive, reçu du téléphone…) : il rejoint les séquences ci-dessous, prêt pour le CR par IA.</p>
 
   <div id="listeSeq"></div>
@@ -352,7 +353,8 @@ function supprimerSeq(id) {
 
 function choisirMime() {
   if (!window.MediaRecorder) return "";
-  const cands = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac", "audio/ogg;codecs=opus"];
+  // .m4a (AAC) en priorité : accepté par NotebookLM/Gemini, compact, lu partout. Sinon repli webm/opus.
+  const cands = ["audio/mp4;codecs=mp4a.40.2", "audio/mp4", "audio/aac", "audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"];
   for (const m of cands) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (e) {} }
   return "";
 }
@@ -374,7 +376,8 @@ async function basculerRec() {
 
   const mime = choisirMime();
   chunks = [];
-  try { mediaRec = mime ? new MediaRecorder(flux, { mimeType: mime }) : new MediaRecorder(flux); }
+  const optsRec = { audioBitsPerSecond: 64000 }; // voix : ~28 Mo/h, sous la limite Drive/Apps Script (~40 Mo ≈ 1 h 20)
+  try { mediaRec = mime ? new MediaRecorder(flux, Object.assign({ mimeType: mime }, optsRec)) : new MediaRecorder(flux, optsRec); }
   catch (e) { mediaRec = new MediaRecorder(flux); }
   mediaRec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
   mediaRec.onstop = () => finaliserSeq(mediaRec.mimeType || mime);
