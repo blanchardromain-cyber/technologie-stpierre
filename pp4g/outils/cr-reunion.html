@@ -565,8 +565,11 @@ function ajouterCarteSeq(rec) {
     '<div class="actions"></div>';
   const actions = div.querySelector(".actions");
 
+  // Partage natif : seulement sur mobile — sur PC (Windows) l'API échoue en « Permission denied »
+  // et le bouton fait doublon avec ☁️ Drive + 💾 Enregistrer.
+  const surMobile = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
   let peutPartager = false;
-  try { peutPartager = !!(navigator.canShare && navigator.canShare({ files: [new File([rec.blob], nom, { type: rec.mime || "audio/webm" })] })); } catch (e) {}
+  try { peutPartager = surMobile && !!(navigator.canShare && navigator.canShare({ files: [new File([rec.blob], nom, { type: rec.mime || "audio/webm" })] })); } catch (e) {}
   if (peutPartager) {
     const bp = boutonMini("📤 Envoyer (Drive, mail…)", "sec");
     bp.onclick = () => partagerSeq(rec, nom);
