@@ -51,6 +51,11 @@
 <body>
 <h1>📝 CR de réunion — prise de notes <span id="etatSauvegarde"></span></h1>
 <p class="rgpd">Outil 100 % local — notes et enregistrements restent sur cet appareil (rien n'est envoyé sur un serveur). Prénoms plutôt que noms complets si possible.</p>
+<div id="banniereEnLigne" style="display:none;background:#eef4fb;border:1px solid #bcd3ea;border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:.8rem;line-height:1.4">
+  📄 Tu utilises la copie <b>locale</b>. Pour enregistrer au micro de façon fiable (comme Noota) :
+  <a href="https://blanchardromain-cyber.github.io/technologie-stpierre/Prof%20Principal%204e/outils/cr-reunion.html" style="color:#2c5f8a;font-weight:600">🌐 ouvrir la version en ligne (toujours à jour) →</a>
+  <br><span style="color:#7b8794">Mettre à jour cette copie locale : <a href="https://github.com/blanchardromain-cyber/technologie-stpierre/archive/refs/heads/main.zip" style="color:#2c5f8a">⬇️ télécharger la dernière version (ZIP)</a></span>
+</div>
 
 <div class="carte">
   <b class="titre-carte">🎙️ Enregistrement audio de la réunion</b>
@@ -118,11 +123,15 @@
 </div>
 
 <div class="carte">
-  <b style="font-size:.9rem">✉️ Message EcoleDirecte d'accompagnement</b>
-  <p class="note">Une fois le CR généré par Claude : génère ce court message, colle-le dans EcoleDirecte et joins le CR en pièce jointe.</p>
-  <button class="sec" onclick="genererMailED()">⚙️ Générer le message</button>
-  <textarea id="tMailED" style="display:none;min-height:150px"></textarea>
-  <button class="sec" id="btnCopierMailED" style="display:none" onclick="copierMailED(this)">📋 Copier</button>
+  <b style="font-size:.9rem">✉️ Message d'accompagnement</b>
+  <p class="note">Une fois le CR généré par Claude : choisis le destinataire, génère le message, puis envoie-le avec le CR en pièce jointe.</p>
+  <button class="sec" onclick="genererMail('ed', this)">👪 EcoleDirecte (familles / élèves)</button>
+  <button class="sec" onclick="genererMail('gmail', this)">🏫 Gmail (collègues : profs, vie scolaire)</button>
+  <textarea id="tMailED" style="display:none;min-height:160px"></textarea>
+  <div id="actionsMail" style="display:none">
+    <button class="sec" onclick="copierMailED(this)">📋 Copier</button>
+    <button class="sec" id="btnGmail" style="display:none" onclick="ouvrirGmail()">📧 Ouvrir dans Gmail (brouillon pré-rempli)</button>
+  </div>
 </div>
 
 <script>
@@ -208,25 +217,47 @@ function telechargerTxt() {
   telechargerBlob(blob, "notes-reunion-" + document.getElementById("fDateCR").value + ".txt");
 }
 
-function genererMailED() {
+let mailObjet = "", mailCorps = "";
+
+function genererMail(dest, btn) {
   const type = document.getElementById("fType").value;
   const date = document.getElementById("fDateCR").value;
   const dateFr = new Date(date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
   const famille = /famille|parents/i.test(type);
-  const texte =
-"Objet : Compte-rendu — " + type.toLowerCase() + " du " + dateFr + "\n\n" +
+
+  if (dest === "gmail") {
+    // Message interne, ton collégial (profs, vie scolaire, direction).
+    mailObjet = "CR — " + type.toLowerCase() + " du " + dateFr;
+    mailCorps =
+"Bonjour à toutes et tous,\n\n" +
+"Vous trouverez ci-joint le compte-rendu de " + (famille ? "l'échange" : "la réunion") + " du " + dateFr + ".\n" +
+"Il reprend les points abordés, les décisions prises et les actions à suivre (qui / quoi / quand).\n\n" +
+"Merci de me signaler toute correction ou tout complément.\n\n" +
+"Bien cordialement,\nR. Blanchard — professeur principal de 4G";
+  } else {
+    // Message aux familles / élèves via EcoleDirecte.
+    mailObjet = "Compte-rendu — " + type.toLowerCase() + " du " + dateFr;
+    mailCorps =
 (famille ? "Madame, Monsieur,\n\n" : "Bonjour,\n\n") +
 "Veuillez trouver en pièce jointe le compte-rendu de " +
 (famille ? "notre échange" : "la réunion") + " du " + dateFr + ".\n" +
 "Il reprend les points abordés, les décisions prises et les suites convenues.\n\n" +
 (famille ? "N'hésitez pas à me signaler toute précision ou remarque ; je reste à votre disposition pour en reparler.\n\n"
          : "Merci de me signaler toute correction ou complément.\n\n") +
-"Cordialement,\nR. Blanchard — professeur principal de 4G\n\n" +
-"[📎 Joindre le CR généré par Claude avant l'envoi]";
+"Cordialement,\nR. Blanchard — professeur principal de 4G";
+  }
+
   const zone = document.getElementById("tMailED");
-  zone.value = texte;
+  zone.value = "Objet : " + mailObjet + "\n\n" + mailCorps + "\n\n[📎 Joindre le CR généré par Claude avant l'envoi]";
   zone.style.display = "block";
-  document.getElementById("btnCopierMailED").style.display = "inline-block";
+  document.getElementById("actionsMail").style.display = "block";
+  // Le bouton « Ouvrir dans Gmail » n'a de sens que pour l'option collègues.
+  document.getElementById("btnGmail").style.display = (dest === "gmail") ? "inline-block" : "none";
+}
+
+function ouvrirGmail() {
+  const url = "https://mail.google.com/mail/?view=cm&fs=1&su=" + encodeURIComponent(mailObjet) + "&body=" + encodeURIComponent(mailCorps);
+  window.open(url, "_blank", "noopener");
 }
 
 function copierMailED(btn) {
@@ -525,6 +556,7 @@ document.getElementById("chkConsent").addEventListener("change", function () {
 
 if (sttDispo()) document.getElementById("wrapStt").hidden = false;
 majDepotEtat();
+if (location.protocol === "file:") document.getElementById("banniereEnLigne").style.display = "block";
 
 CHAMPS.forEach(id => document.getElementById(id).addEventListener("input", sauvegarder));
 restaurer();
