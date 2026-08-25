@@ -33,6 +33,7 @@
   .place.vide { background: #fafbfc; border-style: dashed; }
   .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f; }
   .place.devant-tag { border-color: #2c5f8a; border-width: 2px; }
+  .place.derriere-tag { border-color: #7a3d99; border-width: 2px; }
   .place.selectionnee { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
   .place.conflit { box-shadow: inset 0 0 0 2px #c0392b; }
   #lateral { width: 250px; }
@@ -52,7 +53,7 @@
     #entetePrint { display: block; font-size: 13px; margin-bottom: 6px; }
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
-    .place.devant-tag { border-color: #8fa3b8; border-width: 1.5px; }
+    .place.devant-tag, .place.derriere-tag { border-color: #8fa3b8; border-width: 1.5px; }
     #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1); }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4 landscape; margin: 8mm; }
@@ -140,7 +141,7 @@
   <div id="lateral">
     <div class="panneau">
       <h2>Légende (écran seulement)</h2>
-      <span style="font-size:.72rem">vert = dys · bleu = « devant » · orange = sélection · rouge = conflit.<br>
+      <span style="font-size:.72rem">vert = dys · bleu = « devant » · violet = « derrière » · orange = sélection · rouge = conflit.<br>
       Échanger : touche une place puis une autre.<br>
       Photos : importées via ⚙️ Données.</span>
     </div>
@@ -149,6 +150,12 @@
       <select id="selDevant"></select>
       <button id="btnAjouterDevant" class="sec">Ajouter</button>
       <div class="liste" id="listeDevant"></div>
+    </div>
+    <div class="panneau">
+      <h2>Placer derrière (derniers rangs)</h2>
+      <select id="selDerriere"></select>
+      <button id="btnAjouterDerriere" class="sec">Ajouter</button>
+      <div class="liste" id="listeDerriere"></div>
     </div>
     <div class="panneau">
       <h2>Associer (côte à côte)</h2>
@@ -186,6 +193,7 @@ let affectation = {};       // placeId -> index élève
 let separations = [];       // paires d'index à éloigner
 let associations = [];      // paires d'index à mettre côte à côte
 let devant = [];            // index à placer aux premiers rangs (en plus des dys)
+let derriere = [];          // index à placer aux derniers rangs
 let selection = null;
 let dateGeneration = null;
 
@@ -241,10 +249,13 @@ function genererPlan() {
 
   // priorité "devant" : dys (si coché) + liste manuelle, sans doublon, dans l'ordre de la liste
   const prioritaires = liste.filter(e => (dysDevant && e.tags.includes("dys")) || devant.includes(e.idx));
-  const autres = liste.filter(e => !prioritaires.includes(e));
+  // "derrière" : liste manuelle, sauf élèves déjà prioritaires devant (qui l'emportent)
+  const derniers = liste.filter(e => !prioritaires.includes(e) && derriere.includes(e.idx));
+  const autres = liste.filter(e => !prioritaires.includes(e) && !derniers.includes(e));
   let restantes = [...placesTriees];
   prioritaires.forEach(e => { const p = restantes.shift(); if (p) affectation[p.id] = e.idx; });
   autres.forEach(e => { const p = restantes.shift(); if (p) affectation[p.id] = e.idx; });
+  derniers.forEach(e => { const p = restantes.shift(); if (p) affectation[p.id] = e.idx; });
 
   reparerAssociations();
   reparerSeparations();
@@ -361,6 +372,7 @@ function afficher() {
       div.classList.remove("vide");
       if (e.tags.includes("dys")) div.classList.add("dys");
       if (devant.includes(idx)) div.classList.add("devant-tag");
+      if (derriere.includes(idx)) div.classList.add("derriere-tag");
       if (enConflit.includes(p.id)) div.classList.add("conflit");
       let interieur = "";
       if (avecPhotos) interieur += '<img class="photo" src="' + PP4G.photoUrl(e.nom, e.prenom) + '" onerror="this.style.display=\'none\'">';
@@ -429,6 +441,16 @@ function afficherPanneaux() {
     l.appendChild(b); zoneDevant.appendChild(l);
   });
 
+  const zoneDerriere = document.getElementById("listeDerriere");
+  zoneDerriere.innerHTML = "";
+  derriere.forEach((idx, i) => {
+    const l = document.createElement("div");
+    l.innerHTML = "<span>" + nomCourt(idx) + "</span>";
+    const b = document.createElement("button"); b.textContent = "×";
+    b.onclick = () => { derriere.splice(i, 1); sauvegarder(); afficher(); };
+    l.appendChild(b); zoneDerriere.appendChild(l);
+  });
+
   const zoneAss = document.getElementById("listeAss");
   zoneAss.innerHTML = "";
   associations.forEach(([a, b], i) => {
@@ -453,7 +475,7 @@ function afficherPanneaux() {
 }
 
 function remplirSelects() {
-  ["sepA", "sepB", "assA", "assB", "selDevant"].forEach(id => {
+  ["sepA", "sepB", "assA", "assB", "selDevant", "selDerriere"].forEach(id => {
     const sel = document.getElementById(id);
     sel.innerHTML = "";
     eleves.forEach((e, i) => {
@@ -495,7 +517,7 @@ function instantane() {
     dysDevant: document.getElementById("dysDevant").checked,
     mixte: document.getElementById("mixte").checked,
     photos: document.getElementById("photos").checked,
-    affectation, separations, associations, devant,
+    affectation, separations, associations, devant, derriere,
     dateGeneration: dateGeneration ? new Date(dateGeneration).toISOString() : null
   };
 }
@@ -512,6 +534,7 @@ function appliquer(s) {
   separations = s.separations || [];
   associations = s.associations || [];
   devant = s.devant || [];
+  derriere = s.derriere || [];
   dateGeneration = s.dateGeneration ? new Date(s.dateGeneration) : null;
   construireGabarit();
 }
@@ -539,7 +562,7 @@ function demarrer(donnees) {
   classeActive = donnees.classe;
   eleves = donnees.eleves;
   selection = null; dateGeneration = null;
-  affectation = {}; separations = []; associations = []; devant = [];
+  affectation = {}; separations = []; associations = []; devant = []; derriere = [];
   document.getElementById("titre").textContent =
     "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
   document.getElementById("btnSupprimerClasse").style.display = Object.keys(lireImports()).length ? "inline" : "none";
@@ -643,6 +666,10 @@ document.getElementById("btnAjouterAss").onclick = () => ajouterPaire(associatio
 document.getElementById("btnAjouterDevant").onclick = () => {
   const i = +document.getElementById("selDevant").value;
   if (!devant.includes(i)) { devant.push(i); sauvegarder(); afficher(); }
+};
+document.getElementById("btnAjouterDerriere").onclick = () => {
+  const i = +document.getElementById("selDerriere").value;
+  if (!derriere.includes(i)) { derriere.push(i); sauvegarder(); afficher(); }
 };
 document.getElementById("btnEnregistrer").onclick = () => {
   const nom = document.getElementById("nomPlan").value.trim();
