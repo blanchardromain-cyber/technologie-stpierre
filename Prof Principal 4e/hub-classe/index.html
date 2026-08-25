@@ -11,8 +11,8 @@
   header h1 { font-size: 1.05rem; }
   header .sous { font-size: .72rem; opacity: .85; }
   #bandeauDemo { background: #d97706; color: #fff; text-align: center; font-size: .75rem; padding: 4px; }
-  nav { display: flex; background: #fff; border-bottom: 2px solid #d9dee5; position: sticky; top: 0; z-index: 5; }
-  nav button { flex: 1; padding: 10px 4px; border: none; background: none; font-size: .85rem; cursor: pointer; color: #52606d; border-bottom: 3px solid transparent; }
+  nav { display: flex; flex-wrap: wrap; background: #fff; border-bottom: 2px solid #d9dee5; position: sticky; top: 0; z-index: 5; }
+  nav button { flex: 1 1 auto; min-width: 84px; padding: 10px 4px; border: none; background: none; font-size: .85rem; cursor: pointer; color: #52606d; border-bottom: 3px solid transparent; }
   nav button.actif { color: #2c5f8a; font-weight: 600; border-bottom-color: #2c5f8a; }
   main { padding: 12px; }
   .carte { background: #fff; border: 1px solid #d9dee5; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
@@ -52,6 +52,17 @@
   .jours label { font-size: .78rem; border: 1px solid #b8c0cc; border-radius: 6px; padding: 3px 8px; cursor: pointer; user-select: none; }
   .jours input { margin-right: 3px; }
   .charte { font-size: .72rem; color: #7b8794; margin-top: 14px; text-align: center; }
+  .edtJours { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; }
+  .edtJours button { flex: 0 0 auto; border: 1px solid #b8c0cc; background: #fff; border-radius: 14px; padding: 5px 10px; font-size: .76rem; cursor: pointer; color: #3e4c59; white-space: nowrap; }
+  .edtJours button.actif { background: #2c5f8a; border-color: #2c5f8a; color: #fff; font-weight: 600; }
+  .seance { display: flex; gap: 10px; align-items: flex-start; padding: 8px 2px; border-bottom: 1px solid #eef1f5; }
+  .seance:last-child { border-bottom: none; }
+  .seance .heure { flex: 0 0 50px; font-size: .78rem; color: #2c5f8a; font-weight: 600; line-height: 1.3; }
+  .seance .titre { font-size: .88rem; }
+  .seance .salle { font-size: .72rem; color: #7b8794; }
+  .seance.encours { background: #eef5fb; border-radius: 8px; }
+  .lienEdt { display: inline-block; background: #2c5f8a; color: #fff; text-decoration: none; border-radius: 6px; padding: 8px 16px; font-size: .85rem; margin-top: 8px; }
+  .majEdt { font-size: .72rem; color: #7b8794; text-align: center; margin-top: 10px; }
 </style>
 </head>
 <body>
@@ -81,6 +92,7 @@
   <nav>
     <button data-onglet="annonces" class="actif">📢 Annonces</button>
     <button data-onglet="entraide">🤝 Entraide</button>
+    <button data-onglet="edt" id="ongletEdt" style="display:none">📅 EDT</button>
     <button data-onglet="plan">🪑 Plan</button>
     <button data-onglet="menage">🧹 Ménage</button>
     <button data-onglet="moi" id="ongletMoi">👤 Moi</button>
@@ -122,6 +134,13 @@ function contientInsulte(texte) {
   return tokens.some(tok => mot.some(w => tok === w || tok === w + "s" || tok === w + "e" || tok === w + "es"));
 }
 const JOURS_SEMAINE = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+
+// Emploi du temps : l'agenda de la 4G n'est disponible dans EcoleDirecte qu'à la rentrée.
+// L'onglet est donc PROGRAMMÉ : invisible pour les élèves avant cette date, visible dès ce jour-là.
+// (Le prof, lui, le voit tout de suite pour préparer le réglage.)
+const EDT_ACTIVATION = "2026-09-01";   // mardi 1er septembre 2026
+// Filet de secours si le backend n'est pas à jour : lien web simple vers l'agenda (facultatif).
+const EDT_LIEN_SECOURS = "";
 let session = null;   // {code, pseudo, role, horaires}
 let messages = [];
 let ongletActif = "annonces";
@@ -130,6 +149,8 @@ let mesInfos = null;      // {casier, referent1, referent2, eleves} — onglet M
 let infosClasse = null;   // {infos, horaires} — onglet Classe (prof)
 let planPublie = null;    // plan de classe publié (chaîne JSON) — onglet Plan
 let planningMenage = null; // planning ménage publié (chaîne JSON) — onglet Ménage
+let edt = null;           // {mode, url, evenements, maj} — onglet Emploi du temps
+let edtJour = "";         // jour affiché (AAAA-MM-JJ)
 
 // ---------- accès données : backend réel ou démo locale ----------
 async function api(action, donnees = {}) {
@@ -195,11 +216,17 @@ function apiDemo(action, d) {
   }
   if (action === "listeInfos") return fini({ ok: true,
     infos: Object.entries(bdd.infos).map(([pseudo, x]) => ({ pseudo, ...x })),
-    horaires: horaires() });
+    horaires: horaires(), edtUrl: bdd.divers.edtUrl || "" });
   if (action === "reglerHoraires") { bdd.divers.ouverture = d.ouverture; bdd.divers.fermeture = d.fermeture; bdd.divers.joursOuverts = d.jours; return fini({ ok: true }); }
   if (action === "reglerMotsPerso") { bdd.divers.motsPerso = (d.motsPerso || []).join(","); return fini({ ok: true }); }
   if (action === "publierPlan") { bdd.divers.planClasse = d.plan; return fini({ ok: true }); }
   if (action === "lirePlan") return fini({ ok: true, plan: bdd.divers.planClasse });
+  if (action === "reglerEdt") { bdd.divers.edtUrl = d.url; return fini({ ok: true }); }
+  if (action === "lireEdt") {
+    if (bdd.divers.edtUrl && !/\.ics(\?|#|$)|ical/i.test(bdd.divers.edtUrl))
+      return fini({ ok: true, url: bdd.divers.edtUrl, mode: "lien", evenements: [] });
+    return fini({ ok: true, url: bdd.divers.edtUrl || "", mode: "ics", maj: Date.now(), evenements: edtDemo() });
+  }
   if (action === "publierMenage") { bdd.divers.planningMenage = d.planning; return fini({ ok: true }); }
   if (action === "lireMenage") return fini({ ok: true, planning: bdd.divers.planningMenage || "" });
   if (action === "poster") {
@@ -213,6 +240,27 @@ function apiDemo(action, d) {
   if (action === "masquer") m.masque = d.retablir ? 0 : 1;
   if (action === "signaler") m.signale = (m.signale || 0) + 1;
   return fini({ ok: true });
+}
+
+// Emploi du temps fictif (mode démo) : semaine type calée sur la semaine en cours.
+function edtDemo() {
+  const modele = [
+    [1, "08:00", "09:00", "Mathématiques", "B12"], [1, "09:00", "10:00", "Français", "A04"],
+    [1, "10:15", "11:15", "Anglais", "A11"], [1, "14:00", "15:00", "EPS", "Gymnase"],
+    [2, "08:00", "10:00", "Technologie", "Salle techno"], [2, "10:15", "11:15", "Histoire-Géo", "B07"],
+    [2, "13:30", "14:30", "Vie de classe", "B12"],
+    [3, "08:00", "09:00", "Physique-Chimie", "Labo 2"], [3, "09:00", "10:00", "SVT", "Labo 1"],
+    [4, "08:00", "09:00", "Français", "A04"], [4, "10:15", "12:15", "Arts plastiques", "Atelier"],
+    [4, "14:00", "15:00", "Espagnol", "A09"],
+    [5, "08:00", "09:00", "Mathématiques", "B12"], [5, "09:00", "10:00", "Musique", "A02"],
+    [5, "10:15", "11:15", "Anglais", "A11"]
+  ];
+  const lundi = new Date(); lundi.setHours(0, 0, 0, 0);
+  lundi.setDate(lundi.getDate() - ((lundi.getDay() + 6) % 7));
+  return modele.map(([j, debut, fin, titre, salle]) => {
+    const d = new Date(lundi); d.setDate(d.getDate() + j - 1);
+    return { jour: isoDe(d), debut, fin, titre, salle, journee: false };
+  });
 }
 
 // ---------- connexion ----------
@@ -248,6 +296,8 @@ async function afficherAppli() {
   document.getElementById("ongletModeration").style.display = estProf ? "block" : "none";
   document.getElementById("ongletClasse").style.display = estProf ? "block" : "none";
   document.getElementById("ongletMoi").style.display = estProf ? "none" : "block";
+  // Onglet programmé : ouvert à tous à partir du 1er septembre, visible avant par le prof seul.
+  document.getElementById("ongletEdt").style.display = (estProf || edtEnService()) ? "block" : "none";
   await rafraichir();
 }
 
@@ -294,6 +344,11 @@ async function changerOnglet(onglet) {
   if (onglet === "plan" && planPublie === null) {
     const rep = await api("lirePlan");
     planPublie = rep.ok ? (rep.plan || "") : "obsolete";
+    dessiner();
+  }
+  if (onglet === "edt" && edt === null) {
+    const rep = await api("lireEdt");
+    edt = (rep && rep.ok) ? rep : { mode: "obsolete", evenements: [] };
     dessiner();
   }
   if (onglet === "menage" && planningMenage === null) {
@@ -391,6 +446,15 @@ function dessiner() {
     h += questions.length ? questions.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune question. Lance-toi !</div>';
   }
 
+  if (ongletActif === "edt") {
+    if (!edtEnService() && session.role !== "prof") h += edtBientot();
+    else {
+      if (session.role === "prof" && !edtEnService()) h += edtBientot();
+      if (edt === null) h += '<div class="vide">Chargement…</div>';
+      else h += rendreEdt();
+    }
+  }
+
   if (ongletActif === "plan") {
     if (planPublie === null) h += '<div class="vide">Chargement…</div>';
     else if (planPublie === "obsolete") h += '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
@@ -438,6 +502,16 @@ function dessiner() {
         '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
         '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+      h += '<div class="carte"><b>📅 Emploi du temps de la classe</b>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Colle ici l\'adresse de l\'agenda de la 4G récupérée dans <b>EcoleDirecte</b> ' +
+        '(Agenda → <i>Exporter / S\'abonner à l\'agenda</i>). Si c\'est un flux <b>.ics</b>, le Hub affiche directement la grille des cours ; ' +
+        'si c\'est un simple lien web, il affiche un bouton « Ouvrir l\'emploi du temps ».</p>' +
+        '<input type="text" id="urlEdt" placeholder="https://…" style="margin-top:6px" value="' + echap((infosClasse.edtUrl || "")) + '">' +
+        '<div class="ligneBtn"><button class="principal" onclick="enregistrerEdt()">Enregistrer</button>' +
+        '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="edt=null;changerOnglet(\'edt\')">Voir l\'onglet EDT</button></div>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">' + (edtEnService()
+          ? "✅ L\'onglet 📅 EDT est ouvert aux élèves."
+          : "🕐 L\'onglet 📅 EDT s\'ouvrira aux élèves le <b>" + dateLongue(EDT_ACTIVATION) + "</b> (tu le vois déjà, eux pas encore).") + "</p></div>";
       const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
       h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Une liste d\'insultes et de gros mots est déjà bloquée automatiquement (accents, répétitions et déformations comprises). Ajoute ici tes mots interdits <b>en plus</b>, séparés par des virgules :</p>' +
@@ -538,6 +612,15 @@ async function enregistrerHoraires() {
   changerOnglet("classe");
 }
 
+async function enregistrerEdt() {
+  const url = document.getElementById("urlEdt").value.trim();
+  const rep = await api("reglerEdt", { url });
+  if (!rep.ok) { alert(rep.erreur || "Enregistrement impossible (backend à mettre à jour ?)."); return; }
+  if (infosClasse) infosClasse.edtUrl = url;
+  edt = null;                       // le prochain affichage relit l'agenda
+  alert("Emploi du temps enregistré." + (edtEnService() ? "" : " Il s'ouvrira aux élèves le " + dateLongue(EDT_ACTIVATION) + "."));
+}
+
 async function enregistrerMotsPerso() {
   const mots = document.getElementById("motsPerso").value.split(/[,\n;]/).map(s => s.trim()).filter(Boolean);
   const rep = await api("reglerMotsPerso", { motsPerso: mots });
@@ -548,6 +631,82 @@ async function enregistrerMotsPerso() {
 }
 
 // rendu du plan de classe publié (pseudonymisé, lecture seule)
+// ---------- emploi du temps ----------
+function isoDe(d) {
+  const p = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+}
+function isoAujourdhui() { return isoDe(new Date()); }
+function dateDeIso(iso) { return new Date(iso + "T00:00"); }
+function libelleJour(iso) {
+  const t = dateDeIso(iso).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+function dateLongue(iso) {
+  const t = dateDeIso(iso).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+/** L'onglet n'est ouvert aux élèves qu'à partir de la date d'activation programmée. */
+function edtEnService() { return isoAujourdhui() >= EDT_ACTIVATION; }
+
+function edtBientot() {
+  return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>🕐 Onglet programmé</b>' +
+    '<p style="font-size:.8rem;margin-top:6px">L\'emploi du temps de la 4G s\'ouvre le <b>' + dateLongue(EDT_ACTIVATION) + '</b>, ' +
+    'quand l\'agenda de la classe est publié dans EcoleDirecte.</p></div>';
+}
+
+function rendreEdt() {
+  const lien = edt.url || EDT_LIEN_SECOURS;
+  const boutonLien = lien
+    ? '<div style="text-align:center"><a class="lienEdt" href="' + echap(lien) + '" target="_blank" rel="noopener">Ouvrir l\'emploi du temps</a></div>'
+    : "";
+
+  if (edt.mode === "obsolete")
+    return lien
+      ? '<div class="carte" style="text-align:center"><b>📅 Emploi du temps de la 4G</b>' +
+        '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Affichage détaillé indisponible (backend à mettre à jour).</p>' + boutonLien + "</div>"
+      : '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
+
+  if (edt.mode === "erreur")
+    return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>⚠️ Agenda momentanément illisible</b>' +
+      '<p style="font-size:.78rem;margin-top:6px">' + echap(edt.erreur || "") + "</p>" + boutonLien + "</div>";
+
+  if (edt.mode === "lien" || (edt.mode !== "ics" && lien))
+    return '<div class="carte" style="text-align:center"><b>📅 Emploi du temps de la 4G</b>' +
+      '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Il s\'ouvre dans EcoleDirecte (connexion avec ton compte).</p>' + boutonLien + "</div>";
+
+  const seances = (edt.evenements || []).slice();
+  if (!seances.length)
+    return '<div class="vide">Aucun emploi du temps publié pour le moment.' +
+      (session.role === "prof" ? '<br><span style="font-size:.78rem">Onglet <b>📋 Classe</b> → « Emploi du temps de la classe » pour coller l\'adresse de l\'agenda.</span>' : "") + "</div>";
+
+  const jours = [...new Set(seances.map(s => s.jour))].sort();
+  if (!edtJour || jours.indexOf(edtJour) === -1)
+    edtJour = jours.find(j => j >= isoAujourdhui()) || jours[jours.length - 1];
+
+  let h = '<div class="edtJours">' + jours.map(j =>
+    '<button class="' + (j === edtJour ? "actif" : "") + '" onclick="edtJour=\'' + j + '\';dessiner()">' +
+    libelleJour(j) + (j === isoAujourdhui() ? " •" : "") + "</button>").join("") + "</div>";
+
+  const dujour = seances.filter(s => s.jour === edtJour);
+  const maintenant = edtJour === isoAujourdhui()
+    ? String(new Date().getHours()).padStart(2, "0") + ":" + String(new Date().getMinutes()).padStart(2, "0") : "";
+  h += '<div class="carte"><b>' + dateLongue(edtJour) + "</b>";
+  h += dujour.map(s => {
+    const encours = maintenant && s.debut && s.fin && s.debut <= maintenant && maintenant < s.fin;
+    return '<div class="seance' + (encours ? " encours" : "") + '">' +
+      '<div class="heure">' + (s.journee ? "jour" : echap(s.debut) + "<br>" + echap(s.fin)) + "</div>" +
+      "<div><div class=\"titre\">" + echap(s.titre) + "</div>" +
+      (s.salle ? '<div class="salle">📍 ' + echap(s.salle) + "</div>" : "") + "</div></div>";
+  }).join("") || '<p style="font-size:.82rem;color:#7b8794;margin-top:8px">Pas de cours ce jour-là.</p>';
+  h += "</div>";
+
+  if (lien) h += '<div style="text-align:center"><a class="lienEdt" href="' + echap(lien) + '" target="_blank" rel="noopener">Ouvrir dans EcoleDirecte</a></div>';
+  h += '<div class="majEdt">Source : agenda EcoleDirecte de la classe' + (edt.maj ? " — actualisé " + quand(edt.maj) : "") +
+    ' · <a href="#" onclick="edt=null;changerOnglet(\'edt\');return false">🔄 rafraîchir</a></div>';
+  return h;
+}
+
 function rendrePlan(brut) {
   let plan;
   try { plan = JSON.parse(brut); } catch (e) { return '<div class="vide">Plan illisible.</div>'; }

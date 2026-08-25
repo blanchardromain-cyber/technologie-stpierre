@@ -3,6 +3,10 @@
  * Onglets : Codes, Messages, Signalements + (v2) Infos, Divers.
  * Nouveautés v2 : horaires d'ouverture (blocage élèves hors plage), casier + référents
  * absence par élève, plan de classe publié (pseudonymisé).
+ * Nouveauté v2.5 : emploi du temps de la classe — l'URL de l'agenda EcoleDirecte est réglée
+ * par le prof (onglet Classe) ; si c'est un flux .ics, le serveur le lit et le décode ici
+ * (le navigateur des élèves ne peut pas le faire : CORS). Résultat mis en cache 30 min.
+ * ⚠️ Le fuseau du projet Apps Script doit être « Europe/Paris » (Projet > Paramètres).
  * MISE À JOUR d'un déploiement existant : coller ce code, exécuter initialiser() une fois,
  * puis Déployer > Gérer les déploiements > ✏️ > Nouvelle version (l'URL ne change pas).
  */
@@ -56,6 +60,7 @@ function initialiser() {
     d.appendRow(["motsPerso", ""]);
     d.appendRow(["planClasse", ""]);
     d.appendRow(["planningMenage", ""]);
+    d.appendRow(["edtUrl", ""]);
   }
   // Colonne des valeurs en TEXTE : empêche Sheets de convertir « 07:30 » en date (bug « samedi »).
   feuille(NOM_FEUILLE_DIVERS).getRange("B:B").setNumberFormat("@");
@@ -177,7 +182,7 @@ function traiter(d, u) {
       case "majInfos": return majInfos(d, u);
       case "listeInfos":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
-        return { ok: true, infos: lireInfos(), horaires: horairesActuels() };
+        return { ok: true, infos: lireInfos(), horaires: horairesActuels(), edtUrl: lireDivers("edtUrl") };
       case "reglerHoraires":
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         ecrireDivers("ouverture", String(d.ouverture || "").slice(0, 5));
@@ -204,6 +209,11 @@ function traiter(d, u) {
         return { ok: true };
       case "lireMenage":
         return { ok: true, planning: lireDivers("planningMenage") };
+      case "reglerEdt":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        return reglerEdt(d);
+      case "lireEdt":
+        return lireEdt();
       default: return { ok: false, erreur: "Action inconnue." };
     }
   } finally {
@@ -349,6 +359,153 @@ function signaler(d, u) {
     }
   }
   return { ok: false, erreur: "Message introuvable." };
+}
+
+// ---------- Emploi du temps de la classe (agenda EcoleDirecte) ----------
+// Deux cas d'URL :
+//   • flux iCalendar (.ics / ical) : lu et décodé ici, les élèves voient la grille dans le Hub ;
+//   • lien web classique : le Hub affiche simplement un bouton « Ouvrir l'emploi du temps ».
+var EDT_CACHE_SECONDES = 1800;   // 30 min : l'emploi du temps ne bouge pas toutes les minutes
+var EDT_JOURS_AVANT = 7;         // fenêtre renvoyée au Hub : semaine écoulée…
+var EDT_JOURS_APRES = 28;        // …et 4 semaines à venir
+
+function estFluxIcs(url) {
+  var u = String(url).toLowerCase();
+  return /\.ics(\?|#|$)/.test(u) || u.indexOf("ical") !== -1 || u.indexOf("format=ics") !== -1;
+}
+
+function reglerEdt(d) {
+  var url = String(d.url || "").trim().slice(0, 500);
+  if (url && !/^https?:\/\//i.test(url))
+    return { ok: false, erreur: "L'adresse doit commencer par https://" };
+  ecrireDivers("edtUrl", url);
+  CacheService.getScriptCache().remove("edt");   // l'ancien agenda ne doit pas survivre au changement
+  return { ok: true };
+}
+
+function lireEdt() {
+  var url = lireDivers("edtUrl");
+  if (!url) return { ok: true, url: "", mode: "vide", evenements: [] };
+  if (!estFluxIcs(url)) return { ok: true, url: url, mode: "lien", evenements: [] };
+
+  var cache = CacheService.getScriptCache();
+  var enCache = cache.get("edt");
+  if (enCache) {
+    var prec = JSON.parse(enCache);
+    if (prec.url === url) return prec;
+  }
+
+  var reponse;
+  try {
+    var http = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
+    if (http.getResponseCode() >= 400)
+      return { ok: true, url: url, mode: "erreur", evenements: [],
+               erreur: "L'agenda a répondu " + http.getResponseCode() + " (lien expiré ou privé ?)." };
+    reponse = { ok: true, url: url, mode: "ics", maj: Date.now(), evenements: analyserIcs(http.getContentText()) };
+  } catch (err) {
+    return { ok: true, url: url, mode: "erreur", evenements: [],
+             erreur: "Agenda injoignable : " + (err && err.message ? err.message : err) };
+  }
+  var serialise = JSON.stringify(reponse);
+  if (serialise.length < 90000) cache.put("edt", serialise, EDT_CACHE_SECONDES);  // limite CacheService
+  return reponse;
+}
+
+/** Décode un fichier iCalendar en séances normalisées {jour, debut, fin, titre, salle, journee}. */
+function analyserIcs(texte) {
+  var lignes = String(texte).replace(/\r\n/g, "\n").replace(/\n[ \t]/g, "").split("\n"); // dépliage RFC 5545
+  var bruts = [], courant = null;
+  for (var i = 0; i < lignes.length; i++) {
+    var ligne = lignes[i];
+    if (ligne.indexOf("BEGIN:VEVENT") === 0) { courant = { exclus: [] }; continue; }
+    if (ligne.indexOf("END:VEVENT") === 0) { if (courant && courant.debut) bruts.push(courant); courant = null; continue; }
+    if (!courant) continue;
+    var sep = ligne.indexOf(":");
+    if (sep === -1) continue;
+    var entete = ligne.slice(0, sep), valeur = ligne.slice(sep + 1);
+    var cle = entete.split(";")[0].toUpperCase();
+    if (cle === "DTSTART") { courant.debut = dateIcs(valeur); courant.journee = /VALUE=DATE(;|:|$)/i.test(entete) || valeur.length === 8; }
+    else if (cle === "DTEND") courant.fin = dateIcs(valeur);
+    else if (cle === "SUMMARY") courant.titre = detexteIcs(valeur);
+    else if (cle === "LOCATION") courant.salle = detexteIcs(valeur);
+    else if (cle === "RRULE") courant.rrule = valeur;
+    else if (cle === "EXDATE") valeur.split(",").forEach(function (v) {
+      var d = dateIcs(v); if (d) courant.exclus.push(Utilities.formatDate(d, fuseau(), "yyyy-MM-dd"));
+    });
+  }
+
+  var min = new Date(); min.setHours(0, 0, 0, 0); min.setDate(min.getDate() - EDT_JOURS_AVANT);
+  var max = new Date(); max.setHours(23, 59, 59, 999); max.setDate(max.getDate() + EDT_JOURS_APRES);
+
+  var seances = [];
+  bruts.forEach(function (ev) {
+    var duree = (ev.fin && ev.debut) ? (ev.fin.getTime() - ev.debut.getTime()) : 3600000;
+    developperIcs(ev, min, max).forEach(function (debut) {
+      var jour = Utilities.formatDate(debut, fuseau(), "yyyy-MM-dd");
+      if (ev.exclus.indexOf(jour) !== -1) return;
+      var fin = new Date(debut.getTime() + duree);
+      seances.push({
+        jour: jour,
+        debut: ev.journee ? "" : Utilities.formatDate(debut, fuseau(), "HH:mm"),
+        fin: ev.journee ? "" : Utilities.formatDate(fin, fuseau(), "HH:mm"),
+        titre: String(ev.titre || "Cours").slice(0, 120),
+        salle: String(ev.salle || "").slice(0, 60),
+        journee: !!ev.journee
+      });
+    });
+  });
+  seances.sort(function (a, b) { return a.jour === b.jour ? a.debut.localeCompare(b.debut) : a.jour.localeCompare(b.jour); });
+  return seances.slice(0, 400);
+}
+
+/** Occurrences d'un VEVENT dans la fenêtre. Récurrences gérées : FREQ=DAILY/WEEKLY (+INTERVAL, BYDAY, COUNT, UNTIL). */
+function developperIcs(ev, min, max) {
+  if (!ev.rrule) return (ev.debut >= min && ev.debut <= max) ? [ev.debut] : [];
+  var regles = {};
+  ev.rrule.split(";").forEach(function (p) { var kv = p.split("="); regles[kv[0].toUpperCase()] = kv[1]; });
+  var freq = String(regles.FREQ || "").toUpperCase();
+  if (freq !== "WEEKLY" && freq !== "DAILY") return (ev.debut >= min && ev.debut <= max) ? [ev.debut] : [];
+  var intervalle = parseInt(regles.INTERVAL || "1", 10) || 1;
+  var jusqua = regles.UNTIL ? dateIcs(regles.UNTIL) : null;
+  var total = regles.COUNT ? parseInt(regles.COUNT, 10) : 0;
+  var codes = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+  var byday = regles.BYDAY ? regles.BYDAY.split(",").map(function (s) { return s.slice(-2).toUpperCase(); }) : null;
+
+  var occurrences = [], compte = 0, curseur = new Date(ev.debut), depart = new Date(ev.debut);
+  depart.setHours(0, 0, 0, 0);
+  for (var garde = 0; garde < 800; garde++) {
+    if (jusqua && curseur > jusqua) break;
+    if (total && compte >= total) break;
+    if (curseur > max) break;
+    var jourZero = new Date(curseur); jourZero.setHours(0, 0, 0, 0);
+    var ecart = Math.round((jourZero - depart) / 86400000);
+    var retenu = freq === "DAILY"
+      ? ecart % intervalle === 0
+      : (Math.floor(ecart / 7) % intervalle === 0) && (byday ? byday.indexOf(codes[curseur.getDay()]) !== -1 : curseur.getDay() === ev.debut.getDay());
+    if (retenu) {
+      compte++;
+      if (curseur >= min) occurrences.push(new Date(curseur));
+    }
+    curseur.setDate(curseur.getDate() + 1);
+  }
+  return occurrences;
+}
+
+/** « 20260901T080000Z », « 20260901T080000 » ou « 20260901 » -> Date. */
+function dateIcs(valeur) {
+  var m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})(Z)?)?$/.exec(String(valeur).trim());
+  if (!m) return null;
+  var an = +m[1], mois = +m[2] - 1, jour = +m[3], h = +(m[4] || 0), mn = +(m[5] || 0), s = +(m[6] || 0);
+  if (m[7]) return new Date(Date.UTC(an, mois, jour, h, mn, s));   // UTC explicite
+  return new Date(an, mois, jour, h, mn, s);                        // heure locale (TZID ou flottante)
+}
+
+function detexteIcs(valeur) {
+  return String(valeur).replace(/\\n/gi, " ").replace(/\\,/g, ",").replace(/\;/g, ";").replace(/\\\\/g, "\\").trim();
+}
+
+function fuseau() {
+  return Session.getScriptTimeZone();
 }
 
 function feuille(nom) {
