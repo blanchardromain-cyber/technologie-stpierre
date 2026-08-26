@@ -375,7 +375,7 @@ function afficher() {
       if (derriere.includes(idx)) div.classList.add("derriere-tag");
       if (enConflit.includes(p.id)) div.classList.add("conflit");
       let interieur = "";
-      if (avecPhotos) interieur += '<img class="photo" src="' + PP4G.photoUrl(e.nom, e.prenom) + '" onerror="this.style.display=\'none\'">';
+      if (avecPhotos) interieur += '<img class="photo" src="' + PP4G.photoUrl(e.nom, e.prenom) + '" onerror="if(!PP4G.essayerExtension(this)) this.style.display=\'none\'">';
       interieur += '<span class="prenom">' + e.prenom + '</span><span class="nom">' + e.nom + "</span>";
       div.innerHTML += interieur;
       div.draggable = true;

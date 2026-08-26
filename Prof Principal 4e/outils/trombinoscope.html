@@ -55,7 +55,7 @@ if (window.DONNEES_4G) {
     v.className = "vignette";
     const initiales = e.prenom[0] + e.nom[0];
     v.innerHTML = '<div class="cadre"><img src="' + PP4G.photoUrl(e.nom, e.prenom) + '" ' +
-      'onerror="this.parentNode.innerHTML=\'<span class=&quot;initiales&quot;>' + initiales + '</span>\'"></div>' +
+      'onerror="if(!PP4G.essayerExtension(this)) this.parentNode.innerHTML=\'<span class=&quot;initiales&quot;>' + initiales + '</span>\'"></div>' +
       '<div class="etiquette">' + e.nom + "<small>" + e.prenom + "</small></div>";
     grille.appendChild(v);
   });

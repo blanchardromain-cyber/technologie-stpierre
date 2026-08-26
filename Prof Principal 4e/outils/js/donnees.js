@@ -118,11 +118,41 @@ window.PP4G = (function () {
     return readyPromise;
   }
 
+  var EXTENSIONS_PHOTO = ["jpg", "jpeg", "JPG", "JPEG", "png", "PNG"];
+
   function photoUrl(nom, prenom) {
     var cle = nom + " " + prenom;
-    if (source === "idb") return photoBlobUrls[cle] || "";
+    if (source === "idb") {
+      if (photoBlobUrls[cle]) return photoBlobUrls[cle];
+      // Repli insensible à la casse/espaces : rattrape un fichier importé "Dupont Jean.jpg"
+      // alors que la fiche élève attend "DUPONT Jean" (nom toujours en majuscules côté données).
+      var norm = cle.trim().toLowerCase();
+      for (var k in photoBlobUrls) {
+        if (k.trim().toLowerCase() === norm) return photoBlobUrls[k];
+      }
+      return "";
+    }
     // Mode PC : chemin identique à celui qu'utilisaient les outils historiquement.
-    return "../donnees/photos/" + encodeURIComponent(cle) + ".jpg";
+    // essayerExtension() tente ensuite jpeg/png si le .jpg initial est introuvable (onerror).
+    return "../donnees/photos/" + encodeURIComponent(cle) + "." + EXTENSIONS_PHOTO[0];
+  }
+
+  // Repli d'extension pour le mode PC (chemin fichier) : appelé depuis le onerror d'un <img>
+  // dont le src vient de photoUrl(). Retourne true si un nouvel essai vient d'être lancé (un
+  // autre événement onerror suivra), false si toutes les extensions ont été tentées (repli
+  // final à la charge de l'appelant). Sans effet en mode idb (URL blob, rien à deviner).
+  function essayerExtension(img) {
+    if (source === "idb") return false;
+    var i = +(img.getAttribute("data-photo-i") || 0) + 1;
+    if (i >= EXTENSIONS_PHOTO.length) return false;
+    var base = img.getAttribute("data-photo-base");
+    if (base === null) {
+      base = img.src.replace(/\.[A-Za-z0-9]+$/, "");
+      img.setAttribute("data-photo-base", base);
+    }
+    img.setAttribute("data-photo-i", i);
+    img.src = base + "." + EXTENSIONS_PHOTO[i];
+    return true;
   }
 
   // ---------- écriture (étape N2 : import/export) ----------
@@ -238,6 +268,7 @@ window.PP4G = (function () {
   return {
     ready: ready,
     photoUrl: photoUrl,
+    essayerExtension: essayerExtension,
     importerClasse: importerClasse,
     importerPhoto: importerPhoto,
     listerClasses: listerClasses,
