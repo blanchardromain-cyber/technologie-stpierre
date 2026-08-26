@@ -30,6 +30,39 @@ Tant que `BACKEND_URL` est vide dans `index.html`, la page tourne en **MODE DÉM
 3. Distribuer les cartes individuelles : imprimer `../donnees/cartes-codes-4G.html` et découper.
 4. Séance HVC « charte de communication » avant l'ouverture aux élèves.
 
+## 4. Emploi du temps de la classe (onglet 📅 EDT) — mise en service le **mardi 1er septembre 2026**
+
+L'onglet est déjà en place mais **programmé** : `const EDT_ACTIVATION = "2026-09-01"` dans `index.html`.
+Avant cette date, seuls les profs le voient (bandeau « onglet programmé ») ; le 1er septembre il
+apparaît automatiquement pour les élèves, sans rien modifier.
+
+**Le jour J, une seule manipulation :**
+
+1. Dans **EcoleDirecte**, ouvrir l'agenda de la 4G → *Exporter / S'abonner à l'agenda* → copier l'adresse.
+2. Dans le Hub, se connecter avec le code `PROF-…` → onglet **📋 Classe** → carte
+   **📅 Emploi du temps de la classe** → coller l'adresse → **Enregistrer**.
+3. Vérifier avec **Voir l'onglet EDT** (puis avec un code élève).
+
+**Deux types d'adresse acceptés :**
+
+| Adresse fournie par EcoleDirecte | Ce que voient les élèves |
+| --- | --- |
+| flux **iCalendar** (`.ics`, « ical », `format=ics`) | la **grille des cours** dans le Hub (jour par jour, salle, cours en cours surligné) |
+| **lien web** classique | un bouton « Ouvrir l'emploi du temps » (ED demandera leur connexion) |
+
+**Prérequis backend** (sinon l'onglet affiche « backend à mettre à jour ») :
+
+- recoller `apps-script/Code.gs`, exécuter `initialiser()`, puis « Gérer les déploiements → Nouvelle version » ;
+- **Projet Apps Script → Paramètres → fuseau horaire = `Europe/Paris`** (sinon les heures de cours sont décalées) ;
+- le flux `.ics` est lu **par le serveur** (le navigateur des élèves ne le peut pas : CORS) et mis en cache 30 min —
+  une modification d'emploi du temps peut donc mettre jusqu'à une demi-heure à apparaître (le lien
+  « 🔄 rafraîchir » de l'onglet ne contourne pas ce cache, il relit la réponse du serveur).
+- si l'adresse `.ics` d'ED contient un jeton personnel, elle reste **dans le Sheet privé** : les élèves ne la voient
+  jamais, seule la grille décodée leur est envoyée. Un lien web simple, lui, est affiché tel quel.
+
+Repli si le backend n'est pas à jour le jour J : renseigner `const EDT_LIEN_SECOURS = "https://…"`
+dans `index.html` (lien web vers l'agenda) — l'onglet affichera au moins le bouton d'ouverture.
+
 ## Rappels sécurité / RGPD
 
 - Le dossier `donnees/` (codes ↔ noms complets) ne part **jamais** en ligne (gitignore).

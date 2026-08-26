@@ -217,8 +217,24 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - **`TRANSMISSION.md`** créé (racine `Prof Principal 4e/`) : reprise de session complète —
     projet, existant, travaux de la conversation, 8 actions en attente, pièges rencontrés,
     règles de travail (2 copies 🟥, `CACHE_VERSION`, D5, priorité des appréciations), repères techniques.
+- **Étape 25** ✅ (2026-08-25) — **Hub : onglet 📅 EDT (emploi du temps de la classe), programmé au 1er septembre** :
+  - Nouvel onglet **📅 EDT** dans le Hub, alimenté par l'**agenda EcoleDirecte de la 4G**. L'adresse se règle
+    dans l'onglet **📋 Classe** (prof) → « Emploi du temps de la classe » ; elle est stockée dans Divers > `edtUrl`.
+  - Deux cas gérés : **flux `.ics`** → le backend le télécharge, le décode (dépliage RFC 5545, `RRULE`
+    hebdo/quotidienne, `EXDATE`, journées entières, dates UTC ou TZID) et le Hub affiche la **grille jour par jour**
+    (bandeau de jours défilant, cours en cours surligné) ; **lien web simple** → bouton « Ouvrir l'emploi du temps ».
+    Le décodage est fait **côté serveur** car le navigateur des élèves ne peut pas lire un `.ics` d'un autre domaine (CORS).
+    Résultat mis en cache **30 min**, fenêtre J-7 → J+28.
+  - **Programmation** : `EDT_ACTIVATION = "2026-09-01"` dans `index.html` — l'onglet est **invisible pour les élèves**
+    avant cette date (le prof le voit dès maintenant, avec un bandeau « onglet programmé », pour préparer le réglage).
+    Aucune autre action que le collage de l'URL n'est nécessaire le jour J.
+  - ⚠️ Backend Hub à redéployer (actions `reglerEdt`/`lireEdt`) + **fuseau du projet Apps Script = Europe/Paris**.
+    Sans redéploiement, l'onglet retombe sur le lien de secours `EDT_LIEN_SECOURS` s'il est renseigné.
+  - Vérifié en navigateur (mode démo, 390 px) : onglet caché côté élève avant le 1er septembre, visible après,
+    grille + navigation entre jours, mode « lien simple », carte de réglage prof, 0 erreur console.
+    Décodeur `.ics` testé à part (récurrence hebdo, EXDATE, journée entière, UTC).
 - **À construire plus tard** — **CR de réunion à partir d'un enregistrement audio** (2A) : faisable = audio → transcription (dictée téléphone / Google Recorder / dictée Word, *hors Claude*) → Claude en fait le CR Word. **Prérequis RGPD : informer et recueillir le consentement des participants avant tout enregistrement.**
-- **Étapes suivantes** — redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · CR réunion audio (plus tard).
+- **Étapes suivantes** — **mardi 1er septembre : coller l'adresse de l'agenda EcoleDirecte de la 4G** dans le Hub (onglet 📋 Classe) · redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · CR réunion audio (plus tard).
 
 ### Fondation de données (posée le 2026-07-03)
 - `Prof Principal 4e/donnees/eleves-4G.json` — source canonique (élèves + tags + profs + e-mails).
