@@ -50,13 +50,13 @@ Clique en **B2** et tape la 1re formule, puis **C2**, **D2**… (une par colonne
 =COUNTIFS(Remarques!$C:$C;$A2;Remarques!$F:$F;"Attitude au collège")
 ```
 ```
-=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">="&DATE(2026;9;1);Remarques!$D:$D;"<="&DATE(2026;11;30))
+=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">="&DATE(2026;9;1);Remarques!$D:$D;"<="&DATE(2026;11;20))
 ```
 ```
-=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">"&DATE(2026;11;30);Remarques!$D:$D;"<="&DATE(2027;3;10))
+=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">"&DATE(2026;11;20);Remarques!$D:$D;"<="&DATE(2027;2;19))
 ```
 ```
-=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">"&DATE(2027;3;10))
+=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">"&DATE(2027;2;19))
 ```
 
 ### Étape 5 — étendre vers le bas
@@ -77,7 +77,7 @@ Sélectionne **E2:G35** → menu **Format → Mise en forme conditionnelle** →
    (classeur en français). Si ton classeur est en anglais, remplace **tous les `;` par des `,`**.
 3. **Les colonnes T1/T2/T3 renvoient 0** → la colonne `Remarques!D` contient du texte et non des
    dates. Sélectionne la colonne D → **Format → Nombre → Date**. Sinon, utilise la variante texte :
-   `=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">=2026-09-01";Remarques!$D:$D;"<=2026-11-30")`
+   `=COUNTIFS(Remarques!$C:$C;$A2;Remarques!$D:$D;">=2026-09-01";Remarques!$D:$D;"<=2026-11-20")`
 
 > Repère des colonnes de l'onglet `Remarques` (ne pas les déplacer) :
 > **A** id · **B** ts · **C** élève · **D** date · **E** matière · **F** catégorie · **G** précision · **H** parents

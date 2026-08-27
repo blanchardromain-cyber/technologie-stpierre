@@ -29,8 +29,12 @@ function initialiser() {
     cfg.appendRow(["emailProf", "blanchard.romain@stpierre85.com"]);
     cfg.appendRow(["emailsEquipe", "adresse1@stpierre85.com, adresse2@stpierre85.com"]);
   }
-  if (!config("finT1")) feuille(F_CONFIG).appendRow(["finT1", "2026-11-30"]);
-  if (!config("finT2")) feuille(F_CONFIG).appendRow(["finT2", "2027-03-10"]);
+  // Bornes de trimestre = dates d'arrêt des notes (fournies par le prof le 2026-07-21).
+  // ⚠️ Si le Carnet a DÉJÀ été initialisé, ces lignes ne réécrivent pas les valeurs existantes :
+  // corriger alors les cellules finT1/finT2 à la main dans l'onglet Config.
+  if (!config("finT1")) feuille(F_CONFIG).appendRow(["finT1", "2026-11-20"]);
+  if (!config("finT2")) feuille(F_CONFIG).appendRow(["finT2", "2027-02-19"]);
+  if (!config("finT3")) feuille(F_CONFIG).appendRow(["finT3", "2027-06-11"]);
 }
 
 function doPost(e) {

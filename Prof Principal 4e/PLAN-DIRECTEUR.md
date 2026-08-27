@@ -233,6 +233,10 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
   - Vérifié en navigateur (mode démo, 390 px) : onglet caché côté élève avant le 1er septembre, visible après,
     grille + navigation entre jours, mode « lien simple », carte de réglage prof, 0 erreur console.
     Décodeur `.ics` testé à part (récurrence hebdo, EXDATE, journée entière, UTC).
+- **Étape 26** ✅ (2026-07-21) — **Dates officielles de l'année intégrées** :
+  - **Arrêt des notes / bornes de trimestre** (fournies par le prof) : T1 **20/11/2026**, T2 **19/02/2027**, T3 **11/06/2027** (au lieu de 30/11 et 10/03 provisoires). Mis à jour : Carnet backend (`finT1`/`finT2` + ajout `finT3`) et frontend (défauts + démo), `TABLEAU-DE-BORD.md` (bornes COUNTIFS T1/T2/T3), `PROGRAMME-HVC.md` (séances « préparer/retour conseil » recalées — le conseil T2 tombe **après** les vacances d'hiver, ~09/03).
+    ⚠️ **Si le Carnet est déjà déployé** : corriger à la main les cellules `finT1`/`finT2` de l'onglet Config (l'`initialiser` ne réécrit pas une valeur existante), puis redéployer.
+  - **Réunion de rentrée parents : lundi 14 septembre 2026 à 18 h 30** — ajoutée à la diapo d'accueil du diaporama et notée au programme HVC. **Diaporama finalisé** : calendrier avec les vraies dates d'arrêt des notes + conseils + remise des bulletins (vérifié, 10 diapos, équipe chargée).
 - **À construire plus tard** — **CR de réunion à partir d'un enregistrement audio** (2A) : faisable = audio → transcription (dictée téléphone / Google Recorder / dictée Word, *hors Claude*) → Claude en fait le CR Word. **Prérequis RGPD : informer et recueillir le consentement des participants avant tout enregistrement.**
 - **Étapes suivantes** — **mardi 1er septembre : coller l'adresse de l'agenda EcoleDirecte de la 4G** dans le Hub (onglet 📋 Classe) · redéployer les backends Hub et Carnet (+ `initialiser()`) · renseigner Config emailsEquipe (Carnet) · feu vert chef avant usage élèves réel · **photos élèves : vers le 15-20 septembre** · listes des autres classes de techno (importables) · CR réunion audio (plus tard).
 
