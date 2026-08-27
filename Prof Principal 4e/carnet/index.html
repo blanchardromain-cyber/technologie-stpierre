@@ -71,7 +71,7 @@ const JOURS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 const CRENEAUX = ["Récréation du matin (10h30)", "Temps du midi (13h30)", "Récréation de l'après-midi (14h45)"];
 const MODE_DEMO = !BACKEND_URL || new URLSearchParams(location.search).has("demo");
 let session = null;
-let donnees = { remarques: [], rdvs: [], config: { finT1: "2026-11-30", finT2: "2027-03-10" } };
+let donnees = { remarques: [], rdvs: [], config: { finT1: "2026-11-20", finT2: "2027-02-19" } };
 let trimestreActif = null; // onglet T1/T2/T3 sélectionné
 let filtreJournal = { eleve: "", matiere: "", categorie: "", texte: "" };
 let triJournal = { col: "date", sens: -1 }; // -1 = décroissant, 1 = croissant
@@ -119,7 +119,7 @@ function apiDemo(action, d) {
   if (action === "liste") {
     const filtre = x => session.role === "prof" || x.pseudo === session.pseudo;
     return fini({ ok: true, remarques: bdd.remarques.filter(filtre).map(avecTrimestre), rdvs: bdd.rdvs.filter(filtre),
-      config: { finT1: "2026-11-30", finT2: "2027-03-10" } });
+      config: { finT1: "2026-11-20", finT2: "2027-02-19" } });
   }
   if (action === "ajouter") {
     bdd.remarques.push({ id: "r" + Date.now(), ts: Date.now(), pseudo: session.pseudo, date: d.date, matiere: d.matiere, categorie: d.categorie, precision: d.precision, parents: d.parents });
