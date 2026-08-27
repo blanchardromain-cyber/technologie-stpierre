@@ -77,7 +77,7 @@ var ECHELLES = [
  */
 var T = {
   eleve:      "Qui es-tu ?",
-  surnom:     "Comment préfères-tu qu'on t'appelle ?",
+  surnom:     "Prénom d'usage (si différent de ton prénom officiel)",
   fratrie:    "Ta place dans la fratrie",
   activites:  "Tes activités régulières",
   heuresAct:  "Au total, combien d'heures par semaine consacres-tu à ces activités ?",
@@ -135,7 +135,7 @@ function creerQuiz() {
 
   form.addTextItem()
       .setTitle(T.surnom)
-      .setHelpText("Prénom d'usage, diminutif… Laisse vide si ton prénom te va très bien.")
+      .setHelpText("Diminutif, autre prénom… Laisse vide si ton prénom officiel te va très bien.")
       .setRequired(false);
 
   form.addMultipleChoiceItem()

@@ -52,7 +52,7 @@ Compte environ 10 minutes. »*
 ### Section 1 — Qui es-tu ?
 1. **Nom et prénom** · *Liste déroulante* avec les 26 élèves — **obligatoire**
    *(liste déroulante et non texte libre : zéro faute de frappe, donc les formules de la fiche marchent toujours)*
-2. **Comment préfères-tu qu'on t'appelle ?** · Texte court · facultatif
+2. **Prénom d'usage (si différent de ton prénom officiel)** · Texte court · facultatif
 3. **Ta place dans la fratrie** · Choix : `Enfant unique` / `Aîné(e)` / `Du milieu` / `Cadet(te)` · facultatif
 
 ### Section 2 — Ta vie en dehors du collège
@@ -118,7 +118,7 @@ Le script `apps-script/2-Exploitation.gs` construit **trois onglets** par-dessus
 
 ### 4.1 `Fiche élève` — un menu déroulant, tout s'affiche
 Aucun onglet par élève à maintenir. Tu choisis un nom en **B2**, et la fiche entière suit :
-surnom souhaité, fratrie, activités, rythme de vie, méthode de travail, matières, avenir, message
+prénom d'usage, fratrie, activités, rythme de vie, méthode de travail, matières, avenir, message
 libre. Les 8 échelles sont affichées **en jauge** (`████░`) avec un dégradé rouge → ambre → vert,
 et la moyenne de l'élève est comparée à celle de la classe.
 
