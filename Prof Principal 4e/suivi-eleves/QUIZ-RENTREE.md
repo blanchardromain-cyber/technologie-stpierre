@@ -89,17 +89,19 @@ Compte environ 10 minutes. »*
 14. **Après la 3e, tu penses plutôt à…** · Choix :
     `Seconde générale et technologique` / `Seconde professionnelle` / `CAP` / `Apprentissage` / `Je ne sais pas encore`
 15. **À quel point es-tu sûr(e) de ce choix ?** · Échelle 1 → 5
-16. **Un métier ou un domaine qui t'attire ?** · Texte court · facultatif
-17. **Pourquoi celui-là ?** · Paragraphe · facultatif
-18. **Sais-tu quelles études il faut faire pour y arriver ?** · Choix : `Oui, précisément` / `Vaguement` / `Pas du tout`
-19. **Sur quoi aimerais-tu être informé(e) cette année ?** · Cases
+16. **Connais-tu les classes de 3e Prépa-Métiers ou de 3e en MFR (Maison Familiale Rurale) ?** · Choix : `Oui, et ça m'intéresserait` / `Oui, mais ça ne m'intéresse pas` / `Non, je ne connaissais pas` / `Je ne sais pas encore` · facultatif
+    *(parcours qui existent en plus de la 3e classique au collège — repère tôt, sans stigmatiser, les élèves à qui en parler en priorité)*
+17. **Un métier ou un domaine qui t'attire ?** · Texte court · facultatif
+18. **Pourquoi celui-là ?** · Paragraphe · facultatif
+19. **Sais-tu quelles études il faut faire pour y arriver ?** · Choix : `Oui, précisément` / `Vaguement` / `Pas du tout`
+20. **Sur quoi aimerais-tu être informé(e) cette année ?** · Cases
     `Les métiers` · `Les filières après la 3e` · `Le stage de 3e` · `Les portes ouvertes` ·
-    `Comment mieux m'organiser` · `Autre chose (je le dis en dessous)`
+    `Comment mieux m'organiser` · `Les parcours 3e Prépa-Métiers / 3e en MFR` · `Autre chose (je le dis en dessous)`
 
 ### Section 5 — Ce que tu veux me dire
-20. **Y a-t-il quelque chose que je devrais savoir pour bien t'accompagner ?** · Paragraphe · facultatif
+21. **Y a-t-il quelque chose que je devrais savoir pour bien t'accompagner ?** · Paragraphe · facultatif
     *(santé, aménagement, situation familiale, timidité… — « tu écris seulement si tu veux »)*
-21. **Un objectif personnel pour cette année** · Texte court · facultatif
+22. **Un objectif personnel pour cette année** · Texte court · facultatif
 
 ---
 
@@ -179,6 +181,7 @@ Deux malentendus fréquents que ce diagnostic dissipe :
 | Ce qui aide à comprendre, besoin de calme | **Plan de classe** : placement, binômes de tutorat |
 | Matières où l'élève a besoin d'aide | Repérer les binômes d'**entraide** (Hub) |
 | Orientation + certitude + besoins d'info | Contenu des **séances HVC 12, 15 et 20** (Parcours Avenir) |
+| Connaissance / intérêt pour la 3e Prépa-Métiers ou la 3e en MFR | Repérer tôt qui informer en priorité sur ces parcours (entretien individuel, sans attendre le conseil de fin d'année) |
 | Échelles confiance / oral / bien-être | Attention particulière ; comparaison si tu reposes le quiz en juin |
 | Message libre | À lire **le soir même** : c'est là que se disent les choses importantes |
 | Objectif personnel | À reprendre en entretien et en **appréciation** (touche personnelle, en complément) |
