@@ -96,21 +96,43 @@ window.PP4G = (function () {
             classes.forEach(function (c) { if (c && c.classe) window.CLASSES[c.classe] = c; });
             window.DONNEES_4G = window.CLASSES["4G"] || classes[0];
           }
-          return lireTout(db, "photos");
-        })
-        .then(function (photos) {
-          (photos || []).forEach(function (p) {
-            if (p.value instanceof Blob) photoBlobUrls[p.key] = URL.createObjectURL(p.value);
-          });
+          return chargerPhotosIdb();
         });
     });
   }
+
+  // (Re)construit la table des URLs blob depuis le magasin « photos ». Appelee au demarrage
+  // dans LES DEUX modes : sur PC aussi, une photo importee dans le navigateur doit primer sur
+  // le fichier du dossier donnees/photos/. Rappelee apres chaque import pour rafraichir.
+  function chargerPhotosIdb() {
+    return ouvrirBase().then(function (db) {
+      if (!db) return;
+      return lireTout(db, "photos").then(function (photos) {
+        Object.keys(photoBlobUrls).forEach(function (k) {
+          try { URL.revokeObjectURL(photoBlobUrls[k]); } catch (e) {}
+        });
+        photoBlobUrls = {};
+        (photos || []).forEach(function (p) {
+          if (p.value instanceof Blob) photoBlobUrls[p.key] = URL.createObjectURL(p.value);
+        });
+      });
+    });
+  }
+
+  // Nombre de photos memorisees dans le navigateur (0 = aucune, on retombe sur les fichiers).
+  function nbPhotos() { return Object.keys(photoBlobUrls).length; }
 
   function ready() {
     if (readyPromise) return readyPromise;
     readyPromise = new Promise(function (resolve) {
       // PC : les data-scripts ont déjà peuplé les globales → rien à faire.
-      if (window.CLASSES || window.DONNEES_4G) { source = "globals"; resolve(); return; }
+      if (window.CLASSES || window.DONNEES_4G) {
+        source = "globals";
+        // Les eleves viennent des data-scripts, mais les photos peuvent avoir ete importees
+        // dans le navigateur (magasin « photos ») : on les charge aussi, elles priment.
+        chargerPhotosIdb().then(resolve, resolve);
+        return;
+      }
       // PWA/mobile : lire IndexedDB (vide tant que l'import N2 n'a pas eu lieu).
       source = "idb";
       chargerDepuisIdb().then(resolve, resolve);
@@ -122,16 +144,16 @@ window.PP4G = (function () {
 
   function photoUrl(nom, prenom) {
     var cle = nom + " " + prenom;
-    if (source === "idb") {
-      if (photoBlobUrls[cle]) return photoBlobUrls[cle];
-      // Repli insensible à la casse/espaces : rattrape un fichier importé "Dupont Jean.jpg"
-      // alors que la fiche élève attend "DUPONT Jean" (nom toujours en majuscules côté données).
-      var norm = cle.trim().toLowerCase();
-      for (var k in photoBlobUrls) {
-        if (k.trim().toLowerCase() === norm) return photoBlobUrls[k];
-      }
-      return "";
+    // Une photo memorisee dans le navigateur prime toujours sur le fichier du dossier : c'est
+    // elle qui rend l'outil utilisable sans avoir a deposer des fichiers a la main.
+    if (photoBlobUrls[cle]) return photoBlobUrls[cle];
+    // Repli insensible à la casse/espaces : rattrape un fichier importé "Dupont Jean.jpg"
+    // alors que la fiche élève attend "DUPONT Jean" (nom toujours en majuscules côté données).
+    var norm = cle.trim().toLowerCase();
+    for (var k in photoBlobUrls) {
+      if (k.trim().toLowerCase() === norm) return photoBlobUrls[k];
     }
+    if (source === "idb") return "";
     // Mode PC : chemin identique à celui qu'utilisaient les outils historiquement.
     // essayerExtension() tente ensuite jpeg/png si le .jpg initial est introuvable (onerror).
     return "../donnees/photos/" + encodeURIComponent(cle) + "." + EXTENSIONS_PHOTO[0];
@@ -142,7 +164,8 @@ window.PP4G = (function () {
   // autre événement onerror suivra), false si toutes les extensions ont été tentées (repli
   // final à la charge de l'appelant). Sans effet en mode idb (URL blob, rien à deviner).
   function essayerExtension(img) {
-    if (source === "idb") return false;
+    // URL blob (photo memorisee) : il n'y a aucune extension a deviner.
+    if (source === "idb" || /^blob:/.test(img.src || "")) return false;
     var i = +(img.getAttribute("data-photo-i") || 0) + 1;
     if (i >= EXTENSIONS_PHOTO.length) return false;
     var base = img.getAttribute("data-photo-base");
@@ -195,6 +218,19 @@ window.PP4G = (function () {
         tx.onerror = function () { reject(tx.error); };
       });
     });
+  }
+
+  // Vide le magasin « photos » (les fichiers du dossier donnees/photos/ ne sont pas touches).
+  function effacerPhotos() {
+    return ouvrirBase().then(function (db) {
+      if (!db) throw new Error("IndexedDB indisponible sur ce navigateur.");
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction("photos", "readwrite");
+        tx.objectStore("photos").clear();
+        tx.oncomplete = function () { resolve(); };
+        tx.onerror = function () { reject(tx.error); };
+      });
+    }).then(chargerPhotosIdb);
   }
 
   function listerClasses() {
@@ -271,6 +307,9 @@ window.PP4G = (function () {
     essayerExtension: essayerExtension,
     importerClasse: importerClasse,
     importerPhoto: importerPhoto,
+    rechargerPhotos: chargerPhotosIdb,
+    effacerPhotos: effacerPhotos,
+    nbPhotos: nbPhotos,
     listerClasses: listerClasses,
     supprimerClasses: supprimerClasses,
     exporterTout: exporterTout,
