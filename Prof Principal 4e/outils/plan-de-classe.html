@@ -70,6 +70,9 @@
   <button id="btnImporterClasse" class="sec" title="CSV, Excel (.xlsx) ou JSON — Nom;Prénom;Sexe">➕ Importer une classe</button>
   <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Supprimer une ou plusieurs classes importées">🗑 Supprimer…</button>
   <input type="file" id="fichierClasse" accept=".csv,.txt,.json,.xlsx" style="display:none">
+  <button id="btnImporterPhotos" class="sec" title="Choisis les photos une fois : elles sont mémorisées dans ce navigateur et réutilisées à chaque ouverture">🖼 Importer les photos</button>
+  <span id="etatPhotos" style="font-size:.72rem;color:#7b8794"></span>
+  <input type="file" id="fichierPhotos" accept="image/*" multiple style="display:none">
   <div id="panneauClasses" style="display:none;flex-basis:100%;background:#fff7e6;border:1px solid #e0b84d;border-radius:8px;padding:8px 10px;margin-top:6px">
     <b style="font-size:.8rem">Classes importées à supprimer</b>
     <div style="font-size:.72rem;color:#7b8794">Coche une ou plusieurs classes. Les classes du dossier <code>donnees/</code> ne sont pas concernées.</div>
@@ -122,7 +125,7 @@
       <h2>Légende (écran seulement)</h2>
       <span style="font-size:.72rem">vert = dys · bleu = « devant » · violet = « derrière » · orange = sélection · rouge = conflit.<br>
       Échanger : clic puis clic (ou glisser-déposer).<br>
-      Photos : fichiers <code>donnees/photos/NOM Prénom.jpg</code>.</span>
+      Photos : bouton <b>🖼 Importer les photos</b> (mémorisées dans ce navigateur) ou fichiers <code>donnees/photos/NOM Prénom.jpg</code>.</span>
     </div>
     <div class="panneau">
       <h2>Placer devant (premiers rangs)</h2>
@@ -687,6 +690,50 @@ document.getElementById("fichierClasse").onchange = async ev => {
   }
   ev.target.value = "";
 };
+// ---------- photos mémorisées (IndexedDB, magasin « photos ») ----------
+// Le nom du fichier fait la clé : « HERBRETEAU Ruben.jpg » -> « HERBRETEAU Ruben ». La
+// correspondance avec la fiche élève est insensible à la casse et aux espaces (cf. donnees.js),
+// donc « herbreteau ruben.jpg » marche aussi. Une fois importées, les photos survivent à la
+// fermeture du navigateur : plus besoin de déposer des fichiers dans donnees/photos/.
+function majEtatPhotos() {
+  const n = PP4G.nbPhotos ? PP4G.nbPhotos() : 0;
+  const el = document.getElementById("etatPhotos");
+  el.textContent = n ? n + " photo(s) mémorisée(s) — clic droit pour effacer" : "";
+  el.title = n ? "Clic droit : effacer les photos mémorisées de ce navigateur" : "";
+}
+
+document.getElementById("btnImporterPhotos").onclick = () => document.getElementById("fichierPhotos").click();
+
+document.getElementById("fichierPhotos").onchange = async ev => {
+  const fichiers = [...ev.target.files];
+  ev.target.value = "";
+  if (!fichiers.length) return;
+  let ok = 0;
+  const rates = [];
+  for (const f of fichiers) {
+    const cle = f.name.replace(/\.[^.]+$/, "").trim();
+    try { await PP4G.importerPhoto(cle, f); ok++; }
+    catch (e) { rates.push(f.name); }
+  }
+  await PP4G.rechargerPhotos();
+  majEtatPhotos();
+  document.getElementById("photos").checked = true;
+  sauvegarder();
+  afficher();
+  alert(ok + " photo(s) mémorisée(s) dans ce navigateur." +
+        (rates.length ? "\n\nÉchec : " + rates.join(", ") : "") +
+        "\n\nUne photo n'apparaît pas ? Son fichier doit être nommé « NOM Prénom » (ex : DUPONT Jean.jpg).");
+};
+
+document.getElementById("etatPhotos").oncontextmenu = async ev => {
+  ev.preventDefault();
+  if (!PP4G.nbPhotos || !PP4G.nbPhotos()) return;
+  if (!confirm("Effacer les " + PP4G.nbPhotos() + " photo(s) mémorisée(s) dans ce navigateur ?\n\n(Les fichiers du dossier donnees/photos/ ne sont pas touchés.)")) return;
+  await PP4G.effacerPhotos();
+  majEtatPhotos();
+  afficher();
+};
+
 // ---------- suppression de classes importées (sélection multiple) ----------
 function ouvrirPanneauSuppression() {
   const imports = lireImports();
@@ -723,6 +770,7 @@ document.getElementById("btnToutCocher").onclick = () => {
 };
 
 PP4G.ready().then(() => {
+majEtatPhotos();
 if (!initClasses()) {
   document.getElementById("chargeur").style.display = "block";
   document.getElementById("fichierJson").onchange = ev => {
