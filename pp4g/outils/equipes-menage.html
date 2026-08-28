@@ -77,7 +77,7 @@
 </div>
 
 <div class="barre carte-instrument">
-  <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
+  <label>Taille mini d'équipe : <input type="number" id="taille" value="3" min="3" max="5" style="width:44px"></label>
   <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
   <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
   <button id="btnGenerer">Générer les équipes</button>
@@ -129,8 +129,11 @@ function feriesDe(lundi) {
 }
 
 function generer() {
-  const taille = Math.min(5, Math.max(4, +document.getElementById("taille").value));
-  const nb = Math.ceil(eleves.length / taille);
+  // « Taille mini » : aucune équipe ne descend en dessous de cette valeur. On prend donc le
+  // nombre d'équipes par défaut (division entière) et le reste est réparti sur les premières,
+  // qui comptent un élève de plus. 25 élèves en 3 → 8 équipes : 7 de 3 et 1 de 4.
+  const taille = Math.min(5, Math.max(3, +document.getElementById("taille").value));
+  const nb = Math.max(1, Math.floor(eleves.length / taille));
   const melange = liste => { const c = [...liste]; for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; } return c; };
   const filles = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "F"));
   const garcons = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "M"));
