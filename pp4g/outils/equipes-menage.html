@@ -130,7 +130,11 @@ function feriesDe(lundi) {
 
 function generer() {
   const taille = Math.min(5, Math.max(3, +document.getElementById("taille").value));
-  const nb = Math.ceil(eleves.length / taille);
+  // La taille demandée est un PLANCHER, pas un plafond : on arrondit le nombre d'équipes à
+  // l'inférieur et le reste (< taille) est absorbé par le round-robin ci-dessous, qui donne
+  // un élève de plus à autant d'équipes qu'il y a de restants. Aucune équipe en sous-effectif.
+  // Ex. 25 élèves à 3 -> 8 équipes : sept de 3 et une de 4 (et non neuf équipes dont deux de 2).
+  const nb = Math.max(1, Math.floor(eleves.length / taille));
   const melange = liste => { const c = [...liste]; for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; } return c; };
   const filles = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "F"));
   const garcons = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "M"));
