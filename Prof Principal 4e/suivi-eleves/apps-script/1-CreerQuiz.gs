@@ -41,13 +41,13 @@ var DESCRIPTION_FORM =
   "Il n'y a pas de bonne ou de mauvaise réponse, et il ne sera pas noté.\n" +
   "Seul M. Blanchard le lit. Compte environ 10 minutes.";
 
-/** Les 26 élèves, tels qu'ils apparaîtront dans la liste déroulante.
+/** Les 25 élèves, tels qu'ils apparaîtront dans la liste déroulante.
  *  Source : donnees/eleves-4G.js — à mettre à jour en cas d'arrivée/départ. */
 var ELEVES = [
   "Léni ALLEMAND", "Maël BILLAUD", "Louis BLOCH", "Noa BOISSEAU",
   "Juliette BOUGARD", "Amandine CAPRETTI", "Anaëlle DAHERON", "Lucas FORT",
   "Louis GABORIEAU", "Lila GATELIER", "Coraline GERBAUD", "Clara GERMAIN",
-  "Aaron GNAFOUA BOUANCHEAU", "Adèle GUERIN", "Ruben HERBRETEAU",
+  "Aaron GNAFOUA BOUANCHEAU", "Adèle GUERIN",
   "Mahydine JOETS", "Albin LAMOTHE", "Emy LEFEBVRE CHENU", "Léa MANDIN",
   "Lola MERCIER", "Chloé PANCHOUT", "Maëlya PASQUIER LAMBERT",
   "Ninon PICHEREAU", "Zora PIFFETEAU", "Uriel SELLIER", "Lucien TIGER"

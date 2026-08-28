@@ -50,7 +50,7 @@ Compte environ 10 minutes. »*
 > jamais des envois. En cas de doublon volontaire, supprime la ligne périmée dans `Reponses`.
 
 ### Section 1 — Qui es-tu ?
-1. **Nom et prénom** · *Liste déroulante* avec les 26 élèves — **obligatoire**
+1. **Nom et prénom** · *Liste déroulante* avec les 25 élèves — **obligatoire**
    *(liste déroulante et non texte libre : zéro faute de frappe, donc les formules de la fiche marchent toujours)*
 2. **Prénom d'usage (si différent de ton prénom officiel)** · Texte court · facultatif
 3. **Ta place dans la fratrie** · Choix : `Enfant unique` / `Aîné(e)` / `Du milieu` / `Cadet(te)` · facultatif
@@ -137,7 +137,7 @@ d'orientation, l'heure du coucher, les matières où l'on demande de l'aide. Les
 classe** et les **séances HVC Parcours Avenir**.
 
 ### 4.3 `Bilan` — qui doit encore répondre
-Les 26 élèves, ✅ / ❌, la date de réception, et une colonne « 💬 a écrit un message libre ».
+Les 25 élèves, ✅ / ❌, la date de réception, et une colonne « 💬 a écrit un message libre ».
 Le menu **🎓 Quiz 4G → Qui n'a pas répondu ?** te donne la liste à relancer en une boîte de
 dialogue.
 

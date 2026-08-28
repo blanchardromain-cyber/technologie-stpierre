@@ -9,7 +9,7 @@
 
 ## 1. Le projet en 10 lignes
 
-R. Blanchard, professeur de technologie, est **professeur principal de la 4G** (26 élèves,
+R. Blanchard, professeur de technologie, est **professeur principal de la 4G** (25 élèves,
 collège St-Pierre, zone B). Il construit avec Claude un **« Couteau Suisse »** d'outils pour
 absorber la charge administrative du rôle, mieux communiquer avec des élèves vus 1-2 h par
 semaine, et prévenir les conflits liés aux groupes WhatsApp non régulés.

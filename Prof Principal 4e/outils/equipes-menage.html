@@ -63,7 +63,7 @@
 </div>
 
 <div class="barre">
-  <label>Taille d'équipe : <input type="number" id="taille" value="5" min="4" max="5" style="width:44px"></label>
+  <label>Taille d'équipe : <input type="number" id="taille" value="3" min="3" max="5" style="width:44px"></label>
   <label>1re semaine (lundi) : <input type="date" id="debut" value="2026-09-07"></label>
   <label>Semaines à programmer : <input type="number" id="nbSemaines" value="30" min="1" max="36" style="width:52px"></label>
   <button id="btnGenerer">Générer les équipes</button>
@@ -112,7 +112,7 @@ function feriesDe(lundi) {
 }
 
 function generer() {
-  const taille = Math.min(5, Math.max(4, +document.getElementById("taille").value));
+  const taille = Math.min(5, Math.max(3, +document.getElementById("taille").value));
   const nb = Math.ceil(eleves.length / taille);
   const melange = liste => { const c = [...liste]; for (let i = c.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [c[i], c[j]] = [c[j], c[i]]; } return c; };
   const filles = melange(eleves.map((e, i) => i).filter(i => eleves[i].sexe === "F"));
