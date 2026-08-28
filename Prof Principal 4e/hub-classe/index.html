@@ -135,10 +135,8 @@ function contientInsulte(texte) {
 }
 const JOURS_SEMAINE = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
-// Emploi du temps : l'agenda de la 4G n'est disponible dans EcoleDirecte qu'à la rentrée.
-// L'onglet est donc PROGRAMMÉ : invisible pour les élèves avant cette date, visible dès ce jour-là.
-// (Le prof, lui, le voit tout de suite pour préparer le réglage.)
-const EDT_ACTIVATION = "2026-09-01";   // mardi 1er septembre 2026
+// Emploi du temps : l'agenda de la 4G est publié dans EcoleDirecte, l'onglet est donc
+// ouvert à tout le monde (il l'était auparavant sous condition de date, jusqu'au 01/09/2026).
 // Filet de secours si le backend n'est pas à jour : lien web simple vers l'agenda (facultatif).
 const EDT_LIEN_SECOURS = "";
 let session = null;   // {code, pseudo, role, horaires}
@@ -296,8 +294,7 @@ async function afficherAppli() {
   document.getElementById("ongletModeration").style.display = estProf ? "block" : "none";
   document.getElementById("ongletClasse").style.display = estProf ? "block" : "none";
   document.getElementById("ongletMoi").style.display = estProf ? "none" : "block";
-  // Onglet programmé : ouvert à tous à partir du 1er septembre, visible avant par le prof seul.
-  document.getElementById("ongletEdt").style.display = (estProf || edtEnService()) ? "block" : "none";
+  document.getElementById("ongletEdt").style.display = "block";
   await rafraichir();
 }
 
@@ -447,12 +444,8 @@ function dessiner() {
   }
 
   if (ongletActif === "edt") {
-    if (!edtEnService() && session.role !== "prof") h += edtBientot();
-    else {
-      if (session.role === "prof" && !edtEnService()) h += edtBientot();
-      if (edt === null) h += '<div class="vide">Chargement…</div>';
-      else h += rendreEdt();
-    }
+    if (edt === null) h += '<div class="vide">Chargement…</div>';
+    else h += rendreEdt();
   }
 
   if (ongletActif === "plan") {
@@ -509,9 +502,7 @@ function dessiner() {
         '<input type="text" id="urlEdt" placeholder="https://…" style="margin-top:6px" value="' + echap((infosClasse.edtUrl || "")) + '">' +
         '<div class="ligneBtn"><button class="principal" onclick="enregistrerEdt()">Enregistrer</button>' +
         '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="edt=null;changerOnglet(\'edt\')">Voir l\'onglet EDT</button></div>' +
-        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">' + (edtEnService()
-          ? "✅ L\'onglet 📅 EDT est ouvert aux élèves."
-          : "🕐 L\'onglet 📅 EDT s\'ouvrira aux élèves le <b>" + dateLongue(EDT_ACTIVATION) + "</b> (tu le vois déjà, eux pas encore).") + "</p></div>";
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">✅ L\'onglet 📅 EDT est ouvert aux élèves.</p></div>';
       const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
       h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Une liste d\'insultes et de gros mots est déjà bloquée automatiquement (accents, répétitions et déformations comprises). Ajoute ici tes mots interdits <b>en plus</b>, séparés par des virgules :</p>' +
@@ -618,7 +609,7 @@ async function enregistrerEdt() {
   if (!rep.ok) { alert(rep.erreur || "Enregistrement impossible (backend à mettre à jour ?)."); return; }
   if (infosClasse) infosClasse.edtUrl = url;
   edt = null;                       // le prochain affichage relit l'agenda
-  alert("Emploi du temps enregistré." + (edtEnService() ? "" : " Il s'ouvrira aux élèves le " + dateLongue(EDT_ACTIVATION) + "."));
+  alert("Emploi du temps enregistré.");
 }
 
 async function enregistrerMotsPerso() {
@@ -647,14 +638,6 @@ function dateLongue(iso) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
 /** L'onglet n'est ouvert aux élèves qu'à partir de la date d'activation programmée. */
-function edtEnService() { return isoAujourdhui() >= EDT_ACTIVATION; }
-
-function edtBientot() {
-  return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>🕐 Onglet programmé</b>' +
-    '<p style="font-size:.8rem;margin-top:6px">L\'emploi du temps de la 4G s\'ouvre le <b>' + dateLongue(EDT_ACTIVATION) + '</b>, ' +
-    'quand l\'agenda de la classe est publié dans EcoleDirecte.</p></div>';
-}
-
 function rendreEdt() {
   const lien = edt.url || EDT_LIEN_SECOURS;
   const boutonLien = lien
