@@ -166,11 +166,33 @@ async function api(action, donnees = {}) {
   return rep;
 }
 
+// Depuis la v2.6, seules les actions d'Entraide (poster une question/réponse, merci,
+// résoudre) peuvent renvoyer { ferme:true } : le reste du Hub n'est plus jamais bloqué.
+// On n'efface donc plus toute la page — un simple message suffit.
 function afficherFerme(message) {
-  document.getElementById("contenu").innerHTML =
-    '<div class="carte" style="text-align:center;padding:30px 14px"><div style="font-size:2rem">🌙</div>' +
-    '<b>' + echap(message || "Le Hub est fermé.") + "</b>" +
-    '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">Reviens pendant les horaires d\'ouverture.</p></div>';
+  alert(message || "L'Entraide est fermée pour le moment.");
+}
+
+// Mirroir client (lecture seule) de horsPlage()/messageFermeEntraide() côté serveur,
+// pour afficher tout de suite l'état de l'Entraide sans attendre un aller-retour refusé.
+function horsPlageClient(h) {
+  if (!h) return false;
+  if (h.jours) {
+    var jourIso = String(((new Date().getDay() + 6) % 7) + 1);
+    if (h.jours.split(",").indexOf(jourIso) === -1) return true;
+  }
+  if (!h.ouverture || !h.fermeture) return false;
+  var d = new Date();
+  var maintenant = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+  return maintenant < h.ouverture || maintenant >= h.fermeture;
+}
+
+function messageFermeEntraideClient(h) {
+  h = h || {};
+  var noms = { "1": "lun", "2": "mar", "3": "mer", "4": "jeu", "5": "ven", "6": "sam", "7": "dim" };
+  var jours = (h.jours || "1,2,3,4,5,6,7").split(",").map(j => noms[j] || j).join(", ");
+  var plage = (h.ouverture && h.fermeture) ? " de " + h.ouverture + " à " + h.fermeture : "";
+  return "L'Entraide est fermée en dehors des horaires surveillés. Ouvert : " + jours + plage + ".";
 }
 
 function chargerDemo() {
@@ -202,7 +224,11 @@ function apiDemo(action, d) {
     return fini(c ? { ok: true, pseudo: c[0], role: c[1], horaires: horaires() }
                   : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
   }
-  if (action === "liste") return fini({ ok: true, messages: bdd.messages });
+  const horsEntraide = session && session.role === "eleve" && horsPlageClient(horaires());
+  if (action === "liste") {
+    const vus = horsEntraide ? bdd.messages.filter(m => m.type !== "question" && m.type !== "reponse") : bdd.messages;
+    return fini({ ok: true, messages: vus });
+  }
   if (action === "infosMoi") {
     const mienne = bdd.infos[session.pseudo] || {};
     return fini({ ok: true, casier: mienne.casier || "", referent1: mienne.referent1 || "", referent2: mienne.referent2 || "",
@@ -228,9 +254,11 @@ function apiDemo(action, d) {
   if (action === "publierMenage") { bdd.divers.planningMenage = d.planning; return fini({ ok: true }); }
   if (action === "lireMenage") return fini({ ok: true, planning: bdd.divers.planningMenage || "" });
   if (action === "poster") {
+    if (horsEntraide && d.type !== "annonce") return fini({ ok: false, ferme: true, erreur: messageFermeEntraideClient(horaires()) });
     bdd.messages.push({ id: "m" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, type: d.type, parentId: d.parentId || "", matiere: d.matiere || "", texte: d.texte, resolu: 0, masque: 0, merci: [], signale: 0 });
     return fini({ ok: true });
   }
+  if ((action === "merci" || action === "resoudre") && horsEntraide) return fini({ ok: false, ferme: true, erreur: messageFermeEntraideClient(horaires()) });
   const m = bdd.messages.find(x => x.id === d.id);
   if (!m) return fini({ ok: false, erreur: "Message introuvable" });
   if (action === "merci" && !m.merci.includes(session.code)) m.merci.push(session.code);
@@ -428,6 +456,13 @@ function dessiner() {
   }
 
   if (ongletActif === "entraide") {
+    const entraideFermee = session.role !== "prof" && horsPlageClient(session.horaires);
+    if (entraideFermee) {
+      h += '<div class="carte" style="text-align:center;padding:26px 14px"><div style="font-size:1.8rem">🌙</div>' +
+        '<b>Entraide fermée pour le moment</b>' +
+        '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">' + echap(messageFermeEntraideClient(session.horaires)) + "</p>" +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Le reste du Hub (annonces, plan, ménage, EDT) reste accessible.</p></div>';
+    } else {
     h += '<form class="composer" onsubmit="posterQuestion(event)"><b style="font-size:.85rem">Poser une question à la classe</b>' +
       '<select id="matiereQuestion" style="margin-top:6px">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select>" +
       '<textarea id="texteQuestion" placeholder="Ex : exercice 3 p.42, je ne comprends pas la consigne…"></textarea>' +
@@ -441,6 +476,7 @@ function dessiner() {
     if (masquerResolues) questions = questions.filter(m => !m.resolu);
     questions.sort((a, b) => (a.resolu - b.resolu) || (b.ts - a.ts));
     h += questions.length ? questions.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune question. Lance-toi !</div>';
+    }
   }
 
   if (ongletActif === "edt") {
@@ -489,12 +525,12 @@ function dessiner() {
         const num = String(i + 1);
         return '<label><input type="checkbox" class="jourCase" value="' + num + '"' + (joursOuverts.indexOf(num) !== -1 ? " checked" : "") + ">" + nom + "</label>";
       }).join("");
-      h += '<div class="carte"><b>🕐 Ouverture du Hub pour les élèves</b>' +
+      h += '<div class="carte"><b>🕐 Horaires d\'ouverture de l\'Entraide</b>' +
         '<div style="font-size:.78rem;margin-top:8px">Jours d\'ouverture :</div><div class="jours">' + casesJours + "</div>" +
         '<div class="ligneBtn" style="margin-top:10px">Horaires : de <input type="time" id="hOuverture" style="width:110px" value="' + echap(ho.ouverture || "") + '"> à ' +
         '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
         '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
-        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Seul l\'onglet 🤝 Entraide (questions/réponses entre élèves) est concerné : hors de ces jours/horaires, les élèves y voient « Entraide fermée » et ne peuvent ni poster ni consulter les questions. Le reste du Hub (annonces, plan, ménage, EDT, classe) reste toujours accessible. Toutes les cases cochées + horaires vides = Entraide ouverte en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
       h += '<div class="carte"><b>📅 Emploi du temps de la classe</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Colle ici l\'adresse de l\'agenda de la 4G récupérée dans <b>EcoleDirecte</b> ' +
         '(Agenda → <i>Exporter / S\'abonner à l\'agenda</i>). Si c\'est un flux <b>.ics</b>, le Hub affiche directement la grille des cours ; ' +
