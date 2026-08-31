@@ -48,7 +48,7 @@
     <button id="btnDeco" style="display:none">Quitter</button>
   </div>
   <h1>🚑 PSC1 — Inscriptions 4G</h1>
-  <div class="sous">Formation Prévention et Secours Civiques — le mercredi (8h30-16h00), en binôme.</div>
+  <div class="sous">Formation Prévention et Secours Civiques — le jour de la rentrée, en binôme. Choisis ta session (1 à 13).</div>
 </header>
 
 <div id="ecranConnexion">
@@ -88,11 +88,7 @@ function chargerDemo() {
   if (brut) return JSON.parse(brut);
   return {
     codes: { "DEMO1": ["Léa D.", "eleve"], "DEMO2": ["Tom D.", "eleve"], "DEMO3": ["Zoé D.", "eleve"], "PROF1": ["M. Blanchard", "prof"] },
-    sessions: [
-      { id: "s1", date: "2026-10-07", capacite: 2, ouverte: 1 },
-      { id: "s2", date: "2026-11-18", capacite: 2, ouverte: 1 },
-      { id: "s3", date: "2027-01-13", capacite: 2, ouverte: 0 }
-    ],
+    sessions: Array.from({ length: 13 }, (_, i) => ({ id: "s" + (i + 1), numero: i + 1, capacite: 2, ouverte: 1 })),
     inscriptions: []
   };
 }
@@ -113,7 +109,7 @@ function apiDemo(action, d) {
     const s = bdd.sessions.find(x => x.id === d.sessionId);
     if (!s || !s.ouverte) return fini({ ok: false, erreur: "Session fermée." });
     const dansSession = bdd.inscriptions.filter(i => i.sessionId === d.sessionId).length * 2;
-    if (dansSession + 2 > s.capacite) return fini({ ok: false, erreur: "Plus de place sur cette date." });
+    if (dansSession + 2 > s.capacite) return fini({ ok: false, erreur: "Plus de place sur cette session." });
     const dejaInscrits = bdd.inscriptions.flatMap(i => [i.pseudo1, i.pseudo2]);
     if (dejaInscrits.includes(session.pseudo)) return fini({ ok: false, erreur: "Tu es déjà inscrit(e)." });
     if (dejaInscrits.includes(d.binome)) return fini({ ok: false, erreur: d.binome + " est déjà inscrit(e)." });
@@ -122,7 +118,7 @@ function apiDemo(action, d) {
     return fini({ ok: true });
   }
   if (session && session.role === "prof") {
-    if (action === "ajouterSession") { bdd.sessions.push({ id: "s" + Date.now(), date: d.date, capacite: +d.capacite || 2, ouverte: 1 }); return fini({ ok: true }); }
+    if (action === "ajouterSession") { bdd.sessions.push({ id: "s" + Date.now(), numero: +d.numero, capacite: +d.capacite || 2, ouverte: 1 }); return fini({ ok: true }); }
     if (action === "basculerSession") { const s = bdd.sessions.find(x => x.id === d.sessionId); if (s) s.ouverte = s.ouverte ? 0 : 1; return fini({ ok: true }); }
     if (action === "retirer") { bdd.inscriptions = bdd.inscriptions.filter(i => i.id !== d.inscriptionId); return fini({ ok: true }); }
   }
@@ -161,16 +157,7 @@ async function rafraichir() {
 
 // ---------- rendu ----------
 function echap(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
-function versDate(v) {
-  // gère tous les formats renvoyés par le backend : ISO complet, "AAAA-MM-JJ", ou texte anglais "Fri Jul 24 2026"
-  let d = new Date(v);
-  if (isNaN(d)) d = new Date(String(v).slice(0, 10) + "T12:00");
-  return isNaN(d) ? null : d;
-}
-function dateFr(iso) {
-  const d = versDate(iso);
-  return d ? d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : String(iso);
-}
+function libelle(s) { return "Session n° " + s.numero; }
 function inscritsDe(sessionId) { return etat.inscriptions.filter(i => i.sessionId === sessionId); }
 function monInscription() { return etat.inscriptions.find(i => i.pseudo1 === session.pseudo || i.pseudo2 === session.pseudo); }
 
@@ -183,19 +170,19 @@ function dessiner() {
     if (mienne) {
       const s = etat.sessions.find(x => x.id === mienne.sessionId);
       const binome = mienne.pseudo1 === session.pseudo ? mienne.pseudo2 : mienne.pseudo1;
-      h += '<div class="bandeau-inscrit">✅ <b>Tu es inscrit(e)</b> au PSC1 le <b>' + dateFr(s.date) + "</b> (8h30-16h00), en binôme avec <b>" + echap(binome) + "</b>.<div class='note'>Pour toute modification, vois M. Blanchard.</div></div>";
+      h += '<div class="bandeau-inscrit">✅ <b>Tu es inscrit(e)</b> à la <b>' + libelle(s) + "</b>, en binôme avec <b>" + echap(binome) + "</b>.<div class='note'>Pour toute modification, vois M. Blanchard.</div></div>";
     } else {
-      h += '<p class="note" style="margin-bottom:10px">Choisis une date <b>avec ton binôme</b> (pensez au retour à la maison le mercredi). Une seule inscription pour vous deux : l\'un de vous deux inscrit le binôme. <b>Définitif.</b></p>';
+      h += '<p class="note" style="margin-bottom:10px">Choisis une session <b>avec ton binôme</b>. Une seule inscription pour vous deux : l\'un de vous deux inscrit le binôme. <b>Définitif.</b></p>';
     }
   }
 
   const sessionsVisibles = estProf ? etat.sessions : etat.sessions.filter(s => s.ouverte);
-  sessionsVisibles.sort((a, b) => (versDate(a.date) || 0) - (versDate(b.date) || 0)).forEach(s => {
+  sessionsVisibles.sort((a, b) => a.numero - b.numero).forEach(s => {
     const inscrits = inscritsDe(s.id);
     const placesPrises = inscrits.length * 2;
     const complete = placesPrises >= s.capacite;
     h += '<div class="carte' + (!s.ouverte ? " fermee" : "") + (complete ? " complete" : "") + '">';
-    h += "<h3>" + dateFr(s.date);
+    h += "<h3>" + libelle(s);
     h += s.ouverte ? (complete ? '<span class="badge complete">complet</span>' : '<span class="badge ouverte">ouvert</span>') : '<span class="badge fermee">fermé</span>';
     h += "</h3>";
     h += '<div class="places">' + placesPrises + " / " + s.capacite + " places prises</div>";
@@ -208,19 +195,19 @@ function dessiner() {
       h += '<label>Ton binôme : <select id="binome-' + s.id + '">' +
         etat.eleves.filter(p => p !== session.pseudo).map(p => "<option>" + echap(p) + "</option>").join("") +
         "</select></label>";
-      h += '<button class="principal" onclick="inscrire(\'' + s.id + '\')">S\'inscrire à cette date</button>';
+      h += '<button class="principal" onclick="inscrire(\'' + s.id + '\')">S\'inscrire à cette session</button>';
     }
-    if (estProf) h += '<button class="sec" style="margin-top:6px" onclick="basculer(\'' + s.id + '\')">' + (s.ouverte ? "Fermer" : "Ouvrir") + " cette date</button>";
+    if (estProf) h += '<button class="sec" style="margin-top:6px" onclick="basculer(\'' + s.id + '\')">' + (s.ouverte ? "Fermer" : "Ouvrir") + " cette session</button>";
     h += "</div>";
   });
   if (!sessionsVisibles.length) h += '<div class="carte">Aucune date ouverte pour le moment — reviens plus tard !</div>';
 
   if (estProf) {
-    h += '<div class="zoneProf"><h3 style="font-size:.9rem">Ajouter une date (mercredi)</h3>' +
-      '<label>Date : <input type="date" id="nouvelleDate"></label>' +
+    h += '<div class="zoneProf"><h3 style="font-size:.9rem">Ajouter une session</h3>' +
+      '<label>N° de session : <input type="number" id="nouveauNumero" min="1" step="1"></label>' +
       '<label>Capacité (élèves) : <input type="number" id="nouvelleCapacite" value="2" min="2" step="2"></label>' +
       '<button class="principal" onclick="ajouterSession()">Ajouter</button>' +
-      '<p class="note">Les dates s\'ouvrent au fil de l\'année (décision D4). Fermer une date la cache aux élèves sans effacer les inscrits.</p></div>';
+      '<p class="note">Les 13 sessions sont normalement déjà créées (initialiserSessions13). Fermer une session la cache aux élèves sans effacer les inscrits.</p></div>';
   }
   document.getElementById("contenu").innerHTML = h;
 }
@@ -229,7 +216,7 @@ function dessiner() {
 async function inscrire(sessionId) {
   const binome = document.getElementById("binome-" + sessionId).value;
   const s = etat.sessions.find(x => x.id === sessionId);
-  if (!confirm("Inscription DÉFINITIVE :\n" + session.pseudo + " + " + binome + "\nle " + dateFr(s.date) + " (8h30-16h00).\n\nVous êtes bien d'accord tous les deux ?")) return;
+  if (!confirm("Inscription DÉFINITIVE :\n" + session.pseudo + " + " + binome + "\n" + libelle(s) + ".\n\nVous êtes bien d'accord tous les deux ?")) return;
   const rep = await api("inscrire", { sessionId, binome });
   if (!rep.ok) alert(rep.erreur);
   rafraichir();
@@ -241,10 +228,9 @@ async function retirer(inscriptionId) {
 }
 async function basculer(sessionId) { await api("basculerSession", { sessionId }); rafraichir(); }
 async function ajouterSession() {
-  const date = document.getElementById("nouvelleDate").value;
-  if (!date) { alert("Choisis une date."); return; }
-  if (new Date(date + "T12:00").getDay() !== 3) { if (!confirm("Ce n'est pas un mercredi. Ajouter quand même ?")) return; }
-  await api("ajouterSession", { date, capacite: document.getElementById("nouvelleCapacite").value });
+  const numero = document.getElementById("nouveauNumero").value;
+  if (!numero) { alert("Indique un numéro de session."); return; }
+  await api("ajouterSession", { numero, capacite: document.getElementById("nouvelleCapacite").value });
   rafraichir();
 }
 
