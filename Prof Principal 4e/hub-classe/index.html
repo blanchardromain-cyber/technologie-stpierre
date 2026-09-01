@@ -135,10 +135,8 @@ function contientInsulte(texte) {
 }
 const JOURS_SEMAINE = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
-// Emploi du temps : l'agenda de la 4G n'est disponible dans EcoleDirecte qu'à la rentrée.
-// L'onglet est donc PROGRAMMÉ : invisible pour les élèves avant cette date, visible dès ce jour-là.
-// (Le prof, lui, le voit tout de suite pour préparer le réglage.)
-const EDT_ACTIVATION = "2026-09-01";   // mardi 1er septembre 2026
+// Emploi du temps : l'agenda de la 4G est publié dans EcoleDirecte, l'onglet est donc
+// ouvert à tout le monde (il l'était auparavant sous condition de date, jusqu'au 01/09/2026).
 // Filet de secours si le backend n'est pas à jour : lien web simple vers l'agenda (facultatif).
 const EDT_LIEN_SECOURS = "";
 let session = null;   // {code, pseudo, role, horaires}
@@ -168,11 +166,33 @@ async function api(action, donnees = {}) {
   return rep;
 }
 
+// Depuis la v2.6, seules les actions d'Entraide (poster une question/réponse, merci,
+// résoudre) peuvent renvoyer { ferme:true } : le reste du Hub n'est plus jamais bloqué.
+// On n'efface donc plus toute la page — un simple message suffit.
 function afficherFerme(message) {
-  document.getElementById("contenu").innerHTML =
-    '<div class="carte" style="text-align:center;padding:30px 14px"><div style="font-size:2rem">🌙</div>' +
-    '<b>' + echap(message || "Le Hub est fermé.") + "</b>" +
-    '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">Reviens pendant les horaires d\'ouverture.</p></div>';
+  alert(message || "L'Entraide est fermée pour le moment.");
+}
+
+// Mirroir client (lecture seule) de horsPlage()/messageFermeEntraide() côté serveur,
+// pour afficher tout de suite l'état de l'Entraide sans attendre un aller-retour refusé.
+function horsPlageClient(h) {
+  if (!h) return false;
+  if (h.jours) {
+    var jourIso = String(((new Date().getDay() + 6) % 7) + 1);
+    if (h.jours.split(",").indexOf(jourIso) === -1) return true;
+  }
+  if (!h.ouverture || !h.fermeture) return false;
+  var d = new Date();
+  var maintenant = ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+  return maintenant < h.ouverture || maintenant >= h.fermeture;
+}
+
+function messageFermeEntraideClient(h) {
+  h = h || {};
+  var noms = { "1": "lun", "2": "mar", "3": "mer", "4": "jeu", "5": "ven", "6": "sam", "7": "dim" };
+  var jours = (h.jours || "1,2,3,4,5,6,7").split(",").map(j => noms[j] || j).join(", ");
+  var plage = (h.ouverture && h.fermeture) ? " de " + h.ouverture + " à " + h.fermeture : "";
+  return "L'Entraide est fermée en dehors des horaires surveillés. Ouvert : " + jours + plage + ".";
 }
 
 function chargerDemo() {
@@ -204,7 +224,11 @@ function apiDemo(action, d) {
     return fini(c ? { ok: true, pseudo: c[0], role: c[1], horaires: horaires() }
                   : { ok: false, erreur: "Code inconnu. En mode démo, essaie DEMO1, DEMO2 ou PROF1." });
   }
-  if (action === "liste") return fini({ ok: true, messages: bdd.messages });
+  const horsEntraide = session && session.role === "eleve" && horsPlageClient(horaires());
+  if (action === "liste") {
+    const vus = horsEntraide ? bdd.messages.filter(m => m.type !== "question" && m.type !== "reponse") : bdd.messages;
+    return fini({ ok: true, messages: vus });
+  }
   if (action === "infosMoi") {
     const mienne = bdd.infos[session.pseudo] || {};
     return fini({ ok: true, casier: mienne.casier || "", referent1: mienne.referent1 || "", referent2: mienne.referent2 || "",
@@ -230,9 +254,11 @@ function apiDemo(action, d) {
   if (action === "publierMenage") { bdd.divers.planningMenage = d.planning; return fini({ ok: true }); }
   if (action === "lireMenage") return fini({ ok: true, planning: bdd.divers.planningMenage || "" });
   if (action === "poster") {
+    if (horsEntraide && d.type !== "annonce") return fini({ ok: false, ferme: true, erreur: messageFermeEntraideClient(horaires()) });
     bdd.messages.push({ id: "m" + Date.now(), ts: Date.now(), pseudo: session.pseudo, role: session.role, type: d.type, parentId: d.parentId || "", matiere: d.matiere || "", texte: d.texte, resolu: 0, masque: 0, merci: [], signale: 0 });
     return fini({ ok: true });
   }
+  if ((action === "merci" || action === "resoudre") && horsEntraide) return fini({ ok: false, ferme: true, erreur: messageFermeEntraideClient(horaires()) });
   const m = bdd.messages.find(x => x.id === d.id);
   if (!m) return fini({ ok: false, erreur: "Message introuvable" });
   if (action === "merci" && !m.merci.includes(session.code)) m.merci.push(session.code);
@@ -296,8 +322,7 @@ async function afficherAppli() {
   document.getElementById("ongletModeration").style.display = estProf ? "block" : "none";
   document.getElementById("ongletClasse").style.display = estProf ? "block" : "none";
   document.getElementById("ongletMoi").style.display = estProf ? "none" : "block";
-  // Onglet programmé : ouvert à tous à partir du 1er septembre, visible avant par le prof seul.
-  document.getElementById("ongletEdt").style.display = (estProf || edtEnService()) ? "block" : "none";
+  document.getElementById("ongletEdt").style.display = "block";
   await rafraichir();
 }
 
@@ -431,6 +456,13 @@ function dessiner() {
   }
 
   if (ongletActif === "entraide") {
+    const entraideFermee = session.role !== "prof" && horsPlageClient(session.horaires);
+    if (entraideFermee) {
+      h += '<div class="carte" style="text-align:center;padding:26px 14px"><div style="font-size:1.8rem">🌙</div>' +
+        '<b>Entraide fermée pour le moment</b>' +
+        '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">' + echap(messageFermeEntraideClient(session.horaires)) + "</p>" +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Le reste du Hub (annonces, plan, ménage, EDT) reste accessible.</p></div>';
+    } else {
     h += '<form class="composer" onsubmit="posterQuestion(event)"><b style="font-size:.85rem">Poser une question à la classe</b>' +
       '<select id="matiereQuestion" style="margin-top:6px">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select>" +
       '<textarea id="texteQuestion" placeholder="Ex : exercice 3 p.42, je ne comprends pas la consigne…"></textarea>' +
@@ -444,15 +476,12 @@ function dessiner() {
     if (masquerResolues) questions = questions.filter(m => !m.resolu);
     questions.sort((a, b) => (a.resolu - b.resolu) || (b.ts - a.ts));
     h += questions.length ? questions.map(m => carteMessage(m, false)).join("") : '<div class="vide">Aucune question. Lance-toi !</div>';
+    }
   }
 
   if (ongletActif === "edt") {
-    if (!edtEnService() && session.role !== "prof") h += edtBientot();
-    else {
-      if (session.role === "prof" && !edtEnService()) h += edtBientot();
-      if (edt === null) h += '<div class="vide">Chargement…</div>';
-      else h += rendreEdt();
-    }
+    if (edt === null) h += '<div class="vide">Chargement…</div>';
+    else h += rendreEdt();
   }
 
   if (ongletActif === "plan") {
@@ -496,12 +525,12 @@ function dessiner() {
         const num = String(i + 1);
         return '<label><input type="checkbox" class="jourCase" value="' + num + '"' + (joursOuverts.indexOf(num) !== -1 ? " checked" : "") + ">" + nom + "</label>";
       }).join("");
-      h += '<div class="carte"><b>🕐 Ouverture du Hub pour les élèves</b>' +
+      h += '<div class="carte"><b>🕐 Horaires d\'ouverture de l\'Entraide</b>' +
         '<div style="font-size:.78rem;margin-top:8px">Jours d\'ouverture :</div><div class="jours">' + casesJours + "</div>" +
         '<div class="ligneBtn" style="margin-top:10px">Horaires : de <input type="time" id="hOuverture" style="width:110px" value="' + echap(ho.ouverture || "") + '"> à ' +
         '<input type="time" id="hFermeture" style="width:110px" value="' + echap(ho.fermeture || "") + '"></div>' +
         '<button class="principal" onclick="enregistrerHoraires()">Enregistrer</button>' +
-        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Hors de ces jours/horaires, les élèves voient « Hub fermé » (bloqué côté serveur). Toutes les cases cochées + horaires vides = ouvert en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Seul l\'onglet 🤝 Entraide (questions/réponses entre élèves) est concerné : hors de ces jours/horaires, les élèves y voient « Entraide fermée » et ne peuvent ni poster ni consulter les questions. Le reste du Hub (annonces, plan, ménage, EDT, classe) reste toujours accessible. Toutes les cases cochées + horaires vides = Entraide ouverte en permanence. Toi (prof), tu n\'es jamais bloqué.</p></div>';
       h += '<div class="carte"><b>📅 Emploi du temps de la classe</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Colle ici l\'adresse de l\'agenda de la 4G récupérée dans <b>EcoleDirecte</b> ' +
         '(Agenda → <i>Exporter / S\'abonner à l\'agenda</i>). Si c\'est un flux <b>.ics</b>, le Hub affiche directement la grille des cours ; ' +
@@ -509,9 +538,7 @@ function dessiner() {
         '<input type="text" id="urlEdt" placeholder="https://…" style="margin-top:6px" value="' + echap((infosClasse.edtUrl || "")) + '">' +
         '<div class="ligneBtn"><button class="principal" onclick="enregistrerEdt()">Enregistrer</button>' +
         '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="edt=null;changerOnglet(\'edt\')">Voir l\'onglet EDT</button></div>' +
-        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">' + (edtEnService()
-          ? "✅ L\'onglet 📅 EDT est ouvert aux élèves."
-          : "🕐 L\'onglet 📅 EDT s\'ouvrira aux élèves le <b>" + dateLongue(EDT_ACTIVATION) + "</b> (tu le vois déjà, eux pas encore).") + "</p></div>";
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">✅ L\'onglet 📅 EDT est ouvert aux élèves.</p></div>';
       const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
       h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Une liste d\'insultes et de gros mots est déjà bloquée automatiquement (accents, répétitions et déformations comprises). Ajoute ici tes mots interdits <b>en plus</b>, séparés par des virgules :</p>' +
@@ -618,7 +645,7 @@ async function enregistrerEdt() {
   if (!rep.ok) { alert(rep.erreur || "Enregistrement impossible (backend à mettre à jour ?)."); return; }
   if (infosClasse) infosClasse.edtUrl = url;
   edt = null;                       // le prochain affichage relit l'agenda
-  alert("Emploi du temps enregistré." + (edtEnService() ? "" : " Il s'ouvrira aux élèves le " + dateLongue(EDT_ACTIVATION) + "."));
+  alert("Emploi du temps enregistré.");
 }
 
 async function enregistrerMotsPerso() {
@@ -647,14 +674,6 @@ function dateLongue(iso) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
 /** L'onglet n'est ouvert aux élèves qu'à partir de la date d'activation programmée. */
-function edtEnService() { return isoAujourdhui() >= EDT_ACTIVATION; }
-
-function edtBientot() {
-  return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>🕐 Onglet programmé</b>' +
-    '<p style="font-size:.8rem;margin-top:6px">L\'emploi du temps de la 4G s\'ouvre le <b>' + dateLongue(EDT_ACTIVATION) + '</b>, ' +
-    'quand l\'agenda de la classe est publié dans EcoleDirecte.</p></div>';
-}
-
 function rendreEdt() {
   const lien = edt.url || EDT_LIEN_SECOURS;
   const boutonLien = lien

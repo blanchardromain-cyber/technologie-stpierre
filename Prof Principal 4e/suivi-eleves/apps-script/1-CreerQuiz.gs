@@ -96,6 +96,7 @@ var T = {
   besoin:     "Cette année en 4e, les matières où je pense avoir le plus besoin d'aide",
   apres3e:    "Après la 3e, tu penses plutôt à…",
   certitude:  "À quel point es-tu sûr(e) de ce choix ?",
+  mfrPrepa:   "Connais-tu les classes de 3e Prépa-Métiers ou de 3e en MFR (Maison Familiale Rurale) ?",
   metier:     "Un métier ou un domaine qui t'attire ?",
   pourquoi:   "Pourquoi celui-là ?",
   etudes:     "Sais-tu quelles études il faut faire pour y arriver ?",
@@ -239,6 +240,15 @@ function creerQuiz() {
       .setLabels("pas sûr(e) du tout", "totalement sûr(e)")
       .setRequired(false);
 
+  form.addMultipleChoiceItem()
+      .setTitle(T.mfrPrepa)
+      .setHelpText("Ce sont des parcours qui existent en plus de la 3e classique au collège — je peux t'expliquer si tu veux.")
+      .setChoiceValues([
+        "Oui, et ça m'intéresserait", "Oui, mais ça ne m'intéresse pas",
+        "Non, je ne connaissais pas", "Je ne sais pas encore"
+      ])
+      .setRequired(false);
+
   form.addTextItem().setTitle(T.metier).setRequired(false);
   form.addParagraphTextItem().setTitle(T.pourquoi).setRequired(false);
 
@@ -253,6 +263,7 @@ function creerQuiz() {
       .setChoiceValues([
         "Les métiers", "Les filières après la 3e", "Le stage de 3e",
         "Les portes ouvertes", "Comment mieux m'organiser",
+        "Les parcours 3e Prépa-Métiers / 3e en MFR",
         "Autre chose (je le dis en dessous)"
       ])
       .setRequired(false);
