@@ -17,7 +17,10 @@
   button.sec { background: #fff; color: #0f1f3d; }
   button:hover { opacity: .88; }
   .zone { display: flex; gap: 12px; align-items: flex-start; }
-  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; --ex: 1; }
+  /* --mx/--my/--mb = marges de la salle, --gx/--gy = interstices entre vignettes. Valeurs
+     d'écran ici, réduites dans @media print : à l'impression cet espace vide ne porte aucune
+     information, il est rendu aux vignettes (photos + noms plus grands sur la feuille A4). */
+  #salle { position: relative; background: #fff; border: 1px solid #d9dee5; border-radius: 8px; min-height: 420px; --k: 1; --ey: 1; --ex: 1; --mx: 18px; --my: 40px; --mb: 12px; --gx: 8px; --gy: 10px; }
   .tableau-bar { position: absolute; left: 25%; width: 50%; height: calc(22px * var(--k)); background: #4a5a6a; color: #fff; font-size: calc(.7rem * var(--k)); text-align: center; line-height: calc(22px * var(--k)); border-radius: 4px; }
   .place { position: absolute; border: 1.5px solid #8fa3b8; border-radius: 6px; background: #eef3f8; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; text-align: center; }
   .place .num { position: absolute; top: 1px; left: 4px; font-size: calc(.58rem * var(--k)); color: #98a6b5; }
@@ -48,7 +51,8 @@
     #entetePrint b { font-size: 16px; }
     .place.dys, .place.conflit { box-shadow: none; }
     .place.devant-tag, .place.derriere-tag { border-color: #8fa3b8; border-width: 1.5px; }
-    #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1); }
+    #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1);
+             --mx: 8px; --my: 30px; --mb: 6px; --gx: 4px; --gy: 6px; }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     /* L'orientation est choisie par afficher() : voir #pagePrint dans le <head>. */
   }
@@ -56,7 +60,7 @@
 <!-- Orientation d'impression : recalculee a chaque affichage pour maximiser la taille des
      vignettes (paysage pour une salle large et basse, portrait quand les photos sont
      affichees et que la hauteur devient le facteur limitant). -->
-<style id="pagePrint">@page { size: A4 landscape; margin: 8mm; }</style>
+<style id="pagePrint">@page { size: A4 landscape; margin: 6mm; }</style>
 </head>
 <body>
 <h1 id="titre">Plan de classe 4G</h1>
@@ -316,21 +320,30 @@ function afficher() {
   const avecPhotos = document.getElementById("photos").checked;
   const L = avecPhotos ? 70 : 62, H = avecPhotos ? 96 : 46, MX = 18, MY = 40;
   const MB = 12;   // marge basse : la marge haute (MY) loge la barre TABLEAU, pas celle-ci
+  // Marges et interstices « papier » (cf. #salle dans @media print) : plus serrés qu'à l'écran,
+  // car cet espace vide ne porte aucune information. Tout le calcul d'échelle ci-dessous
+  // raisonne sur ces valeurs-là — c'est ce qui agrandit les vignettes du PDF d'environ 10 à 15 %.
+  const MXp = 8, MYp = 30, MBp = 6, GXp = 4, GYp = 6;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
-  const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY + MB + (maxY + 1) * (H + 10);
+  const largeurSalle = MXp * 2 + (maxX + 1) * (L + GXp), hauteurSalle = MYp + MBp + (maxY + 1) * (H + GYp);
   const estTechno = document.getElementById("gabarit").value === "techno";
   const decalBase = estTechno ? 0 : 20;
   const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
-  salle.style.height = "calc(var(--k) * (" + (MY + MB + H + decalBase) + "px + " + (maxRang * (H + 10)) + "px * var(--ey)))";
-  salle.style.minWidth = "calc(var(--k) * (" + (MX * 2 + L) + "px + " + (maxX * (L + 8)) + "px * var(--ex)))";
+  // Hauteur/largeur exprimées avec les variables CSS : à l'écran ce sont les marges confortables
+  // (MX/MY/MB, gouttières 8 et 10 px), à l'impression les valeurs serrées de @media print.
+  salle.style.height = "calc(var(--k) * (var(--my) + var(--mb) + " + (H + decalBase) + "px + " + maxRang + " * (" + H + "px + var(--gy)) * var(--ey)))";
+  salle.style.minWidth = "calc(var(--k) * (2 * var(--mx) + " + L + "px + " + maxX + " * (" + L + "px + var(--gx)) * var(--ex)))";
   // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi). Pas de transform (Chrome
   // ré-ajusterait la page) : tailles réelles via --k (échelle) + étirement des inter-rangs
   // --ey (cas limité par la largeur) ou des inter-colonnes --ex (cas limité par la hauteur,
   // ex : option photos), activés uniquement par le CSS @media print.
-  // Zone utile a 96 dpi, marges de 8 mm et bandeau d'en-tete deduits.
+  // Zone utile a 96 dpi : A4 = 794 x 1123 px, moins les marges @page (6 mm ~ 23 px de chaque
+  // cote) et le bandeau d'en-tete (~34 px en hauteur). Marges ramenees de 8 a 6 mm : c'est
+  // autant de place rendue aux vignettes, tout en restant dans la zone imprimable des
+  // imprimantes courantes.
   const PAGES = [
-    { orientation: "landscape", L: 1050, H: 690 },
-    { orientation: "portrait", L: 730, H: 1010 }
+    { orientation: "landscape", L: 1075, H: 715 },
+    { orientation: "portrait", L: 745, H: 1044 }
   ];
   // Une salle large et basse (sans photos) tient mieux en paysage ; avec les photos les
   // cases deviennent hautes et c'est la hauteur qui bride tout — le portrait laisse alors
@@ -341,15 +354,15 @@ function afficher() {
     var k = pg.L / largeurSalle, ey = 1, ex = 1;
     if (k * hauteurSalle >= pg.H) {
       k = Math.min(k, pg.H / hauteurSalle);
-      ex = Math.min(2.5, (pg.L / k - MX * 2 - L) / Math.max(1, maxX * (L + 8)));
+      ex = Math.min(2.5, (pg.L / k - MXp * 2 - L) / Math.max(1, maxX * (L + GXp)));
     } else {
-      ey = Math.min(2.5, (pg.H / k - MY - MB - H - decalBase) / Math.max(1, maxRang * (H + 10)));
+      ey = Math.min(2.5, (pg.H / k - MYp - MBp - H - decalBase) / Math.max(1, maxRang * (H + GYp)));
     }
     if (!meilleur || k > meilleur.k) meilleur = { k: k, ey: ey, ex: ex, orientation: pg.orientation };
   });
   const echelle = meilleur.k, etirement = meilleur.ey, etirementX = meilleur.ex;
   document.getElementById("pagePrint").textContent =
-    "@page { size: A4 " + meilleur.orientation + "; margin: 8mm; }";
+    "@page { size: A4 " + meilleur.orientation + "; margin: 6mm; }";
   salle.style.setProperty("--echelle-print", echelle.toFixed(3));
   salle.style.setProperty("--etirement-y", etirement.toFixed(3));
   salle.style.setProperty("--etirement-x", etirementX.toFixed(3));
@@ -371,11 +384,10 @@ function afficher() {
     const div = document.createElement("div");
     div.className = "place vide";
     const colX = vueEleve ? (maxX - p.x) : p.x;
-    div.style.left = "calc(var(--k) * (" + MX + "px + " + (colX * (L + 8)) + "px * var(--ex)))";
+    div.style.left = "calc(var(--k) * (var(--mx) + " + colX + " * (" + L + "px + var(--gx)) * var(--ex)))";
     let rangY = technoActif ? p.y : p.y - 1;
     if (vueEleve) rangY = maxRang - rangY;
-    const decalage = MY + (technoActif ? 0 : 20);
-    div.style.top = "calc(var(--k) * (" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey)))";
+    div.style.top = "calc(var(--k) * (var(--my) + " + (technoActif ? 0 : 20) + "px + " + rangY + " * (" + H + "px + var(--gy)) * var(--ey)))";
     div.style.width = "calc(var(--k) * " + L + "px)";
     div.style.height = "calc(var(--k) * " + H + "px)";
     div.dataset.place = p.id;
