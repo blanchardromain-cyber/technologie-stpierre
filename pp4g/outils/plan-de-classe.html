@@ -110,6 +110,12 @@
     <label>Rangs : <input type="number" id="nbRangs" value="4" min="1" max="8" style="width:44px"></label>
     <label>Tables/rang : <input type="number" id="nbTables" value="4" min="1" max="8" style="width:44px"></label>
   </span>
+  <label title="Vue élève : la salle telle qu'un élève la voit depuis sa place — vue de référence, c'est elle qui part sur le Hub. Vue prof : la même salle vue du tableau, face à la classe (le plan fait un demi-tour).">Point de vue :
+    <select id="vue">
+      <option value="eleve">Vue élève</option>
+      <option value="prof">Vue prof (face à la classe)</option>
+    </select>
+  </label>
   <label>Placement :
     <select id="mode">
       <option value="alpha">Alphabétique</option>
@@ -142,6 +148,7 @@
     <div class="panneau">
       <h2>Légende (écran seulement)</h2>
       <span style="font-size:.72rem">vert = dys · bleu = « devant » · violet = « derrière » · orange = sélection · rouge = conflit.<br>
+      Point de vue : <b>élève</b> = la salle depuis leur place ; <b>prof</b> = face à la classe (demi-tour).<br>
       Échanger : touche une place puis une autre.<br>
       Photos : importées via ⚙️ Données.</span>
     </div>
@@ -196,6 +203,13 @@ let devant = [];            // index à placer aux premiers rangs (en plus des d
 let derriere = [];          // index à placer aux derniers rangs
 let selection = null;
 let dateGeneration = null;
+
+// Point de vue du plan. « élève » = la salle telle qu'un élève la voit depuis sa place : c'est
+// la vue de référence (celle des coordonnées p.x / p.y, et celle publiée sur le Hub). « prof » =
+// la même salle vue du tableau, face à la classe, soit un demi-tour du plan. Purement visuel :
+// l'affectation des élèves aux places n'est jamais touchée par la bascule.
+function estVueProf() { return document.getElementById("vue").value === "prof"; }
+function nomVue() { return estVueProf() ? "vue prof (face à la classe)" : "vue élève"; }
 
 // Salle techno réelle : 30 postes, 2 blocs en escalier, tableau côté postes 1-8 (bas).
 const TECHNO = [
@@ -324,6 +338,7 @@ function afficher() {
   const salle = document.getElementById("salle");
   salle.innerHTML = "";
   const avecPhotos = document.getElementById("photos").checked;
+  const vueProf = estVueProf();
   const L = avecPhotos ? 70 : 62, H = avecPhotos ? 96 : 46, MX = 18, MY = 40;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
   const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY * 2 + (maxY + 1) * (H + 10);
@@ -352,15 +367,23 @@ function afficher() {
   barre.className = "tableau-bar";
   barre.textContent = "TABLEAU";
   const technoActif = document.getElementById("gabarit").value === "techno";
-  barre.style[technoActif ? "bottom" : "top"] = "6px";
+  // Demi-tour : le tableau passe à l'autre bord de la feuille (bas en techno / haut en rangées,
+  // et l'inverse en vue prof).
+  barre.style[technoActif !== vueProf ? "bottom" : "top"] = "6px";
   salle.appendChild(barre);
 
   const enConflit = conflits().flat();
   places.forEach(p => {
     const div = document.createElement("div");
     div.className = "place vide";
-    div.style.left = "calc(var(--k) * (" + MX + "px + " + (p.x * (L + 8)) + "px * var(--ex)))";
-    const rangY = technoActif ? p.y : p.y - 1, decalage = MY + (technoActif ? 0 : 20);
+    // Demi-tour en vue prof : colonne x -> maxX - x, rang -> maxRang - rang. Le décalage de
+    // 20 px qui réserve la bande TABLEAU en haut (gabarits « rangées ») passe alors en bas, d'où
+    // le décalage ramené à MY : la hauteur totale de la salle, elle, ne change pas.
+    const colX = vueProf ? maxX - p.x : p.x;
+    div.style.left = "calc(var(--k) * (" + MX + "px + " + (colX * (L + 8)) + "px * var(--ex)))";
+    const rang = technoActif ? p.y : p.y - 1;
+    const rangY = vueProf ? maxRang - rang : rang;
+    const decalage = vueProf ? MY : MY + (technoActif ? 0 : 20);
     div.style.top = "calc(var(--k) * (" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey)))";
     div.style.width = "calc(var(--k) * " + L + "px)";
     div.style.height = "calc(var(--k) * " + H + "px)";
@@ -500,7 +523,7 @@ function majEntetePrint() {
   const nomSalle = g.options[g.selectedIndex].text;
   const d = dateGeneration ? new Date(dateGeneration) : null;
   document.getElementById("entetePrint").innerHTML =
-    "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
+    "<b>Plan de classe " + classeActive + "</b> — " + nomSalle + " — " + nomVue() +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR");
 }
@@ -514,6 +537,7 @@ function instantane() {
     nbRangs: document.getElementById("nbRangs").value,
     nbTables: document.getElementById("nbTables").value,
     mode: document.getElementById("mode").value,
+    vue: document.getElementById("vue").value,
     dysDevant: document.getElementById("dysDevant").checked,
     mixte: document.getElementById("mixte").checked,
     photos: document.getElementById("photos").checked,
@@ -527,6 +551,7 @@ function appliquer(s) {
   document.getElementById("nbRangs").value = s.nbRangs || 4;
   document.getElementById("nbTables").value = s.nbTables || 4;
   if (s.mode) document.getElementById("mode").value = s.mode;
+  document.getElementById("vue").value = s.vue || "eleve";
   document.getElementById("dysDevant").checked = s.dysDevant !== false;
   document.getElementById("mixte").checked = !!s.mixte;
   document.getElementById("photos").checked = !!s.photos;
@@ -630,6 +655,7 @@ function importerClasse(nomClasse, texte) {
 document.getElementById("gabarit").onchange = () => { construireGabarit(); affectation = {}; afficher(); };
 ["nbRangs", "nbTables"].forEach(id => document.getElementById(id).onchange = () => { construireGabarit(); affectation = {}; afficher(); });
 document.getElementById("photos").onchange = () => { sauvegarder(); afficher(); };
+document.getElementById("vue").onchange = () => { sauvegarder(); afficher(); };
 document.getElementById("btnGenerer").onclick = genererPlan;
 document.getElementById("btnVider").onclick = () => { affectation = {}; selection = null; sauvegarder(); afficher(); };
 document.getElementById("btnImprimer").onclick = () => window.print();
@@ -651,6 +677,9 @@ document.getElementById("btnPublier").onclick = async () => {
     places: places.map(p => {
       const idx = affectation[p.id];
       // pseudonymisation : prénom + initiale du nom uniquement (jamais le nom complet en ligne)
+      // Coordonnées TOUJOURS en vue élève (p.x / p.y bruts), quel que soit le point de vue
+      // affiché à l'écran : le Hub est lu par les élèves, qui doivent y retrouver la salle
+      // dans le sens où ils la voient depuis leur place. Ne pas y appliquer le demi-tour.
       return { num: p.num, x: p.x, y: p.y, nom: idx !== undefined ? eleves[idx].prenom + " " + eleves[idx].nom[0] + "." : "" };
     })
   };

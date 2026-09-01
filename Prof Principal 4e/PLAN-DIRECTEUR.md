@@ -59,7 +59,7 @@ Le **portail** est une page d'accueil unique (lanceur) qui liste les modules ave
 
 ### 🟥 Local RGPD — HTML 100 % local (jamais en ligne)
 - **Moteur d'affectation (partagé)** — cœur réutilisable, 3 modes :
-  - *Placement* : **plan de classe** — gabarit **techno (30 postes en escalier, 2 blocs, rangées de 3 + postes avancés isolés)** + gabarits **rangées de 1 et de 2** (salles banalisées).
+  - *Placement* : **plan de classe** — gabarit **techno (30 postes en escalier, 2 blocs, rangées de 3 + postes avancés isolés)** + gabarits **rangées de 1 et de 2** (salles banalisées). Bascule **point de vue élève / prof** (demi-tour du plan) à l'écran et à l'impression ; la publication sur le Hub reste toujours en vue élève.
   - *Binômes* : élève relais, tutorat.
   - *Groupes* : équipes de ménage (3 à 5 élèves : balayage, poubelles/tri, tableau…), groupes de projet.
   - Contraintes : dures (X devant / près du tableau — dys, PAP, vue ; séparer X et Y ; près du bureau) + souples (tutorat fort/faible, alphabétique, mixité). Sorties : plan visuel, glisser-déposer, export PNG/PDF.
