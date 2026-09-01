@@ -1,8 +1,10 @@
 /**
- * PSC1 4G — backend Apps Script (inscriptions binômes, mercredis).
+ * PSC1 4G — backend Apps Script (inscriptions binômes, sessions numérotées le jour de la rentrée).
  * Onglets : Codes (code|pseudo|role — mêmes codes que le Hub), Sessions, Inscriptions.
- * Règles (plan directeur D4) : inscription possible, DÉSINSCRIPTION IMPOSSIBLE (sauf prof).
+ * Règles : inscription possible, DÉSINSCRIPTION IMPOSSIBLE (sauf prof).
  * Les codes des élèves ne sont JAMAIS renvoyés au navigateur (binôme choisi par pseudo).
+ * Anti-collision : chaque inscription passe par un verrou serveur (LockService) —
+ * deux binômes ne peuvent jamais valider la même session en même temps.
  */
 
 var F_CODES = "Codes";
@@ -13,8 +15,21 @@ var F_INSCRIPTIONS = "Inscriptions";
 function initialiser() {
   var c = SpreadsheetApp.getActiveSpreadsheet();
   if (!c.getSheetByName(F_CODES)) c.insertSheet(F_CODES).appendRow(["code", "pseudo", "role"]);
-  if (!c.getSheetByName(F_SESSIONS)) c.insertSheet(F_SESSIONS).appendRow(["id", "date", "capacite", "ouverte"]);
+  if (!c.getSheetByName(F_SESSIONS)) c.insertSheet(F_SESSIONS).appendRow(["id", "numero", "capacite", "ouverte"]);
   if (!c.getSheetByName(F_INSCRIPTIONS)) c.insertSheet(F_INSCRIPTIONS).appendRow(["id", "ts", "sessionId", "pseudo1", "pseudo2", "parQui"]);
+}
+
+/**
+ * À exécuter UNE FOIS à la main (après initialiser) : crée les 13 sessions
+ * numérotées 1 à 13, capacité 2 élèves (1 binôme) chacune, toutes ouvertes.
+ * Sans effet si des sessions existent déjà (ne duplique pas).
+ */
+function initialiserSessions13() {
+  var f = feuille(F_SESSIONS);
+  if (f.getLastRow() > 1) return; // déjà initialisé
+  for (var n = 1; n <= 13; n++) {
+    f.appendRow([Utilities.getUuid().slice(0, 8), n, 2, 1]);
+  }
 }
 
 function doPost(e) {
@@ -52,7 +67,7 @@ function traiter(d, u) {
     case "inscrire": return inscrire(d, u);
     case "ajouterSession":
       if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
-      feuille(F_SESSIONS).appendRow([Utilities.getUuid().slice(0, 8), d.date, Math.max(2, +d.capacite || 2), 1]);
+      feuille(F_SESSIONS).appendRow([Utilities.getUuid().slice(0, 8), +d.numero, Math.max(2, +d.capacite || 2), 1]);
       return { ok: true };
     case "basculerSession":
       if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
@@ -64,14 +79,8 @@ function traiter(d, u) {
   }
 }
 
-// Sheets peut renvoyer la date en objet Date : on la reformate en "yyyy-MM-dd".
-function jour(v) {
-  if (v instanceof Date) return Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd");
-  return String(v).slice(0, 10);
-}
-
 function etat(u) {
-  var sessions = lire(F_SESSIONS).map(function (l) { return { id: l[0], date: jour(l[1]), capacite: l[2], ouverte: l[3] }; });
+  var sessions = lire(F_SESSIONS).map(function (l) { return { id: l[0], numero: +l[1], capacite: l[2], ouverte: l[3] }; });
   var inscriptions = lire(F_INSCRIPTIONS).map(function (l) { return { id: l[0], ts: l[1], sessionId: l[2], pseudo1: l[3], pseudo2: l[4], parQui: l[5] }; });
   var eleves = lire(F_CODES).filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
   return { ok: true, sessions: sessions, inscriptions: inscriptions, eleves: eleves };

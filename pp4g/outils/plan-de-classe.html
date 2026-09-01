@@ -94,7 +94,7 @@
   <label id="zoneClasse" style="display:none"><b>Classe :</b>
     <select id="selClasse"></select>
   </label>
-  <button id="btnImporterClasse" class="sec" title="CSV, Excel (.xlsx) ou JSON — Nom;Prénom;Sexe">➕ Importer une classe</button>
+  <button id="btnImporterClasse" class="sec" title="CSV, Excel (.xlsx) ou JSON — colonnes Nom;Prénom;Sexe;Dys (4e colonne : X, oui, 1 ou dys pour un élève dys)">➕ Importer une classe</button>
   <button id="btnSupprimerClasse" class="sec" style="display:none;color:#c0392b;border-color:#c0392b" title="Supprimer une ou plusieurs classes importées">🗑 Supprimer…</button>
   <!-- Pas de filtre `accept` : sur Android, Google Drive annonce CSV/JSON avec un type MIME
        que le filtre par extension grise (fichier visible mais non sélectionnable). -->
@@ -660,7 +660,12 @@ function analyserListe(texte, nomClasse) {
     const c = l.split(sep).map(x => x.trim());
     if (c.length < 2 || /^nom$/i.test(c[0])) return; // en-tête ou ligne invalide
     const sexe = (c[2] || "").toUpperCase().startsWith("F") ? "F" : "M";
-    const tags = (c[3] || "").toLowerCase().includes("dys") ? ["dys"] : [];
+    // 4e colonne = repérage « dys ». On accepte toutes les façons naturelles de cocher une
+    // case dans un tableur (X, x, oui, 1, vrai, « dys », « dyslexie »…) : est considéré comme
+    // dys tout contenu non vide qui n'est pas une négation explicite.
+    const marque = (c[3] || "").trim().toLowerCase();
+    const negations = ["0", "-", "–", "non", "n", "no", "faux", "false", "nan"];
+    const tags = marque && !negations.includes(marque) ? ["dys"] : [];
     eleves.push({ nom: c[0].toUpperCase(), prenom: c[1], sexe, tags });
   });
   if (!eleves.length) throw new Error("aucune ligne élève reconnue");
@@ -673,7 +678,7 @@ function importerClasse(nomClasse, texte) {
   imports[nomClasse] = donnees;
   localStorage.setItem(CLE_IMPORTS, JSON.stringify(imports));
   initClasses(nomClasse);
-  return donnees.eleves.length;
+  return donnees;
 }
 
 document.getElementById("gabarit").onchange = () => { construireGabarit(); affectation = {}; afficher(); };
@@ -753,8 +758,11 @@ document.getElementById("fichierClasse").onchange = async ev => {
   try {
     // texteDuFichier convertit un .xlsx en texte tabulé ; csv/json passent tels quels.
     const texte = await PP4G_XLSX.texteDuFichier(fichier);
-    const n = importerClasse(nom.trim().toUpperCase(), texte);
-    alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + n + " élèves.");
+    const donnees = importerClasse(nom.trim().toUpperCase(), texte);
+    const nbDys = donnees.eleves.filter(e => e.tags.includes("dys")).length;
+    alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + donnees.eleves.length +
+          " élèves, dont " + nbDys + " repéré(s) « dys » (cadre vert dans le plan)." +
+          (nbDys ? "" : "\n\nAucun « dys » détecté : pour les repérer, coche la 4e colonne du fichier (X, oui, 1, dys…) pour les élèves concernés, puis réimporte."));
   } catch (e) {
     alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — en CSV, Excel (.xlsx) ou JSON au format canonique.");
   }

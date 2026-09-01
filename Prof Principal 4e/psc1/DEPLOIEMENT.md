@@ -3,17 +3,25 @@
 Même montage que le Hub (`../hub-classe/DEPLOIEMENT.md`), en plus court :
 
 1. **Classeur** : créer un Google Sheet privé `PSC1 4G` → Apps Script → coller
-   `apps-script/Code.gs` → exécuter `initialiser` → coller dans l'onglet **Codes**
-   les colonnes `code · pseudo · role` de `../donnees/codes-eleves-4G.csv`
-   (**mêmes codes que le Hub** : une seule carte par élève).
+   `apps-script/Code.gs` → exécuter `initialiser` PUIS `initialiserSessions13`
+   (crée d'un coup les 13 sessions numérotées 1 à 13, capacité 2 élèves/session,
+   toutes ouvertes) → coller dans l'onglet **Codes** les colonnes `code · pseudo · role`
+   de `../donnees/codes-eleves-4G.csv` (**mêmes codes que le Hub** : une seule carte par élève).
 2. **Déployer** : application Web · exécuter en tant que : moi · accès : tout le monde
    → copier l'URL dans `BACKEND_URL` de `index.html`.
 3. **Publier** : déposer `index.html` dans un dépôt Pages (soit un dépôt dédié `psc1-4g`,
    soit un sous-dossier du dépôt `hub-4g`).
-4. **Ouvrir les dates** : se connecter avec le code `PROF-…` → « Ajouter une date »
-   (mercredis, capacité 2 par défaut, modulable). Les dates se dévoilent au fil de l'année (D4).
+4. **Séance de rentrée** : les 13 sessions sont déjà ouvertes — chaque binôme choisit sa
+   session pendant les 3h. Le zoneProf permet d'ajouter une session en plus si besoin
+   (numéro + capacité), et de fermer une session (cache aux élèves, garde les inscrits).
 
 Mode démo tant que `BACKEND_URL` est vide : codes `DEMO1/DEMO2/DEMO3` (élèves), `PROF1` (prof).
+
+## Répartition des 25 élèves sur 13 sessions
+
+Capacité par défaut = 2 élèves (1 binôme) par session : 13 sessions × 2 = 26 places pour
+25 élèves — largement suffisant, avec 1 place de marge (ou passe la capacité d'une session
+à 3 pour un trinôme si un élève reste seul, via le champ « Capacité » du zoneProf).
 
 ## Partage avec la responsable de niveau (synchronisation automatique)
 

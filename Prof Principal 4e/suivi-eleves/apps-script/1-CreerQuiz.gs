@@ -47,7 +47,7 @@ var ELEVES = [
   "Léni ALLEMAND", "Maël BILLAUD", "Louis BLOCH", "Noa BOISSEAU",
   "Juliette BOUGARD", "Amandine CAPRETTI", "Anaëlle DAHERON", "Lucas FORT",
   "Louis GABORIEAU", "Lila GATELIER", "Coraline GERBAUD", "Clara GERMAIN",
-  "Aaron GNAFOUA BOUANCHEAU", "Adèle GUERIN", "Ruben HERBRETEAU",
+  "Aaron GNAFOUA BOUANCHEAU", "Adèle GUERIN",
   "Mahydine JOETS", "Albin LAMOTHE", "Emy LEFEBVRE CHENU", "Léa MANDIN",
   "Lola MERCIER", "Chloé PANCHOUT", "Maëlya PASQUIER LAMBERT",
   "Ninon PICHEREAU", "Zora PIFFETEAU", "Uriel SELLIER", "Lucien TIGER"
@@ -102,7 +102,10 @@ var T = {
   etudes:     "Sais-tu quelles études il faut faire pour y arriver ?",
   infos:      "Sur quoi aimerais-tu être informé(e) cette année ?",
   message:    "Y a-t-il quelque chose que je devrais savoir pour bien t'accompagner ?",
-  objectif:   "Un objectif personnel pour cette année"
+  objectif:   "Un objectif personnel pour cette année",
+  // Ajoutee a la main dans le formulaire apres la creation initiale (aout 2026) :
+  // reintegree ici pour que le script reste la source de verite du quiz.
+  mfrPrepa:   "Connais-tu les classes de 3e Prépa-Métiers ou de 3e en MFR (Maison Familiale Rurale) ?  Ce sont des parcours qui existent en plus de la 3e classique au collège — je peux t'expliquer si tu veux."
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -281,6 +284,14 @@ function creerQuiz() {
   form.addTextItem()
       .setTitle(T.objectif)
       .setHelpText("Une seule phrase. On la relira ensemble en juin.")
+      .setRequired(false);
+
+  form.addMultipleChoiceItem()
+      .setTitle(T.mfrPrepa)
+      .setChoiceValues([
+        "Oui, et ça m'intéresserait", "Oui, mais ça ne m'intéresse pas",
+        "Non, je ne connaissais pas", "Je ne sais pas encore"
+      ])
       .setRequired(false);
 
   // ── Classeur de réponses ───────────────────────────────────────────────────
