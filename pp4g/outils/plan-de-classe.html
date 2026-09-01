@@ -56,7 +56,7 @@
     .place.devant-tag, .place.derriere-tag { border-color: #8fa3b8; border-width: 1.5px; }
     #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1); }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    @page { size: A4 landscape; margin: 8mm; }
+    /* L'orientation est choisie par afficher() : voir #pagePrint dans le <head>. */
   }
   @media (pointer: coarse) {
     /* Cibles tactiles élargies (téléphone) — placé en dernier pour gagner sur les règles de base. */
@@ -69,6 +69,10 @@
     #lateral { width: 100%; }
   }
 </style>
+<!-- Orientation d'impression : recalculee a chaque affichage pour maximiser la taille des
+     vignettes (paysage pour une salle large et basse, portrait quand les photos sont
+     affichees et que la hauteur devient le facteur limitant). -->
+<style id="pagePrint">@page { size: A4 landscape; margin: 8mm; }</style>
 </head>
 <body>
 <a class="retour" href="../index.html">← Accueil</a>
@@ -119,6 +123,12 @@
   <label><input type="checkbox" id="dysDevant" checked> dys devant</label>
   <label><input type="checkbox" id="mixte"> binômes mixtes F-G</label>
   <label><input type="checkbox" id="photos"> photos</label>
+  <label title="Prof = le plan tel qu'on le lit depuis le bureau. Élève = la même salle vue depuis les tables (rotation 180°).">Point de vue :
+    <select id="pointDeVue">
+      <option value="prof">Prof (depuis le bureau)</option>
+      <option value="eleve">Élève (depuis les tables)</option>
+    </select>
+  </label>
   <button id="btnGenerer">Générer</button>
   <button id="btnVider" class="sec">Vider</button>
   <button id="btnImprimer" class="sec">Imprimer / PDF</button>
@@ -325,25 +335,41 @@ function afficher() {
   salle.innerHTML = "";
   const avecPhotos = document.getElementById("photos").checked;
   const L = avecPhotos ? 70 : 62, H = avecPhotos ? 96 : 46, MX = 18, MY = 40;
+  const MB = 12;   // marge basse : la marge haute (MY) loge la barre TABLEAU, pas celle-ci
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
-  const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY * 2 + (maxY + 1) * (H + 10);
+  const largeurSalle = MX * 2 + (maxX + 1) * (L + 8), hauteurSalle = MY + MB + (maxY + 1) * (H + 10);
   const estTechno = document.getElementById("gabarit").value === "techno";
   const decalBase = estTechno ? 0 : 20;
   const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
-  salle.style.height = "calc(var(--k) * (" + (MY * 2 + H + decalBase) + "px + " + (maxRang * (H + 10)) + "px * var(--ey)))";
+  salle.style.height = "calc(var(--k) * (" + (MY + MB + H + decalBase) + "px + " + (maxRang * (H + 10)) + "px * var(--ey)))";
   salle.style.minWidth = "calc(var(--k) * (" + (MX * 2 + L) + "px + " + (maxX * (L + 8)) + "px * var(--ex)))";
   // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi). Pas de transform (Chrome
   // ré-ajusterait la page) : tailles réelles via --k (échelle) + étirement des inter-rangs
   // --ey (cas limité par la largeur) ou des inter-colonnes --ex (cas limité par la hauteur,
   // ex : option photos), activés uniquement par le CSS @media print.
-  const budgetL = 1050, budgetH = 690;
-  let echelle = budgetL / largeurSalle, etirement = 1, etirementX = 1;
-  if (echelle * hauteurSalle >= budgetH) {
-    echelle = Math.min(echelle, budgetH / hauteurSalle);
-    etirementX = Math.min(2.5, (budgetL / echelle - MX * 2 - L) / Math.max(1, maxX * (L + 8)));
-  } else {
-    etirement = Math.min(2.5, (budgetH / echelle - MY * 2 - H - decalBase) / Math.max(1, maxRang * (H + 10)));
-  }
+  // Zone utile a 96 dpi, marges de 8 mm et bandeau d'en-tete deduits.
+  const PAGES = [
+    { orientation: "landscape", L: 1050, H: 690 },
+    { orientation: "portrait", L: 730, H: 1010 }
+  ];
+  // Une salle large et basse (sans photos) tient mieux en paysage ; avec les photos les
+  // cases deviennent hautes et c'est la hauteur qui bride tout — le portrait laisse alors
+  // une echelle bien superieure. On calcule les deux et on garde la plus grande echelle :
+  // c'est elle qui fixe la taille des vignettes imprimees.
+  let meilleur = null;
+  PAGES.forEach(function (pg) {
+    var k = pg.L / largeurSalle, ey = 1, ex = 1;
+    if (k * hauteurSalle >= pg.H) {
+      k = Math.min(k, pg.H / hauteurSalle);
+      ex = Math.min(2.5, (pg.L / k - MX * 2 - L) / Math.max(1, maxX * (L + 8)));
+    } else {
+      ey = Math.min(2.5, (pg.H / k - MY - MB - H - decalBase) / Math.max(1, maxRang * (H + 10)));
+    }
+    if (!meilleur || k > meilleur.k) meilleur = { k: k, ey: ey, ex: ex, orientation: pg.orientation };
+  });
+  const echelle = meilleur.k, etirement = meilleur.ey, etirementX = meilleur.ex;
+  document.getElementById("pagePrint").textContent =
+    "@page { size: A4 " + meilleur.orientation + "; margin: 8mm; }";
   salle.style.setProperty("--echelle-print", echelle.toFixed(3));
   salle.style.setProperty("--etirement-y", etirement.toFixed(3));
   salle.style.setProperty("--etirement-x", etirementX.toFixed(3));
@@ -352,15 +378,23 @@ function afficher() {
   barre.className = "tableau-bar";
   barre.textContent = "TABLEAU";
   const technoActif = document.getElementById("gabarit").value === "techno";
-  barre.style[technoActif ? "bottom" : "top"] = "6px";
+  // Point de vue : « prof » = rendu de référence (lecture depuis le bureau) ; « élève » = la même
+  // salle vue depuis les tables, soit une rotation de 180° : colonnes et rangs inversés, et la
+  // barre TABLEAU qui bascule du côté opposé. Aucune place n'est déplacée, seul l'affichage tourne.
+  const vueEleve = document.getElementById("pointDeVue").value === "eleve";
+  const coteBarre = technoActif ? "bottom" : "top";
+  barre.style[vueEleve ? (coteBarre === "top" ? "bottom" : "top") : coteBarre] = "6px";
   salle.appendChild(barre);
 
   const enConflit = conflits().flat();
   places.forEach(p => {
     const div = document.createElement("div");
     div.className = "place vide";
-    div.style.left = "calc(var(--k) * (" + MX + "px + " + (p.x * (L + 8)) + "px * var(--ex)))";
-    const rangY = technoActif ? p.y : p.y - 1, decalage = MY + (technoActif ? 0 : 20);
+    const colX = vueEleve ? (maxX - p.x) : p.x;
+    div.style.left = "calc(var(--k) * (" + MX + "px + " + (colX * (L + 8)) + "px * var(--ex)))";
+    let rangY = technoActif ? p.y : p.y - 1;
+    if (vueEleve) rangY = maxRang - rangY;
+    const decalage = MY + (technoActif ? 0 : 20);
     div.style.top = "calc(var(--k) * (" + decalage + "px + " + rangY + " * " + (H + 10) + "px * var(--ey)))";
     div.style.width = "calc(var(--k) * " + L + "px)";
     div.style.height = "calc(var(--k) * " + H + "px)";
@@ -502,7 +536,8 @@ function majEntetePrint() {
   document.getElementById("entetePrint").innerHTML =
     "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
-    " — imprimé le " + new Date().toLocaleDateString("fr-FR");
+    " — imprimé le " + new Date().toLocaleDateString("fr-FR") +
+    (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof");
 }
 
 window.addEventListener("beforeprint", majEntetePrint); // rafraîchit la date d'impression ; l'échelle, elle, est en CSS pur
@@ -517,6 +552,7 @@ function instantane() {
     dysDevant: document.getElementById("dysDevant").checked,
     mixte: document.getElementById("mixte").checked,
     photos: document.getElementById("photos").checked,
+    pointDeVue: document.getElementById("pointDeVue").value,
     affectation, separations, associations, devant, derriere,
     dateGeneration: dateGeneration ? new Date(dateGeneration).toISOString() : null
   };
@@ -530,6 +566,7 @@ function appliquer(s) {
   document.getElementById("dysDevant").checked = s.dysDevant !== false;
   document.getElementById("mixte").checked = !!s.mixte;
   document.getElementById("photos").checked = !!s.photos;
+  document.getElementById("pointDeVue").value = s.pointDeVue || "prof";
   affectation = s.affectation || {};
   separations = s.separations || [];
   associations = s.associations || [];
@@ -630,6 +667,7 @@ function importerClasse(nomClasse, texte) {
 document.getElementById("gabarit").onchange = () => { construireGabarit(); affectation = {}; afficher(); };
 ["nbRangs", "nbTables"].forEach(id => document.getElementById(id).onchange = () => { construireGabarit(); affectation = {}; afficher(); });
 document.getElementById("photos").onchange = () => { sauvegarder(); afficher(); };
+document.getElementById("pointDeVue").onchange = () => { sauvegarder(); afficher(); };
 document.getElementById("btnGenerer").onclick = genererPlan;
 document.getElementById("btnVider").onclick = () => { affectation = {}; selection = null; sauvegarder(); afficher(); };
 document.getElementById("btnImprimer").onclick = () => window.print();
