@@ -669,6 +669,19 @@ function instantane() {
   };
 }
 
+// Un plan enregistré désigne les élèves par leur rang dans la liste. Si la classe est
+// réimportée avec un effectif différent (élève parti, fichier corrigé), ces rangs peuvent
+// pointer dans le vide : on les écarte avant tout affichage, sinon la lecture des « tags »
+// d'un élève inexistant fait échouer l'import entier.
+function oublierElevesDisparus() {
+  const valide = i => Number.isInteger(i) && i >= 0 && i < eleves.length;
+  Object.keys(affectation).forEach(id => { if (!valide(affectation[id])) delete affectation[id]; });
+  separations = separations.filter(p => Array.isArray(p) && valide(p[0]) && valide(p[1]));
+  associations = associations.filter(p => Array.isArray(p) && valide(p[0]) && valide(p[1]));
+  devant = devant.filter(valide);
+  derriere = derriere.filter(valide);
+}
+
 function appliquer(s) {
   document.getElementById("gabarit").value = s.gabarit || "techno";
   document.getElementById("nbRangs").value = s.nbRangs || 4;
@@ -684,6 +697,7 @@ function appliquer(s) {
   devant = s.devant || [];
   derriere = s.derriere || [];
   dateGeneration = s.dateGeneration ? new Date(s.dateGeneration) : null;
+  oublierElevesDisparus();
   construireGabarit();
 }
 
@@ -708,7 +722,9 @@ let catalogue = {}; // nomClasse -> {classe, annee, eleves}
 
 function demarrer(donnees) {
   classeActive = donnees.classe;
-  eleves = donnees.eleves;
+  // Filet de sécurité : une classe venue d'un import ancien, du Hub ou d'un JSON incomplet
+  // peut ne pas porter « tags ». Sans ce garde-fou l'affichage plante à la première lecture.
+  eleves = (donnees.eleves || []).map(e => ({ ...e, tags: Array.isArray(e.tags) ? e.tags : [] }));
   selection = null; dateGeneration = null;
   affectation = {}; separations = []; associations = []; devant = []; derriere = [];
   document.getElementById("titre").textContent =
