@@ -110,6 +110,7 @@
   <label>Salle :
     <select id="gabarit">
       <option value="techno">Salle techno (30 postes)</option>
+      <option value="multimedia">Salle multimédia (31 postes)</option>
       <option value="rangs2">Rangées — tables de 2</option>
       <option value="rangs1">Rangées — tables de 1</option>
     </select>
@@ -219,12 +220,36 @@ const TECHNO = [
   [11,7,4],[10,8,4],[9,9,4],[4,7,5],[3,7,6],[2,8,6],[1,9,6]
 ];
 
+// Salle multimédia réelle : 31 postes. 15 postes contre les murs (1-5 mur gauche, 6-9 mur du
+// fond, 10-15 mur des fenêtres) et 4 tables rondes de 4 postes (16-19, 20-23, 24-27, 28-31).
+// Grille 9 colonnes x 8 rangs, bureau/tableau en bas (rang 7) : les colonnes 1, 4 et 7 et les
+// rangs libres servent d'allées de circulation. Les deux tables côté fenêtres (16-19 et 20-23)
+// sont décalées d'un rang vers le bureau -> disposition en quinconce, conforme à la salle.
+// Chaque table ronde = un bloc jointif de 4 cases : ses 4 postes sont voisins au sens de
+// voisines(), donc « associer côte à côte » fonctionne au sein d'une table et pas entre deux.
+const MULTIMEDIA = [
+  [6,2,0],[7,3,0],[8,5,0],[9,6,0],                            // mur du fond
+  [10,8,1],[11,8,2],[12,8,3],[13,8,4],[14,8,5],[15,8,6],      // mur des fenêtres
+  [5,0,1],[4,0,2],[3,0,3],[2,0,4],[1,0,5],                    // mur de gauche
+  [26,2,2],[27,3,2],[25,2,3],[24,3,3],                        // table 3 : 24-27
+  [22,5,3],[23,6,3],[21,5,4],[20,6,4],                        // table 2 : 20-23
+  [30,2,5],[31,3,5],[29,2,6],[28,3,6],                        // table 4 : 28-31
+  [17,5,6],[16,6,6],[18,5,7],[19,6,7]                         // table 1 : 16-19
+];
+
+// Gabarits de salle réelle : positions figées, rangs numérotés à partir de 0 et barre TABLEAU
+// en bas (par opposition aux gabarits « Rangées » générés, dont le rang 0 est le tableau).
+const SALLES_FIXES = ["techno", "multimedia"];
+
 function construireGabarit() {
   const g = document.getElementById("gabarit").value;
-  document.getElementById("paramsRangs").style.display = g === "techno" ? "none" : "inline";
+  document.getElementById("paramsRangs").style.display = SALLES_FIXES.includes(g) ? "none" : "inline";
   places = [];
   if (g === "techno") {
     TECHNO.forEach(([num, cx, cy]) => places.push({ id: "p" + num, num, x: cx, y: cy, rangDevant: 6 - cy }));
+  } else if (g === "multimedia") {
+    // 8 rangs (0 = mur du fond, 7 = côté bureau) : rangDevant = distance au bureau.
+    MULTIMEDIA.forEach(([num, cx, cy]) => places.push({ id: "p" + num, num, x: cx, y: cy, rangDevant: 7 - cy }));
   } else {
     const nbRangs = +document.getElementById("nbRangs").value;
     const nbTables = +document.getElementById("nbTables").value;
@@ -247,7 +272,14 @@ function genererPlan() {
   const dysDevant = document.getElementById("dysDevant").checked;
   const mixte = document.getElementById("mixte").checked;
   affectation = {};
-  const placesTriees = [...places].sort((p, q) => p.rangDevant - q.rangDevant || p.x - q.x);
+  // Salle multimédia : remplissage imposé dans l'ordre des numéros de poste, pour qu'une classe
+  // de N élèves occupe exactement les postes 1 à N (les postes suivants restent libres et
+  // servent de réserve à reparerSeparations). Ailleurs : du rang le plus proche du tableau
+  // vers le fond, comme avant.
+  const parNumero = document.getElementById("gabarit").value === "multimedia";
+  const placesTriees = parNumero
+    ? [...places].sort((p, q) => p.num - q.num)
+    : [...places].sort((p, q) => p.rangDevant - q.rangDevant || p.x - q.x);
   let liste = eleves.map((e, i) => ({ ...e, idx: i }));
   if (mode === "alpha") liste.sort(ordreAlpha); else melanger(liste);
 
@@ -315,6 +347,19 @@ function conflitSiEchange(idA, idB) {
   return n;
 }
 
+// Simule le déplacement d'un élève vers un poste LIBRE (pas un échange) et rend le nombre de
+// conflits obtenu. On repasse par delete pour ne laisser aucune clé résiduelle dans affectation :
+// une clé de valeur undefined ferait compter le poste comme occupé ailleurs dans l'outil.
+function conflitSiDeplace(idOccupe, idLibre) {
+  const e = affectation[idOccupe];
+  delete affectation[idOccupe];
+  affectation[idLibre] = e;
+  const n = conflits().length;
+  delete affectation[idLibre];
+  affectation[idOccupe] = e;
+  return n;
+}
+
 function reparerSeparations() {
   const associes = new Set(associations.flat());
   for (let essai = 0; essai < 50; essai++) {
@@ -329,8 +374,21 @@ function reparerSeparations() {
     const pa = places.find(p => p.id === enConflit[0][0]);
     const cible = places.filter(p => affectation[p.id] !== undefined && p.id !== pa.id && !associes.has(affectation[p.id]))
       .find(p => !voisines(p, pa) && conflitSiEchange(pa.id, p.id) === 0);
-    if (!cible) return;
-    [affectation[pa.id], affectation[cible.id]] = [affectation[cible.id], affectation[pa.id]];
+    if (cible) {
+      [affectation[pa.id], affectation[cible.id]] = [affectation[cible.id], affectation[pa.id]];
+      continue;
+    }
+    // Salle multimédia : aucun échange entre élèves ne résout la séparation. On autorise alors
+    // le déplacement vers un poste LIBRE (numéro non attribué, au-delà de l'effectif) dès qu'il
+    // fait baisser le nombre de conflits — l'élève s'y retrouve seul, c'est le but recherché.
+    // Postes libres essayés dans l'ordre des numéros, pour rester au plus près du bloc occupé.
+    if (document.getElementById("gabarit").value !== "multimedia") return;
+    const avant = conflits().length;
+    const libre = places.filter(p => affectation[p.id] === undefined).sort((p, q) => p.num - q.num)
+      .find(p => !voisines(p, pa) && conflitSiDeplace(pa.id, p.id) < avant);
+    if (!libre) return;
+    affectation[libre.id] = affectation[pa.id];
+    delete affectation[pa.id];
   }
 }
 
@@ -346,7 +404,7 @@ function afficher() {
   const MXp = 8, MYp = 30, MBp = 6, GXp = 4, GYp = 6;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
   const largeurSalle = MXp * 2 + (maxX + 1) * (L + GXp), hauteurSalle = MYp + MBp + (maxY + 1) * (H + GYp);
-  const estTechno = document.getElementById("gabarit").value === "techno";
+  const estTechno = SALLES_FIXES.includes(document.getElementById("gabarit").value);
   const decalBase = estTechno ? 0 : 20;
   const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
   // Hauteur/largeur exprimées avec les variables CSS : à l'écran ce sont les marges confortables
@@ -390,7 +448,7 @@ function afficher() {
   const barre = document.createElement("div");
   barre.className = "tableau-bar";
   barre.textContent = "TABLEAU";
-  const technoActif = document.getElementById("gabarit").value === "techno";
+  const technoActif = SALLES_FIXES.includes(document.getElementById("gabarit").value);
   // Point de vue : « prof » = rendu de référence (lecture depuis le bureau) ; « élève » = la même
   // salle vue depuis les tables, soit une rotation de 180° : colonnes et rangs inversés, et la
   // barre TABLEAU qui bascule du côté opposé. Aucune place n'est déplacée, seul l'affichage tourne.
@@ -702,7 +760,7 @@ document.getElementById("btnPublier").onclick = async () => {
   const plan = {
     maj: new Date().toLocaleDateString("fr-FR") + " " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
     classe: classeActive, salle: g.options[g.selectedIndex].text,
-    barBas: g.value === "techno",
+    barBas: SALLES_FIXES.includes(g.value),
     places: places.map(p => {
       const idx = affectation[p.id];
       // pseudonymisation : prénom + initiale du nom uniquement (jamais le nom complet en ligne)
