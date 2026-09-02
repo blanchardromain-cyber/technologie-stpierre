@@ -383,13 +383,20 @@ function afficher() {
   // raisonne sur ces valeurs-là — c'est ce qui agrandit les vignettes du PDF d'environ 10 à 15 %.
   const MXp = 8, MYp = 30, MBp = 6, GXp = 4, GYp = 6;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
-  const largeurSalle = MXp * 2 + (maxX + 1) * (L + GXp), hauteurSalle = MYp + MBp + (maxY + 1) * (H + GYp);
+  // Salle multimédia : la dernière rangée (postes 18-19) descend jusqu'au bas de la salle, là où
+  // la barre TABLEAU est ancrée — elle recouvrait donc les vignettes. On réserve sous le dernier
+  // rang une demi-hauteur de vignette, à l'écran comme à l'impression (la valeur suit L/H, donc
+  // elle double automatiquement en mode photos). Plancher à 32 px : la barre est ancrée à
+  // bottom:6px avec une hauteur de 22px * --k, donc elle occupe au plus 28 px NON mis à
+  // l'échelle — une réserve plus petite la ferait réapparaître par-dessus les vignettes au PDF.
+  const reserveBarre = document.getElementById("gabarit").value === "multimedia" ? Math.max(32, Math.round(H / 2)) : 0;
+  const largeurSalle = MXp * 2 + (maxX + 1) * (L + GXp), hauteurSalle = MYp + MBp + reserveBarre + (maxY + 1) * (H + GYp);
   const estTechno = SALLES_FIXES.includes(document.getElementById("gabarit").value);
   const decalBase = estTechno ? 0 : 20;
   const maxRang = estTechno ? maxY : maxY - 1; // index max réellement utilisé dans les positions
   // Hauteur/largeur exprimées avec les variables CSS : à l'écran ce sont les marges confortables
   // (MX/MY/MB, gouttières 8 et 10 px), à l'impression les valeurs serrées de @media print.
-  salle.style.height = "calc(var(--k) * (var(--my) + var(--mb) + " + (H + decalBase) + "px + " + maxRang + " * (" + H + "px + var(--gy)) * var(--ey)))";
+  salle.style.height = "calc(var(--k) * (var(--my) + var(--mb) + " + (H + decalBase) + "px + " + maxRang + " * (" + H + "px + var(--gy)) * var(--ey)) + " + reserveBarre + "px)";
   salle.style.minWidth = "calc(var(--k) * (2 * var(--mx) + " + L + "px + " + maxX + " * (" + L + "px + var(--gx)) * var(--ex)))";
   // Pleine page A4 paysage (~1050 x 690 px utiles à 96 dpi). Pas de transform (Chrome
   // ré-ajusterait la page) : tailles réelles via --k (échelle) + étirement des inter-rangs
