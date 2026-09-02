@@ -49,17 +49,21 @@
     .barre, #lateral, .rgpd, .info, #chargeur, h1 { display: none !important; }
     #entetePrint { display: block; font-size: 13px; margin-bottom: 6px; }
     #entetePrint b { font-size: 16px; }
-    #entetePrint .legende-dys { font-size: 11px; color: #333; margin-top: 2px; }
-    #entetePrint .pastille-dys { display: inline-block; width: 10px; height: 10px; margin-right: 5px;
-      vertical-align: -1px; border: 2px solid #2c8a5f; border-radius: 2px;
+    #entetePrint .legende-dys { font-size: 12px; font-weight: 600; color: #1d2530; margin-top: 3px; }
+    #entetePrint .pastille-dys { display: inline-block; width: 12px; height: 12px; margin-right: 6px;
+      vertical-align: -2px; border: 3px solid #2c8a5f; border-radius: 3px;
       -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     /* Le cadre vert « dys » est CONSERVÉ à l'impression : un collègue qui prend la salle doit
        pouvoir repérer où sont assis les élèves à aménagements, déjà connus de l'établissement.
        Le repère rouge « conflit », lui, est un outil de travail à l'écran : il disparaît. */
     .place.conflit { box-shadow: none; }
-    .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .place.devant-tag, .place.derriere-tag { border-color: #8fa3b8; border-width: 1.5px; }
+    /* Trait épaissi à 3,5 px et bordure de la vignette reprise en vert : à l'échelle réduite du
+       PDF, un liseré de 2 px devenait presque invisible une fois imprimé. Règle placée APRÈS
+       celle des repères devant/derrière, sinon un élève dys aussi marqué « devant » perdrait
+       sa bordure verte (même spécificité : la dernière règle l'emporte). */
+    .place.dys { box-shadow: inset 0 0 0 3.5px #2c8a5f; border-color: #2c8a5f;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1);
              --mx: 8px; --my: 30px; --mb: 6px; --gx: 4px; --gy: 6px; }
     .tableau-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
