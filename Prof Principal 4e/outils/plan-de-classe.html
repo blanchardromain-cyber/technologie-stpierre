@@ -177,6 +177,7 @@
 <script src="../donnees/eleves-4G.js"></script>
 <script src="../donnees/config-portail.js"></script>
 <script src="../../pp4g/js/xlsx-leger.js"></script>
+<script src="../../pp4g/js/liste-eleves.js"></script>
 <script src="js/donnees.js"></script>
 <script>
 let classeActive = null;
@@ -701,29 +702,19 @@ function analyserListe(texte, nomClasse) {
     return { classe: nomClasse, annee: brut.annee || "2026-2027",
       eleves: eleves.map(e => ({ nom: String(e.nom).toUpperCase(), prenom: e.prenom, sexe: e.sexe === "F" ? "F" : "M", tags: e.tags || [] })) };
   }
-  const lignes = texte.split(/\r?\n/).filter(l => l.trim());
-  const sep = lignes[0].includes(";") ? ";" : lignes[0].includes("\t") ? "\t" : ",";
-  const eleves = [];
-  lignes.forEach(l => {
-    const c = l.split(sep).map(x => x.trim());
-    if (c.length < 2 || /^nom$/i.test(c[0])) return; // en-tête ou ligne invalide
-    const sexe = (c[2] || "").toUpperCase().startsWith("F") ? "F" : "M";
-    // 4e colonne = repérage « dys ». On accepte toutes les façons naturelles de cocher une
-    // case dans un tableur (X, x, oui, 1, vrai, « dys », « dyslexie »…) : est considéré comme
-    // dys tout contenu non vide qui n'est pas une négation explicite.
-    const marque = (c[3] || "").trim().toLowerCase();
-    const negations = ["0", "-", "–", "non", "n", "no", "faux", "false", "nan"];
-    const tags = marque && !negations.includes(marque) ? ["dys"] : [];
-    eleves.push({ nom: c[0].toUpperCase(), prenom: c[1], sexe, tags });
-  });
-  if (!eleves.length) throw new Error("aucune ligne élève reconnue");
-  return { classe: nomClasse, annee: "2026-2027", eleves };
+  // CSV / texte tabulé (.xlsx converti) : règle unique partagée par tous les points d'import,
+  // dans pp4g/js/liste-eleves.js — en-tête repéré, colonnes reconnues par leur intitulé, lignes
+  // décoratives (titre, date, effectif, professeur…) écartées.
+  const lu = PP4G_LISTE.elevesDepuisTexte(texte);
+  if (!lu.eleves.length) throw new Error("aucune ligne élève reconnue");
+  return { classe: nomClasse, annee: "2026-2027", eleves: lu.eleves, lecture: lu };
 }
 
 function importerClasse(nomClasse, texte) {
   const donnees = analyserListe(texte, nomClasse);
   const imports = lireImports();
-  imports[nomClasse] = donnees;
+  const { lecture, ...aStocker } = donnees;   // le détail de lecture ne sert qu'au message d'import
+  imports[nomClasse] = aStocker;
   localStorage.setItem(CLE_IMPORTS, JSON.stringify(imports));
   initClasses(nomClasse);
   return donnees;
@@ -808,9 +799,18 @@ document.getElementById("fichierClasse").onchange = async ev => {
     const texte = await PP4G_XLSX.texteDuFichier(fichier);
     const donnees = importerClasse(nom.trim().toUpperCase(), texte);
     const nbDys = donnees.eleves.filter(e => e.tags.includes("dys")).length;
-    alert("Classe « " + nom.trim().toUpperCase() + " » importée : " + donnees.eleves.length +
-          " élèves, dont " + nbDys + " repéré(s) « dys » (cadre vert dans le plan)." +
-          (nbDys ? "" : "\n\nAucun « dys » détecté : pour les repérer, coche la 4e colonne du fichier (X, oui, 1, dys…) pour les élèves concernés, puis réimporte."));
+    const lu = donnees.lecture;
+    let message = "Classe « " + nom.trim().toUpperCase() + " » importée : " + donnees.eleves.length +
+                  " élèves, dont " + nbDys + " repéré(s) « dys » (cadre vert dans le plan).";
+    if (lu && lu.ignorees) message += "\n\n" + lu.ignorees + " ligne(s) du fichier ignorée(s) (titre, date, effectif, annotation…) : " +
+                                      lu.lignesIgnorees.join(" / ") + (lu.ignorees > lu.lignesIgnorees.length ? " …" : "");
+    if (lu && lu.colonnes.entete && lu.colonnes.dys < 0 && !nbDys)
+      message += "\n\nAucune colonne « Dys » dans le fichier : ajoute-la (X, oui, 1, dys…) puis réimporte pour placer ces élèves devant.";
+    else if (!nbDys)
+      message += "\n\nAucun « dys » détecté : pour les repérer, coche la colonne « Dys » du fichier (X, oui, 1, dys…) pour les élèves concernés, puis réimporte.";
+    if (lu && lu.colonnes.sexe < 0)
+      message += "\n\nAucune colonne « Sexe » : l'option « binômes mixtes F-G » restera sans effet pour cette classe.";
+    alert(message);
   } catch (e) {
     alert("Import impossible : " + e.message + "\nFormat attendu : une ligne par élève « Nom;Prénom;Sexe » (F/M ou F/G), 4e colonne facultative « dys » — en CSV, Excel (.xlsx) ou JSON au format 4G.");
   }
