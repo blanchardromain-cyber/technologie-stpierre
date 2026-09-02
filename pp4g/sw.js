@@ -10,7 +10,7 @@
  * CACHE_VERSION : à incrémenter à chaque lot de fichiers ajoutés/modifiés sous pp4g/
  * (N1 = v1 ; N2 ajoutera l'écran données -> v2 ; etc.) pour forcer le renouvellement du cache.
  */
-const CACHE_VERSION = "pp4g-v37";
+const CACHE_VERSION = "pp4g-v38";
 
 const PRECACHE = [
   "./",
@@ -27,6 +27,7 @@ const PRECACHE = [
   "./js/verrou.js",
   "./js/icones.js",
   "./js/xlsx-leger.js",
+  "./js/liste-eleves.js",
   "./fonts/B612-Regular.ttf",
   "./fonts/B612-Bold.ttf",
   "./icons/logo-source.svg",
