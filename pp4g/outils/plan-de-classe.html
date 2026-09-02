@@ -403,13 +403,16 @@ function afficher() {
   // raisonne sur ces valeurs-là — c'est ce qui agrandit les vignettes du PDF d'environ 10 à 15 %.
   const MXp = 8, MYp = 30, MBp = 6, GXp = 4, GYp = 6;
   const maxX = Math.max(...places.map(p => p.x)), maxY = Math.max(...places.map(p => p.y));
-  // Salle multimédia : la dernière rangée (postes 18-19) descend jusqu'au bas de la salle, là où
-  // la barre TABLEAU est ancrée — elle recouvrait donc les vignettes. On réserve sous le dernier
-  // rang une demi-hauteur de vignette, à l'écran comme à l'impression (la valeur suit L/H, donc
-  // elle double automatiquement en mode photos). Plancher à 32 px : la barre est ancrée à
-  // bottom:6px avec une hauteur de 22px * --k, donc elle occupe au plus 28 px NON mis à
-  // l'échelle — une réserve plus petite la ferait réapparaître par-dessus les vignettes au PDF.
-  const reserveBarre = document.getElementById("gabarit").value === "multimedia" ? Math.max(32, Math.round(H / 2)) : 0;
+  // Point de vue : « prof » = la salle lue depuis le bureau — tableau en BAS de la feuille, la
+  // rangée la plus proche du tableau juste au-dessus ; « élève » = la même salle vue depuis les
+  // tables, soit une rotation de 180° (colonnes et rangs inversés, barre TABLEAU en haut).
+  const vueEleve = document.getElementById("pointDeVue").value === "eleve";
+  // Quand la barre TABLEAU est en bas, la marge basse (--mb, 12 px) ne suffit pas : la barre
+  // recouvrait la dernière rangée. On réserve alors sous elle une demi-hauteur de vignette (donc
+  // le double en mode photos), avec un plancher de 32 px : la barre est ancrée à bottom:6px pour
+  // une hauteur de 22px * --k, soit jusqu'à 28 px NON mis à l'échelle — une réserve plus petite
+  // la ferait réapparaître par-dessus les vignettes à l'impression.
+  const reserveBarre = vueEleve ? 0 : Math.max(32, Math.round(H / 2));
   const largeurSalle = MXp * 2 + (maxX + 1) * (L + GXp), hauteurSalle = MYp + MBp + reserveBarre + (maxY + 1) * (H + GYp);
   const estTechno = SALLES_FIXES.includes(document.getElementById("gabarit").value);
   const decalBase = estTechno ? 0 : 20;
@@ -455,13 +458,10 @@ function afficher() {
   const barre = document.createElement("div");
   barre.className = "tableau-bar";
   barre.textContent = "TABLEAU";
-  const technoActif = SALLES_FIXES.includes(document.getElementById("gabarit").value);
-  // Point de vue : « prof » = rendu de référence (lecture depuis le bureau) ; « élève » = la même
-  // salle vue depuis les tables, soit une rotation de 180° : colonnes et rangs inversés, et la
-  // barre TABLEAU qui bascule du côté opposé. Aucune place n'est déplacée, seul l'affichage tourne.
-  const vueEleve = document.getElementById("pointDeVue").value === "eleve";
-  const coteBarre = technoActif ? "bottom" : "top";
-  barre.style[vueEleve ? (coteBarre === "top" ? "bottom" : "top") : coteBarre] = "6px";
+  // Aucune place n'est déplacée, seul l'affichage tourne. La convention vaut désormais pour TOUS
+  // les gabarits : les gabarits « Rangées » plaçaient le tableau en haut en vue prof, donc à
+  // l'inverse des salles réelles (techno, multimédia) — les deux familles sont réalignées.
+  barre.style[vueEleve ? "top" : "bottom"] = "6px";
   salle.appendChild(barre);
 
   const enConflit = conflits().flat();
@@ -470,9 +470,12 @@ function afficher() {
     div.className = "place vide";
     const colX = vueEleve ? (maxX - p.x) : p.x;
     div.style.left = "calc(var(--k) * (var(--mx) + " + colX + " * (" + L + "px + var(--gx)) * var(--ex)))";
-    let rangY = technoActif ? p.y : p.y - 1;
+    // Salles réelles : y croît déjà vers le tableau, rien à faire. Gabarits « Rangées » : y = rang
+    // + 1 avec le rang 0 (le plus proche du tableau) en tête — on inverse pour l'amener lui aussi
+    // en bas de la feuille, contre la barre TABLEAU.
+    let rangY = estTechno ? p.y : maxRang - (p.y - 1);
     if (vueEleve) rangY = maxRang - rangY;
-    div.style.top = "calc(var(--k) * (var(--my) + " + (technoActif ? 0 : 20) + "px + " + rangY + " * (" + H + "px + var(--gy)) * var(--ey)))";
+    div.style.top = "calc(var(--k) * (var(--my) + " + (estTechno ? 0 : 20) + "px + " + rangY + " * (" + H + "px + var(--gy)) * var(--ey)))";
     div.style.width = "calc(var(--k) * " + L + "px)";
     div.style.height = "calc(var(--k) * " + H + "px)";
     div.dataset.place = p.id;
