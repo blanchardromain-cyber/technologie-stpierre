@@ -55,7 +55,16 @@
     .barre, #lateral, .rgpd, .info, #chargeur, h1, .entete-cockpit, .horizon-footer { display: none !important; }
     #entetePrint { display: block; font-size: 13px; margin-bottom: 6px; }
     #entetePrint b { font-size: 16px; }
-    .place.dys, .place.conflit { box-shadow: none; }
+    #entetePrint .legende-dys { font-size: 11px; color: #333; margin-top: 2px; }
+    #entetePrint .pastille-dys { display: inline-block; width: 10px; height: 10px; margin-right: 5px;
+      vertical-align: -1px; border: 2px solid #2c8a5f; border-radius: 2px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    /* Le cadre vert « dys » est CONSERVÉ à l'impression : un collègue qui prend la salle doit
+       pouvoir repérer où sont assis les élèves à aménagements, déjà connus de l'établissement.
+       Le repère rouge « conflit », lui, est un outil de travail à l'écran : il disparaît. */
+    .place.conflit { box-shadow: none; }
+    .place.dys { box-shadow: inset 0 0 0 2px #2c8a5f;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .place.devant-tag, .place.derriere-tag { border-color: #8fa3b8; border-width: 1.5px; }
     #salle { border: none; --k: var(--echelle-print, 1); --ey: var(--etirement-y, 1); --ex: var(--etirement-x, 1);
              --mx: 8px; --my: 30px; --mb: 6px; --gx: 4px; --gy: 6px; }
@@ -430,9 +439,14 @@ function afficher() {
   // cote) et le bandeau d'en-tete (~34 px en hauteur). Marges ramenees de 8 a 6 mm : c'est
   // autant de place rendue aux vignettes, tout en restant dans la zone imprimable des
   // imprimantes courantes.
+  // La légende « dys » ajoute une ligne au bandeau d'en-tête : autant de hauteur utile en
+  // moins pour le plan, sinon la dernière rangée déborderait de la page.
+  const nbDysPlaces = Object.keys(affectation).filter(id =>
+    affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
+  const hLegende = nbDysPlaces ? 16 : 0;
   const PAGES = [
-    { orientation: "landscape", L: 1075, H: 715 },
-    { orientation: "portrait", L: 745, H: 1044 }
+    { orientation: "landscape", L: 1075, H: 715 - hLegende },
+    { orientation: "portrait", L: 745, H: 1044 - hLegende }
   ];
   // Une salle large et basse (sans photos) tient mieux en paysage ; avec les photos les
   // cases deviennent hautes et c'est la hauteur qui bride tout — le portrait laisse alors
@@ -614,11 +628,17 @@ function majEntetePrint() {
   const g = document.getElementById("gabarit");
   const nomSalle = g.options[g.selectedIndex].text;
   const d = dateGeneration ? new Date(dateGeneration) : null;
+  // Légende « dys » sur le papier : un collègue qui récupère la salle voit d'un coup d'œil
+  // OÙ sont assis les élèves à aménagements, sans avoir à croiser le plan avec une liste.
+  const nbDys = Object.keys(affectation).filter(id =>
+    affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
   document.getElementById("entetePrint").innerHTML =
     "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR") +
-    (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof");
+    (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof") +
+    (nbDys ? '<div class="legende-dys"><span class="pastille-dys"></span>Cadre vert : ' + nbDys +
+             " élève(s) à aménagements (dys) — repère de placement.</div>" : "");
 }
 
 window.addEventListener("beforeprint", majEntetePrint); // rafraîchit la date d'impression ; l'échelle, elle, est en CSS pur
