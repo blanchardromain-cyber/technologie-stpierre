@@ -83,6 +83,7 @@
 <div class="horizon-footer"></div>
 
 <script src="js/xlsx-leger.js"></script>
+<script src="js/liste-eleves.js"></script>
 <script src="outils/js/donnees.js"></script>
 <script src="js/verrou.js"></script>
 <script>
@@ -105,22 +106,12 @@ function analyserListe(texte, nomClasse) {
       eleves: eleves.map(e => ({ nom: String(e.nom).toUpperCase(), prenom: e.prenom, sexe: e.sexe === "F" ? "F" : "M", tags: e.tags || [] }))
     };
   }
-  const lignes = texte.split(/\r?\n/).filter(l => l.trim());
-  const sep = lignes[0].includes(";") ? ";" : lignes[0].includes("\t") ? "\t" : ",";
-  const eleves = [];
-  lignes.forEach(l => {
-    const c = l.split(sep).map(x => x.trim());
-    if (c.length < 2 || /^nom$/i.test(c[0])) return;
-    const sexe = (c[2] || "").toUpperCase().startsWith("F") ? "F" : "M";
-    // 4e colonne = repérage « dys » : toute case cochée d'une façon ou d'une autre
-    // (X, x, oui, 1, vrai, « dys »…) compte, sauf négation explicite.
-    const marque = (c[3] || "").trim().toLowerCase();
-    const negations = ["0", "-", "–", "non", "n", "no", "faux", "false", "nan"];
-    const tags = marque && !negations.includes(marque) ? ["dys"] : [];
-    eleves.push({ nom: c[0].toUpperCase(), prenom: c[1], sexe, tags });
-  });
-  if (!eleves.length) throw new Error("aucune ligne élève reconnue");
-  return { classe: nomClasse || "CLASSE", annee: "2026-2027", eleves };
+  // CSV / texte tabulé (.xlsx converti) : règle unique partagée par tous les points d'import,
+  // dans js/liste-eleves.js — en-tête repéré, colonnes reconnues par leur intitulé, lignes
+  // décoratives (titre, date, effectif, professeur…) écartées.
+  const lu = PP4G_LISTE.elevesDepuisTexte(texte);
+  if (!lu.eleves.length) throw new Error("aucune ligne élève reconnue");
+  return { classe: nomClasse || "CLASSE", annee: "2026-2027", eleves: lu.eleves, lecture: lu };
 }
 
 function afficherRecap(texte, classe) {
