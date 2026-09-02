@@ -483,7 +483,13 @@ function afficher() {
   places.forEach(p => {
     const div = document.createElement("div");
     div.className = "place vide";
-    const colX = vueEleve ? (maxX - p.x) : p.x;
+    // Sens de lecture des colonnes. Gabarits « Rangées » : numérotation à partir de la DROITE
+    // en vue prof — le professeur, tableau dans le dos et face à la classe, a le poste 1 à sa
+    // droite, puis 2, 3… vers sa gauche (et de même 7 à 12 au rang suivant). Salles réelles
+    // (techno, multimédia) : les postes ont une position physique, elle ne se renumérote pas.
+    // La vue élève inverse le tout, dans un cas comme dans l'autre.
+    const miroirColonnes = vueEleve !== !estTechno;
+    const colX = miroirColonnes ? (maxX - p.x) : p.x;
     div.style.left = "calc(var(--k) * (var(--mx) + " + colX + " * (" + L + "px + var(--gx)) * var(--ex)))";
     // Salles réelles : y croît déjà vers le tableau, rien à faire. Gabarits « Rangées » : y = rang
     // + 1 avec le rang 0 (le plus proche du tableau) en tête — on inverse pour l'amener lui aussi
