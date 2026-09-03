@@ -3,6 +3,10 @@
 Séquence 1, cycle 4. Activité élève : `batiment_eleve.html`
 (intégrée au site dans la capsule **P1 — Aménagement d'un bâtiment**, code d'accès **BAT26**).
 
+> Ce corrigé est aussi consultable et imprimable depuis le site, dans la capsule
+> **P1 — Corrigé Aménagement d'un bâtiment** (code **CORBAT26**). Les deux versions ont le
+> même contenu : en modifier une demande de reporter la modification dans l'autre.
+
 **Situation problème :** comment aménager des logements universitaires accueillant tout public
 en toute sécurité ?
 
