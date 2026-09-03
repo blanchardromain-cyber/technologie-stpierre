@@ -97,6 +97,11 @@
   .situ h2{font-size:19px;font-weight:700;margin:4px 0 6px;max-width:82%}
   .situ p{font-size:13.5px;opacity:.95;max-width:82%}
 
+  .reprise{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;
+    background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);
+    padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00
+  }
   section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
   .sthdr{
     display:flex;align-items:center;gap:12px;padding:14px 20px;
@@ -348,6 +353,8 @@
 </div>
 
 <main>
+
+  <div class="reprise" id="reprise" hidden></div>
 
   <div class="situ">
     <div class="lb">Situation problème</div>
@@ -835,6 +842,7 @@
 <div class="sendbar">
   <div class="sendbar-in">
     <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" onclick="reprendreDernierEnvoi()" title="Recharge la fiche depuis le dernier travail envoyé au professeur">&#x21A9;&#xFE0F; Reprendre mon envoi</button>
     <button class="btn btn-sec" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
     <button class="btn btn-sec" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; Copie de secours</button>
     <button class="btn btn-send" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer au professeur</button>
@@ -1449,16 +1457,9 @@ function restaurerSelonIdentite(){
   restoreDraft();
   renderPlan(); updateProgress();
 }
-function restoreDraft(){
-  var raw = null;
-  try { raw = localStorage.getItem(draftKey()); } catch(e){}
-  if (!raw) return;
-  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
-  if (!d) return;
-  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
-  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
-  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
-  var f = d.fields || {};
+/* Remplit la fiche à partir d'un jeu de réponses (brouillon local ou travail envoyé). */
+function appliquerDonnees(f, chips){
+  f = f || {};
   for (var i=0;i<FIELD_IDS.length;i++){
     var el = $(FIELD_IDS[i]);
     if (el && f[FIELD_IDS[i]] !== undefined){ el.value = f[FIELD_IDS[i]]; markFilled(el); }
@@ -1484,12 +1485,116 @@ function restoreDraft(){
       planItems = arr.map(function(o){ return {id:nextItemId++, k:o.k, x:o.x, y:o.y, w:o.w, h:o.h}; });
     } catch(e){}
   }
-  chipChoice = d.chips || {};
-  for (var ci in chipChoice){
-    if (!chipChoice.hasOwnProperty(ci)) continue;
+  chipChoice = chips || {};
+  for (var ci=0; ci<CHIPS.length; ci++){
     var cel = $("chip-"+ci);
-    if (cel && chipChoice[ci]) cel.setAttribute("data-choice", chipChoice[ci]);
+    if (!cel) continue;
+    cel.classList.remove("ok","ko");
+    if (chipChoice[ci]) cel.setAttribute("data-choice", chipChoice[ci]);
+    else cel.removeAttribute("data-choice");
   }
+}
+function restoreDraft(){
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch(e){}
+  if (!raw) return;
+  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  appliquerDonnees(d.fields, d.chips);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   REPRENDRE LE DERNIER ENVOI
+   Filet de sécurité : si le brouillon a disparu (autre poste, autre
+   navigateur, stockage effacé par la tablette), on recharge la fiche
+   depuis le travail déjà envoyé au professeur.
+   ════════════════════════════════════════════════════════════════ */
+function eidCourant(){
+  if (USER.id) return USER.id;
+  var ename = (val("inp-prenom") + " " + val("inp-nom")).trim();
+  if (!ename) return "";
+  var classe = val("inp-classe") ? ("5" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  return CAP_ID + "." + (slug(classe) || "5x") + "." + (slug(ename) || "eleve");
+}
+function envoiLocal(eid){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i=subs.length-1; i>=0; i--)
+      if (subs[i] && subs[i].eid === eid && subs[i].cap === CAP_ID) return subs[i];
+  } catch(e){}
+  return null;
+}
+function envoiCloud(eid, onDone){
+  if (!hasUrl() || !eid){ onDone(null); return; }
+  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  fetch(url).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok || !d.subs || !d.subs.length){ onDone(null); return; }
+    var miens = d.subs.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    onDone(miens[0] || null);
+  }).catch(function(){ onDone(null); });
+}
+function plusRecent(a, b){
+  if (!a) return b; if (!b) return a;
+  return (new Date(b.dateISO||0) > new Date(a.dateISO||0)) ? b : a;
+}
+function dateLisible(sub){
+  var d = new Date(sub && sub.dateISO ? sub.dateISO : Date.now());
+  function p(n){ return n<10 ? "0"+n : ""+n; }
+  return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
+}
+function appliquerEnvoi(sub){
+  if (!sub) return;
+  if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
+    var bouts = String(sub.ename).split(" ");
+    $("inp-prenom").value = bouts.shift() || "";
+    $("inp-nom").value = bouts.join(" ");
+  }
+  if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^5/, "").toUpperCase();
+  planItems = []; nextItemId = 1;
+  appliquerDonnees(sub.fields, sub.chips);
+  var ban = $("reprise"); if (ban) ban.hidden = true;
+  renderPlan(); updateProgress(); saveDraft();
+  flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
+}
+function reprendreDernierEnvoi(){
+  var eid = eidCourant();
+  if (!eid){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> : c'est ce qui permet de retrouver ton travail.", "err");
+    $("inp-prenom").focus(); return;
+  }
+  if (!formVierge() && !confirm("Récupérer le dernier travail envoyé remplacera ce qui est actuellement dans la fiche. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var local = envoiLocal(eid);
+  envoiCloud(eid, function(distant){
+    var sub = plusRecent(local, distant);
+    if (!sub){
+      flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err");
+      return;
+    }
+    appliquerEnvoi(sub);
+  });
+}
+/* Fiche vide alors qu'un travail a déjà été envoyé : on le signale sans rien écraser. */
+function proposerReprise(){
+  if (!formVierge()) return;
+  var eid = eidCourant();
+  if (!eid) return;
+  function afficher(sub){
+    if (!sub || !formVierge()) return;
+    var ban = $("reprise");
+    if (!ban) return;
+    ban.innerHTML = '<div><strong>&#x21A9;&#xFE0F; Un travail envoyé le ' + dateLisible(sub) + ' a été retrouvé.</strong>' +
+      '<div style="font-size:12.5px;margin-top:2px">Ta fiche est vide sur cet appareil : tu peux la recharger pour continuer.</div></div>' +
+      '<button class="btn btn-send" style="white-space:nowrap" onclick="reprendreDernierEnvoi()">Récupérer mon travail</button>';
+    ban.hidden = false;
+  }
+  var local = envoiLocal(eid);
+  if (local) afficher(local);
+  envoiCloud(eid, function(distant){ afficher(plusRecent(local, distant)); });
 }
 
 /* ════════════ MESSAGES ════════════ */
@@ -1719,6 +1824,7 @@ function initActivite(){
   renderPlan();
   updateProgress();
   flushQueue();
+  proposerReprise();
   if (!(window.SpeechRecognition || window.webkitSpeechRecognition)){
     var notes = document.querySelectorAll(".micbtn");
     for (var i=0;i<notes.length;i++) notes[i].title = "Dictée disponible avec Chrome ou Edge";
