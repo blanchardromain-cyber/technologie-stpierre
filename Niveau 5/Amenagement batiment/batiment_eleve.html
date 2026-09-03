@@ -354,9 +354,9 @@
         Un <strong>objet technique</strong> est un objet réalisé ou modifié par l'Homme.
       </div>
 
-      <figure class="illus" hidden id="illus-1">
-        <img src="ressources/1-objets-naturels-techniques.png" alt="Terrasse aménagée dans un jardin"
-             onload="this.parentNode.hidden=false" onerror="this.parentNode.remove()">
+      <figure class="illus" hidden id="illus-1"
+        data-alt="Terrasse aménagée dans un jardin"
+        data-src="ressources/1-objets-naturels-techniques.png|ressources/1-objets-naturels-techniques.jpg|ressources/1 Objets Techniques Objets Naturels.png">
         <figcaption>Une terrasse aménagée : combien d'objets techniques vois-tu&nbsp;?</figcaption>
       </figure>
 
@@ -558,9 +558,9 @@
         </div>
       </details>
 
-      <figure class="illus" hidden id="illus-4">
-        <img src="ressources/4-le-college.png" alt="Différents types de bâtiments"
-             onload="this.parentNode.hidden=false" onerror="this.parentNode.remove()">
+      <figure class="illus" hidden id="illus-4"
+        data-alt="Différents types de bâtiments"
+        data-src="ressources/4-le-college.png|ressources/4-le-college.jpg|ressources/4 Le collège.png">
         <figcaption>Des bâtiments très différents : logements, hôpital, bureaux, salle de spectacle, tours…</figcaption>
       </figure>
 
@@ -746,9 +746,9 @@
         </table>
       </div>
 
-      <figure class="illus" hidden id="illus-6">
-        <img src="ressources/6-conteneur-maritime.png" alt="Conteneur maritime et cité universitaire du Havre"
-             onload="this.parentNode.hidden=false" onerror="this.parentNode.remove()">
+      <figure class="illus" hidden id="illus-6"
+        data-alt="Conteneur maritime et cité universitaire du Havre"
+        data-src="ressources/6-conteneur-maritime.png|ressources/6-conteneur-maritime.jpg|ressources/6 Conteneur maritime.png">
         <figcaption>Du conteneur maritime de 40 pieds à la cité universitaire du Havre.</figcaption>
       </figure>
 
@@ -1588,6 +1588,35 @@ function sendToProf(){
   });
 }
 
+/* ════════════ ILLUSTRATIONS FACULTATIVES ════════════
+   Chaque <figure data-src="chemin1|chemin2|…"> essaie ses fichiers dans l'ordre :
+   le premier trouvé s'affiche, et si aucun n'existe le bloc disparaît.
+   Le professeur peut donc déposer les images du Drive sans les renommer. */
+function loadIllustrations(){
+  var figs = document.querySelectorAll("figure.illus[data-src]");
+  for (var i=0;i<figs.length;i++){
+    (function(fig){
+      var srcs = (fig.getAttribute("data-src") || "").split("|");
+      var alt  = fig.getAttribute("data-alt") || "";
+      var k = 0;
+      function next(){
+        if (k >= srcs.length){ fig.remove(); return; }
+        var url = encodeURI(srcs[k++].trim());
+        var probe = new Image();
+        probe.onload = function(){
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          fig.insertBefore(img, fig.firstChild);
+          fig.hidden = false;
+        };
+        probe.onerror = next;
+        probe.src = url;
+      }
+      next();
+    })(figs[i]);
+  }
+}
+
 /* ════════════ INITIALISATION ════════════ */
 function readPrefill(){
   try {
@@ -1620,6 +1649,7 @@ function wireFields(){
 }
 function initActivite(){
   try { if (localStorage.getItem("batiment5e_dys") === "1"){ document.body.classList.add("dys"); $("btn-dys").classList.add("on"); } } catch(e){}
+  loadIllustrations();
   buildChips();
   buildStepBank();
   buildPalette();
