@@ -75,6 +75,19 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .bv{background:var(--vp);color:var(--vt)}.bg{background:var(--gb);color:var(--td)}
 .block-badge{background:#FEF9E7;color:#7D6608;border:1px dashed #D4AC0D}
 
+/* CORRIGÉ P1 5e — mise en forme des sections */
+.bat-cor-h{font-size:15px;font-weight:700;color:var(--bl);margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--gb)}
+.bat-cor-p{font-size:13.5px;line-height:1.7;color:var(--td);margin-bottom:8px}
+.bat-cor-p strong,.bat-cor-l strong{color:var(--tx)}
+.bat-cor-l{font-size:13.5px;line-height:1.7;color:var(--td);margin:0 0 10px 20px}
+.bat-cor-l li{margin-bottom:4px}
+.bat-cor-t{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 14px}
+.bat-cor-t th{background:var(--bl);color:#fff;text-align:left;padding:7px 10px;font-weight:600;font-size:12.5px}
+.bat-cor-t td{border:1px solid var(--gb);padding:7px 10px;vertical-align:top;color:var(--td)}
+.bat-cor-t td.k{background:var(--gr);font-weight:700;color:var(--bl);width:22%}
+.bat-cor-t td.ok{background:var(--vp);color:var(--vt);font-weight:700;width:34%}
+.bat-cor-t a{color:var(--bc)}
+
 /* CODE INVITATION */
 .code-gate{background:white;border-radius:var(--r);box-shadow:var(--sh);border:2px dashed var(--gb);padding:32px 24px;text-align:center;max-width:420px;margin:40px auto}
 .code-gate .gate-icon{font-size:48px;margin-bottom:16px}
@@ -3646,6 +3659,113 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         loading="lazy"></iframe>
     </div>
 
+    <!-- BÂTIMENT 5e — CORRIGÉ P1 (réservé au professeur, code CORBAT26) -->
+    <div id="pg-batiment5e-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Corrigé Aménagement d'un bâtiment</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé et notes d'organisation &mdash; 5<sup>e</sup></h3>
+        <p style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
+          Réponses attendues pour les questions dont la réponse est stable. Les réponses ouvertes
+          (objets choisis, besoins cités, exemples au collège) admettent d'autres formulations :
+          les exemples ci-dessous servent de repère de correction.
+        </p>
+        <button onclick="printBatimentCorrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+
+        <div id="bat-cor-body" style="margin-top:20px">
+
+          <div style="background:var(--bp);border-left:4px solid var(--bl);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:18px">
+            <div style="font-weight:700;color:var(--bl);font-size:14px;margin-bottom:4px">Situation problème</div>
+            <div style="font-size:13.5px;color:var(--td)">Comment aménager des logements universitaires accueillant tout public en toute sécurité&nbsp;?</div>
+          </div>
+
+          <h4 class="bat-cor-h">Organisation</h4>
+          <table class="bat-cor-t">
+            <tr><td class="k">Modalité</td><td>Individuelle (identité pré-remplie depuis le compte élève). La modélisation Sweet Home 3D (6.4) se fait <strong>en binôme</strong>.</td></tr>
+            <tr><td class="k">Support</td><td>Navigateur &mdash; <strong>Chrome ou Edge</strong> pour la dictée vocale.</td></tr>
+            <tr><td class="k">Durée indicative</td><td>2 à 3 séances : parties 1 à 5, puis partie 6 et Sweet Home 3D.</td></tr>
+            <tr><td class="k">Sauvegarde</td><td>Brouillon automatique sur le poste ; « Envoyer au professeur » dépose le travail dans le tableau de bord.</td></tr>
+            <tr><td class="k">Accessibilité</td><td>Bouton &laquo;&nbsp;&#x1F3A4; Dicter&nbsp;&raquo; sur chaque champ ; bouton &laquo;&nbsp;Confort de lecture&nbsp;&raquo; (police B612, espacement élargi).</td></tr>
+            <tr><td class="k">Code élève</td><td><strong>BAT26</strong> &mdash; modifiable dans l'onglet &laquo;&nbsp;Codes d'accès&nbsp;&raquo;.</td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">Ressources ouvertes depuis la fiche</h4>
+          <table class="bat-cor-t">
+            <tr><td class="k">Partie 1</td><td><a href="https://techno-flash.com/activites/v2/classification_objets/classification_objets.html" target="_blank" rel="noopener">La classification des objets</a> (Techno-Flash)</td></tr>
+            <tr><td class="k">Partie 2</td><td><a href="https://techno-flash.com/activites/v2/associer_produits_besoin/associer_produits_besoin.html" target="_blank" rel="noopener">Associer des produits à un besoin</a></td></tr>
+            <tr><td class="k">Partie 3</td><td><a href="https://techno-flash.com/activites/v2/fonction_usage/fonction_usage.html" target="_blank" rel="noopener">La fonction d'usage d'un produit</a></td></tr>
+            <tr><td class="k">Partie 4</td><td>Réglementations ERP-ERT-IGH et Classement des ERP : intégrées à la fiche, en dépliants.</td></tr>
+            <tr><td class="k">Partie 6</td><td><a href="https://www.youtube.com/watch?v=XRkp4-lq7y4&amp;t=1s" target="_blank" rel="noopener">Le Sénat</a> &middot; <a href="https://www.youtube.com/watch?v=1_H5Z4b9bIE&amp;list=PLvqD551Lv13mPIH1bECcZ-xSdlsEEGe1l" target="_blank" rel="noopener">Institut de biologie Gustave Roussy</a> &middot; <a href="https://www.cougnaud.com/" target="_blank" rel="noopener">Cougnaud</a></td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">1. Objet naturel / objet technique</h4>
+          <p class="bat-cor-p"><strong>Échauffement (auto-corrigé).</strong> Naturels : arbre, rocher, fleur sauvage, nuage, galet. Techniques : vélo, sac à dos, table de jardin, lampadaire, terrasse en bois.</p>
+          <p class="bat-cor-p"><strong>Attendu :</strong> un objet technique a été <strong>réalisé ou modifié par l'Homme</strong> pour répondre à un besoin ; un objet naturel n'a pas été transformé.</p>
+
+          <h4 class="bat-cor-h">2. Produit et besoin</h4>
+          <table class="bat-cor-t">
+            <tr><th>Type de besoin</th><th>Besoin</th><th>Objet technique</th></tr>
+            <tr><td class="k">Physiologique</td><td>Se protéger du froid, se nourrir</td><td>Chauffage, réfrigérateur</td></tr>
+            <tr><td class="k">Sécurité</td><td>Protéger son logement</td><td>Serrure, détecteur de fumée</td></tr>
+            <tr><td class="k">Appartenance</td><td>Rester en lien avec les autres</td><td>Smartphone, réseau social</td></tr>
+            <tr><td class="k">Estime</td><td>Être reconnu, se sentir valorisé</td><td>Vêtement de marque, trophée</td></tr>
+            <tr><td class="k">Épanouissement</td><td>Créer, apprendre</td><td>Instrument de musique, ordinateur</td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">3. Fonction d'usage (verbe à l'infinitif)</h4>
+          <ul class="bat-cor-l">
+            <li><strong>Sac à dos :</strong> permettre de <strong>transporter</strong> des affaires sur le dos, en gardant les mains libres.</li>
+            <li><strong>Vélo :</strong> permettre de <strong>se déplacer</strong> en utilisant l'énergie musculaire.</li>
+            <li><strong>Logement étudiant :</strong> permettre de <strong>loger</strong> un étudiant : dormir, se laver, cuisiner, travailler.</li>
+          </ul>
+
+          <h4 class="bat-cor-h">4. Le collège</h4>
+          <ul class="bat-cor-l">
+            <li><strong>IGH</strong> &mdash; Immeuble de Grande Hauteur : dernier plancher à plus de 28 m (habitation) ou 50 m (autres bâtiments).</li>
+            <li><strong>ERT</strong> &mdash; Établissement Recevant des Travailleurs : des salariés y travaillent (bureaux, usine, atelier).</li>
+            <li><strong>ERP</strong> &mdash; Établissement Recevant du Public : accueille des personnes extérieures (collège, magasin, hôpital).</li>
+            <li><strong>Habitation</strong> &mdash; les logements : maison, immeuble collectif, logement étudiant.</li>
+          </ul>
+          <p class="bat-cor-p"><strong>Synonymes :</strong> le <em>type</em> = l'<strong>activité</strong> ; la <em>catégorie</em> = la <strong>capacité</strong> (l'effectif accueilli).</p>
+          <p class="bat-cor-p"><strong>Le collège :</strong> <strong>type R</strong> (éveil, enseignement, formation). La <strong>catégorie</strong> dépend de l'effectif réel : l'activité la vérifie automatiquement à partir du nombre saisi par l'élève &mdash; plus de 1500 → 1<sup>re</sup> ; 701 à 1500 → 2<sup>e</sup> ; 301 à 700 → 3<sup>e</sup> ; 300 et moins → 4<sup>e</sup> ; petit établissement → 5<sup>e</sup>. <em>Penser à donner l'effectif du collège en début de séance.</em></p>
+
+          <h4 class="bat-cor-h">5. Contraintes et normes</h4>
+          <table class="bat-cor-t">
+            <tr><th>Affirmation</th><th>Réponse</th></tr>
+            <tr><td>Elle a été décidée par un organisme d'État</td><td class="ok">une norme</td></tr>
+            <tr><td>Elle a été décidée par le client</td><td class="ok">une contrainte</td></tr>
+            <tr><td>Une norme doit être obligatoirement appliquée</td><td class="ok">oui</td></tr>
+            <tr><td>Une contrainte doit être obligatoirement appliquée</td><td class="ok">non &mdash; elle se négocie avec le client</td></tr>
+          </table>
+          <table class="bat-cor-t">
+            <tr><th>Domaine</th><th>Norme</th><th>Contrainte</th></tr>
+            <tr><td class="k">Handicap</td><td>Rampe d'accès, ascenseur, largeur des portes, WC PMR</td><td>Place de stationnement PMR choisie, matériel adapté acheté</td></tr>
+            <tr><td class="k">Sécurité</td><td>Extincteurs, blocs de secours, portes coupe-feu, plan d'évacuation</td><td>Portail fermé aux heures de cours, badge d'accès</td></tr>
+            <tr><td class="k">Esthétique</td><td>Peu de normes : signalétique réglementaire, couleurs de sécurité</td><td>Couleur des murs, matériaux de façade, mobilier</td></tr>
+            <tr><td class="k">Électricité</td><td>Prises reliées à la terre, tableau et disjoncteurs, hauteur des prises</td><td>Nombre de prises par salle, éclairage LED choisi</td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">6. Modélisation</h4>
+          <p class="bat-cor-p"><strong>Principe :</strong> les modules (ici des conteneurs de 40 pieds) sont fabriqués et équipés en usine, puis transportés et assemblés sur le chantier. Les vidéos du Sénat et de l'Institut Gustave Roussy montrent des bureaux construits ainsi.</p>
+          <p class="bat-cor-p"><strong>Avantages :</strong> chantier rapide, moins de nuisances et de déchets, coût maîtrisé, réemploi des conteneurs, modules démontables et déplaçables, qualité contrôlée en usine.</p>
+          <p class="bat-cor-p"><strong>Étapes attendues :</strong> 1 croquis <em>(donné)</em> → 2 régler l'échelle et dessiner les murs aux bonnes dimensions → 3 placer la porte et les fenêtres → 4 créer les cloisons des espaces → 5 installer les meubles et vérifier les dimensions → 6 décorer <em>(donné)</em>.</p>
+          <p class="bat-cor-p"><strong>Plan interactif :</strong> conteneur 40 pieds <strong>1219 × 244 cm</strong> (hauteur 259 cm), grille de 10 cm, 1 grand carreau = 1 m. Meubles aux dimensions réelles : lit 90×190, armoire 100×60, table 115×115, meuble cuisine 120×65, douche 80×80, lavabo 60×60, WC 40×80, bureau 140×65, cloisons, porte, fenêtres. La liste de contrôle sous le plan valide les 4 espaces (cuisine, repos, hygiène, travail), la porte sur un mur, au moins une fenêtre, au moins une cloison et l'absence de meubles superposés.</p>
+          <p class="bat-cor-p"><strong>Sweet Home 3D :</strong> reprise du plan en binôme à partir du fichier <em>conteneur maritime 40.sh3d</em> &mdash; penser à le partager aux élèves.</p>
+
+          <h4 class="bat-cor-h">Notes techniques</h4>
+          <ul class="bat-cor-l">
+            <li>La fiche fonctionne aussi ouverte seule&nbsp;: <em>Niveau 5/Amenagement batiment/batiment_eleve.html</em>.</li>
+            <li>L'identité est transmise par le site avant l'affichage ; l'élève peut la corriger.</li>
+            <li>Envoi&nbsp;: même backend que les autres capsules. Hors connexion, le travail est gardé sur le poste et repart automatiquement.</li>
+            <li>Le plan est enregistré au format JSON (type, position et dimensions en cm) et redessiné dans la fiche de l'élève, côté professeur.</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
     <!-- RÉSEAU 5e — CAPSULE P2 (activité embarquée depuis le dépôt reseau-5e) -->
     <div id="pg-reseau5e" class="h">
       <div class="phdr">
@@ -4457,6 +4577,7 @@ var SEQUENCES_DEF = [
   {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
   {id:"batiment5e", niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
+  {id:"batiment5e-cor", niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
   {id:"reseau5e", niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"filius5e", niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
   {id:"filius5e-cor", niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
@@ -4919,6 +5040,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
+        } else if (s.id === "batiment5e-cor") {
+          badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "batiment5e") {
           badgeHtml = '<span class="badge" style="background:#FCE4D6;color:#C55A11;font-weight:700">&#x1F3D7;&#xFE0F; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
@@ -4944,6 +5067,7 @@ function renderDash() {
       else if (s.id === "cap1")     clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
+      else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -4994,6 +5118,7 @@ function tryUnlock() {
     else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
+    else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -5803,6 +5928,33 @@ function updateNotifSettings() {
       if (fb) { fb.textContent = "❌ Backend injoignable"; fb.style.color = "var(--rg)"; }
     });
 }
+/* Corrigé P1 5e — impression : on reprend le corps de la page tel qu'il s'affiche */
+function printBatimentCorrige() {
+  var corps = document.getElementById("bat-cor-body");
+  if (!corps) return;
+  var w = window.open('', '_blank');
+  var d = new Date();
+  function p2(n){ return n < 10 ? '0' + n : '' + n; }
+  var dStr = p2(d.getDate()) + '/' + p2(d.getMonth()+1) + '/' + d.getFullYear();
+  var css = 'body{font-family:"DM Sans",Arial,sans-serif;font-size:12.5px;color:#1A202C;max-width:760px;margin:0 auto;padding:18px}'
+    + 'h1{font-size:17px;color:#1F4E79;margin-bottom:2px}.sub{color:#666;font-size:11.5px;margin-bottom:16px}'
+    + '.bat-cor-h{font-size:14px;font-weight:700;color:#1F4E79;margin:18px 0 6px;padding-bottom:4px;border-bottom:2px solid #E2E8F0;page-break-after:avoid}'
+    + '.bat-cor-p{font-size:12.5px;line-height:1.6;color:#4A5568;margin-bottom:6px}'
+    + '.bat-cor-l{font-size:12.5px;line-height:1.6;color:#4A5568;margin:0 0 8px 18px}'
+    + '.bat-cor-t{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 12px;page-break-inside:avoid}'
+    + '.bat-cor-t th{background:#1F4E79;color:#fff;text-align:left;padding:5px 8px}'
+    + '.bat-cor-t td{border:1px solid #CBD5E0;padding:5px 8px;vertical-align:top;color:#4A5568}'
+    + '.bat-cor-t td.k{background:#F4F6F8;font-weight:700;color:#1F4E79}'
+    + '.bat-cor-t td.ok{background:#E2EFDA;color:#1E6B3B;font-weight:700}'
+    + 'a{color:#2E75B6;text-decoration:none}@media print{button{display:none}}';
+  w.document.write('<html><head><meta charset="utf-8"><title>Corrigé P1 5e — Aménager un bâtiment</title><style>'
+    + css + '</style></head><body><h1>TECHNOLOGIE — R. Blanchard — Corrigé P1 5<sup>e</sup> : Aménager un bâtiment</h1>'
+    + '<div class="sub">Document professeur — imprimé le ' + dStr + '</div>'
+    + corps.innerHTML
+    + '<br><button onclick="window.print()">Imprimer</button></body></html>');
+  w.document.close();
+}
+
 function printPwds() {
   /* Respecte le filtre Classe sélectionné dans le modal Config */
   var selEl = document.getElementById("pwd-class-filter");
