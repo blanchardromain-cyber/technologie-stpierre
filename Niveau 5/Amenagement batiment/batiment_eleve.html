@@ -267,6 +267,15 @@
   .cbline{display:flex;align-items:flex-start;gap:10px;background:var(--gr);border-radius:9px;padding:11px 14px;margin:12px 0}
   .cbline input[type=checkbox]{width:20px;height:20px;accent-color:var(--vt);margin-top:1px;flex:0 0 auto;cursor:pointer}
   .cbline label{font-size:14px;font-weight:600;color:var(--tx);cursor:pointer}
+  .reslinks{
+    background:#EEF6FF;border:1px solid #A9CBEA;border-radius:10px;
+    padding:11px 14px;margin:0 0 16px
+  }
+  .reslinks .rl-lb{
+    display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
+    color:var(--bl);margin-bottom:7px
+  }
+  .reslinks p{font-size:13px;color:var(--td);margin:6px 0 0}
   .linkbtn{
     display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);
     border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;
@@ -360,6 +369,12 @@
         <figcaption>Une terrasse aménagée : combien d'objets techniques vois-tu&nbsp;?</figcaption>
       </figure>
 
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; Pour découvrir la notion</span>
+        <a class="linkbtn" href="https://techno-flash.com/activites/v2/classification_objets/classification_objets.html" target="_blank" rel="noopener">&#x1F517; La classification des objets</a>
+        <p>Fais d'abord cette activité en ligne, puis reviens répondre ici.</p>
+      </div>
+
       <span class="qlabel"><span class="qn">Échauffement</span>Range chaque mot dans la bonne catégorie : clique une fois = <b>naturel</b>, deux fois = <b>technique</b>.</span>
       <div class="legend">Légende : <b class="lg-nat">naturel</b> &nbsp; <b class="lg-tec">technique</b></div>
       <div class="chipbox" id="chipbox"></div>
@@ -397,6 +412,12 @@
         On appelle <strong>besoin</strong> le sentiment de manque, d'insatisfaction qui pousse un être vivant à agir.
         Un objet technique est créé pour <strong>répondre à un besoin</strong>.
       </div>
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; Pour découvrir la notion</span>
+        <a class="linkbtn" href="https://techno-flash.com/activites/v2/associer_produits_besoin/associer_produits_besoin.html" target="_blank" rel="noopener">&#x1F517; Associer des produits à un besoin</a>
+        <p>Entraîne-toi en ligne, puis complète le tableau ci-dessous.</p>
+      </div>
+
       <div class="pyramide">
         <div style="background:#7B2C8B;width:36%">5. Épanouissement</div>
         <div style="background:#2E75B6;width:48%">4. Estime</div>
@@ -449,6 +470,12 @@
         La <strong>fonction d'usage</strong> est la fonction pour laquelle l'objet a été créé.
         Elle répond à la question : <strong>« À quoi sert-il ? »</strong> — on la formule avec un verbe à l'infinitif
         (ex. : <em>« Permettre de… »</em>).
+      </div>
+
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; Pour découvrir la notion</span>
+        <a class="linkbtn" href="https://techno-flash.com/activites/v2/fonction_usage/fonction_usage.html" target="_blank" rel="noopener">&#x1F517; La fonction d'usage d'un produit</a>
+        <p>Cette activité en ligne t'aide à formuler une fonction d'usage avec un verbe à l'infinitif.</p>
       </div>
 
       <span class="qlabel"><span class="qn">3.1</span>Retrouve la fonction d'usage de chacun de ces objets techniques.</span>
@@ -721,7 +748,13 @@
       </div>
 
       <span class="qlabel"><span class="qn">6.1</span>Après avoir vu des exemples de constructions réalisées par l'entreprise Cougnaud, explique le principe de la construction modulaire, puis ses avantages.</span>
-      <a class="linkbtn" href="https://www.cougnaud.com/" target="_blank" rel="noopener">&#x1F3D7;&#xFE0F; Site de l'entreprise Cougnaud</a>
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F3AC; Des bureaux construits en modulaire</span>
+        <a class="linkbtn" href="https://www.youtube.com/watch?v=XRkp4-lq7y4&amp;t=1s" target="_blank" rel="noopener">&#x25B6;&#xFE0F; Le Sénat</a>
+        <a class="linkbtn" href="https://www.youtube.com/watch?v=1_H5Z4b9bIE&amp;list=PLvqD551Lv13mPIH1bECcZ-xSdlsEEGe1l" target="_blank" rel="noopener">&#x25B6;&#xFE0F; L'Institut de biologie Gustave Roussy</a>
+        <a class="linkbtn" href="https://www.cougnaud.com/" target="_blank" rel="noopener">&#x1F3D7;&#xFE0F; Site de l'entreprise Cougnaud</a>
+        <p>Regarde ces chantiers : que remarques-tu sur la façon de construire et sur la durée des travaux&nbsp;?</p>
+      </div>
       <div class="fwrap" style="margin-top:8px">
         <label class="hint">Le principe :</label>
         <textarea class="rep" id="b6-principe" placeholder="Les bâtiments sont construits…"></textarea>
@@ -778,12 +811,12 @@
       <div class="chk" id="plan-check"></div>
       <input type="hidden" id="b6-plan">
 
-      <span class="qlabel"><span class="qn">6.4</span>Modélise maintenant ta solution sur <strong>Sweet Home 3D</strong>, aménage l'intérieur, et vérifie que ta construction répond bien aux exigences citées plus haut.</span>
+      <span class="qlabel"><span class="qn">6.4</span>Modélise maintenant ta solution sur <strong>Sweet Home 3D</strong>, <strong>en binôme</strong> : aménage l'intérieur, puis vérifie que votre construction répond bien aux exigences citées plus haut.</span>
       <a class="linkbtn" href="https://www.sweethome3d.com/fr/" target="_blank" rel="noopener">&#x1F5A5;&#xFE0F; Sweet Home 3D</a>
       <a class="linkbtn" href="https://drive.google.com/file/d/16g02iLW4cAn0D4SvdM9x8RzLcKm_F4iu/view" target="_blank" rel="noopener">&#x1F4E6; Fichier « conteneur maritime 40.sh3d »</a>
       <div class="cbline">
         <input type="checkbox" id="b6-sh3d">
-        <label for="b6-sh3d">J'ai réalisé la modélisation de mon logement sur Sweet Home 3D et je l'ai enregistrée sur mon espace.</label>
+        <label for="b6-sh3d">Nous avons réalisé la modélisation du logement sur Sweet Home 3D en binôme, et le fichier est enregistré.</label>
       </div>
       <div class="fwrap">
         <label class="hint">Bilan : mon logement respecte-t-il les exigences (sécurité, accessibilité, confort) ? Justifie.</label>
