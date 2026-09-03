@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 — Aménager un bâtiment — 5ème</title>
+<!-- Polices chargées sans bloquer l'affichage : si le réseau du collège filtre Google Fonts,
+     l'activité reste utilisable immédiatement avec les polices du système. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  /* Police B612 (très lisible) — utilisée par le mode « confort de lecture » */
+  @font-face {
+    font-family: 'B612';
+    src: url('../../pp4g/fonts/B612-Regular.ttf') format('truetype');
+    font-weight: 400; font-display: swap;
+  }
+  @font-face {
+    font-family: 'B612';
+    src: url('../../pp4g/fonts/B612-Bold.ttf') format('truetype');
+    font-weight: 700; font-display: swap;
+  }
+
+  :root{
+    --br:#C55A11;      /* orange brique — couleur de la séquence */
+    --brl:#FCE4D6;
+    --bl:#1F4E79;      /* bleu institution */
+    --bc:#2E75B6;
+    --bp:#DEEAF1;
+    --vt:#1E6B3B;      /* vert validation */
+    --vp:#E2EFDA;
+    --rg:#C0392B;
+    --rgp:#FADBD8;
+    --gr:#F4F6F8;
+    --gb:#E2E8F0;
+    --tx:#1A202C;
+    --td:#4A5568;
+    --r:12px;
+    --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"DM Sans",system-ui,sans-serif;
+    background:var(--gr); color:var(--tx);
+    font-size:15px; line-height:1.6;
+  }
+  body.dys{
+    font-family:'B612',"DM Sans",sans-serif;
+    letter-spacing:.4px; word-spacing:2px; line-height:1.9; font-size:16px;
+  }
+  body.dys .card p, body.dys label{line-height:2}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{
+    background:linear-gradient(135deg,var(--bl),#0D2B50);
+    color:#fff; padding:16px 22px;
+    position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 14px rgba(0,0,0,.25);
+  }
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FFC08A}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{
+    background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none;
+  }
+  .fld input:focus{border-color:#FFC08A}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE DE PROGRESSION ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:0;z-index:40}
+  .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:180px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--br),#E8842A);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{
+    background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .toolbtn.on{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1180px;margin:0 auto;padding:22px 22px 140px}
+  .situ{
+    background:linear-gradient(135deg,var(--br),#E8842A);color:#fff;border-radius:var(--r);
+    padding:20px 24px;margin-bottom:22px;box-shadow:var(--sh);position:relative;overflow:hidden
+  }
+  .situ::after{content:"\1F3D7";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.18}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+  .situ h2{font-size:19px;font-weight:700;margin:4px 0 6px;max-width:82%}
+  .situ p{font-size:13.5px;opacity:.95;max-width:82%}
+
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{
+    display:flex;align-items:center;gap:12px;padding:14px 20px;
+    background:var(--bp);border-left:6px solid var(--bl);cursor:pointer;user-select:none
+  }
+  .sthdr .num{
+    width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto
+  }
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  .lesson{
+    background:var(--gr);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;
+    padding:12px 15px;margin-bottom:16px;font-size:14px;color:var(--td)
+  }
+  .lesson strong{color:var(--bl)}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;color:var(--tx);margin:16px 0 8px}
+  .qlabel .qn{color:var(--br);font-weight:700;font-family:"DM Mono",monospace;margin-right:5px}
+  .hint{font-size:12.5px;color:var(--td);font-style:italic;margin:-4px 0 8px}
+
+  /* ═══ CHAMPS + DICTÉE ═══ */
+  .fwrap{position:relative;margin-bottom:12px}
+  textarea.rep, input.rep{
+    width:100%;font-family:inherit;font-size:14.5px;color:var(--tx);
+    background:#FFFDF9;border:2px solid var(--gb);border-radius:9px;
+    padding:10px 12px 10px 12px;outline:none;resize:vertical;transition:border-color .15s,background .15s
+  }
+  textarea.rep{min-height:62px;line-height:1.65}
+  textarea.rep:focus, input.rep:focus{border-color:var(--br);background:#fff}
+  textarea.rep.filled, input.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
+  body.dys textarea.rep, body.dys input.rep{font-size:16px;line-height:1.9}
+  .micbtn{
+    display:inline-flex;align-items:center;gap:5px;margin-top:5px;
+    background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .micbtn:hover{border-color:var(--br);color:var(--br)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .microw{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .micnote{font-size:11.5px;color:var(--td)}
+
+  /* ═══ TABLEAUX ═══ */
+  table.grid{width:100%;border-collapse:collapse;margin-bottom:8px}
+  table.grid th{
+    background:var(--bl);color:#fff;font-size:12.5px;font-weight:600;text-align:left;
+    padding:9px 11px;border:1px solid var(--bl)
+  }
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:top}
+  table.grid td.lead{background:var(--gr);font-weight:600;font-size:13.5px;color:var(--bl);width:210px}
+  table.grid td.lead small{display:block;font-weight:400;color:var(--td);font-size:11.5px;margin-top:2px}
+  .tscroll{overflow-x:auto}
+
+  /* ═══ QUIZ AUTO-CORRIGÉS ═══ */
+  .chipbox{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}
+  .chip{
+    background:#fff;border:2px solid var(--gb);border-radius:22px;padding:7px 14px;
+    font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;user-select:none
+  }
+  .chip:hover{border-color:var(--bc)}
+  .chip[data-choice="nat"]{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+  .chip[data-choice="tec"]{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .chip.ok{box-shadow:0 0 0 3px rgba(30,107,59,.25)}
+  .chip.ko{box-shadow:0 0 0 3px rgba(192,57,43,.3)}
+  .legend{font-size:12.5px;color:var(--td);margin-bottom:10px}
+  .legend b{padding:2px 8px;border-radius:12px}
+  .lg-nat{background:var(--vp);color:var(--vt)}
+  .lg-tec{background:var(--bp);color:var(--bl)}
+
+  .qcm{margin:10px 0 14px}
+  .qcm .prop{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:var(--gr);border:1px solid var(--gb);border-radius:9px;padding:9px 12px;margin-bottom:7px
+  }
+  .qcm .prop .txt{flex:1;min-width:220px;font-size:14px}
+  .qcm .opts{display:flex;gap:7px}
+  .qcm .opt{
+    border:2px solid var(--gb);background:#fff;border-radius:8px;padding:5px 12px;
+    font-family:inherit;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .qcm .opt:hover{border-color:var(--bc)}
+  .qcm .opt.sel{background:var(--bl);border-color:var(--bl);color:#fff}
+  .qcm .prop.ok{background:var(--vp);border-color:var(--vt)}
+  .qcm .prop.ko{background:var(--rgp);border-color:var(--rg)}
+  .fb{font-size:12.5px;font-weight:600;margin-top:4px;width:100%}
+  .fb.ok{color:var(--vt)}
+  .fb.ko{color:var(--rg)}
+
+  .btnck{
+    background:var(--bl);color:#fff;border:none;border-radius:9px;padding:9px 18px;
+    font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s
+  }
+  .btnck:hover{background:var(--bc)}
+  .result{margin-top:10px;font-size:13.5px;font-weight:700;border-radius:9px;padding:9px 14px;display:none}
+  .result.show{display:block}
+  .result.good{background:var(--vp);color:var(--vt)}
+  .result.bad{background:var(--brl);color:var(--br)}
+
+  /* ═══ RESSOURCES DÉPLIANTES ═══ */
+  details.res{
+    background:#FFF9F2;border:1px solid #F0CFA8;border-radius:10px;padding:0;margin-bottom:14px;overflow:hidden
+  }
+  details.res>summary{
+    cursor:pointer;padding:11px 15px;font-weight:700;font-size:13.5px;color:var(--br);
+    list-style:none;display:flex;align-items:center;gap:8px
+  }
+  details.res>summary::-webkit-details-marker{display:none}
+  details.res>summary::after{content:"▾";margin-left:auto;transition:transform .2s}
+  details.res[open]>summary::after{transform:rotate(180deg)}
+  details.res .rbody{padding:0 15px 14px;font-size:13.5px;color:var(--td)}
+  details.res .rbody ul{margin:6px 0 6px 20px}
+  details.res .rbody li{margin-bottom:3px}
+  details.res .rbody h5{color:var(--bl);font-size:13px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.6px}
+  .typegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:5px;margin-top:6px}
+  .typegrid div{background:#fff;border:1px solid var(--gb);border-radius:7px;padding:5px 9px;font-size:12.5px}
+  .typegrid b{color:var(--br);font-family:"DM Mono",monospace}
+
+  /* ═══ ILLUSTRATIONS ═══ */
+  figure.illus{margin:0 0 16px;border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff}
+  figure.illus img{display:block;width:100%;height:auto}
+  figure.illus figcaption{padding:8px 12px;font-size:12.5px;color:var(--td);border-top:1px solid var(--gb);background:var(--gr)}
+  .objcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .objcard{border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff}
+  .objcard .pic{background:var(--gr);display:flex;align-items:center;justify-content:center;padding:10px}
+  .objcard .cap{padding:9px 12px;font-weight:700;font-size:14px;color:var(--bl);border-top:1px solid var(--gb)}
+  .objcard .body{padding:0 12px 12px}
+  .pyramide{display:flex;flex-direction:column;align-items:center;gap:3px;margin:10px 0 16px}
+  .pyramide div{
+    color:#fff;font-size:12.5px;font-weight:600;text-align:center;padding:6px 10px;border-radius:5px
+  }
+
+  /* ═══ PLAN INTERACTIF ═══ */
+  .plantools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+  .palette{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .pal{
+    display:flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--gb);border-radius:9px;
+    padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--tx);cursor:pointer;transition:.15s
+  }
+  .pal:hover{border-color:var(--br);background:#FFF9F2}
+  .pal small{color:var(--td);font-weight:400;font-family:"DM Mono",monospace;font-size:11px}
+  #plan-scroll{overflow:auto;background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:14px}
+  #plan{
+    position:relative;background:#fff;border:3px solid #7A5230;box-shadow:inset 0 0 0 2px #C89B6A;
+    margin:0 auto;touch-action:none
+  }
+  .item{
+    position:absolute;border:2px solid rgba(0,0,0,.35);border-radius:4px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;color:#1A202C;cursor:grab;overflow:hidden;text-align:center;
+    box-shadow:0 1px 3px rgba(0,0,0,.2);user-select:none;touch-action:none
+  }
+  .item small{font-weight:400;font-size:9px;opacity:.8;font-family:"DM Mono",monospace}
+  .item.sel{outline:3px solid var(--br);outline-offset:1px;z-index:5}
+  .item.bad{border-color:var(--rg);box-shadow:0 0 0 2px rgba(192,57,43,.45)}
+  .item.drag{cursor:grabbing;opacity:.85}
+  .chk{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .chk span{
+    font-size:12.5px;font-weight:600;border-radius:18px;padding:4px 12px;
+    background:var(--gr);border:1px solid var(--gb);color:var(--td)
+  }
+  .chk span.ok{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+  .chk span.ko{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+
+  .cbline{display:flex;align-items:flex-start;gap:10px;background:var(--gr);border-radius:9px;padding:11px 14px;margin:12px 0}
+  .cbline input[type=checkbox]{width:20px;height:20px;accent-color:var(--vt);margin-top:1px;flex:0 0 auto;cursor:pointer}
+  .cbline label{font-size:14px;font-weight:600;color:var(--tx);cursor:pointer}
+  .linkbtn{
+    display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);
+    border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;
+    text-decoration:none;margin:3px 6px 3px 0
+  }
+  .linkbtn:hover{background:var(--bc);color:#fff}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{
+    position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--gb);
+    box-shadow:0 -4px 20px rgba(0,0,0,.09);padding:11px 22px;z-index:60
+  }
+  .sendbar-in{max-width:1180px;margin:0 auto;display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{border:none;border-radius:9px;padding:10px 17px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-send{background:var(--br);color:#fff}
+  .btn-send:hover{background:#E8842A}
+  .btn-send:disabled{opacity:.5;cursor:not-allowed}
+  .btn-sec{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-sec:hover{background:var(--bp);color:var(--bl)}
+  .draftst{font-size:12px;color:var(--td);margin-right:auto;font-family:"DM Mono",monospace}
+  .sendst{display:none;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:0 0 10px;font-weight:600}
+  .sendst.show{display:block}
+  .sendst.ok{background:var(--vp);color:var(--vt)}
+  .sendst.err{background:var(--rgp);color:var(--rg)}
+  .sendst.wait{background:var(--bp);color:var(--bl)}
+
+  @media (max-width:640px){
+    header h1{font-size:16px}
+    .fld input{width:118px}
+    main{padding:16px 13px 150px}
+    .situ h2,.situ p{max-width:100%}
+    .situ::after{display:none}
+  }
+  @media print{
+    header,.pbar-wrap,.sendbar,.micbtn,.plantools,.palette,.btnck,.toolbtn{display:none!important}
+    body{background:#fff}
+    section.step{box-shadow:none;border:1px solid #999;break-inside:avoid}
+    section.step.closed .stbody{display:block}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 1</div>
+      <h1>P1 — Aménager un bâtiment</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 0 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" id="btn-dys" onclick="toggleDys()" title="Agrandit le texte et l'espacement des lettres">&#x1F441;&#xFE0F; Confort de lecture</button>
+    <button class="toolbtn" onclick="toggleAll()" id="btn-fold">&#x1F4D6; Tout ouvrir / fermer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Comment aménager des logements universitaires accueillant tout public en toute sécurité&nbsp;?</h2>
+    <p>La ville manque de logements étudiants. On décide d'en construire à partir de <strong>conteneurs maritimes</strong> recyclés, comme la cité universitaire du Havre. À toi de mener l'étude, puis d'aménager ton logement.</p>
+  </div>
+
+  <!-- ════════════ 1. OBJET NATUREL / OBJET TECHNIQUE ════════════ -->
+  <section class="step" id="sec1">
+    <div class="sthdr" onclick="toggleSec('sec1')">
+      <div class="num">1</div><h3>Objet naturel / objet technique</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Un <strong>objet naturel</strong> est un « objet » qui n'a pas été modifié par l'Homme.<br>
+        Un <strong>objet technique</strong> est un objet réalisé ou modifié par l'Homme.
+      </div>
+
+      <figure class="illus" hidden id="illus-1"
+        data-alt="Terrasse aménagée dans un jardin"
+        data-src="ressources/1-objets-naturels-techniques.png|ressources/1-objets-naturels-techniques.jpg|ressources/1 Objets Techniques Objets Naturels.png">
+        <figcaption>Une terrasse aménagée : combien d'objets techniques vois-tu&nbsp;?</figcaption>
+      </figure>
+
+      <span class="qlabel"><span class="qn">Échauffement</span>Range chaque mot dans la bonne catégorie : clique une fois = <b>naturel</b>, deux fois = <b>technique</b>.</span>
+      <div class="legend">Légende : <b class="lg-nat">naturel</b> &nbsp; <b class="lg-tec">technique</b></div>
+      <div class="chipbox" id="chipbox"></div>
+      <button class="btnck" onclick="checkChips()">Vérifier mon classement</button>
+      <div class="result" id="chip-res"></div>
+
+      <span class="qlabel"><span class="qn">1.1</span>Observe la photo projetée par ton professeur (ou la salle autour de toi) et trouve 3 objets naturels et 3 objets techniques.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:50%">Objets naturels</th><th>Objets techniques</th></tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="b1-nat1" type="text" placeholder="Objet naturel n°1"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b1-tec1" type="text" placeholder="Objet technique n°1"></div></td>
+          </tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="b1-nat2" type="text" placeholder="Objet naturel n°2"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b1-tec2" type="text" placeholder="Objet technique n°2"></div></td>
+          </tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="b1-nat3" type="text" placeholder="Objet naturel n°3"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b1-tec3" type="text" placeholder="Objet technique n°3"></div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ 2. PRODUIT ET BESOIN ════════════ -->
+  <section class="step" id="sec2">
+    <div class="sthdr" onclick="toggleSec('sec2')">
+      <div class="num">2</div><h3>Produit et besoin</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        On appelle <strong>besoin</strong> le sentiment de manque, d'insatisfaction qui pousse un être vivant à agir.
+        Un objet technique est créé pour <strong>répondre à un besoin</strong>.
+      </div>
+      <div class="pyramide">
+        <div style="background:#7B2C8B;width:36%">5. Épanouissement</div>
+        <div style="background:#2E75B6;width:48%">4. Estime</div>
+        <div style="background:#1E6B3B;width:60%">3. Appartenance</div>
+        <div style="background:#C55A11;width:74%">2. Sécurité</div>
+        <div style="background:#1F4E79;width:88%">1. Besoins physiologiques</div>
+      </div>
+
+      <span class="qlabel"><span class="qn">2.1</span>Pour chaque type de besoin, cite un besoin précis puis un objet technique qui permet d'y répondre.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:210px">Type de besoin</th><th>Un besoin précis</th><th>L'objet technique associé</th></tr>
+          <tr>
+            <td class="lead">1. Physiologiques<small>essentiels à la survie</small></td>
+            <td><div class="fwrap"><input class="rep" id="b2-phy-besoin" type="text" placeholder="ex. se protéger du froid"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b2-phy-objet" type="text" placeholder="ex. le chauffage"></div></td>
+          </tr>
+          <tr>
+            <td class="lead">2. De sécurité<small>protection contre les dangers</small></td>
+            <td><div class="fwrap"><input class="rep" id="b2-sec-besoin" type="text"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b2-sec-objet" type="text"></div></td>
+          </tr>
+          <tr>
+            <td class="lead">3. D'appartenance<small>lien social, intégration au groupe</small></td>
+            <td><div class="fwrap"><input class="rep" id="b2-app-besoin" type="text"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b2-app-objet" type="text"></div></td>
+          </tr>
+          <tr>
+            <td class="lead">4. D'estime<small>être respecté, avoir confiance en soi</small></td>
+            <td><div class="fwrap"><input class="rep" id="b2-est-besoin" type="text"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b2-est-objet" type="text"></div></td>
+          </tr>
+          <tr>
+            <td class="lead">5. D'épanouissement<small>créer, s'épanouir personnellement</small></td>
+            <td><div class="fwrap"><input class="rep" id="b2-epa-besoin" type="text"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b2-epa-objet" type="text"></div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ 3. FONCTION D'USAGE ════════════ -->
+  <section class="step" id="sec3">
+    <div class="sthdr" onclick="toggleSec('sec3')">
+      <div class="num">3</div><h3>Fonction d'usage</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        La <strong>fonction d'usage</strong> est la fonction pour laquelle l'objet a été créé.
+        Elle répond à la question : <strong>« À quoi sert-il ? »</strong> — on la formule avec un verbe à l'infinitif
+        (ex. : <em>« Permettre de… »</em>).
+      </div>
+
+      <span class="qlabel"><span class="qn">3.1</span>Retrouve la fonction d'usage de chacun de ces objets techniques.</span>
+      <div class="objcards">
+
+        <div class="objcard">
+          <div class="pic">
+            <svg viewBox="0 0 120 110" width="130" height="120" role="img" aria-label="Sac à dos">
+              <rect x="30" y="18" width="60" height="14" rx="7" fill="none" stroke="#4A5568" stroke-width="3"/>
+              <path d="M28 34h64a10 10 0 0 1 10 10v44a10 10 0 0 1-10 10H28a10 10 0 0 1-10-10V44a10 10 0 0 1 10-10z" fill="#2E75B6" stroke="#1F4E79" stroke-width="3"/>
+              <path d="M18 60h84" stroke="#1F4E79" stroke-width="3"/>
+              <rect x="42" y="66" width="36" height="22" rx="5" fill="#DEEAF1" stroke="#1F4E79" stroke-width="2.5"/>
+              <circle cx="60" cy="77" r="3.5" fill="#1F4E79"/>
+            </svg>
+          </div>
+          <div class="cap">Le sac à dos</div>
+          <div class="body"><div class="fwrap"><textarea class="rep" id="b3-sac" placeholder="À quoi sert-il ?"></textarea></div></div>
+        </div>
+
+        <div class="objcard">
+          <div class="pic">
+            <svg viewBox="0 0 150 110" width="150" height="120" role="img" aria-label="Vélo">
+              <circle cx="34" cy="80" r="24" fill="none" stroke="#1A202C" stroke-width="4"/>
+              <circle cx="116" cy="80" r="24" fill="none" stroke="#1A202C" stroke-width="4"/>
+              <path d="M34 80 62 42h34L116 80M62 42l14 38M96 42h14" fill="none" stroke="#C55A11" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M56 38h16" stroke="#1A202C" stroke-width="5" stroke-linecap="round"/>
+              <path d="M104 34l10 8" stroke="#1A202C" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="76" cy="80" r="7" fill="none" stroke="#1A202C" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="cap">Le vélo</div>
+          <div class="body"><div class="fwrap"><textarea class="rep" id="b3-velo" placeholder="À quoi sert-il ?"></textarea></div></div>
+        </div>
+
+        <div class="objcard">
+          <div class="pic">
+            <svg viewBox="0 0 150 110" width="150" height="120" role="img" aria-label="Logement étudiant en conteneur">
+              <rect x="14" y="34" width="122" height="56" rx="4" fill="#E8842A" stroke="#7A5230" stroke-width="3"/>
+              <path d="M26 34v56M42 34v56M58 34v56M92 34v56M108 34v56M124 34v56" stroke="#B4651A" stroke-width="2"/>
+              <rect x="62" y="48" width="26" height="42" fill="#DEEAF1" stroke="#1F4E79" stroke-width="2.5"/>
+              <circle cx="83" cy="70" r="2.5" fill="#1F4E79"/>
+              <rect x="102" y="46" width="20" height="18" fill="#BFE3F5" stroke="#1F4E79" stroke-width="2.5"/>
+              <path d="M8 90h134" stroke="#4A5568" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="cap">Le logement étudiant</div>
+          <div class="body"><div class="fwrap"><textarea class="rep" id="b3-logement" placeholder="À quoi sert-il ?"></textarea></div></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ 4. LE COLLÈGE ════════════ -->
+  <section class="step" id="sec4">
+    <div class="sthdr" onclick="toggleSec('sec4')">
+      <div class="num">4</div><h3>Le collège : comment classe-t-on les bâtiments&nbsp;?</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+
+      <details class="res">
+        <summary>&#x1F4DA; Ressource 1 — Réglementations ERP · ERT · IGH · Habitation</summary>
+        <div class="rbody">
+          <p>En France, chaque bâtiment est soumis à une réglementation qui dépend de <strong>qui l'occupe</strong> et de <strong>sa hauteur</strong>. On distingue 4 grandes familles :</p>
+          <ul>
+            <li><strong>IGH</strong> — <em>Immeuble de Grande Hauteur</em> : le plancher du dernier étage est à plus de <strong>28 m</strong> du sol (habitation) ou plus de <strong>50 m</strong> (autres bâtiments). Règles anti-incendie très strictes : les secours ne peuvent pas intervenir depuis l'extérieur.</li>
+            <li><strong>ERT</strong> — <em>Établissement Recevant des Travailleurs</em> : locaux où travaillent des salariés (bureaux, usine, atelier, entrepôt). Le Code du travail y protège les travailleurs.</li>
+            <li><strong>ERP</strong> — <em>Établissement Recevant du Public</em> : bâtiment qui accueille des personnes extérieures, payantes ou non (collège, magasin, cinéma, hôpital, mairie…). Règles de sécurité incendie et d'accessibilité renforcées.</li>
+            <li><strong>Bâtiments d'habitation</strong> : les logements où l'on habite (maison individuelle, immeuble collectif, logement étudiant…).</li>
+          </ul>
+          <p>Un même bâtiment peut appartenir à plusieurs familles : le collège reçoit du <strong>public</strong> (élèves, familles) <em>et</em> des <strong>travailleurs</strong> (professeurs, personnels).</p>
+        </div>
+      </details>
+
+      <details class="res">
+        <summary>&#x1F4DA; Ressource 2 — Le classement des ERP (type et catégorie)</summary>
+        <div class="rbody">
+          <p>Les ERP sont classés suivant leur <strong>activité</strong> et leur <strong>capacité</strong>.</p>
+          <h5>I — Le type (l'activité), désigné par une lettre</h5>
+          <div class="typegrid">
+            <div><b>J</b> Accueil de personnes âgées ou handicapées</div>
+            <div><b>L</b> Salles de spectacles, conférences, réunions</div>
+            <div><b>M</b> Magasins, centres commerciaux</div>
+            <div><b>N</b> Restaurants, débits de boisson</div>
+            <div><b>O</b> Hôtels, pensions de famille</div>
+            <div><b>P</b> Salles de danse et de jeux</div>
+            <div><b>R</b> Éveil, enseignement, formation, centres de loisirs</div>
+            <div><b>S</b> Bibliothèques, centres de documentation</div>
+            <div><b>T</b> Salles d'exposition</div>
+            <div><b>U</b> Établissements de soins</div>
+            <div><b>V</b> Établissements de culte</div>
+            <div><b>W</b> Administrations, banques, bureaux</div>
+            <div><b>X</b> Établissements sportifs couverts</div>
+            <div><b>Y</b> Musées</div>
+            <div><b>PA</b> Établissements de plein air</div>
+            <div><b>GA</b> Gares accessibles au public</div>
+          </div>
+          <h5>II — La catégorie (la capacité), désignée par un chiffre</h5>
+          <ul>
+            <li><strong>1<sup>re</sup> catégorie</strong> : au-dessus de 1 500 personnes</li>
+            <li><strong>2<sup>e</sup> catégorie</strong> : de 701 à 1 500 personnes</li>
+            <li><strong>3<sup>e</sup> catégorie</strong> : de 301 à 700 personnes</li>
+            <li><strong>4<sup>e</sup> catégorie</strong> : 300 personnes et au-dessous (sauf 5<sup>e</sup> catégorie)</li>
+            <li><strong>5<sup>e</sup> catégorie</strong> : petits établissements sous un seuil qui dépend du type (pour un type R : moins de 100 personnes en étage ou sous-sol, et moins de 200 au total)</li>
+          </ul>
+          <p><em>Exemple : une mairie qui ne peut pas accueillir plus de 200 personnes est classée type W – catégorie 5.</em></p>
+        </div>
+      </details>
+
+      <figure class="illus" hidden id="illus-4"
+        data-alt="Différents types de bâtiments"
+        data-src="ressources/4-le-college.png|ressources/4-le-college.jpg|ressources/4 Le collège.png">
+        <figcaption>Des bâtiments très différents : logements, hôpital, bureaux, salle de spectacle, tours…</figcaption>
+      </figure>
+
+      <span class="qlabel"><span class="qn">4.1</span>À l'aide de la ressource 1, explique la signification de chaque famille de bâtiment.</span>
+      <div class="fwrap"><label class="hint">Les bâtiments IGH :</label><textarea class="rep" id="b4-igh" placeholder="IGH signifie… et cela concerne les bâtiments…"></textarea></div>
+      <div class="fwrap"><label class="hint">Les bâtiments ERT :</label><textarea class="rep" id="b4-ert" placeholder="ERT signifie…"></textarea></div>
+      <div class="fwrap"><label class="hint">Les bâtiments ERP :</label><textarea class="rep" id="b4-erp" placeholder="ERP signifie…"></textarea></div>
+      <div class="fwrap"><label class="hint">Les bâtiments d'habitation :</label><textarea class="rep" id="b4-hab" placeholder="Ce sont les bâtiments…"></textarea></div>
+      <button class="btnck" onclick="checkDefs()">Vérifier mes définitions</button>
+      <div class="result" id="def-res"></div>
+
+      <span class="qlabel"><span class="qn">4.2</span>Grâce à la ressource 2, trouve un synonyme des deux critères de classement d'un ERP.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:180px">Critère</th><th>Synonyme (un seul mot)</th></tr>
+          <tr><td class="lead">Le type</td><td><div class="fwrap"><input class="rep" id="b4-syn-type" type="text" placeholder="c'est-à-dire…"></div></td></tr>
+          <tr><td class="lead">La catégorie</td><td><div class="fwrap"><input class="rep" id="b4-syn-cat" type="text" placeholder="c'est-à-dire…"></div></td></tr>
+        </table>
+      </div>
+
+      <span class="qlabel"><span class="qn">4.3</span>Le collège accueille du public et des travailleurs : il fait donc partie des ERP. Classe-le !</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:33%">Son type</th><th style="width:33%">Nombre de personnes accueillies</th><th>Sa catégorie</th></tr>
+          <tr>
+            <td>
+              <select class="rep" id="b4-type" data-nomic>
+                <option value="">— choisir —</option>
+                <option value="J">J — personnes âgées / handicapées</option>
+                <option value="L">L — salles de spectacles, réunions</option>
+                <option value="M">M — magasins</option>
+                <option value="N">N — restaurants</option>
+                <option value="O">O — hôtels</option>
+                <option value="P">P — salles de danse et de jeux</option>
+                <option value="R">R — éveil, enseignement, formation</option>
+                <option value="S">S — bibliothèques</option>
+                <option value="T">T — salles d'exposition</option>
+                <option value="U">U — établissements de soins</option>
+                <option value="V">V — établissements de culte</option>
+                <option value="W">W — administrations, bureaux</option>
+                <option value="X">X — établissements sportifs</option>
+                <option value="Y">Y — musées</option>
+              </select>
+            </td>
+            <td><div class="fwrap"><input class="rep" id="b4-effectif" type="number" min="0" step="1" placeholder="ex. 620" data-nomic></div></td>
+            <td>
+              <select class="rep" id="b4-cat" data-nomic>
+                <option value="">— choisir —</option>
+                <option value="1">1re catégorie (plus de 1500)</option>
+                <option value="2">2e catégorie (701 à 1500)</option>
+                <option value="3">3e catégorie (301 à 700)</option>
+                <option value="4">4e catégorie (300 et moins)</option>
+                <option value="5">5e catégorie (petit établissement)</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <button class="btnck" onclick="checkCollege()">Vérifier le classement du collège</button>
+      <div class="result" id="col-res"></div>
+      <div class="fwrap" style="margin-top:12px">
+        <label class="hint">Justifie ta réponse (pourquoi ce type et cette catégorie ?)</label>
+        <textarea class="rep" id="b4-justif" placeholder="Le collège est de type… car… Sa catégorie est… car il accueille environ… personnes."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ 5. CONTRAINTES ET NORMES ════════════ -->
+  <section class="step" id="sec5">
+    <div class="sthdr" onclick="toggleSec('sec5')">
+      <div class="num">5</div><h3>Contraintes et normes</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Nous souhaitons concevoir un <strong>logement universitaire</strong> (bâtiment d'habitation). Pour cela, il faut respecter
+        des <strong>exigences</strong>. Avant de commencer, il est indispensable de bien les identifier, pour assurer
+        le <strong>confort</strong> et la <strong>sécurité</strong> des résidents.
+      </div>
+
+      <span class="qlabel"><span class="qn">5.1</span>Quelle est la différence entre une simple contrainte et une norme ? Coche la bonne réponse pour chaque affirmation.</span>
+      <div class="qcm" id="qcm-cn">
+        <div class="prop" id="p-etat">
+          <div class="txt">Elle a été décidée par un organisme d'État (AFNOR, ministère…).</div>
+          <div class="opts">
+            <button class="opt" onclick="pick('b5-etat','contrainte',this)">une contrainte</button>
+            <button class="opt" onclick="pick('b5-etat','norme',this)">une norme</button>
+          </div>
+          <div class="fb" id="fb-b5-etat"></div>
+        </div>
+        <div class="prop" id="p-client">
+          <div class="txt">Elle a été décidée par le client (celui qui commande le projet).</div>
+          <div class="opts">
+            <button class="opt" onclick="pick('b5-client','contrainte',this)">une contrainte</button>
+            <button class="opt" onclick="pick('b5-client','norme',this)">une norme</button>
+          </div>
+          <div class="fb" id="fb-b5-client"></div>
+        </div>
+        <div class="prop" id="p-nob">
+          <div class="txt">Une norme doit être obligatoirement appliquée.</div>
+          <div class="opts">
+            <button class="opt" onclick="pick('b5-norme-oblig','oui',this)">oui</button>
+            <button class="opt" onclick="pick('b5-norme-oblig','non',this)">non</button>
+          </div>
+          <div class="fb" id="fb-b5-norme-oblig"></div>
+        </div>
+        <div class="prop" id="p-cob">
+          <div class="txt">Une contrainte doit être obligatoirement appliquée.</div>
+          <div class="opts">
+            <button class="opt" onclick="pick('b5-contrainte-oblig','oui',this)">oui</button>
+            <button class="opt" onclick="pick('b5-contrainte-oblig','non',this)">non</button>
+          </div>
+          <div class="fb" id="fb-b5-contrainte-oblig"></div>
+        </div>
+      </div>
+      <button class="btnck" onclick="checkCN()">Vérifier mes réponses</button>
+      <div class="result" id="cn-res"></div>
+
+      <span class="qlabel"><span class="qn">5.2</span>Pour chaque domaine, donne des exemples concrets observables au collège : ce qui vient d'une <b>norme</b> (obligatoire) et ce qui vient d'une <b>contrainte</b> (choix du client, du lieu, du budget).</span>
+      <p class="hint">Vise 3 éléments par ligne. Le bouton 🎤 permet de dicter la réponse à voix haute.</p>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:150px">Domaine</th><th style="width:44%">Exemples liés à une NORME</th><th>Exemples liés à une CONTRAINTE</th></tr>
+          <tr>
+            <td class="lead">Le handicap<small>accessibilité pour tous</small></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-handicap-n" placeholder="ex. rampe d'accès, ascenseur, largeur des portes…"></textarea></div></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-handicap-c"></textarea></div></td>
+          </tr>
+          <tr>
+            <td class="lead">La sécurité<small>incendie, évacuation</small></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-securite-n" placeholder="ex. extincteurs, blocs de secours, portes coupe-feu…"></textarea></div></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-securite-c"></textarea></div></td>
+          </tr>
+          <tr>
+            <td class="lead">L'esthétique<small>l'aspect du bâtiment</small></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-esthetique-n"></textarea></div></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-esthetique-c" placeholder="ex. couleur des murs, matériaux, forme du toit…"></textarea></div></td>
+          </tr>
+          <tr>
+            <td class="lead">L'électricité<small>installation, éclairage</small></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-electrique-n" placeholder="ex. prises reliées à la terre, tableau électrique…"></textarea></div></td>
+            <td><div class="fwrap"><textarea class="rep" id="b5-electrique-c"></textarea></div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════ 6. MODÉLISATION ════════════ -->
+  <section class="step" id="sec6">
+    <div class="sthdr" onclick="toggleSec('sec6')">
+      <div class="num">6</div><h3>Modélisation du logement étudiant</h3><div class="chev">▾</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        La <strong>construction modulaire</strong> propose bien des avantages : des modules sont fabriqués en usine
+        puis assemblés sur le chantier. Nous allons nous inspirer de ce mode constructif, comme la
+        <strong>cité universitaire du Havre</strong>, construite à partir de conteneurs maritimes de 40 pieds.
+      </div>
+
+      <span class="qlabel"><span class="qn">6.1</span>Après avoir vu des exemples de constructions réalisées par l'entreprise Cougnaud, explique le principe de la construction modulaire, puis ses avantages.</span>
+      <a class="linkbtn" href="https://www.cougnaud.com/" target="_blank" rel="noopener">&#x1F3D7;&#xFE0F; Site de l'entreprise Cougnaud</a>
+      <div class="fwrap" style="margin-top:8px">
+        <label class="hint">Le principe :</label>
+        <textarea class="rep" id="b6-principe" placeholder="Les bâtiments sont construits…"></textarea>
+      </div>
+      <div class="fwrap">
+        <label class="hint">Les avantages (donne-en au moins trois) :</label>
+        <textarea class="rep" id="b6-avantages" placeholder="1… 2… 3…"></textarea>
+      </div>
+
+      <span class="qlabel"><span class="qn">6.2</span>Planifie la modélisation de ton logement universitaire : liste les étapes dans l'ordre chronologique.</span>
+      <p class="hint">Aide : clique sur une proposition ci-dessous pour l'insérer dans le champ sélectionné (tu peux aussi écrire ou dicter ta propre réponse).</p>
+      <div class="chipbox" id="stepbank"></div>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:120px">Étape</th><th>Ce que je fais</th></tr>
+          <tr><td class="lead">1<sup>re</sup> étape</td><td style="font-size:14px;color:var(--td);padding-top:14px">dessiner un croquis sur une feuille <em>(donné)</em></td></tr>
+          <tr><td class="lead">2<sup>e</sup> étape</td><td><div class="fwrap"><input class="rep" id="b6-etape2" type="text"></div></td></tr>
+          <tr><td class="lead">3<sup>e</sup> étape</td><td><div class="fwrap"><input class="rep" id="b6-etape3" type="text"></div></td></tr>
+          <tr><td class="lead">4<sup>e</sup> étape</td><td><div class="fwrap"><input class="rep" id="b6-etape4" type="text"></div></td></tr>
+          <tr><td class="lead">5<sup>e</sup> étape</td><td><div class="fwrap"><input class="rep" id="b6-etape5" type="text"></div></td></tr>
+          <tr><td class="lead">6<sup>e</sup> étape</td><td style="font-size:14px;color:var(--td);padding-top:14px">décorer le logement <em>(donné)</em></td></tr>
+        </table>
+      </div>
+
+      <figure class="illus" hidden id="illus-6"
+        data-alt="Conteneur maritime et cité universitaire du Havre"
+        data-src="ressources/6-conteneur-maritime.png|ressources/6-conteneur-maritime.jpg|ressources/6 Conteneur maritime.png">
+        <figcaption>Du conteneur maritime de 40 pieds à la cité universitaire du Havre.</figcaption>
+      </figure>
+
+      <span class="qlabel"><span class="qn">6.3</span>Aménage ton logement sur le plan du conteneur maritime.</span>
+      <div class="tscroll">
+        <table class="grid" style="max-width:560px">
+          <tr><th></th><th>Longueur (en cm)</th><th>Largeur (en cm)</th><th>Hauteur (en cm)</th></tr>
+          <tr><td class="lead" style="width:110px">40 pieds</td><td>1219</td><td>244</td><td>259</td></tr>
+        </table>
+      </div>
+      <div class="lesson" style="border-left-color:var(--br)">
+        <strong>Échelle du plan :</strong> 1 petit carreau = 10 cm &nbsp;·&nbsp; 1 grand carreau = 1 m.<br>
+        Ton logement doit contenir <strong>4 espaces</strong> : cuisine, repos (chambre), hygiène et travail —
+        sans oublier la <strong>porte</strong> et les <strong>fenêtres</strong>. Les cloisons servent à séparer les espaces.
+      </div>
+
+      <div class="palette" id="palette"></div>
+      <div class="plantools">
+        <button class="toolbtn" onclick="rotateSel()">&#x21BB; Pivoter (R)</button>
+        <button class="toolbtn" onclick="deleteSel()">&#x1F5D1;&#xFE0F; Supprimer (Suppr)</button>
+        <button class="toolbtn" onclick="zoomPlan(-1)">&#x2212; Zoom</button>
+        <button class="toolbtn" onclick="zoomPlan(1)">+ Zoom</button>
+        <button class="toolbtn" onclick="resetPlan()">&#x267B;&#xFE0F; Vider le plan</button>
+        <span class="micnote">Astuce : clique un meuble de la liste pour l'ajouter, puis fais-le glisser. Un clic sur un meuble le sélectionne.</span>
+      </div>
+      <div id="plan-scroll"><div id="plan"></div></div>
+      <div class="chk" id="plan-check"></div>
+      <input type="hidden" id="b6-plan">
+
+      <span class="qlabel"><span class="qn">6.4</span>Modélise maintenant ta solution sur <strong>Sweet Home 3D</strong>, aménage l'intérieur, et vérifie que ta construction répond bien aux exigences citées plus haut.</span>
+      <a class="linkbtn" href="https://www.sweethome3d.com/fr/" target="_blank" rel="noopener">&#x1F5A5;&#xFE0F; Sweet Home 3D</a>
+      <a class="linkbtn" href="https://drive.google.com/file/d/16g02iLW4cAn0D4SvdM9x8RzLcKm_F4iu/view" target="_blank" rel="noopener">&#x1F4E6; Fichier « conteneur maritime 40.sh3d »</a>
+      <div class="cbline">
+        <input type="checkbox" id="b6-sh3d">
+        <label for="b6-sh3d">J'ai réalisé la modélisation de mon logement sur Sweet Home 3D et je l'ai enregistrée sur mon espace.</label>
+      </div>
+      <div class="fwrap">
+        <label class="hint">Bilan : mon logement respecte-t-il les exigences (sécurité, accessibilité, confort) ? Justifie.</label>
+        <textarea class="rep" id="b6-bilan" placeholder="Mon logement respecte… car… En revanche, il faudrait encore…" style="min-height:88px"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <div class="sendst" id="send-status"></div>
+
+</main>
+
+<div class="sendbar">
+  <div class="sendbar-in">
+    <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+    <button class="btn btn-sec" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; Copie de secours</button>
+    <button class="btn btn-send" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   P1 — AMÉNAGER UN BÂTIMENT (5e) — Collège Saint Pierre, Les Essarts
+   Activité élève : questions, quiz auto-corrigés, plan interactif,
+   dictée vocale sur tous les champs, envoi au tableau de bord prof.
+   Backend partagé avec index.html (Apps Script).
+   ════════════════════════════════════════════════════════════════ */
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "batiment5e";
+var CAP_LABEL   = "P1 5e — Aménager un bâtiment";
+var PREFILL_KEY = "batiment5e_prefill";
+var QUEUE_KEY   = "batiment5e_offline_queue";
+var DRAFT_PFX   = "batiment5e_draft_";
+
+/* Identité de l'élève (transmise par le site via localStorage, même origine) */
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ── Champs texte / select suivis (progression + sauvegarde) ── */
+var FIELD_IDS = [
+  "b1-nat1","b1-nat2","b1-nat3","b1-tec1","b1-tec2","b1-tec3",
+  "b2-phy-besoin","b2-phy-objet","b2-sec-besoin","b2-sec-objet","b2-app-besoin","b2-app-objet",
+  "b2-est-besoin","b2-est-objet","b2-epa-besoin","b2-epa-objet",
+  "b3-sac","b3-velo","b3-logement",
+  "b4-igh","b4-ert","b4-erp","b4-hab","b4-syn-type","b4-syn-cat","b4-type","b4-effectif","b4-cat","b4-justif",
+  "b5-handicap-n","b5-handicap-c","b5-securite-n","b5-securite-c",
+  "b5-esthetique-n","b5-esthetique-c","b5-electrique-n","b5-electrique-c",
+  "b6-principe","b6-avantages","b6-etape2","b6-etape3","b6-etape4","b6-etape5","b6-bilan"
+];
+/* Questions à choix (stockées à part) */
+var QCM_IDS = ["b5-etat","b5-client","b5-norme-oblig","b5-contrainte-oblig"];
+var QCM_COR = { "b5-etat":"norme", "b5-client":"contrainte", "b5-norme-oblig":"oui", "b5-contrainte-oblig":"non" };
+var QCM_EXPL = {
+  "b5-etat":"Une norme est écrite par un organisme officiel (AFNOR, État) : elle s'impose à tout le monde.",
+  "b5-client":"Une contrainte vient du client, du terrain, du budget… Elle ne concerne que ce projet.",
+  "b5-norme-oblig":"Oui : une norme est obligatoire, sinon le bâtiment ne peut pas être autorisé.",
+  "b5-contrainte-oblig":"Non : une contrainte peut être discutée ou modifiée avec le client, contrairement à une norme."
+};
+var qcmAns = {};
+
+/* ── Libellés lisibles (résumé côté professeur) ── */
+var QUESTION_GROUPS = [
+  { titre:"1. Objet naturel / objet technique", items:[
+    ["b1-nat1","Objet naturel 1"],["b1-nat2","Objet naturel 2"],["b1-nat3","Objet naturel 3"],
+    ["b1-tec1","Objet technique 1"],["b1-tec2","Objet technique 2"],["b1-tec3","Objet technique 3"]]},
+  { titre:"2. Produit et besoin", items:[
+    ["b2-phy-besoin","Physiologique — besoin"],["b2-phy-objet","Physiologique — objet"],
+    ["b2-sec-besoin","Sécurité — besoin"],["b2-sec-objet","Sécurité — objet"],
+    ["b2-app-besoin","Appartenance — besoin"],["b2-app-objet","Appartenance — objet"],
+    ["b2-est-besoin","Estime — besoin"],["b2-est-objet","Estime — objet"],
+    ["b2-epa-besoin","Épanouissement — besoin"],["b2-epa-objet","Épanouissement — objet"]]},
+  { titre:"3. Fonction d'usage", items:[
+    ["b3-sac","Sac à dos"],["b3-velo","Vélo"],["b3-logement","Logement étudiant"]]},
+  { titre:"4. Le collège (ERP / ERT / IGH)", items:[
+    ["b4-igh","IGH"],["b4-ert","ERT"],["b4-erp","ERP"],["b4-hab","Habitation"],
+    ["b4-syn-type","Synonyme de « type »"],["b4-syn-cat","Synonyme de « catégorie »"],
+    ["b4-type","Type du collège"],["b4-effectif","Effectif accueilli"],["b4-cat","Catégorie du collège"],
+    ["b4-justif","Justification"]]},
+  { titre:"5. Contraintes et normes", items:[
+    ["b5-etat","Décidée par l'État →"],["b5-client","Décidée par le client →"],
+    ["b5-norme-oblig","Norme obligatoire ?"],["b5-contrainte-oblig","Contrainte obligatoire ?"],
+    ["b5-handicap-n","Handicap — norme"],["b5-handicap-c","Handicap — contrainte"],
+    ["b5-securite-n","Sécurité — norme"],["b5-securite-c","Sécurité — contrainte"],
+    ["b5-esthetique-n","Esthétique — norme"],["b5-esthetique-c","Esthétique — contrainte"],
+    ["b5-electrique-n","Électricité — norme"],["b5-electrique-c","Électricité — contrainte"]]},
+  { titre:"6. Modélisation", items:[
+    ["b6-principe","Principe de la construction modulaire"],["b6-avantages","Avantages"],
+    ["b6-etape2","2e étape"],["b6-etape3","3e étape"],["b6-etape4","4e étape"],["b6-etape5","5e étape"],
+    ["b6-sh3d","Modélisation Sweet Home 3D réalisée"],["b6-bilan","Bilan"]]}
+];
+
+/* ════════════ OUTILS ════════════ */
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? String(e.value||"").trim() : ""; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function slug(s){
+  return String(s||"").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function norm(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
+/* ════════════ PLIAGE DES SECTIONS ════════════ */
+function toggleSec(id){ var s=$(id); if(s) s.classList.toggle("closed"); }
+function toggleAll(){
+  var secs = document.querySelectorAll("section.step");
+  var anyOpen = false;
+  for (var i=0;i<secs.length;i++) if (!secs[i].classList.contains("closed")) anyOpen = true;
+  for (var j=0;j<secs.length;j++) secs[j].classList.toggle("closed", anyOpen);
+}
+
+/* ════════════ CONFORT DE LECTURE (dys) ════════════ */
+function toggleDys(){
+  document.body.classList.toggle("dys");
+  var on = document.body.classList.contains("dys");
+  $("btn-dys").classList.toggle("on", on);
+  try { localStorage.setItem("batiment5e_dys", on ? "1" : "0"); } catch(e){}
+}
+
+/* ════════════ DICTÉE VOCALE (Web Speech API) ════════════ */
+var _micActive = null;
+function addMicButtons(){
+  var fields = document.querySelectorAll("textarea.rep, input.rep[type=text]");
+  for (var i=0;i<fields.length;i++){
+    var f = fields[i];
+    if (f.hasAttribute("data-nomic")) continue;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "micbtn";
+    b.id = "mic-" + f.id;
+    b.innerHTML = "&#x1F3A4; Dicter";
+    b.setAttribute("data-target", f.id);
+    b.onclick = (function(tid, bid){ return function(){ toggleDictation(tid, bid); }; })(f.id, b.id);
+    f.parentNode.appendChild(b);
+  }
+}
+function toggleDictation(targetId, btnId){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){ flash("La dictée vocale fonctionne avec Chrome ou Edge. Écris ta réponse au clavier.", "err"); return; }
+  if (_micActive && _micActive.btnId === btnId){ try{ _micActive.recog.stop(); }catch(e){} return; }
+  if (_micActive){ try{ _micActive.recog.stop(); }catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(targetId);
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arrêter"; }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", interim = "";
+
+  recog.onresult = function(e){
+    interim = "";
+    var fin = base;
+    for (var i=e.resultIndex;i<e.results.length;i++){
+      if (e.results[i].isFinal){
+        fin += (fin && !/\s$/.test(fin) ? " " : "") + e.results[i][0].transcript;
+        base = fin;
+      } else interim = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (interim ? " " + interim : ""); markFilled(ta); }
+  };
+  function stopMic(){
+    if (ta && interim){ ta.value = base; markFilled(ta); }
+    _micActive = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+    updateProgress(); saveDraft();
+  }
+  recog.onerror = function(e){
+    stopMic();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = stopMic;
+  try { recog.start(); _micActive = { recog:recog, btnId:btnId }; }
+  catch(e){ stopMic(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function markFilled(el){
+  if (!el || !el.classList) return;
+  var v = String(el.value||"").trim();
+  el.classList.toggle("filled", v.length > 0);
+}
+function countFilled(){
+  var n = 0;
+  for (var i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) n++;
+  for (var j=0;j<QCM_IDS.length;j++) if (qcmAns[QCM_IDS[j]]) n++;
+  if ($("b6-sh3d") && $("b6-sh3d").checked) n++;
+  if (planItems.length >= 6) n++;
+  return n;
+}
+function totalFields(){ return FIELD_IDS.length + QCM_IDS.length + 2; }
+function updateProgress(){
+  var done = countFilled(), tot = totalFields();
+  var pct = Math.round(done/tot*100);
+  $("pbar-fill").style.width = pct + "%";
+  $("pcount").textContent = done + " / " + tot + " réponses";
+}
+
+/* ════════════ 1 — ÉCHAUFFEMENT : NATUREL / TECHNIQUE ════════════ */
+var CHIPS = [
+  {t:"un arbre",            a:"nat"},
+  {t:"un vélo",             a:"tec"},
+  {t:"un rocher",           a:"nat"},
+  {t:"un sac à dos",        a:"tec"},
+  {t:"une fleur sauvage",   a:"nat"},
+  {t:"une table de jardin", a:"tec"},
+  {t:"un nuage",            a:"nat"},
+  {t:"un lampadaire",       a:"tec"},
+  {t:"un galet",            a:"nat"},
+  {t:"une terrasse en bois",a:"tec"}
+];
+var chipChoice = {};
+function buildChips(){
+  var box = $("chipbox"); if (!box) return;
+  var h = "";
+  for (var i=0;i<CHIPS.length;i++){
+    h += '<div class="chip" id="chip-'+i+'" onclick="cycleChip('+i+')">'+esc(CHIPS[i].t)+'</div>';
+  }
+  box.innerHTML = h;
+}
+function cycleChip(i){
+  var el = $("chip-"+i); if (!el) return;
+  var cur = chipChoice[i] || "";
+  var next = cur === "" ? "nat" : (cur === "nat" ? "tec" : "");
+  chipChoice[i] = next;
+  if (next) el.setAttribute("data-choice", next); else el.removeAttribute("data-choice");
+  el.classList.remove("ok","ko");
+  $("chip-res").classList.remove("show");
+  saveDraft();
+}
+function checkChips(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<CHIPS.length;i++){
+    var el = $("chip-"+i), c = chipChoice[i] || "";
+    el.classList.remove("ok","ko");
+    if (!c) continue;
+    rep++;
+    if (c === CHIPS[i].a){ ok++; el.classList.add("ok"); } else el.classList.add("ko");
+  }
+  var res = $("chip-res");
+  res.className = "result show " + (ok === CHIPS.length ? "good" : "bad");
+  if (rep === 0) { res.className = "result show bad"; res.innerHTML = "Clique d'abord sur les mots pour les classer."; return; }
+  var reste = CHIPS.length - rep;
+  res.innerHTML = (ok === CHIPS.length ? "&#x1F3C6; Parfait ! Les " + CHIPS.length + " mots sont bien classés." :
+    "&#x1F4AA; " + ok + " bonne(s) réponse(s) sur " + rep + " mot(s) classé(s)." +
+    (reste > 0 ? " Il reste " + reste + " mot(s) à classer." : "") +
+    " Les mots entourés en rouge sont à revoir : un objet <b>technique</b> a été fabriqué ou transformé par l'Homme.");
+  saveDraft();
+}
+
+/* ════════════ 4 — VÉRIFICATIONS ════════════ */
+var DEF_KEYS = {
+  "b4-igh": { mots:["hauteur","haut","28","50","etage","étage"], att:"IGH = Immeuble de Grande Hauteur : le dernier plancher est à plus de 28 m (habitation) ou 50 m du sol." },
+  "b4-ert": { mots:["travail","travailleur","salari","employ","entreprise","bureau"], att:"ERT = Établissement Recevant des Travailleurs : des salariés y travaillent (bureaux, usine, atelier)." },
+  "b4-erp": { mots:["public","visiteur","client","personnes exterieures","extérieur"], att:"ERP = Établissement Recevant du Public : il accueille des personnes extérieures (collège, magasin, hôpital…)." },
+  "b4-hab": { mots:["log","habit","maison","appartement","immeuble","vit","vivre","résid","resid"], att:"Bâtiments d'habitation : les logements où l'on habite (maison, immeuble, logement étudiant)." }
+};
+function checkDefs(){
+  var ok = 0, tot = 0, detail = "";
+  for (var id in DEF_KEYS){
+    if (!DEF_KEYS.hasOwnProperty(id)) continue;
+    tot++;
+    var v = norm(val(id)), d = DEF_KEYS[id], found = false;
+    for (var i=0;i<d.mots.length;i++) if (v.indexOf(norm(d.mots[i])) >= 0) { found = true; break; }
+    var el = $(id);
+    if (el) el.style.borderColor = v ? (found ? "#2E8B4A" : "#C0392B") : "";
+    if (found) ok++;
+    else detail += "<div style='margin-top:4px'>&#x27A1;&#xFE0F; " + esc(d.att) + "</div>";
+  }
+  var res = $("def-res");
+  res.className = "result show " + (ok === tot ? "good" : "bad");
+  res.innerHTML = (ok === tot ? "&#x2705; Les 4 définitions sont correctes !" :
+    "&#x1F50D; " + ok + " / " + tot + " définitions correctes. Complète les autres :" + detail);
+}
+function checkCollege(){
+  var t = val("b4-type"), eff = parseInt(val("b4-effectif"),10), cat = val("b4-cat");
+  var msg = [], allOk = true;
+  if (!t) { msg.push("Choisis d'abord le <b>type</b>."); allOk = false; }
+  else if (t === "R") msg.push("&#x2705; Type <b>R</b> : le collège est un établissement d'enseignement.");
+  else { msg.push("&#x274C; Type <b>" + esc(t) + "</b> : relis la ressource 2 — un collège sert à l'<b>enseignement</b>."); allOk = false; }
+
+  if (isNaN(eff) || eff <= 0){ msg.push("Indique le nombre de personnes accueillies (élèves + personnels)."); allOk = false; }
+  else {
+    var attendu = eff > 1500 ? "1" : eff > 700 ? "2" : eff > 300 ? "3" : eff >= 200 ? "4" : "5";
+    if (!cat){ msg.push("Choisis maintenant la <b>catégorie</b>."); allOk = false; }
+    else if (cat === attendu) msg.push("&#x2705; Catégorie <b>" + esc(cat) + "</b> : cohérent avec " + eff + " personnes.");
+    else {
+      msg.push("&#x274C; Avec <b>" + eff + " personnes</b>, la catégorie attendue est la <b>" + attendu + "<sup>e</sup></b> (revois le tableau des catégories).");
+      allOk = false;
+    }
+  }
+  var res = $("col-res");
+  res.className = "result show " + (allOk ? "good" : "bad");
+  res.innerHTML = msg.join("<br>");
+}
+
+/* ════════════ 5 — CONTRAINTE / NORME ════════════ */
+function pick(id, value, btn){
+  qcmAns[id] = value;
+  var opts = btn.parentNode.querySelectorAll(".opt");
+  for (var i=0;i<opts.length;i++) opts[i].classList.remove("sel");
+  btn.classList.add("sel");
+  var prop = btn.closest(".prop");
+  if (prop) prop.classList.remove("ok","ko");
+  var fb = $("fb-"+id); if (fb){ fb.textContent = ""; fb.className = "fb"; }
+  updateProgress(); saveDraft();
+}
+function checkCN(){
+  var ok = 0;
+  for (var i=0;i<QCM_IDS.length;i++){
+    var id = QCM_IDS[i], a = qcmAns[id], good = a === QCM_COR[id];
+    var fb = $("fb-"+id);
+    var prop = fb ? fb.closest(".prop") : null;
+    if (prop) prop.classList.toggle("ok", !!a && good), prop.classList.toggle("ko", !!a && !good);
+    if (fb){
+      if (!a){ fb.className = "fb ko"; fb.textContent = "⚠️ Pas encore répondu."; }
+      else if (good){ fb.className = "fb ok"; fb.textContent = "✅ " + QCM_EXPL[id]; ok++; }
+      else { fb.className = "fb ko"; fb.textContent = "❌ " + QCM_EXPL[id]; }
+    }
+  }
+  var res = $("cn-res");
+  res.className = "result show " + (ok === QCM_IDS.length ? "good" : "bad");
+  res.innerHTML = (ok === QCM_IDS.length ? "&#x1F3C6; " : "&#x1F4AA; ") + ok + " / " + QCM_IDS.length + " bonnes réponses.";
+}
+
+/* ════════════ 6.2 — BANQUE D'ÉTAPES ════════════ */
+var STEP_BANK = [
+  "dessiner les murs du conteneur aux bonnes dimensions",
+  "régler l'échelle du plan",
+  "placer la porte et les fenêtres",
+  "créer les cloisons des différents espaces",
+  "installer les meubles de chaque espace",
+  "vérifier les dimensions et les exigences",
+  "visualiser le logement en 3D"
+];
+var lastFocused = null;
+function buildStepBank(){
+  var box = $("stepbank"); if (!box) return;
+  var h = "";
+  for (var i=0;i<STEP_BANK.length;i++) h += '<div class="chip" onclick="insertStep('+i+')">'+esc(STEP_BANK[i])+'</div>';
+  box.innerHTML = h;
+}
+function insertStep(i){
+  var target = lastFocused && /^b6-etape/.test(lastFocused) ? $(lastFocused) : null;
+  if (!target){
+    var ids = ["b6-etape2","b6-etape3","b6-etape4","b6-etape5"];
+    for (var k=0;k<ids.length;k++) if (!val(ids[k])) { target = $(ids[k]); break; }
+  }
+  if (!target){ flash("Les 4 étapes sont déjà remplies : clique dans un champ pour le remplacer.", "wait"); return; }
+  target.value = STEP_BANK[i];
+  markFilled(target); target.focus();
+  updateProgress(); saveDraft();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   6.3 — PLAN INTERACTIF DU CONTENEUR 40 PIEDS
+   Coordonnées stockées en centimètres, affichage à l'échelle.
+   ════════════════════════════════════════════════════════════════ */
+var PLAN_L = 1219;   /* longueur intérieure (cm) */
+var PLAN_P = 244;    /* largeur / profondeur (cm) */
+var GRID   = 10;     /* pas de la grille : 1 petit carreau = 10 cm */
+var ZOOMS  = [0.30, 0.40, 0.50, 0.65, 0.85, 1.10];
+var zoomIdx = 2;
+var planItems = [];   /* [{id,k,x,y,w,h}] */
+var selId = null;
+var nextItemId = 1;
+
+var CATALOGUE = [
+  {k:"lit",      n:"Lit",            w:90,  h:190, c:"#BFD9F2", e:"🛏️", esp:"repos"},
+  {k:"armoire",  n:"Armoire",        w:100, h:60,  c:"#D4C4F0", e:"🗄️", esp:"repos"},
+  {k:"cuisine",  n:"Meuble cuisine", w:120, h:65,  c:"#F7C59F", e:"🍳",       esp:"cuisine"},
+  {k:"table",    n:"Table",          w:115, h:115, c:"#FBD9A5", e:"🍽️", esp:"cuisine"},
+  {k:"douche",   n:"Douche",         w:80,  h:80,  c:"#A8E6D8", e:"🚿",       esp:"hygiene"},
+  {k:"lavabo",   n:"Lavabo",         w:60,  h:60,  c:"#BFEAF5", e:"🚰",       esp:"hygiene"},
+  {k:"wc",       n:"WC",             w:40,  h:80,  c:"#D5F0C0", e:"🚽",       esp:"hygiene"},
+  {k:"bureau",   n:"Bureau",         w:140, h:65,  c:"#F5C6CB", e:"💻",       esp:"travail"},
+  {k:"chaise",   n:"Chaise",         w:45,  h:45,  c:"#E6E6E6", e:"🪑",       esp:""},
+  {k:"cloison",  n:"Cloison 244",    w:10,  h:244, c:"#C0A98F", e:"",                   esp:"cloison"},
+  {k:"cloison2", n:"Cloison 122",    w:10,  h:122, c:"#C0A98F", e:"",                   esp:"cloison"},
+  {k:"porte",    n:"Porte",          w:90,  h:12,  c:"#B07C46", e:"🚪",       esp:"acces"},
+  {k:"fenetre",  n:"Fenêtre",        w:120, h:12,  c:"#7FD3F0", e:"🪟",       esp:"acces"}
+];
+function cat(k){ for (var i=0;i<CATALOGUE.length;i++) if (CATALOGUE[i].k===k) return CATALOGUE[i]; return null; }
+function scale(){ return ZOOMS[zoomIdx]; }
+
+function buildPalette(){
+  var box = $("palette"); if (!box) return;
+  var h = "";
+  for (var i=0;i<CATALOGUE.length;i++){
+    var c = CATALOGUE[i];
+    h += '<div class="pal" onclick="addItem(\''+c.k+'\')" title="Ajouter : '+esc(c.n)+'">' +
+         '<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:'+c.c+';border:1px solid rgba(0,0,0,.3)"></span>' +
+         (c.e ? c.e+' ' : '') + esc(c.n) + ' <small>'+c.w+'×'+c.h+'</small></div>';
+  }
+  box.innerHTML = h;
+}
+function overlaps(a, b){
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+function findSpot(w, h){
+  for (var y=0; y+h<=PLAN_P; y+=GRID){
+    for (var x=0; x+w<=PLAN_L; x+=GRID){
+      var test = {x:x, y:y, w:w, h:h}, libre = true;
+      for (var i=0;i<planItems.length;i++) if (overlaps(test, planItems[i])) { libre = false; break; }
+      if (libre) return {x:x, y:y};
+    }
+  }
+  return {x:0, y:0};
+}
+function addItem(k){
+  var c = cat(k); if (!c) return;
+  var w = c.w, h = c.h;
+  if (w > PLAN_L) w = PLAN_L;
+  if (h > PLAN_P) h = PLAN_P;
+  var spot = findSpot(w, h);
+  var it = { id: nextItemId++, k:k, x:spot.x, y:spot.y, w:w, h:h };
+  planItems.push(it);
+  selId = it.id;
+  renderPlan(); updateProgress(); saveDraft();
+}
+function deleteSel(){
+  if (selId == null) { flash("Sélectionne d'abord un élément du plan (un clic dessus).", "wait"); return; }
+  planItems = planItems.filter(function(i){ return i.id !== selId; });
+  selId = null; renderPlan(); updateProgress(); saveDraft();
+}
+function rotateSel(){
+  if (selId == null) { flash("Sélectionne d'abord un élément du plan (un clic dessus).", "wait"); return; }
+  for (var i=0;i<planItems.length;i++){
+    var it = planItems[i];
+    if (it.id !== selId) continue;
+    var w = it.h, h = it.w;
+    if (w > PLAN_L || h > PLAN_P) return;
+    it.w = w; it.h = h;
+    if (it.x + it.w > PLAN_L) it.x = PLAN_L - it.w;
+    if (it.y + it.h > PLAN_P) it.y = PLAN_P - it.h;
+  }
+  renderPlan(); saveDraft();
+}
+function resetPlan(){
+  if (planItems.length && !confirm("Vider complètement le plan ?")) return;
+  planItems = []; selId = null; renderPlan(); updateProgress(); saveDraft();
+}
+function zoomPlan(d){
+  zoomIdx = Math.max(0, Math.min(ZOOMS.length-1, zoomIdx + d));
+  renderPlan();
+}
+function fitZoom(){
+  var wrap = $("plan-scroll"); if (!wrap) return;
+  var avail = wrap.clientWidth - 34;
+  for (var i=ZOOMS.length-1;i>=0;i--){ if (PLAN_L*ZOOMS[i] <= avail){ zoomIdx = i; return; } }
+  zoomIdx = 0;
+}
+function renderPlan(){
+  var plan = $("plan"); if (!plan) return;
+  var S = scale();
+  plan.style.width  = (PLAN_L*S) + "px";
+  plan.style.height = (PLAN_P*S) + "px";
+  var minor = GRID*S, major = 100*S;
+  plan.style.backgroundImage =
+    "linear-gradient(to right, rgba(31,78,121,.28) 1px, transparent 1px)," +
+    "linear-gradient(to bottom, rgba(31,78,121,.28) 1px, transparent 1px)," +
+    "linear-gradient(to right, rgba(31,78,121,.10) 1px, transparent 1px)," +
+    "linear-gradient(to bottom, rgba(31,78,121,.10) 1px, transparent 1px)";
+  plan.style.backgroundSize = major+"px "+major+"px, "+major+"px "+major+"px, "+minor+"px "+minor+"px, "+minor+"px "+minor+"px";
+
+  var h = "";
+  for (var i=0;i<planItems.length;i++){
+    var it = planItems[i], c = cat(it.k) || {n:it.k, c:"#ddd", e:""};
+    var wpx = it.w*S, hpx = it.h*S;
+    var showTxt = wpx > 46 && hpx > 26;
+    h += '<div class="item'+(it.id===selId?' sel':'')+'" data-id="'+it.id+'" style="left:'+(it.x*S)+'px;top:'+(it.y*S)+'px;width:'+wpx+'px;height:'+hpx+'px;background:'+c.c+'">' +
+         (showTxt ? (c.e ? c.e+' ' : '') + esc(c.n) + '<small>'+it.w+'×'+it.h+'</small>' : (c.e || '')) +
+         '</div>';
+  }
+  plan.innerHTML = h;
+  var els = plan.querySelectorAll(".item");
+  for (var j=0;j<els.length;j++) els[j].addEventListener("pointerdown", startDrag);
+  $("b6-plan").value = JSON.stringify(planItems.map(function(i){ return {k:i.k,x:i.x,y:i.y,w:i.w,h:i.h}; }));
+  checkPlan();
+}
+var drag = null;
+function startDrag(ev){
+  ev.preventDefault();
+  var id = parseInt(this.getAttribute("data-id"), 10);
+  selId = id;
+  var it = null;
+  for (var i=0;i<planItems.length;i++) if (planItems[i].id === id) it = planItems[i];
+  if (!it) return;
+  drag = { id:id, sx:ev.clientX, sy:ev.clientY, ox:it.x, oy:it.y, el:this, moved:false };
+  this.classList.add("drag");
+  this.setPointerCapture && this.setPointerCapture(ev.pointerId);
+  var els = $("plan").querySelectorAll(".item");
+  for (var k=0;k<els.length;k++) els[k].classList.toggle("sel", els[k] === this);
+  window.addEventListener("pointermove", onDrag);
+  window.addEventListener("pointerup", endDrag);
+}
+function onDrag(ev){
+  if (!drag) return;
+  var S = scale();
+  var it = null;
+  for (var i=0;i<planItems.length;i++) if (planItems[i].id === drag.id) it = planItems[i];
+  if (!it) return;
+  var nx = drag.ox + (ev.clientX - drag.sx)/S;
+  var ny = drag.oy + (ev.clientY - drag.sy)/S;
+  nx = Math.round(nx/GRID)*GRID; ny = Math.round(ny/GRID)*GRID;
+  nx = Math.max(0, Math.min(PLAN_L - it.w, nx));
+  ny = Math.max(0, Math.min(PLAN_P - it.h, ny));
+  if (nx !== it.x || ny !== it.y) drag.moved = true;
+  it.x = nx; it.y = ny;
+  drag.el.style.left = (nx*S) + "px";
+  drag.el.style.top  = (ny*S) + "px";
+}
+function endDrag(){
+  window.removeEventListener("pointermove", onDrag);
+  window.removeEventListener("pointerup", endDrag);
+  if (!drag) return;
+  drag.el.classList.remove("drag");
+  var moved = drag.moved;
+  drag = null;
+  renderPlan();
+  if (moved){ updateProgress(); saveDraft(); }
+}
+document.addEventListener("keydown", function(ev){
+  var tag = (ev.target && ev.target.tagName || "").toLowerCase();
+  if (tag === "input" || tag === "textarea" || tag === "select") return;
+  if (ev.key === "Delete" || ev.key === "Backspace"){ if (selId != null){ ev.preventDefault(); deleteSel(); } }
+  if (ev.key === "r" || ev.key === "R"){ if (selId != null){ ev.preventDefault(); rotateSel(); } }
+});
+
+/* ── Contrôle automatique du plan ── */
+function planHas(k){ for (var i=0;i<planItems.length;i++) if (planItems[i].k === k) return true; return false; }
+function planCount(k){ var n=0; for (var i=0;i<planItems.length;i++) if (planItems[i].k === k) n++; return n; }
+function onWall(it){
+  var T = 20;
+  return it.y <= T || it.y + it.h >= PLAN_P - T || it.x <= T || it.x + it.w >= PLAN_L - T;
+}
+function planOverlapIds(){
+  var bad = {};
+  var solides = planItems.filter(function(i){ return i.k !== "porte" && i.k !== "fenetre"; });
+  for (var i=0;i<solides.length;i++){
+    for (var j=i+1;j<solides.length;j++){
+      if (overlaps(solides[i], solides[j])){ bad[solides[i].id] = 1; bad[solides[j].id] = 1; }
+    }
+  }
+  return bad;
+}
+function checkPlan(){
+  var bad = planOverlapIds();
+  var els = $("plan").querySelectorAll(".item");
+  for (var i=0;i<els.length;i++){
+    els[i].classList.toggle("bad", !!bad[parseInt(els[i].getAttribute("data-id"),10)]);
+  }
+  var portesOk = false;
+  for (var p=0;p<planItems.length;p++) if (planItems[p].k === "porte" && onWall(planItems[p])) portesOk = true;
+  var tests = [
+    { lb:"🛏️ Espace repos (lit + armoire)", ok: planHas("lit") && planHas("armoire") },
+    { lb:"🍳 Espace cuisine (meuble + table)",    ok: planHas("cuisine") && planHas("table") },
+    { lb:"🚿 Espace hygiène (douche + lavabo + WC)", ok: planHas("douche") && planHas("lavabo") && planHas("wc") },
+    { lb:"💻 Espace travail (bureau)",            ok: planHas("bureau") },
+    { lb:"🚪 Une porte sur un mur",               ok: portesOk },
+    { lb:"🪟 Au moins une fenêtre",               ok: planCount("fenetre") >= 1 },
+    { lb:"🧱 Des cloisons pour séparer",          ok: planCount("cloison") + planCount("cloison2") >= 1 },
+    { lb:"✅ Aucun meuble superposé",                   ok: Object.keys(bad).length === 0 }
+  ];
+  var h = "";
+  for (var t=0;t<tests.length;t++) h += '<span class="'+(tests[t].ok?"ok":"ko")+'">'+(tests[t].ok?"✓ ":"○ ")+tests[t].lb+'</span>';
+  $("plan-check").innerHTML = h;
+}
+function planSummary(){
+  if (!planItems.length) return "Plan vide.";
+  var byK = {};
+  for (var i=0;i<planItems.length;i++){
+    var it = planItems[i], c = cat(it.k);
+    var nom = c ? c.n : it.k;
+    if (!byK[nom]) byK[nom] = [];
+    byK[nom].push(it.w+"×"+it.h+" cm en (x="+it.x+" ; y="+it.y+")");
+  }
+  var out = [];
+  for (var n in byK) if (byK.hasOwnProperty(n)) out.push("• " + n + " ×" + byK[n].length + " : " + byK[n].join(" ; "));
+  return out.join("\n");
+}
+
+/* ════════════ BROUILLON LOCAL (sauvegarde automatique) ════════════ */
+function draftKey(){ return DRAFT_PFX + (USER.id || slug(val("inp-prenom")+"-"+val("inp-nom")) || "anon"); }
+function collect(){
+  var fields = {};
+  for (var i=0;i<FIELD_IDS.length;i++) fields[FIELD_IDS[i]] = val(FIELD_IDS[i]);
+  for (var j=0;j<QCM_IDS.length;j++) fields[QCM_IDS[j]] = qcmAns[QCM_IDS[j]] || "";
+  fields["b6-sh3d"] = ($("b6-sh3d") && $("b6-sh3d").checked) ? "oui" : "";
+  fields["b6-plan"] = $("b6-plan") ? $("b6-plan").value : "[]";
+  return {
+    p: val("inp-prenom"), n: val("inp-nom"), c: val("inp-classe"),
+    fields: fields, chips: chipChoice, ts: Date.now()
+  };
+}
+var _draftT = null;
+function saveDraft(){
+  if (_draftT) clearTimeout(_draftT);
+  _draftT = setTimeout(function(){
+    try {
+      localStorage.setItem(draftKey(), JSON.stringify(collect()));
+      var d = new Date();
+      function p(x){ return x<10?"0"+x:""+x; }
+      $("draft-st").textContent = "Brouillon enregistré à " + p(d.getHours()) + ":" + p(d.getMinutes());
+    } catch(e){}
+  }, 500);
+}
+function restoreDraft(){
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch(e){}
+  if (!raw) return;
+  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  var f = d.fields || {};
+  for (var i=0;i<FIELD_IDS.length;i++){
+    var el = $(FIELD_IDS[i]);
+    if (el && f[FIELD_IDS[i]] !== undefined){ el.value = f[FIELD_IDS[i]]; markFilled(el); }
+  }
+  for (var j=0;j<QCM_IDS.length;j++){
+    var id = QCM_IDS[j], v = f[id];
+    if (!v) continue;
+    qcmAns[id] = v;
+    var fb = $("fb-"+id);
+    var prop = fb ? fb.closest(".prop") : null;
+    if (prop){
+      var opts = prop.querySelectorAll(".opt");
+      for (var k=0;k<opts.length;k++){
+        var txt = (opts[k].textContent||"").trim().toLowerCase();
+        if (txt === v || txt === "une "+v) opts[k].classList.add("sel");
+      }
+    }
+  }
+  if (f["b6-sh3d"] === "oui" && $("b6-sh3d")) $("b6-sh3d").checked = true;
+  if (f["b6-plan"]){
+    try {
+      var arr = JSON.parse(f["b6-plan"]) || [];
+      planItems = arr.map(function(o){ return {id:nextItemId++, k:o.k, x:o.x, y:o.y, w:o.w, h:o.h}; });
+    } catch(e){}
+  }
+  chipChoice = d.chips || {};
+  for (var ci in chipChoice){
+    if (!chipChoice.hasOwnProperty(ci)) continue;
+    var cel = $("chip-"+ci);
+    if (cel && chipChoice[ci]) cel.setAttribute("data-choice", chipChoice[ci]);
+  }
+}
+
+/* ════════════ MESSAGES ════════════ */
+function flash(html, kind){
+  var box = $("send-status");
+  box.className = "sendst show " + (kind || "wait");
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+/* ════════════ COPIE DE SECOURS ════════════ */
+function saveBackup(){
+  var data = collect();
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "batiment5e_" + (slug(data.p+"-"+data.n) || "eleve") + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  flash("&#x2B07;&#xFE0F; Copie de secours téléchargée sur cet ordinateur.", "ok");
+}
+
+/* ════════════ RÉSUMÉ LISIBLE (vue professeur) ════════════ */
+function buildOpenSummary(state){
+  var f = state.fields, lines = [];
+  var LBL = { "b5-etat":"Décidée par l'État", "b5-client":"Décidée par le client",
+              "b5-norme-oblig":"Norme obligatoire", "b5-contrainte-oblig":"Contrainte obligatoire" };
+  for (var g=0; g<QUESTION_GROUPS.length; g++){
+    var grp = QUESTION_GROUPS[g], block = [];
+    for (var i=0;i<grp.items.length;i++){
+      var id = grp.items[i][0], lb = grp.items[i][1];
+      block.push("• " + lb + " : " + (f[id] ? f[id] : "—"));
+    }
+    lines.push("— " + grp.titre + " —\n" + block.join("\n"));
+  }
+  /* Quiz auto-corrigés */
+  var okCN = 0;
+  for (var q=0;q<QCM_IDS.length;q++) if (f[QCM_IDS[q]] === QCM_COR[QCM_IDS[q]]) okCN++;
+  var okChips = 0, repChips = 0;
+  for (var c in state.chips){
+    if (!state.chips.hasOwnProperty(c) || !state.chips[c]) continue;
+    repChips++;
+    if (CHIPS[c] && state.chips[c] === CHIPS[c].a) okChips++;
+  }
+  lines.push("— Quiz auto-corrigés —\n• Naturel / technique : " + okChips + "/" + CHIPS.length +
+             " (" + repChips + " classés)\n• Contrainte / norme : " + okCN + "/" + QCM_IDS.length);
+  lines.push("— Plan du conteneur —\n" + planSummary());
+  return lines.join("\n\n");
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function unqueueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+/* Le site (index.html) lit localStorage.subs : on y dépose aussi la soumission
+   pour que la carte de l'élève affiche « En attente de correction » tout de suite. */
+function storeLocalSub(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(APPS_SCRIPT_URL, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !hasUrl()) return;
+    q.forEach(function(sub){ postSub(sub); });
+  } catch(e){}
+}
+function makeSub(){
+  var state = collect();
+  var classe = state.c ? ("5" + state.c.toUpperCase()) : (USER.c || "");
+  var ename  = (state.p + " " + state.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe)||"5x") + "." + (slug(ename)||"eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: countFilled(),
+    qcmTot: totalFields(),
+    open: buildOpenSummary(state),
+    fields: state.fields,
+    chips: state.chips,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function sendToProf(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 5A) en haut de la fiche.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var done = countFilled();
+  if (done < 10 && !confirm("Tu n'as rempli que " + done + " réponse(s). Envoyer quand même au professeur ?")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  saveDraft();
+  var sub = makeSub();
+  storeLocalSub(sub);
+  /* Si l'activité est ouverte depuis le site (iframe, même origine),
+     on rafraîchit le tableau de bord pour afficher « En attente de correction ». */
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  postSub(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Travail envoyé au professeur</strong> le " + new Date().toLocaleString("fr-FR") +
+            ".<br>Tu peux continuer à compléter : un nouvel envoi remplacera le précédent.", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Pas de panique : ton travail est <strong>conservé sur cet ordinateur</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ ILLUSTRATIONS FACULTATIVES ════════════
+   Chaque <figure data-src="chemin1|chemin2|…"> essaie ses fichiers dans l'ordre :
+   le premier trouvé s'affiche, et si aucun n'existe le bloc disparaît.
+   Le professeur peut donc déposer les images du Drive sans les renommer. */
+function loadIllustrations(){
+  var figs = document.querySelectorAll("figure.illus[data-src]");
+  for (var i=0;i<figs.length;i++){
+    (function(fig){
+      var srcs = (fig.getAttribute("data-src") || "").split("|");
+      var alt  = fig.getAttribute("data-alt") || "";
+      var k = 0;
+      function next(){
+        if (k >= srcs.length){ fig.remove(); return; }
+        var url = encodeURI(srcs[k++].trim());
+        var probe = new Image();
+        probe.onload = function(){
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          fig.insertBefore(img, fig.firstChild);
+          fig.hidden = false;
+        };
+        probe.onerror = next;
+        probe.src = url;
+      }
+      next();
+    })(figs[i]);
+  }
+}
+
+/* ════════════ INITIALISATION ════════════ */
+function readPrefill(){
+  try {
+    var raw = localStorage.getItem(PREFILL_KEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d) return;
+    USER = { id: d.id || "", p: d.p || "", n: d.n || "", c: d.c || "" };
+    if (USER.p) $("inp-prenom").value = USER.p;
+    if (USER.n) $("inp-nom").value = USER.n;
+    if (USER.c) $("inp-classe").value = String(USER.c).replace(/^5/, "").toUpperCase();
+  } catch(e){}
+}
+function wireFields(){
+  var els = document.querySelectorAll(".rep");
+  for (var i=0;i<els.length;i++){
+    var el = els[i];
+    el.addEventListener("input", function(){ markFilled(this); updateProgress(); saveDraft(); });
+    el.addEventListener("change", function(){ markFilled(this); updateProgress(); saveDraft(); });
+    el.addEventListener("focus", function(){ lastFocused = this.id; });
+    markFilled(el);
+  }
+  var cb = $("b6-sh3d");
+  if (cb) cb.addEventListener("change", function(){ updateProgress(); saveDraft(); });
+  var idf = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j=0;j<idf.length;j++){
+    var e = $(idf[j]);
+    if (e) e.addEventListener("input", function(){ saveDraft(); });
+  }
+}
+function initActivite(){
+  try { if (localStorage.getItem("batiment5e_dys") === "1"){ document.body.classList.add("dys"); $("btn-dys").classList.add("on"); } } catch(e){}
+  loadIllustrations();
+  buildChips();
+  buildStepBank();
+  buildPalette();
+  readPrefill();
+  restoreDraft();
+  wireFields();
+  addMicButtons();
+  fitZoom();
+  renderPlan();
+  updateProgress();
+  flushQueue();
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)){
+    var notes = document.querySelectorAll(".micbtn");
+    for (var i=0;i<notes.length;i++) notes[i].title = "Dictée disponible avec Chrome ou Edge";
+  }
+}
+/* On démarre dès que le HTML est prêt (sans attendre les polices distantes),
+   pour que l'activité soit utilisable même avec une connexion lente. */
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
+else initActivite();
+window.addEventListener("resize", function(){
+  clearTimeout(window._rz);
+  window._rz = setTimeout(function(){ fitZoom(); renderPlan(); }, 250);
+});
+</script>
+</body>
+</html>

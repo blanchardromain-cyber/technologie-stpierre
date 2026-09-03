@@ -3517,6 +3517,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="p12-act3">P12 &mdash; Activit&eacute; 3 (Algorigrammes)</option>
             <option value="p12-cor-a1">P12 &mdash; Corrig&eacute; Activit&eacute; 1</option>
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
+            <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -3628,11 +3629,27 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
     </div>
   
-    <!-- RÉSEAU 5e — CAPSULE P1 (activité embarquée depuis le dépôt reseau-5e) -->
+    <!-- BÂTIMENT 5e — CAPSULE P1 (activité hébergée dans ce dépôt) -->
+    <div id="pg-batiment5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Aménagement d'un bâtiment (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité <strong>individuelle</strong>. Réponds aux questions (le bouton <strong>&#x1F3A4; Dicter</strong> permet de répondre à la voix),
+        aménage le plan du conteneur, puis clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> : ton travail arrive dans le tableau de bord.
+        Ton brouillon est enregistré automatiquement sur ce poste.
+      </p>
+      <iframe id="batiment5e-frame" data-src="Niveau%205/Amenagement%20batiment/batiment_eleve.html" title="Aménager un bâtiment (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- RÉSEAU 5e — CAPSULE P2 (activité embarquée depuis le dépôt reseau-5e) -->
     <div id="pg-reseau5e" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Réseau informatique (5e)</h2>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Réseau informatique (5e)</h2>
       </div>
       <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         Activité à réaliser <strong>en binôme</strong> sur PowerShell. Remplissez vos prénoms et noms en haut de la fiche, puis cliquez <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> à la fin : votre travail arrive directement dans le tableau de bord du professeur.
@@ -3642,11 +3659,11 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         loading="lazy"></iframe>
     </div>
 
-    <!-- FILIUS 5e — CAPSULE P2 (activité embarquée depuis le dépôt filius-5e) -->
+    <!-- FILIUS 5e — CAPSULE P3 (activité embarquée depuis le dépôt filius-5e) -->
     <div id="pg-filius5e" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Réseau avec Filius (5e)</h2>
+        <h2 style="font-size:17px;font-weight:700">P3 &mdash; Réseau avec Filius (5e)</h2>
       </div>
       <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         Activité <strong>en binôme</strong> dans le logiciel <strong>Filius</strong> (installé sur les PC). Construisez le réseau, répondez aux questions, puis cliquez <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> : votre travail arrive directement dans le tableau de bord.
@@ -3660,7 +3677,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
     <div id="pg-filius5e-cor" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Corrigé Filius</h2>
+        <h2 style="font-size:17px;font-weight:700">P3 &mdash; Corrigé Filius</h2>
       </div>
       <div class="card" style="border-left:5px solid var(--vt);max-width:820px">
         <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'activité Filius</h3>
@@ -3672,11 +3689,11 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
     </div>
 
-    <!-- MAISON 5e — CAPSULE P3 (activité embarquée depuis le dépôt maison-5e) -->
+    <!-- MAISON 5e — CAPSULE P4 (activité embarquée depuis le dépôt maison-5e) -->
     <div id="pg-maison5e" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P3 &mdash; Mon réseau à la maison (5e)</h2>
+        <h2 style="font-size:17px;font-weight:700">P4 &mdash; Mon réseau à la maison (5e)</h2>
       </div>
       <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         Activité <strong>à faire à la maison</strong>, en autonomie, sur un ordinateur. Suis les explications pas à pas (PowerShell ou invite de commandes), réponds, puis clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong>.
@@ -4603,10 +4620,11 @@ var SEQUENCES_DEF = [
   {id:"p12-act3",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
   {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
-  {id:"reseau5e", niveau:"5ème", titre:"P1 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
-  {id:"filius5e", niveau:"5ème", titre:"P2 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
-  {id:"filius5e-cor", niveau:"5ème", titre:"P2 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
-  {id:"maison5e", niveau:"5ème", titre:"P3 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"MAI26", open:true},
+  {id:"batiment5e", niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
+  {id:"reseau5e", niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
+  {id:"filius5e", niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
+  {id:"filius5e-cor", niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
+  {id:"maison5e", niveau:"5ème", titre:"P4 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"MAI26", open:true},
   {id:"seq3",    niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
 
@@ -4848,6 +4866,14 @@ function goPage(pid) {
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
+  if (pid === "pg-batiment5e") {
+    // Pré-remplit l'identité de l'élève connecté (même origine → localStorage).
+    try {
+      if (user) localStorage.setItem("batiment5e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var bIfr = document.getElementById("batiment5e-frame");
+    if (bIfr) bIfr.src = bIfr.getAttribute("data-src");
+  }
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
     // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
@@ -5057,6 +5083,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
+        } else if (s.id === "batiment5e") {
+          badgeHtml = '<span class="badge" style="background:#FCE4D6;color:#C55A11;font-weight:700">&#x1F3D7;&#xFE0F; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
           badgeHtml = "";
         } else {
@@ -5079,6 +5107,7 @@ function renderDash() {
       else if (s.id === "dc-corrige") clickAction = "onclick=\"goPage('pg-dc');setTimeout(revealDCCorrigeAfterUnlock,100)\"";
       else if (s.id === "cap1")     clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
+      else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -5128,6 +5157,7 @@ function tryUnlock() {
     else if (pendingSeq === "p12-act3") goPage("pg-p12-act3");
     else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
+    else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -5356,6 +5386,128 @@ function buildReseauModalHTML(sub) {
     row("Réseau en étoile (switch)","syn-1") + row("Modem-routeur (ipconfig)","syn-2") +
     row("Adresse IP (ipconfig)","syn-3") + row("Internet = réseau de réseaux","syn-4") +
     row("Pare-feu / protection","syn-5");
+}
+
+/* ════════ P1 5e — AMÉNAGER UN BÂTIMENT ════════
+   Structure des réponses (mêmes identifiants que Niveau 5/Amenagement batiment/batiment_eleve.html)
+   Sert à la vue prof (réponses + corrigé indicatif) et à l'export CSV. */
+var BATIMENT_GROUPS = [
+  { titre:"1. Objet naturel / objet technique", couleur:"var(--vt)", items:[
+    ["b1-nat1","Objet naturel 1"],["b1-nat2","Objet naturel 2"],["b1-nat3","Objet naturel 3"],
+    ["b1-tec1","Objet technique 1"],["b1-tec2","Objet technique 2"],["b1-tec3","Objet technique 3"]]},
+  { titre:"2. Produit et besoin", couleur:"var(--bl)", items:[
+    ["b2-phy-besoin","Physiologique — besoin"],["b2-phy-objet","Physiologique — objet"],
+    ["b2-sec-besoin","Sécurité — besoin"],["b2-sec-objet","Sécurité — objet"],
+    ["b2-app-besoin","Appartenance — besoin"],["b2-app-objet","Appartenance — objet"],
+    ["b2-est-besoin","Estime — besoin"],["b2-est-objet","Estime — objet"],
+    ["b2-epa-besoin","Épanouissement — besoin"],["b2-epa-objet","Épanouissement — objet"]]},
+  { titre:"3. Fonction d'usage", couleur:"var(--or)", items:[
+    ["b3-sac","Sac à dos"],["b3-velo","Vélo"],["b3-logement","Logement étudiant"]]},
+  { titre:"4. Le collège (ERP / ERT / IGH)", couleur:"var(--bl)", items:[
+    ["b4-igh","IGH"],["b4-ert","ERT"],["b4-erp","ERP"],["b4-hab","Habitation"],
+    ["b4-syn-type","Synonyme de « type »"],["b4-syn-cat","Synonyme de « catégorie »"],
+    ["b4-type","Type du collège"],["b4-effectif","Effectif accueilli"],["b4-cat","Catégorie du collège"],
+    ["b4-justif","Justification"]]},
+  { titre:"5. Contraintes et normes", couleur:"#7B2C8B", items:[
+    ["b5-etat","Décidée par l'État →"],["b5-client","Décidée par le client →"],
+    ["b5-norme-oblig","Une norme est obligatoire ?"],["b5-contrainte-oblig","Une contrainte est obligatoire ?"],
+    ["b5-handicap-n","Handicap — norme"],["b5-handicap-c","Handicap — contrainte"],
+    ["b5-securite-n","Sécurité — norme"],["b5-securite-c","Sécurité — contrainte"],
+    ["b5-esthetique-n","Esthétique — norme"],["b5-esthetique-c","Esthétique — contrainte"],
+    ["b5-electrique-n","Électricité — norme"],["b5-electrique-c","Électricité — contrainte"]]},
+  { titre:"6. Modélisation", couleur:"#C55A11", items:[
+    ["b6-principe","Principe de la construction modulaire"],["b6-avantages","Avantages"],
+    ["b6-etape2","2e étape"],["b6-etape3","3e étape"],["b6-etape4","4e étape"],["b6-etape5","5e étape"],
+    ["b6-sh3d","Sweet Home 3D réalisé"],["b6-bilan","Bilan"]]}
+];
+/* Corrigé indicatif — affiché sous la réponse de l'élève dans la vue prof */
+var BATIMENT_CORRIGE = {
+  "b4-igh":"Immeuble de Grande Hauteur : dernier plancher à plus de 28 m (habitation) ou 50 m (autres).",
+  "b4-ert":"Établissement Recevant des Travailleurs : des salariés y travaillent (bureaux, usine, atelier).",
+  "b4-erp":"Établissement Recevant du Public : accueille des personnes extérieures (collège, magasin, hôpital…).",
+  "b4-hab":"Bâtiments d'habitation : les logements (maison, immeuble, logement étudiant).",
+  "b4-syn-type":"L'activité.",
+  "b4-syn-cat":"La capacité (l'effectif accueilli).",
+  "b4-type":"R — établissements d'éveil, d'enseignement, de formation.",
+  "b4-cat":"Dépend de l'effectif : >1500 → 1re ; 701-1500 → 2e ; 301-700 → 3e ; ≤300 → 4e ; petit établissement → 5e.",
+  "b5-etat":"une norme",
+  "b5-client":"une contrainte",
+  "b5-norme-oblig":"oui",
+  "b5-contrainte-oblig":"non",
+  "b6-etape2":"régler l'échelle puis dessiner les murs du conteneur aux bonnes dimensions",
+  "b6-etape3":"placer la porte et les fenêtres",
+  "b6-etape4":"créer les cloisons des espaces",
+  "b6-etape5":"installer les meubles et vérifier les dimensions"
+};
+var BATIMENT_QCM = { "b5-etat":"norme", "b5-client":"contrainte", "b5-norme-oblig":"oui", "b5-contrainte-oblig":"non" };
+var BATIMENT_MEUBLES = {
+  lit:{n:"Lit",c:"#BFD9F2"}, armoire:{n:"Armoire",c:"#D4C4F0"}, cuisine:{n:"Meuble cuisine",c:"#F7C59F"},
+  table:{n:"Table",c:"#FBD9A5"}, douche:{n:"Douche",c:"#A8E6D8"}, lavabo:{n:"Lavabo",c:"#BFEAF5"},
+  wc:{n:"WC",c:"#D5F0C0"}, bureau:{n:"Bureau",c:"#F5C6CB"}, chaise:{n:"Chaise",c:"#E6E6E6"},
+  cloison:{n:"Cloison",c:"#C0A98F"}, cloison2:{n:"Cloison",c:"#C0A98F"},
+  porte:{n:"Porte",c:"#B07C46"}, fenetre:{n:"Fenêtre",c:"#7FD3F0"}
+};
+/* Plan du conteneur (1219 × 244 cm) redessiné en SVG à partir des données de l'élève */
+function batimentPlanSVG(raw) {
+  var items = [];
+  try { items = JSON.parse(raw || "[]") || []; } catch (e) { items = []; }
+  if (!items.length) return '<div style="font-size:12.5px;color:var(--td);font-style:italic">Aucun aménagement enregistré.</div>';
+  var L = 1219, P = 244, S = 0.42;
+  var svg = '<svg viewBox="0 0 ' + (L*S+4) + ' ' + (P*S+4) + '" width="100%" style="max-width:100%;background:#fff;border-radius:6px">';
+  svg += '<rect x="2" y="2" width="' + (L*S) + '" height="' + (P*S) + '" fill="#fff" stroke="#7A5230" stroke-width="3"/>';
+  for (var g = 100; g < L; g += 100) svg += '<line x1="' + (2+g*S) + '" y1="2" x2="' + (2+g*S) + '" y2="' + (2+P*S) + '" stroke="#1F4E79" stroke-opacity=".18"/>';
+  for (var h = 100; h < P; h += 100) svg += '<line x1="2" y1="' + (2+h*S) + '" x2="' + (2+L*S) + '" y2="' + (2+h*S) + '" stroke="#1F4E79" stroke-opacity=".18"/>';
+  for (var i = 0; i < items.length; i++) {
+    var it = items[i], m = BATIMENT_MEUBLES[it.k] || {n:it.k, c:"#DDD"};
+    svg += '<rect x="' + (2+it.x*S) + '" y="' + (2+it.y*S) + '" width="' + (it.w*S) + '" height="' + (it.h*S) +
+           '" fill="' + m.c + '" stroke="#33404F" stroke-width="1" rx="2"/>';
+    if (it.w*S > 34 && it.h*S > 14) {
+      svg += '<text x="' + (2+(it.x+it.w/2)*S) + '" y="' + (2+(it.y+it.h/2)*S+3) + '" text-anchor="middle" font-size="9" font-family="DM Sans,sans-serif" fill="#1A202C">' + m.n + '</text>';
+    }
+  }
+  svg += '</svg>';
+  return svg;
+}
+/* P1 5e — rendu des réponses de l'élève pour le tableau de bord professeur */
+function buildBatimentModalHTML(sub) {
+  var f = sub && sub.fields ? sub.fields : null;
+  function esc(x){ return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  if (!f) return "<em>Aucune réponse enregistrée.</em>";
+  function row(label, id) {
+    var v = f[id];
+    var cor = BATIMENT_CORRIGE[id]
+      ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + esc(BATIMENT_CORRIGE[id]) + '</div>'
+      : '';
+    var flag = '';
+    if (BATIMENT_QCM[id]) flag = v ? (v === BATIMENT_QCM[id] ? ' ✅' : ' ❌') : '';
+    return '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + label + flag + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
+      (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div>' + cor + '</div>';
+  }
+  var html = '<div style="background:#FCE4D6;border:1px solid #E8A87C;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px">' +
+    '<strong>&#x1F3D7;&#xFE0F; ' + esc(sub.ename || '') + '</strong> — Classe ' + esc(sub.ecls || '') + '</div>';
+  /* Quiz auto-corrigés */
+  var okQcm = 0, nQcm = 0;
+  for (var q in BATIMENT_QCM) { if (!BATIMENT_QCM.hasOwnProperty(q)) continue; nQcm++; if (f[q] === BATIMENT_QCM[q]) okQcm++; }
+  var chips = sub.chips || {}, okChips = 0, nChips = 0;
+  var CHIPS_COR = ["nat","tec","nat","tec","nat","tec","nat","tec","nat","tec"];
+  for (var c in chips) {
+    if (!chips.hasOwnProperty(c) || !chips[c]) continue;
+    nChips++;
+    if (chips[c] === CHIPS_COR[c]) okChips++;
+  }
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+    '<span style="background:var(--vp);color:var(--vt);border-radius:14px;padding:3px 11px;font-size:12px;font-weight:700">Naturel / technique : ' + okChips + '/10 (' + nChips + ' classés)</span>' +
+    '<span style="background:var(--bp);color:var(--bl);border-radius:14px;padding:3px 11px;font-size:12px;font-weight:700">Contrainte / norme : ' + okQcm + '/' + nQcm + '</span>' +
+    '</div>';
+  for (var g2 = 0; g2 < BATIMENT_GROUPS.length; g2++) {
+    var grp = BATIMENT_GROUPS[g2];
+    html += '<div style="font-weight:700;color:' + grp.couleur + ';font-size:12px;margin:12px 0 4px">' + grp.titre.toUpperCase() + '</div>';
+    for (var i2 = 0; i2 < grp.items.length; i2++) html += row(grp.items[i2][1], grp.items[i2][0]);
+  }
+  html += '<div style="font-weight:700;color:#C55A11;font-size:12px;margin:12px 0 4px">PLAN DU CONTENEUR (1219 × 244 cm)</div>';
+  html += batimentPlanSVG(f["b6-plan"]);
+  return html;
 }
 
 /* ════════ FILIUS 5e — structure unique : questions + corrigé ════════
@@ -5600,6 +5752,9 @@ function renderSubs() {
       } else if (s.cap === "p12-act3") {
         var a3score = (s.fields && s.fields.score) ? s.fields.score : "—";
         sc = '<span style="background:#EEF2FF;color:#4338CA;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F4CA; ' + a3score + ' exercices</span>';
+      } else if (s.cap === "batiment5e") {
+        var bDone = (s.score !== undefined ? s.score : 0), bTot = (s.qcmTot || 50);
+        sc = '<span style="background:#FCE4D6;color:#C55A11;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F3D7;&#xFE0F; ' + bDone + '/' + bTot + ' réponses</span>';
       } else if (s.cap === "reseau5e") {
         var rDone = (s.score !== undefined ? s.score : 0), rTot = (s.qcmTot || 24);
         sc = '<span style="background:#E0F7FF;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F310; ' + rDone + '/' + rTot + ' réponses</span>';
@@ -5862,6 +6017,10 @@ function openModal(sid) {
     var nfp2 = countP12Ex2Fields(sub.fields);
     var q3okM = String(sub.fields["ex2-q3"]||"").trim() === "54";
     document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+  } else if (sub.cap === "batiment5e") {
+    if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
+    document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub);
+    document.getElementById("mscore").textContent = "Activité individuelle — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses — Statut : " + sub.status;
   } else if (sub.cap === "reseau5e") {
     if (mh3) mh3.textContent = "Réseau 5e — Manipulation (binôme)";
     document.getElementById("mrep").innerHTML = buildReseauModalHTML(sub);
@@ -5902,6 +6061,7 @@ function printModalSub() {
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
   else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
@@ -6026,6 +6186,7 @@ function printSubDirect(sid) {
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
   else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
@@ -6247,6 +6408,22 @@ function _buildCapsuleCSV(cap, filtered) {
         var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
         var exCols = exKeys.map(function(k){ return f[k] || "—"; });
         return base.concat(exCols).concat([f.bilan || ""]);
+      })
+    };
+  }
+  if (cap === "batiment5e") {
+    var batIds = [];
+    for (var bg = 0; bg < BATIMENT_GROUPS.length; bg++)
+      for (var bi = 0; bi < BATIMENT_GROUPS[bg].items.length; bi++) batIds.push(BATIMENT_GROUPS[bg].items[bi]);
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Reponses"].concat(batIds.map(function(it){ return it[1]; })).concat(["Plan (nb elements)"]),
+      rows: filtered.map(function(x){
+        var f = x.fields || {};
+        var nbPlan = 0;
+        try { nbPlan = (JSON.parse(f["b6-plan"] || "[]") || []).length; } catch(e) {}
+        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0)]
+          .concat(batIds.map(function(it){ return f[it[0]] || ""; }))
+          .concat([nbPlan]);
       })
     };
   }
