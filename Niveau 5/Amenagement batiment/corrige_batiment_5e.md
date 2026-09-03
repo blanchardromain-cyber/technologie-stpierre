@@ -18,6 +18,22 @@ en toute sécurité ?
 | Sauvegarde | brouillon automatique sur le poste, envoi au tableau de bord professeur |
 | Accessibilité | bouton « 🎤 Dicter » sur chaque champ, bouton « 👁️ Confort de lecture » (police B612, interlignes et espacement élargis) |
 
+La partie 6.4 (modélisation sur **Sweet Home 3D**) se fait **en binôme** ; la fiche, elle,
+reste individuelle.
+
+## Ressources en ligne intégrées à la fiche
+
+Chaque notion s'ouvre sur un bandeau « Pour découvrir la notion » qui renvoie vers l'activité
+correspondante, à faire avant de répondre :
+
+| Partie | Ressource |
+|---|---|
+| 1. Objet naturel / objet technique | [La classification des objets](https://techno-flash.com/activites/v2/classification_objets/classification_objets.html) (Techno-Flash) |
+| 2. Produit et besoin | [Associer des produits à un besoin](https://techno-flash.com/activites/v2/associer_produits_besoin/associer_produits_besoin.html) (Techno-Flash) |
+| 3. Fonction d'usage | [La fonction d'usage d'un produit](https://techno-flash.com/activites/v2/fonction_usage/fonction_usage.html) (Techno-Flash) |
+| 4. Le collège | *Réglementations ERP-ERT-IGH* et *Classement des ERP* : intégrées directement dans la fiche, en dépliants |
+| 6. Modélisation | Vidéos de bureaux modulaires : [Le Sénat](https://www.youtube.com/watch?v=XRkp4-lq7y4&t=1s) · [Institut de biologie Gustave Roussy](https://www.youtube.com/watch?v=1_H5Z4b9bIE&list=PLvqD551Lv13mPIH1bECcZ-xSdlsEEGe1l) · [entreprise Cougnaud](https://www.cougnaud.com/) |
+
 Le travail envoyé apparaît dans **Espace professeur → Soumissions** (filtre *P1 5e — Aménager un
 bâtiment*) : réponses regroupées par partie, scores des deux quiz auto-corrigés et **plan du
 conteneur redessiné**. Export CSV disponible, impression possible depuis la fiche.
@@ -75,7 +91,9 @@ Exemples au collège :
 
 ### 6. Modélisation
 - **Principe** : les modules (ici des conteneurs de 40 pieds) sont fabriqués et équipés en usine,
-  puis transportés et assemblés sur le chantier.
+  puis transportés et assemblés sur le chantier. Les vidéos du Sénat et de l'Institut Gustave
+  Roussy montrent des bureaux construits ainsi : les élèves y observent l'assemblage des modules
+  et la rapidité du chantier avant de rédiger leur réponse.
 - **Avantages** : chantier rapide, moins de nuisances et de déchets, coût maîtrisé, réemploi des
   conteneurs (recyclage), modules démontables et déplaçables, qualité contrôlée en usine.
 - **Étapes attendues** : 1 croquis *(donné)* → 2 régler l'échelle et dessiner les murs aux bonnes
