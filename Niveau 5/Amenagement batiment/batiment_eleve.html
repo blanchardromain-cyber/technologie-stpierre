@@ -243,9 +243,11 @@
   .pal:hover{border-color:var(--br);background:#FFF9F2}
   .pal small{color:var(--td);font-weight:400;font-family:"DM Mono",monospace;font-size:11px}
   #plan-scroll{overflow:auto;background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:14px}
+  /* touch-action reste par défaut sur le plan : au doigt, un glissé sur le fond
+     fait défiler le plan ; seuls les meubles (.item) capturent le geste. */
   #plan{
     position:relative;background:#fff;border:3px solid #7A5230;box-shadow:inset 0 0 0 2px #C89B6A;
-    margin:0 auto;touch-action:none
+    margin:0 auto
   }
   .item{
     position:absolute;border:2px solid rgba(0,0,0,.35);border-radius:4px;
@@ -960,7 +962,11 @@ function addMicButtons(){
 }
 function toggleDictation(targetId, btnId){
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR){ flash("La dictée vocale fonctionne avec Chrome ou Edge. Écris ta réponse au clavier.", "err"); return; }
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
+          "(touche &#x1F3A4; en bas du clavier) ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
   if (_micActive && _micActive.btnId === btnId){ try{ _micActive.recog.stop(); }catch(e){} return; }
   if (_micActive){ try{ _micActive.recog.stop(); }catch(e){} }
 
@@ -1429,6 +1435,20 @@ function saveDraft(){
     } catch(e){}
   }, 500);
 }
+/* La fiche est-elle encore vierge ? (sert à ne jamais écraser un travail en cours) */
+function formVierge(){
+  for (var i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) return false;
+  for (var j=0;j<QCM_IDS.length;j++) if (qcmAns[QCM_IDS[j]]) return false;
+  return planItems.length === 0;
+}
+/* Ouverte hors du site, la fiche n'a pas encore d'identité au chargement : dès que
+   l'élève saisit son prénom et son nom, on recherche son brouillon. */
+function restaurerSelonIdentite(){
+  if (USER.id || !formVierge()) return;
+  if (!val("inp-prenom") || !val("inp-nom")) return;
+  restoreDraft();
+  renderPlan(); updateProgress();
+}
 function restoreDraft(){
   var raw = null;
   try { raw = localStorage.getItem(draftKey()); } catch(e){}
@@ -1678,7 +1698,11 @@ function wireFields(){
   var idf = ["inp-prenom","inp-nom","inp-classe"];
   for (var j=0;j<idf.length;j++){
     var e = $(idf[j]);
-    if (e) e.addEventListener("input", function(){ saveDraft(); });
+    if (e){
+      e.addEventListener("input", function(){ saveDraft(); });
+      e.addEventListener("change", restaurerSelonIdentite);
+      e.addEventListener("blur", restaurerSelonIdentite);
+    }
   }
 }
 function initActivite(){
