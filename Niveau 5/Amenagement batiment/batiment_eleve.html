@@ -74,7 +74,9 @@
   #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
 
   /* ═══ BARRE DE PROGRESSION ═══ */
-  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:0;z-index:40}
+  /* La barre d'outils se colle juste SOUS l'en-tête (hauteur mesurée au chargement),
+     pour rester atteignable quand la page défile — lecture immersive comprise. */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
   .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .pbar{flex:1;min-width:180px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
   .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--br),#E8842A);transition:width .35s}
@@ -354,7 +356,7 @@
 
 <main>
 
-  <div class="reprise" id="reprise" hidden></div>
+  <div class="reprise" id="reprise" hidden data-nolecture></div>
 
   <div class="situ">
     <div class="lb">Situation problème</div>
@@ -373,12 +375,6 @@
         Un <strong>objet technique</strong> est un objet réalisé ou modifié par l'Homme.
       </div>
 
-      <figure class="illus" hidden id="illus-1"
-        data-alt="Terrasse aménagée dans un jardin"
-        data-src="ressources/1-objets-naturels-techniques.png|ressources/1-objets-naturels-techniques.jpg|ressources/1 Objets Techniques Objets Naturels.png">
-        <figcaption>Une terrasse aménagée : combien d'objets techniques vois-tu&nbsp;?</figcaption>
-      </figure>
-
       <div class="reslinks">
         <span class="rl-lb">&#x1F50E; Pour découvrir la notion</span>
         <a class="linkbtn" href="https://techno-flash.com/activites/v2/classification_objets/classification_objets.html" target="_blank" rel="noopener">&#x1F517; La classification des objets</a>
@@ -391,7 +387,14 @@
       <button class="btnck" onclick="checkChips()">Vérifier mon classement</button>
       <div class="result" id="chip-res"></div>
 
-      <span class="qlabel"><span class="qn">1.1</span>Observe la photo projetée par ton professeur (ou la salle autour de toi) et trouve 3 objets naturels et 3 objets techniques.</span>
+      <span class="qlabel"><span class="qn">1.1</span>Observe la photo ci-dessous &mdash; ou la salle autour de toi &mdash; et trouve 3 objets naturels et 3 objets techniques.</span>
+
+      <figure class="illus" hidden id="illus-1"
+        data-alt="Terrasse aménagée dans un jardin"
+        data-src="ressources/1-objets-naturels-techniques.png|ressources/1-objets-naturels-techniques.jpg|ressources/1 Objets Techniques Objets Naturels.png">
+        <figcaption>Une terrasse aménagée : combien d'objets techniques vois-tu&nbsp;?</figcaption>
+      </figure>
+
       <div class="tscroll">
         <table class="grid">
           <tr><th style="width:50%">Objets naturels</th><th>Objets techniques</th></tr>
@@ -969,6 +972,8 @@ function addMicButtons(){
   }
 }
 function toggleDictation(targetId, btnId){
+  /* On ne dicte pas par-dessus la lecture à voix haute. */
+  try { if (window.LectureImmersive && LectureImmersive.actif()) LectureImmersive.stop(); } catch(e){}
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR){
     flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
@@ -1810,7 +1815,13 @@ function wireFields(){
     }
   }
 }
+/* Hauteur réelle de l'en-tête : elle change avec la largeur de l'écran. */
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
 function initActivite(){
+  calerBarreOutils();
   try { if (localStorage.getItem("batiment5e_dys") === "1"){ document.body.classList.add("dys"); $("btn-dys").classList.add("on"); } } catch(e){}
   loadIllustrations();
   buildChips();
@@ -1835,9 +1846,15 @@ function initActivite(){
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
 else initActivite();
 window.addEventListener("resize", function(){
+  calerBarreOutils();
   clearTimeout(window._rz);
   window._rz = setTimeout(function(){ fitZoom(); renderPlan(); }, 250);
 });
 </script>
+
+<!-- Lecture immersive : lit la fiche à voix haute en surlignant le texte.
+     Module partagé, réutilisable tel quel dans les prochaines capsules. -->
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"section.step.closed", classeFermeture:"closed" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
 </body>
 </html>
