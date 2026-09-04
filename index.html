@@ -4348,6 +4348,8 @@ function addLogoToPdfHeader(doc, M) {
 // Chaque élève a son propre mot de passe dans le champ "pwd"
 // Format généré : 3 premières lettres du prénom + 4 chiffres
 var ELEVES = [
+  /* Accompagnant (AESH) : accès aux capsules pour suivre les élèves, sans être compté comme élève */
+  {id:"mickael.bretin", p:"Mickaël", n:"BRETIN", c:"AESH", niveau:"Accompagnement", pwd:"mic8055", role:"aesh"},
   {id:"valentin.amiand", p:"Valentin", n:"AMIAND", c:"4A", niveau:"4ème", pwd:"val8055"},
   {id:"ines.baranger", p:"Ines", n:"BARANGER", c:"4A", niveau:"4ème", pwd:"ine8360"},
   {id:"agnes.bidet", p:"Agnès", n:"BIDET", c:"4A", niveau:"4ème", pwd:"agn6307"},
@@ -5746,6 +5748,7 @@ function renderSubs() {
   for (var i = 0; i < all.length; i++) ids.push(all[i].eid);
   var miss = "";
   for (var i = 0; i < ELEVES.length; i++) {
+    if (ELEVES[i].role) continue;   /* accompagnants : pas des élèves à relancer */
     var found = false;
     for (var j = 0; j < ids.length; j++) { if (ids[j] === ELEVES[i].id) { found = true; break; } }
     if (!found) miss += '<span style="background:#fff;border:1px solid var(--gb);border-radius:8px;padding:5px 10px;font-size:12px">' + ELEVES[i].p + ' ' + ELEVES[i].n + ' <span style="color:var(--td);font-size:11px">(' + ELEVES[i].c + ')</span></span>';
