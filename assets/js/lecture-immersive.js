@@ -33,7 +33,8 @@
 
   var synth = window.speechSynthesis;
   var blocs = [], index = -1, motsCourants = [], bornes = [], enPause = false, enLecture = false;
-  var voixFr = null, tickReprise = null, boundaryVu = false;
+  var voixFr = null, tickReprise = null, boundaryVu = false, motActif = null;
+  var minuterie = null, plan = [], tDebut = 0, pauseCumul = 0, pauseDebut = 0;
 
   /* ── Styles ─────────────────────────────────────────────────────────── */
   function injecterStyles() {
@@ -61,11 +62,17 @@
   /* ── Voix française ─────────────────────────────────────────────────── */
   function choisirVoix() {
     if (!synth) return;
-    var v = synth.getVoices() || [];
+    var v = synth.getVoices() || [], fr = [], i;
+    for (i = 0; i < v.length; i++) if (/^fr(-|_|$)/i.test(v[i].lang)) fr.push(v[i]);
+    /* Les voix « réseau » (Google) ne signalent pas les mots prononcés dans
+       Chrome : à défaut, le surlignage mot à mot ne pourrait pas suivre. On
+       préfère donc une voix installée sur l'appareil quand il y en a une. */
+    var locales = fr.filter(function (x) { return x.localService; });
+    var choix = locales.length ? locales : fr;
     voixFr = null;
-    for (var i = 0; i < v.length; i++) {
-      if (/^fr(-|_|$)/i.test(v[i].lang)) {
-        if (!voixFr || /Google|Amelie|Amélie|Thomas|Audrey/i.test(v[i].name)) voixFr = v[i];
+    for (i = 0; i < choix.length; i++) {
+      if (!voixFr || /Amelie|Amélie|Thomas|Audrey|Hortense|Denise|Claude|Paul/i.test(choix[i].name)) {
+        voixFr = choix[i];
       }
     }
   }
@@ -140,13 +147,54 @@
     bloc.normalize();
   }
 
+  /* ── Surlignage du mot prononcé ─────────────────────────────────────── */
+  function surlignerMot(k) {
+    if (k < 0 || k >= motsCourants.length) return;
+    if (motActif === motsCourants[k]) return;
+    if (motActif) motActif.classList.remove("li-mot-actif");
+    motActif = motsCourants[k];
+    motActif.classList.add("li-mot-actif");
+  }
+
+  /* Tous les navigateurs ne signalent pas les mots prononcés : Safari/iPad et
+     les voix réseau de Chrome restent muets là-dessus. On estime alors la
+     durée de chaque mot pour que le surlignage suive quand même ; dès qu'un
+     vrai signal arrive, la minuterie s'efface au profit du navigateur. */
+  function planifier(rate) {
+    var cps = 13.5 * (parseFloat(rate) || 1), t = 0;
+    plan = motsCourants.map(function (sp) {
+      var mot = sp.textContent;
+      t += (mot.length + 1) / cps * 1000;
+      if (/[.!?:;]$/.test(mot)) t += 320;                 /* respiration de fin de phrase */
+      else if (/[,)»]$/.test(mot)) t += 150;
+      return t;
+    });
+  }
+  function lancerMinuterie() {
+    arreterMinuterie();
+    tDebut = Date.now(); pauseCumul = 0; pauseDebut = 0;
+    minuterie = setInterval(function () {
+      if (boundaryVu) { arreterMinuterie(); return; }     /* le navigateur suit déjà */
+      if (!enLecture || enPause || !plan.length) return;
+      var ecoule = Date.now() - tDebut - pauseCumul;
+      for (var k = 0; k < plan.length; k++) {
+        if (ecoule < plan[k]) { surlignerMot(k); return; }
+      }
+      surlignerMot(plan.length - 1);
+    }, 60);
+  }
+  function arreterMinuterie() {
+    if (minuterie) { clearInterval(minuterie); minuterie = null; }
+  }
+
   /* ── Lecture ────────────────────────────────────────────────────────── */
   function nettoyerBloc() {
+    arreterMinuterie();
     if (index >= 0 && blocs[index]) {
       blocs[index].classList.remove("li-bloc");
       recoller(blocs[index]);
     }
-    motsCourants = []; bornes = [];
+    motsCourants = []; bornes = []; plan = []; motActif = null;
   }
   function lireBloc(i) {
     nettoyerBloc();
@@ -176,18 +224,20 @@
     u.onboundary = function (e) {
       if (e.name && e.name !== "word") return;
       boundaryVu = true;
+      arreterMinuterie();
       var ci = e.charIndex || 0;
       for (var k = 0; k < bornes.length; k++) {
-        if (ci >= bornes[k].debut && ci < bornes[k].fin) {
-          for (var j = 0; j < motsCourants.length; j++) motsCourants[j].classList.remove("li-mot-actif");
-          bornes[k].sp.classList.add("li-mot-actif");
-          return;
-        }
+        if (ci >= bornes[k].debut && ci < bornes[k].fin) { surlignerMot(k); return; }
       }
     };
     u.onend = function () { if (enLecture && !enPause) lireBloc(index + 1); };
     u.onerror = function () { if (enLecture && !enPause) lireBloc(index + 1); };
+    /* La minuterie démarre tout de suite puis se recale sur le début réel de
+       la voix, le temps de latence variant d'un appareil à l'autre. */
+    planifier(u.rate);
+    u.onstart = function () { if (!boundaryVu) tDebut = Date.now(); };
     synth.speak(u);
+    if (!boundaryVu) lancerMinuterie();
   }
   function vitesse() {
     var v = null;
@@ -213,13 +263,19 @@
   }
   function pause() {
     if (!enLecture) return;
-    if (enPause) { enPause = false; synth.resume(); }
-    else { enPause = true; synth.pause(); }
+    if (enPause) {
+      enPause = false;
+      if (pauseDebut) { pauseCumul += Date.now() - pauseDebut; pauseDebut = 0; }
+      synth.resume();
+    } else {
+      enPause = true; pauseDebut = Date.now(); synth.pause();
+    }
     majBarre();
   }
   function stop(silencieux) {
     if (synth) synth.cancel();
     if (tickReprise) { clearInterval(tickReprise); tickReprise = null; }
+    arreterMinuterie();
     nettoyerBloc();
     index = -1; enLecture = false; enPause = false;
     document.body.classList.remove("li-en-cours");
