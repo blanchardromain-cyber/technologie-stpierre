@@ -71,6 +71,20 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .scbody h3{font-size:14px;font-weight:700;margin-bottom:3px}
 .scbody p{font-size:12px;color:var(--td);margin-bottom:10px}
 .scmeta{display:flex;align-items:center;justify-content:space-between}
+/* ── Dossiers de séquence sur le tableau de bord ── */
+.dossier{border:1px solid var(--gb);border-radius:12px;background:#fff;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.045)}
+.dossier-bt{display:flex;align-items:center;gap:11px;width:100%;padding:13px 16px;background:none;border:0;border-left:5px solid var(--gb);font-family:inherit;text-align:left;cursor:pointer;transition:background .15s}
+.dossier-bt:hover{background:var(--gr)}
+.dossier-bt:focus-visible{outline:3px solid var(--bc);outline-offset:-3px}
+.dossier-bt .chev{color:var(--td);font-size:13px;flex:0 0 auto;transition:transform .2s}
+.dossier.ouvert .dossier-bt .chev{transform:rotate(90deg)}
+.dossier-bt .ic{font-size:18px;flex:0 0 auto;line-height:1}
+.dossier-bt .tt{flex:1;min-width:0;font-size:14.5px;font-weight:700;color:var(--tx)}
+.dossier-bt .dnb{font-size:11.5px;font-weight:700;color:var(--td);white-space:nowrap;background:var(--gr);border-radius:20px;padding:3px 10px}
+.dossier-corps{display:none;padding:2px 14px 14px}
+.dossier.ouvert .dossier-corps{display:block}
+@media (max-width:520px){.dossier-bt{flex-wrap:wrap;row-gap:7px;padding:12px 13px}.dossier-bt .tt{flex:1 1 auto;min-width:0;font-size:14px}.dossier-bt .dnb{margin-left:29px}.dossier-bt .dnb~.dnb{margin-left:0}}
+@media print{.dossier-corps{display:block!important}.dossier-bt .chev{display:none}}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
 .bv{background:var(--vp);color:var(--vt)}.bg{background:var(--gb);color:var(--td)}
 .block-badge{background:#FEF9E7;color:#7D6608;border:1px dashed #D4AC0D}
@@ -5228,6 +5242,87 @@ function goPage(pid) {
 }
 
 // ================================================================
+// DOSSIERS DE SÉQUENCE (tableau de bord élève)
+// ================================================================
+/* Chaque capsule appartient à la séquence que porte son champ « ordre » :
+   110 et 111 → séquence 11 ; 120 à 128 → séquence 12. Une capsule sans
+   « ordre » se range dans un dossier « Autres » en fin de niveau. */
+function numeroSequence(s) {
+  return (s.ordre === undefined) ? -1 : Math.floor(s.ordre / 10);
+}
+/* Nom, icône et couleur de chaque dossier. Une séquence absente de cette table
+   n'empêche rien : son dossier prend le titre de sa première capsule. */
+var DOSSIERS_SEQ = {
+  "5ème": {
+    1:  { titre:"P1 &mdash; Am&eacute;nagement d'un b&acirc;timent", icone:"&#x1F3D7;&#xFE0F;", couleur:"#C55A11" },
+    2:  { titre:"P2 &mdash; R&eacute;seau informatique",              icone:"&#x1F310;",         couleur:"#00C2FF" },
+    3:  { titre:"P3 &mdash; R&eacute;seau avec Filius",               icone:"&#x1F5A7;",         couleur:"#7C4DFF" },
+    4:  { titre:"P4 &mdash; Mon r&eacute;seau &agrave; la maison",     icone:"&#x1F3E0;",         couleur:"#2E8B4A" }
+  },
+  "4ème": {
+    11: { titre:"P11 &mdash; L'eau, ressource essentielle",           icone:"&#x1F4A7;",         couleur:"#0288D1" },
+    12: { titre:"P12 &mdash; Technologie &amp; Alimentation",         icone:"&#x1F374;"     , couleur:"#C55A11" },
+    13: { titre:"P13 &mdash; Biomim&eacute;tisme",                    icone:"&#x1F98E;",         couleur:"#1E6B3B" },
+    14: { titre:"P14 &mdash; Prochain th&egrave;me",                  icone:"&#x1F552;",         couleur:"#94A3B8" },
+    90: { titre:"&Eacute;valuations",                                 icone:"&#x1F4CB;",         couleur:"#7B2C8B" }
+  },
+  "3ème": {
+    3:  { titre:"P3 &mdash; &Agrave; venir", icone:"&#x1F552;", couleur:"#94A3B8" }
+  }
+};
+/* Dossiers ouverts / fermés, mémorisés par élève sur cet appareil. */
+function cleDossiers() { return "dash_dossiers_" + (user ? user.id : "guest"); }
+function dossiersMemo() {
+  try { return JSON.parse(localStorage.getItem(cleDossiers())) || {}; } catch (e) { return {}; }
+}
+function toggleDossier(cle) {
+  var el = document.getElementById("dossier-" + cle);
+  if (!el) return;
+  var ouvert = el.classList.toggle("ouvert");
+  var bt = document.getElementById("bt-" + cle);
+  if (bt) bt.setAttribute("aria-expanded", ouvert ? "true" : "false");
+  var memo = dossiersMemo();
+  memo[cle] = ouvert ? 1 : 0;
+  try { localStorage.setItem(cleDossiers(), JSON.stringify(memo)); } catch (e) {}
+}
+/* Un dossier de séquence : barre cliquable + grille de cartes repliable. */
+function dossierHTML(niv, dossier, cartes, stats, nbDossiers) {
+  var meta = (DOSSIERS_SEQ[niv] || {})[dossier.num] || {};
+  var titre = meta.titre || dossier.items[0].titre;
+  var icone = meta.icone || "&#x1F4C1;";
+  var couleur = meta.couleur || "var(--bl)";
+  var cle = niv.charAt(0) + "-" + dossier.num;
+
+  /* Ouvert si l'élève l'a laissé ouvert. Sinon, on ouvre d'office quand il n'y a
+     qu'un seul dossier dans le niveau, ou qu'un travail est à retravailler : ce
+     qui appelle une action ne doit pas rester caché derrière un clic. */
+  var memo = dossiersMemo(), ouvert;
+  if (Object.prototype.hasOwnProperty.call(memo, cle)) ouvert = !!memo[cle];
+  else ouvert = (nbDossiers === 1) || (stats.arevoir > 0);
+
+  var pastille = "";
+  if (stats.arevoir > 0) {
+    pastille = '<span class="dnb" style="background:#FFEBEE;color:#C62828">&#x1F504; ' + stats.arevoir + ' &agrave; retravailler</span>';
+  } else if (stats.attente > 0) {
+    pastille = '<span class="dnb" style="background:#FFF8E1;color:#7D6608">&#x23F3; ' + stats.attente + ' en attente</span>';
+  } else if (stats.ouvertes > 0 && stats.validees >= stats.ouvertes) {
+    pastille = '<span class="dnb" style="background:#E8F5E9;color:#2E7D32">&#x2705; Termin&eacute;</span>';
+  } else if (stats.ouvertes === 0) {
+    pastille = '<span class="dnb" style="background:var(--gb);color:var(--td)">Bient&ocirc;t disponible</span>';
+  }
+
+  var n = stats.total;
+  var h = '<div class="dossier' + (ouvert ? ' ouvert' : '') + '" id="dossier-' + cle + '">';
+  h += '<button type="button" class="dossier-bt" id="bt-' + cle + '" aria-expanded="' + (ouvert ? 'true' : 'false') +
+       '" aria-controls="corps-' + cle + '" style="border-left-color:' + couleur + '" onclick="toggleDossier(\'' + cle + '\')">';
+  h += '<span class="chev">&#x25B8;</span><span class="ic">' + icone + '</span>';
+  h += '<span class="tt">' + titre + '</span>';
+  h += pastille;
+  h += '<span class="dnb">' + n + ' capsule' + (n > 1 ? 's' : '') + '</span></button>';
+  h += '<div class="dossier-corps" id="corps-' + cle + '"><div class="sgrid">' + cartes + '</div></div>';
+  return h + '</div>';
+}
+// ================================================================
 // DASHBOARD — classement par niveau
 // ================================================================
 function renderDash() {
@@ -5253,7 +5348,7 @@ function renderDash() {
   for (var ni = 0; ni < order.length; ni++) {
     var niv = order[ni];
     if (!niveaux[niv]) continue;
-    html += '<div class="niveau-section"><div class="niveau-label">Niveau ' + niv + '</div><div class="sgrid">';
+    html += '<div class="niveau-section"><div class="niveau-label">Niveau ' + niv + '</div>';
     var seqs = niveaux[niv];
     /* Les capsules suivent la progression pédagogique : P11 avant P12, et chaque
        activité juste avant son corrigé (voir le champ « ordre » de SEQUENCES_DEF). */
@@ -5262,14 +5357,31 @@ function renderDash() {
       var ob = (b.ordre === undefined) ? 1e9 : b.ordre;
       return oa - ob;
     });
-    for (var i = 0; i < seqs.length; i++) {
-      var s = seqs[i];
+    /* … puis elles sont rangées dans le dossier de leur séquence (P11, P12…),
+       déduit du champ « ordre » : 110 et 111 → séquence 11, 120 à 128 → séquence 12. */
+    var dossiers = [], parNum = {};
+    for (var di = 0; di < seqs.length; di++) {
+      var dnum = numeroSequence(seqs[di]);
+      if (!parNum[dnum]) { parNum[dnum] = { num: dnum, items: [] }; dossiers.push(parNum[dnum]); }
+      parNum[dnum].items.push(seqs[di]);
+    }
+    for (var dg = 0; dg < dossiers.length; dg++) {
+      var dossier = dossiers[dg];
+      var cartes = '', stats = { total:0, ouvertes:0, validees:0, attente:0, arevoir:0 };
+
+    for (var i = 0; i < dossier.items.length; i++) {
+      var s = dossier.items[i];
       var code = codes[s.id];
       var mySub = subByCap[s.id];
       // Si l'élève a déjà une soumission pour cette capsule, il l'a forcément déverrouillée à un moment :
       // on n'affiche plus "Code requis" même sur un nouveau navigateur.
       var isLocked = (code && code.length > 0) && !unlocked[s.id] && !mySub;
       var isOpen = s.open;
+      stats.total++;
+      if (isOpen) stats.ouvertes++;
+      if (mySub && mySub.status === 'validated') stats.validees++;
+      else if (mySub && mySub.status === 'rejected') stats.arevoir++;
+      else if (mySub && mySub.status === 'pending')  stats.attente++;
       var badgeHtml = "";
       if (!isOpen) {
         badgeHtml = '<span class="badge block-badge">Bientôt disponible</span>';
@@ -5335,13 +5447,16 @@ function renderDash() {
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
       else if (s.id === "maison5e") clickAction = "onclick=\"goPage('pg-maison5e')\"";
-      html += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
-      html += '<div class="schdr" style="background:' + s.couleur + '"></div>';
-      html += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
-      html += '<div class="scmeta">' + badgeHtml + '<span style="font-size:11px;color:var(--td)">' + s.niveau + '</span></div>';
-      html += '</div></div>';
+      cartes += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
+      cartes += '<div class="schdr" style="background:' + s.couleur + '"></div>';
+      cartes += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
+      cartes += '<div class="scmeta">' + badgeHtml + '<span style="font-size:11px;color:var(--td)">' + s.niveau + '</span></div>';
+      cartes += '</div></div>';
     }
-    html += '</div></div>';
+
+      html += dossierHTML(niv, dossier, cartes, stats, dossiers.length);
+    }
+    html += '</div>';
   }
   document.getElementById("sequences-par-niveau").innerHTML = html;
 }
