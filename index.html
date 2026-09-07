@@ -4794,32 +4794,39 @@ var ELEVES = [
   {id:"ethan.salicru", p:"Ethan", n:"SALICRU", c:"5A", niveau:"5ème", pwd:"eth1035"}
 ];
 
-// Séquences — activer avec un code d'invitation (vide = accès libre)
-// Le code est stocké dans localStorage et modifiable par le prof depuis l'interface
+/* Séquences — activer avec un code d'invitation (vide = accès libre).
+   Le code est stocké dans localStorage et modifiable par le prof depuis l'interface.
+
+   ORDRE D'AFFICHAGE : le champ « ordre » place la capsule dans la progression
+   pédagogique de son niveau — numéro de séquence × 10, puis rang à l'intérieur
+   de la séquence (P11 → 110, son corrigé → 111 ; P12 → 120, 121, 122…).
+   Une nouvelle capsule peut donc être ajoutée n'importe où dans le tableau :
+   c'est « ordre » qui décide, pas la position de la ligne. Sans « ordre », la
+   capsule se range à la fin de son niveau. */
 var SEQUENCES_DEF = [
-  {id:"dc",   niveau:"4ème", titre:"Devoir Commun — 30 min", desc:"Épreuve évaluée : cardiofréquencemètre &amp; aquaponie. Code fourni par le professeur.", couleur:"var(--vi)", code:"DC26", open:true},
-  {id:"dc-corrige", niveau:"4ème", titre:"Corrigé Devoir Commun", desc:"Code d'accès au corrigé.", couleur:"var(--vt)", code:"CODC00", open:true},
-  {id:"p12",  niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
-  {id:"p12-ex1", niveau:"4ème", titre:"P12 — Exercice n°1 — Distributeur de croquettes", desc:"Comment adapter la quantité de nourriture à un animal ?", couleur:"#C2185B", code:"CHA26", open:true},
-  {id:"p12-ex1-cor", niveau:"4ème", titre:"P12 — Corrigé Exercice n°1", desc:"Corrigé du distributeur de croquettes. Code d'accès professeur.", couleur:"var(--vt)", code:"CORCHA26", open:true},
-  {id:"p12-ex2", niveau:"4ème", titre:"P12 — Exercice n°2 — Bac à sable connecté", desc:"Comment conserver des aliments sans réfrigérateur ?", couleur:"#0277BD", code:"SAB26", open:true},
-  {id:"p12-ex2-cor", niveau:"4ème", titre:"P12 — Corrigé Exercice n°2", desc:"Corrigé du bac à sable connecté. Code d'accès professeur.", couleur:"var(--vt)", code:"CORSAB26", open:true},
-  {id:"cap1", niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
-  {id:"seq2", niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
-  {id:"rem1", niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
-  {id:"p12-act2",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
-  {id:"p12-act3",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
-  {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
-  {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
-  {id:"eau4e", niveau:"4ème", titre:"P11 — L'eau, ressource essentielle", desc:"Activités 1 et 2 : le voyage de l'eau, puis le coût de l'eau et le gaspillage. Quiz auto-corrigés, mini-tableur de la facture, dictée vocale et aménagements dys.", couleur:"#0288D1", code:"EAU26", open:true},
-  {id:"eau4e-cor", niveau:"4ème", titre:"P11 — Corrigé L'eau, ressource essentielle", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU26", open:true},
-  {id:"batiment5e", niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
-  {id:"batiment5e-cor", niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
-  {id:"reseau5e", niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
-  {id:"filius5e", niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
-  {id:"filius5e-cor", niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
-  {id:"maison5e", niveau:"5ème", titre:"P4 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"MAI26", open:true},
-  {id:"seq3",    niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
+  {id:"batiment5e", ordre:10, niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
+  {id:"batiment5e-cor", ordre:11, niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
+  {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
+  {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
+  {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
+  {id:"maison5e", ordre:40, niveau:"5ème", titre:"P4 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"MAI26", open:true},
+  {id:"eau4e", ordre:110, niveau:"4ème", titre:"P11 — L'eau, ressource essentielle", desc:"Activités 1 et 2 : le voyage de l'eau, puis le coût de l'eau et le gaspillage. Quiz auto-corrigés, mini-tableur de la facture, dictée vocale et aménagements dys.", couleur:"#0288D1", code:"EAU26", open:true},
+  {id:"eau4e-cor", ordre:111, niveau:"4ème", titre:"P11 — Corrigé L'eau, ressource essentielle", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU26", open:true},
+  {id:"p12", ordre:120, niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
+  {id:"p12-cor-a1", ordre:121, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
+  {id:"p12-act2", ordre:122, niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
+  {id:"p12-cor-a2", ordre:123, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
+  {id:"p12-act3", ordre:124, niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
+  {id:"p12-ex1", ordre:125, niveau:"4ème", titre:"P12 — Exercice n°1 — Distributeur de croquettes", desc:"Comment adapter la quantité de nourriture à un animal ?", couleur:"#C2185B", code:"CHA26", open:true},
+  {id:"p12-ex1-cor", ordre:126, niveau:"4ème", titre:"P12 — Corrigé Exercice n°1", desc:"Corrigé du distributeur de croquettes. Code d'accès professeur.", couleur:"var(--vt)", code:"CORCHA26", open:true},
+  {id:"p12-ex2", ordre:127, niveau:"4ème", titre:"P12 — Exercice n°2 — Bac à sable connecté", desc:"Comment conserver des aliments sans réfrigérateur ?", couleur:"#0277BD", code:"SAB26", open:true},
+  {id:"p12-ex2-cor", ordre:128, niveau:"4ème", titre:"P12 — Corrigé Exercice n°2", desc:"Corrigé du bac à sable connecté. Code d'accès professeur.", couleur:"var(--vt)", code:"CORSAB26", open:true},
+  {id:"cap1", ordre:130, niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
+  {id:"rem1", ordre:131, niveau:"4\u00e8me", titre:"R\u00e9m&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
+  {id:"seq2", ordre:140, niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
+  {id:"dc", ordre:900, niveau:"4ème", titre:"Devoir Commun — 30 min", desc:"Épreuve évaluée : cardiofréquencemètre &amp; aquaponie. Code fourni par le professeur.", couleur:"var(--vi)", code:"DC26", open:true},
+  {id:"dc-corrige", ordre:901, niveau:"4ème", titre:"Corrigé Devoir Commun", desc:"Code d'accès au corrigé.", couleur:"var(--vt)", code:"CODC00", open:true},
+  {id:"seq3", ordre:30, niveau:"3ème", titre:"P3 — À venir", desc:"Séquence 3ème à venir.", couleur:"var(--gb)", code:"", open:false}
 ];
 
 // ================================================================
@@ -5248,6 +5255,13 @@ function renderDash() {
     if (!niveaux[niv]) continue;
     html += '<div class="niveau-section"><div class="niveau-label">Niveau ' + niv + '</div><div class="sgrid">';
     var seqs = niveaux[niv];
+    /* Les capsules suivent la progression pédagogique : P11 avant P12, et chaque
+       activité juste avant son corrigé (voir le champ « ordre » de SEQUENCES_DEF). */
+    seqs.sort(function(a, b){
+      var oa = (a.ordre === undefined) ? 1e9 : a.ordre;
+      var ob = (b.ordre === undefined) ? 1e9 : b.ordre;
+      return oa - ob;
+    });
     for (var i = 0; i < seqs.length; i++) {
       var s = seqs[i];
       var code = codes[s.id];
