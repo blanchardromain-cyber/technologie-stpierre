@@ -3531,6 +3531,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <option value="p12-act3">P12 &mdash; Activit&eacute; 3 (Algorigrammes)</option>
             <option value="p12-cor-a1">P12 &mdash; Corrig&eacute; Activit&eacute; 1</option>
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
+            <option value="eau4e">P11 4e &mdash; L'eau, ressource essentielle</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
@@ -3643,6 +3644,238 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
       </div>
     </div>
   
+    <!-- P11 4e — L'EAU, RESSOURCE ESSENTIELLE (activité hébergée dans ce dépôt) -->
+    <div id="pg-eau4e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; L'eau, ressource essentielle (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité <strong>individuelle</strong> regroupant les <strong>activités 1 et 2</strong> de la séquence (le simulateur de consommation se fait <strong>en binôme</strong>).
+        Le bouton <strong>&#x1F3A4; Dicter</strong> permet de répondre à la voix, <strong>&#x1F441;&#xFE0F; Confort de lecture</strong> règle la police, la taille et la couleur de la page,
+        et <strong>&#x1F50A; Lecture immersive</strong> lit la fiche à voix haute. Clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong> quand tu as terminé :
+        ton brouillon est de toute façon enregistré automatiquement sur ce poste.
+      </p>
+      <iframe id="eau4e-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/eau_eleve.html" title="L'eau, ressource essentielle (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — CORRIGÉ (réservé au professeur, code COREAU26) -->
+    <div id="pg-eau4e-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé L'eau, ressource essentielle</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé, aménagements et notes d'organisation &mdash; 4<sup>e</sup></h3>
+        <p style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
+          Compétence <strong>CT 2.5</strong> &mdash; identifier un besoin et énoncer un problème technique.
+          Les réponses ouvertes (bilan, gaspillages observés, justifications) admettent d'autres
+          formulations : les exemples ci-dessous servent de repère de correction.
+        </p>
+        <button onclick="printEauCorrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+
+        <div id="eau-cor-body" style="margin-top:20px">
+
+          <div style="background:var(--bp);border-left:4px solid var(--bl);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:18px">
+            <div style="font-weight:700;color:var(--bl);font-size:14px;margin-bottom:4px">Situation problème</div>
+            <div style="font-size:13.5px;color:var(--td)">Comment préserver l'eau, une ressource essentielle&nbsp;?</div>
+          </div>
+
+          <p class="bat-cor-p">La fiche regroupe les <strong>deux activités</strong> de la séquence :
+          <strong>Activité 1 &mdash; Le voyage de l'eau</strong> (parties 1 à 4) et
+          <strong>Activité 2 &mdash; Combien coûte l'eau, où la gaspille-t-on&nbsp;?</strong> (parties 5 à 8).
+          L'élève envoie <strong>un seul travail</strong>. Pour ne traiter que l'activité 1 en première
+          séance, replier les parties 5 à 8 avec le bouton &laquo;&nbsp;Tout ouvrir / fermer&nbsp;&raquo;.</p>
+
+          <h4 class="bat-cor-h">Organisation</h4>
+          <table class="bat-cor-t">
+            <tr><td class="k">Modalité</td><td>Individuelle (identité pré-remplie depuis le compte élève). Le simulateur de la partie 5 se fait <strong>en binôme</strong>.</td></tr>
+            <tr><td class="k">Support</td><td>Navigateur &mdash; <strong>Chrome ou Edge</strong> pour la dictée vocale.</td></tr>
+            <tr><td class="k">Durée indicative</td><td>2 séances : parties 1 à 4, puis parties 5 à 8.</td></tr>
+            <tr><td class="k">Sauvegarde</td><td>Brouillon automatique sur le poste ; &laquo;&nbsp;Envoyer au professeur&nbsp;&raquo; dépose le travail dans le tableau de bord.</td></tr>
+            <tr><td class="k">Aménagements</td><td>&laquo;&nbsp;&#x1F3A4; Dicter&nbsp;&raquo; sur chaque champ rédigé, &laquo;&nbsp;&#x1F441;&#xFE0F; Confort de lecture&nbsp;&raquo; (police, taille, interligne, espacement, couleur de page, règle et masque de lecture), &laquo;&nbsp;&#x1F50A; Lecture immersive&nbsp;&raquo;.</td></tr>
+            <tr><td class="k">Auto-correction</td><td>8 exercices se corrigent seuls dans la fiche, avec un retour explicatif.</td></tr>
+            <tr><td class="k">Code élève</td><td><strong>EAU26</strong> &mdash; modifiable dans l'onglet &laquo;&nbsp;Codes d'accès&nbsp;&raquo;.</td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">Ressources ouvertes depuis la fiche</h4>
+          <table class="bat-cor-t">
+            <tr><td class="k">Partie 1</td><td><a href="https://drive.google.com/file/d/18z1OZE9f47-IBPW835xyUBpCWJBnTFHl/view" target="_blank" rel="noopener">Le parcours de l'eau</a> &middot; <a href="https://drive.google.com/file/d/1sEKmLmjym_jGiupfMZeiqDVaYdz9JVEB/view" target="_blank" rel="noopener">Réduire sa consommation d'eau</a> (Ouest-France, 20 juillet 2025)</td></tr>
+            <tr><td class="k">Partie 2</td><td><a href="https://drive.google.com/file/d/151Od_gYkzjqXSC2rZgRvTE4dOL-WXm_I/view" target="_blank" rel="noopener">Carte des origines de l'eau en Vendée</a> &middot; <a href="https://www.vendee-eau.fr" target="_blank" rel="noopener">vendee-eau.fr</a></td></tr>
+            <tr><td class="k">Partie 5</td><td><a href="https://www.eaudeparis.fr/simulateur" target="_blank" rel="noopener">Simulateur de consommation d'eau</a> (Eau de Paris), en binôme</td></tr>
+            <tr><td class="k">Partie 6</td><td><a href="https://drive.google.com/file/d/1j_sCGEsD8WDE3yI8pN0ZGpBD4EeubmBc/view" target="_blank" rel="noopener">Facture recto</a> &middot; <a href="https://drive.google.com/file/d/10fI7Ye49h2sLaifnLTkS5NwF_K49eO9i/view" target="_blank" rel="noopener">Facture détaillée (verso)</a> &mdash; SUEZ pour le compte de Vendée Eau</td></tr>
+          </table>
+          <p class="bat-cor-p"><strong>À vérifier avant la séance :</strong> le partage des PDF du Drive doit être réglé sur
+          &laquo;&nbsp;Tous les utilisateurs disposant du lien&nbsp;&raquo;, sinon les élèves tombent sur une demande d'autorisation.</p>
+
+          <h4 class="bat-cor-h">Activité 1 &mdash; 1. Une ressource précieuse</h4>
+          <p class="bat-cor-p"><strong>Échauffement vrai / faux (auto-corrigé).</strong></p>
+          <table class="bat-cor-t">
+            <tr><th>Affirmation</th><th style="width:80px">Réponse</th><th>Pourquoi</th></tr>
+            <tr><td>Moins de 1 % de l'eau de la planète est de l'eau douce facilement accessible.</td><td class="ok">Vrai</td><td>La Terre est couverte à 70 % d'eau, mais presque tout est salé.</td></tr>
+            <tr><td>L'eau qui sort d'une station d'épuration est potable.</td><td class="ok">Faux</td><td>Elle est dépolluée pour être rendue au milieu naturel, mais pas buvable.</td></tr>
+            <tr><td>Une douche consomme moins d'eau qu'un bain.</td><td class="ok">Vrai</td><td>60 à 80 L pour une douche, 150 L pour un bain.</td></tr>
+            <tr><td>Les urines contiennent un polluant appelé azote.</td><td class="ok">Vrai</td><td>L'azote est nocif pour le milieu naturel en grande quantité.</td></tr>
+            <tr><td>Le dégrillage sert à enlever les graisses.</td><td class="ok">Faux</td><td>Le dégrillage retient les gros déchets ; les graisses partent au dégraissage.</td></tr>
+          </table>
+          <p class="bat-cor-p"><strong>1.1 &mdash; Pourquoi économiser l'eau potable&nbsp;?</strong> L'eau douce potable est
+          <strong>rare</strong> (moins de 1 % de l'eau de la planète), <strong>coûteuse à produire et à acheminer</strong>
+          (usine, pompes, canalisations, énergie), et une partie est déjà <strong>perdue dans les fuites</strong> du réseau
+          (environ un litre sur cinq en France). La gaspiller, c'est gaspiller une ressource limitée et de l'énergie.</p>
+
+          <h4 class="bat-cor-h">2. D'où provient l'eau&nbsp;?</h4>
+          <p class="bat-cor-p"><strong>2.1 (auto-corrigé).</strong> L'eau est captée à partir&nbsp;:</p>
+          <ul class="bat-cor-l">
+            <li>d'une <strong>source</strong> qui sort naturellement de terre&nbsp;;</li>
+            <li>d'un <strong>cours d'eau</strong> (rivière, fleuve, retenue de barrage)&nbsp;;</li>
+            <li>d'une <strong>nappe d'eau souterraine</strong>, atteinte par <strong>forage</strong>.</li>
+          </ul>
+          <p class="bat-cor-p">La vérification accepte les synonymes (rivière, fleuve, ruisseau, retenue, barrage, lac ;
+          nappe, souterrain, forage, puits) et ignore accents et majuscules.</p>
+          <p class="bat-cor-p"><strong>2.2 &mdash; Un captage ou une usine en Vendée.</strong> La Bultière, le Rochereau,
+          le Graon, le Jaunay, Apremont, Mervent, le Moulin Papon, Finfarine, l'Angle Guignard, le Marillet, le Gros Noyer,
+          Sainte-Germaine, Saint-Martin-des-Fontaines… Selon la commune, faire retrouver leur propre origine sur la carte.</p>
+
+          <h4 class="bat-cor-h">3. Comment l'eau devient-elle potable&nbsp;?</h4>
+          <p class="bat-cor-p"><strong>3.1 &mdash; Définition.</strong> Une eau potable est une eau
+          <strong>que l'on peut boire sans risque pour la santé</strong>.</p>
+          <p class="bat-cor-p"><strong>3.2 (auto-corrigé) &mdash; Ordre du traitement et solution technique&nbsp;:</strong></p>
+          <table class="bat-cor-t">
+            <tr><th style="width:70px">Ordre</th><th>Étape</th><th>Solution technique</th></tr>
+            <tr><td class="k">1</td><td>Coagulation-floculation</td><td class="ok">Injection de réactifs</td></tr>
+            <tr><td class="k">2</td><td>Décantation</td><td class="ok">Repos de l'eau</td></tr>
+            <tr><td class="k">3</td><td>Filtration</td><td class="ok">L'eau traverse du sable</td></tr>
+            <tr><td class="k">4</td><td>Désinfection</td><td class="ok">Ajout de chlore</td></tr>
+          </table>
+          <p class="bat-cor-p">Détail utile à l'oral : les réactifs sont le <strong>charbon actif</strong> (micropolluants,
+          pesticides, matières organiques) puis le <strong>chlorure ferrique et des polymères</strong> (pour agglomérer les
+          particules en suspension).</p>
+
+          <h4 class="bat-cor-h">4. Comment l'eau arrive-t-elle au robinet&nbsp;?</h4>
+          <p class="bat-cor-p"><strong>4.1 (auto-corrigé).</strong> 1 : le <strong>réservoir</strong> (souvent semi-enterré)
+          &mdash; 2 : la <strong>pompe de relevage</strong> &mdash; 3 : le <strong>château d'eau</strong>.</p>
+          <p class="bat-cor-p"><strong>4.2 &mdash; Fonction d'usage du château d'eau.</strong>
+          <strong>Stocker l'eau en hauteur pour donner de la pression</strong> et alimenter les robinets en continu.
+          On attend un verbe à l'infinitif : situé plus haut que les habitations, le château d'eau laisse l'eau
+          redescendre par son propre poids.</p>
+          <p class="bat-cor-p"><strong>4.3 (auto-corrigé) &mdash; Le cycle domestique de l'eau.</strong>
+          Captage &rarr; Usine de potabilisation &rarr; Château d'eau &rarr; Robinet &rarr; Égouts et collecteurs
+          &rarr; Station d'épuration. Insister sur les <strong>deux circuits</strong> : celui qui apporte l'eau propre,
+          et celui qui emporte l'eau sale pour la dépolluer avant de la rendre au milieu naturel.</p>
+
+          <h4 class="bat-cor-h">Activité 2 &mdash; 5. Estimer sa consommation</h4>
+          <p class="bat-cor-p"><strong>5.1.</strong> Valeur libre, à comparer à l'ordre de grandeur :
+          <strong>45 à 55 m³ par personne et par an</strong> (environ 148 L par jour). Les résultats du simulateur varient
+          selon le foyer : c'est l'occasion de faire dire <em>pourquoi</em>.</p>
+          <p class="bat-cor-p"><strong>5.2 (auto-corrigé) &mdash; Répartition moyenne en France&nbsp;:</strong></p>
+          <table class="bat-cor-t">
+            <tr><th>Hygiène corporelle</th><th>Chasse d'eau</th><th>Linge</th><th>Vaisselle</th><th>Autres</th></tr>
+            <tr><td class="ok">≈ 39 %</td><td class="ok">≈ 20 %</td><td class="ok">≈ 12 %</td><td class="ok">≈ 10 %</td><td class="ok">≈ 19 %</td></tr>
+          </table>
+          <p class="bat-cor-p">La vérification demande un total de 100 % (± 2) et des valeurs à ± 8 points des moyennes.
+          &laquo;&nbsp;Autres&nbsp;&raquo; regroupe jardin et voiture (6 %), cuisine (6 %), fuites (6 %) et la boisson (1 %) :
+          on ne boit qu'<strong>environ 1 %</strong> de l'eau potable qu'on paie &mdash; un chiffre qui marque les élèves.</p>
+
+          <h4 class="bat-cor-h">6. Lire une facture d'eau</h4>
+          <p class="bat-cor-p"><strong>6.1 (auto-corrigé).</strong> Prix unitaire HT : <strong>1,162 € / m³</strong>
+          (ligne &laquo;&nbsp;Consommation Vendée Eau &mdash; tarif Bleu 1<sup>er</sup> semestre 2025&nbsp;&raquo;).
+          Piège : la ligne au-dessus affiche <strong>1,17 €</strong>, c'est le tarif du <strong>semestre précédent</strong>.</p>
+          <p class="bat-cor-p"><strong>6.2 (auto-corrigé) &mdash; Formules attendues&nbsp;:</strong></p>
+          <table class="bat-cor-t">
+            <tr><th style="width:70px">Cellule</th><th>Libellé</th><th>Formule</th></tr>
+            <tr><td class="k">B7</td><td>Total eau (€)</td><td class="ok">=B2*B3</td></tr>
+            <tr><td class="k">B8</td><td>Total assainissement (€)</td><td class="ok">=B2*B4</td></tr>
+            <tr><td class="k">B9</td><td>Sous-total HT (€)</td><td class="ok">=B7+B8+B5</td></tr>
+            <tr><td class="k">B10</td><td>Montant de la TVA (€)</td><td class="ok">=B9*B6/100</td></tr>
+            <tr><td class="k">B11</td><td>TOTAL TTC (€)</td><td class="ok">=B9+B10</td></tr>
+          </table>
+          <p class="bat-cor-p">La vérification <strong>exige une vraie formule</strong> (elle doit commencer par
+          <strong>=</strong>) : un résultat tapé à la main est refusé, puisque c'est l'écriture de la formule qui est évaluée.
+          Toute écriture équivalente donnant le même résultat est acceptée (par exemple <strong>=B2*B3+B2*B4+B5</strong> en B9).
+          Avec les valeurs par défaut (50 m³ &middot; 1,16 €/m³ &middot; 1,55 €/m³ &middot; 30 € &middot; 5,5 %), le total est de
+          <strong>174,60 €</strong> : c'est la valeur à reporter en 6.3.</p>
+          <p class="bat-cor-p">Le bouton <strong>&laquo;&nbsp;&#x1F9FE; Charger les valeurs de la vraie facture&nbsp;&raquo;</strong>
+          remplace les données par celles de la facture étudiée &mdash; 59 m³, eau à 1,162 €/m³, redevances de l'Agence de l'eau
+          à 0,408 €/m³ (0,058 prélèvement + 0,33 consommation + 0,02 performance des réseaux), abonnement 43 €, TVA 5,5 % &mdash;
+          et les formules justes donnent alors <strong>143,09 €</strong>, à comparer aux <strong>143,26 €</strong> de la facture
+          réelle. L'écart de 17 centimes vient des deux tarifs successifs appliqués sur la facture (20 m³ à 1,17 € puis 39 m³ à
+          1,162 €) : très bon point d'appui pour faire lire la facture en détail.</p>
+          <p class="bat-cor-p"><strong>6.4 &mdash; Les cellules orange.</strong> Elles correspondent à la
+          <strong>redevance d'assainissement</strong> : la collecte et le traitement des eaux usées par les égouts et la station
+          d'épuration. C'est un service <strong>distinct du prix de l'eau potable</strong>, facturé sur la même facture.
+          Repère (Ouest-France) : environ 45 % de la facture pour la distribution de l'eau, 37 % pour la collecte et la
+          dépollution des eaux usées, 18 % pour les taxes et redevances.</p>
+
+          <h4 class="bat-cor-h">7. Où gaspille-t-on l'eau&nbsp;?</h4>
+          <p class="bat-cor-p"><strong>7.1 (auto-corrigé) &mdash; Associations&nbsp;:</strong></p>
+          <table class="bat-cor-t">
+            <tr><th>Gaspillage</th><th>Geste économe</th></tr>
+            <tr><td>Laisser couler l'eau pendant le brossage des dents</td><td class="ok">Fermer le robinet ; poser un mousseur (limiteur de débit)</td></tr>
+            <tr><td>Prendre un bain plutôt qu'une douche</td><td class="ok">Préférer une douche courte</td></tr>
+            <tr><td>Lancer le lave-linge à moitié vide</td><td class="ok">Attendre que la machine soit bien remplie</td></tr>
+            <tr><td>Un robinet qui goutte en permanence</td><td class="ok">Signaler et réparer la fuite</td></tr>
+            <tr><td>Arroser le jardin en plein soleil, à midi</td><td class="ok">Arroser le soir ou tôt le matin</td></tr>
+          </table>
+          <p class="bat-cor-p"><strong>7.2.</strong> Réponses libres. Exemples : la chasse d'eau à simple flux
+          (&rarr; double flux), laver la voiture au jet (&rarr; station de lavage ou seau), la fuite de la chasse d'eau du
+          collège (&rarr; prévenir l'agent d'entretien), l'eau froide perdue en attendant l'eau chaude
+          (&rarr; la récupérer dans un seau pour arroser).</p>
+          <p class="bat-cor-p"><strong>7.3 &mdash; La calculette.</strong> Base : <strong>10 litres par minute</strong> pour un
+          robinet ouvert et <strong>4,34 € le m³</strong> (prix moyen TTC en France). Pour 3 minutes par jour : 30 L/jour, soit
+          <strong>10 950 L ≈ 11 m³</strong> et environ <strong>47,50 € par an</strong>, pour une seule personne.
+          Faire multiplier par le nombre d'élèves du collège pour l'effet de bascule.</p>
+
+          <h4 class="bat-cor-h">8. Vers une solution technique</h4>
+          <p class="bat-cor-p"><strong>8.1 (auto-corrigé) &mdash; QCM.</strong> La bonne réponse est
+          <strong>le robinet automatique à détection de présence</strong> : il ne laisse couler l'eau que lorsque des mains sont
+          détectées, donc il agit tout seul, sans dépendre de la bonne volonté de chacun. L'affiche relève de la sensibilisation,
+          pas de la solution technique ; le seau ne réduit pas la consommation ; un réservoir plus grand ne change rien au gaspillage.</p>
+          <p class="bat-cor-p"><strong>8.2.</strong> On attend l'idée d'un <strong>robinet qui se ferme seul</strong> (détection
+          infrarouge, poussoir temporisé) et/ou d'un <strong>mousseur / limiteur de débit</strong>, avec une justification :
+          <em>l'eau ne coule que lorsqu'on en a besoin, donc on ne peut plus l'oublier ouvert.</em></p>
+          <p class="bat-cor-p"><strong>8.3 &mdash; Bilan.</strong> Éléments valorisés : la rareté de l'eau douce, le coût réel
+          d'un m³, la part de l'hygiène et de la chasse d'eau, la différence entre un geste (qui dépend de nous) et un objet
+          technique (qui agit tout seul).</p>
+
+          <h4 class="bat-cor-h">Aménagements pour les élèves à besoins particuliers</h4>
+          <p class="bat-cor-p">Tout est accessible depuis la barre d'outils de la fiche, sans installation ni compte.
+          Les réglages sont enregistrés sur l'appareil et <strong>communs à toutes les capsules</strong> : l'élève ne les
+          refait qu'une fois.</p>
+          <table class="bat-cor-t">
+            <tr><th>Réglage</th><th>Ce qu'il change</th><th>Pour qui</th></tr>
+            <tr><td class="k">Police</td><td>Standard, <strong>B612</strong> (conçue pour être lue vite sans confondre les lettres proches) ou Verdana</td><td>Dyslexie, confusion de lettres</td></tr>
+            <tr><td class="k">Taille du texte</td><td>5 crans, de 100 % à 150 %</td><td>Basse vision, fatigue visuelle</td></tr>
+            <tr><td class="k">Interligne</td><td>Normal, aéré, très aéré</td><td>Dyslexie, saut de ligne</td></tr>
+            <tr><td class="k">Espacement</td><td>Lettres et mots, 3 crans</td><td>Dyslexie (réduit l'effet de masquage latéral)</td></tr>
+            <tr><td class="k">Couleur de page</td><td>Blanc, crème, bleu pâle, gris, vert pâle &mdash; appliquée au fond <em>et</em> aux cartes</td><td>Éblouissement, sensibilité au contraste</td></tr>
+            <tr><td class="k">Lignes courtes</td><td>Limite les paragraphes à ~62 caractères</td><td>Dyslexie, retour à la ligne</td></tr>
+            <tr><td class="k">Règle de lecture</td><td>Bande surlignée qui suit le curseur ou le doigt</td><td>Saut de ligne, poursuite oculaire</td></tr>
+            <tr><td class="k">Masque de lecture</td><td>Assombrit le reste de la page autour de la ligne lue</td><td>Trouble attentionnel (TDAH)</td></tr>
+            <tr><td class="k">Lecture immersive</td><td>Lit la fiche à voix haute en surlignant le paragraphe <em>et</em> le mot prononcé ; vitesse réglable, clic pour reprendre à un endroit</td><td>Dyslexie, lecture lente, non-lecteurs</td></tr>
+            <tr><td class="k">Dictée vocale</td><td>Bouton &laquo;&nbsp;&#x1F3A4; Dicter&nbsp;&raquo; sur chaque champ rédigé (Chrome/Edge ; micro du clavier sur iPad)</td><td>Dysorthographie, dysgraphie</td></tr>
+          </table>
+          <p class="bat-cor-p">La conception des exercices vise aussi l'accessibilité : les deux remises en ordre se font avec
+          des <strong>flèches &#x25B2;&#x25BC;</strong> et jamais par glisser-déposer (utilisable à la souris, au doigt et au
+          clavier, sans pénaliser les élèves dyspraxiques) ; les corrections donnent un <strong>retour explicatif</strong> et pas
+          seulement &laquo;&nbsp;faux&nbsp;&raquo; ; la correction des champs textuels <strong>ignore accents, majuscules et
+          ponctuation</strong> ; et la fiche est entièrement <strong>imprimable</strong> pour les élèves dont le PAP prévoit un
+          support papier.</p>
+
+          <h4 class="bat-cor-h">Notes techniques</h4>
+          <ul class="bat-cor-l">
+            <li>Fichier autonome : il fonctionne aussi ouvert directement (<code>Niveau 4/P11 Eau ressource essentielle/eau_eleve.html</code>), hors du site.</li>
+            <li>Identité : le site dépose <code>eau4e_prefill</code> dans le <code>localStorage</code> avant d'afficher l'activité ; l'élève peut corriger les champs.</li>
+            <li>Envoi : même backend Apps Script que les autres capsules (<code>cap: "eau4e"</code>). En cas de coupure réseau, la soumission est mise en file d'attente sur le poste et repart automatiquement.</li>
+            <li>Le mini-tableur reprend le moteur de l'outil déjà utilisé en classe (<code>techno-p11-eau/tableur-facture.html</code>) : mêmes cellules, mêmes valeurs par défaut, même résultat de 174,60 €. Intégré à la fiche, il remonte désormais dans le tableau de bord avec le reste du travail.</li>
+            <li>Modules partagés réutilisables : <code>assets/js/confort-lecture.js</code> et <code>assets/js/lecture-immersive.js</code>.</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
     <!-- BÂTIMENT 5e — CAPSULE P1 (activité hébergée dans ce dépôt) -->
     <div id="pg-batiment5e" class="h">
       <div class="phdr">
@@ -4578,6 +4811,8 @@ var SEQUENCES_DEF = [
   {id:"p12-act3",niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
   {id:"p12-cor-a1", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-cor-a2", niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 2", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 2 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORACT226", open:true},
+  {id:"eau4e", niveau:"4ème", titre:"P11 — L'eau, ressource essentielle", desc:"Activités 1 et 2 : le voyage de l'eau, puis le coût de l'eau et le gaspillage. Quiz auto-corrigés, mini-tableur de la facture, dictée vocale et aménagements dys.", couleur:"#0288D1", code:"EAU26", open:true},
+  {id:"eau4e-cor", niveau:"4ème", titre:"P11 — Corrigé L'eau, ressource essentielle", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU26", open:true},
   {id:"batiment5e", niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
   {id:"batiment5e-cor", niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
   {id:"reseau5e", niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
@@ -4825,6 +5060,14 @@ function goPage(pid) {
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
+  if (pid === "pg-eau4e") {
+    // Pré-remplit l'identité de l'élève connecté (même origine → localStorage).
+    try {
+      if (user) localStorage.setItem("eau4e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var eIfr = document.getElementById("eau4e-frame");
+    if (eIfr) eIfr.src = eIfr.getAttribute("data-src");
+  }
   if (pid === "pg-batiment5e") {
     // Pré-remplit l'identité de l'élève connecté (même origine → localStorage).
     try {
@@ -5042,8 +5285,10 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "batiment5e-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "batiment5e-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
+        } else if (s.id === "eau4e") {
+          badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
         } else if (s.id === "batiment5e") {
           badgeHtml = '<span class="badge" style="background:#FCE4D6;color:#C55A11;font-weight:700">&#x1F3D7;&#xFE0F; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
@@ -5068,6 +5313,8 @@ function renderDash() {
       else if (s.id === "dc-corrige") clickAction = "onclick=\"goPage('pg-dc');setTimeout(revealDCCorrigeAfterUnlock,100)\"";
       else if (s.id === "cap1")     clickAction = "onclick=\"goPage('pg-cap')\"";
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
+      else if (s.id === "eau4e")     clickAction = "onclick=\"goPage('pg-eau4e')\"";
+      else if (s.id === "eau4e-cor") clickAction = "onclick=\"goPage('pg-eau4e-cor')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
@@ -5119,6 +5366,8 @@ function tryUnlock() {
     else if (pendingSeq === "p12-act3") goPage("pg-p12-act3");
     else if (pendingSeq === "p12-cor-a1") goPage("pg-p12-cor-a1");
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
+    else if (pendingSeq === "eau4e") goPage("pg-eau4e");
+    else if (pendingSeq === "eau4e-cor") goPage("pg-eau4e-cor");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
@@ -5354,6 +5603,239 @@ function buildReseauModalHTML(sub) {
 /* ════════ P1 5e — AMÉNAGER UN BÂTIMENT ════════
    Structure des réponses (mêmes identifiants que Niveau 5/Amenagement batiment/batiment_eleve.html)
    Sert à la vue prof (réponses + corrigé indicatif) et à l'export CSV. */
+/* ════════ P11 4e — L'EAU : structure des réponses pour la vue professeur ════════ */
+var EAU_GROUPS = [
+  { titre:"A1 — 1. Une ressource précieuse", couleur:"#0288D1", items:[
+    ["a1-eco","Pourquoi économiser l'eau potable"]]},
+  { titre:"A1 — 2. D'où provient l'eau", couleur:"#0288D1", items:[
+    ["a2-orig1","Origine 1"],["a2-orig2","Origine 2"],["a2-orig3","Origine 3"],
+    ["a2-captage","Captage ou usine en Vendée"]]},
+  { titre:"A1 — 3. L'eau potable", couleur:"#0288D1", items:[
+    ["a3-potable","Définition d'une eau potable"]]},
+  { titre:"A1 — 4. Jusqu'au robinet", couleur:"#0288D1", items:[
+    ["a4-elem1","Élément 1"],["a4-elem2","Élément 2"],["a4-elem3","Élément 3"],
+    ["a4-chateau","Fonction d'usage du château d'eau"]]},
+  { titre:"A2 — 5. Estimer sa consommation", couleur:"var(--bl)", items:[
+    ["b1-simu","Simulateur utilisé en binôme"],["b1-conso","Consommation annuelle (m³)"],
+    ["b1-hyg","Hygiène corporelle (%)"],["b1-chasse","Chasse d'eau (%)"],["b1-linge","Linge (%)"],
+    ["b1-vaisselle","Vaisselle (%)"],["b1-autres","Autres (%)"]]},
+  { titre:"A2 — 6. Lire une facture d'eau", couleur:"var(--bl)", items:[
+    ["b2-prix","Prix unitaire HT (€/m³)"],
+    ["B7","Formule B7 — Total eau"],["B8","Formule B8 — Total assainissement"],
+    ["B9","Formule B9 — Sous-total HT"],["B10","Formule B10 — Montant TVA"],["B11","Formule B11 — Total TTC"],
+    ["b2-ttc","Montant à payer (TTC)"],["b2-orange","Cellules orange de la facture"]]},
+  { titre:"A2 — 7. Gaspillage et gestes économes", couleur:"#C55A11", items:[
+    ["b3-gasp1","Gaspillage 1"],["b3-geste1","Geste économe 1"],
+    ["b3-gasp2","Gaspillage 2"],["b3-geste2","Geste économe 2"],
+    ["b3-minutes","Robinet laissé ouvert (min/jour)"]]},
+  { titre:"A2 — 8. Vers une solution technique", couleur:"#7B2C8B", items:[
+    ["b4-qcm","Objet technique choisi (QCM)"],["b4-objet","Justification du choix"],["b4-bilan","Bilan"]]}
+];
+/* Corrigé indicatif — affiché sous la réponse de l'élève dans la vue prof */
+var EAU_CORRIGE = {
+  "a1-eco":"Ressource rare (moins de 1 % d'eau douce accessible), coûteuse à produire et à acheminer, et dont une partie est perdue dans les fuites.",
+  "a2-orig1":"Une source, un cours d'eau ou une nappe souterraine (forage) — les trois, dans n'importe quel ordre.",
+  "a2-orig2":"Une source, un cours d'eau ou une nappe souterraine (forage) — les trois, dans n'importe quel ordre.",
+  "a2-orig3":"Une source, un cours d'eau ou une nappe souterraine (forage) — les trois, dans n'importe quel ordre.",
+  "a3-potable":"Une eau que l'on peut boire sans risque pour la santé.",
+  "a4-elem1":"Le réservoir (souvent semi-enterré).",
+  "a4-elem2":"La pompe de relevage.",
+  "a4-elem3":"Le château d'eau.",
+  "a4-chateau":"Stocker l'eau en hauteur pour donner de la pression et alimenter les robinets en continu.",
+  "b1-conso":"Ordre de grandeur : 45 à 55 m³ par personne et par an.",
+  "b1-hyg":"≈ 39 %", "b1-chasse":"≈ 20 %", "b1-linge":"≈ 12 %", "b1-vaisselle":"≈ 10 %", "b1-autres":"≈ 19 %",
+  "b2-prix":"1,162 € / m³ (tarif Bleu, 1er semestre 2025). 1,17 € est le tarif du semestre précédent.",
+  "B7":"=B2*B3", "B8":"=B2*B4", "B9":"=B7+B8+B5", "B10":"=B9*B6/100", "B11":"=B9+B10",
+  "b2-ttc":"174,60 € avec les valeurs par défaut ; 143,09 € avec les valeurs de la facture réelle.",
+  "b2-orange":"La redevance d'assainissement : collecte et traitement des eaux usées, distincte du prix de l'eau potable.",
+  "b4-qcm":"auto — le robinet automatique à détection de présence.",
+  "b4-objet":"Un robinet automatique à détection (ou un mousseur / limiteur de débit) : l'eau ne coule que lorsqu'on en a besoin."
+};
+var EAU_VF     = ["v","f","v","v","f"];
+var EAU_VF_LB  = ["Moins de 1 % d'eau douce accessible","L'eau d'une station d'épuration est potable",
+                  "Une douche consomme moins qu'un bain","Les urines contiennent de l'azote",
+                  "Le dégrillage enlève les graisses"];
+var EAU_POT    = [["coag","Coagulation-floculation","reactifs"],["decant","Décantation","repos"],
+                  ["filtr","Filtration","sable"],["desinf","Désinfection","chlore"]];
+var EAU_SOL_LB = { reactifs:"Injection de réactifs", repos:"Repos de l'eau",
+                   sable:"L'eau traverse du sable", chlore:"Ajout de chlore" };
+var EAU_CYCLE  = [["captage","Captage"],["usine","Usine de potabilisation"],["chateau","Château d'eau"],
+                  ["robinet","Robinet"],["egouts","Égouts et collecteurs"],["epuration","Station d'épuration"]];
+var EAU_ASSOC  = [["Brossage des dents, robinet ouvert","fermer"],["Bain plutôt que douche","douche"],
+                  ["Lave-linge à moitié vide","plein"],["Robinet qui goutte","fuite"],
+                  ["Arrosage en plein soleil","soir"]];
+var EAU_SS     = ["B7","B8","B9","B10","B11"];
+
+/* Rejoue les formules de l'élève avec SES données (B2 à B6), comme le fait la fiche. */
+function eauTableur(f) {
+  f = f || {};
+  function raw(ref) { return String(f[ref] == null ? "" : f[ref]).trim().replace(",", "."); }
+  var cache = {};
+  function valeur(ref, pile) {
+    if (Object.prototype.hasOwnProperty.call(cache, ref)) return cache[ref];
+    var r = raw(ref);
+    if (r === "") return NaN;
+    if (r.charAt(0) === "=") {
+      if (pile.indexOf(ref) >= 0) { cache[ref] = NaN; return NaN; }
+      pile.push(ref);
+      var mauvais = false;
+      var expr = r.slice(1).toUpperCase().replace(/B[0-9]+/g, function (m) {
+        var v = valeur(m, pile);
+        if (isNaN(v)) { mauvais = true; return "(0)"; }
+        return "(" + v + ")";
+      });
+      pile.pop();
+      var res = NaN;
+      if (!mauvais && /^[-+*/(). 0-9]+$/.test(expr)) {
+        try { var x = Function("return (" + expr + ")")(); if (typeof x === "number" && isFinite(x)) res = x; } catch (e) {}
+      }
+      cache[ref] = res; return res;
+    }
+    var n = parseFloat(r);
+    cache[ref] = isNaN(n) ? NaN : n;
+    return cache[ref];
+  }
+  var B2 = parseFloat(raw("B2")) || 0, B3 = parseFloat(raw("B3")) || 0, B4 = parseFloat(raw("B4")) || 0,
+      B5 = parseFloat(raw("B5")) || 0, B6 = parseFloat(raw("B6")) || 0;
+  var eau = B2 * B3, ass = B2 * B4, ht = eau + ass + B5, tva = ht * B6 / 100;
+  var att = { B7: eau, B8: ass, B9: ht, B10: tva, B11: ht + tva };
+  var ok = {}, nb = 0;
+  for (var i = 0; i < EAU_SS.length; i++) {
+    var ref = EAU_SS[i], r = raw(ref), v = valeur(ref, []);
+    ok[ref] = (r.charAt(0) === "=") && !isNaN(v) && Math.abs(v - att[ref]) < 0.01;
+    if (ok[ref]) nb++;
+  }
+  return { ok: ok, nb: nb, total: att.B11 };
+}
+
+/* P11 4e — rendu des réponses de l'élève pour le tableau de bord professeur */
+function buildEauModalHTML(sub) {
+  var f = sub && sub.fields ? sub.fields : null;
+  function esc(x) { return String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  if (!f) return "<em>Aucune réponse enregistrée.</em>";
+
+  var ss = eauTableur(f);
+  var prixOk = null;
+  var pv = parseFloat(String(f["b2-prix"] || "").replace(",", ".").replace(/[^0-9.]/g, ""));
+  if (!isNaN(pv)) prixOk = Math.abs(pv - 1.162) < 0.011;
+
+  function row(label, id) {
+    var v = f[id];
+    var cor = EAU_CORRIGE[id]
+      ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + esc(EAU_CORRIGE[id]) + '</div>'
+      : '';
+    var flag = '';
+    if (id === "b4-qcm" && v) flag = (v === "auto") ? ' ✅' : ' ❌';
+    if (id === "b2-prix" && prixOk !== null) flag = prixOk ? ' ✅' : ' ❌';
+    if (ss.ok.hasOwnProperty(id) && v) flag = ss.ok[id] ? ' ✅' : ' ❌';
+    return '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + label + flag + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
+      (v && String(v).trim() ? esc(v) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div>' + cor + '</div>';
+  }
+  function chip(bg, fg, txt) {
+    return '<span style="background:' + bg + ';color:' + fg + ';border-radius:14px;padding:3px 11px;font-size:12px;font-weight:700">' + txt + '</span>';
+  }
+  /* Une suite d'étapes remise en ordre, avec la position juste ou fausse */
+  function suite(csv, ref, lbs) {
+    var l = String(csv || "").split(",").filter(function (x) { return x; });
+    if (!l.length) return '<div style="font-size:12.5px;color:var(--td);font-style:italic">Non renseigné.</div>';
+    var h = '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    for (var i = 0; i < l.length; i++) {
+      var bon = (l[i] === ref[i]);
+      h += '<span style="background:' + (bon ? 'var(--vp)' : 'var(--rgp)') + ';color:' + (bon ? 'var(--vt)' : 'var(--rg)') +
+           ';border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:600">' + (i + 1) + '. ' + esc(lbs[l[i]] || l[i]) + '</span>';
+    }
+    return h + '</div>';
+  }
+
+  var potRef = EAU_POT.map(function (x) { return x[0]; });
+  var potLb  = {}; for (var a = 0; a < EAU_POT.length; a++) potLb[EAU_POT[a][0]] = EAU_POT[a][1];
+  var cycRef = EAU_CYCLE.map(function (x) { return x[0]; });
+  var cycLb  = {}; for (var b = 0; b < EAU_CYCLE.length; b++) cycLb[EAU_CYCLE[b][0]] = EAU_CYCLE[b][1];
+
+  /* Scores des exercices auto-corrigés */
+  var vf = sub.vf || {}, okVF = 0, nVF = 0;
+  for (var v1 in vf) { if (!vf.hasOwnProperty(v1) || !vf[v1]) continue; nVF++; if (vf[v1] === EAU_VF[v1]) okVF++; }
+  var as = sub.assoc || {}, okAS = 0, nAS = 0;
+  for (var a1 in as) { if (!as.hasOwnProperty(a1) || !as[a1]) continue; nAS++; if (as[a1] === EAU_ASSOC[a1][1]) okAS++; }
+  var potL = String(f["ordre-pot"] || "").split(","), okPot = 0, okSol = 0;
+  for (var p = 0; p < EAU_POT.length; p++) {
+    if (potL[p] === EAU_POT[p][0]) okPot++;
+    if (f["sol-" + EAU_POT[p][0]] === EAU_POT[p][2]) okSol++;
+  }
+  var cycL = String(f["ordre-cycle"] || "").split(","), okCyc = 0;
+  for (var c = 0; c < EAU_CYCLE.length; c++) if (cycL[c] === EAU_CYCLE[c][0]) okCyc++;
+
+  var html = '<div style="background:#D8F0FB;border:1px solid #9BD6EF;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px">' +
+    '<strong>&#x1F4A7; ' + esc(sub.ename || '') + '</strong> — Classe ' + esc(sub.ecls || '') + '</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">' +
+    chip('var(--vp)', 'var(--vt)', 'Vrai / faux : ' + okVF + '/5 (' + nVF + ' répondus)') +
+    chip('var(--bp)', 'var(--bl)', 'Potabilisation : ordre ' + okPot + '/4 · solutions ' + okSol + '/4') +
+    chip('var(--bp)', 'var(--bl)', 'Cycle domestique : ' + okCyc + '/6') +
+    chip('#FCE4D6', '#C55A11', 'Gaspillage / geste : ' + okAS + '/5 (' + nAS + ' répondus)') +
+    chip('#D8F0FB', '#0277BD', 'Formules du tableur : ' + ss.nb + '/5') +
+    chip('#EDE7FF', '#5B34C7', 'QCM : ' + (f["b4-qcm"] === "auto" ? "juste" : (f["b4-qcm"] ? "faux" : "—"))) +
+    '</div>';
+
+  html += '<div style="font-weight:700;color:#0288D1;font-size:12px;margin:12px 0 4px">VRAI / FAUX</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
+  for (var q = 0; q < EAU_VF.length; q++) {
+    var rep = vf[q];
+    var bonVF = rep === EAU_VF[q];
+    html += '<span style="background:' + (!rep ? 'var(--gr)' : (bonVF ? 'var(--vp)' : 'var(--rgp)')) +
+      ';color:' + (!rep ? 'var(--td)' : (bonVF ? 'var(--vt)' : 'var(--rg)')) +
+      ';border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:600">' + esc(EAU_VF_LB[q]) +
+      ' : ' + (rep ? (rep === "v" ? "Vrai" : "Faux") : "—") + '</span>';
+  }
+  html += '</div>';
+
+  for (var g = 0; g < EAU_GROUPS.length; g++) {
+    var grp = EAU_GROUPS[g];
+    html += '<div style="font-weight:700;color:' + grp.couleur + ';font-size:12px;margin:12px 0 4px">' + grp.titre.toUpperCase() + '</div>';
+    for (var i2 = 0; i2 < grp.items.length; i2++) html += row(grp.items[i2][1], grp.items[i2][0]);
+    if (grp.titre.indexOf("3. L'eau potable") > 0) {
+      html += '<div style="font-size:11px;font-weight:700;color:var(--bl);margin:8px 0 3px">Ordre du traitement (attendu : coagulation-floculation → décantation → filtration → désinfection)</div>';
+      html += suite(f["ordre-pot"], potRef, potLb);
+      html += '<div style="font-size:11px;font-weight:700;color:var(--bl);margin:8px 0 3px">Solutions techniques associées</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      for (var s2 = 0; s2 < EAU_POT.length; s2++) {
+        var choix = f["sol-" + EAU_POT[s2][0]], bonS = choix === EAU_POT[s2][2];
+        html += '<span style="background:' + (!choix ? 'var(--gr)' : (bonS ? 'var(--vp)' : 'var(--rgp)')) +
+          ';color:' + (!choix ? 'var(--td)' : (bonS ? 'var(--vt)' : 'var(--rg)')) +
+          ';border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:600">' + esc(EAU_POT[s2][1]) + ' = ' +
+          esc(EAU_SOL_LB[choix] || "—") + '</span>';
+      }
+      html += '</div>';
+    }
+    if (grp.titre.indexOf("4. Jusqu'au robinet") > 0) {
+      html += '<div style="font-size:11px;font-weight:700;color:var(--bl);margin:8px 0 3px">Cycle domestique de l\'eau (attendu : captage → usine → château d\'eau → robinet → égouts → station d\'épuration)</div>';
+      html += suite(f["ordre-cycle"], cycRef, cycLb);
+    }
+    if (grp.titre.indexOf("6. Lire une facture") > 0) {
+      html += '<div style="font-size:11px;font-weight:700;color:var(--bl);margin:8px 0 3px">Données saisies dans le tableur</div>';
+      html += '<div style="font-size:12.5px;color:var(--td);background:var(--gr);border-radius:6px;padding:8px 10px">' +
+        'B2 = ' + esc(f["B2"] || "—") + ' m³ · B3 = ' + esc(f["B3"] || "—") + ' €/m³ · B4 = ' + esc(f["B4"] || "—") +
+        ' €/m³ · B5 = ' + esc(f["B5"] || "—") + ' € · B6 = ' + esc(f["B6"] || "—") + ' %<br>' +
+        '<strong>Total TTC attendu avec ces données : ' +
+        (isNaN(ss.total) ? "—" : ss.total.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })) +
+        ' €</strong></div>';
+    }
+    if (grp.titre.indexOf("7. Gaspillage") > 0) {
+      html += '<div style="font-size:11px;font-weight:700;color:var(--bl);margin:8px 0 3px">Associations gaspillage → geste économe</div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      for (var k = 0; k < EAU_ASSOC.length; k++) {
+        var ch = as[k], bonA = ch === EAU_ASSOC[k][1];
+        html += '<span style="background:' + (!ch ? 'var(--gr)' : (bonA ? 'var(--vp)' : 'var(--rgp)')) +
+          ';color:' + (!ch ? 'var(--td)' : (bonA ? 'var(--vt)' : 'var(--rg)')) +
+          ';border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:600">' + esc(EAU_ASSOC[k][0]) +
+          (ch ? (bonA ? ' ✅' : ' ❌') : ' —') + '</span>';
+      }
+      html += '</div>';
+    }
+  }
+  return html;
+}
+
 var BATIMENT_GROUPS = [
   { titre:"1. Objet naturel / objet technique", couleur:"var(--vt)", items:[
     ["b1-nat1","Objet naturel 1"],["b1-nat2","Objet naturel 2"],["b1-nat3","Objet naturel 3"],
@@ -5715,6 +6197,9 @@ function renderSubs() {
       } else if (s.cap === "p12-act3") {
         var a3score = (s.fields && s.fields.score) ? s.fields.score : "—";
         sc = '<span style="background:#EEF2FF;color:#4338CA;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F4CA; ' + a3score + ' exercices</span>';
+      } else if (s.cap === "eau4e") {
+        var eDone = (s.score !== undefined ? s.score : 0), eTot = (s.qcmTot || 49);
+        sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F4A7; ' + eDone + '/' + eTot + ' réponses</span>';
       } else if (s.cap === "batiment5e") {
         var bDone = (s.score !== undefined ? s.score : 0), bTot = (s.qcmTot || 50);
         sc = '<span style="background:#FCE4D6;color:#C55A11;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F3D7;&#xFE0F; ' + bDone + '/' + bTot + ' réponses</span>';
@@ -5932,6 +6417,33 @@ function updateNotifSettings() {
     });
 }
 /* Corrigé P1 5e — impression : on reprend le corps de la page tel qu'il s'affiche */
+function printEauCorrige() {
+  var corps = document.getElementById("eau-cor-body");
+  if (!corps) return;
+  var w = window.open('', '_blank');
+  var d = new Date();
+  function p2(n){ return n < 10 ? '0' + n : '' + n; }
+  var dStr = p2(d.getDate()) + '/' + p2(d.getMonth()+1) + '/' + d.getFullYear();
+  var css = 'body{font-family:"DM Sans",Arial,sans-serif;font-size:12.5px;color:#1A202C;max-width:760px;margin:0 auto;padding:18px}'
+    + 'h1{font-size:17px;color:#1F4E79;margin-bottom:2px}.sub{color:#666;font-size:11.5px;margin-bottom:16px}'
+    + '.bat-cor-h{font-size:14px;font-weight:700;color:#1F4E79;margin:18px 0 6px;padding-bottom:4px;border-bottom:2px solid #E2E8F0;page-break-after:avoid}'
+    + '.bat-cor-p{font-size:12.5px;line-height:1.6;color:#4A5568;margin-bottom:6px}'
+    + '.bat-cor-l{font-size:12.5px;line-height:1.6;color:#4A5568;margin:0 0 8px 18px}'
+    + '.bat-cor-t{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 12px;page-break-inside:avoid}'
+    + '.bat-cor-t th{background:#1F4E79;color:#fff;text-align:left;padding:5px 8px}'
+    + '.bat-cor-t td{border:1px solid #CBD5E0;padding:5px 8px;vertical-align:top;color:#4A5568}'
+    + '.bat-cor-t td.k{background:#F4F6F8;font-weight:700;color:#1F4E79}'
+    + '.bat-cor-t td.ok{background:#E2EFDA;color:#1E6B3B;font-weight:700}'
+    + 'code{font-family:"DM Mono",monospace;background:#F4F6F8;padding:1px 4px;border-radius:3px}'
+    + 'a{color:#2E75B6;text-decoration:none}@media print{button{display:none}}';
+  w.document.write('<html><head><meta charset="utf-8"><title>Corrigé P11 4e — L\'eau, ressource essentielle</title><style>'
+    + css + '</style></head><body><h1>TECHNOLOGIE — R. Blanchard — Corrigé P11 4<sup>e</sup> : L\'eau, ressource essentielle</h1>'
+    + '<div class="sub">Document professeur — imprimé le ' + dStr + '</div>'
+    + corps.innerHTML
+    + '<br><button onclick="window.print()">Imprimer</button></body></html>');
+  w.document.close();
+}
+
 function printBatimentCorrige() {
   var corps = document.getElementById("bat-cor-body");
   if (!corps) return;
@@ -6008,6 +6520,10 @@ function openModal(sid) {
     var nfp2 = countP12Ex2Fields(sub.fields);
     var q3okM = String(sub.fields["ex2-q3"]||"").trim() === "54";
     document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+  } else if (sub.cap === "eau4e") {
+    if (mh3) mh3.textContent = "P11 4e — L'eau, ressource essentielle";
+    document.getElementById("mrep").innerHTML = buildEauModalHTML(sub);
+    document.getElementById("mscore").textContent = "Activités 1 et 2 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||49) + " réponses — Statut : " + sub.status;
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub);
@@ -6052,6 +6568,7 @@ function printModalSub() {
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
   else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
@@ -6140,7 +6657,8 @@ function printSubDirect(sid) {
     "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
     "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
     "filius5e":"Filius 5e — Simulation réseau (binôme)",
-    "maison5e":"Maison 5e — Mon réseau à la maison"
+    "maison5e":"Maison 5e — Mon réseau à la maison",
+    "eau4e":"P11 4e — L'eau, ressource essentielle"
   };
   var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
   var dateStr = fmtDateTime(sub.dateISO || sub.date);
@@ -6161,6 +6679,8 @@ function printSubDirect(sid) {
     var nfy = countP12Ex2Fields(sub.fields||{});
     var q3ok = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
     scoreStr = nfy.done + "/" + nfy.total + " champs" + (q3ok ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+  } else if (sub.cap === "eau4e") {
+    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||49) + " réponses — Statut : " + sub.status;
   } else if (sub.cap === "reseau5e") {
     scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
   } else if (sub.cap === "filius5e") {
@@ -6177,6 +6697,7 @@ function printSubDirect(sid) {
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
+  else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
   else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
@@ -6399,6 +6920,35 @@ function _buildCapsuleCSV(cap, filtered) {
         var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
         var exCols = exKeys.map(function(k){ return f[k] || "—"; });
         return base.concat(exCols).concat([f.bilan || ""]);
+      })
+    };
+  }
+  if (cap === "eau4e") {
+    var eauIds = [];
+    for (var eg = 0; eg < EAU_GROUPS.length; eg++)
+      for (var ei = 0; ei < EAU_GROUPS[eg].items.length; ei++) eauIds.push(EAU_GROUPS[eg].items[ei]);
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Reponses","VF /5","Ordre potabilisation /4","Solutions techniques /4",
+                "Cycle domestique /6","Associations /5","Formules tableur /5","Total TTC calcule"]
+                .concat(eauIds.map(function(it){ return it[1]; })),
+      rows: filtered.map(function(x){
+        var f = x.fields || {};
+        var ss = eauTableur(f);
+        var vf = x.vf || {}, okVF = 0;
+        for (var v in vf) if (vf.hasOwnProperty(v) && vf[v] === EAU_VF[v]) okVF++;
+        var as = x.assoc || {}, okAS = 0;
+        for (var a in as) if (as.hasOwnProperty(a) && EAU_ASSOC[a] && as[a] === EAU_ASSOC[a][1]) okAS++;
+        var potL = String(f["ordre-pot"] || "").split(","), okPot = 0, okSol = 0;
+        for (var p = 0; p < EAU_POT.length; p++) {
+          if (potL[p] === EAU_POT[p][0]) okPot++;
+          if (f["sol-" + EAU_POT[p][0]] === EAU_POT[p][2]) okSol++;
+        }
+        var cycL = String(f["ordre-cycle"] || "").split(","), okCyc = 0;
+        for (var c = 0; c < EAU_CYCLE.length; c++) if (cycL[c] === EAU_CYCLE[c][0]) okCyc++;
+        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0),
+                okVF, okPot, okSol, okCyc, okAS, ss.nb,
+                isNaN(ss.total) ? "" : ss.total.toFixed(2).replace(".", ",")]
+          .concat(eauIds.map(function(it){ return f[it[0]] || ""; }));
       })
     };
   }
