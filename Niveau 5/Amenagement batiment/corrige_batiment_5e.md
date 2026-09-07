@@ -20,10 +20,36 @@ en toute sécurité ?
 | Support | navigateur — **Chrome ou Edge** pour la dictée vocale |
 | Durée indicative | 2 à 3 séances (parties 1 à 5, puis partie 6 + Sweet Home 3D) |
 | Sauvegarde | brouillon automatique sur le poste, envoi au tableau de bord professeur |
-| Accessibilité | bouton « 🎤 Dicter » sur chaque champ, bouton « 👁️ Confort de lecture » (police B612, interlignes et espacement élargis) |
+| Accessibilité | bouton « 🎤 Dicter » sur chaque champ, bouton « 👁️ Confort de lecture », bouton « 🔊 Lecture immersive » |
 
 La partie 6.4 (modélisation sur **Sweet Home 3D**) se fait **en binôme** ; la fiche, elle,
 reste individuelle.
+
+### Aménagements pour les élèves à besoins particuliers
+
+Depuis la barre d'outils, sans installation ni compte. Les réglages sont enregistrés sur
+l'appareil et **communs à toutes les capsules** : un élève qui les a choisis en P11 les
+retrouve ici, et inversement.
+
+| Réglage | Ce qu'il change | Pour qui |
+|---|---|---|
+| Police | Standard, **B612** (conçue pour être lue vite sans confondre les lettres proches) ou Verdana | dyslexie, confusion de lettres |
+| Taille du texte | 5 crans, de 100 % à 150 % | basse vision, fatigue visuelle |
+| Interligne | Normal, aéré, très aéré | dyslexie, saut de ligne |
+| Espacement des lettres et des mots | 3 crans | dyslexie (réduit l'effet de masquage latéral) |
+| Couleur de la page | Blanc, crème, bleu pâle, gris, vert pâle — appliquée au fond **et** aux cartes | éblouissement, sensibilité au contraste |
+| Lignes courtes | Limite les paragraphes à ~62 caractères | dyslexie, retour à la ligne |
+| Règle de lecture | Bande surlignée qui suit le curseur ou le doigt | saut de ligne, poursuite oculaire |
+| Masque de lecture | Assombrit le reste de la page autour de la ligne lue | trouble attentionnel (TDAH) |
+| Lecture immersive | Lit la fiche à voix haute en surlignant le paragraphe **et** le mot prononcé | dyslexie, lecture lente |
+| Dictée vocale | Bouton « 🎤 Dicter » sur chaque champ (Chrome/Edge ; micro du clavier sur iPad) | dysorthographie, dysgraphie |
+
+Le plan interactif du conteneur suit l'agrandissement choisi : les meubles restent sous le
+doigt ou sous le curseur quel que soit le réglage de taille.
+
+> Ces réglages ont remplacé l'ancien bouton « Confort de lecture » de la capsule, qui se
+> contentait d'une bascule tout ou rien. Un élève qui l'avait activé récupère automatiquement
+> des réglages équivalents la première fois qu'il rouvre la fiche.
 
 ## Ressources en ligne intégrées à la fiche
 

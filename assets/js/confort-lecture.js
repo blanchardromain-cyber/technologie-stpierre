@@ -178,6 +178,15 @@
     if (bouton) bouton.classList.toggle("cl-on", actif());
     ecrire();
     majPanneau();
+
+    /* Une capsule qui dessine elle-même en pixels (plan, schéma, canevas) a besoin
+       de savoir que l'échelle a changé pour se redessiner : elle écoute cet événement
+       et lit ConfortLecture.echelle(). */
+    try {
+      document.dispatchEvent(new CustomEvent("confort-lecture", {
+        detail: { reglages: window.ConfortLecture ? ConfortLecture.reglages() : null, echelle: TAILLES[etat.taille] || 1 }
+      }));
+    } catch (e) {}
   }
 
   /* ── Règle / masque : suivent le curseur ou le doigt ─────────────────── */
@@ -363,6 +372,9 @@
     ouvrir: ouvrir,
     fermer: fermer,
     reglages: function () { var c = {}; for (var k in etat) if (etat.hasOwnProperty(k)) c[k] = etat[k]; return c; },
+    /* Facteur d'agrandissement appliqué à la zone de contenu (1 = taille normale).
+       À utiliser pour convertir un déplacement de souris en pixels de la page. */
+    echelle: function () { return TAILLES[etat.taille] || 1; },
     appliquer: appliquer
   };
 })();
