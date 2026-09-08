@@ -643,7 +643,7 @@ function majEntetePrint() {
   const nbDys = Object.keys(affectation).filter(id =>
     affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
   document.getElementById("entetePrint").innerHTML =
-    "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
+    "<b>Plan de classe " + (classeActive || "") + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR") +
     (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof") +
