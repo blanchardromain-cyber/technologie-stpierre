@@ -729,6 +729,8 @@ function demarrer(donnees) {
   affectation = {}; separations = []; associations = []; devant = []; derriere = [];
   document.getElementById("titre").textContent =
     "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
+  // Titre de l'onglet = nom de fichier proposé par le navigateur à l'impression/PDF.
+  document.title = "Plan de classe " + donnees.classe;
   document.getElementById("btnSupprimerClasse").style.display = Object.keys(lireImports()).length ? "inline" : "none";
   document.getElementById("panneauClasses").style.display = "none";
   remplirSelects();
