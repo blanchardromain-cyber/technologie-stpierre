@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Activités 3 et 4 — Le besoin et les normes — 4ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --ea:#0288D1;      /* bleu eau — couleur de la séquence P11 */
+    --eal:#D8F0FB;
+    --bl:#1F4E79;
+    --bc:#2E75B6;
+    --bp:#DEEAF1;
+    --vt:#1E6B3B;
+    --vp:#E2EFDA;
+    --or:#C55A11;
+    --orp:#FCE4D6;
+    --vi:#7B2C8B;
+    --vip:#EFE0F3;
+    --rg:#C0392B;
+    --rgp:#FADBD8;
+    --gr:#F4F6F8;
+    --gb:#E2E8F0;
+    --tx:#1A202C;
+    --td:#4A5568;
+    --r:12px;
+    --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--bl),#0D2B50);color:#fff;padding:16px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8FD8F5}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#8FD8F5}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:180px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ea),#41B6E6);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1180px;margin:0 auto;padding:22px 22px 140px}
+  .situ{background:linear-gradient(135deg,var(--ea),#41B6E6);color:#fff;border-radius:var(--r);padding:20px 24px;margin-bottom:22px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .situ::after{content:"\1F6B0";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.22}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.9}
+  .situ h2{font-size:19px;font-weight:700;margin:4px 0 6px;max-width:82%}
+  .situ p{font-size:13.5px;opacity:.95;max-width:82%}
+
+  .acte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bl);color:#fff;border-radius:var(--r);padding:12px 18px;margin:26px 0 14px;box-shadow:var(--sh)}
+  .acte .n{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:0 0 auto}
+  .acte h2{font-size:16px;font-weight:700}
+  .acte .pb{font-size:12px;color:#BBD3E8;margin-top:2px}
+  .acte:first-of-type{margin-top:0}
+
+  .reprise{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00}
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bp);border-left:6px solid var(--bl);cursor:pointer;user-select:none}
+  .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  .lesson{background:var(--gr);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:16px;font-size:14px;color:var(--td)}
+  .lesson strong{color:var(--bl)}
+  .lesson ul{margin:6px 0 0 20px}
+  .lesson li{margin-bottom:3px}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;color:var(--tx);margin:16px 0 8px}
+  .qlabel .qn{color:var(--ea);font-weight:700;font-family:"DM Mono",monospace;margin-right:5px}
+  .hint{font-size:12.5px;color:var(--td);font-style:italic;margin:-4px 0 8px}
+
+  /* ═══ CHAMPS + DICTÉE ═══ */
+  .fwrap{position:relative;margin-bottom:12px}
+  textarea.rep, input.rep{width:100%;font-family:inherit;font-size:14.5px;color:var(--tx);background:#FBFDFF;border:2px solid var(--gb);border-radius:9px;padding:10px 12px;outline:none;resize:vertical;transition:border-color .15s,background .15s}
+  textarea.rep{min-height:62px;line-height:1.65}
+  textarea.rep:focus, input.rep:focus{border-color:var(--ea);background:#fff}
+  textarea.rep.filled, input.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
+  .micbtn{display:inline-flex;align-items:center;gap:5px;margin-top:5px;background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .micbtn:hover{border-color:var(--ea);color:var(--ea)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+  /* ═══ TABLEAUX ═══ */
+  table.grid{width:100%;border-collapse:collapse;margin-bottom:8px}
+  table.grid th{background:var(--bl);color:#fff;font-size:12.5px;font-weight:600;text-align:left;padding:9px 11px;border:1px solid var(--bl)}
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:top}
+  table.grid td.lead{background:var(--gr);font-weight:600;font-size:13.5px;color:var(--bl);width:150px}
+  table.grid td.num{background:var(--gr);font-weight:700;color:var(--ea);text-align:center;width:60px;font-family:"DM Mono",monospace}
+  .tscroll{overflow-x:auto}
+
+  /* ═══ QQOQCP — RELIER ═══ */
+  ul.relier{list-style:none;margin:0 0 10px}
+  ul.relier li{display:flex;align-items:center;gap:11px;flex-wrap:wrap;background:#fff;border:2px solid var(--gb);border-radius:10px;padding:9px 12px;margin-bottom:7px}
+  ul.relier li .cle{flex:0 0 auto;min-width:96px;font-size:14px;font-weight:700;color:var(--bl)}
+  ul.relier li .qst{flex:1;min-width:180px;font-size:13.5px;color:var(--td)}
+  ul.relier li select{font-family:inherit;font-size:13px;padding:7px 9px;border:2px solid var(--gb);border-radius:8px;background:#FBFDFF;color:var(--tx);min-width:270px;outline:none}
+  ul.relier li select:focus{border-color:var(--ea)}
+  ul.relier li.ok{border-color:var(--vt);background:var(--vp)}
+  ul.relier li.ko{border-color:var(--rg);background:var(--rgp)}
+
+  /* ═══ BÊTE À CORNES ═══ */
+  .bac{background:var(--gr);border:1px solid var(--gb);border-radius:12px;padding:16px;margin-bottom:14px}
+  .bac-haut{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bac-case{background:#fff;border:2px solid var(--ea);border-radius:10px;padding:11px 13px}
+  .bac-case label{display:block;font-size:12px;font-weight:700;color:var(--ea);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .bac-case input{width:100%;font-family:inherit;font-size:14px;color:var(--tx);background:#FBFDFF;border:2px solid var(--gb);border-radius:8px;padding:8px 10px;outline:none}
+  .bac-case input:focus{border-color:var(--ea);background:#fff}
+  .bac-case.ok{border-color:var(--vt)}
+  .bac-case.ok input{background:#FBFFFA;border-color:#A8CFA4}
+  .bac-case.ko{border-color:var(--rg)}
+  .bac-liens{display:block;width:100%;height:34px}
+  .bac-obj{background:var(--bl);color:#fff;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:15px;letter-spacing:.4px}
+  .bac-obj small{display:block;font-weight:400;font-size:11.5px;color:#BBD3E8;letter-spacing:0;margin-bottom:3px;text-transform:uppercase}
+  .bac-bas{max-width:520px;margin:0 auto}
+  .phrase{background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:13px 16px;font-size:14.5px;line-height:1.9;color:var(--bl)}
+  .phrase .t{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ea);margin-bottom:6px}
+  .phrase b{background:#fff;border-bottom:2px solid var(--ea);border-radius:3px;padding:2px 7px;font-family:"DM Mono",monospace;font-size:13.5px}
+  .phrase b.vide{color:#9BB3C4;border-bottom-style:dashed;font-style:italic}
+
+  /* ═══ QCM / QUIZ ═══ */
+  .qbloc{border:1px solid var(--gb);border-radius:11px;padding:13px 15px;margin-bottom:11px;background:#fff}
+  .qbloc .qtit{font-size:14.5px;font-weight:600;margin-bottom:9px}
+  .qbloc .qtit .qn{font-family:"DM Mono",monospace;color:var(--vi);font-weight:700;margin-right:6px}
+  .qbloc .prop{display:flex;align-items:center;gap:10px;background:var(--gr);border:2px solid var(--gb);border-radius:9px;padding:9px 12px;margin-bottom:6px;cursor:pointer;transition:.12s}
+  .qbloc .prop:hover{border-color:var(--bc)}
+  .qbloc .prop .mk{width:23px;height:23px;border-radius:50%;border:2px solid var(--gb);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--td);background:#fff}
+  .qbloc .prop.sel{border-color:var(--bl);background:var(--bp)}
+  .qbloc .prop.sel .mk{background:var(--bl);border-color:var(--bl);color:#fff}
+  .qbloc .prop.ok{border-color:var(--vt);background:var(--vp)}
+  .qbloc .prop.ko{border-color:var(--rg);background:var(--rgp)}
+  .qbloc .prop .txt{font-size:13.5px}
+  .qbloc .exp{font-size:12.5px;color:var(--vt);font-weight:600;margin-top:6px;display:none}
+  .qbloc .exp.show{display:block}
+  .qbloc .exp.ko{color:var(--rg)}
+
+  /* ═══ SÉLECTEURS SIMPLES ═══ */
+  .selrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+  .selrow label{font-size:14px;font-weight:600;color:var(--tx)}
+  .selrow select{font-family:inherit;font-size:14px;padding:8px 11px;border:2px solid var(--gb);border-radius:9px;background:#FBFDFF;color:var(--tx);outline:none;min-width:120px}
+  .selrow select:focus{border-color:var(--ea)}
+  .selrow select.ok{border-color:var(--vt);background:#FBFFFA}
+  .selrow select.ko{border-color:var(--rg);background:#FFF7F6}
+  .ipbox{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:12px 15px;margin-bottom:12px}
+  .ipbox .lb{font-weight:700;color:var(--bl);font-size:16px;font-family:"DM Mono",monospace}
+  .ipbox select{min-width:74px;font-family:"DM Mono",monospace;font-weight:700;font-size:16px;text-align:center}
+
+  /* ═══ BOUTONS + RÉSULTATS ═══ */
+  .btnck{background:var(--bl);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btnck:hover{background:var(--bc)}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .result{margin-top:10px;font-size:13.5px;font-weight:700;border-radius:9px;padding:9px 14px;display:none}
+  .result.show{display:block}
+  .result.good{background:var(--vp);color:var(--vt)}
+  .result.bad{background:var(--orp);color:var(--or)}
+
+  /* ═══ RESSOURCES ═══ */
+  .reslinks{background:#EEF6FF;border:1px solid #A9CBEA;border-radius:10px;padding:11px 14px;margin:0 0 16px}
+  .reslinks .rl-lb{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--bl);margin-bottom:7px}
+  .reslinks p{font-size:13px;color:var(--td);margin:6px 0 0}
+  .linkbtn{display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:3px 6px 3px 0}
+  .linkbtn:hover{background:var(--bc);color:#fff}
+  details.res{background:#F5FBFE;border:1px solid #A9CBEA;border-radius:10px;margin-bottom:14px;overflow:hidden}
+  details.res>summary{cursor:pointer;padding:11px 15px;font-weight:700;font-size:13.5px;color:var(--ea);list-style:none;display:flex;align-items:center;gap:8px}
+  details.res>summary::-webkit-details-marker{display:none}
+  details.res>summary::after{content:"\25BE";margin-left:auto;transition:transform .2s}
+  details.res[open]>summary::after{transform:rotate(180deg)}
+  details.res .rbody{padding:0 15px 14px;font-size:13.5px;color:var(--td)}
+  details.res .rbody ul{margin:6px 0 6px 20px}
+  details.res .rbody li{margin-bottom:3px}
+
+  figure.illus{margin:0 0 16px;border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center}
+  figure.illus img{display:block;max-width:100%;height:auto;margin:12px auto}
+  figure.illus figcaption{padding:8px 12px;font-size:12.5px;color:var(--td);border-top:1px solid var(--gb);background:var(--gr)}
+
+  .retenir{background:var(--vp);border:1px solid #A8CFA4;border-left:5px solid var(--vt);border-radius:0 10px 10px 0;padding:13px 16px;margin-top:16px;font-size:13.5px;color:#22543D}
+  .retenir b{color:var(--vt)}
+  .retenir .t{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--vt);margin-bottom:6px}
+  .retenir p{margin-bottom:5px}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--gb);box-shadow:0 -4px 20px rgba(0,0,0,.09);padding:11px 22px;z-index:60}
+  .sendbar-in{max-width:1180px;margin:0 auto;display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{border:none;border-radius:9px;padding:10px 17px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-send{background:var(--ea);color:#fff}
+  .btn-send:hover{background:#41B6E6}
+  .btn-send:disabled{opacity:.5;cursor:not-allowed}
+  .btn-sec{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-sec:hover{background:var(--bp);color:var(--bl)}
+  .draftst{font-size:12px;color:var(--td);margin-right:auto;font-family:"DM Mono",monospace}
+  .sendst{display:none;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:0 0 10px;font-weight:600}
+  .sendst.show{display:block}
+  .sendst.ok{background:var(--vp);color:var(--vt)}
+  .sendst.err{background:var(--rgp);color:var(--rg)}
+  .sendst.wait{background:var(--bp);color:var(--bl)}
+
+  @media (max-width:640px){
+    header h1{font-size:16px}
+    .fld input{width:118px}
+    main{padding:16px 13px 150px}
+    .situ h2,.situ p{max-width:100%}
+    .situ::after{display:none}
+    ul.relier li select{min-width:100%}
+    .bac-haut{grid-template-columns:1fr}
+    .bac-liens{display:none}
+  }
+  @media print{
+    header,.pbar-wrap,.sendbar,.micbtn,.btnck,.toolbtn{display:none!important}
+    body{background:#fff}
+    section.step{box-shadow:none;border:1px solid #999;break-inside:avoid}
+    section.step.closed .stbody{display:block}
+    .qbloc .exp{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 4<sup>e</sup> · Séquence P11 · CT 2.5</div>
+      <h1>P11 — Activités 3 et 4 : le besoin et les normes</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">4</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 0 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" onclick="toggleAll()" id="btn-fold">&#x1F4D6; Tout ouvrir / fermer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="reprise" id="reprise" hidden data-nolecture></div>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Le robinet automatique à détection</h2>
+    <p>Dans les activités 1 et 2, tu as vu que l'eau potable est une ressource précieuse et qu'on la gaspille facilement au robinet. Dans un collège, un hôpital ou un restaurant, ce gaspillage est multiplié par des <strong>centaines d'utilisateurs chaque jour</strong>. Tu vas maintenant analyser l'objet technique qui répond à ce problème : le <strong>robinet automatique à détection</strong>.</p>
+  </div>
+
+  <!-- ═══════════════ ACTIVITÉ 3 — IDENTIFIER LE BESOIN ═══════════════ -->
+  <div class="acte">
+    <div class="n">3</div>
+    <div>
+      <h2>Activité 3 — Identifier le besoin</h2>
+      <div class="pb">Problématique : à quel besoin répond un robinet automatique à détection&nbsp;?</div>
+    </div>
+  </div>
+
+  <!-- ──────── 1. LA FONCTION D'USAGE ──────── -->
+  <section class="step" id="sec1">
+    <div class="sthdr" onclick="toggleSec('sec1')">
+      <div class="num">1</div><h3>La fonction d'usage</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; À observer avant de répondre</span>
+        <a class="linkbtn" href="https://drive.google.com/file/d/11pF36RgHlAVnFS-uyz3ua69gG8OofYQ2/view" target="_blank" rel="noopener">&#x1F3AC; Vidéo — Fonctionnement d'un robinet Selfpower</a>
+        <a class="linkbtn" href="https://drive.google.com/file/d/1oXgEbILyj7z3gO0Ym1VNIaAzhreM8C2w/view" target="_blank" rel="noopener">&#x1F5BC;&#xFE0F; Photo — Robinet à détection</a>
+        <p>Regarde la vidéo, puis observe : que se passe-t-il quand on approche les mains&nbsp;? Et quand on les retire&nbsp;?</p>
+      </div>
+
+      <figure class="illus" hidden id="illus-robinet"
+        data-alt="Robinet automatique à détection installé sur un lavabo"
+        data-src="ressources/robinet-detection-auto.jpg|ressources/robinet-detection-auto.png|ressources/Robinet detection auto.jpg">
+        <figcaption>Un robinet automatique à détection : le capteur repère les mains et ouvre l'eau tout seul.</figcaption>
+      </figure>
+
+      <div class="lesson">
+        La <strong>fonction d'usage</strong> d'un objet technique répond à la question :
+        <strong>« À quoi sert cet objet ? »</strong> On la rédige avec un verbe à l'infinitif.
+      </div>
+
+      <span class="qlabel"><span class="qn">1.1</span>À quoi sert le robinet automatique à détection&nbsp;? Écris sa <strong>fonction d'usage</strong>.</span>
+      <div class="hint">Commence par un verbe à l'infinitif, et dis <em>quand</em> l'eau coule et <em>pourquoi</em> c'est utile.</div>
+      <div class="fwrap">
+        <textarea class="rep" id="a3-usage" placeholder="Le robinet automatique à détection sert à…" style="min-height:80px"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── 2. LA MÉTHODE QQOQCP ──────── -->
+  <section class="step" id="sec2">
+    <div class="sthdr" onclick="toggleSec('sec2')">
+      <div class="num">2</div><h3>Analyser le problème : la méthode QQOQCP</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        La méthode <strong>QQOQCP</strong> aide à comprendre une situation et à cerner précisément un problème :
+        <strong>Q</strong>uoi&nbsp;? <strong>Q</strong>ui&nbsp;? <strong>O</strong>ù&nbsp;? <strong>Q</strong>uand&nbsp;?
+        <strong>C</strong>omment&nbsp;? <strong>P</strong>ourquoi&nbsp;?
+      </div>
+
+      <span class="qlabel"><span class="qn">2.1</span>Relie chaque question à la réponse qui convient, <strong>pour le robinet automatique</strong>.</span>
+      <div class="hint">Chaque réponse ne sert qu'une seule fois.</div>
+      <ul class="relier" id="qqbox"></ul>
+      <div class="btnrow"><button class="btnck" onclick="checkQQ()">Vérifier mes associations</button></div>
+      <div class="result" id="qq-res"></div>
+    </div>
+  </section>
+
+  <!-- ──────── 3. LA BÊTE À CORNES ──────── -->
+  <section class="step" id="sec3">
+    <div class="sthdr" onclick="toggleSec('sec3')">
+      <div class="num">3</div><h3>Exprimer le besoin : la bête à cornes</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        La <strong>bête à cornes</strong> est un outil qui exprime le besoin auquel répond un objet technique.
+        Elle pose trois questions : <strong>à qui</strong> l'objet rend-il service, <strong>sur quoi</strong> agit-il,
+        et <strong>dans quel but</strong> existe-t-il&nbsp;?
+      </div>
+
+      <span class="qlabel"><span class="qn">3.1</span>Complète la bête à cornes du robinet automatique à détection.</span>
+      <div class="bac">
+        <div class="bac-haut">
+          <div class="bac-case" id="case-qui">
+            <label for="a3-qui">À qui rend-il service&nbsp;?</label>
+            <input class="rep" id="a3-qui" type="text" placeholder="ex. aux utilisateurs…">
+          </div>
+          <div class="bac-case" id="case-quoi">
+            <label for="a3-quoi">Sur quoi agit-il&nbsp;?</label>
+            <input class="rep" id="a3-quoi" type="text" placeholder="ex. sur l'eau…">
+          </div>
+        </div>
+        <svg class="bac-liens" viewBox="0 0 300 34" preserveAspectRatio="none" aria-hidden="true" data-nolecture>
+          <line x1="75" y1="0" x2="140" y2="30" stroke="#0288D1" stroke-width="2"/>
+          <line x1="225" y1="0" x2="160" y2="30" stroke="#0288D1" stroke-width="2"/>
+        </svg>
+        <div class="bac-obj">
+          <small>Objet technique</small>
+          ROBINET AUTOMATIQUE À DÉTECTION
+        </div>
+        <svg class="bac-liens" viewBox="0 0 300 34" preserveAspectRatio="none" aria-hidden="true" data-nolecture>
+          <line x1="150" y1="0" x2="150" y2="34" stroke="#0288D1" stroke-width="2"/>
+        </svg>
+        <div class="bac-bas">
+          <div class="bac-case" id="case-but">
+            <label for="a3-but">Dans quel but existe-t-il&nbsp;?</label>
+            <input class="rep" id="a3-but" type="text" placeholder="ex. économiser l'eau…">
+          </div>
+        </div>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkBac()">Vérifier ma bête à cornes</button></div>
+      <div class="result" id="bac-res"></div>
+
+      <span class="qlabel"><span class="qn">3.2</span>Ta phrase du besoin s'écrit toute seule à partir de la bête à cornes&nbsp;:</span>
+      <div class="phrase" id="phrase-besoin">
+        <span class="t">&#x2605; Énoncé du besoin</span>
+        L'objet technique nommé <b>ROBINET AUTOMATIQUE À DÉTECTION</b> rend service
+        <b class="vide" id="ph-qui">…………</b> en agissant
+        <b class="vide" id="ph-quoi">…………</b> pour satisfaire le besoin&nbsp;:
+        <b class="vide" id="ph-but">…………</b>.
+      </div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        <p><b>Fonction d'usage :</b> elle répond à la question « À quoi sert l'objet&nbsp;? ».</p>
+        <p><b>Besoin :</b> ce qui pousse à créer un objet technique ; un besoin non satisfait fait naître un nouvel objet.</p>
+        <p><b>QQOQCP :</b> outil d'analyse — Quoi&nbsp;? Qui&nbsp;? Où&nbsp;? Quand&nbsp;? Comment&nbsp;? Pourquoi&nbsp;? — pour cerner un problème.</p>
+        <p><b>Bête à cornes :</b> outil qui exprime le besoin : à qui l'objet rend service, sur quoi il agit, dans quel but.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ ACTIVITÉ 4 — CONTRAINTES ET NORME (INDICE IP) ═══════════ -->
+  <div class="acte">
+    <div class="n">4</div>
+    <div>
+      <h2>Activité 4 — Contraintes et norme (indice IP)</h2>
+      <div class="pb">Problématique : quelles contraintes et quelle norme s'imposent au robinet automatique&nbsp;?</div>
+    </div>
+  </div>
+
+  <!-- ──────── 4. LES CONTRAINTES ──────── -->
+  <section class="step" id="sec4">
+    <div class="sthdr" onclick="toggleSec('sec4')">
+      <div class="num">4</div><h3>Les contraintes</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Une <strong>contrainte</strong> est une exigence que l'objet technique doit respecter : elle vient du lieu
+        où il est installé, des personnes qui l'utilisent, du budget, de l'environnement…
+      </div>
+
+      <span class="qlabel"><span class="qn">4.1</span>Le robinet automatique est installé dans les <strong>sanitaires d'un collège</strong>. Cite <strong>trois contraintes</strong> qu'il doit respecter.</span>
+      <div class="hint">Pense à l'endroit (humide&nbsp;?), à l'électricité, à qui s'en sert, à l'entretien, au prix.</div>
+      <div class="fwrap"><input class="rep" id="a4-c1" type="text" placeholder="Contrainte n°1"></div>
+      <div class="fwrap"><input class="rep" id="a4-c2" type="text" placeholder="Contrainte n°2"></div>
+      <div class="fwrap"><input class="rep" id="a4-c3" type="text" placeholder="Contrainte n°3"></div>
+    </div>
+  </section>
+
+  <!-- ──────── 5. QU'EST-CE QU'UNE NORME ? ──────── -->
+  <section class="step" id="sec5">
+    <div class="sthdr" onclick="toggleSec('sec5')">
+      <div class="num">5</div><h3>Qu'est-ce qu'une norme&nbsp;?</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <span class="qlabel"><span class="qn">5.1</span>Fais une recherche, puis donne une <strong>définition simple</strong> du mot « norme ».</span>
+      <div class="fwrap">
+        <textarea class="rep" id="a4-norme" placeholder="Une norme est…" style="min-height:76px"></textarea>
+      </div>
+
+      <details class="res">
+        <summary>&#x1F4A1; Coup de pouce pour ta recherche</summary>
+        <div class="rbody">
+          <p>Trois questions à te poser en lisant ce que tu trouves&nbsp;:</p>
+          <ul>
+            <li><strong>Qui</strong> écrit une norme&nbsp;? (une personne seule, une entreprise, ou un organisme officiel&nbsp;?)</li>
+            <li>Est-ce qu'on <strong>peut choisir</strong> de ne pas la respecter&nbsp;?</li>
+            <li><strong>À quoi</strong> sert-elle&nbsp;? (sécurité, qualité, compatibilité entre les objets…)</li>
+          </ul>
+          <p>Attention à ne pas confondre <strong>norme</strong> et <strong>contrainte</strong> : la contrainte vient du projet
+          (le lieu, le budget, le client), la norme vient d'un <em>organisme officiel</em> et s'impose à tout le monde.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ──────── 6. L'INDICE DE PROTECTION IP ──────── -->
+  <section class="step" id="sec6">
+    <div class="sthdr" onclick="toggleSec('sec6')">
+      <div class="num">6</div><h3>L'indice de protection (IP)</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        L'<strong>indice IP</strong> indique le niveau de <strong>protection</strong> d'un matériel contre l'intrusion
+        d'éléments qui pourraient l'endommager. Il comporte <strong>deux chiffres</strong>.
+      </div>
+
+      <span class="qlabel"><span class="qn">6.1</span>Que protège chacun des deux chiffres&nbsp;?</span>
+      <div class="selrow">
+        <label for="ip-solide">Le <strong>1<sup>er</sup></strong> chiffre indique la protection contre…</label>
+        <select id="ip-solide" onchange="pickSel(this)"></select>
+      </div>
+      <div class="selrow">
+        <label for="ip-liquide">Le <strong>2<sup>e</sup></strong> chiffre indique la protection contre…</label>
+        <select id="ip-liquide" onchange="pickSel(this)"></select>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkChiffres()">Vérifier</button></div>
+      <div class="result" id="chif-res"></div>
+
+      <span class="qlabel"><span class="qn">6.2</span>Le tableau de la norme</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:60px">Chiffre</th><th>1<sup>er</sup> chiffre — solides et poussières</th><th>2<sup>e</sup> chiffre — eau et liquides</th></tr>
+          <tr><td class="num">0</td><td>Non protégé</td><td>Non protégé</td></tr>
+          <tr><td class="num">1</td><td>Protégé contre les corps solides &gt; 50 mm</td><td>Protégé contre les chutes verticales de gouttes d'eau (condensation)</td></tr>
+          <tr><td class="num">2</td><td>Protégé contre les corps solides &gt; 12,5 mm</td><td>Protégé contre les chutes de gouttes jusqu'à 15° de la verticale</td></tr>
+          <tr><td class="num">3</td><td>Protégé contre les corps solides &gt; 2,5 mm</td><td>Protégé contre l'eau de pluie jusqu'à 60° de la verticale</td></tr>
+          <tr><td class="num">4</td><td>Protégé contre les corps solides &gt; 1 mm</td><td>Protégé contre les projections d'eau de toutes directions</td></tr>
+          <tr><td class="num">5</td><td>Protégé contre les poussières</td><td>Protégé contre les jets d'eau à la lance</td></tr>
+          <tr><td class="num">6</td><td>Totalement étanche aux poussières</td><td>Protégé contre les projections puissantes (paquets de mer)</td></tr>
+          <tr><td class="num">7</td><td>—</td><td>Protégé contre l'immersion temporaire</td></tr>
+        </table>
+      </div>
+
+      <span class="qlabel"><span class="qn">6.3</span>Un robinet est placé près d'un point d'eau, avec des <strong>projections fréquentes</strong>. Quel <strong>2<sup>e</sup> chiffre minimum</strong> proposes-tu&nbsp;?</span>
+      <div class="selrow">
+        <label for="ip-min">2<sup>e</sup> chiffre minimum :</label>
+        <select id="ip-min" onchange="pickSel(this)"></select>
+      </div>
+      <div class="fwrap">
+        <label class="hint" for="a4-pourquoi">Explique ton choix en t'appuyant sur le tableau.</label>
+        <textarea class="rep" id="a4-pourquoi" placeholder="Je choisis ce chiffre parce que…"></textarea>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkMin()">Vérifier mon choix</button></div>
+      <div class="result" id="min-res"></div>
+
+      <span class="qlabel"><span class="qn">6.4</span>Propose maintenant un <strong>indice IP complet</strong> adapté au robinet.</span>
+      <div class="ipbox">
+        <span class="lb">IP</span>
+        <select id="ip-a" onchange="pickSel(this)"></select>
+        <select id="ip-b" onchange="pickSel(this)"></select>
+        <span class="hint" style="margin:0">← 1<sup>er</sup> chiffre (solides) puis 2<sup>e</sup> chiffre (eau)</span>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkIP()">Vérifier mon indice IP</button></div>
+      <div class="result" id="ip-res"></div>
+    </div>
+  </section>
+
+  <!-- ──────── 7. QUIZ IP ──────── -->
+  <section class="step" id="sec7">
+    <div class="sthdr" onclick="toggleSec('sec7')">
+      <div class="num">7</div><h3>Quiz — L'indice de protection</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Six questions pour vérifier que tu as bien compris la norme IP. Tu peux répondre dans l'ordre que tu veux
+        et revenir en arrière : rien n'est chronométré.
+      </div>
+      <div id="quizbox"></div>
+      <div class="btnrow"><button class="btnck" onclick="checkQuiz()">Vérifier mes réponses</button></div>
+      <div class="result" id="quiz-res"></div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        <p><b>Contrainte :</b> exigence imposée par le projet (le lieu, le budget, l'usage). Elle peut se négocier.</p>
+        <p><b>Norme :</b> règle officielle, reconnue et obligatoire, que le concepteur doit respecter (sécurité, qualité…).</p>
+        <p><b>Indice IP :</b> le 1<sup>er</sup> chiffre = protection contre les solides et les poussières (0 → 6), le
+        2<sup>e</sup> chiffre = protection contre l'eau (0 → 8). En milieu humide, on choisit un 2<sup>e</sup> chiffre élevé
+        (par exemple <b>IP65</b>).</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sendst" id="send-status"></div>
+
+</main>
+
+<div class="sendbar">
+  <div class="sendbar-in">
+    <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" onclick="reprendreDernierEnvoi()" title="Recharge la fiche depuis le dernier travail envoyé au professeur">&#x21A9;&#xFE0F; Reprendre mon envoi</button>
+    <button class="btn btn-sec" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+    <button class="btn btn-sec" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; Copie de secours</button>
+    <button class="btn btn-send" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   P11 — ACTIVITÉS 3 ET 4 (4e) — Collège Saint Pierre, Les Essarts
+   A3 : fonction d'usage, QQOQCP, bête à cornes.
+   A4 : contraintes, norme, indice de protection IP, quiz.
+   Backend partagé avec index.html (Apps Script).
+   ════════════════════════════════════════════════════════════════ */
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "eau34";
+var CAP_LABEL   = "P11 4e — Activités 3 et 4 (besoin et normes)";
+var PREFILL_KEY = "eau34_prefill";
+var QUEUE_KEY   = "eau34_offline_queue";
+var DRAFT_PFX   = "eau34_draft_";
+
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ── Champs rédigés ── */
+var FIELD_IDS = [
+  "a3-usage", "a3-qui", "a3-quoi", "a3-but",
+  "a4-c1", "a4-c2", "a4-c3", "a4-norme", "a4-pourquoi"
+];
+/* ── Listes déroulantes ── */
+var SEL_IDS = ["ip-solide", "ip-liquide", "ip-min", "ip-a", "ip-b"];
+
+/* ── Libellés lisibles (résumé côté professeur) ── */
+var QUESTION_GROUPS = [
+  { titre:"A3 — 1. La fonction d'usage", items:[
+    ["a3-usage","Fonction d'usage du robinet"]]},
+  { titre:"A3 — 3. La bête à cornes", items:[
+    ["a3-qui","À qui rend-il service"],["a3-quoi","Sur quoi agit-il"],["a3-but","Dans quel but"]]},
+  { titre:"A4 — 4. Les contraintes", items:[
+    ["a4-c1","Contrainte 1"],["a4-c2","Contrainte 2"],["a4-c3","Contrainte 3"]]},
+  { titre:"A4 — 5. La norme", items:[
+    ["a4-norme","Définition d'une norme"]]},
+  { titre:"A4 — 6. L'indice IP", items:[
+    ["ip-solide","1er chiffre protège contre"],["ip-liquide","2e chiffre protège contre"],
+    ["ip-min","2e chiffre minimum"],["a4-pourquoi","Justification du choix"],
+    ["ip-a","Indice proposé — 1er chiffre"],["ip-b","Indice proposé — 2e chiffre"]]}
+];
+
+/* ════════════ OUTILS ════════════ */
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? String(e.value||"").trim() : ""; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function slug(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+/* Comparaison souple : sans accent, sans majuscule, sans ponctuation. */
+function norm(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+}
+function contientUn(texte, mots){
+  var t = norm(texte);
+  if (!t) return false;
+  for (var i=0;i<mots.length;i++) if (t.indexOf(mots[i]) >= 0) return true;
+  return false;
+}
+function afficher(id, ok, html){
+  var b = $(id);
+  if (!b) return;
+  b.className = "result show " + (ok ? "good" : "bad");
+  b.innerHTML = html;
+}
+/* Mélange reproductible : l'ordre des propositions ne change pas d'une
+   ouverture à l'autre, sinon un élève qui revient serait perdu. */
+function melanger(tab, graine){
+  var a = tab.slice(), g = graine;
+  for (var i=a.length-1; i>0; i--){
+    g = (g * 9301 + 49297) % 233280;
+    var j = Math.floor(g / 233280 * (i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+/* ════════════ PLIAGE DES SECTIONS ════════════ */
+function toggleSec(id){ var s=$(id); if(s) s.classList.toggle("closed"); }
+function toggleAll(){
+  var secs = document.querySelectorAll("section.step");
+  var anyOpen = false;
+  for (var i=0;i<secs.length;i++) if (!secs[i].classList.contains("closed")) anyOpen = true;
+  for (var j=0;j<secs.length;j++) secs[j].classList.toggle("closed", anyOpen);
+}
+
+/* ════════════ DICTÉE VOCALE ════════════ */
+var _micActive = null;
+function addMicButtons(){
+  var fields = document.querySelectorAll("textarea.rep, input.rep[type=text]");
+  for (var i=0;i<fields.length;i++){
+    var f = fields[i];
+    if (f.hasAttribute("data-nomic")) continue;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "micbtn";
+    b.id = "mic-" + f.id;
+    b.innerHTML = "&#x1F3A4; Dicter";
+    b.setAttribute("data-nolecture", "");
+    b.onclick = (function(tid, bid){ return function(){ toggleDictation(tid, bid); }; })(f.id, b.id);
+    f.parentNode.appendChild(b);
+  }
+}
+function toggleDictation(targetId, btnId){
+  try { if (window.LectureImmersive && LectureImmersive.actif()) LectureImmersive.stop(); } catch(e){}
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
+          "(touche &#x1F3A4; en bas du clavier) ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
+  if (_micActive && _micActive.btnId === btnId){ try{ _micActive.recog.stop(); }catch(e){} return; }
+  if (_micActive){ try{ _micActive.recog.stop(); }catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(targetId);
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arrêter"; }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", interim = "";
+
+  recog.onresult = function(e){
+    interim = "";
+    var fin = base;
+    for (var i=e.resultIndex;i<e.results.length;i++){
+      if (e.results[i].isFinal){
+        fin += (fin && !/\s$/.test(fin) ? " " : "") + e.results[i][0].transcript;
+        base = fin;
+      } else interim = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (interim ? " " + interim : ""); markFilled(ta); majPhrase(); }
+  };
+  function stopMic(){
+    if (ta && interim){ ta.value = base; markFilled(ta); }
+    _micActive = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+    updateProgress(); saveDraft(); majPhrase();
+  }
+  recog.onerror = function(e){
+    stopMic();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = stopMic;
+  try { recog.start(); _micActive = { recog:recog, btnId:btnId }; }
+  catch(e){ stopMic(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function markFilled(el){
+  if (!el || !el.classList) return;
+  el.classList.toggle("filled", String(el.value||"").trim().length > 0);
+}
+function countFilled(){
+  var n = 0, i;
+  for (i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) n++;
+  for (i=0;i<SEL_IDS.length;i++)   if (val(SEL_IDS[i]))   n++;
+  for (i=0;i<QQ.length;i++)   if (qqAns[i])   n++;
+  for (i=0;i<QUIZ.length;i++) if (quizAns[i] !== undefined) n++;
+  return n;
+}
+function totalFields(){ return FIELD_IDS.length + SEL_IDS.length + QQ.length + QUIZ.length; }
+function updateProgress(){
+  var done = countFilled(), tot = totalFields();
+  $("pbar-fill").style.width = Math.round(done/tot*100) + "%";
+  $("pcount").textContent = done + " / " + tot + " réponses";
+}
+
+/* ════════════ 2 — QQOQCP À RELIER ════════════ */
+var QQ = [
+  { cle:"Quoi ?",     q:"À quel besoin répond l'objet ?",            a:"quoi",
+    r:"Distribuer de l'eau automatiquement, sans contact." },
+  { cle:"Qui ?",      q:"Quelles sont les personnes concernées ?",    a:"qui",
+    r:"Les utilisateurs et le gestionnaire de l'établissement." },
+  { cle:"Où ?",       q:"À quel endroit, dans quelles conditions ?",  a:"ou",
+    r:"Dans les sanitaires des lieux publics et collectifs." },
+  { cle:"Quand ?",    q:"À quel moment ?",                            a:"quand",
+    r:"À chaque lavage de mains, toute l'année." },
+  { cle:"Comment ?",  q:"Avec quoi satisfaire ce besoin ?",           a:"comment",
+    r:"Avec un robinet équipé d'un capteur de détection." },
+  { cle:"Pourquoi ?", q:"Pour quelle raison apparaît ce besoin ?",    a:"pourquoi",
+    r:"Pour économiser l'eau et améliorer l'hygiène." }
+];
+var qqAns = {};
+function buildQQ(){
+  var box = $("qqbox"); if (!box) return;
+  var choix = melanger(QQ.map(function(x){ return { v:x.a, t:x.r }; }), 7);
+  var h = "";
+  for (var i=0;i<QQ.length;i++){
+    h += '<li id="qq-' + i + '">' +
+           '<span class="cle">' + esc(QQ[i].cle) + '</span>' +
+           '<span class="qst">' + esc(QQ[i].q) + '</span>' +
+           '<select id="qqsel-' + i + '" onchange="pickQQ(' + i + ',this.value)" aria-label="Réponse pour ' + esc(QQ[i].cle) + '">' +
+             '<option value="">— choisir la réponse —</option>';
+    for (var j=0;j<choix.length;j++){
+      h += '<option value="' + choix[j].v + '">' + esc(choix[j].t) + '</option>';
+    }
+    h += '</select></li>';
+  }
+  box.innerHTML = h;
+}
+function pickQQ(i, v){
+  if (v) qqAns[i] = v; else delete qqAns[i];
+  var li = $("qq-"+i); if (li) li.classList.remove("ok","ko");
+  var r = $("qq-res"); if (r) r.className = "result";
+  updateProgress(); saveDraft();
+}
+function checkQQ(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<QQ.length;i++){
+    var li = $("qq-"+i);
+    if (li) li.classList.remove("ok","ko");
+    if (!qqAns[i]) continue;
+    rep++;
+    var bon = qqAns[i] === QQ[i].a;
+    if (bon) ok++;
+    if (li) li.classList.add(bon ? "ok" : "ko");
+  }
+  if (!rep){ afficher("qq-res", false, "Choisis d'abord une réponse pour au moins une question."); return; }
+  afficher("qq-res", ok === QQ.length,
+    ok === QQ.length
+      ? "🎉 6 / 6 — tu as cerné le problème avec la méthode QQOQCP."
+      : ok + " / " + QQ.length + " juste(s). Les lignes en rouge sont à revoir : relis la question, puis cherche la réponse qui y répond vraiment.");
+}
+
+/* ════════════ 3 — BÊTE À CORNES ════════════ */
+var BAC = [
+  { id:"a3-qui",  case_:"case-qui",  ph:"ph-qui",  prep:"a",
+    mots:["utilisateur","usager","eleve","personne","gestionnaire","college","public","main"],
+    aide:"À qui ? Pense à celui qui se lave les mains — et à celui qui paie la facture d'eau." },
+  { id:"a3-quoi", case_:"case-quoi", ph:"ph-quoi", prep:"sur",
+    mots:["eau","debit","ecoulement","jet"],
+    aide:"Sur quoi ? Ce que le robinet ouvre et ferme." },
+  { id:"a3-but",  case_:"case-but",  ph:"ph-but",  enlever:["pour","de","d"],
+    mots:["economis","gaspill","preserv","hygien","eviter"],
+    aide:"Dans quel but ? Repense à la problématique de toute la séquence." }
+];
+/* La phrase du besoin est composée à partir de la bête à cornes, sans jamais
+   retoucher les mots de l'élève : on ajoute seulement la préposition qui manque,
+   en respectant les contractions du français (à + les = aux, à + le = au). */
+function avecPreposition(texte, prep){
+  var t = String(texte || "").trim();
+  if (!t || !prep) return t;
+  var n = norm(t);
+  if (prep === "sur"){
+    return (n.indexOf("sur ") === 0 || n === "sur") ? t : "sur " + t;
+  }
+  /* prep === « à » */
+  if (n.indexOf("a ") === 0 || n.indexOf("au ") === 0 || n.indexOf("aux ") === 0) return t;
+  if (/^les\s+/i.test(t))     return "aux " + t.replace(/^les\s+/i, "");
+  if (/^le\s+/i.test(t))      return "au "  + t.replace(/^le\s+/i, "");
+  if (/^l['\u2019]/i.test(t)) return "à "   + t;
+  if (/^la\s+/i.test(t))      return "à "   + t;
+  return "à " + t;
+}
+function sansTete(texte, mots){
+  var t = String(texte || "").trim();
+  if (!mots) return t;
+  for (var i=0;i<mots.length;i++){
+    var re = new RegExp("^" + mots[i] + "['\u2019]?\\s*", "i");
+    if (re.test(t)){
+      var reste = t.replace(re, "").trim();
+      if (reste) return reste;
+    }
+  }
+  return t;
+}
+function majPhrase(){
+  for (var i=0;i<BAC.length;i++){
+    var b = BAC[i], el = $(b.ph);
+    if (!el) continue;
+    var v = avecPreposition(sansTete(val(b.id), b.enlever), b.prep);
+    if (v){ el.textContent = v; el.classList.remove("vide"); }
+    else { el.textContent = "…………"; el.classList.add("vide"); }
+  }
+}
+function checkBac(){
+  var ok = 0, vides = 0, aides = [];
+  for (var i=0;i<BAC.length;i++){
+    var c = $(BAC[i].case_);
+    if (c) c.classList.remove("ok","ko");
+    var v = val(BAC[i].id);
+    if (!v){ vides++; continue; }
+    var bon = contientUn(v, BAC[i].mots);
+    if (bon){ ok++; if (c) c.classList.add("ok"); }
+    else { if (c) c.classList.add("ko"); aides.push(BAC[i].aide); }
+  }
+  if (vides === BAC.length){ afficher("bac-res", false, "Complète d'abord les trois cases de la bête à cornes."); return; }
+  if (ok === BAC.length){
+    afficher("bac-res", true, "✅ Parfait : le robinet rend service <strong>aux utilisateurs</strong>, agit sur <strong>l'eau</strong>, " +
+      "pour <strong>économiser l'eau et éviter le gaspillage</strong>. Ta phrase du besoin est juste en dessous.");
+  } else {
+    afficher("bac-res", false, ok + " / 3 case(s) juste(s)" + (vides ? " (" + vides + " encore vide)" : "") +
+      ".<br>" + aides.join("<br>"));
+  }
+}
+
+/* ════════════ 6 — L'INDICE IP ════════════ */
+var SELECTS = {
+  "ip-solide": { cor:"solides", exp:"Le 1<sup>er</sup> chiffre (0 à 6) indique la protection contre les corps solides et les poussières.",
+    opts:[["solides","les corps solides et les poussières"],["eau","l'eau et les liquides"],
+          ["chocs","les chocs"],["chaleur","la chaleur"]] },
+  "ip-liquide": { cor:"eau", exp:"Le 2<sup>e</sup> chiffre (0 à 8) indique la protection contre l'eau.",
+    opts:[["poussieres","les poussières"],["eau","l'eau et les liquides"],
+          ["bruit","le bruit"],["rayures","les rayures"]] },
+  "ip-min": { cor:"4", exp:"Un 2<sup>e</sup> chiffre de <strong>4</strong> correspond à la protection contre les projections d'eau de toutes directions — exactement le cas du robinet.",
+    opts:[["0","0"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"]] },
+  "ip-a": { cor:"6", opts:[["0","0"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"]] },
+  "ip-b": { cor:"5", opts:[["0","0"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"]] }
+};
+function buildSelects(){
+  for (var id in SELECTS){
+    if (!SELECTS.hasOwnProperty(id)) continue;
+    var el = $(id); if (!el) continue;
+    var h = '<option value="">—</option>';
+    var o = SELECTS[id].opts;
+    for (var i=0;i<o.length;i++) h += '<option value="' + o[i][0] + '">' + esc(o[i][1]) + '</option>';
+    el.innerHTML = h;
+  }
+}
+function pickSel(el){
+  el.classList.remove("ok","ko");
+  var r = $("chif-res"); if (r) r.className = "result";
+  var r2 = $("min-res"); if (r2) r2.className = "result";
+  var r3 = $("ip-res");  if (r3) r3.className = "result";
+  updateProgress(); saveDraft();
+}
+function marquer(id){
+  var el = $(id); if (!el) return null;
+  el.classList.remove("ok","ko");
+  if (!el.value) return null;
+  var bon = el.value === SELECTS[id].cor;
+  el.classList.add(bon ? "ok" : "ko");
+  return bon;
+}
+function checkChiffres(){
+  var a = marquer("ip-solide"), b = marquer("ip-liquide");
+  if (a === null && b === null){ afficher("chif-res", false, "Choisis d'abord une réponse dans les deux listes."); return; }
+  if (a && b){
+    afficher("chif-res", true, "✅ Exact. " + SELECTS["ip-solide"].exp + " " + SELECTS["ip-liquide"].exp);
+  } else {
+    var msg = [];
+    if (a === false) msg.push("1<sup>er</sup> chiffre : " + SELECTS["ip-solide"].exp);
+    if (b === false) msg.push("2<sup>e</sup> chiffre : " + SELECTS["ip-liquide"].exp);
+    if (a === null || b === null) msg.push("Il manque une réponse.");
+    afficher("chif-res", false, msg.join("<br>"));
+  }
+}
+function checkMin(){
+  var el = $("ip-min");
+  if (!el.value){ afficher("min-res", false, "Choisis d'abord un chiffre dans la liste."); return; }
+  var v = parseInt(el.value, 10);
+  el.classList.remove("ok","ko");
+  if (v === 4){
+    el.classList.add("ok");
+    afficher("min-res", true, "✅ " + SELECTS["ip-min"].exp);
+  } else if (v > 4){
+    el.classList.add("ok");
+    afficher("min-res", true, "✅ Ce n'est pas faux : " + v + " protège encore mieux que 4. Le <strong>minimum</strong> demandé " +
+      "est cependant 4 (projections d'eau de toutes directions). Un 5 est un bon choix pour protéger la partie électrique.");
+  } else {
+    el.classList.add("ko");
+    afficher("min-res", false, "Pas assez protégé : avec " + v + ", l'eau projetée peut encore entrer. " + SELECTS["ip-min"].exp);
+  }
+}
+function checkIP(){
+  var a = $("ip-a"), b = $("ip-b");
+  a.classList.remove("ok","ko"); b.classList.remove("ok","ko");
+  if (!a.value || !b.value){ afficher("ip-res", false, "Choisis les deux chiffres de l'indice."); return; }
+  var na = parseInt(a.value, 10), nb = parseInt(b.value, 10);
+  var bonA = na >= 5, bonB = nb >= 4;
+  a.classList.add(bonA ? "ok" : "ko");
+  b.classList.add(bonB ? "ok" : "ko");
+  if (bonA && bonB){
+    afficher("ip-res", true, "✅ <strong>IP" + na + nb + "</strong> convient. L'indice de référence pour ce type de robinet est " +
+      "<strong>IP65</strong> : 6 = totalement étanche aux poussières, 5 = protégé contre les jets d'eau.");
+  } else {
+    var m = [];
+    if (!bonA) m.push("1<sup>er</sup> chiffre trop faible : dans des sanitaires, il y a de la poussière et des projections — vise au moins 5.");
+    if (!bonB) m.push("2<sup>e</sup> chiffre trop faible : il faut au minimum 4 pour résister aux projections d'eau.");
+    afficher("ip-res", false, m.join("<br>") + "<br>Repère : <strong>IP65</strong>.");
+  }
+}
+
+/* ════════════ 7 — QUIZ IP ════════════ */
+var QUIZ = [
+  { q:"Que protège le 1ᵉʳ chiffre de l'indice IP ?",
+    o:["Contre les corps solides et les poussières","Contre l'eau et les liquides","Contre les chocs","Contre la chaleur"],
+    c:0, x:"Le 1ᵉʳ chiffre (0 à 6) indique la protection contre les corps solides et les poussières." },
+  { q:"Que protège le 2ᵉ chiffre de l'indice IP ?",
+    o:["Contre les poussières","Contre l'eau et les liquides","Contre le bruit","Contre les rayures"],
+    c:1, x:"Le 2ᵉ chiffre (0 à 8) indique la protection contre l'eau." },
+  { q:"Un objet électrique est exposé à des projections d'eau de toutes directions. Quel 2ᵉ chiffre minimum faut-il ?",
+    o:["1","2","4","0"],
+    c:2, x:"Un 2ᵉ chiffre de 4 correspond à la protection contre les projections d'eau de toutes directions." },
+  { q:"Que signifie l'indice IP65 ?",
+    o:["Protégé contre les gouttes verticales seulement","Totalement protégé contre les poussières et contre les jets d'eau",
+       "Protégé contre l'immersion permanente","Aucune protection"],
+    c:1, x:"6 = totalement étanche aux poussières ; 5 = protégé contre les jets d'eau à la lance." },
+  { q:"Entre IP44 et IP65, lequel protège le mieux contre l'eau ?",
+    o:["IP44","IP65","Ils protègent pareil","On ne peut pas savoir"],
+    c:1, x:"Le 2ᵉ chiffre de IP65 est 5, supérieur au 4 de IP44 : meilleure protection contre l'eau." },
+  { q:"Pour le robinet automatique d'un sanitaire (zone humide), quel indice est adapté ?",
+    o:["IP00","IP20","IP65","IP10"],
+    c:2, x:"IP65 protège la partie électrique contre la poussière et les jets d'eau : adapté à une zone humide." }
+];
+var quizAns = {};
+function buildQuiz(){
+  var box = $("quizbox"); if (!box) return;
+  var h = "";
+  for (var i=0;i<QUIZ.length;i++){
+    h += '<div class="qbloc" id="qb-' + i + '">' +
+           '<div class="qtit"><span class="qn">Q' + (i+1) + '</span>' + esc(QUIZ[i].q) + '</div>';
+    for (var j=0;j<QUIZ[i].o.length;j++){
+      h += '<div class="prop" id="qp-' + i + '-' + j + '" onclick="pickQuiz(' + i + ',' + j + ')">' +
+             '<span class="mk">' + String.fromCharCode(65+j) + '</span>' +
+             '<span class="txt">' + esc(QUIZ[i].o[j]) + '</span></div>';
+    }
+    h += '<div class="exp" id="qx-' + i + '"></div></div>';
+  }
+  box.innerHTML = h;
+}
+function pickQuiz(i, j){
+  quizAns[i] = j;
+  for (var k=0;k<QUIZ[i].o.length;k++){
+    var p = $("qp-"+i+"-"+k);
+    if (p){ p.classList.remove("sel","ok","ko"); if (k === j) p.classList.add("sel"); }
+  }
+  var x = $("qx-"+i); if (x) x.className = "exp";
+  var r = $("quiz-res"); if (r) r.className = "result";
+  updateProgress(); saveDraft();
+}
+function checkQuiz(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<QUIZ.length;i++){
+    var choisi = quizAns[i];
+    var x = $("qx-"+i);
+    for (var j=0;j<QUIZ[i].o.length;j++){
+      var p = $("qp-"+i+"-"+j);
+      if (!p) continue;
+      p.classList.remove("sel","ok","ko");
+      if (choisi === undefined) continue;
+      if (j === QUIZ[i].c) p.classList.add("ok");
+      else if (j === choisi) p.classList.add("ko");
+    }
+    if (choisi === undefined){ if (x) x.className = "exp"; continue; }
+    rep++;
+    var bon = choisi === QUIZ[i].c;
+    if (bon) ok++;
+    if (x){ x.className = "exp show" + (bon ? "" : " ko"); x.innerHTML = (bon ? "✅ " : "❌ ") + QUIZ[i].x; }
+  }
+  if (!rep){ afficher("quiz-res", false, "Réponds d'abord à au moins une question."); return; }
+  afficher("quiz-res", ok === QUIZ.length,
+    ok === QUIZ.length
+      ? "🎉 6 / 6 — la norme IP n'a plus de secret pour toi."
+      : "Score : " + ok + " / " + QUIZ.length + (rep < QUIZ.length ? " (" + (QUIZ.length - rep) + " sans réponse)" : "") +
+        ". Lis les explications sous chaque question, puis corrige.");
+}
+
+/* ════════════ BROUILLON LOCAL ════════════ */
+function draftKey(){ return DRAFT_PFX + (USER.id || slug(val("inp-prenom")+"-"+val("inp-nom")) || "anon"); }
+function collect(){
+  var fields = {}, i;
+  for (i=0;i<FIELD_IDS.length;i++) fields[FIELD_IDS[i]] = val(FIELD_IDS[i]);
+  for (i=0;i<SEL_IDS.length;i++)   fields[SEL_IDS[i]]   = val(SEL_IDS[i]);
+  return {
+    p: val("inp-prenom"), n: val("inp-nom"), c: val("inp-classe"),
+    fields: fields, qq: qqAns, quiz: quizAns, ts: Date.now()
+  };
+}
+var _draftT = null;
+function saveDraft(){
+  if (_draftT) clearTimeout(_draftT);
+  _draftT = setTimeout(function(){
+    try {
+      localStorage.setItem(draftKey(), JSON.stringify(collect()));
+      var d = new Date();
+      function p(x){ return x<10?"0"+x:""+x; }
+      $("draft-st").textContent = "Brouillon enregistré à " + p(d.getHours()) + ":" + p(d.getMinutes());
+    } catch(e){}
+  }, 500);
+}
+function formVierge(){
+  var i;
+  for (i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) return false;
+  for (i=0;i<SEL_IDS.length;i++)   if (val(SEL_IDS[i]))   return false;
+  for (var k in qqAns)   if (qqAns.hasOwnProperty(k) && qqAns[k]) return false;
+  for (var q in quizAns) if (quizAns.hasOwnProperty(q)) return false;
+  return true;
+}
+function restaurerSelonIdentite(){
+  if (USER.id || !formVierge()) return;
+  if (!val("inp-prenom") || !val("inp-nom")) return;
+  restoreDraft();
+  updateProgress();
+}
+function appliquerDonnees(f, qq, quiz){
+  f = f || {};
+  var i, el;
+  var tous = FIELD_IDS.concat(SEL_IDS);
+  for (i=0;i<tous.length;i++){
+    el = $(tous[i]);
+    if (el && f[tous[i]] !== undefined){ el.value = f[tous[i]]; markFilled(el); }
+  }
+  qqAns = qq || {};
+  for (i=0;i<QQ.length;i++){
+    var sel = $("qqsel-"+i);
+    if (sel) sel.value = qqAns[i] || "";
+  }
+  quizAns = quiz || {};
+  for (i=0;i<QUIZ.length;i++){
+    if (quizAns[i] === undefined) continue;
+    for (var j=0;j<QUIZ[i].o.length;j++){
+      var p = $("qp-"+i+"-"+j);
+      if (p){ p.classList.remove("sel","ok","ko"); if (j === quizAns[i]) p.classList.add("sel"); }
+    }
+  }
+  majPhrase();
+}
+function restoreDraft(){
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch(e){}
+  if (!raw) return;
+  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  appliquerDonnees(d.fields, d.qq, d.quiz);
+}
+
+/* ════════════ REPRENDRE LE DERNIER ENVOI ════════════ */
+function eidCourant(){
+  if (USER.id) return USER.id;
+  var ename = (val("inp-prenom") + " " + val("inp-nom")).trim();
+  if (!ename) return "";
+  var classe = val("inp-classe") ? ("4" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  return CAP_ID + "." + (slug(classe) || "4x") + "." + (slug(ename) || "eleve");
+}
+function envoiLocal(eid){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i=subs.length-1; i>=0; i--)
+      if (subs[i] && subs[i].eid === eid && subs[i].cap === CAP_ID) return subs[i];
+  } catch(e){}
+  return null;
+}
+function envoiCloud(eid, onDone){
+  if (!hasUrl() || !eid){ onDone(null); return; }
+  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  fetch(url).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok || !d.subs || !d.subs.length){ onDone(null); return; }
+    var miens = d.subs.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    onDone(miens[0] || null);
+  }).catch(function(){ onDone(null); });
+}
+function plusRecent(a, b){
+  if (!a) return b; if (!b) return a;
+  return (new Date(b.dateISO||0) > new Date(a.dateISO||0)) ? b : a;
+}
+function dateLisible(sub){
+  var d = new Date(sub && sub.dateISO ? sub.dateISO : Date.now());
+  function p(n){ return n<10 ? "0"+n : ""+n; }
+  return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
+}
+function appliquerEnvoi(sub){
+  if (!sub) return;
+  if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
+    var bouts = String(sub.ename).split(" ");
+    $("inp-prenom").value = bouts.shift() || "";
+    $("inp-nom").value = bouts.join(" ");
+  }
+  if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^4/, "").toUpperCase();
+  appliquerDonnees(sub.fields, sub.qq, sub.quiz);
+  var ban = $("reprise"); if (ban) ban.hidden = true;
+  updateProgress(); saveDraft();
+  flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
+}
+function reprendreDernierEnvoi(){
+  var eid = eidCourant();
+  if (!eid){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> : c'est ce qui permet de retrouver ton travail.", "err");
+    $("inp-prenom").focus(); return;
+  }
+  if (!formVierge() && !confirm("Récupérer le dernier travail envoyé remplacera ce qui est actuellement dans la fiche. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var local = envoiLocal(eid);
+  envoiCloud(eid, function(distant){
+    var sub = plusRecent(local, distant);
+    if (!sub){
+      flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err");
+      return;
+    }
+    appliquerEnvoi(sub);
+  });
+}
+function proposerReprise(){
+  if (!formVierge()) return;
+  var eid = eidCourant();
+  if (!eid) return;
+  function montrer(sub){
+    if (!sub || !formVierge()) return;
+    var ban = $("reprise");
+    if (!ban) return;
+    ban.innerHTML = '<div><strong>&#x21A9;&#xFE0F; Un travail envoyé le ' + dateLisible(sub) + ' a été retrouvé.</strong>' +
+      '<div style="font-size:12.5px;margin-top:2px">Ta fiche est vide sur cet appareil : tu peux la recharger pour continuer.</div></div>' +
+      '<button class="btn btn-send" style="white-space:nowrap" onclick="reprendreDernierEnvoi()">Récupérer mon travail</button>';
+    ban.hidden = false;
+  }
+  var local = envoiLocal(eid);
+  if (local) montrer(local);
+  envoiCloud(eid, function(distant){ montrer(plusRecent(local, distant)); });
+}
+
+/* ════════════ MESSAGES ════════════ */
+function flash(html, kind){
+  var box = $("send-status");
+  box.className = "sendst show " + (kind || "wait");
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+/* ════════════ COPIE DE SECOURS ════════════ */
+function saveBackup(){
+  var data = collect();
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "eau34_" + (slug(data.p+"-"+data.n) || "eleve") + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  flash("&#x2B07;&#xFE0F; Copie de secours téléchargée sur cet ordinateur.", "ok");
+}
+
+/* ════════════ RÉSUMÉ LISIBLE (vue professeur) ════════════ */
+function buildOpenSummary(state){
+  var f = state.fields, lignes = [];
+  var LB = {};
+  for (var s in SELECTS){
+    if (!SELECTS.hasOwnProperty(s)) continue;
+    LB[s] = {};
+    for (var i=0;i<SELECTS[s].opts.length;i++) LB[s][SELECTS[s].opts[i][0]] = SELECTS[s].opts[i][1];
+  }
+  for (var g=0; g<QUESTION_GROUPS.length; g++){
+    var grp = QUESTION_GROUPS[g], bloc = [];
+    for (var k=0;k<grp.items.length;k++){
+      var id = grp.items[k][0], lb = grp.items[k][1];
+      var v = f[id];
+      if (LB[id] && v) v = LB[id][v] || v;
+      bloc.push("• " + lb + " : " + (v ? v : "—"));
+    }
+    lignes.push("— " + grp.titre + " —\n" + bloc.join("\n"));
+  }
+  /* Exercices auto-corrigés */
+  var okQQ = 0, repQQ = 0;
+  for (var q in state.qq){
+    if (!state.qq.hasOwnProperty(q) || !state.qq[q]) continue;
+    repQQ++; if (QQ[q] && state.qq[q] === QQ[q].a) okQQ++;
+  }
+  var okQz = 0, repQz = 0;
+  for (var z in state.quiz){
+    if (!state.quiz.hasOwnProperty(z) || state.quiz[z] === undefined) continue;
+    repQz++; if (QUIZ[z] && state.quiz[z] === QUIZ[z].c) okQz++;
+  }
+  var okBac = 0;
+  for (var b=0;b<BAC.length;b++) if (contientUn(f[BAC[b].id], BAC[b].mots)) okBac++;
+  var okIP = 0;
+  if (f["ip-solide"] === "solides") okIP++;
+  if (f["ip-liquide"] === "eau")    okIP++;
+  if (parseInt(f["ip-min"], 10) >= 4) okIP++;
+
+  lignes.push("— Exercices auto-corrigés —\n" +
+    "• QQOQCP : " + okQQ + "/6 (" + repQQ + " répondus)\n" +
+    "• Bête à cornes : " + okBac + "/3\n" +
+    "• Indice IP (chiffres et minimum) : " + okIP + "/3\n" +
+    "• Indice proposé : IP" + (f["ip-a"] || "?") + (f["ip-b"] || "?") + "\n" +
+    "• Quiz IP : " + okQz + "/6 (" + repQz + " répondus)");
+  lignes.push("— Énoncé du besoin —\nL'objet technique nommé ROBINET AUTOMATIQUE À DÉTECTION rend service à " +
+    (f["a3-qui"] || "…") + " en agissant sur " + (f["a3-quoi"] || "…") +
+    " pour satisfaire le besoin : " + (f["a3-but"] || "…") + ".");
+  return lignes.join("\n\n");
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function unqueueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function storeLocalSub(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(APPS_SCRIPT_URL, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !hasUrl()) return;
+    q.forEach(function(sub){ postSub(sub); });
+  } catch(e){}
+}
+function makeSub(){
+  var state = collect();
+  var classe = state.c ? ("4" + state.c.toUpperCase()) : (USER.c || "");
+  var ename  = (state.p + " " + state.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe)||"4x") + "." + (slug(ename)||"eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: countFilled(),
+    qcmTot: totalFields(),
+    open: buildOpenSummary(state),
+    fields: state.fields,
+    qq: state.qq,
+    quiz: state.quiz,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function sendToProf(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 4A) en haut de la fiche.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var done = countFilled();
+  if (done < 8 && !confirm("Tu n'as rempli que " + done + " réponse(s). Envoyer quand même au professeur ?")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  saveDraft();
+  var sub = makeSub();
+  storeLocalSub(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  postSub(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Travail envoyé au professeur</strong> le " + new Date().toLocaleString("fr-FR") +
+            ".<br>Tu peux continuer à compléter : un nouvel envoi remplacera le précédent.", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Pas de panique : ton travail est <strong>conservé sur cet ordinateur</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ ILLUSTRATIONS FACULTATIVES ════════════ */
+function loadIllustrations(){
+  var figs = document.querySelectorAll("figure.illus[data-src]");
+  for (var i=0;i<figs.length;i++){
+    (function(fig){
+      var srcs = (fig.getAttribute("data-src") || "").split("|");
+      var alt  = fig.getAttribute("data-alt") || "";
+      var k = 0;
+      function next(){
+        if (k >= srcs.length){ fig.remove(); return; }
+        var url = encodeURI(srcs[k++].trim());
+        var probe = new Image();
+        probe.onload = function(){
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          fig.insertBefore(img, fig.firstChild);
+          fig.hidden = false;
+        };
+        probe.onerror = next;
+        probe.src = url;
+      }
+      next();
+    })(figs[i]);
+  }
+}
+
+/* ════════════ INITIALISATION ════════════ */
+function readPrefill(){
+  try {
+    var raw = localStorage.getItem(PREFILL_KEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d) return;
+    USER = { id: d.id || "", p: d.p || "", n: d.n || "", c: d.c || "" };
+    if (USER.p) $("inp-prenom").value = USER.p;
+    if (USER.n) $("inp-nom").value = USER.n;
+    if (USER.c) $("inp-classe").value = String(USER.c).replace(/^4/, "").toUpperCase();
+  } catch(e){}
+}
+function wireFields(){
+  var els = document.querySelectorAll(".rep");
+  for (var i=0;i<els.length;i++){
+    var el = els[i];
+    el.addEventListener("input", function(){
+      markFilled(this); updateProgress(); saveDraft();
+      if (this.id.indexOf("a3-") === 0) majPhrase();
+    });
+    el.addEventListener("change", function(){ markFilled(this); updateProgress(); saveDraft(); });
+    markFilled(el);
+  }
+  var idf = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j=0;j<idf.length;j++){
+    var e = $(idf[j]);
+    if (e){
+      e.addEventListener("input", function(){ saveDraft(); });
+      e.addEventListener("change", restaurerSelonIdentite);
+      e.addEventListener("blur", restaurerSelonIdentite);
+    }
+  }
+}
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+function initActivite(){
+  calerBarreOutils();
+  loadIllustrations();
+  buildQQ();
+  buildSelects();
+  buildQuiz();
+  readPrefill();
+  restoreDraft();
+  wireFields();
+  addMicButtons();
+  majPhrase();
+  updateProgress();
+  flushQueue();
+  proposerReprise();
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)){
+    var notes = document.querySelectorAll(".micbtn");
+    for (var i=0;i<notes.length;i++) notes[i].title = "Dictée disponible avec Chrome ou Edge";
+  }
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
+else initActivite();
+window.addEventListener("resize", calerBarreOutils);
+</script>
+
+<!-- Aménagements dys et confort de lecture : police, taille, interligne, espacement,
+     couleur de page, règle et masque de lecture. Module partagé entre les capsules. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+
+<!-- Lecture immersive : lit la fiche à voix haute en surlignant le texte. -->
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"section.step.closed", classeFermeture:"closed" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+</body>
+</html>
