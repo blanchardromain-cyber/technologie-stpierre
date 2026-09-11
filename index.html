@@ -3797,11 +3797,26 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <p class="bat-cor-p"><strong>6.1 (auto-corrigé).</strong> Prix unitaire HT : <strong>1,162 € / m³</strong>
           (ligne &laquo;&nbsp;Consommation Vendée Eau &mdash; tarif Bleu 1<sup>er</sup> semestre 2025&nbsp;&raquo;).
           Piège : la ligne au-dessus affiche <strong>1,17 €</strong>, c'est le tarif du <strong>semestre précédent</strong>.</p>
-          <p class="bat-cor-p"><strong>6.2 (auto-corrigé) &mdash; Formules attendues&nbsp;:</strong></p>
+          <p class="bat-cor-p"><strong>6.2 (auto-corrigé) &mdash; Les données de la feuille (B2 à B11).</strong>
+          La feuille estime la facture <strong>annuelle</strong> de l'élève : B2 vient de <strong>son</strong> simulateur (question 5.1),
+          B3 à B6 se relèvent sur la facture de M. Dupont. Le résultat est donc différent d'un élève à l'autre.</p>
+          <table class="bat-cor-t">
+            <tr><th style="width:70px">Cellule</th><th>Libellé</th><th>Attendu</th></tr>
+            <tr><td class="k">B2</td><td>Consommation sur l'année (m³)</td><td class="ok">la valeur du simulateur (45 à 55 m³ / personne / an)</td></tr>
+            <tr><td class="k">B3</td><td>Consommation Vendée Eau &mdash; prix unitaire HT</td><td class="ok">1,162 €/m³</td></tr>
+            <tr><td class="k">B4</td><td>Redevances Agence de l'eau</td><td class="ok">0,408 €/m³</td></tr>
+            <tr><td class="k">B5</td><td>Abonnement pour l'année</td><td class="ok">86 € (43 € sur la facture &times; 2 semestres)</td></tr>
+            <tr><td class="k">B6</td><td>TVA</td><td class="ok">5,5 %</td></tr>
+          </table>
+          <p class="bat-cor-p">Le bouton <strong>&laquo;&nbsp;Vérifier mes données&nbsp;&raquo;</strong> ne donne jamais la valeur :
+          il renvoie l'élève à l'endroit du document (&laquo;&nbsp;verso, bloc Redevances Agence de l'eau&nbsp;&raquo;) et signale les
+          trois confusions fréquentes &mdash; le tarif 1,17 € du <strong>semestre précédent</strong>, l'abonnement <strong>semestriel</strong>
+          pris pour un abonnement annuel, et le <strong>montant</strong> de TVA pris pour le <strong>taux</strong>.</p>
+          <p class="bat-cor-p"><strong>6.3 (auto-corrigé) &mdash; Formules attendues&nbsp;:</strong></p>
           <table class="bat-cor-t">
             <tr><th style="width:70px">Cellule</th><th>Libellé</th><th>Formule</th></tr>
             <tr><td class="k">B7</td><td>Total eau (€)</td><td class="ok">=B2*B3</td></tr>
-            <tr><td class="k">B8</td><td>Total assainissement (€)</td><td class="ok">=B2*B4</td></tr>
+            <tr><td class="k">B8</td><td>Total des redevances (€)</td><td class="ok">=B2*B4</td></tr>
             <tr><td class="k">B9</td><td>Sous-total HT (€)</td><td class="ok">=B7+B8+B5</td></tr>
             <tr><td class="k">B10</td><td>Montant de la TVA (€)</td><td class="ok">=B9*B6/100</td></tr>
             <tr><td class="k">B11</td><td>TOTAL TTC (€)</td><td class="ok">=B9+B10</td></tr>
@@ -3809,15 +3824,27 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
           <p class="bat-cor-p">La vérification <strong>exige une vraie formule</strong> (elle doit commencer par
           <strong>=</strong>) : un résultat tapé à la main est refusé, puisque c'est l'écriture de la formule qui est évaluée.
           Toute écriture équivalente donnant le même résultat est acceptée (par exemple <strong>=B2*B3+B2*B4+B5</strong> en B9).
-          Avec les valeurs par défaut (50 m³ &middot; 1,16 €/m³ &middot; 1,55 €/m³ &middot; 30 € &middot; 5,5 %), le total est de
-          <strong>174,60 €</strong> : c'est la valeur à reporter en 6.3.</p>
-          <p class="bat-cor-p">Le bouton <strong>&laquo;&nbsp;&#x1F9FE; Charger les valeurs de la vraie facture&nbsp;&raquo;</strong>
-          remplace les données par celles de la facture étudiée &mdash; 59 m³, eau à 1,162 €/m³, redevances de l'Agence de l'eau
+          Avec 50 m³, le total s'établit à <strong>173,55 €</strong> pour l'année.</p>
+          <p class="bat-cor-p"><strong>L'aide, en classe.</strong> Aucune formule n'est affichée nulle part sur la fiche.
+          Le bouton <strong>&laquo;&nbsp;Coup de pouce&nbsp;&raquo;</strong> ouvre deux crans, et deux seulement&nbsp;: le
+          <strong>cran 1</strong> reformule la ligne avec des mots (sans citer de cellule), le <strong>cran 2</strong> dit
+          <em>quelles</em> cellules interviennent (sans dire l'opération). Le nombre de crans ouverts par cellule remonte dans
+          le tableau de bord : il indique où la classe a buté. Le message d'erreur, lui, <strong>nomme la faute</strong> sans
+          donner la formule &mdash; signe = oublié, résultat tapé à la main, aucune référence utilisée, cellule inexistante,
+          bonnes cellules mais mauvaise opération, pourcentage oublié en B10, ou formule juste s'appuyant sur une cellule
+          encore fausse.</p>
+          <p class="bat-cor-p">Le bouton <strong>&laquo;&nbsp;&#x1F9FE; Tester mes formules sur la vraie facture&nbsp;&raquo;</strong>
+          charge le temps d'un test les chiffres du semestre de M. Dupont &mdash; 59 m³, eau à 1,162 €/m³, redevances de l'Agence de l'eau
           à 0,408 €/m³ (0,058 prélèvement + 0,33 consommation + 0,02 performance des réseaux), abonnement 43 €, TVA 5,5 % &mdash;
-          et les formules justes donnent alors <strong>143,09 €</strong>, à comparer aux <strong>143,26 €</strong> de la facture
-          réelle. L'écart de 17 centimes vient des deux tarifs successifs appliqués sur la facture (20 m³ à 1,17 € puis 39 m³ à
+          et des formules justes affichent alors <strong>143,09 €</strong>, à comparer aux <strong>143,26 €</strong> imprimés sur la
+          facture. C'est l'autocontrôle de l'élève : si son total colle au document, ses formules sont bonnes. Le bouton
+          <strong>&laquo;&nbsp;Revenir à mes valeurs&nbsp;&raquo;</strong> lui rend ensuite sa propre estimation.
+          L'écart de 17 centimes vient des deux tarifs successifs appliqués sur la facture (20 m³ à 1,17 € puis 39 m³ à
           1,162 €) : très bon point d'appui pour faire lire la facture en détail.</p>
-          <p class="bat-cor-p"><strong>6.4 &mdash; Les cellules orange.</strong> Elles correspondent à la
+          <p class="bat-cor-p"><strong>6.4 &mdash; Montant TTC.</strong> Réponse <strong>personnelle</strong> : c'est le montant affiché
+          en B11, qui dépend de la consommation estimée par l'élève. Contrôle rapide :
+          (B2 &times; 1,162 + B2 &times; 0,408 + 86) &times; 1,055 &mdash; soit 173,55 € pour 50 m³, 190,90 € pour 60 m³.</p>
+          <p class="bat-cor-p"><strong>6.5 &mdash; Les cellules orange.</strong> Elles correspondent à la
           <strong>redevance d'assainissement</strong> : la collecte et le traitement des eaux usées par les égouts et la station
           d'épuration. C'est un service <strong>distinct du prix de l'eau potable</strong>, facturé sur la même facture.
           Repère (Ouest-France) : environ 45 % de la facture pour la distribution de l'eau, 37 % pour la collecte et la
@@ -3883,7 +3910,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
             <li>Fichier autonome : il fonctionne aussi ouvert directement (<code>Niveau 4/P11 Eau ressource essentielle/eau_eleve.html</code>), hors du site.</li>
             <li>Identité : le site dépose <code>eau4e_prefill</code> dans le <code>localStorage</code> avant d'afficher l'activité ; l'élève peut corriger les champs.</li>
             <li>Envoi : même backend Apps Script que les autres capsules (<code>cap: "eau4e"</code>). En cas de coupure réseau, la soumission est mise en file d'attente sur le poste et repart automatiquement.</li>
-            <li>Le mini-tableur reprend le moteur de l'outil déjà utilisé en classe (<code>techno-p11-eau/tableur-facture.html</code>) : mêmes cellules, mêmes valeurs par défaut, même résultat de 174,60 €. Intégré à la fiche, il remonte désormais dans le tableau de bord avec le reste du travail.</li>
+            <li>Le mini-tableur est <strong>identique</strong> à l'outil autonome utilisé en classe (<code>techno-p11-eau/tableur-facture.html</code>) : mêmes libellés repris de la facture, mêmes données à relever, même aide graduée, mêmes messages d'erreur. Intégré à la fiche, il remonte en plus dans le tableau de bord avec le reste du travail.</li>
             <li>Modules partagés réutilisables : <code>assets/js/confort-lecture.js</code> et <code>assets/js/lecture-immersive.js</code>.</li>
           </ul>
 
@@ -6096,9 +6123,13 @@ var EAU_GROUPS = [
     ["b1-vaisselle","Vaisselle (%)"],["b1-autres","Autres (%)"]]},
   { titre:"A2 — 6. Lire une facture d'eau", couleur:"var(--bl)", items:[
     ["b2-prix","Prix unitaire HT (€/m³)"],
-    ["B7","Formule B7 — Total eau"],["B8","Formule B8 — Total assainissement"],
+    ["B2","Donnée B2 — Consommation sur l'année (m³)"],["B3","Donnée B3 — Prix unitaire HT (€/m³)"],
+    ["B4","Donnée B4 — Redevances Agence de l'eau (€/m³)"],["B5","Donnée B5 — Abonnement pour l'année (€)"],
+    ["B6","Donnée B6 — TVA (%)"],
+    ["B7","Formule B7 — Total eau"],["B8","Formule B8 — Total des redevances"],
     ["B9","Formule B9 — Sous-total HT"],["B10","Formule B10 — Montant TVA"],["B11","Formule B11 — Total TTC"],
-    ["b2-ttc","Montant à payer (TTC)"],["b2-orange","Cellules orange de la facture"]]},
+    ["aides-tableur","Coups de pouce utilisés (tableur)"],
+    ["b2-ttc","Montant TTC de la facture estimée"],["b2-orange","Cellules orange de la facture"]]},
   { titre:"A2 — 7. Gaspillage et gestes économes", couleur:"#C55A11", items:[
     ["b3-gasp1","Gaspillage 1"],["b3-geste1","Geste économe 1"],
     ["b3-gasp2","Gaspillage 2"],["b3-geste2","Geste économe 2"],
@@ -6120,8 +6151,14 @@ var EAU_CORRIGE = {
   "b1-conso":"Ordre de grandeur : 45 à 55 m³ par personne et par an.",
   "b1-hyg":"≈ 39 %", "b1-chasse":"≈ 20 %", "b1-linge":"≈ 12 %", "b1-vaisselle":"≈ 10 %", "b1-autres":"≈ 19 %",
   "b2-prix":"1,162 € / m³ (tarif Bleu, 1er semestre 2025). 1,17 € est le tarif du semestre précédent.",
+  "B2":"La consommation annuelle estimée par l'élève au simulateur (question 5.1) — 45 à 55 m³ par personne et par an.",
+  "B3":"1,162 €/m³ (verso, tarif Bleu 1er semestre 2025).",
+  "B4":"0,408 €/m³ (somme des redevances de l'Agence de l'eau).",
+  "B5":"86 € — la facture affiche 43 € pour un semestre, la feuille calcule une année.",
+  "B6":"5,5 %.",
   "B7":"=B2*B3", "B8":"=B2*B4", "B9":"=B7+B8+B5", "B10":"=B9*B6/100", "B11":"=B9+B10",
-  "b2-ttc":"174,60 € avec les valeurs par défaut ; 143,09 € avec les valeurs de la facture réelle.",
+  "aides-tableur":"Indicatif : nombre de coups de pouce ouverts, cellule par cellule (2 crans au maximum par cellule).",
+  "b2-ttc":"Réponse personnelle : le montant affiché en B11, qui dépend de la consommation estimée par l'élève. Contrôle : (B2×1,162 + B2×0,408 + 86) × 1,055. Pour 50 m³ : 173,55 €.",
   "b2-orange":"La redevance d'assainissement : collecte et traitement des eaux usées, distincte du prix de l'eau potable.",
   "b4-qcm":"auto — le robinet automatique à détection de présence.",
   "b4-objet":"Un robinet automatique à détection (ou un mousseur / limiteur de débit) : l'eau ne coule que lorsqu'on en a besoin."

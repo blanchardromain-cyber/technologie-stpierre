@@ -161,12 +161,29 @@ on ne boit qu'**environ 1 %** de l'eau potable qu'on paie — un chiffre qui mar
 tarif Bleu 1ᵉʳ semestre 2025 »). Attention au piège : la ligne au-dessus affiche **1,17 €**, c'est
 le tarif du **semestre précédent** (2ⁿᵈ semestre 2024, 20 m³).
 
-**6.2 (auto-corrigé) — Formules attendues dans le mini-tableur :**
+**6.2 (auto-corrigé) — Les données de la feuille (B2 à B6).**
+La feuille estime la facture **annuelle de l'élève** : B2 vient de **son** simulateur (question 5.1),
+B3 à B6 se relèvent sur la facture de M. Dupont. Le résultat final diffère donc d'un élève à l'autre.
+
+| Cellule | Libellé | Attendu |
+|---|---|---|
+| B2 | Consommation sur l'année (m³) | la valeur du simulateur (45 à 55 m³ / personne / an) |
+| B3 | Consommation Vendée Eau — prix unitaire HT | **1,162 €/m³** |
+| B4 | Redevances Agence de l'eau | **0,408 €/m³** |
+| B5 | Abonnement pour l'année | **86 €** (43 € sur la facture × 2 semestres) |
+| B6 | TVA | **5,5 %** |
+
+Le bouton **« Vérifier mes données »** ne donne jamais la valeur : il renvoie l'élève à l'endroit du
+document (« verso, bloc Redevances Agence de l'eau ») et signale les trois confusions fréquentes —
+le tarif **1,17 €** du semestre précédent, l'abonnement **semestriel** pris pour un abonnement annuel,
+et le **montant** de TVA pris pour le **taux**.
+
+**6.3 (auto-corrigé) — Formules attendues dans le mini-tableur :**
 
 | Cellule | Libellé | Formule attendue |
 |---|---|---|
 | B7 | Total eau (€) | `=B2*B3` |
-| B8 | Total assainissement (€) | `=B2*B4` |
+| B8 | Total des redevances (€) | `=B2*B4` |
 | B9 | Sous-total HT (€) | `=B7+B8+B5` |
 | B10 | Montant de la TVA (€) | `=B9*B6/100` |
 | B11 | TOTAL TTC (€) | `=B9+B10` |
@@ -174,23 +191,41 @@ le tarif du **semestre précédent** (2ⁿᵈ semestre 2024, 20 m³).
 La vérification **exige une vraie formule** (elle doit commencer par `=`) : un résultat tapé à la
 main est refusé, puisque c'est l'écriture de la formule qui est évaluée. D'autres écritures
 équivalentes sont acceptées dès lors qu'elles donnent le même résultat (par exemple
-`=B2*B3+B2*B4+B5` en B9, ou `=B9*1,055` en B11 saisi avec un point décimal).
+`=B2*B3+B2*B4+B5` en B9). Avec 50 m³, le total s'établit à **173,55 €** pour l'année.
 
-Avec les valeurs par défaut (**50 m³ · 1,16 €/m³ · 1,55 €/m³ · 30 € · 5,5 %**) le total est de
-**174,60 €** : c'est la valeur à reporter en 6.3.
+**L'aide, en classe.** Aucune formule n'est affichée nulle part sur la fiche. Le bouton
+**« 💡 Coup de pouce »** ouvre deux crans, et deux seulement :
 
-Le bouton **« 🧾 Charger les valeurs de la vraie facture »** remplace les données par celles de la
-facture étudiée — **59 m³**, eau à **1,162 €/m³**, redevances de l'Agence de l'eau à **0,408 €/m³**
-(0,058 prélèvement + 0,33 consommation + 0,02 performance des réseaux), abonnement **43 €**,
-TVA **5,5 %** — et les formules justes donnent alors **143,09 €**, à comparer aux **143,26 €**
-de la facture réelle. L'écart de 17 centimes vient du fait que la facture applique deux tarifs
-successifs (20 m³ à 1,17 € puis 39 m³ à 1,162 €) : c'est un très bon point d'appui pour faire
-lire la facture en détail.
+| Cran | Ce qu'il donne | Ce qu'il ne donne pas |
+|---|---|---|
+| 1 | la ligne reformulée avec des mots | aucune référence de cellule |
+| 2 | *quelles* cellules interviennent | ni l'opération, ni la formule |
 
-**6.3** — Montant à payer : **174,60 €** avec les valeurs par défaut (ou 143,09 € après avoir
-chargé la facture réelle).
+Le nombre de crans ouverts, cellule par cellule, remonte dans le tableau de bord : il indique où la
+classe a buté. Le message d'erreur, lui, **nomme la faute** sans donner la formule : signe `=`
+oublié, résultat tapé à la main, aucune référence utilisée, cellule inexistante ou vide, bonnes
+cellules mais mauvaise opération, pourcentage oublié en B10, formule juste s'appuyant sur une cellule
+encore fausse. Une formule juste qui recopie un nombre à la place d'une référence (`=B2*1.162`) est
+acceptée, mais signalée.
 
-**6.4 — Les cellules orange.**
+Un encart **HT / TVA / TTC** précède les formules : le HT est le prix du service, la TVA un impôt
+ajouté au prix et reversé à l'État, exprimé en pourcentage du HT (5,5 % = 5,50 € pour 100 € HT), le
+TTC la somme réellement payée. L'eau, produit de première nécessité, bénéficie d'un taux réduit face
+aux 20 % de droit commun.
+
+Le bouton **« 🧾 Tester mes formules sur la vraie facture »** charge, le temps d'un test, les chiffres
+du semestre de M. Dupont — **59 m³**, eau à **1,162 €/m³**, redevances de l'Agence de l'eau à
+**0,408 €/m³** (0,058 prélèvement + 0,33 consommation + 0,02 performance des réseaux), abonnement
+**43 €**, TVA **5,5 %** — et des formules justes affichent alors **143,09 €**, à comparer aux
+**143,26 €** imprimés sur la facture. C'est l'autocontrôle de l'élève : si son total colle au
+document, ses formules sont bonnes. **« Revenir à mes valeurs »** lui rend ensuite son estimation
+personnelle. L'écart de 17 centimes vient des deux tarifs successifs appliqués sur la facture
+(20 m³ à 1,17 € puis 39 m³ à 1,162 €) : un très bon point d'appui pour faire lire la facture en détail.
+
+**6.4** — Montant TTC : **réponse personnelle**, c'est le montant affiché en B11. Contrôle rapide :
+(B2 × 1,162 + B2 × 0,408 + 86) × 1,055 — soit **173,55 €** pour 50 m³, **190,90 €** pour 60 m³.
+
+**6.5 — Les cellules orange.**
 Elles correspondent à la **redevance d'assainissement** : la collecte et le traitement des eaux
 usées par les égouts et la station d'épuration. C'est un service **distinct du prix de l'eau
 potable**, facturé sur la même facture. Repère utile (Ouest-France) : sur une facture, environ
@@ -293,9 +328,9 @@ répondre à l'oral sans que la rédaction ne bloque le raisonnement technique.
   d'afficher l'activité ; l'élève peut corriger les champs.
 - Envoi : même backend Apps Script que les autres capsules (`cap: "eau4e"`). En cas de coupure
   réseau, la soumission est mise en file d'attente sur le poste et repart automatiquement.
-- Le mini-tableur reprend le moteur de l'outil déjà utilisé en classe
-  (`techno-p11-eau/tableur-facture.html`) : mêmes cellules, mêmes valeurs par défaut, même
-  résultat de 174,60 €. Il est désormais **intégré à la fiche**, donc les résultats arrivent
+- Le mini-tableur est **identique** à l'outil autonome utilisé en classe
+  (`techno-p11-eau/tableur-facture.html`) : mêmes libellés repris de la facture, mêmes données à
+  relever, même aide graduée, mêmes messages d'erreur. Il est **intégré à la fiche**, donc les résultats arrivent
   dans le tableau de bord avec le reste du travail, sous une seule identité.
 - Modules partagés, réutilisables tels quels dans les prochaines capsules :
   `assets/js/confort-lecture.js` et `assets/js/lecture-immersive.js`.
