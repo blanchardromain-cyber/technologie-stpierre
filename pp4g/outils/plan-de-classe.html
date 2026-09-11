@@ -160,6 +160,10 @@
   <input type="text" id="nomPlan" placeholder="nom du plan (ex : Techno T1)" style="width:150px">
   <button id="btnEnregistrer">Enregistrer</button>
   <button id="btnSupprimerPlan" class="sec" style="color:#c0392b;border-color:#c0392b">Supprimer</button>
+  <span style="width:1px;height:20px;background:#ccc;margin:0 4px"></span>
+  <button id="btnExporterPlans" class="sec" title="Télécharger tous les plans enregistrés de cette classe dans un fichier (sauvegarde / transfert vers un autre appareil)">⬇ Exporter</button>
+  <button id="btnImporterPlans" class="sec" title="Charger des plans depuis un fichier exporté">⬆ Importer</button>
+  <input type="file" id="fichierPlans" accept="application/json,.json" style="display:none">
 </div>
 
 <div id="entetePrint"></div>
@@ -643,7 +647,7 @@ function majEntetePrint() {
   const nbDys = Object.keys(affectation).filter(id =>
     affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
   document.getElementById("entetePrint").innerHTML =
-    "<b>Plan de classe " + classeActive + "</b> — " + nomSalle +
+    "<b>Plan de classe " + (classeActive || "") + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR") +
     (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof") +
@@ -729,6 +733,8 @@ function demarrer(donnees) {
   affectation = {}; separations = []; associations = []; devant = []; derriere = [];
   document.getElementById("titre").textContent =
     "Plan de classe " + donnees.classe + " — " + eleves.length + " élèves (" + donnees.annee + ")";
+  // Titre de l'onglet = nom de fichier proposé par le navigateur à l'impression/PDF.
+  document.title = "Plan de classe " + donnees.classe;
   document.getElementById("btnSupprimerClasse").style.display = Object.keys(lireImports()).length ? "inline" : "none";
   document.getElementById("panneauClasses").style.display = "none";
   remplirSelects();
@@ -852,6 +858,49 @@ document.getElementById("btnSupprimerPlan").onclick = () => {
   delete plans[nom];
   localStorage.setItem(clePlans(), JSON.stringify(plans));
   majListePlans();
+};
+
+// ---------- exporter / importer les plans enregistrés (sauvegarde & transfert d'appareil) ----------
+// « Enregistrer » range les plans dans le stockage local du navigateur : pratique au quotidien,
+// mais perdu si on change d'appareil ou si le navigateur efface ses données. Exporter produit
+// un fichier .json qu'on garde ou qu'on ré-importe ailleurs.
+document.getElementById("btnExporterPlans").onclick = () => {
+  const plans = lirePlans();
+  if (!Object.keys(plans).length) { alert("Aucun plan enregistré pour « " + classeActive + " » à exporter."); return; }
+  const paquet = { type: "plan-de-classe-plans", classe: classeActive, version: 1, exporteLe: new Date().toISOString(), plans };
+  const blob = new Blob([JSON.stringify(paquet, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "plans-" + String(classeActive || "classe").replace(/[^\w\-]+/g, "_") + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+};
+document.getElementById("btnImporterPlans").onclick = () => document.getElementById("fichierPlans").click();
+document.getElementById("fichierPlans").onchange = async ev => {
+  const fichier = ev.target.files[0];
+  if (!fichier) return;
+  try {
+    const paquet = JSON.parse(await fichier.text());
+    const entrants = paquet && paquet.plans && typeof paquet.plans === "object" ? paquet.plans : null;
+    if (!entrants) throw new Error("format");
+    const noms = Object.keys(entrants);
+    if (!noms.length) { alert("Ce fichier ne contient aucun plan."); ev.target.value = ""; return; }
+    if (paquet.classe && paquet.classe !== classeActive &&
+        !confirm("Ce fichier a été exporté pour la classe « " + paquet.classe + " ».\nL'importer quand même dans « " + classeActive + " » ?")) {
+      ev.target.value = ""; return;
+    }
+    const plans = lirePlans();
+    let ajoutes = 0, remplaces = 0;
+    noms.forEach(nom => { if (nom in plans) remplaces++; else ajoutes++; plans[nom] = entrants[nom]; });
+    localStorage.setItem(clePlans(), JSON.stringify(plans));
+    majListePlans();
+    alert(noms.length + " plan(s) importé(s) dans « " + classeActive + " ».\n" +
+          ajoutes + " ajouté(s), " + remplaces + " remplacé(s).");
+  } catch (e) {
+    alert("Fichier illisible ou format inattendu.\nChoisis un fichier « plans-….json » exporté depuis cet outil.");
+  }
+  ev.target.value = "";
 };
 
 document.getElementById("btnImporterClasse").onclick = () => document.getElementById("fichierClasse").click();

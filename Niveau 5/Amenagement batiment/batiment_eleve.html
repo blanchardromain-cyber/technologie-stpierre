@@ -8,18 +8,6 @@
      l'activité reste utilisable immédiatement avec les polices du système. -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <style>
-  /* Police B612 (très lisible) — utilisée par le mode « confort de lecture » */
-  @font-face {
-    font-family: 'B612';
-    src: url('../../pp4g/fonts/B612-Regular.ttf') format('truetype');
-    font-weight: 400; font-display: swap;
-  }
-  @font-face {
-    font-family: 'B612';
-    src: url('../../pp4g/fonts/B612-Bold.ttf') format('truetype');
-    font-weight: 700; font-display: swap;
-  }
-
   :root{
     --br:#C55A11;      /* orange brique — couleur de la séquence */
     --brl:#FCE4D6;
@@ -44,11 +32,6 @@
     background:var(--gr); color:var(--tx);
     font-size:15px; line-height:1.6;
   }
-  body.dys{
-    font-family:'B612',"DM Sans",sans-serif;
-    letter-spacing:.4px; word-spacing:2px; line-height:1.9; font-size:16px;
-  }
-  body.dys .card p, body.dys label{line-height:2}
 
   /* ═══ EN-TÊTE ═══ */
   header{
@@ -138,7 +121,6 @@
   textarea.rep{min-height:62px;line-height:1.65}
   textarea.rep:focus, input.rep:focus{border-color:var(--br);background:#fff}
   textarea.rep.filled, input.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
-  body.dys textarea.rep, body.dys input.rep{font-size:16px;line-height:1.9}
   .micbtn{
     display:inline-flex;align-items:center;gap:5px;margin-top:5px;
     background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;
@@ -349,7 +331,6 @@
   <div class="pbar-in">
     <span class="pcount" id="pcount">0 / 0 réponse</span>
     <div class="pbar"><span id="pbar-fill"></span></div>
-    <button class="toolbtn" id="btn-dys" onclick="toggleDys()" title="Agrandit le texte et l'espacement des lettres">&#x1F441;&#xFE0F; Confort de lecture</button>
     <button class="toolbtn" onclick="toggleAll()" id="btn-fold">&#x1F4D6; Tout ouvrir / fermer</button>
   </div>
 </div>
@@ -946,14 +927,6 @@ function toggleAll(){
   for (var j=0;j<secs.length;j++) secs[j].classList.toggle("closed", anyOpen);
 }
 
-/* ════════════ CONFORT DE LECTURE (dys) ════════════ */
-function toggleDys(){
-  document.body.classList.toggle("dys");
-  var on = document.body.classList.contains("dys");
-  $("btn-dys").classList.toggle("on", on);
-  try { localStorage.setItem("batiment5e_dys", on ? "1" : "0"); } catch(e){}
-}
-
 /* ════════════ DICTÉE VOCALE (Web Speech API) ════════════ */
 var _micActive = null;
 function addMicButtons(){
@@ -1337,9 +1310,14 @@ function startDrag(ev){
   window.addEventListener("pointermove", onDrag);
   window.addEventListener("pointerup", endDrag);
 }
+/* Le « confort de lecture » agrandit toute la zone de contenu : un déplacement de
+   souris de N pixels d'écran vaut alors N/agrandissement pixels dans le plan. */
+function agrandissement(){
+  try { return (window.ConfortLecture && ConfortLecture.echelle()) || 1; } catch(e){ return 1; }
+}
 function onDrag(ev){
   if (!drag) return;
-  var S = scale();
+  var S = scale() * agrandissement();
   var it = null;
   for (var i=0;i<planItems.length;i++) if (planItems[i].id === drag.id) it = planItems[i];
   if (!it) return;
@@ -1350,8 +1328,9 @@ function onDrag(ev){
   ny = Math.max(0, Math.min(PLAN_P - it.h, ny));
   if (nx !== it.x || ny !== it.y) drag.moved = true;
   it.x = nx; it.y = ny;
-  drag.el.style.left = (nx*S) + "px";
-  drag.el.style.top  = (ny*S) + "px";
+  var P = scale();
+  drag.el.style.left = (nx*P) + "px";
+  drag.el.style.top  = (ny*P) + "px";
 }
 function endDrag(){
   window.removeEventListener("pointermove", onDrag);
@@ -1822,7 +1801,6 @@ function calerBarreOutils(){
 }
 function initActivite(){
   calerBarreOutils();
-  try { if (localStorage.getItem("batiment5e_dys") === "1"){ document.body.classList.add("dys"); $("btn-dys").classList.add("on"); } } catch(e){}
   loadIllustrations();
   buildChips();
   buildStepBank();
@@ -1850,7 +1828,33 @@ window.addEventListener("resize", function(){
   clearTimeout(window._rz);
   window._rz = setTimeout(function(){ fitZoom(); renderPlan(); }, 250);
 });
+/* Changer la taille du texte change aussi la largeur utile du plan : on le recale. */
+document.addEventListener("confort-lecture", function(){
+  clearTimeout(window._cz);
+  window._cz = setTimeout(function(){ fitZoom(); renderPlan(); }, 120);
+});
 </script>
+
+<!-- Aménagements dys et confort de lecture : police, taille, interligne, espacement,
+     couleur de page, règle et masque de lecture. Module partagé entre les capsules. -->
+<script>
+/* Reprise de l'ancien bouton « Confort de lecture » de cette capsule : un élève qui
+   l'avait activé retrouve des réglages équivalents dans le nouveau panneau, une seule
+   fois, puis l'ancienne clé est effacée. */
+(function(){
+  try {
+    if (localStorage.getItem("batiment5e_dys") === "1" && !localStorage.getItem("confort_lecture")) {
+      localStorage.setItem("confort_lecture", JSON.stringify({
+        police:"b612", taille:1, interligne:1, espacement:1,
+        fond:"blanc", colonne:false, regle:false, masque:false
+      }));
+    }
+    localStorage.removeItem("batiment5e_dys");
+  } catch(e){}
+})();
+window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };
+</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
 
 <!-- Lecture immersive : lit la fiche à voix haute en surlignant le texte.
      Module partagé, réutilisable tel quel dans les prochaines capsules. -->

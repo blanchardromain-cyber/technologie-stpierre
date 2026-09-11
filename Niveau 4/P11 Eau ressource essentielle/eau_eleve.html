@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — L'eau, ressource essentielle — 4ème</title>
+<!-- Polices chargées sans bloquer l'affichage : si le réseau du collège filtre Google Fonts,
+     l'activité reste utilisable immédiatement avec les polices du système. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --ea:#0288D1;      /* bleu eau — couleur de la séquence */
+    --eal:#D8F0FB;
+    --bl:#1F4E79;      /* bleu institution */
+    --bc:#2E75B6;
+    --bp:#DEEAF1;
+    --vt:#1E6B3B;      /* vert validation */
+    --vp:#E2EFDA;
+    --or:#C55A11;
+    --orp:#FCE4D6;
+    --rg:#C0392B;
+    --rgp:#FADBD8;
+    --gr:#F4F6F8;
+    --gb:#E2E8F0;
+    --tx:#1A202C;
+    --td:#4A5568;
+    --r:12px;
+    --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"DM Sans",system-ui,sans-serif;
+    background:var(--gr); color:var(--tx);
+    font-size:15px; line-height:1.6;
+  }
+
+  /* ═══ EN-TÊTE ═══ */
+  header{
+    background:linear-gradient(135deg,var(--bl),#0D2B50);
+    color:#fff; padding:16px 22px;
+    position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 14px rgba(0,0,0,.25);
+  }
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8FD8F5}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{
+    background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none;
+  }
+  .fld input:focus{border-color:#8FD8F5}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  /* Elle se colle juste SOUS l'en-tête (hauteur mesurée au chargement), pour rester
+     atteignable quand la page défile — lecture immersive et confort de lecture compris. */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:180px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ea),#41B6E6);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{
+    background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1180px;margin:0 auto;padding:22px 22px 140px}
+  .situ{
+    background:linear-gradient(135deg,var(--ea),#41B6E6);color:#fff;border-radius:var(--r);
+    padding:20px 24px;margin-bottom:22px;box-shadow:var(--sh);position:relative;overflow:hidden
+  }
+  .situ::after{content:"\1F4A7";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.22}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.9}
+  .situ h2{font-size:19px;font-weight:700;margin:4px 0 6px;max-width:82%}
+  .situ p{font-size:13.5px;opacity:.95;max-width:82%}
+
+  /* Bandeau séparant l'activité 1 de l'activité 2 */
+  .acte{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:var(--bl);color:#fff;border-radius:var(--r);
+    padding:12px 18px;margin:26px 0 14px;box-shadow:var(--sh)
+  }
+  .acte .n{
+    width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:0 0 auto
+  }
+  .acte h2{font-size:16px;font-weight:700}
+  .acte .pb{font-size:12px;color:#BBD3E8;margin-top:2px}
+  .acte:first-of-type{margin-top:0}
+
+  .reprise{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;
+    background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);
+    padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00
+  }
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{
+    display:flex;align-items:center;gap:12px;padding:14px 20px;
+    background:var(--bp);border-left:6px solid var(--bl);cursor:pointer;user-select:none
+  }
+  .sthdr .num{
+    width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto
+  }
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  .lesson{
+    background:var(--gr);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;
+    padding:12px 15px;margin-bottom:16px;font-size:14px;color:var(--td)
+  }
+  .lesson strong{color:var(--bl)}
+  .lesson ul{margin:6px 0 0 20px}
+  .lesson li{margin-bottom:3px}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;color:var(--tx);margin:16px 0 8px}
+  .qlabel .qn{color:var(--ea);font-weight:700;font-family:"DM Mono",monospace;margin-right:5px}
+  .hint{font-size:12.5px;color:var(--td);font-style:italic;margin:-4px 0 8px}
+
+  /* ═══ CHIFFRES CLÉS ═══ */
+  .keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:0 0 16px}
+  .key{background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:10px 13px}
+  .key b{display:block;font-size:20px;color:var(--ea);font-family:"DM Mono",monospace;line-height:1.2}
+  .key span{font-size:12px;color:var(--td)}
+
+  /* ═══ CHAMPS + DICTÉE ═══ */
+  .fwrap{position:relative;margin-bottom:12px}
+  textarea.rep, input.rep{
+    width:100%;font-family:inherit;font-size:14.5px;color:var(--tx);
+    background:#FBFDFF;border:2px solid var(--gb);border-radius:9px;
+    padding:10px 12px;outline:none;resize:vertical;transition:border-color .15s,background .15s
+  }
+  textarea.rep{min-height:62px;line-height:1.65}
+  textarea.rep:focus, input.rep:focus{border-color:var(--ea);background:#fff}
+  textarea.rep.filled, input.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
+  .micbtn{
+    display:inline-flex;align-items:center;gap:5px;margin-top:5px;
+    background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .micbtn:hover{border-color:var(--ea);color:var(--ea)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .micnote{font-size:11.5px;color:var(--td)}
+
+  /* ═══ TABLEAUX ═══ */
+  table.grid{width:100%;border-collapse:collapse;margin-bottom:8px}
+  table.grid th{
+    background:var(--bl);color:#fff;font-size:12.5px;font-weight:600;text-align:left;
+    padding:9px 11px;border:1px solid var(--bl)
+  }
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:top}
+  table.grid td.lead{background:var(--gr);font-weight:600;font-size:13.5px;color:var(--bl);width:210px}
+  table.grid td.lead small{display:block;font-weight:400;color:var(--td);font-size:11.5px;margin-top:2px}
+  .tscroll{overflow-x:auto}
+
+  /* ═══ VRAI / FAUX ═══ */
+  .vf{margin:10px 0 14px}
+  .vfline{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    background:var(--gr);border:1px solid var(--gb);border-radius:9px;padding:9px 12px;margin-bottom:7px
+  }
+  .vfline .txt{flex:1;min-width:230px;font-size:14px}
+  .vfline .opts{display:flex;gap:7px}
+  .vfline .opt{
+    border:2px solid var(--gb);background:#fff;border-radius:8px;padding:5px 14px;
+    font-family:inherit;font-size:13px;font-weight:700;color:var(--td);cursor:pointer;transition:.15s
+  }
+  .vfline .opt:hover{border-color:var(--bc)}
+  .vfline .opt.sel{background:var(--bl);border-color:var(--bl);color:#fff}
+  .vfline.ok{background:var(--vp);border-color:var(--vt)}
+  .vfline.ko{background:var(--rgp);border-color:var(--rg)}
+  .fb{font-size:12.5px;font-weight:600;margin-top:4px;width:100%}
+  .fb.ok{color:var(--vt)}
+  .fb.ko{color:var(--rg)}
+
+  /* ═══ REMISE EN ORDRE (sans glisser-déposer : accessible au clavier,
+         à la souris et au doigt, y compris en cas de dyspraxie) ═══ */
+  ol.ordre{list-style:none;counter-reset:etape;margin:0 0 10px}
+  ol.ordre li{
+    counter-increment:etape;display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+    background:#fff;border:2px solid var(--gb);border-radius:10px;padding:9px 12px;margin-bottom:7px
+  }
+  ol.ordre li::before{
+    content:counter(etape);width:26px;height:26px;border-radius:50%;flex:0 0 auto;
+    background:var(--ea);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;font-family:"DM Mono",monospace
+  }
+  ol.ordre li .nom{flex:1;min-width:150px;font-size:14px;font-weight:600}
+  ol.ordre li .nom small{display:block;font-weight:400;font-size:12px;color:var(--td)}
+  ol.ordre li select{
+    font-family:inherit;font-size:13px;padding:6px 9px;border:2px solid var(--gb);
+    border-radius:8px;background:#FBFDFF;color:var(--tx);min-width:190px;outline:none
+  }
+  ol.ordre li select:focus{border-color:var(--ea)}
+  ol.ordre li .mv{display:flex;gap:4px}
+  ol.ordre li .mv button{
+    width:30px;height:30px;border:2px solid var(--gb);background:#fff;border-radius:8px;
+    font-size:13px;color:var(--td);cursor:pointer;transition:.15s
+  }
+  ol.ordre li .mv button:hover:not(:disabled){border-color:var(--ea);color:var(--ea)}
+  ol.ordre li .mv button:disabled{opacity:.35;cursor:not-allowed}
+  ol.ordre li.ok{border-color:var(--vt);background:var(--vp)}
+  ol.ordre li.ko{border-color:var(--rg);background:var(--rgp)}
+  /* Les associations reprennent la même mise en page, sans numérotation :
+     l'ordre des lignes n'a pas de sens ici. */
+  ul.assoc{list-style:none;margin:0 0 10px}
+  ul.assoc li{
+    display:flex;align-items:center;gap:11px;flex-wrap:wrap;
+    background:#fff;border:2px solid var(--gb);border-radius:10px;padding:9px 12px;margin-bottom:7px
+  }
+  ul.assoc li .nom{flex:1;min-width:170px;font-size:14px;font-weight:600}
+  ul.assoc li select{
+    font-family:inherit;font-size:13px;padding:6px 9px;border:2px solid var(--gb);
+    border-radius:8px;background:#FBFDFF;color:var(--tx);min-width:250px;outline:none
+  }
+  ul.assoc li select:focus{border-color:var(--ea)}
+  ul.assoc li.ok{border-color:var(--vt);background:var(--vp)}
+  ul.assoc li.ko{border-color:var(--rg);background:var(--rgp)}
+  @media (max-width:640px){ ul.assoc li select{min-width:100%} }
+
+  /* ═══ RÉPARTITION DE LA CONSOMMATION ═══ */
+  .repart{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .repart .rc{background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:10px 12px}
+  .repart .rc label{display:block;font-size:12.5px;font-weight:700;color:var(--bl);margin-bottom:5px}
+  .repart .rc .row{display:flex;align-items:center;gap:6px}
+  .repart .rc input{
+    width:70px;font-family:inherit;font-size:15px;font-weight:700;text-align:right;
+    border:2px solid var(--gb);border-radius:8px;padding:6px 8px;background:#fff;color:var(--tx);outline:none
+  }
+  .repart .rc input:focus{border-color:var(--ea)}
+  .jauge{height:8px;background:var(--gb);border-radius:8px;overflow:hidden;margin-top:7px}
+  .jauge i{display:block;height:100%;background:var(--ea);width:0;transition:width .25s}
+  .somme{font-family:"DM Mono",monospace;font-size:13px;font-weight:600;color:var(--td);margin-bottom:10px}
+  .somme b.ok{color:var(--vt)}
+  .somme b.ko{color:var(--rg)}
+
+  /* ═══ MINI-TABLEUR ═══ */
+  table.ss{border-collapse:collapse;width:100%;margin-top:6px;font-size:14px}
+  table.ss th,table.ss td{border:1px solid #C4D0E0;padding:0}
+  table.ss thead th{background:var(--bl);color:#fff;text-align:center;padding:6px;font-weight:700}
+  table.ss .rh{background:var(--bp);color:var(--bl);text-align:center;font-weight:700;width:36px;padding:6px}
+  table.ss td.lbl{background:#F3F7FC;color:var(--bl);font-weight:600;padding:8px 10px;font-size:13.5px}
+  table.ss td.cell{padding:0;position:relative}
+  table.ss td.cell input{
+    border:none;border-radius:0;width:100%;padding:9px 78px 9px 10px;background:transparent;
+    font-family:"DM Mono",monospace;font-size:13.5px;color:var(--tx);outline:none
+  }
+  table.ss td.cell input:focus{box-shadow:inset 0 0 0 2px var(--ea)}
+  table.ss td.data input{font-weight:700;color:#13633D;background:#EEF7F1}
+  table.ss td.formula{background:#FFFDF5}
+  table.ss td.ttc{background:var(--eal)}
+  table.ss td.ttc input{font-weight:800;color:var(--bl)}
+  table.ss td.ok{box-shadow:inset 0 0 0 2px var(--vt)}
+  table.ss td.ko{box-shadow:inset 0 0 0 2px var(--rg)}
+  .chip{
+    position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--bp);color:var(--bl);
+    border-radius:6px;padding:2px 7px;font-size:12px;font-weight:700;pointer-events:none;font-family:"DM Mono",monospace
+  }
+
+  /* ═══ AIDE GRADUÉE DU TABLEUR ═══ */
+  .aide{background:#FFF8E7;border:1px solid #F0D089;border-radius:10px;padding:11px 14px;margin-top:12px}
+  .aide .at{font-size:13px;font-weight:700;color:#8A5A00;margin-bottom:8px}
+  .aide-bts{display:flex;gap:7px;flex-wrap:wrap}
+  .aidebt{
+    background:#fff;border:2px solid #E0B65C;border-radius:8px;padding:5px 12px;cursor:pointer;
+    font-family:"DM Mono",monospace;font-size:13px;font-weight:700;color:#8A5A00;transition:.15s
+  }
+  .aidebt:hover{background:#FBEFD5}
+  .aidebt.used{background:#F5E2B8;border-color:#C79A34}
+  .aide-msg{margin-top:9px;font-size:13px;color:#6B4A00;line-height:1.5}
+  .aide-msg .cran{font-family:"DM Mono",monospace;font-size:11.5px;font-weight:700;color:#A87400;display:block;margin-bottom:2px}
+  .exemple{background:#fff;border:1px dashed #9BB6D4;border-radius:8px;padding:9px 12px;margin-top:8px;font-size:13px;color:var(--td)}
+  .exemple code{font-family:"DM Mono",monospace;background:var(--bp);color:var(--bl);border-radius:4px;padding:1px 5px;font-weight:700}
+  .avert{font-size:12.5px;color:#8A5A00;background:#FFF8E7;border-left:4px solid #E0B65C;border-radius:0 7px 7px 0;padding:7px 11px;margin-top:8px}
+
+  /* ═══ CALCULETTE DU GASPILLAGE ═══ */
+  .calc{background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:13px 15px;margin-bottom:14px}
+  .calc .l1{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:14px}
+  .calc input{
+    width:80px;font-family:"DM Mono",monospace;font-size:15px;font-weight:700;text-align:right;
+    border:2px solid #9BD6EF;border-radius:8px;padding:6px 9px;background:#fff;color:var(--bl);outline:none
+  }
+  .calc input:focus{border-color:var(--ea)}
+  .calc .out{margin-top:10px;font-size:14px;color:var(--bl);font-weight:600}
+  .calc .out b{font-family:"DM Mono",monospace;color:var(--ea);font-size:16px}
+
+  /* ═══ QCM ═══ */
+  .qcm{margin:10px 0 14px}
+  .qcm .prop{
+    display:flex;align-items:center;gap:11px;
+    background:var(--gr);border:2px solid var(--gb);border-radius:9px;padding:10px 13px;margin-bottom:7px;cursor:pointer
+  }
+  .qcm .prop:hover{border-color:var(--bc)}
+  .qcm .prop .mk{
+    width:24px;height:24px;border-radius:50%;border:2px solid var(--gb);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--td);background:#fff
+  }
+  .qcm .prop.sel{border-color:var(--bl);background:var(--bp)}
+  .qcm .prop.sel .mk{background:var(--bl);border-color:var(--bl);color:#fff}
+  .qcm .prop.ok{border-color:var(--vt);background:var(--vp)}
+  .qcm .prop.ko{border-color:var(--rg);background:var(--rgp)}
+  .qcm .prop .txt{font-size:14px}
+
+  /* ═══ BOUTONS DE VÉRIFICATION ═══ */
+  .btnck{
+    background:var(--bl);color:#fff;border:none;border-radius:9px;padding:9px 18px;
+    font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s
+  }
+  .btnck:hover{background:var(--bc)}
+  .btnck.sec{background:#fff;color:var(--bl);border:2px solid var(--bl);padding:7px 16px}
+  .btnck.sec:hover{background:var(--bp)}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .result{margin-top:10px;font-size:13.5px;font-weight:700;border-radius:9px;padding:9px 14px;display:none}
+  .result.show{display:block}
+  .result.good{background:var(--vp);color:var(--vt)}
+  .result.bad{background:var(--orp);color:var(--or)}
+
+  /* ═══ RESSOURCES ═══ */
+  .reslinks{background:#EEF6FF;border:1px solid #A9CBEA;border-radius:10px;padding:11px 14px;margin:0 0 16px}
+  .reslinks .rl-lb{
+    display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
+    color:var(--bl);margin-bottom:7px
+  }
+  .reslinks p{font-size:13px;color:var(--td);margin:6px 0 0}
+  .linkbtn{
+    display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);
+    border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;
+    text-decoration:none;margin:3px 6px 3px 0
+  }
+  .linkbtn:hover{background:var(--bc);color:#fff}
+  details.res{background:#F5FBFE;border:1px solid #A9CBEA;border-radius:10px;margin-bottom:14px;overflow:hidden}
+  details.res>summary{
+    cursor:pointer;padding:11px 15px;font-weight:700;font-size:13.5px;color:var(--ea);
+    list-style:none;display:flex;align-items:center;gap:8px
+  }
+  details.res>summary::-webkit-details-marker{display:none}
+  details.res>summary::after{content:"\25BE";margin-left:auto;transition:transform .2s}
+  details.res[open]>summary::after{transform:rotate(180deg)}
+  details.res .rbody{padding:0 15px 14px;font-size:13.5px;color:var(--td)}
+  details.res .rbody ul{margin:6px 0 6px 20px}
+  details.res .rbody li{margin-bottom:3px}
+
+  figure.illus{margin:0 0 16px;border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center}
+  figure.illus img{display:block;max-width:100%;height:auto;margin:12px auto}
+  figure.illus figcaption{padding:8px 12px;font-size:12.5px;color:var(--td);border-top:1px solid var(--gb);background:var(--gr)}
+
+  .cbline{display:flex;align-items:flex-start;gap:10px;background:var(--gr);border-radius:9px;padding:11px 14px;margin:12px 0}
+  .cbline input[type=checkbox]{width:20px;height:20px;accent-color:var(--vt);margin-top:1px;flex:0 0 auto;cursor:pointer}
+  .cbline label{font-size:14px;font-weight:600;color:var(--tx);cursor:pointer}
+
+  .retenir{
+    background:var(--vp);border:1px solid #A8CFA4;border-left:5px solid var(--vt);
+    border-radius:0 10px 10px 0;padding:13px 16px;margin-top:16px;font-size:13.5px;color:#22543D
+  }
+  .retenir b{color:var(--vt)}
+  .retenir .t{
+    display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
+    color:var(--vt);margin-bottom:6px
+  }
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{
+    position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--gb);
+    box-shadow:0 -4px 20px rgba(0,0,0,.09);padding:11px 22px;z-index:60
+  }
+  .sendbar-in{max-width:1180px;margin:0 auto;display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{border:none;border-radius:9px;padding:10px 17px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-send{background:var(--ea);color:#fff}
+  .btn-send:hover{background:#41B6E6}
+  .btn-send:disabled{opacity:.5;cursor:not-allowed}
+  .btn-sec{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-sec:hover{background:var(--bp);color:var(--bl)}
+  .draftst{font-size:12px;color:var(--td);margin-right:auto;font-family:"DM Mono",monospace}
+  .sendst{display:none;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:0 0 10px;font-weight:600}
+  .sendst.show{display:block}
+  .sendst.ok{background:var(--vp);color:var(--vt)}
+  .sendst.err{background:var(--rgp);color:var(--rg)}
+  .sendst.wait{background:var(--bp);color:var(--bl)}
+
+  @media (max-width:640px){
+    header h1{font-size:16px}
+    .fld input{width:118px}
+    main{padding:16px 13px 150px}
+    .situ h2,.situ p{max-width:100%}
+    .situ::after{display:none}
+    ol.ordre li select{min-width:100%}
+  }
+  @media print{
+    header,.pbar-wrap,.sendbar,.micbtn,.btnck,.toolbtn,ol.ordre li .mv{display:none!important}
+    body{background:#fff}
+    section.step{box-shadow:none;border:1px solid #999;break-inside:avoid}
+    section.step.closed .stbody{display:block}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 4<sup>e</sup> · Séquence P11 · CT 2.5</div>
+      <h1>P11 — L'eau, ressource essentielle</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">4</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 0 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" onclick="toggleAll()" id="btn-fold">&#x1F4D6; Tout ouvrir / fermer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="reprise" id="reprise" hidden data-nolecture></div>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Comment préserver l'eau, une ressource essentielle&nbsp;?</h2>
+    <p>Chaque Français utilise en moyenne <strong>148 litres d'eau par jour</strong>. D'où vient cette eau&nbsp;? Combien coûte-t-elle&nbsp;? Et où la gaspillons-nous&nbsp;? Tu vas mener l'enquête, puis identifier le <strong>besoin</strong> auquel devra répondre l'objet technique que nous étudierons ensuite.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       ACTIVITÉ 1 — LE VOYAGE DE L'EAU
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="acte">
+    <div class="n">1</div>
+    <div>
+      <h2>Activité 1 — Le voyage de l'eau</h2>
+      <div class="pb">Problématique : d'où vient l'eau que nous utilisons, et pourquoi est-elle précieuse&nbsp;?</div>
+    </div>
+  </div>
+
+  <!-- ──────────── 1. UNE RESSOURCE PRÉCIEUSE ──────────── -->
+  <section class="step" id="sec1">
+    <div class="sthdr" onclick="toggleSec('sec1')">
+      <div class="num">1</div><h3>Une ressource précieuse</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; Pour découvrir la notion</span>
+        <a class="linkbtn" href="https://drive.google.com/file/d/18z1OZE9f47-IBPW835xyUBpCWJBnTFHl/view" target="_blank" rel="noopener">&#x1F4C4; Le parcours de l'eau (document)</a>
+        <a class="linkbtn" href="https://drive.google.com/file/d/1sEKmLmjym_jGiupfMZeiqDVaYdz9JVEB/view" target="_blank" rel="noopener">&#x1F4F0; Réduire sa consommation (Ouest-France)</a>
+        <p>Lis d'abord le document, puis réponds aux questions ci-dessous.</p>
+      </div>
+
+      <figure class="illus" hidden id="illus-cycle"
+        data-alt="Le cycle naturel de l'eau : évaporation, condensation, précipitations, ruissellement, infiltration"
+        data-src="ressources/1-cycle-eau.png|ressources/1-cycle-eau.jpg|ressources/Provenance de l'eau.png">
+        <figcaption>Le cycle naturel de l'eau : évaporation, condensation, précipitations, ruissellement et infiltration.</figcaption>
+      </figure>
+
+      <div class="keys">
+        <div class="key"><b>70&nbsp;%</b><span>de la surface de la Terre est couverte d'eau…</span></div>
+        <div class="key"><b>&lt; 1&nbsp;%</b><span>… mais moins de 1&nbsp;% est de l'eau douce facilement accessible</span></div>
+        <div class="key"><b>1 sur 5</b><span>litres d'eau potable perdu dans les fuites du réseau, en France</span></div>
+        <div class="key"><b>148 L</b><span>consommés par personne et par jour</span></div>
+      </div>
+
+      <span class="qlabel"><span class="qn">Échauffement</span>Vrai ou faux&nbsp;? Clique ta réponse pour chaque affirmation.</span>
+      <div class="vf" id="vfbox"></div>
+      <div class="btnrow"><button class="btnck" onclick="checkVF()">Vérifier mes réponses</button></div>
+      <div class="result" id="vf-res"></div>
+
+      <span class="qlabel"><span class="qn">1.1</span>Selon toi, pourquoi faut-il économiser l'eau potable&nbsp;?</span>
+      <div class="hint">Pense à trois choses : sa rareté, ce qu'il faut faire pour la rendre potable, et ce qu'on perd dans les fuites.</div>
+      <div class="fwrap">
+        <textarea class="rep" id="a1-eco" placeholder="Il faut économiser l'eau potable parce que…" style="min-height:80px"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────── 2. D'OÙ PROVIENT L'EAU ? ──────────── -->
+  <section class="step" id="sec2">
+    <div class="sthdr" onclick="toggleSec('sec2')">
+      <div class="num">2</div><h3>D'où provient l'eau&nbsp;?</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        L'eau que nous utilisons est <strong>captée</strong> dans le milieu naturel, puis conduite vers une usine
+        qui la rend potable. Selon les endroits, on ne va pas la chercher au même endroit.
+      </div>
+
+      <span class="qlabel"><span class="qn">2.1</span>Cite les <strong>trois origines possibles</strong> de l'eau captée.</span>
+      <div class="hint">Une par case, dans l'ordre que tu veux.</div>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th>Origine n°1</th><th>Origine n°2</th><th>Origine n°3</th></tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="a2-orig1" type="text" placeholder="ex. une source…"></div></td>
+            <td><div class="fwrap"><input class="rep" id="a2-orig2" type="text"></div></td>
+            <td><div class="fwrap"><input class="rep" id="a2-orig3" type="text"></div></td>
+          </tr>
+        </table>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkOrigines()">Vérifier mes trois origines</button></div>
+      <div class="result" id="orig-res"></div>
+
+      <details class="res">
+        <summary>&#x1F5FA;&#xFE0F; Et chez nous, en Vendée&nbsp;?</summary>
+        <div class="rbody">
+          <p>En Vendée, l'eau potable est produite par <strong>Vendée Eau</strong>. Elle vient surtout de
+          <strong>retenues et de rivières</strong> (barrages), et parfois de <strong>captages souterrains</strong>.</p>
+          <ul>
+            <li>Retenues et usines : la Bultière, le Rochereau, le Graon, le Jaunay, Apremont, Mervent, le Moulin Papon, Finfarine, l'Angle Guignard…</li>
+            <li>Captages d'eau souterraine : le Gros Noyer, Sainte-Germaine, Saint-Martin-des-Fontaines, le Marillet…</li>
+          </ul>
+          <p><a class="linkbtn" href="https://drive.google.com/file/d/151Od_gYkzjqXSC2rZgRvTE4dOL-WXm_I/view" target="_blank" rel="noopener">&#x1F5FA;&#xFE0F; Carte des origines de l'eau en Vendée</a>
+          <a class="linkbtn" href="https://www.vendee-eau.fr" target="_blank" rel="noopener">&#x1F517; vendee-eau.fr</a></p>
+        </div>
+      </details>
+
+      <span class="qlabel"><span class="qn">2.2</span>Cite <strong>un lieu de captage ou une usine</strong> qui produit l'eau potable en Vendée.</span>
+      <div class="fwrap"><input class="rep" id="a2-captage" type="text" placeholder="ex. la Bultière"></div>
+    </div>
+  </section>
+
+  <!-- ──────────── 3. COMMENT L'EAU DEVIENT-ELLE POTABLE ? ──────────── -->
+  <section class="step" id="sec3">
+    <div class="sthdr" onclick="toggleSec('sec3')">
+      <div class="num">3</div><h3>Comment l'eau devient-elle potable&nbsp;?</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <span class="qlabel"><span class="qn">3.1</span>Complète la définition : une eau potable est une eau…</span>
+      <div class="fwrap">
+        <textarea class="rep" id="a3-potable" placeholder="Une eau potable est une eau que l'on peut…"></textarea>
+      </div>
+
+      <span class="qlabel"><span class="qn">3.2</span>Remets les 4 étapes du traitement <strong>dans l'ordre</strong> avec les flèches, puis relie chaque étape à sa <strong>solution technique</strong>.</span>
+      <div class="hint">Utilise les boutons &#x25B2; et &#x25BC; pour déplacer une étape. L'étape n°1 est celle qui arrive en premier dans l'usine.</div>
+      <ol class="ordre" id="ord-pot"></ol>
+      <div class="btnrow"><button class="btnck" onclick="checkPot()">Vérifier le traitement</button></div>
+      <div class="result" id="pot-res"></div>
+
+      <details class="res">
+        <summary>&#x1F4A1; Un coup de pouce sur les quatre étapes</summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Coagulation-floculation</b> : on <em>injecte des réactifs</em> (charbon actif, chlorure ferrique, polymères) pour coller entre elles les petites particules en suspension.</li>
+            <li><b>Décantation</b> : l'eau est <em>au repos</em>. Devenues plus lourdes, les particules tombent au fond du bassin.</li>
+            <li><b>Filtration</b> : l'eau <em>traverse un lit de sable</em> qui retient les dernières impuretés.</li>
+            <li><b>Désinfection</b> : on <em>ajoute du chlore</em> pour que l'eau reste saine jusqu'au robinet.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ──────────── 4. COMMENT L'EAU ARRIVE-T-ELLE AU ROBINET ? ──────────── -->
+  <section class="step" id="sec4">
+    <div class="sthdr" onclick="toggleSec('sec4')">
+      <div class="num">4</div><h3>Comment l'eau arrive-t-elle au robinet&nbsp;?</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Après l'usine, l'eau potable est <strong>stockée</strong> avant d'être distribuée. C'est ce stockage
+        en hauteur qui donne la <strong>pression</strong> dans les canalisations… et donc au robinet.
+      </div>
+
+      <span class="qlabel"><span class="qn">4.1</span>Nomme les trois éléments qui acheminent l'eau de l'usine jusqu'à l'utilisateur, dans l'ordre.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th>1<sup>er</sup> élément</th><th>2<sup>e</sup> élément</th><th>3<sup>e</sup> élément</th></tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="a4-elem1" type="text" placeholder="où l'eau est stockée…"></div></td>
+            <td><div class="fwrap"><input class="rep" id="a4-elem2" type="text" placeholder="ce qui fait monter l'eau…"></div></td>
+            <td><div class="fwrap"><input class="rep" id="a4-elem3" type="text" placeholder="ce qui la stocke en hauteur…"></div></td>
+          </tr>
+        </table>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkElements()">Vérifier les trois éléments</button></div>
+      <div class="result" id="elem-res"></div>
+
+      <span class="qlabel"><span class="qn">4.2</span>Quelle est la <strong>fonction d'usage</strong> du château d'eau&nbsp;?</span>
+      <div class="hint">Une fonction d'usage commence par un verbe à l'infinitif : « permettre de… ».</div>
+      <div class="fwrap">
+        <textarea class="rep" id="a4-chateau" placeholder="Le château d'eau permet de…"></textarea>
+      </div>
+
+      <span class="qlabel"><span class="qn">4.3</span>Remets dans l'ordre le <strong>cycle domestique de l'eau</strong>, du milieu naturel jusqu'au retour dans la nature.</span>
+      <ol class="ordre" id="ord-cycle"></ol>
+      <div class="btnrow"><button class="btnck" onclick="checkCycle()">Vérifier le cycle</button></div>
+      <div class="result" id="cycle-res"></div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        L'eau suit un voyage : <b>captage</b> (nappe, source, cours d'eau) → <b>potabilisation</b>
+        (coagulation-floculation, décantation, filtration, désinfection) → <b>stockage</b> (château d'eau,
+        qui donne la pression) → <b>robinet</b>. L'eau potable est une ressource <b>limitée et précieuse</b> :
+        il faut éviter de la gaspiller.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       ACTIVITÉ 2 — COMBIEN COÛTE L'EAU, OÙ LA GASPILLE-T-ON ?
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="acte">
+    <div class="n">2</div>
+    <div>
+      <h2>Activité 2 — Combien coûte l'eau, où la gaspille-t-on&nbsp;?</h2>
+      <div class="pb">Problématique : combien coûte l'eau que nous consommons, et où la gaspillons-nous&nbsp;?</div>
+    </div>
+  </div>
+
+  <!-- ──────────── 5. ESTIMER SA CONSOMMATION ──────────── -->
+  <section class="step" id="sec5">
+    <div class="sthdr" onclick="toggleSec('sec5')">
+      <div class="num">5</div><h3>Estimer sa consommation</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; À faire en binôme</span>
+        <a class="linkbtn" href="https://www.eaudeparis.fr/simulateur" target="_blank" rel="noopener">&#x1F5A5;&#xFE0F; Simulateur de consommation d'eau</a>
+        <p>Répondez au simulateur en binôme avec les habitudes de l'un de vous deux, puis notez le résultat ci-dessous.</p>
+      </div>
+
+      <div class="cbline">
+        <input type="checkbox" id="b1-simu">
+        <label for="b1-simu">Nous avons utilisé le simulateur en binôme.</label>
+      </div>
+
+      <span class="qlabel"><span class="qn">5.1</span>Note la consommation annuelle estimée.</span>
+      <div class="fwrap" style="max-width:280px">
+        <input class="rep" id="b1-conso" type="text" inputmode="decimal" placeholder="ex. 48" data-nomic>
+      </div>
+      <div class="hint">En mètres cubes par an (m³/an). Repère : environ 45 à 55 m³ par personne et par an.</div>
+
+      <span class="qlabel"><span class="qn">5.2</span>Complète la répartition de la consommation d'eau à la maison, en pourcentage.</span>
+      <div class="hint">Le total doit faire 100 %. Le document Ouest-France te donne les valeurs moyennes en France.</div>
+      <div class="repart" id="repartbox"></div>
+      <div class="somme" id="somme">Total : <b id="somme-v">0</b> %</div>
+      <div class="btnrow"><button class="btnck" onclick="checkRepartition()">Vérifier ma répartition</button></div>
+      <div class="result" id="rep-res"></div>
+    </div>
+  </section>
+
+  <!-- ──────────── 6. LIRE UNE FACTURE D'EAU ──────────── -->
+  <section class="step" id="sec6">
+    <div class="sthdr" onclick="toggleSec('sec6')">
+      <div class="num">6</div><h3>Lire une facture d'eau</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="reslinks">
+        <span class="rl-lb">&#x1F50E; Le document à lire</span>
+        <a class="linkbtn" href="https://drive.google.com/file/d/1j_sCGEsD8WDE3yI8pN0ZGpBD4EeubmBc/view" target="_blank" rel="noopener">&#x1F4C4; La facture d'eau (recto)</a>
+        <a class="linkbtn" href="https://drive.google.com/file/d/10fI7Ye49h2sLaifnLTkS5NwF_K49eO9i/view" target="_blank" rel="noopener">&#x1F4C4; La facture détaillée (verso)</a>
+        <p>Facture semestrielle de M. Dupont, à Essarts-en-Bocage — SUEZ pour le compte de Vendée Eau.</p>
+      </div>
+
+      <span class="qlabel"><span class="qn">6.1</span>Relève sur la facture le <strong>prix unitaire HT de l'eau</strong> pour le 1<sup>er</sup> semestre 2025.</span>
+      <div class="fwrap" style="max-width:280px">
+        <input class="rep" id="b2-prix" type="text" inputmode="decimal" placeholder="… € / m³" data-nomic>
+      </div>
+      <div class="btnrow"><button class="btnck" onclick="checkPrix()">Vérifier le prix</button></div>
+      <div class="result" id="prix-res"></div>
+
+      <span class="qlabel"><span class="qn">6.2</span>Complète les <strong>données</strong> de la feuille de calcul (cellules B2 à B6).</span>
+      <div class="lesson">
+        Cette feuille de calcul estime <strong>ta facture d'eau pour une année</strong>.
+        <ul>
+          <li><strong>B2</strong> : <strong>ta</strong> consommation — recopie le résultat du simulateur (question 5.1).</li>
+          <li><strong>B3 à B6</strong> : à <strong>relever sur la facture</strong> de M. Dupont (recto et verso). Les libellés
+              de la colonne A reprennent ceux de la facture : cherche la même expression sur le document.</li>
+        </ul>
+        Attention pour <strong>B5</strong> : la facture ne couvre que <strong>six mois</strong>, alors que ta feuille
+        calcule <strong>une année</strong>.
+      </div>
+      <div class="tscroll">
+        <table class="ss">
+          <thead><tr><th class="rh"></th><th style="width:52%">A</th><th>B</th></tr></thead>
+          <tbody>
+            <tr><td class="rh">1</td><td class="lbl">Libellé</td><td class="lbl" style="text-align:center">Valeur</td></tr>
+            <tr><td class="rh">2</td><td class="lbl">Consommation sur l'année (m³)</td><td class="cell data"><input id="B2" placeholder="ta valeur du 5.1" inputmode="decimal" data-nomic></td></tr>
+            <tr><td class="rh">3</td><td class="lbl">Consommation Vendée Eau — prix unitaire HT (€/m³)</td><td class="cell data"><input id="B3" placeholder="sur la facture" inputmode="decimal" data-nomic></td></tr>
+            <tr><td class="rh">4</td><td class="lbl">Redevances Agence de l'eau (€/m³)</td><td class="cell data"><input id="B4" placeholder="sur la facture" inputmode="decimal" data-nomic></td></tr>
+            <tr><td class="rh">5</td><td class="lbl">Abonnement pour l'année (€)</td><td class="cell data"><input id="B5" placeholder="sur la facture" inputmode="decimal" data-nomic></td></tr>
+            <tr><td class="rh">6</td><td class="lbl">TVA (%)</td><td class="cell data"><input id="B6" placeholder="sur la facture" inputmode="decimal" data-nomic></td></tr>
+            <tr><td class="rh">7</td><td class="lbl">Total eau (€)</td><td class="cell formula" id="td-B7"><input id="B7" placeholder="= …" data-nomic><span class="chip" id="cB7"></span></td></tr>
+            <tr><td class="rh">8</td><td class="lbl">Total des redevances (€)</td><td class="cell formula" id="td-B8"><input id="B8" placeholder="= …" data-nomic><span class="chip" id="cB8"></span></td></tr>
+            <tr><td class="rh">9</td><td class="lbl">Sous-total HT (€)</td><td class="cell formula" id="td-B9"><input id="B9" placeholder="= …" data-nomic><span class="chip" id="cB9"></span></td></tr>
+            <tr><td class="rh">10</td><td class="lbl">Montant de la TVA (€)</td><td class="cell formula" id="td-B10"><input id="B10" placeholder="= …" data-nomic><span class="chip" id="cB10"></span></td></tr>
+            <tr><td class="rh">11</td><td class="lbl">TOTAL TTC (€)</td><td class="cell formula ttc" id="td-B11"><input id="B11" placeholder="= …" data-nomic><span class="chip" id="cB11"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="btnrow" style="margin-top:10px">
+        <button class="btnck sec" onclick="reporterConso()">&#x2193; Reprendre ma consommation du 5.1</button>
+        <button class="btnck" onclick="checkDonnees()">Vérifier mes données</button>
+      </div>
+      <div class="result" id="don-res"></div>
+
+      <div class="lesson" style="margin-top:18px">
+        <strong>HT, TVA, TTC : de quoi parle-t-on&nbsp;?</strong>
+        <ul>
+          <li><strong>HT</strong> = <strong>hors taxes</strong> : le prix du service seul, ce que touche l'entreprise qui
+              produit et distribue l'eau.</li>
+          <li>La <strong>TVA</strong> (taxe sur la valeur ajoutée) est un <strong>impôt</strong> ajouté à ce prix. L'entreprise
+              la collecte sur la facture puis la reverse à l'État : elle ne la garde pas. On l'exprime en
+              <strong>pourcentage</strong> du montant HT — un taux de 5,5 % veut dire <strong>5,50 € de taxe pour 100 € HT</strong>.</li>
+          <li><strong>TTC</strong> = <strong>toutes taxes comprises</strong> : le montant HT augmenté de la TVA. C'est la somme
+              que le client paie réellement.</li>
+        </ul>
+        L'eau potable est un produit de première nécessité : elle bénéficie d'un <strong>taux réduit</strong>, bien plus bas
+        que les 20 % appliqués à la plupart des produits.
+      </div>
+
+      <span class="qlabel"><span class="qn">6.3</span>Dans la feuille ci-dessus, écris les <strong>formules</strong> des cellules B7 à B11.</span>
+      <div class="lesson">
+        Une formule commence toujours par le signe <strong>=</strong> et renvoie aux <strong>références</strong> des cellules
+        (B2, B3…) au lieu de recopier les nombres à la main : si une donnée change, tout le calcul se met à jour tout seul.
+        <div class="exemple">
+          <strong>Exemple, sur une tout autre feuille</strong> — <code>A1</code> contient le nombre de crayons (12) et
+          <code>A2</code> le prix d'un crayon (0,80 €). Pour obtenir la dépense, on n'écrit pas 9,6 : on écrit
+          <code>=A1*A2</code>. Change le 12 en 20, le total suit.
+        </div>
+      </div>
+      <div class="aide">
+        <div class="at">&#x1F4A1; Coup de pouce &mdash; clique sur la cellule qui te bloque</div>
+        <div class="aide-bts">
+          <button type="button" class="aidebt" id="aide-B7"  onclick="coupDePouce('B7')">B7</button>
+          <button type="button" class="aidebt" id="aide-B8"  onclick="coupDePouce('B8')">B8</button>
+          <button type="button" class="aidebt" id="aide-B9"  onclick="coupDePouce('B9')">B9</button>
+          <button type="button" class="aidebt" id="aide-B10" onclick="coupDePouce('B10')">B10</button>
+          <button type="button" class="aidebt" id="aide-B11" onclick="coupDePouce('B11')">B11</button>
+        </div>
+        <div class="aide-msg" id="aide-msg">Un 1<sup>er</sup> clic t'explique la ligne avec des mots. Un 2<sup>e</sup> clic
+          sur la même cellule te dit <em>quelles</em> cellules interviennent. La formule, c'est toi qui l'écris.</div>
+      </div>
+      <div class="btnrow" style="margin-top:12px">
+        <button class="btnck" onclick="checkTableur()">Vérifier mes formules</button>
+        <button class="btnck sec" onclick="testerFacture()">&#x1F9FE; Tester mes formules sur la vraie facture</button>
+      </div>
+      <div class="result" id="ss-res"></div>
+
+      <span class="qlabel"><span class="qn">6.4</span>Donne le <strong>montant TTC</strong> de ta facture d'eau estimée pour une année.</span>
+      <div class="fwrap" style="max-width:280px">
+        <input class="rep" id="b2-ttc" type="text" inputmode="decimal" placeholder="… €" data-nomic>
+      </div>
+      <div class="hint">C'est le résultat affiché en B11 : il dépend de ta propre consommation, il est donc différent de celui de ton voisin.</div>
+
+      <span class="qlabel"><span class="qn">6.5</span>À quoi correspondent les <strong>cellules orange</strong> de la facture&nbsp;?</span>
+      <div class="fwrap">
+        <textarea class="rep" id="b2-orange" placeholder="Les cellules orange correspondent à…"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────── 7. OÙ GASPILLE-T-ON L'EAU ? ──────────── -->
+  <section class="step" id="sec7">
+    <div class="sthdr" onclick="toggleSec('sec7')">
+      <div class="num">7</div><h3>Où gaspille-t-on l'eau&nbsp;? Quels gestes économes&nbsp;?</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        L'OMS estime qu'il faut <strong>50 litres par jour</strong> pour vivre décemment et
+        <strong>100 litres</strong> pour vivre confortablement. Au-delà, on parle de <strong>gaspillage</strong>.
+        <ul>
+          <li>Une douche : 60 à 80 L — un bain : 150 L.</li>
+          <li>Un robinet resté ouvert gaspille environ <strong>10 litres par minute</strong>.</li>
+          <li>Fabriquer un jean bon marché : jusqu'à 7 000 L d'eau prélevée et polluée.</li>
+        </ul>
+      </div>
+
+      <span class="qlabel"><span class="qn">7.1</span>Associe chaque situation de gaspillage au geste économe qui lui correspond.</span>
+      <div id="assocbox"></div>
+      <div class="btnrow"><button class="btnck" onclick="checkAssoc()">Vérifier mes associations</button></div>
+      <div class="result" id="assoc-res"></div>
+
+      <span class="qlabel"><span class="qn">7.2</span>Cite <strong>deux situations de gaspillage</strong> que tu observes autour de toi, et le geste économe correspondant.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <tr><th style="width:50%">Gaspillage</th><th>Geste économe</th></tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="b3-gasp1" type="text" placeholder="Gaspillage n°1"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b3-geste1" type="text" placeholder="Geste économe n°1"></div></td>
+          </tr>
+          <tr>
+            <td><div class="fwrap"><input class="rep" id="b3-gasp2" type="text" placeholder="Gaspillage n°2"></div></td>
+            <td><div class="fwrap"><input class="rep" id="b3-geste2" type="text" placeholder="Geste économe n°2"></div></td>
+          </tr>
+        </table>
+      </div>
+
+      <span class="qlabel"><span class="qn">7.3</span>Combien coûte un robinet qu'on laisse couler&nbsp;?</span>
+      <div class="calc">
+        <div class="l1">
+          <label for="b3-minutes">Je laisse couler le robinet</label>
+          <input id="b3-minutes" type="text" inputmode="decimal" value="" placeholder="3" data-nomic>
+          <span>minute(s) par jour (brossage des dents, savonnage des mains…).</span>
+        </div>
+        <div class="out" id="calc-out">Saisis un nombre de minutes pour voir le résultat.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────── 8. VERS UNE SOLUTION TECHNIQUE ──────────── -->
+  <section class="step" id="sec8">
+    <div class="sthdr" onclick="toggleSec('sec8')">
+      <div class="num">8</div><h3>Vers une solution technique</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        Au robinet, l'eau coule souvent pour rien : pendant le savonnage, quand le robinet est mal fermé,
+        ou dans les sanitaires d'un collège où chacun passe très vite. Nous cherchons donc un
+        <strong>objet technique</strong> qui répond à ce besoin.
+      </div>
+
+      <span class="qlabel"><span class="qn">8.1</span>Quel objet technique limiterait le mieux ce gaspillage dans les sanitaires du collège&nbsp;?</span>
+      <div class="qcm" id="qcmbox"></div>
+      <div class="btnrow"><button class="btnck" onclick="checkQcm()">Vérifier ma réponse</button></div>
+      <div class="result" id="qcm-res"></div>
+
+      <span class="qlabel"><span class="qn">8.2</span>Explique ton choix : de quel objet technique aurait-on besoin, et pourquoi&nbsp;?</span>
+      <div class="fwrap">
+        <textarea class="rep" id="b4-objet" placeholder="On aurait besoin d'un… parce que…" style="min-height:80px"></textarea>
+      </div>
+
+      <span class="qlabel"><span class="qn">8.3</span>Bilan de la séquence : qu'as-tu appris sur l'eau et sur son coût&nbsp;?</span>
+      <div class="fwrap">
+        <textarea class="rep" id="b4-bilan" placeholder="J'ai appris que… Ce qui m'a le plus étonné, c'est…" style="min-height:88px"></textarea>
+      </div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        L'eau a un <b>coût</b> (eau + assainissement + abonnement + taxes) et notre consommation va surtout
+        à l'<b>hygiène</b> et à la <b>chasse d'eau</b>. On réduit la consommation par des <b>gestes</b>
+        et par des <b>objets techniques économes</b> : c'est le besoin que nous allons étudier — un robinet
+        qui économise l'eau.
+      </div>
+    </div>
+  </section>
+
+  <div class="sendst" id="send-status"></div>
+
+</main>
+
+<div class="sendbar">
+  <div class="sendbar-in">
+    <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" onclick="reprendreDernierEnvoi()" title="Recharge la fiche depuis le dernier travail envoyé au professeur">&#x21A9;&#xFE0F; Reprendre mon envoi</button>
+    <button class="btn btn-sec" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+    <button class="btn btn-sec" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; Copie de secours</button>
+    <button class="btn btn-send" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   P11 — L'EAU, RESSOURCE ESSENTIELLE (4e) — Collège Saint Pierre
+   Activités 1 (Le voyage de l'eau) et 2 (Combien coûte l'eau ?).
+   Questions, quiz auto-corrigés, remises en ordre, mini-tableur,
+   dictée vocale, envoi au tableau de bord professeur.
+   Backend partagé avec index.html (Apps Script).
+   ════════════════════════════════════════════════════════════════ */
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "eau4e";
+var CAP_LABEL   = "P11 4e — L'eau, ressource essentielle";
+var PREFILL_KEY = "eau4e_prefill";
+var QUEUE_KEY   = "eau4e_offline_queue";
+var DRAFT_PFX   = "eau4e_draft_";
+
+/* Identité de l'élève (transmise par le site via localStorage, même origine) */
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ── Champs texte suivis (progression + sauvegarde) ── */
+var FIELD_IDS = [
+  "a1-eco",
+  "a2-orig1","a2-orig2","a2-orig3","a2-captage",
+  "a3-potable",
+  "a4-elem1","a4-elem2","a4-elem3","a4-chateau",
+  "b1-conso","b1-hyg","b1-chasse","b1-linge","b1-vaisselle","b1-autres",
+  "b2-prix","b2-ttc","b2-orange",
+  "b3-gasp1","b3-geste1","b3-gasp2","b3-geste2","b3-minutes",
+  "b4-objet","b4-bilan"
+];
+/* Cellules du mini-tableur : données à relever + formules à écrire */
+var SS_DATA    = ["B2","B3","B4","B5","B6"];
+var SS_FORMULA = ["B7","B8","B9","B10","B11"];
+/* Valeurs attendues pour les données relevées sur la facture (B2 vient du simulateur).
+   Elles ne sont jamais affichées à l'élève : elles servent à orienter son regard sur le document. */
+var SS_REPERES = {
+  B3:{ v:1.162, tol:0.006, ou:"verso, ligne « Consommation Vendée Eau — tarif Bleu 1<sup>er</sup> semestre 2025 », colonne « Prix unitaire € HT ». La ligne du dessus (1,17 €) est celle du semestre précédent." },
+  B4:{ v:0.408, tol:0.006, ou:"verso, bloc « Redevances Agence de l'eau » : additionne les prix unitaires des lignes de ce bloc (prélèvement, consommation, performance des réseaux)." },
+  B5:{ v:86,    tol:1,     ou:"recto ou verso, ligne « Abonnement ». Pense que la facture couvre un semestre et que ta feuille calcule une année." },
+  B6:{ v:5.5,   tol:0.05,  ou:"bas de la facture, bloc « TVA » : c'est le taux en %, pas le montant en euros." }
+};
+/* Cellules attendues dans chaque formule — sert aux coups de pouce et au diagnostic,
+   jamais à afficher la formule elle-même. */
+var SS_CELLULES = { B7:["B2","B3"], B8:["B2","B4"], B9:["B5","B7","B8"], B10:["B6","B9"], B11:["B9","B10"] };
+/* Aide graduée : deux crans, pas un de plus. */
+var SS_AIDE = {
+  B7:["Sur la facture, l'eau est vendue à un certain prix pour chaque mètre cube. Ici, on cherche ce que coûtent, en tout, les mètres cubes consommés dans l'année.",
+      "Deux cellules interviennent : <strong>B2</strong> et <strong>B3</strong>."],
+  B8:["Les redevances de l'Agence de l'eau se comptent elles aussi pour chaque mètre cube consommé, exactement comme l'eau.",
+      "Deux cellules interviennent : <strong>B2</strong> et <strong>B4</strong>."],
+  B9:["Le sous-total HT rassemble tout ce que l'on paie avant la taxe : l'eau, les redevances, et la part fixe que l'on paie même en consommant peu.",
+      "Trois cellules interviennent : <strong>B7</strong>, <strong>B8</strong> et <strong>B5</strong>."],
+  B10:["La TVA n'est pas un montant fixe : c'est une part du sous-total HT, exprimée en pourcentage. 5,5 % signifie 5,50 € pour 100 € HT.",
+      "Deux cellules interviennent : <strong>B9</strong> et <strong>B6</strong> — et B6 est un pourcentage, pas des euros."],
+  B11:["Le montant TTC, c'est ce que le client paie vraiment : le sous-total hors taxes, auquel on ajoute la taxe.",
+      "Deux cellules interviennent : <strong>B9</strong> et <strong>B10</strong>."]
+};
+/* Nombre de coups de pouce ouverts par cellule (remonté au professeur) */
+var AIDES = { B7:0, B8:0, B9:0, B10:0, B11:0 };
+var SS_SAUVE = null;   /* valeurs personnelles mises de côté pendant le test « vraie facture » */
+
+/* ── Libellés lisibles (résumé côté professeur) ── */
+var QUESTION_GROUPS = [
+  { titre:"A1 — 1. Une ressource précieuse", items:[
+    ["a1-eco","Pourquoi économiser l'eau potable"]]},
+  { titre:"A1 — 2. D'où provient l'eau", items:[
+    ["a2-orig1","Origine 1"],["a2-orig2","Origine 2"],["a2-orig3","Origine 3"],
+    ["a2-captage","Captage ou usine en Vendée"]]},
+  { titre:"A1 — 3. L'eau potable", items:[
+    ["a3-potable","Définition d'une eau potable"]]},
+  { titre:"A1 — 4. Jusqu'au robinet", items:[
+    ["a4-elem1","Élément 1"],["a4-elem2","Élément 2"],["a4-elem3","Élément 3"],
+    ["a4-chateau","Fonction d'usage du château d'eau"]]},
+  { titre:"A2 — 5. Estimer sa consommation", items:[
+    ["b1-simu","Simulateur utilisé en binôme"],["b1-conso","Consommation annuelle (m³)"],
+    ["b1-hyg","Hygiène corporelle (%)"],["b1-chasse","Chasse d'eau (%)"],["b1-linge","Linge (%)"],
+    ["b1-vaisselle","Vaisselle (%)"],["b1-autres","Autres (%)"]]},
+  { titre:"A2 — 6. Lire une facture d'eau", items:[
+    ["b2-prix","Prix unitaire HT (€/m³)"],
+    ["B2","Donnée B2 — Consommation sur l'année (m³)"],["B3","Donnée B3 — Prix unitaire HT (€/m³)"],
+    ["B4","Donnée B4 — Redevances Agence de l'eau (€/m³)"],["B5","Donnée B5 — Abonnement pour l'année (€)"],
+    ["B6","Donnée B6 — TVA (%)"],
+    ["B7","Formule B7 — Total eau"],["B8","Formule B8 — Total des redevances"],
+    ["B9","Formule B9 — Sous-total HT"],["B10","Formule B10 — Montant TVA"],["B11","Formule B11 — Total TTC"],
+    ["b2-ttc","Montant TTC de la facture estimée"],["b2-orange","Cellules orange de la facture"]]},
+  { titre:"A2 — 7. Gaspillage et gestes économes", items:[
+    ["b3-gasp1","Gaspillage 1"],["b3-geste1","Geste économe 1"],
+    ["b3-gasp2","Gaspillage 2"],["b3-geste2","Geste économe 2"],
+    ["b3-minutes","Robinet laissé ouvert (min/jour)"]]},
+  { titre:"A2 — 8. Vers une solution technique", items:[
+    ["b4-qcm","Objet technique choisi (QCM)"],["b4-objet","Justification du choix"],["b4-bilan","Bilan"]]}
+];
+
+/* ════════════ OUTILS ════════════ */
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? String(e.value||"").trim() : ""; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function slug(s){
+  return String(s||"").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+/* Comparaison souple : sans accent, sans majuscule, sans ponctuation.
+   Une réponse juste mal orthographiée en accents reste juste. */
+function norm(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+}
+function nombre(s){
+  var v = parseFloat(String(s||"").replace(",", ".").replace(/[^0-9.\-]/g, ""));
+  return isNaN(v) ? null : v;
+}
+function afficher(id, ok, html){
+  var b = $(id);
+  if (!b) return;
+  b.className = "result show " + (ok ? "good" : "bad");
+  b.innerHTML = html;
+}
+
+/* ════════════ PLIAGE DES SECTIONS ════════════ */
+function toggleSec(id){ var s=$(id); if(s) s.classList.toggle("closed"); }
+function toggleAll(){
+  var secs = document.querySelectorAll("section.step");
+  var anyOpen = false;
+  for (var i=0;i<secs.length;i++) if (!secs[i].classList.contains("closed")) anyOpen = true;
+  for (var j=0;j<secs.length;j++) secs[j].classList.toggle("closed", anyOpen);
+}
+
+/* ════════════ DICTÉE VOCALE (Web Speech API) ════════════ */
+var _micActive = null;
+function addMicButtons(){
+  var fields = document.querySelectorAll("textarea.rep, input.rep[type=text]");
+  for (var i=0;i<fields.length;i++){
+    var f = fields[i];
+    if (f.hasAttribute("data-nomic")) continue;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "micbtn";
+    b.id = "mic-" + f.id;
+    b.innerHTML = "&#x1F3A4; Dicter";
+    b.setAttribute("data-nolecture", "");
+    b.onclick = (function(tid, bid){ return function(){ toggleDictation(tid, bid); }; })(f.id, b.id);
+    f.parentNode.appendChild(b);
+  }
+}
+function toggleDictation(targetId, btnId){
+  /* On ne dicte pas par-dessus la lecture à voix haute. */
+  try { if (window.LectureImmersive && LectureImmersive.actif()) LectureImmersive.stop(); } catch(e){}
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
+          "(touche &#x1F3A4; en bas du clavier) ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
+  if (_micActive && _micActive.btnId === btnId){ try{ _micActive.recog.stop(); }catch(e){} return; }
+  if (_micActive){ try{ _micActive.recog.stop(); }catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(targetId);
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arrêter"; }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", interim = "";
+
+  recog.onresult = function(e){
+    interim = "";
+    var fin = base;
+    for (var i=e.resultIndex;i<e.results.length;i++){
+      if (e.results[i].isFinal){
+        fin += (fin && !/\s$/.test(fin) ? " " : "") + e.results[i][0].transcript;
+        base = fin;
+      } else interim = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (interim ? " " + interim : ""); markFilled(ta); }
+  };
+  function stopMic(){
+    if (ta && interim){ ta.value = base; markFilled(ta); }
+    _micActive = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+    updateProgress(); saveDraft();
+  }
+  recog.onerror = function(e){
+    stopMic();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = stopMic;
+  try { recog.start(); _micActive = { recog:recog, btnId:btnId }; }
+  catch(e){ stopMic(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function markFilled(el){
+  if (!el || !el.classList) return;
+  el.classList.toggle("filled", String(el.value||"").trim().length > 0);
+}
+function countFilled(){
+  var n = 0, i;
+  for (i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) n++;
+  for (i=0;i<VF.length;i++) if (vfAns[i]) n++;
+  /* Une remise en ordre compte dès que l'élève a déplacé quelque chose :
+     l'ordre de départ est volontairement faux, il n'est donc pas une réponse. */
+  if (ordrePot.join(",")   !== ORDRE_POT_INIT)   n++;
+  if (ordreCycle.join(",") !== ORDRE_CYCLE_INIT) n++;
+  for (i=0;i<POT.length;i++) if (solAns[POT[i].k]) n++;
+  for (i=0;i<SS_DATA.length;i++)    if (val(SS_DATA[i])) n++;
+  for (i=0;i<SS_FORMULA.length;i++) if (val(SS_FORMULA[i])) n++;
+  for (i=0;i<ASSOC.length;i++) if (assocAns[i]) n++;
+  if (qcmAns) n++;
+  if ($("b1-simu") && $("b1-simu").checked) n++;
+  return n;
+}
+function totalFields(){
+  return FIELD_IDS.length + VF.length + 1 + POT.length + 1 +
+         SS_DATA.length + SS_FORMULA.length + ASSOC.length + 1 + 1;
+}
+function updateProgress(){
+  var done = countFilled(), tot = totalFields();
+  $("pbar-fill").style.width = Math.round(done/tot*100) + "%";
+  $("pcount").textContent = done + " / " + tot + " réponses";
+}
+
+/* ════════════ 1 — VRAI / FAUX ════════════ */
+var VF = [
+  { t:"Moins de 1 % de l'eau de la planète est de l'eau douce facilement accessible.", a:"v",
+    x:"Vrai : la Terre est couverte à 70 % d'eau, mais presque toute cette eau est salée." },
+  { t:"L'eau qui sort d'une station d'épuration est potable.", a:"f",
+    x:"Faux : elle est dépolluée, donc rendue au milieu naturel sans le dégrader — mais elle n'est pas buvable." },
+  { t:"Pour se laver, une douche consomme moins d'eau qu'un bain.", a:"v",
+    x:"Vrai : environ 60 à 80 L pour une douche, contre 150 L pour un bain." },
+  { t:"Les urines contiennent un polluant appelé azote.", a:"v",
+    x:"Vrai : l'azote est très nocif pour le milieu naturel quand il y est rejeté en grande quantité." },
+  { t:"Dans une station d'épuration, le dégrillage sert à enlever les graisses.", a:"f",
+    x:"Faux : le dégrillage retient les gros déchets (bouteilles, sacs, branches). Les graisses partent au dégraissage." }
+];
+var vfAns = {};
+function buildVF(){
+  var box = $("vfbox"); if (!box) return;
+  var h = "";
+  for (var i=0;i<VF.length;i++){
+    h += '<div class="vfline" id="vf-' + i + '">' +
+           '<span class="txt">' + esc(VF[i].t) + '</span>' +
+           '<span class="opts">' +
+             '<button type="button" class="opt" onclick="pickVF(' + i + ',\'v\',this)">Vrai</button>' +
+             '<button type="button" class="opt" onclick="pickVF(' + i + ',\'f\',this)">Faux</button>' +
+           '</span>' +
+           '<span class="fb" id="vffb-' + i + '"></span>' +
+         '</div>';
+  }
+  box.innerHTML = h;
+}
+function pickVF(i, v, btn){
+  vfAns[i] = v;
+  var opts = btn.parentNode.querySelectorAll(".opt");
+  for (var k=0;k<opts.length;k++) opts[k].classList.remove("sel");
+  btn.classList.add("sel");
+  var l = $("vf-"+i); if (l) l.classList.remove("ok","ko");
+  var f = $("vffb-"+i); if (f) f.textContent = "";
+  updateProgress(); saveDraft();
+}
+function checkVF(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<VF.length;i++){
+    var l = $("vf-"+i), f = $("vffb-"+i);
+    l.classList.remove("ok","ko"); f.className = "fb"; f.textContent = "";
+    if (!vfAns[i]) continue;
+    rep++;
+    var bon = vfAns[i] === VF[i].a;
+    if (bon) ok++;
+    l.classList.add(bon ? "ok" : "ko");
+    f.classList.add(bon ? "ok" : "ko");
+    f.textContent = (bon ? "✅ " : "❌ ") + VF[i].x;
+  }
+  if (!rep){ afficher("vf-res", false, "Réponds d'abord à au moins une affirmation."); return; }
+  afficher("vf-res", ok === VF.length,
+    ok === VF.length ? "🎉 5 / 5 — parfait !" : "Score : " + ok + " / " + VF.length + ". Relis les explications, puis corrige.");
+}
+
+/* ════════════ 2 — LES TROIS ORIGINES DE L'EAU ════════════ */
+var ORIGINES = [
+  { nom:"une source",              mots:["source"] },
+  { nom:"un cours d'eau",          mots:["cours d eau","riviere","fleuve","ruisseau","retenue","barrage","lac"] },
+  { nom:"une nappe souterraine",   mots:["nappe","souterrain","forage","puits"] }
+];
+function checkOrigines(){
+  var saisies = [val("a2-orig1"), val("a2-orig2"), val("a2-orig3")].map(norm);
+  var trouves = [], manquants = [];
+  for (var i=0;i<ORIGINES.length;i++){
+    var vu = false;
+    for (var j=0;j<saisies.length;j++){
+      if (!saisies[j]) continue;
+      for (var k=0;k<ORIGINES[i].mots.length;k++){
+        if (saisies[j].indexOf(ORIGINES[i].mots[k]) >= 0){ vu = true; break; }
+      }
+      if (vu) break;
+    }
+    (vu ? trouves : manquants).push(ORIGINES[i].nom);
+  }
+  if (!manquants.length){
+    afficher("orig-res", true, "✅ Les trois origines y sont : une source, un cours d'eau et une nappe d'eau souterraine (par forage).");
+  } else {
+    afficher("orig-res", false, "Il te manque encore " + manquants.length + " origine(s). Indice : l'eau peut sortir " +
+      "toute seule du sol, couler à l'air libre, ou être cachée sous nos pieds.");
+  }
+}
+
+/* ════════════ 3 — POTABILISATION : ORDRE + SOLUTION TECHNIQUE ════════════ */
+var POT = [
+  { k:"coag",   nom:"Coagulation-floculation", sol:"reactifs" },
+  { k:"decant", nom:"Décantation",             sol:"repos" },
+  { k:"filtr",  nom:"Filtration",              sol:"sable" },
+  { k:"desinf", nom:"Désinfection",            sol:"chlore" }
+];
+var POT_SOLS = [
+  ["reactifs","Injection de réactifs"],
+  ["repos","Repos de l'eau"],
+  ["sable","L'eau traverse du sable"],
+  ["chlore","Ajout de chlore"]
+];
+/* Ordre affiché au départ : volontairement mélangé (pas l'ordre attendu). */
+var ordrePot = ["desinf","coag","decant","filtr"];
+var ORDRE_POT_INIT = ordrePot.join(",");
+var solAns = {};
+
+/* ════════════ 4 — LE CYCLE DOMESTIQUE DE L'EAU ════════════ */
+var CYCLE = [
+  { k:"captage",  nom:"Captage",              det:"source, cours d'eau ou nappe souterraine" },
+  { k:"usine",    nom:"Usine de potabilisation", det:"l'eau est rendue propre à la consommation" },
+  { k:"chateau",  nom:"Château d'eau",        det:"stockage en hauteur, qui donne la pression" },
+  { k:"robinet",  nom:"Robinet",              det:"l'eau est utilisée à la maison" },
+  { k:"egouts",   nom:"Égouts et collecteurs",det:"les eaux usées sont emportées" },
+  { k:"epuration",nom:"Station d'épuration",  det:"les eaux usées sont dépolluées, puis rendues au milieu naturel" }
+];
+var CYCLE_COR = ["captage","usine","chateau","robinet","egouts","epuration"];
+var ordreCycle = ["robinet","egouts","captage","epuration","chateau","usine"];
+var ORDRE_CYCLE_INIT = ordreCycle.join(",");
+
+/* Construction générique d'une liste à remettre en ordre.
+   Pas de glisser-déposer : deux flèches suffisent, à la souris, au doigt
+   et au clavier — c'est aussi plus sûr en cas de dyspraxie. */
+function renderOrdre(boxId, ordre, source, avecSelect){
+  var box = $(boxId); if (!box) return;
+  var h = "";
+  for (var i=0;i<ordre.length;i++){
+    var it = null;
+    for (var j=0;j<source.length;j++) if (source[j].k === ordre[i]) it = source[j];
+    if (!it) continue;
+    h += '<li id="' + boxId + '-' + it.k + '">' +
+           '<span class="nom">' + esc(it.nom) + (it.det ? '<small>' + esc(it.det) + '</small>' : '') + '</span>';
+    if (avecSelect){
+      h += '<select id="sol-' + it.k + '" onchange="pickSol(\'' + it.k + '\',this.value)" aria-label="Solution technique de l\'étape ' + esc(it.nom) + '">' +
+             '<option value="">— solution technique —</option>';
+      for (var s=0;s<POT_SOLS.length;s++){
+        h += '<option value="' + POT_SOLS[s][0] + '"' + (solAns[it.k] === POT_SOLS[s][0] ? " selected" : "") + '>' + esc(POT_SOLS[s][1]) + '</option>';
+      }
+      h += '</select>';
+    }
+    h += '<span class="mv">' +
+           '<button type="button" title="Monter" aria-label="Monter" onclick="bougerOrdre(\'' + boxId + '\',' + i + ',-1)"' + (i === 0 ? " disabled" : "") + '>&#x25B2;</button>' +
+           '<button type="button" title="Descendre" aria-label="Descendre" onclick="bougerOrdre(\'' + boxId + '\',' + i + ',1)"' + (i === ordre.length-1 ? " disabled" : "") + '>&#x25BC;</button>' +
+         '</span></li>';
+  }
+  box.innerHTML = h;
+}
+function bougerOrdre(boxId, i, d){
+  var ordre = (boxId === "ord-pot") ? ordrePot : ordreCycle;
+  var j = i + d;
+  if (j < 0 || j >= ordre.length) return;
+  var t = ordre[i]; ordre[i] = ordre[j]; ordre[j] = t;
+  if (boxId === "ord-pot") renderOrdre("ord-pot", ordrePot, POT, true);
+  else renderOrdre("ord-cycle", ordreCycle, CYCLE, false);
+  var res = $(boxId === "ord-pot" ? "pot-res" : "cycle-res");
+  if (res) res.className = "result";
+  saveDraft();
+}
+function pickSol(k, v){
+  if (v) solAns[k] = v; else delete solAns[k];
+  var li = $("ord-pot-"+k); if (li) li.classList.remove("ok","ko");
+  updateProgress(); saveDraft();
+}
+function checkPot(){
+  var ordreOk = 0, solOk = 0, i;
+  for (i=0;i<POT.length;i++){
+    var k = ordrePot[i];
+    var attendu = POT[i].k;                       /* POT est déjà dans le bon ordre */
+    var li = $("ord-pot-"+k);
+    var bonRang = (k === attendu);
+    var bonneSol = false;
+    for (var j=0;j<POT.length;j++) if (POT[j].k === k) bonneSol = (solAns[k] === POT[j].sol);
+    if (bonRang) ordreOk++;
+    if (bonneSol) solOk++;
+    if (li){
+      li.classList.remove("ok","ko");
+      li.classList.add(bonRang && bonneSol ? "ok" : "ko");
+    }
+  }
+  var parfait = (ordreOk === POT.length && solOk === POT.length);
+  afficher("pot-res", parfait,
+    parfait
+      ? "✅ Parfait : coagulation-floculation → décantation → filtration → désinfection, avec la bonne solution technique pour chacune."
+      : "Ordre : " + ordreOk + "/4 étapes bien placées — solutions techniques : " + solOk + "/4. " +
+        "Indice : on commence par rassembler les particules, on les laisse tomber, on filtre, et on désinfecte en dernier.");
+}
+function checkCycle(){
+  var ok = 0;
+  for (var i=0;i<CYCLE_COR.length;i++){
+    var li = $("ord-cycle-"+ordreCycle[i]);
+    var bon = (ordreCycle[i] === CYCLE_COR[i]);
+    if (bon) ok++;
+    if (li){ li.classList.remove("ok","ko"); li.classList.add(bon ? "ok" : "ko"); }
+  }
+  afficher("cycle-res", ok === CYCLE_COR.length,
+    ok === CYCLE_COR.length
+      ? "✅ C'est bien le cycle domestique de l'eau : captage → usine → château d'eau → robinet → égouts → station d'épuration."
+      : ok + "/6 étapes bien placées. Souviens-toi : il y a deux circuits — celui qui apporte l'eau propre, puis celui qui emporte l'eau sale.");
+}
+
+/* ════════════ 4 bis — ÉLÉMENTS JUSQU'AU ROBINET ════════════ */
+var ELEMENTS = [
+  { nom:"le réservoir (semi-enterré)", mots:["reservoir","cuve","bache"] },
+  { nom:"la pompe de relevage",        mots:["pompe","relevage","surpresseur"] },
+  { nom:"le château d'eau",            mots:["chateau"] }
+];
+function checkElements(){
+  var ids = ["a4-elem1","a4-elem2","a4-elem3"], ok = 0, details = [];
+  for (var i=0;i<ELEMENTS.length;i++){
+    var v = norm(val(ids[i])), bon = false;
+    for (var k=0;k<ELEMENTS[i].mots.length;k++) if (v && v.indexOf(ELEMENTS[i].mots[k]) >= 0) bon = true;
+    if (bon) ok++; else details.push("n°" + (i+1));
+    var el = $(ids[i]);
+    if (el) el.style.borderColor = v ? (bon ? "#1E6B3B" : "#C0392B") : "";
+  }
+  afficher("elem-res", ok === 3,
+    ok === 3
+      ? "✅ Exact : réservoir (semi-enterré) → pompe de relevage → château d'eau."
+      : ok + "/3 exact(s). À revoir : élément " + details.join(", ") + ". Indice : d'abord on stocke, puis on fait monter l'eau, puis on la stocke en hauteur.");
+}
+
+/* ════════════ 5 — RÉPARTITION DE LA CONSOMMATION ════════════ */
+var REPART = [
+  { id:"b1-hyg",       lb:"Hygiène corporelle", ref:39 },
+  { id:"b1-chasse",    lb:"Chasse d'eau",       ref:20 },
+  { id:"b1-linge",     lb:"Linge",              ref:12 },
+  { id:"b1-vaisselle", lb:"Vaisselle",          ref:10 },
+  { id:"b1-autres",    lb:"Autres",             ref:19 }
+];
+function buildRepart(){
+  var box = $("repartbox"); if (!box) return;
+  var h = "";
+  for (var i=0;i<REPART.length;i++){
+    h += '<div class="rc"><label for="' + REPART[i].id + '">' + esc(REPART[i].lb) + '</label>' +
+         '<div class="row"><input class="rep" id="' + REPART[i].id + '" type="text" inputmode="numeric" placeholder="0" data-nomic><span>%</span></div>' +
+         '<div class="jauge"><i id="jauge-' + REPART[i].id + '"></i></div></div>';
+  }
+  box.innerHTML = h;
+}
+function majRepart(){
+  var somme = 0;
+  for (var i=0;i<REPART.length;i++){
+    var v = nombre(val(REPART[i].id));
+    if (v !== null && v >= 0){ somme += v; }
+    var j = $("jauge-"+REPART[i].id);
+    if (j) j.style.width = Math.max(0, Math.min(100, v || 0)) + "%";
+  }
+  var el = $("somme-v");
+  if (el){
+    el.textContent = Math.round(somme*10)/10;
+    el.className = (Math.abs(somme - 100) <= 2) ? "ok" : (somme > 0 ? "ko" : "");
+  }
+}
+function checkRepartition(){
+  var somme = 0, proches = 0, vides = 0;
+  for (var i=0;i<REPART.length;i++){
+    var v = nombre(val(REPART[i].id));
+    if (v === null){ vides++; continue; }
+    somme += v;
+    if (Math.abs(v - REPART[i].ref) <= 8) proches++;
+  }
+  if (vides){ afficher("rep-res", false, "Complète les " + vides + " case(s) encore vides."); return; }
+  var totalOk = Math.abs(somme - 100) <= 2;
+  if (totalOk && proches === REPART.length){
+    afficher("rep-res", true, "✅ Bravo : total à 100 % et des valeurs très proches des moyennes françaises " +
+      "(hygiène ≈ 39 %, chasse d'eau ≈ 20 %, linge ≈ 12 %, vaisselle ≈ 10 %, autres ≈ 19 %).");
+  } else if (!totalOk){
+    afficher("rep-res", false, "Ton total fait " + (Math.round(somme*10)/10) + " % : il doit faire 100 %. Ajuste tes valeurs.");
+  } else {
+    afficher("rep-res", false, "Total correct, mais " + (REPART.length - proches) + " valeur(s) s'éloignent des moyennes " +
+      "(hygiène ≈ 39 %, chasse d'eau ≈ 20 %, linge ≈ 12 %, vaisselle ≈ 10 %, autres ≈ 19 %).");
+  }
+}
+
+/* ════════════ 6 — MINI-TABLEUR DE LA FACTURE ════════════ */
+function brut(ref){ return String(($(ref)||{value:""}).value || "").trim().replace(",", "."); }
+/* Évalue une cellule : une valeur, ou une formule « =B2*B3 » qui peut
+   elle-même renvoyer vers d'autres cellules (comme dans un vrai tableur). */
+function valeurCellule(ref, cache, pile){
+  if (Object.prototype.hasOwnProperty.call(cache, ref)) return cache[ref];
+  var raw = brut(ref);
+  if (raw === "") return NaN;
+  if (raw.charAt(0) === "="){
+    if (pile.indexOf(ref) >= 0){ cache[ref] = NaN; return NaN; }   /* renvoi circulaire */
+    pile.push(ref);
+    var mauvais = false;
+    var expr = raw.slice(1).toUpperCase().replace(/B[0-9]+/g, function(m){
+      var v = valeurCellule(m, cache, pile);
+      if (isNaN(v)){ mauvais = true; return "(0)"; }
+      return "(" + v + ")";
+    });
+    pile.pop();
+    var res = NaN;
+    if (!mauvais && /^[-+*/(). 0-9]+$/.test(expr)){
+      try { var r = Function("return (" + expr + ")")(); if (typeof r === "number" && isFinite(r)) res = r; } catch(e){}
+    }
+    cache[ref] = res; return res;
+  }
+  var num = parseFloat(raw);
+  cache[ref] = isNaN(num) ? NaN : num;
+  return cache[ref];
+}
+function euros(x){
+  return isNaN(x) ? "?" : x.toLocaleString("fr-FR", { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
+function recalculer(){
+  var cache = {};
+  for (var i=0;i<SS_FORMULA.length;i++){
+    var ref = SS_FORMULA[i], chip = $("c"+ref);
+    if (!chip) continue;
+    if (brut(ref) === ""){ chip.textContent = ""; continue; }
+    var v = valeurCellule(ref, cache, []);
+    chip.textContent = isNaN(v) ? "?" : euros(v) + " €";
+  }
+}
+function attendu(){
+  var B2 = parseFloat(brut("B2")) || 0, B3 = parseFloat(brut("B3")) || 0,
+      B4 = parseFloat(brut("B4")) || 0, B5 = parseFloat(brut("B5")) || 0,
+      B6 = parseFloat(brut("B6")) || 0;
+  var eau = B2*B3, ass = B2*B4, ht = eau + ass + B5, tva = ht*B6/100;
+  return { B7:eau, B8:ass, B9:ht, B10:tva, B11:ht + tva };
+}
+/* Les données sont-elles toutes saisies ? Sans elles, aucune formule ne peut être jugée. */
+function donneesCompletes(){
+  for (var i=0;i<SS_DATA.length;i++) if (brut(SS_DATA[i]) === "") return false;
+  return true;
+}
+
+/* ── 6.2 — Reprendre sa consommation du simulateur ── */
+function reporterConso(){
+  var c = val("b1-conso").replace(",", ".");
+  if (!c){
+    afficher("don-res", false, "La question 5.1 est encore vide : utilise d'abord le simulateur, puis reviens ici.");
+    return;
+  }
+  if ($("B2")){ $("B2").value = c; }
+  recalculer(); updateProgress(); saveDraft();
+  afficher("don-res", true, "Ta consommation du 5.1 (<strong>" + esc(c) + " m³</strong>) est reportée en B2. " +
+    "La feuille calcule maintenant <strong>ta</strong> facture, pas celle de M. Dupont.");
+}
+
+/* ── 6.2 — Vérification des données relevées sur la facture ── */
+function checkDonnees(){
+  var msgs = [], ok = 0, vides = 0, i, ref;
+  var b2 = parseFloat(brut("B2"));
+  if (brut("B2") === ""){
+    vides++;
+    msgs.push("<strong>B2</strong> : reporte ta consommation annuelle estimée (question 5.1).");
+  } else if (isNaN(b2) || b2 <= 0){
+    msgs.push("<strong>B2</strong> : on attend un nombre de mètres cubes.");
+  } else if (b2 < 10 || b2 > 400){
+    msgs.push("<strong>B2</strong> : " + esc(brut("B2")) + " m³ par an, c'est très loin de l'ordre de grandeur " +
+      "(45 à 55 m³ par personne et par an). Vérifie l'unité donnée par le simulateur.");
+  } else { ok++; }
+
+  for (i=0;i<SS_DATA.length;i++){
+    ref = SS_DATA[i];
+    if (ref === "B2") continue;
+    var rep = SS_REPERES[ref], raw = brut(ref);
+    if (raw === ""){ vides++; msgs.push("<strong>" + ref + "</strong> : à relever sur la facture — " + rep.ou); continue; }
+    var v = parseFloat(raw);
+    if (isNaN(v)){ msgs.push("<strong>" + ref + "</strong> : on attend un nombre (avec un point ou une virgule décimale)."); continue; }
+    if (Math.abs(v - rep.v) <= rep.tol){ ok++; continue; }
+    if (ref === "B5" && Math.abs(v - rep.v/2) <= 1){
+      msgs.push("<strong>B5</strong> : c'est bien le montant lu sur la facture, mais elle ne couvre que " +
+        "<strong>six mois</strong>. Ta feuille, elle, calcule une <strong>année</strong>.");
+    } else if (ref === "B6" && v > 20){
+      msgs.push("<strong>B6</strong> : on attend le <strong>taux</strong> de TVA en %, pas le montant en euros.");
+    } else if (ref === "B3" && Math.abs(v - 1.17) < 0.006){
+      msgs.push("<strong>B3</strong> : c'est le tarif du <strong>semestre précédent</strong>. " + rep.ou);
+    } else {
+      msgs.push("<strong>" + ref + "</strong> : ce n'est pas la bonne ligne — " + rep.ou);
+    }
+  }
+  if (ok === SS_DATA.length){
+    afficher("don-res", true, "🎉 Les 5 données sont bonnes. Tu peux écrire tes formules (question 6.3).");
+  } else {
+    afficher("don-res", false, ok + "/5 donnée(s) correcte(s)" + (vides ? " — " + vides + " cellule(s) encore vide(s)" : "") +
+      ".<ul style=\"margin:6px 0 0 18px;font-weight:400\"><li>" + msgs.join("</li><li>") + "</li></ul>");
+  }
+}
+
+/* ── 6.3 — Coup de pouce en deux crans ── */
+function coupDePouce(ref){
+  var boite = $("aide-msg"), textes = SS_AIDE[ref];
+  if (!boite || !textes) return;
+  if (AIDES[ref] < 2) AIDES[ref]++;
+  var cran = AIDES[ref];
+  var bt = $("aide-" + ref);
+  if (bt) bt.classList.add("used");
+  boite.innerHTML =
+    '<span class="cran">' + ref + " — coup de pouce " + cran + "/2</span>" + textes[cran-1] +
+    (cran === 1
+      ? ' <em>(reclique sur ' + ref + " pour savoir quelles cellules interviennent)</em>"
+      : ' <em>(à toi d\'écrire la formule : c\'est le travail demandé)</em>');
+  saveDraft();
+}
+function aidesTexte(){
+  var out = [], n = 0;
+  for (var i=0;i<SS_FORMULA.length;i++){
+    var r = SS_FORMULA[i];
+    if (AIDES[r]) { out.push(r + "×" + AIDES[r]); n += AIDES[r]; }
+  }
+  return { n:n, txt: out.length ? out.join(", ") : "aucun" };
+}
+function appliquerAides(txt){
+  if (!txt) return;
+  var parts = String(txt).split(",");
+  for (var i=0;i<parts.length;i++){
+    var m = /^\s*(B[0-9]+)\s*[x×]\s*([0-9]+)\s*$/.exec(parts[i]);
+    if (m && AIDES.hasOwnProperty(m[1])){
+      AIDES[m[1]] = Math.min(2, parseInt(m[2], 10) || 0);
+      var bt = $("aide-" + m[1]);
+      if (bt && AIDES[m[1]]) bt.classList.add("used");
+    }
+  }
+}
+
+/* ── 6.3 — Diagnostic d'une formule fausse, sans jamais la donner ── */
+function refsDe(raw){
+  var m = raw.toUpperCase().match(/B[0-9]+/g);
+  return m || [];
+}
+function memesCellules(a, b){
+  if (a.length !== b.length) return false;
+  var x = a.slice().sort().join(","), y = b.slice().sort().join(",");
+  return x === y;
+}
+/* Valeur que donnerait la formule de l'élève si les cellules dont elle dépend
+   étaient justes : permet de distinguer « formule fausse » de « formule juste,
+   mais qui s'appuie sur une cellule encore fausse ». */
+function valeurIdeale(ref, exp){
+  var cache = {};
+  for (var i=0;i<SS_FORMULA.length;i++){
+    if (SS_FORMULA[i] !== ref) cache[SS_FORMULA[i]] = exp[SS_FORMULA[i]];
+  }
+  return valeurCellule(ref, cache, []);
+}
+/* Parmi les cellules citées par la formule, lesquelles sont encore fausses ? */
+function dependancesFausses(raw, exp){
+  var refs = refsDe(raw), out = [], cache = {};
+  for (var i=0;i<refs.length;i++){
+    if (SS_FORMULA.indexOf(refs[i]) < 0) continue;
+    var v = valeurCellule(refs[i], cache, []);
+    if (isNaN(v) || Math.abs(v - exp[refs[i]]) >= 0.01) out.push(refs[i]);
+  }
+  return out;
+}
+function diagFormule(ref, raw, v, vIdeale, exp){
+  if (raw.charAt(0) !== "="){
+    if (/^[-+*/(). 0-9]+$/.test(raw))
+      return "tu as tapé le résultat à la main. Le tableur attend une <strong>formule</strong>, qui commence par <strong>=</strong>.";
+    return "il manque le signe <strong>=</strong> au début : sans lui, le tableur garde ta saisie comme du texte.";
+  }
+  var refs = refsDe(raw.slice(1));
+  if (!refs.length)
+    return "ta formule ne renvoie à <strong>aucune cellule</strong> : tu as recopié des nombres. Utilise les références (B2, B3…) pour que le calcul se mette à jour tout seul.";
+  for (var i=0;i<refs.length;i++){
+    var n = parseInt(refs[i].slice(1), 10);
+    if (n < 2 || n > 11) return "la cellule <strong>" + refs[i] + "</strong> n'existe pas dans cette feuille (elle va de B1 à B11).";
+    if (refs[i] === ref) return "ta formule se renvoie à <strong>elle-même</strong> : le tableur tourne en rond.";
+    if (brut(refs[i]) === "") return "la cellule <strong>" + refs[i] + "</strong> est encore vide : le calcul ne peut pas aboutir.";
+    if (isNaN(valeurCellule(refs[i], {}, [ref])))
+      return "ta formule s'appuie sur <strong>" + refs[i] + "</strong>, qui ne renvoie pas encore de nombre. Corrige d'abord cette cellule-là.";
+  }
+  if (!isNaN(vIdeale) && Math.abs(vIdeale - exp[ref]) < 0.01){
+    var dep = dependancesFausses(raw.slice(1), exp);
+    return "ta formule est <strong>juste</strong> — mais elle s'appuie sur " +
+      (dep.length ? "<strong>" + dep.join(" et ") + "</strong>, qui reste" + (dep.length > 1 ? "nt" : "") + " à corriger" : "une cellule encore fausse") +
+      ". Corrige cette cellule-là, puis revérifie.";
+  }
+  if (isNaN(v))
+    return "le tableur n'arrive pas à calculer ta formule : vérifie les parenthèses et les signes (+ − * /).";
+  if (ref === "B10" && !isNaN(vIdeale) && Math.abs(vIdeale - exp[ref]*100) < 0.01)
+    return "tu utilises les bonnes cellules, mais <strong>B6 est un pourcentage</strong> : 5,5 ne veut pas dire 5,50 €.";
+  if (refs.length === 1)
+    return "ta formule recopie une seule cellule. Relis le libellé de la ligne : plusieurs valeurs doivent être combinées.";
+  if (memesCellules(refs, SS_CELLULES[ref]))
+    return "les cellules utilisées sont les <strong>bonnes</strong>, mais pas l'opération. Relis le libellé de la ligne.";
+  return "regarde quelles valeurs doivent intervenir : le libellé de la ligne (colonne A) le dit en toutes lettres.";
+}
+/* Formule juste mais qui recopie un nombre au lieu d'une référence : on la valide, on alerte. */
+function nombreEnDur(raw){
+  var corps = raw.slice(1).toUpperCase().replace(/B[0-9]+/g, "");
+  var nums = corps.match(/[0-9]+(?:\.[0-9]+)?/g) || [];
+  for (var i=0;i<nums.length;i++) if (nums[i] !== "100") return true;
+  return false;
+}
+function checkTableur(){
+  if (!donneesCompletes()){
+    afficher("ss-res", false, "Complète d'abord les données B2 à B6 (question 6.2) : sans elles, tes formules ne peuvent pas être vérifiées.");
+    return;
+  }
+  var exp = attendu(), cache = {}, ok = 0, details = [], vides = 0, alertes = [];
+  for (var i=0;i<SS_FORMULA.length;i++){
+    var ref = SS_FORMULA[i], td = $("td-"+ref);
+    if (td) td.classList.remove("ok","ko");
+    var raw = brut(ref);
+    if (raw === ""){ vides++; continue; }
+    var v = valeurCellule(ref, cache, []);
+    /* On exige une vraie formule : c'est la compétence travaillée, pas le calcul mental. */
+    var bon = (raw.charAt(0) === "=") && !isNaN(v) && Math.abs(v - exp[ref]) < 0.01;
+    if (bon){
+      ok++; if (td) td.classList.add("ok");
+      if (nombreEnDur(raw)) alertes.push(ref);
+    } else {
+      details.push("<strong>" + ref + "</strong> : " + diagFormule(ref, raw, v, valeurIdeale(ref, exp), exp));
+      if (td) td.classList.add("ko");
+    }
+  }
+  if (vides === SS_FORMULA.length){
+    afficher("ss-res", false, "Écris d'abord tes formules dans les cellules B7 à B11 (elles commencent par <strong>=</strong>). " +
+      "Bloqué sur une ligne ? Le bouton <strong>Coup de pouce</strong> est là pour ça.");
+    return;
+  }
+  var mot = alertes.length
+    ? "<div style=\"margin-top:7px;font-weight:400\">⚠️ " + alertes.join(", ") +
+      " donne le bon résultat, mais tu y as recopié un nombre au lieu d'une référence : si la donnée change, le total sera faux.</div>"
+    : "";
+  if (ok === SS_FORMULA.length){
+    afficher("ss-res", true, "🎉 Les 5 formules sont justes. Ta facture d'eau estimée pour l'année : <strong>" +
+      euros(exp.B11) + " €</strong> — reporte ce montant à la question 6.4." + mot);
+  } else {
+    afficher("ss-res", false, ok + "/5 formule(s) juste(s)" + (vides ? " — " + vides + " cellule(s) encore vide(s)" : "") +
+      ".<ul style=\"margin:6px 0 0 18px;font-weight:400\"><li>" + details.join("</li><li>") + "</li></ul>" + mot);
+  }
+}
+/* Test grandeur nature : les chiffres du semestre de M. Dupont (SUEZ pour Vendée Eau,
+   1er semestre 2025). Des formules justes doivent retrouver le total imprimé sur la facture. */
+function testerFacture(){
+  var i;
+  if (!SS_SAUVE){
+    SS_SAUVE = {};
+    for (i=0;i<SS_DATA.length;i++) SS_SAUVE[SS_DATA[i]] = val(SS_DATA[i]);
+  }
+  var v = { B2:"59", B3:"1.162", B4:"0.408", B5:"43", B6:"5.5" };
+  for (var k in v) if (v.hasOwnProperty(k) && $(k)){ $(k).value = v[k]; }
+  recalculer(); updateProgress(); saveDraft();
+  var exp = attendu();
+  afficher("ss-res", true, "🧾 Données du semestre de M. Dupont chargées : 59 m³, 1,162 €/m³, redevances 0,408 €/m³, " +
+    "abonnement 43 €, TVA 5,5 %. Tes formules affichent <strong>" + euros(exp.B11) + " €</strong> en B11 : compare ce montant " +
+    "au total imprimé sur la facture (143,26 €). S'il y colle, tes formules sont bonnes. " +
+    '<button type="button" class="btnck sec" style="margin-top:8px" onclick="revenirMesValeurs()">↩ Revenir à mes valeurs</button>');
+}
+function revenirMesValeurs(){
+  if (!SS_SAUVE) return;
+  for (var i=0;i<SS_DATA.length;i++){
+    var ref = SS_DATA[i];
+    if ($(ref)) $(ref).value = SS_SAUVE[ref] || "";
+  }
+  SS_SAUVE = null;
+  recalculer(); updateProgress(); saveDraft();
+  afficher("ss-res", true, "↩ Tes données sont revenues. La feuille calcule de nouveau <strong>ta</strong> facture estimée.");
+}
+function checkPrix(){
+  var v = nombre(val("b2-prix"));
+  if (v === null){ afficher("prix-res", false, "Relève le prix unitaire HT sur la facture détaillée (verso)."); return; }
+  if (Math.abs(v - 1.162) < 0.011){
+    afficher("prix-res", true, "✅ Exact : <strong>1,162 € / m³</strong> HT pour le 1<sup>er</sup> semestre 2025 (tarif Bleu, Vendée Eau).");
+  } else {
+    afficher("prix-res", false, "Ce n'est pas la bonne ligne. Cherche « Consommation Vendée Eau — tarif Bleu 1<sup>er</sup> semestre 2025 », " +
+      "colonne « Prix unitaire € HT ». Attention : 1,17 € correspond au semestre précédent.");
+  }
+}
+
+/* ════════════ 7 — GASPILLAGE ET GESTES ÉCONOMES ════════════ */
+var ASSOC = [
+  { g:"Je laisse couler l'eau pendant que je me brosse les dents.", a:"fermer" },
+  { g:"Je prends un bain plutôt qu'une douche.",                    a:"douche" },
+  { g:"Je lance le lave-linge à moitié vide.",                      a:"plein" },
+  { g:"Un robinet goutte en permanence dans la classe.",            a:"fuite" },
+  { g:"J'arrose le jardin en plein soleil, à midi.",                a:"soir" }
+];
+var ASSOC_GESTES = [
+  ["fermer","Fermer le robinet et poser un mousseur (limiteur de débit)"],
+  ["douche","Préférer une douche courte"],
+  ["plein","Attendre que la machine soit bien remplie"],
+  ["fuite","Signaler et réparer la fuite"],
+  ["soir","Arroser le soir ou tôt le matin"]
+];
+var assocAns = {};
+function buildAssoc(){
+  var box = $("assocbox"); if (!box) return;
+  var h = '<ul class="assoc">';
+  for (var i=0;i<ASSOC.length;i++){
+    h += '<li id="as-' + i + '">' +
+           '<span class="nom">' + esc(ASSOC[i].g) + '</span>' +
+           '<select id="assoc-' + i + '" onchange="pickAssoc(' + i + ',this.value)" aria-label="Geste économe correspondant">' +
+             '<option value="">— geste économe —</option>';
+    for (var j=0;j<ASSOC_GESTES.length;j++){
+      h += '<option value="' + ASSOC_GESTES[j][0] + '">' + esc(ASSOC_GESTES[j][1]) + '</option>';
+    }
+    h += '</select></li>';
+  }
+  box.innerHTML = h + "</ul>";
+}
+function pickAssoc(i, v){
+  if (v) assocAns[i] = v; else delete assocAns[i];
+  var li = $("as-"+i); if (li) li.classList.remove("ok","ko");
+  updateProgress(); saveDraft();
+}
+function checkAssoc(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<ASSOC.length;i++){
+    var li = $("as-"+i);
+    if (li) li.classList.remove("ok","ko");
+    if (!assocAns[i]) continue;
+    rep++;
+    var bon = assocAns[i] === ASSOC[i].a;
+    if (bon) ok++;
+    if (li) li.classList.add(bon ? "ok" : "ko");
+  }
+  if (!rep){ afficher("assoc-res", false, "Choisis d'abord un geste économe pour au moins une situation."); return; }
+  afficher("assoc-res", ok === ASSOC.length,
+    ok === ASSOC.length ? "✅ 5 / 5 — toutes les associations sont justes."
+                        : ok + " / " + ASSOC.length + " juste(s). Les lignes en rouge sont à revoir.");
+}
+/* Calculette : 10 L/min, 4,34 € le m³ (prix moyen TTC en France, source Ouest-France). */
+function majCalc(){
+  var out = $("calc-out"); if (!out) return;
+  var m = nombre(val("b3-minutes"));
+  if (m === null || m <= 0){ out.textContent = "Saisis un nombre de minutes pour voir le résultat."; return; }
+  var litresJour = m * 10;
+  var litresAn = litresJour * 365;
+  var m3 = litresAn / 1000;
+  var euro = m3 * 4.34;
+  out.innerHTML = "Cela fait <b>" + Math.round(litresJour) + " L</b> par jour, soit <b>" +
+    Math.round(litresAn).toLocaleString("fr-FR") + " L</b> — environ <b>" +
+    (Math.round(m3*10)/10).toLocaleString("fr-FR") + " m³</b> et <b>" +
+    euro.toLocaleString("fr-FR", {minimumFractionDigits:2, maximumFractionDigits:2}) +
+    " €</b> par an, pour une seule personne.";
+}
+
+/* ════════════ 8 — QCM SOLUTION TECHNIQUE ════════════ */
+var QCM = [
+  { v:"seau",     t:"Un seau, pour récupérer l'eau du robinet." },
+  { v:"auto",     t:"Un robinet automatique à détection de présence." },
+  { v:"affiche",  t:"Une affiche « Pensez à fermer le robinet »." },
+  { v:"reservoir",t:"Un réservoir plus grand dans le château d'eau." }
+];
+var QCM_COR = "auto";
+var QCM_EXPL = "Le robinet automatique ne laisse couler l'eau que lorsque des mains sont détectées : " +
+  "il agit tout seul, sans dépendre de la bonne volonté de chacun. C'est un objet technique qui répond au besoin.";
+var qcmAns = "";
+function buildQcm(){
+  var box = $("qcmbox"); if (!box) return;
+  var h = "";
+  for (var i=0;i<QCM.length;i++){
+    h += '<div class="prop" id="qp-' + QCM[i].v + '" onclick="pickQcm(\'' + QCM[i].v + '\')">' +
+           '<span class="mk">' + String.fromCharCode(65+i) + '</span>' +
+           '<span class="txt">' + esc(QCM[i].t) + '</span></div>';
+  }
+  box.innerHTML = h;
+}
+function pickQcm(v){
+  qcmAns = v;
+  for (var i=0;i<QCM.length;i++){
+    var p = $("qp-"+QCM[i].v);
+    if (p){ p.classList.remove("sel","ok","ko"); if (QCM[i].v === v) p.classList.add("sel"); }
+  }
+  var r = $("qcm-res"); if (r) r.className = "result";
+  updateProgress(); saveDraft();
+}
+function checkQcm(){
+  if (!qcmAns){ afficher("qcm-res", false, "Choisis d'abord une proposition."); return; }
+  for (var i=0;i<QCM.length;i++){
+    var p = $("qp-"+QCM[i].v);
+    if (!p) continue;
+    p.classList.remove("sel","ok","ko");
+    if (QCM[i].v === QCM_COR) p.classList.add("ok");
+    else if (QCM[i].v === qcmAns) p.classList.add("ko");
+  }
+  afficher("qcm-res", qcmAns === QCM_COR,
+    (qcmAns === QCM_COR ? "✅ " : "❌ ") + QCM_EXPL);
+}
+
+/* ════════════ BROUILLON LOCAL (sauvegarde automatique) ════════════ */
+function draftKey(){ return DRAFT_PFX + (USER.id || slug(val("inp-prenom")+"-"+val("inp-nom")) || "anon"); }
+function collect(){
+  var fields = {}, i;
+  for (i=0;i<FIELD_IDS.length;i++) fields[FIELD_IDS[i]] = val(FIELD_IDS[i]);
+  for (i=0;i<SS_DATA.length;i++)    fields[SS_DATA[i]]    = val(SS_DATA[i]);
+  for (i=0;i<SS_FORMULA.length;i++) fields[SS_FORMULA[i]] = val(SS_FORMULA[i]);
+  fields["b1-simu"] = ($("b1-simu") && $("b1-simu").checked) ? "oui" : "";
+  fields["b4-qcm"]  = qcmAns || "";
+  fields["aides-tableur"] = aidesTexte().txt;
+  fields["ordre-pot"]   = ordrePot.join(",");
+  fields["ordre-cycle"] = ordreCycle.join(",");
+  for (i=0;i<POT.length;i++) fields["sol-"+POT[i].k] = solAns[POT[i].k] || "";
+  return {
+    p: val("inp-prenom"), n: val("inp-nom"), c: val("inp-classe"),
+    fields: fields, vf: vfAns, assoc: assocAns, ts: Date.now()
+  };
+}
+var _draftT = null;
+function saveDraft(){
+  if (_draftT) clearTimeout(_draftT);
+  _draftT = setTimeout(function(){
+    try {
+      localStorage.setItem(draftKey(), JSON.stringify(collect()));
+      var d = new Date();
+      function p(x){ return x<10?"0"+x:""+x; }
+      $("draft-st").textContent = "Brouillon enregistré à " + p(d.getHours()) + ":" + p(d.getMinutes());
+    } catch(e){}
+  }, 500);
+}
+/* La fiche est-elle encore vierge ? (sert à ne jamais écraser un travail en cours) */
+function formVierge(){
+  for (var i=0;i<FIELD_IDS.length;i++) if (val(FIELD_IDS[i])) return false;
+  for (var j=0;j<SS_FORMULA.length;j++) if (val(SS_FORMULA[j])) return false;
+  for (var d=0;d<SS_DATA.length;d++) if (val(SS_DATA[d])) return false;
+  for (var k in vfAns) if (vfAns.hasOwnProperty(k) && vfAns[k]) return false;
+  for (var a in assocAns) if (assocAns.hasOwnProperty(a) && assocAns[a]) return false;
+  return !qcmAns;
+}
+/* Ouverte hors du site, la fiche n'a pas encore d'identité au chargement : dès que
+   l'élève saisit son prénom et son nom, on recherche son brouillon. */
+function restaurerSelonIdentite(){
+  if (USER.id || !formVierge()) return;
+  if (!val("inp-prenom") || !val("inp-nom")) return;
+  restoreDraft();
+  updateProgress();
+}
+/* Remplit la fiche à partir d'un jeu de réponses (brouillon local ou travail envoyé). */
+function appliquerDonnees(f, vf, assoc){
+  f = f || {};
+  var i, el;
+  var tous = FIELD_IDS.concat(SS_DATA).concat(SS_FORMULA);
+  for (i=0;i<tous.length;i++){
+    el = $(tous[i]);
+    if (el && f[tous[i]] !== undefined){ el.value = f[tous[i]]; markFilled(el); }
+  }
+  if (f["b1-simu"] === "oui" && $("b1-simu")) $("b1-simu").checked = true;
+  appliquerAides(f["aides-tableur"]);
+  if (f["b4-qcm"]) pickQcm(f["b4-qcm"]);
+
+  if (f["ordre-pot"]){
+    var op = String(f["ordre-pot"]).split(",");
+    if (op.length === POT.length) ordrePot = op;
+  }
+  if (f["ordre-cycle"]){
+    var oc = String(f["ordre-cycle"]).split(",");
+    if (oc.length === CYCLE.length) ordreCycle = oc;
+  }
+  solAns = {};
+  for (i=0;i<POT.length;i++) if (f["sol-"+POT[i].k]) solAns[POT[i].k] = f["sol-"+POT[i].k];
+  renderOrdre("ord-pot", ordrePot, POT, true);
+  renderOrdre("ord-cycle", ordreCycle, CYCLE, false);
+
+  vfAns = vf || {};
+  for (i=0;i<VF.length;i++){
+    var ligne = $("vf-"+i);
+    if (!ligne) continue;
+    var opts = ligne.querySelectorAll(".opt");
+    for (var o=0;o<opts.length;o++){
+      opts[o].classList.remove("sel");
+      var attendu = (o === 0) ? "v" : "f";
+      if (vfAns[i] === attendu) opts[o].classList.add("sel");
+    }
+  }
+  assocAns = assoc || {};
+  for (i=0;i<ASSOC.length;i++){
+    var sel = $("assoc-"+i);
+    if (sel) sel.value = assocAns[i] || "";
+  }
+  majRepart(); majCalc(); recalculer();
+}
+function restoreDraft(){
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch(e){}
+  if (!raw) return;
+  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  appliquerDonnees(d.fields, d.vf, d.assoc);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   REPRENDRE LE DERNIER ENVOI
+   Filet de sécurité : si le brouillon a disparu (autre poste, autre
+   navigateur, stockage effacé par la tablette), on recharge la fiche
+   depuis le travail déjà envoyé au professeur.
+   ════════════════════════════════════════════════════════════════ */
+function eidCourant(){
+  if (USER.id) return USER.id;
+  var ename = (val("inp-prenom") + " " + val("inp-nom")).trim();
+  if (!ename) return "";
+  var classe = val("inp-classe") ? ("4" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  return CAP_ID + "." + (slug(classe) || "4x") + "." + (slug(ename) || "eleve");
+}
+function envoiLocal(eid){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i=subs.length-1; i>=0; i--)
+      if (subs[i] && subs[i].eid === eid && subs[i].cap === CAP_ID) return subs[i];
+  } catch(e){}
+  return null;
+}
+function envoiCloud(eid, onDone){
+  if (!hasUrl() || !eid){ onDone(null); return; }
+  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  fetch(url).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.ok || !d.subs || !d.subs.length){ onDone(null); return; }
+    var miens = d.subs.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    onDone(miens[0] || null);
+  }).catch(function(){ onDone(null); });
+}
+function plusRecent(a, b){
+  if (!a) return b; if (!b) return a;
+  return (new Date(b.dateISO||0) > new Date(a.dateISO||0)) ? b : a;
+}
+function dateLisible(sub){
+  var d = new Date(sub && sub.dateISO ? sub.dateISO : Date.now());
+  function p(n){ return n<10 ? "0"+n : ""+n; }
+  return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
+}
+function appliquerEnvoi(sub){
+  if (!sub) return;
+  if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
+    var bouts = String(sub.ename).split(" ");
+    $("inp-prenom").value = bouts.shift() || "";
+    $("inp-nom").value = bouts.join(" ");
+  }
+  if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^4/, "").toUpperCase();
+  appliquerDonnees(sub.fields, sub.vf, sub.assoc);
+  var ban = $("reprise"); if (ban) ban.hidden = true;
+  updateProgress(); saveDraft();
+  flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
+}
+function reprendreDernierEnvoi(){
+  var eid = eidCourant();
+  if (!eid){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> : c'est ce qui permet de retrouver ton travail.", "err");
+    $("inp-prenom").focus(); return;
+  }
+  if (!formVierge() && !confirm("Récupérer le dernier travail envoyé remplacera ce qui est actuellement dans la fiche. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var local = envoiLocal(eid);
+  envoiCloud(eid, function(distant){
+    var sub = plusRecent(local, distant);
+    if (!sub){
+      flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err");
+      return;
+    }
+    appliquerEnvoi(sub);
+  });
+}
+/* Fiche vide alors qu'un travail a déjà été envoyé : on le signale sans rien écraser. */
+function proposerReprise(){
+  if (!formVierge()) return;
+  var eid = eidCourant();
+  if (!eid) return;
+  function montrer(sub){
+    if (!sub || !formVierge()) return;
+    var ban = $("reprise");
+    if (!ban) return;
+    ban.innerHTML = '<div><strong>&#x21A9;&#xFE0F; Un travail envoyé le ' + dateLisible(sub) + ' a été retrouvé.</strong>' +
+      '<div style="font-size:12.5px;margin-top:2px">Ta fiche est vide sur cet appareil : tu peux la recharger pour continuer.</div></div>' +
+      '<button class="btn btn-send" style="white-space:nowrap" onclick="reprendreDernierEnvoi()">Récupérer mon travail</button>';
+    ban.hidden = false;
+  }
+  var local = envoiLocal(eid);
+  if (local) montrer(local);
+  envoiCloud(eid, function(distant){ montrer(plusRecent(local, distant)); });
+}
+
+/* ════════════ MESSAGES ════════════ */
+function flash(html, kind){
+  var box = $("send-status");
+  box.className = "sendst show " + (kind || "wait");
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+/* ════════════ COPIE DE SECOURS ════════════ */
+function saveBackup(){
+  var data = collect();
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "eau4e_" + (slug(data.p+"-"+data.n) || "eleve") + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  flash("&#x2B07;&#xFE0F; Copie de secours téléchargée sur cet ordinateur.", "ok");
+}
+
+/* ════════════ RÉSUMÉ LISIBLE (vue professeur) ════════════ */
+function LIB_ORDRE(liste, source){
+  var out = [];
+  for (var i=0;i<liste.length;i++){
+    for (var j=0;j<source.length;j++) if (source[j].k === liste[i]) out.push((i+1) + ". " + source[j].nom);
+  }
+  return out.join(" → ");
+}
+function buildOpenSummary(state){
+  var f = state.fields, lignes = [];
+  var LB_SOL = {};
+  for (var s=0;s<POT_SOLS.length;s++) LB_SOL[POT_SOLS[s][0]] = POT_SOLS[s][1];
+
+  for (var g=0; g<QUESTION_GROUPS.length; g++){
+    var grp = QUESTION_GROUPS[g], bloc = [];
+    for (var i=0;i<grp.items.length;i++){
+      var id = grp.items[i][0], lb = grp.items[i][1];
+      bloc.push("• " + lb + " : " + (f[id] ? f[id] : "—"));
+    }
+    lignes.push("— " + grp.titre + " —\n" + bloc.join("\n"));
+  }
+
+  /* Quiz auto-corrigés */
+  var okVF = 0, repVF = 0;
+  for (var v in state.vf){
+    if (!state.vf.hasOwnProperty(v) || !state.vf[v]) continue;
+    repVF++; if (VF[v] && state.vf[v] === VF[v].a) okVF++;
+  }
+  var okAs = 0, repAs = 0;
+  for (var a in state.assoc){
+    if (!state.assoc.hasOwnProperty(a) || !state.assoc[a]) continue;
+    repAs++; if (ASSOC[a] && state.assoc[a] === ASSOC[a].a) okAs++;
+  }
+  var okPot = 0, okSol = 0;
+  for (var p=0;p<POT.length;p++){
+    if (ordrePot[p] === POT[p].k) okPot++;
+    if (solAns[POT[p].k] === POT[p].sol) okSol++;
+  }
+  var okCyc = 0;
+  for (var c=0;c<CYCLE_COR.length;c++) if (ordreCycle[c] === CYCLE_COR[c]) okCyc++;
+  var exp = attendu(), cache = {}, okSS = 0;
+  for (var t=0;t<SS_FORMULA.length;t++){
+    var raw = brut(SS_FORMULA[t]);
+    if (raw.charAt(0) !== "=") continue;
+    var vv = valeurCellule(SS_FORMULA[t], cache, []);
+    if (!isNaN(vv) && Math.abs(vv - exp[SS_FORMULA[t]]) < 0.01) okSS++;
+  }
+
+  lignes.push("— Quiz auto-corrigés —\n" +
+    "• Vrai / faux : " + okVF + "/" + VF.length + " (" + repVF + " répondus)\n" +
+    "• Potabilisation — ordre : " + okPot + "/4, solutions techniques : " + okSol + "/4\n" +
+    "  " + LIB_ORDRE(ordrePot, POT) + "\n" +
+    "  solutions : " + POT.map(function(x){ return x.nom + " = " + (LB_SOL[solAns[x.k]] || "—"); }).join(" ; ") + "\n" +
+    "• Cycle domestique : " + okCyc + "/6\n" +
+    "  " + LIB_ORDRE(ordreCycle, CYCLE) + "\n" +
+    "• Gaspillage / geste économe : " + okAs + "/" + ASSOC.length + " (" + repAs + " répondus)\n" +
+    "• Formules du tableur : " + okSS + "/5 — facture estimée : " + euros(exp.B11) + " €" +
+    " (données B2 à B6 : " + SS_DATA.map(function(r){ return r + "=" + (f[r] || "—"); }).join(" ") + ")\n" +
+    "• Coups de pouce du tableur : " + aidesTexte().n + (aidesTexte().n ? " (" + aidesTexte().txt + ")" : "") + "\n" +
+    "• QCM solution technique : " + (f["b4-qcm"] === QCM_COR ? "juste" : (f["b4-qcm"] ? "faux" : "non répondu")));
+  return lignes.join("\n\n");
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function unqueueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+/* Le site (index.html) lit localStorage.subs : on y dépose aussi la soumission
+   pour que la carte de l'élève affiche « En attente de correction » tout de suite. */
+function storeLocalSub(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(APPS_SCRIPT_URL, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !hasUrl()) return;
+    q.forEach(function(sub){ postSub(sub); });
+  } catch(e){}
+}
+function makeSub(){
+  var state = collect();
+  var classe = state.c ? ("4" + state.c.toUpperCase()) : (USER.c || "");
+  var ename  = (state.p + " " + state.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe)||"4x") + "." + (slug(ename)||"eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: countFilled(),
+    qcmTot: totalFields(),
+    open: buildOpenSummary(state),
+    fields: state.fields,
+    vf: state.vf,
+    assoc: state.assoc,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function sendToProf(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 4A) en haut de la fiche.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var done = countFilled();
+  if (done < 10 && !confirm("Tu n'as rempli que " + done + " réponse(s). Envoyer quand même au professeur ?")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  saveDraft();
+  var sub = makeSub();
+  storeLocalSub(sub);
+  /* Si l'activité est ouverte depuis le site (iframe, même origine),
+     on rafraîchit le tableau de bord pour afficher « En attente de correction ». */
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  postSub(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Travail envoyé au professeur</strong> le " + new Date().toLocaleString("fr-FR") +
+            ".<br>Tu peux continuer à compléter : un nouvel envoi remplacera le précédent.", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Pas de panique : ton travail est <strong>conservé sur cet ordinateur</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ ILLUSTRATIONS FACULTATIVES ════════════
+   Chaque <figure data-src="chemin1|chemin2|…"> essaie ses fichiers dans l'ordre :
+   le premier trouvé s'affiche, et si aucun n'existe le bloc disparaît. */
+function loadIllustrations(){
+  var figs = document.querySelectorAll("figure.illus[data-src]");
+  for (var i=0;i<figs.length;i++){
+    (function(fig){
+      var srcs = (fig.getAttribute("data-src") || "").split("|");
+      var alt  = fig.getAttribute("data-alt") || "";
+      var k = 0;
+      function next(){
+        if (k >= srcs.length){ fig.remove(); return; }
+        var url = encodeURI(srcs[k++].trim());
+        var probe = new Image();
+        probe.onload = function(){
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          fig.insertBefore(img, fig.firstChild);
+          fig.hidden = false;
+        };
+        probe.onerror = next;
+        probe.src = url;
+      }
+      next();
+    })(figs[i]);
+  }
+}
+
+/* ════════════ INITIALISATION ════════════ */
+function readPrefill(){
+  try {
+    var raw = localStorage.getItem(PREFILL_KEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d) return;
+    USER = { id: d.id || "", p: d.p || "", n: d.n || "", c: d.c || "" };
+    if (USER.p) $("inp-prenom").value = USER.p;
+    if (USER.n) $("inp-nom").value = USER.n;
+    if (USER.c) $("inp-classe").value = String(USER.c).replace(/^4/, "").toUpperCase();
+  } catch(e){}
+}
+function wireFields(){
+  var els = document.querySelectorAll(".rep");
+  for (var i=0;i<els.length;i++){
+    var el = els[i];
+    el.addEventListener("input", function(){
+      markFilled(this); updateProgress(); saveDraft();
+      if (this.id.indexOf("b1-") === 0) majRepart();
+      if (this.id === "b1-conso" && $("B2") && brut("B2") === ""){
+        $("B2").value = String(this.value || "").trim().replace(",", ".");
+        recalculer();
+      }
+      if (this.id === "b3-minutes") majCalc();
+    });
+    el.addEventListener("change", function(){ markFilled(this); updateProgress(); saveDraft(); });
+    markFilled(el);
+  }
+  var cellules = document.querySelectorAll("table.ss input");
+  for (var c=0;c<cellules.length;c++){
+    cellules[c].addEventListener("input", function(){
+      recalculer(); updateProgress(); saveDraft();
+      var td = this.parentNode; if (td) td.classList.remove("ok","ko");
+    });
+  }
+  /* La calculette du gaspillage n'est pas un champ « .rep » : on la branche à part. */
+  var mn = $("b3-minutes");
+  if (mn) mn.addEventListener("input", function(){ majCalc(); updateProgress(); saveDraft(); });
+  var cb = $("b1-simu");
+  if (cb) cb.addEventListener("change", function(){ updateProgress(); saveDraft(); });
+  var idf = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j=0;j<idf.length;j++){
+    var e = $(idf[j]);
+    if (e){
+      e.addEventListener("input", function(){ saveDraft(); });
+      e.addEventListener("change", restaurerSelonIdentite);
+      e.addEventListener("blur", restaurerSelonIdentite);
+    }
+  }
+}
+/* Hauteur réelle de l'en-tête : elle change avec la largeur de l'écran. */
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+function initActivite(){
+  calerBarreOutils();
+  loadIllustrations();
+  buildVF();
+  buildRepart();
+  buildAssoc();
+  buildQcm();
+  renderOrdre("ord-pot", ordrePot, POT, true);
+  renderOrdre("ord-cycle", ordreCycle, CYCLE, false);
+  readPrefill();
+  restoreDraft();
+  wireFields();
+  addMicButtons();
+  recalculer();
+  majRepart();
+  majCalc();
+  updateProgress();
+  flushQueue();
+  proposerReprise();
+  if (!(window.SpeechRecognition || window.webkitSpeechRecognition)){
+    var notes = document.querySelectorAll(".micbtn");
+    for (var i=0;i<notes.length;i++) notes[i].title = "Dictée disponible avec Chrome ou Edge";
+  }
+}
+/* On démarre dès que le HTML est prêt (sans attendre les polices distantes),
+   pour que l'activité soit utilisable même avec une connexion lente. */
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
+else initActivite();
+window.addEventListener("resize", calerBarreOutils);
+</script>
+
+<!-- Aménagements dys et confort de lecture : police, taille, interligne, espacement,
+     couleur de page, règle et masque de lecture. Module partagé entre les capsules. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+
+<!-- Lecture immersive : lit la fiche à voix haute en surlignant le texte. -->
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"section.step.closed", classeFermeture:"closed" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+</body>
+</html>
