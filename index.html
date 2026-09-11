@@ -4100,6 +4100,22 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         loading="lazy"></iframe>
     </div>
 
+    <!-- BÂTIMENT 5e — SYNTHÈSE P1 (code SYNBAT26) -->
+    <div id="pg-batiment5e-syn" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Synthèse : aménager un bâtiment (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La synthèse de la séquence, à <strong>conquérir notion par notion</strong> : un petit défi, puis la définition se dévoile.
+        Rien n'est noté et rien n'est à envoyer. Le bouton <strong>&laquo;&nbsp;Imprimer ma synthèse&nbsp;&raquo;</strong> sort la fiche
+        complète et correcte sur deux pages, identique pour tous les élèves.
+      </p>
+      <iframe id="batiment5e-syn-frame" data-src="Niveau%205/Amenagement%20batiment/synthese_eleve.html" title="Synthèse : aménager un bâtiment (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- BÂTIMENT 5e — CORRIGÉ P1 (réservé au professeur, code CORBAT26) -->
     <div id="pg-batiment5e-cor" class="h">
       <div class="phdr">
@@ -5015,6 +5031,7 @@ var ELEVES = [
 var SEQUENCES_DEF = [
   {id:"batiment5e", ordre:10, niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
   {id:"batiment5e-cor", ordre:11, niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
+  {id:"batiment5e-syn", ordre:12, niveau:"5ème", titre:"P1 — Synthèse Aménager un bâtiment", desc:"La synthèse à conquérir : un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète.", couleur:"#2E75B6", code:"SYNBAT26", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
@@ -5300,6 +5317,14 @@ function goPage(pid) {
     } catch (e) {}
     var bIfr = document.getElementById("batiment5e-frame");
     if (bIfr) bIfr.src = bIfr.getAttribute("data-src");
+  }
+  if (pid === "pg-batiment5e-syn") {
+    // Même identité que l'activité : elle ne sert qu'à l'en-tête de la feuille imprimée.
+    try {
+      if (user) localStorage.setItem("batiment5e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var sIfr = document.getElementById("batiment5e-syn-frame");
+    if (sIfr) sIfr.src = sIfr.getAttribute("data-src");
   }
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
@@ -5621,6 +5646,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
+        } else if (s.id === "batiment5e-syn") {
+          badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "batiment5e") {
           badgeHtml = '<span class="badge" style="background:#FCE4D6;color:#C55A11;font-weight:700">&#x1F3D7;&#xFE0F; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
@@ -5651,6 +5678,7 @@ function renderDash() {
       else if (s.id === "eau34-cor") clickAction = "onclick=\"goPage('pg-eau34-cor')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
+      else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -5709,6 +5737,7 @@ function tryUnlock() {
     else if (pendingSeq === "eau34-cor") goPage("pg-eau34-cor");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
+    else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
