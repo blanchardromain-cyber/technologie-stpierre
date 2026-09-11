@@ -12,9 +12,14 @@ l'activité essaie plusieurs noms dans l'ordre et garde le premier qu'elle trouv
 | Partie 1, avant l'échauffement | `1-objets-naturels-techniques.png` · `1-objets-naturels-techniques.jpg` · `1 Objets Techniques Objets Naturels.png` |
 | Partie 4, avant la question 4.1 | `4-le-college.png` · `4-le-college.jpg` · `4 Le collège.png` |
 | Partie 6, avant le plan | `6-conteneur-maritime.png` · `6-conteneur-maritime.jpg` · `6 Conteneur maritime.png` |
+| Synthèse, colonne « Le croquis » | `croquis.png` · `croquis.jpg` · `Croquis.PNG` |
+| Synthèse, colonne « La modélisation du réel » | `modelisation-du-reel.png` · `modelisation-du-reel.jpg` · `Modelisation du reel.PNG` |
 
 Le troisième nom de chaque ligne est le nom d'origine dans le dossier Drive
 « Séquence 1 / Dys » : il suffit donc de glisser les fichiers ici tels quels.
+
+Les deux vues de la synthèse ont un **dessin vectoriel de secours** : si le fichier
+manque, la comparaison croquis / modélisation reste illustrée au lieu de disparaître.
 
 Format conseillé : PNG ou JPG, largeur 1000 à 1400 px (les images sont redimensionnées
 automatiquement à la largeur de la page). En JPG, la page se charge nettement plus vite
