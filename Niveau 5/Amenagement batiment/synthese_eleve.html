@@ -123,8 +123,11 @@
   .comparo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:13px 0}
   .colonne{border:1.5px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff}
   .colonne h4{background:var(--bp);color:var(--bl);font-size:14.5px;padding:9px 14px;border-bottom:1.5px solid var(--gb)}
-  .colonne .dessin{padding:10px;text-align:center;background:#FCFDFE}
+  .colonne .dessin{padding:10px;text-align:center;background:#FCFDFE;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px}
   .colonne .dessin svg{width:100%;max-width:230px;height:auto;display:inline-block}
+  .colonne .dessin img{max-width:100%;height:auto;display:inline-block;border-radius:4px}
+  .colonne .legende{font-size:11.5px;color:var(--td);font-style:italic;margin-top:5px}
   .colonne ul{list-style:none;padding:11px 14px 13px}
   .colonne li{font-size:13.5px;line-height:1.65;padding-left:17px;position:relative;margin-bottom:4px}
   .colonne li::before{content:"\25B8";position:absolute;left:0;color:var(--br);font-weight:700}
@@ -193,8 +196,12 @@
     .carte .det{font-size:8.4pt;line-height:1.4}
     .comparo{gap:7pt;margin:5pt 0;break-inside:avoid}
     .colonne h4{background:none;color:#1F4E79;font-size:10pt;padding:3pt 8pt;border-bottom:1pt solid #CBD5E0}
-    .colonne .dessin{padding:4pt}
+    .colonne .dessin{padding:4pt;min-height:33mm}
     .colonne .dessin svg{max-width:96pt}
+    /* Les deux captures ne font que ~255 px de large : au-delà de 40 mm sur le
+       papier elles piqueraient. On les laisse donc petites plutôt que floues. */
+    .colonne .dessin img{max-width:40mm}
+    .colonne .legende{font-size:8pt;margin-top:2pt}
     .colonne ul{padding:6pt 9pt 7pt}
     .colonne li{font-size:9pt;line-height:1.45;margin-bottom:1.5pt}
     .retiens{background:none;border:1.5pt solid #1E6B3B;padding:6pt 10pt;margin-top:7pt;break-inside:avoid}
@@ -551,7 +558,7 @@
 
       <div class="defi" id="defi4">
         <div class="dtitre">Défi &mdash; croquis ou modélisation&nbsp;?</div>
-        <span class="dq">Tu viens de représenter ton logement en conteneur de deux façons. Laquelle correspond à chaque phrase&nbsp;?</span>
+        <span class="dq">Les deux images ci-dessous montrent le <strong>même objet</strong>, représenté de deux façons. Laquelle correspond à chaque phrase&nbsp;?</span>
         <div class="ligne">
           <span class="enonce">Je le trace à main levée sur une feuille.</span>
           <span class="opts" data-bonne="cro">
@@ -594,7 +601,8 @@
         <div class="comparo">
           <div class="colonne">
             <h4>Le croquis</h4>
-            <div class="dessin" aria-hidden="true">
+            <div class="dessin" data-alt="Croquis filaire d'un pont en arche"
+                 data-src="ressources/croquis.png|ressources/croquis.jpg|ressources/Croquis.PNG">
               <svg viewBox="0 0 240 130" fill="none" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M28 96 L28 44 L150 44 L150 96 Z" stroke-dasharray="52 3 30 2"/>
                 <path d="M150 44 L196 24 L196 76 L150 96" stroke-dasharray="40 3 24 2"/>
@@ -608,6 +616,7 @@
                   <path d="M170 122 L166 126 L172 126 Z" fill="#C55A11"/>
                 </g>
               </svg>
+              <div class="legende">Un pont, tracé en quelques traits.</div>
             </div>
             <ul>
               <li>Réalisé <strong>à main levée</strong>, sur papier.</li>
@@ -618,7 +627,8 @@
 
           <div class="colonne">
             <h4>La modélisation du réel</h4>
-            <div class="dessin" aria-hidden="true">
+            <div class="dessin" data-alt="Modélisation 3D texturée du même pont en arche"
+                 data-src="ressources/modelisation-du-reel.png|ressources/modelisation-du-reel.jpg|ressources/Modelisation du reel.PNG">
               <svg viewBox="0 0 240 130" fill="none" stroke="#1F4E79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="14" y="14" width="212" height="88" rx="5" stroke="#94A3B8" stroke-width="2"/>
                 <path d="M96 102 v10 M144 102 v10 M84 116 h72" stroke="#94A3B8" stroke-width="2"/>
@@ -632,6 +642,7 @@
                   <path d="M46 92 L134 92 M46 89 v6 M134 89 v6"/>
                 </g>
               </svg>
+              <div class="legende">Le même pont, modélisé en 3D.</div>
             </div>
             <ul>
               <li>Réalisée <strong>à l'ordinateur</strong>, à taille réelle et <strong>en 3D</strong>.</li>
@@ -876,6 +887,36 @@ function chargerIllustrations(){
   }
 }
 
+/* ── Croquis et modélisation : photos si elles sont là, dessins sinon ──
+   Chaque .dessin porte un dessin vectoriel de secours et une liste de noms
+   de fichiers. Le premier fichier trouvé remplace le dessin ; si aucun n'est
+   présent, la comparaison reste illustrée. */
+function chargerDessins(){
+  var zones = document.querySelectorAll(".dessin[data-src]");
+  for (var i = 0; i < zones.length; i++){
+    (function(zone){
+      var srcs = (zone.getAttribute("data-src") || "").split("|");
+      var alt  = zone.getAttribute("data-alt") || "";
+      var k = 0;
+      function suivant(){
+        if (k >= srcs.length) return;                 /* on garde le dessin */
+        var url = encodeURI(srcs[k++].trim());
+        var test = new Image();
+        test.onload = function(){
+          var svg = zone.querySelector("svg");
+          if (svg) svg.remove();
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          zone.insertBefore(img, zone.firstChild);   /* avant la légende */
+        };
+        test.onerror = suivant;
+        test.src = url;
+      }
+      suivant();
+    })(zones[i]);
+  }
+}
+
 /* ── Lexique regroupé pour la feuille imprimée ─────────────────────── */
 function assemblerLexique(){
   var liste = document.getElementById("lexique-liste");
@@ -897,6 +938,7 @@ function demarrer(){
   restaurerEtat();
   majProgression();
   chargerIllustrations();
+  chargerDessins();
   assemblerLexique();
   calerBarreOutils();
 
