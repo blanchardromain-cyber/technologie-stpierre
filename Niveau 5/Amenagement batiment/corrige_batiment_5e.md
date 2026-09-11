@@ -7,6 +7,11 @@ Séquence 1, cycle 4. Activité élève : `batiment_eleve.html`
 > **P1 — Corrigé Aménagement d'un bâtiment** (code **CORBAT26**). Les deux versions ont le
 > même contenu : en modifier une demande de reporter la modification dans l'autre.
 
+> La **synthèse** de la séquence est une capsule séparée : `synthese_eleve.html`,
+> **P1 — Synthèse Aménager un bâtiment**, code **SYNBAT26**. À ouvrir aux élèves une fois
+> l'activité terminée. Chaque notion s'y gagne par un court défi, mais la feuille imprimée
+> (deux pages A4) contient toujours la synthèse complète et identique pour tous.
+
 **Situation problème :** comment aménager des logements universitaires accueillant tout public
 en toute sécurité ?
 

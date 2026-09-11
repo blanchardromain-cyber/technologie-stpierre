@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 — Synthèse : aménager un bâtiment — 5ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  @font-face{font-family:'B612';src:url('../../pp4g/fonts/B612-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+  @font-face{font-family:'B612';src:url('../../pp4g/fonts/B612-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+
+  :root{
+    --br:#C55A11; --brl:#FCE4D6;
+    --bl:#1F4E79; --bc:#2E75B6; --bp:#DEEAF1;
+    --vt:#1E6B3B; --vp:#E2EFDA;
+    --rg:#C0392B; --rgp:#FADBD8;
+    --gr:#F4F6F8; --gb:#E2E8F0;
+    --tx:#1A202C; --td:#4A5568;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+  body.dys{font-family:'B612',"DM Sans",sans-serif;letter-spacing:.4px;word-spacing:2px;line-height:1.9;font-size:16px}
+  body.dys p,body.dys li,body.dys label{line-height:2}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--bl),#0D2B50);color:#fff;padding:16px 22px;
+    position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FFC08A}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#FFC08A}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:150px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--br),#E8842A);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .toolbtn.on{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+  .toolbtn.prim{background:var(--br);border-color:var(--br);color:#fff}
+  .toolbtn.prim:hover{background:#A94A0D;border-color:#A94A0D;color:#fff}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1100px;margin:0 auto;padding:22px 22px 120px}
+  .situ{background:linear-gradient(135deg,var(--br),#E8842A);color:#fff;border-radius:var(--r);
+    padding:20px 24px;margin-bottom:20px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .situ::after{content:"\1F3D7";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.18}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+  .situ h2{font-size:18px;font-weight:700;margin:4px 0 6px;max-width:82%}
+  .situ p{font-size:13.5px;opacity:.95;max-width:82%}
+
+  .mode{display:flex;align-items:flex-start;gap:12px;background:#FFF9E6;border:2px solid #E8B84B;
+    border-radius:var(--r);padding:13px 17px;margin-bottom:20px;font-size:13.5px;color:#6B4E00;line-height:1.65}
+  .mode b{color:#5A4000}
+
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bp);
+    border-left:6px solid var(--bl);cursor:pointer;user-select:none}
+  .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .etat{font-size:11px;font-weight:700;color:var(--td);white-space:nowrap}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  /* ═══ LE DÉFI (écran seulement) ═══ */
+  .defi{background:var(--gr);border:2px dashed var(--gb);border-radius:10px;padding:15px 17px;margin-bottom:16px}
+  .defi .dtitre{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--br);font-weight:600;margin-bottom:7px}
+  .defi .dq{font-size:14.5px;font-weight:600;margin-bottom:12px;display:block}
+  .ligne{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:7px 0}
+  .ligne + .ligne{border-top:1px solid var(--gb)}
+  .ligne .enonce{flex:1;min-width:190px;font-size:14px}
+  .opts{display:flex;gap:6px;flex-wrap:wrap}
+  .opt{display:inline-flex;align-items:center;background:#fff;border:1.5px solid var(--gb);border-radius:999px;
+    padding:5px 13px;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .opt:hover{border-color:var(--bc);color:var(--bl)}
+  .opt.juste{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+  .opt.faux{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+  .opt.montre{background:var(--vp);border-color:var(--vt);color:var(--vt);box-shadow:0 0 0 3px rgba(30,107,59,.18)}
+  .verdict{font-size:13px;font-weight:600;min-width:22px}
+  .dpied{margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lienrep{background:none;border:none;font-family:inherit;font-size:12.5px;color:var(--bc);
+    text-decoration:underline;cursor:pointer;padding:0}
+  .lienrep:hover{color:var(--bl)}
+  .dscore{font-size:12.5px;color:var(--td)}
+
+  /* ═══ LA NOTION (imprimée) ═══ */
+  .notion{display:none}
+  .notion.vue{display:block;animation:ouvre .35s ease}
+  @keyframes ouvre{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  .defbloc{border-left:5px solid var(--br);background:var(--brl);border-radius:0 10px 10px 0;
+    padding:12px 16px;margin-bottom:11px}
+  .defbloc .mot{font-weight:700;color:#8C3D06}
+  .defbloc p{font-size:14.5px;line-height:1.7}
+  .defbloc .ex{display:block;margin-top:5px;font-size:13px;color:#7A4A22;font-style:italic}
+
+  .apart{background:var(--bp);border-left:5px solid var(--bc);border-radius:0 10px 10px 0;
+    padding:12px 16px;margin:11px 0;font-size:14px;line-height:1.7}
+
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:11px;margin:13px 0}
+  .carte{border:1.5px solid var(--gb);border-radius:10px;padding:12px 14px;background:#fff;display:flex;gap:11px}
+  .carte .ico{flex:0 0 auto;width:30px;height:30px;color:var(--br)}
+  .carte .ico svg{width:30px;height:30px;display:block}
+  .carte .txt{flex:1}
+  .carte .nom{font-weight:700;font-size:14px;color:var(--bl);display:block;margin-bottom:2px}
+  .carte .det{font-size:13px;color:var(--td);line-height:1.6}
+  .carte .det i{color:#7A4A22;font-style:italic}
+
+  .amorce{font-size:14px;margin:11px 0 3px}
+  .comparo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:13px 0}
+  .colonne{border:1.5px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff}
+  .colonne h4{background:var(--bp);color:var(--bl);font-size:14.5px;padding:9px 14px;border-bottom:1.5px solid var(--gb)}
+  .colonne .dessin{padding:10px;text-align:center;background:#FCFDFE}
+  .colonne .dessin svg{width:100%;max-width:230px;height:auto;display:inline-block}
+  .colonne ul{list-style:none;padding:11px 14px 13px}
+  .colonne li{font-size:13.5px;line-height:1.65;padding-left:17px;position:relative;margin-bottom:4px}
+  .colonne li::before{content:"\25B8";position:absolute;left:0;color:var(--br);font-weight:700}
+
+  .retiens{background:var(--vp);border:2px solid var(--vt);border-radius:var(--r);padding:17px 20px;margin-top:22px}
+  .retiens h3{color:var(--vt);font-size:16px;margin-bottom:9px}
+  .retiens ol{padding-left:20px}
+  .retiens li{font-size:14px;line-height:1.75;margin-bottom:5px}
+  .retiens li b{color:#14522C}
+
+  .motsdurs{margin-top:12px;border:1.5px dotted var(--bc);border-radius:10px;padding:11px 15px;background:#FBFDFF}
+  .motsdurs .t{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--bc);font-weight:700;margin-bottom:5px}
+  .motsdurs dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}
+  .motsdurs dt{font-weight:700;color:var(--bl)}
+  .motsdurs dd{color:var(--td)}
+
+  figure.illus{margin:0 0 14px;border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center}
+  figure.illus img{display:block;max-width:100%;height:auto;margin:10px auto}
+  figure.illus figcaption{padding:8px 12px;font-size:12.5px;color:var(--td);border-top:1px solid var(--gb);background:var(--gr)}
+
+  .entete-papier{display:none}
+  .lexique-papier{display:none}
+
+  /* ═══ IMPRESSION — 2 pages aérées, contenu de référence toujours complet ═══ */
+  @media print{
+    @page{size:A4 portrait;margin:11mm 12mm}
+    header,.pbar-wrap,.defi,.mode,.situ::after,.li-barre{display:none!important}
+    body{background:#fff;font-size:10.5pt;line-height:1.55}
+    body.dys{font-size:11pt;line-height:1.7}
+    main{max-width:none;padding:0}
+    .entete-papier{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+      border-bottom:2.5pt solid #1F4E79;padding-bottom:5pt;margin-bottom:9pt}
+    .entete-papier .gauche .sur{font-size:8pt;letter-spacing:1.4pt;text-transform:uppercase;color:#C55A11;font-weight:700}
+    .entete-papier .gauche h1{font-size:15pt;color:#1F4E79;line-height:1.2}
+    .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
+    .entete-papier .droite .nom{font-weight:700;color:#1A202C;font-size:10pt}
+    .situ{background:none;color:#1A202C;border:1.5pt solid #C55A11;border-radius:6pt;
+      padding:4pt 9pt;margin-bottom:6pt;box-shadow:none;break-inside:avoid}
+    .situ .lb{color:#C55A11;font-size:7.2pt}
+    .situ h2{font-size:11pt;color:#8C3D06;max-width:none;margin:1pt 0 2pt}
+    .situ p{font-size:9pt;max-width:none;opacity:1;color:#4A5568}
+    /* Tout le contenu de référence s'imprime, quel que soit l'état de l'écran. */
+    .notion{display:block!important}
+    /* Les sections coulent d'une page à l'autre : les garder entières
+       gaspillait un tiers de page et poussait la fiche à quatre feuilles.
+       Ce sont les petits blocs qui restent insécables. */
+    section.step{box-shadow:none;border:none;margin-bottom:7pt;break-inside:auto}
+    section.step.closed .stbody{display:block}
+    .sthdr{background:none;border-left:none;border-bottom:1.2pt solid #1F4E79;padding:0 0 3pt;
+      margin-bottom:6pt;break-inside:avoid;break-after:avoid}
+    .sthdr .num{width:15pt;height:15pt;font-size:9pt}
+    .sthdr h3{font-size:12.5pt}
+    .sthdr .chev,.sthdr .etat{display:none}
+    .stbody{padding:0}
+    .defbloc{background:#FDF3EC;border-left:3pt solid #C55A11;padding:4pt 8pt;margin-bottom:3.5pt;break-inside:avoid}
+    .defbloc p{font-size:9.8pt;line-height:1.45}
+    /* L'exemple enchaîne sur la définition au lieu de prendre une ligne à lui :
+       quatre lignes gagnées par notion, sans rien retirer du contenu. */
+    .defbloc .ex{display:inline;font-size:8.8pt;margin:0 0 0 3pt}
+    .apart{background:#F2F7FB;border-left:3pt solid #2E75B6;padding:4pt 8pt;margin:4pt 0;font-size:9.3pt;line-height:1.45;break-inside:avoid}
+    .amorce{font-size:9.5pt;margin:4pt 0 2pt;break-after:avoid}
+    .grille{gap:4pt;margin:5pt 0;grid-template-columns:repeat(3,1fr)}
+    #notion3 .grille{grid-template-columns:repeat(2,1fr)}
+    .carte{padding:4pt 6pt;gap:5pt;break-inside:avoid;border-color:#CBD5E0}
+    .carte .ico,.carte .ico svg{width:15pt;height:15pt}
+    .carte .nom{font-size:9.2pt}
+    .carte .det{font-size:8.4pt;line-height:1.4}
+    .comparo{gap:7pt;margin:5pt 0;break-inside:avoid}
+    .colonne h4{background:none;color:#1F4E79;font-size:10pt;padding:3pt 8pt;border-bottom:1pt solid #CBD5E0}
+    .colonne .dessin{padding:4pt}
+    .colonne .dessin svg{max-width:96pt}
+    .colonne ul{padding:6pt 9pt 7pt}
+    .colonne li{font-size:9pt;line-height:1.45;margin-bottom:1.5pt}
+    .retiens{background:none;border:1.5pt solid #1E6B3B;padding:6pt 10pt;margin-top:7pt;break-inside:avoid}
+    .retiens h3{font-size:10.5pt;margin-bottom:2pt}
+    .retiens li{font-size:9pt;line-height:1.38;margin-bottom:0.5pt}
+    /* Les quatre encadrés de vocabulaire sont regroupés en fin de fiche : dispersés,
+       ils coûtaient 68 mm et l'un d'eux tombait à cheval sur la coupure de page. */
+    .motsdurs{display:none}
+    .lexique-papier{display:block;border:1.2pt dotted #2E75B6;border-radius:6pt;
+      padding:5pt 10pt;margin-top:7pt;break-inside:avoid;background:#FBFDFF}
+    .lexique-papier .t{font-size:8pt;letter-spacing:1.2pt;text-transform:uppercase;
+      color:#2E75B6;font-weight:700;margin-bottom:3pt}
+    .lexique-papier dl{display:grid;grid-template-columns:auto 1fr auto 1fr;
+      gap:1pt 9pt;font-size:8pt;line-height:1.35}
+    .lexique-papier dt{font-weight:700;color:#1F4E79}
+    .lexique-papier dd{color:#4A5568}
+    /* La photo reste à l'écran mais quitte la feuille : purement décorative ici,
+       elle coûtait 40 mm, soit le sixième d'une page, et faisait déborder
+       la synthèse sur une troisième feuille. Les pictogrammes et les deux
+       dessins, eux, portent du sens : ils restent. */
+    figure.illus{display:none}
+    .saut{break-before:page}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 1</div>
+      <h1>P1 — Synthèse : aménager un bâtiment</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 4 notion</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" id="btn-dys" onclick="basculerDys()" title="Agrandit le texte et l'espacement des lettres">&#x1F441;&#xFE0F; Confort de lecture</button>
+    <button class="toolbtn" id="btn-tout" onclick="afficherTout()" title="Dévoile les quatre notions d'un coup, pour réviser">&#x1F4D6; Afficher toute la synthèse</button>
+    <button class="toolbtn prim" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer ma synthèse</button>
+  </div>
+</div>
+
+<main>
+
+  <!-- En-tête visible uniquement sur la feuille imprimée -->
+  <div class="entete-papier">
+    <div class="gauche">
+      <div class="sur">Technologie · 5<sup>e</sup> · Séquence 1 · Synthèse</div>
+      <h1>Aménager un bâtiment</h1>
+    </div>
+    <div class="droite">
+      <div class="nom" id="papier-nom">Nom :</div>
+      <div id="papier-date"></div>
+    </div>
+  </div>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Comment aménager des logements universitaires accueillant tout public en toute sécurité&nbsp;?</h2>
+    <p>Voici ce qu'il faut retenir de la séquence pour être capable d'y répondre.</p>
+  </div>
+
+  <div class="mode" data-nolecture>
+    <div>
+      <b>Cette synthèse ne se lit pas, elle se gagne.</b> Pour chaque notion, un petit défi t'attend :
+      réponds d'abord, la définition apparaît ensuite. Tu peux te tromper, ça n'est pas noté —
+      chercher avant de lire, c'est ce qui fait retenir. Et quoi qu'il arrive, la feuille imprimée
+      contient <b>toute</b> la synthèse, correcte et complète.
+    </div>
+  </div>
+
+  <!-- ════════════════ NOTION 1 ════════════════ -->
+  <section class="step" id="sec1">
+    <div class="sthdr" onclick="basculerSection('sec1')">
+      <span class="num">1</span>
+      <h3>Objets, besoins et fonctions d'usage</h3>
+      <span class="etat" id="etat1">à découvrir</span>
+      <span class="chev">&#x25BC;</span>
+    </div>
+    <div class="stbody">
+
+      <div class="defi" id="defi1a">
+        <div class="dtitre">Défi 1 &mdash; naturel ou technique&nbsp;?</div>
+        <span class="dq">Range chaque objet dans la bonne colonne.</span>
+        <div class="ligne">
+          <span class="enonce">Un galet ramassé sur la plage</span>
+          <span class="opts" data-bonne="nat">
+            <label class="opt"><input type="radio" name="d1a-1" value="nat" hidden>Naturel</label>
+            <label class="opt"><input type="radio" name="d1a-1" value="tec" hidden>Technique</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Une chaise de la salle de technologie</span>
+          <span class="opts" data-bonne="tec">
+            <label class="opt"><input type="radio" name="d1a-2" value="nat" hidden>Naturel</label>
+            <label class="opt"><input type="radio" name="d1a-2" value="tec" hidden>Technique</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Une planche de bois sciée et rabotée</span>
+          <span class="opts" data-bonne="tec">
+            <label class="opt"><input type="radio" name="d1a-3" value="nat" hidden>Naturel</label>
+            <label class="opt"><input type="radio" name="d1a-3" value="tec" hidden>Technique</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score1a">0 / 3</span>
+          <button class="lienrep" onclick="montrerReponses('defi1a')">Je préfère voir la réponse</button>
+        </div>
+      </div>
+
+      <div class="defi" id="defi1b">
+        <div class="dtitre">Défi 2 &mdash; la fonction d'usage</div>
+        <span class="dq">À quelle question la fonction d'usage d'un objet répond-elle&nbsp;?</span>
+        <div class="ligne">
+          <span class="enonce">Choisis la bonne question&nbsp;:</span>
+          <span class="opts" data-bonne="b">
+            <label class="opt"><input type="radio" name="d1b" value="a" hidden>Combien coûte-t-il&nbsp;?</label>
+            <label class="opt"><input type="radio" name="d1b" value="b" hidden>À quoi sert-il&nbsp;?</label>
+            <label class="opt"><input type="radio" name="d1b" value="c" hidden>Qui l'a fabriqué&nbsp;?</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score1b">0 / 1</span>
+          <button class="lienrep" onclick="montrerReponses('defi1b')">Je préfère voir la réponse</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion1">
+        <figure class="illus" hidden id="illus-1"
+          data-alt="Terrasse aménagée dans un jardin"
+          data-src="ressources/1-objets-naturels-techniques.png|ressources/1-objets-naturels-techniques.jpg|ressources/1 Objets Techniques Objets Naturels.png">
+          <figcaption>Sur cette terrasse, presque tout est un objet technique : chaque élément a été fabriqué pour répondre à un besoin.</figcaption>
+        </figure>
+
+        <div class="defbloc">
+          <p><span class="mot">Un objet naturel</span> est un objet qui existe dans la nature et qui n'a pas été fabriqué ou modifié par l'Homme.
+          <span class="ex">Exemples : un galet, un arbre, un coquillage.</span></p>
+        </div>
+        <div class="defbloc">
+          <p><span class="mot">Un objet technique</span> est un objet fabriqué ou modifié par l'Homme pour répondre à un besoin.
+          <span class="ex">Exemples : une chaise, un vélo, une planche de bois sciée.</span></p>
+        </div>
+        <div class="defbloc">
+          <p><span class="mot">Un besoin</span> est un sentiment de manque ou d'insatisfaction qui pousse un être vivant à agir pour le satisfaire.
+          <span class="ex">Exemple : avoir froid fait naître le besoin de se protéger &mdash; le manteau y répond.</span></p>
+        </div>
+        <div class="defbloc">
+          <p><span class="mot">La fonction d'usage</span> est la fonction pour laquelle un objet technique a été créé. Elle répond à la question <span class="mot">« À quoi sert-il ? »</span>.
+          <span class="ex">Exemple : la fonction d'usage d'un vélo est de se déplacer.</span></p>
+        </div>
+
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Insatisfaction</dt><dd>le fait de ne pas être satisfait, de manquer de quelque chose.</dd>
+            <dt>Satisfaire un besoin</dt><dd>faire disparaître ce manque.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 2 ════════════════ -->
+  <section class="step" id="sec2">
+    <div class="sthdr" onclick="basculerSection('sec2')">
+      <span class="num">2</span>
+      <h3>Des contraintes&nbsp;? Pourquoi faire&nbsp;?</h3>
+      <span class="etat" id="etat2">à découvrir</span>
+      <span class="chev">&#x25BC;</span>
+    </div>
+    <div class="stbody">
+
+      <div class="defi" id="defi2">
+        <div class="dtitre">Défi &mdash; de quel type est cette contrainte&nbsp;?</div>
+        <span class="dq">Pour concevoir un vélo, le concepteur doit tenir compte de plusieurs exigences. Trouve le type de chacune.</span>
+        <div class="ligne">
+          <span class="enonce">Le vélo doit être équipé de freins.</span>
+          <span class="opts" data-bonne="reg">
+            <label class="opt"><input type="radio" name="d2-1" value="eco" hidden>Économique</label>
+            <label class="opt"><input type="radio" name="d2-1" value="reg" hidden>Réglementaire</label>
+            <label class="opt"><input type="radio" name="d2-1" value="est" hidden>Esthétique</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Le budget ne doit pas dépasser 300&nbsp;€.</span>
+          <span class="opts" data-bonne="eco">
+            <label class="opt"><input type="radio" name="d2-2" value="eco" hidden>Économique</label>
+            <label class="opt"><input type="radio" name="d2-2" value="env" hidden>Environnementale</label>
+            <label class="opt"><input type="radio" name="d2-2" value="tem" hidden>Temporelle</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Le cadre est fabriqué avec des matériaux recyclés.</span>
+          <span class="opts" data-bonne="env">
+            <label class="opt"><input type="radio" name="d2-3" value="tec" hidden>Technique</label>
+            <label class="opt"><input type="radio" name="d2-3" value="env" hidden>Environnementale</label>
+            <label class="opt"><input type="radio" name="d2-3" value="sec" hidden>Sécuritaire</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Le projet doit être terminé avant les vacances.</span>
+          <span class="opts" data-bonne="tem">
+            <label class="opt"><input type="radio" name="d2-4" value="tem" hidden>Temporelle</label>
+            <label class="opt"><input type="radio" name="d2-4" value="est" hidden>Esthétique</label>
+            <label class="opt"><input type="radio" name="d2-4" value="eco" hidden>Économique</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score2">0 / 4</span>
+          <button class="lienrep" onclick="montrerReponses('defi2')">Je préfère voir la réponse</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion2">
+        <div class="defbloc">
+          <p>Lors de la conception d'un produit ou d'un aménagement, le concepteur doit respecter différentes <span class="mot">contraintes</span>.</p>
+        </div>
+        <div class="defbloc">
+          <p><span class="mot">Une contrainte</span> est une demande ou une condition <span class="mot">imposée</span> par le client, l'entreprise, la collectivité ou la réglementation. Elle <span class="mot">limite les choix du concepteur</span>.</p>
+        </div>
+        <div class="apart">
+          Une même contrainte peut être respectée par <strong>plusieurs solutions techniques</strong>.
+          Le concepteur choisit celle qui est la mieux adaptée à l'ensemble des contraintes.
+        </div>
+
+        <div class="grille">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/></svg></span>
+            <span class="txt"><span class="nom">Technique</span><span class="det">Liée au fonctionnement ou aux caractéristiques du produit. <i>Un vélo doit être solide et léger.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h9l4 4v14.4H6z"/><path d="M15 2.8v4h4"/><path d="M9 11.5h7M9 14.8h7M9 18h4.5"/></svg></span>
+            <span class="txt"><span class="nom">Réglementaire</span><span class="det">Liée aux règles et aux normes à respecter. <i>Un vélo doit être équipé de freins.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 3.5c0 8.6-4.3 13.3-11 13.3H5.6C5.6 8.2 10.6 3.5 20 3.5z"/><path d="M4 20.5c1.6-4.4 4.3-7.3 8-9"/></svg></span>
+            <span class="txt"><span class="nom">Environnementale</span><span class="det">Vise à réduire l'impact sur l'environnement. <i>Utiliser des matériaux recyclés.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6l7.6 3v6c0 5-3.2 8.6-7.6 9.8-4.4-1.2-7.6-4.8-7.6-9.8v-6z"/><path d="M8.7 12.1l2.3 2.3 4.3-4.6"/></svg></span>
+            <span class="txt"><span class="nom">Sécuritaire</span><span class="det">Vise à protéger les personnes et les biens. <i>Un casque doit protéger la tête en cas de chute.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17.6 3.4l3 3-9.9 9.9-3.9.9.9-3.9z"/><path d="M3.4 20.6h8"/></svg></span>
+            <span class="txt"><span class="nom">Esthétique</span><span class="det">Concerne l'apparence du produit. <i>Choisir la forme et la couleur d'un vélo.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M15.6 8.5a4.6 4.6 0 00-6.8 1.9 5.6 5.6 0 000 3.2 4.6 4.6 0 006.8 1.9"/><path d="M6.9 11.1h6.2M6.9 13.6h6.2"/></svg></span>
+            <span class="txt"><span class="nom">Économique</span><span class="det">Concerne le coût du produit. <i>Respecter un budget de 300 €.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12.6" r="8.4"/><path d="M12 7.8v4.8l3.2 2M9 2.2h6"/></svg></span>
+            <span class="txt"><span class="nom">Temporelle</span><span class="det">Concerne le délai. <i>Terminer le projet avant les vacances.</i></span></span></div>
+        </div>
+
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Le concepteur</dt><dd>la personne qui imagine et met au point le produit.</dd>
+            <dt>Imposée</dt><dd>que l'on est obligé d'accepter, qu'on ne choisit pas.</dd>
+            <dt>La collectivité</dt><dd>la commune, le département, la région.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 3 ════════════════ -->
+  <section class="step" id="sec3">
+    <div class="sthdr" onclick="basculerSection('sec3')">
+      <span class="num">3</span>
+      <h3>Les normes</h3>
+      <span class="etat" id="etat3">à découvrir</span>
+      <span class="chev">&#x25BC;</span>
+    </div>
+    <div class="stbody">
+
+      <div class="defi" id="defi3">
+        <div class="dtitre">Défi &mdash; vrai ou faux&nbsp;?</div>
+        <span class="dq">Une norme, ce n'est pas tout à fait une contrainte comme les autres.</span>
+        <div class="ligne">
+          <span class="enonce">Une norme est décidée par le client.</span>
+          <span class="opts" data-bonne="f">
+            <label class="opt"><input type="radio" name="d3-1" value="v" hidden>Vrai</label>
+            <label class="opt"><input type="radio" name="d3-1" value="f" hidden>Faux</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Une norme doit obligatoirement être appliquée.</span>
+          <span class="opts" data-bonne="v">
+            <label class="opt"><input type="radio" name="d3-2" value="v" hidden>Vrai</label>
+            <label class="opt"><input type="radio" name="d3-2" value="f" hidden>Faux</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Une simple contrainte, elle, se négocie avec le client.</span>
+          <span class="opts" data-bonne="v">
+            <label class="opt"><input type="radio" name="d3-3" value="v" hidden>Vrai</label>
+            <label class="opt"><input type="radio" name="d3-3" value="f" hidden>Faux</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score3">0 / 3</span>
+          <button class="lienrep" onclick="montrerReponses('defi3')">Je préfère voir la réponse</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion3">
+        <div class="defbloc">
+          <p>Les normes sont des contraintes particulières : <span class="mot">une norme</span> est une règle validée et imposée par l'État.
+          <span class="ex">Elle est donc obligatoire, alors qu'une simple contrainte se négocie avec le client.</span></p>
+        </div>
+
+        <p class="amorce"><strong>Les normes permettent de&nbsp;:</strong></p>
+        <div class="grille">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6.2h11.5v7.4H7.6L3 16.6z"/><path d="M17 9.6h4v7.4l-3.2-2.2h-4.6v-1.2"/></svg></span>
+            <span class="txt"><span class="nom">Se comprendre et communiquer facilement</span><span class="det">Grâce à des codes et des représentations communs. <i>Les symboles utilisés sur un plan ou un schéma.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 20.4H2"/><path d="M5.2 20.4v-7.6M11 20.4V5.6M16.8 20.4v-5.2"/><path d="M9.2 3.2l1.8 1.8 3-3.2"/></svg></span>
+            <span class="txt"><span class="nom">Choisir plus facilement un produit</span><span class="det">En s'appuyant sur des critères communs. <i>Comparer l'autonomie de plusieurs smartphones.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6l7.6 3v6c0 5-3.2 8.6-7.6 9.8-4.4-1.2-7.6-4.8-7.6-9.8v-6z"/><circle cx="12" cy="10.4" r="2"/><path d="M8.6 16.4c.6-1.8 1.9-2.7 3.4-2.7s2.8.9 3.4 2.7"/></svg></span>
+            <span class="txt"><span class="nom">Protéger les utilisateurs</span><span class="det">En garantissant la sécurité des objets et des équipements. <i>Le port du casque à vélo.</i></span></span></div>
+
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11.4 4.2l2.6 4.4M18.2 12.4l2.4 4.2h-5M8.4 16.6H3.4l2.5-4.3"/><path d="M9.2 4.2h4.6M20.6 16.6l-2.4 4.1h-4.8M3.4 16.6l2.4 4.1h4.9"/></svg></span>
+            <span class="txt"><span class="nom">Protéger l'environnement</span><span class="det">En favorisant des objets qui utilisent moins de ressources et produisent moins de déchets. <i>Un emballage fabriqué à partir de matériaux recyclés.</i></span></span></div>
+        </div>
+
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Validée</dt><dd>vérifiée puis acceptée officiellement.</dd>
+            <dt>Un critère</dt><dd>ce que l'on regarde pour comparer et choisir.</dd>
+            <dt>Une ressource</dt><dd>une matière ou une énergie prélevée dans la nature.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 4 ════════════════ -->
+  <section class="step" id="sec4">
+    <div class="sthdr" onclick="basculerSection('sec4')">
+      <span class="num">4</span>
+      <h3>Représenter le réel&nbsp;: croquis et modèles</h3>
+      <span class="etat" id="etat4">à découvrir</span>
+      <span class="chev">&#x25BC;</span>
+    </div>
+    <div class="stbody">
+
+      <div class="defi" id="defi4">
+        <div class="dtitre">Défi &mdash; croquis ou modélisation&nbsp;?</div>
+        <span class="dq">Tu viens de représenter ton logement en conteneur de deux façons. Laquelle correspond à chaque phrase&nbsp;?</span>
+        <div class="ligne">
+          <span class="enonce">Je le trace à main levée sur une feuille.</span>
+          <span class="opts" data-bonne="cro">
+            <label class="opt"><input type="radio" name="d4-1" value="cro" hidden>Le croquis</label>
+            <label class="opt"><input type="radio" name="d4-1" value="mod" hidden>La modélisation</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Je la réalise à l'ordinateur, en 3D et à taille réelle.</span>
+          <span class="opts" data-bonne="mod">
+            <label class="opt"><input type="radio" name="d4-2" value="cro" hidden>Le croquis</label>
+            <label class="opt"><input type="radio" name="d4-2" value="mod" hidden>La modélisation</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Elle permet de simuler le fonctionnement et d'imprimer des plans.</span>
+          <span class="opts" data-bonne="mod">
+            <label class="opt"><input type="radio" name="d4-3" value="cro" hidden>Le croquis</label>
+            <label class="opt"><input type="radio" name="d4-3" value="mod" hidden>La modélisation</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="ligne">
+          <span class="enonce">Il donne seulement l'allure générale de l'objet.</span>
+          <span class="opts" data-bonne="cro">
+            <label class="opt"><input type="radio" name="d4-4" value="cro" hidden>Le croquis</label>
+            <label class="opt"><input type="radio" name="d4-4" value="mod" hidden>La modélisation</label>
+          </span><span class="verdict"></span>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score4">0 / 4</span>
+          <button class="lienrep" onclick="montrerReponses('defi4')">Je préfère voir la réponse</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion4">
+        <div class="defbloc">
+          <p>Pour représenter une solution technique, plusieurs <span class="mot">modes de représentation</span> peuvent être utilisés.</p>
+        </div>
+
+        <div class="comparo">
+          <div class="colonne">
+            <h4>Le croquis</h4>
+            <div class="dessin" aria-hidden="true">
+              <svg viewBox="0 0 240 130" fill="none" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M28 96 L28 44 L150 44 L150 96 Z" stroke-dasharray="52 3 30 2"/>
+                <path d="M150 44 L196 24 L196 76 L150 96" stroke-dasharray="40 3 24 2"/>
+                <path d="M28 44 L74 24 L196 24" stroke-dasharray="44 2 60 3"/>
+                <path d="M50 96 L50 68 L74 68 L74 96" stroke-dasharray="26 2"/>
+                <rect x="96" y="58" width="30" height="22" stroke-dasharray="20 2"/>
+                <path d="M20 100 L206 100" stroke-width="1.6" stroke-dasharray="6 4"/>
+                <g stroke="#C55A11" stroke-width="2">
+                  <path d="M170 122 L204 108"/>
+                  <path d="M204 108 L212 105 L214 111 L206 114 Z"/>
+                  <path d="M170 122 L166 126 L172 126 Z" fill="#C55A11"/>
+                </g>
+              </svg>
+            </div>
+            <ul>
+              <li>Réalisé <strong>à main levée</strong>, sur papier.</li>
+              <li>Donne <strong>l'allure générale</strong> de l'objet technique.</li>
+              <li>Rapide : c'est l'outil de la première idée.</li>
+            </ul>
+          </div>
+
+          <div class="colonne">
+            <h4>La modélisation du réel</h4>
+            <div class="dessin" aria-hidden="true">
+              <svg viewBox="0 0 240 130" fill="none" stroke="#1F4E79" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="14" y="14" width="212" height="88" rx="5" stroke="#94A3B8" stroke-width="2"/>
+                <path d="M96 102 v10 M144 102 v10 M84 116 h72" stroke="#94A3B8" stroke-width="2"/>
+                <path d="M46 84 L46 46 L134 46 L134 84 Z"/>
+                <path d="M134 46 L178 28 L178 66 L134 84" />
+                <path d="M46 46 L90 28 L178 28"/>
+                <path d="M64 84 L64 62 L84 62 L84 84"/>
+                <rect x="100" y="56" width="24" height="18"/>
+                <path d="M46 84 L134 84" stroke-width="2.4"/>
+                <g stroke="#C55A11" stroke-width="1.4">
+                  <path d="M46 92 L134 92 M46 89 v6 M134 89 v6"/>
+                </g>
+              </svg>
+            </div>
+            <ul>
+              <li>Réalisée <strong>à l'ordinateur</strong>, à taille réelle et <strong>en 3D</strong>.</li>
+              <li>Représente <strong>précisément</strong> l'objet technique.</li>
+              <li>C'est ce que tu fais sur <em>Sweet Home 3D</em>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="apart">
+          <strong>Particularités :</strong> à partir d'une modélisation, on peut
+          <strong>simuler ou tester</strong> le fonctionnement d'un objet technique,
+          et <strong>imprimer des plans</strong> pour fabriquer les pièces réelles.
+        </div>
+
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>À main levée</dt><dd>sans règle ni équerre, directement à la main.</dd>
+            <dt>Simuler</dt><dd>faire fonctionner « pour de faux » sur l'ordinateur, avant de fabriquer.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="retiens">
+    <h3>&#x1F3AF; Je retiens en cinq phrases</h3>
+    <ol>
+      <li>Un <b>objet technique</b> a été fabriqué ou modifié par l'Homme, contrairement à un <b>objet naturel</b>.</li>
+      <li>Il existe pour répondre à un <b>besoin</b>, et sa <b>fonction d'usage</b> dit à quoi il sert.</li>
+      <li>Le concepteur travaille sous <b>contraintes</b> : technique, réglementaire, environnementale, sécuritaire, esthétique, économique, temporelle.</li>
+      <li>Une <b>norme</b> est une contrainte imposée par l'État : elle est <b>obligatoire</b>, alors qu'une simple contrainte se négocie.</li>
+      <li>On représente une solution par un <b>croquis</b> à main levée, puis par une <b>modélisation</b> précise en 3D à l'ordinateur.</li>
+    </ol>
+  </div>
+
+  <!-- Sur la feuille imprimée, les quatre encadrés « mots difficiles » sont
+       regroupés ici en une seule liste : rempli au chargement à partir des
+       encadrés eux-mêmes, donc jamais désynchronisé. -->
+  <div class="lexique-papier" id="lexique-papier" data-nolecture>
+    <div class="t">Les mots difficiles de la séquence</div>
+    <dl id="lexique-liste"></dl>
+  </div>
+
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P1 — SYNTHÈSE « aménager un bâtiment » (5e)
+   Principe : la notion se gagne à l'écran, mais la feuille imprimée
+   contient toujours la synthèse complète et correcte, identique pour
+   tous les élèves. Rien de ce que l'élève clique n'est imprimé.
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var CLE_IDENT   = "batiment5e_prefill";
+var CLE_ETAT    = "batiment5e_syn_etat";
+var TOTAL_NOTIONS = 4;
+
+/* Chaque défi sait quelle notion il ouvre et combien de lignes il compte. */
+var DEFIS = {
+  defi1a: { notion: 1, score: "score1a" },
+  defi1b: { notion: 1, score: "score1b" },
+  defi2:  { notion: 2, score: "score2"  },
+  defi3:  { notion: 3, score: "score3"  },
+  defi4:  { notion: 4, score: "score4"  }
+};
+
+/* ── Défis ─────────────────────────────────────────────────────────── */
+function brancherDefis(){
+  var lignes = document.querySelectorAll(".defi .ligne");
+  for (var i = 0; i < lignes.length; i++) brancherLigne(lignes[i]);
+}
+function brancherLigne(ligne){
+  var zone = ligne.querySelector(".opts");
+  if (!zone) return;
+  var bonne = zone.getAttribute("data-bonne");
+  var choix = zone.querySelectorAll("input[type=radio]");
+  for (var i = 0; i < choix.length; i++){
+    choix[i].addEventListener("change", function(){
+      if (ligne.getAttribute("data-fige") === "1") return;
+      var etiquettes = zone.querySelectorAll(".opt");
+      for (var j = 0; j < etiquettes.length; j++) etiquettes[j].classList.remove("juste","faux","montre");
+      var choisi = this.parentNode;
+      var verdict = ligne.querySelector(".verdict");
+      if (this.value === bonne){
+        choisi.classList.add("juste");
+        verdict.textContent = "✓";
+        verdict.style.color = "var(--vt)";
+        ligne.setAttribute("data-fige","1");     /* trouvé : on n'y revient plus */
+      } else {
+        choisi.classList.add("faux");
+        verdict.textContent = "✕";
+        verdict.style.color = "var(--rg)";
+        /* Une erreur ne bloque jamais : la bonne réponse s'éclaire aussitôt. */
+        marquerBonne(zone, bonne);
+        ligne.setAttribute("data-fige","1");
+      }
+      majDefi(ligne.closest(".defi"));
+    });
+  }
+}
+function marquerBonne(zone, bonne){
+  var choix = zone.querySelectorAll("input[type=radio]");
+  for (var i = 0; i < choix.length; i++){
+    if (choix[i].value === bonne) choix[i].parentNode.classList.add("montre");
+  }
+}
+function montrerReponses(idDefi){
+  var defi = document.getElementById(idDefi);
+  if (!defi) return;
+  var lignes = defi.querySelectorAll(".ligne");
+  for (var i = 0; i < lignes.length; i++){
+    var zone = lignes[i].querySelector(".opts");
+    var etiquettes = zone.querySelectorAll(".opt");
+    for (var j = 0; j < etiquettes.length; j++) etiquettes[j].classList.remove("juste","faux","montre");
+    marquerBonne(zone, zone.getAttribute("data-bonne"));
+    lignes[i].setAttribute("data-fige","1");
+    var v = lignes[i].querySelector(".verdict");
+    v.textContent = ""; v.style.color = "";
+  }
+  majDefi(defi);
+}
+function majDefi(defi){
+  if (!defi) return;
+  var cfg = DEFIS[defi.id];
+  var lignes = defi.querySelectorAll(".ligne");
+  var faites = 0, justes = 0;
+  for (var i = 0; i < lignes.length; i++){
+    if (lignes[i].getAttribute("data-fige") === "1") faites++;
+    if (lignes[i].querySelector(".opt.juste")) justes++;
+  }
+  var sc = document.getElementById(cfg.score);
+  if (sc) sc.textContent = justes + " / " + lignes.length;
+  if (faites === lignes.length) verifierNotion(cfg.notion);
+}
+
+/* Une notion s'ouvre quand TOUS les défis qui la concernent sont terminés. */
+function verifierNotion(n){
+  for (var id in DEFIS){
+    if (DEFIS[id].notion !== n) continue;
+    var defi = document.getElementById(id);
+    var lignes = defi.querySelectorAll(".ligne");
+    for (var i = 0; i < lignes.length; i++){
+      if (lignes[i].getAttribute("data-fige") !== "1") return;
+    }
+  }
+  ouvrirNotion(n);
+}
+function ouvrirNotion(n){
+  var bloc = document.getElementById("notion" + n);
+  if (!bloc || bloc.classList.contains("vue")) return;
+  bloc.classList.add("vue");
+  var etat = document.getElementById("etat" + n);
+  if (etat){ etat.textContent = "✓ acquise"; etat.style.color = "var(--vt)"; }
+  majProgression();
+  enregistrerEtat();
+  try { bloc.scrollIntoView({ behavior:"smooth", block:"nearest" }); } catch(e){}
+}
+function afficherTout(){
+  for (var n = 1; n <= TOTAL_NOTIONS; n++) ouvrirNotion(n);
+  for (var id in DEFIS) montrerReponses(id);
+}
+function majProgression(){
+  var vues = document.querySelectorAll(".notion.vue").length;
+  document.getElementById("pcount").textContent =
+    vues + " / " + TOTAL_NOTIONS + " notion" + (vues > 1 ? "s" : "");
+  document.getElementById("pbar-fill").style.width = (vues / TOTAL_NOTIONS * 100) + "%";
+}
+
+/* ── Sections dépliables ───────────────────────────────────────────── */
+function basculerSection(id){
+  var s = document.getElementById(id);
+  if (s) s.classList.toggle("closed");
+}
+
+/* ── Confort de lecture ────────────────────────────────────────────── */
+function basculerDys(){
+  var actif = document.body.classList.toggle("dys");
+  document.getElementById("btn-dys").classList.toggle("on", actif);
+  try { localStorage.setItem("dysMode", actif ? "1" : "0"); } catch(e){}
+}
+
+/* ── Identité (uniquement pour l'en-tête de la feuille imprimée) ───── */
+function lireIdentite(){
+  try {
+    var brut = localStorage.getItem(CLE_IDENT);
+    if (!brut) return;
+    var d = JSON.parse(brut);
+    if (!d) return;
+    if (d.p) document.getElementById("inp-prenom").value = d.p;
+    if (d.n) document.getElementById("inp-nom").value    = d.n;
+    if (d.c) document.getElementById("inp-classe").value = String(d.c).replace(/^5/, "");
+  } catch(e){}
+}
+function majEntetePapier(){
+  var p = document.getElementById("inp-prenom").value.trim();
+  var n = document.getElementById("inp-nom").value.trim();
+  var c = document.getElementById("inp-classe").value.trim().toUpperCase();
+  var qui = (p + " " + n).trim();
+  document.getElementById("papier-nom").textContent =
+    qui ? (qui + (c ? "  ·  5" + c : "")) : "Nom :               Classe :";
+}
+
+/* ── Mémoire de l'avancement (par poste) ───────────────────────────── */
+function enregistrerEtat(){
+  var vues = [];
+  for (var n = 1; n <= TOTAL_NOTIONS; n++){
+    if (document.getElementById("notion" + n).classList.contains("vue")) vues.push(n);
+  }
+  try { localStorage.setItem(CLE_ETAT, JSON.stringify(vues)); } catch(e){}
+}
+function restaurerEtat(){
+  try {
+    var brut = localStorage.getItem(CLE_ETAT);
+    if (!brut) return;
+    var vues = JSON.parse(brut) || [];
+    for (var i = 0; i < vues.length; i++){
+      ouvrirNotion(vues[i]);
+      for (var id in DEFIS){ if (DEFIS[id].notion === vues[i]) montrerReponses(id); }
+    }
+  } catch(e){}
+}
+
+/* ── Illustrations facultatives (mêmes fichiers que l'activité) ────── */
+function chargerIllustrations(){
+  var figs = document.querySelectorAll("figure.illus[data-src]");
+  for (var i = 0; i < figs.length; i++){
+    (function(fig){
+      var srcs = (fig.getAttribute("data-src") || "").split("|");
+      var alt  = fig.getAttribute("data-alt") || "";
+      var k = 0;
+      function suivant(){
+        if (k >= srcs.length){ fig.remove(); return; }
+        var url = encodeURI(srcs[k++].trim());
+        var test = new Image();
+        test.onload = function(){
+          var img = document.createElement("img");
+          img.src = url; img.alt = alt;
+          fig.insertBefore(img, fig.firstChild);
+          fig.hidden = false;
+        };
+        test.onerror = suivant;
+        test.src = url;
+      }
+      suivant();
+    })(figs[i]);
+  }
+}
+
+/* ── Lexique regroupé pour la feuille imprimée ─────────────────────── */
+function assemblerLexique(){
+  var liste = document.getElementById("lexique-liste");
+  if (!liste) return;
+  var sources = document.querySelectorAll(".motsdurs dl > *");
+  for (var i = 0; i < sources.length; i++) liste.appendChild(sources[i].cloneNode(true));
+}
+
+/* ── Barre d'outils collée sous l'en-tête ──────────────────────────── */
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+
+/* ── Démarrage ─────────────────────────────────────────────────────── */
+function demarrer(){
+  brancherDefis();
+  lireIdentite();
+  restaurerEtat();
+  majProgression();
+  chargerIllustrations();
+  assemblerLexique();
+  calerBarreOutils();
+
+  var champs = ["inp-prenom","inp-nom","inp-classe"];
+  for (var i = 0; i < champs.length; i++){
+    document.getElementById(champs[i]).addEventListener("input", majEntetePapier);
+  }
+  majEntetePapier();
+
+  var d = new Date();
+  document.getElementById("papier-date").textContent =
+    ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+
+  try {
+    if (localStorage.getItem("dysMode") === "1"){
+      document.body.classList.add("dys");
+      document.getElementById("btn-dys").classList.add("on");
+    }
+  } catch(e){}
+
+  window.addEventListener("resize", calerBarreOutils);
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+else demarrer();
+</script>
+
+<script>
+/* Le texte des cartes « contraintes » et « normes » vit dans des <span> : sans
+   cette liste, le lecteur immersif sautait un tiers de la synthèse. On y ajoute
+   aussi les énoncés et les réponses des défis, et le lexique. */
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in",
+  sectionsFermees:"section.step.closed", classeFermeture:"closed",
+  selecteurs:"h1, h2, h3, h4, .dq, .enonce, .opt, .defbloc p, .apart, .amorce, " +
+             ".carte .txt, .colonne h4, li, figcaption, dt, dd, p, summary"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+</body>
+</html>
