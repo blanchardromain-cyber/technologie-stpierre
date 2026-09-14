@@ -51,6 +51,8 @@
     padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none;
   }
   .fld input:focus{border-color:#FFC08A}
+  .fld input[readonly]{background:rgba(255,255,255,.72);color:#2D3748;cursor:default}
+  .fld input[readonly]:focus{border-color:transparent}
   .classe-row{display:flex;align-items:stretch}
   .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
     border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
@@ -1420,6 +1422,10 @@ function saveDraft(){
   if (_draftT) clearTimeout(_draftT);
   _draftT = setTimeout(function(){
     try {
+      /* Garde-fou : une fiche vide ne remplace jamais un brouillon enregistré.
+         Sans cela, retaper son nom (hors du site, sans identité pré-remplie)
+         écrasait le travail rangé sous ce nom avant d'avoir pu le recharger. */
+      if (formVierge() && localStorage.getItem(draftKey())) return;
       localStorage.setItem(draftKey(), JSON.stringify(collect()));
       var d = new Date();
       function p(x){ return x<10?"0"+x:""+x; }
@@ -1771,7 +1777,33 @@ function readPrefill(){
     if (USER.p) $("inp-prenom").value = USER.p;
     if (USER.n) $("inp-nom").value = USER.n;
     if (USER.c) $("inp-classe").value = String(USER.c).replace(/^5/, "").toUpperCase();
+    verrouillerIdentite();
   } catch(e){}
+}
+/* L'identité vient du compte de l'élève : on la fige. Il ne peut plus la
+   modifier — ni par erreur, ni pour rendre le travail sous un autre nom — et
+   le brouillon reste rangé sous la même clé du début à la fin.
+   Ouverte hors du site, la fiche n'a pas d'identité : les champs restent
+   saisissables, comme avant. */
+function verrouillerIdentite(){
+  if (!USER.p || !USER.n) return;
+  var champs = ["inp-prenom","inp-nom","inp-classe"];
+  for (var i=0;i<champs.length;i++){
+    var e = $(champs[i]);
+    if (!e) continue;
+    e.readOnly = true;
+    e.tabIndex = -1;
+    e.title = "Identité de ton compte — elle ne se modifie pas ici.";
+  }
+  var z = document.querySelector(".ident");
+  if (z && !document.getElementById("ident-compte")){
+    var n = document.createElement("div");
+    n.id = "ident-compte";
+    n.setAttribute("data-nolecture","");
+    n.textContent = "\u{1F512} identité de ton compte";
+    n.style.cssText = "flex-basis:100%;font-size:10.5px;color:#BBD3E8;letter-spacing:.3px";
+    z.appendChild(n);
+  }
 }
 function wireFields(){
   var els = document.querySelectorAll(".rep");
@@ -1788,7 +1820,7 @@ function wireFields(){
   for (var j=0;j<idf.length;j++){
     var e = $(idf[j]);
     if (e){
-      e.addEventListener("input", function(){ saveDraft(); });
+      e.addEventListener("input", function(){ restaurerSelonIdentite(); saveDraft(); });
       e.addEventListener("change", restaurerSelonIdentite);
       e.addEventListener("blur", restaurerSelonIdentite);
     }
