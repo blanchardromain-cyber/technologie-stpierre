@@ -197,6 +197,9 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .ptabs{display:flex;gap:4px;margin-bottom:22px;background:#fff;border-radius:10px;padding:4px;box-shadow:var(--sh);border:1px solid var(--gb);width:fit-content}
 .ptab{padding:8px 18px;border:none;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;background:transparent;color:var(--td);transition:all .2s}
 .ptab.on{background:var(--bl);color:#fff}
+/* Mode collègue : ni codes d'accès, ni configuration, ni export global. */
+body.mode-collegue #pt-g,body.mode-collegue #pt-c,
+body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
 .sgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
 .stcard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px}
 .stnum{font-size:30px;font-weight:700}
@@ -5149,6 +5152,46 @@ var QUES = [
 // ================================================================
 var user = null, isProf = false, ans = {}, curQ = 0, modalId = null, pendingSeq = null;
 
+/* ════════════════════════════════════════════════════════════════════════
+   COMPTES COLLÈGUES
+   Un collègue se connecte comme un élève, avec un compte nominatif. Il voit
+   les capsules sans avoir à saisir de code, et il suit puis corrige les
+   copies de SES classes — celles listées dans son compte, et elles seules.
+   Il n'a accès ni aux codes d'accès, ni aux mots de passe des élèves, ni à
+   l'export global, ni à la suppression de copies.
+
+   Pour ouvrir un accès, ajoute une ligne :
+     { id:"prenom.nom", p:"Prénom", n:"NOM", pwd:"motdepasse", classes:["5B","5C"] }
+   Les classes s'écrivent comme dans les copies : "5B", "4A"…
+
+   À savoir : le site est un fichier statique. Ces restrictions organisent
+   le travail, elles ne constituent pas une barrière technique — le code
+   source de la page reste lisible par qui sait l'ouvrir.
+   ════════════════════════════════════════════════════════════════════════ */
+var ENSEIGNANTS = [
+  /* Aucun compte pour l'instant : donne-moi prénom, nom et classes. */
+];
+var isCollegue = false;
+
+function classesDuCollegue() {
+  return (isCollegue && user && user.classes) ? user.classes : [];
+}
+/* Une copie est-elle dans le périmètre de la personne connectée ? */
+function copieVisible(sub) {
+  if (!isCollegue) return true;
+  var cl = classesDuCollegue();
+  if (!cl.length) return false;
+  for (var i = 0; i < cl.length; i++) {
+    if (String(sub.ecls || "").toUpperCase() === String(cl[i]).toUpperCase()) return true;
+  }
+  return false;
+}
+function subsVisibles() {
+  var all = getSubs();
+  if (!isCollegue) return all;
+  return all.filter(copieVisible);
+}
+
 // ================================================================
 // UTILITAIRES LOCALSTORAGE
 // ================================================================
@@ -5194,6 +5237,10 @@ function doLogin() {
   if (!id) { showErr("Entre ton identifiant prénom.nom."); return; }
   var el = null;
   for (var i = 0; i < ELEVES.length; i++) { if (ELEVES[i].id === id) { el = ELEVES[i]; break; } }
+  var estEnseignant = false;
+  if (!el) {
+    for (var e = 0; e < ENSEIGNANTS.length; e++) { if (ENSEIGNANTS[e].id === id) { el = ENSEIGNANTS[e]; estEnseignant = true; break; } }
+  }
   if (!el) { showErr("Identifiant non reconnu. Vérifie ton prénom.nom."); return; }
   if (pwd !== el.pwd) { showErr("Mot de passe incorrect."); return; }
   // Se souvenir de moi
@@ -5205,7 +5252,7 @@ function doLogin() {
     localStorage.removeItem("rem_id");
     localStorage.removeItem("rem_pwd");
   }
-  user = el; isProf = false; launch();
+  user = el; isProf = false; isCollegue = estEnseignant; launch();
 }
 function doProfLogin() {
   var id = document.getElementById("pid").value.trim();
@@ -5228,6 +5275,7 @@ function launch() {
   document.getElementById("uname").textContent = user.p + " " + user.n;
   document.getElementById("ucls").textContent = user.c ? user.c : "";
   if (isProf) { goPage("pg-prof"); renderProf(); startProfAutoRefresh(); refreshProf(); }
+  else if (isCollegue) { entrerModeCollegue(); }
   else {
     goPage("pg-dash");
     document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !";
@@ -5295,7 +5343,8 @@ function checkStudentStatusChanges() {
   });
 }
 function doLogout() {
-  user = null; isProf = false; ans = {}; curQ = 0; stopProfAutoRefresh();
+  user = null; isProf = false; isCollegue = false; ans = {}; curQ = 0; stopProfAutoRefresh();
+  document.body.classList.remove("mode-collegue");
   document.getElementById("login").style.display = "flex";
   document.getElementById("app").style.display = "none";
   ["lid","lpwd","pid","ppwd"].forEach(function(id) { document.getElementById(id).value = ""; });
@@ -5628,7 +5677,8 @@ function renderDash() {
       var mySub = subByCap[s.id];
       // Si l'élève a déjà une soumission pour cette capsule, il l'a forcément déverrouillée à un moment :
       // on n'affiche plus "Code requis" même sur un nouveau navigateur.
-      var isLocked = (code && code.length > 0) && !unlocked[s.id] && !mySub;
+      /* Un collègue n'a pas à connaître les codes : son compte fait clé. */
+      var isLocked = !isCollegue && (code && code.length > 0) && !unlocked[s.id] && !mySub;
       var isOpen = s.open;
       stats.total++;
       if (isOpen) stats.ouvertes++;
@@ -6682,6 +6732,55 @@ function buildMaisonModalHTML(sub) {
 // ================================================================
 // TABLEAU DE BORD PROF
 // ================================================================
+/* ── Mode collègue ────────────────────────────────────────────────────── */
+function entrerModeCollegue() {
+  document.body.classList.add("mode-collegue");
+  var cl = classesDuCollegue();
+  document.getElementById("wmsg").textContent = "Bonjour " + user.p + " !";
+  var intro = document.querySelector("#pg-dash .wbanner p");
+  if (intro) intro.textContent = cl.length
+    ? "Accès enseignant \u2014 les capsules s'ouvrent sans code, et tu suis les copies de " + cl.join(", ") + "."
+    : "Accès enseignant \u2014 aucune classe n'est encore rattachée à ton compte.";
+  var surtitre = document.querySelector("#pg-dash .wbanner div div");
+  if (surtitre) surtitre.textContent = "\u25CF Espace enseignant";
+  poserBoutonSuivi();
+  goPage("pg-dash");
+  renderDash();
+  startProfAutoRefresh(); refreshProf();
+}
+/* Un bouton pour passer des capsules au suivi, et revenir. */
+function poserBoutonSuivi() {
+  if (document.getElementById("btn-suivi-collegue")) return;
+  var hote = document.querySelector("#pg-dash .wbanner > div");
+  if (!hote) return;
+  var b = document.createElement("button");
+  b.id = "btn-suivi-collegue";
+  b.textContent = "\u{1F4CA} Suivi de mes classes";
+  b.style.cssText = "margin-top:12px;padding:9px 18px;background:#fff;color:#1F4E79;border:none;" +
+    "border-radius:9px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700";
+  b.onclick = function(){ ouvrirSuiviCollegue(); };
+  hote.appendChild(b);
+}
+function ouvrirSuiviCollegue() {
+  goPage("pg-prof");
+  var badge = document.querySelector("#pg-prof .badge");
+  if (badge) { badge.textContent = "\u{1F464} Accès enseignant"; }
+  var t = document.querySelector("#pg-prof h2");
+  if (t) t.textContent = "Suivi de mes classes";
+  if (!document.getElementById("btn-retour-capsules")) {
+    var r = document.createElement("button");
+    r.id = "btn-retour-capsules";
+    r.textContent = "\u2190 Retour aux capsules";
+    r.style.cssText = "padding:7px 14px;background:var(--gr);color:var(--td);border:1px solid var(--gb);" +
+      "border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;margin-right:8px";
+    r.onclick = function(){ goPage("pg-dash"); renderDash(); };
+    var zone = document.querySelector("#pg-prof > div");
+    if (zone) zone.insertBefore(r, zone.firstChild);
+  }
+  pTab("s");
+  renderProf();
+}
+
 function pTab(t) {
   document.getElementById("pt-s").classList.toggle("on", t === "s");
   document.getElementById("pt-g").classList.toggle("on", t === "g");
@@ -6689,12 +6788,13 @@ function pTab(t) {
   document.getElementById("psuivi").classList.toggle("h", t !== "s");
   document.getElementById("pgates").classList.toggle("h", t !== "g");
   document.getElementById("pconfig").classList.toggle("h", t !== "c");
+  if (isCollegue) return;                 /* ni codes d'accès, ni mots de passe */
   if (t === "g") renderGates();
   if (t === "c") renderConfig();
 }
 function renderProf() { renderStats(); renderSubs(); }
 function renderStats() {
-  var s = getSubs(), p = 0, v = 0, r = 0;
+  var s = subsVisibles(), p = 0, v = 0, r = 0;
   for (var i = 0; i < s.length; i++) {
     if (s[i].status === "pending") p++;
     else if (s[i].status === "validated") v++;
@@ -7112,7 +7212,7 @@ function renderSubs() {
   var cf = document.getElementById("fcap").value;
   var sf = document.getElementById("fstat").value;
   var se = document.getElementById("fsearch").value.toLowerCase();
-  var subs = getSubs(), filtered = [];
+  var subs = subsVisibles(), filtered = [];
   // Peupler le select "classe" avec les classes uniques présentes dans les subs (en préservant la sélection)
   var fclassEl = document.getElementById("fclass");
   var clf = "";
@@ -7203,17 +7303,25 @@ function renderSubs() {
       rows += '<button class="btni" onclick="printSubDirect(' + sid + ')" title="Imprimer ce travail (réponses + note + appréciation)">🖨️</button>';
       if (s.status !== "validated") rows += '<button class="btnv" onclick="updSub(' + sid + ', \'validated\')">&#x2705;</button>';
       if (s.status !== "rejected")  rows += '<button class="btnx" onclick="updSub(' + sid + ', \'rejected\')">&#x274C;</button>';
-      rows += '<button class="btnx" style="background:var(--rg,#c0392b);margin-left:4px" title="Supprimer cette soumission" onclick="deleteSub(' + sid + ')">🗑️</button>';
+      if (!isCollegue) rows += '<button class="btnx" style="background:var(--rg,#c0392b);margin-left:4px" title="Supprimer cette soumission" onclick="deleteSub(' + sid + ')">🗑️</button>';
       rows += '</td></tr>';
     }
     tb.innerHTML = rows;
   }
   var ids = [];
-  var all = getSubs();
+  var all = subsVisibles();
   for (var i = 0; i < all.length; i++) ids.push(all[i].eid);
   var miss = "";
+  var perim = classesDuCollegue();
   for (var i = 0; i < ELEVES.length; i++) {
     if (ELEVES[i].role) continue;   /* accompagnants : pas des élèves à relancer */
+    if (isCollegue) {               /* un collègue ne relance que ses propres classes */
+      var dansPerim = false;
+      for (var q = 0; q < perim.length; q++) {
+        if (String(ELEVES[i].c || "").toUpperCase() === String(perim[q]).toUpperCase()) { dansPerim = true; break; }
+      }
+      if (!dansPerim) continue;
+    }
     var found = false;
     for (var j = 0; j < ids.length; j++) { if (ids[j] === ELEVES[i].id) { found = true; break; } }
     if (!found) miss += '<span style="background:#fff;border:1px solid var(--gb);border-radius:8px;padding:5px 10px;font-size:12px">' + ELEVES[i].p + ' ' + ELEVES[i].n + ' <span style="color:var(--td);font-size:11px">(' + ELEVES[i].c + ')</span></span>';
