@@ -3630,6 +3630,16 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </div>
         </div>
         <div class="cfsec">
+          <h3>&#x1F9D1;&#x200D;&#x1F3EB; Comptes enseignants</h3>
+          <p style="font-size:13px;color:var(--td);margin-bottom:12px">
+            Les collègues à qui tu as ouvert un accès. Ils voient les capsules sans code et suivent
+            les copies de leurs classes ; ils n'ont accès ni à cet onglet, ni aux codes d'accès.
+          </p>
+          <div style="overflow:auto">
+            <table class="pwd-table" id="ens-table"></table>
+          </div>
+        </div>
+        <div class="cfsec">
           <h3>&#x1F511; Identifiants &amp; mots de passe élèves</h3>
           <p style="font-size:13px;color:var(--td);margin-bottom:12px">Chaque élève a un mot de passe <strong>individuel</strong>. Imprimez ce tableau et distribuez les feuillets découpés.</p>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
@@ -5345,6 +5355,11 @@ function checkStudentStatusChanges() {
 function doLogout() {
   user = null; isProf = false; isCollegue = false; ans = {}; curQ = 0; stopProfAutoRefresh();
   document.body.classList.remove("mode-collegue");
+  /* Rien de la session précédente ne doit rester à l'écran pour la suivante. */
+  ["pwd-table", "ens-table", "gate-config-list", "stbody", "nosub"].forEach(function (z) {
+    var el = document.getElementById(z);
+    if (el) el.innerHTML = "";
+  });
   document.getElementById("login").style.display = "flex";
   document.getElementById("app").style.display = "none";
   ["lid","lpwd","pid","ppwd"].forEach(function(id) { document.getElementById(id).value = ""; });
@@ -6782,6 +6797,10 @@ function ouvrirSuiviCollegue() {
 }
 
 function pTab(t) {
+  /* Un collègue n'a que le suivi. Le garde-fou est ici, avant l'affichage :
+     placé plus bas, il laissait apparaître un panneau réservé encore rempli
+     par la session précédente sur le même navigateur. */
+  if (isCollegue) t = "s";
   document.getElementById("pt-s").classList.toggle("on", t === "s");
   document.getElementById("pt-g").classList.toggle("on", t === "g");
   document.getElementById("pt-c").classList.toggle("on", t === "c");
@@ -7411,6 +7430,24 @@ function renderConfig() {
   var cntEl = document.getElementById("pwd-class-count");
   if (cntEl) {
     cntEl.textContent = count + " élève" + (count > 1 ? "s" : "") + (currentFilter ? " en " + currentFilter : " au total");
+  }
+
+  /* Comptes collègues : même tableau que les élèves, avec leur périmètre. */
+  var ensEl = document.getElementById("ens-table");
+  if (ensEl) {
+    var er = '<tr><th>Prénom</th><th>Nom</th><th>Identifiant</th><th>Mot de passe</th><th>Classes suivies</th></tr>';
+    if (!ENSEIGNANTS.length) {
+      er += '<tr><td colspan="5" style="text-align:center;padding:18px;color:var(--td);font-style:italic">Aucun compte enseignant. Ajoute une ligne dans ENSEIGNANTS (voir ACCES-ENSEIGNANTS.md).</td></tr>';
+    } else {
+      for (var t = 0; t < ENSEIGNANTS.length; t++) {
+        var g = ENSEIGNANTS[t];
+        er += '<tr><td>' + g.p + '</td><td>' + g.n + '</td>' +
+              '<td style="font-family:DM Mono,monospace;font-size:12px">' + g.id + '</td>' +
+              '<td style="font-family:DM Mono,monospace;font-size:13px;font-weight:700;color:var(--vt)">' + g.pwd + '</td>' +
+              '<td style="font-size:12px">' + (g.classes || []).join(' \u00b7 ') + '</td></tr>';
+      }
+    }
+    ensEl.innerHTML = er;
   }
 
   /* Charge les paramètres de notification depuis le backend Apps Script */
