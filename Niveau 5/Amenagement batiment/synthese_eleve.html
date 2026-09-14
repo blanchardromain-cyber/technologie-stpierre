@@ -31,6 +31,8 @@
   .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
     padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
   .fld input:focus{border-color:#FFC08A}
+  .fld input[readonly]{background:rgba(255,255,255,.72);color:#2D3748;cursor:default}
+  .fld input[readonly]:focus{border-color:transparent}
   .classe-row{display:flex;align-items:stretch}
   .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
     border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
@@ -830,7 +832,29 @@ function lireIdentite(){
     if (d.p) document.getElementById("inp-prenom").value = d.p;
     if (d.n) document.getElementById("inp-nom").value    = d.n;
     if (d.c) document.getElementById("inp-classe").value = String(d.c).replace(/^5/, "");
+    if (d.p && d.n) verrouillerIdentite();
   } catch(e){}
+}
+/* Ici l'identité ne sert qu'à l'en-tête de la feuille imprimée, mais on la fige
+   quand même : même geste que sur l'activité et l'évaluation. */
+function verrouillerIdentite(){
+  var champs = ["inp-prenom","inp-nom","inp-classe"];
+  for (var i = 0; i < champs.length; i++){
+    var e = document.getElementById(champs[i]);
+    if (!e) continue;
+    e.readOnly = true;
+    e.tabIndex = -1;
+    e.title = "Identité de ton compte — elle ne se modifie pas ici.";
+  }
+  var z = document.querySelector(".ident");
+  if (z && !document.getElementById("ident-compte")){
+    var n = document.createElement("div");
+    n.id = "ident-compte";
+    n.setAttribute("data-nolecture","");
+    n.textContent = "\u{1F512} identité de ton compte";
+    n.style.cssText = "flex-basis:100%;font-size:10.5px;color:#BBD3E8;letter-spacing:.3px";
+    z.appendChild(n);
+  }
 }
 function majEntetePapier(){
   var p = document.getElementById("inp-prenom").value.trim();
