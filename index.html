@@ -4100,6 +4100,22 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
         loading="lazy"></iframe>
     </div>
 
+    <!-- BÂTIMENT 5e — ÉVALUATION n°1 (code EVAL1BAT) -->
+    <div id="pg-eval1-5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Évaluation n°1 (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle notée sur 10</strong>, quatre exercices. Aucune correction n'est montrée à l'élève :
+        la copie part au tableau de bord, où elle arrive <strong>pré-corrigée</strong> et où tu ajustes les points exercice par exercice.
+        Le sujet est lisible à voix haute (<strong>&laquo;&nbsp;Lecture immersive&nbsp;&raquo;</strong>) et les réponses peuvent être dictées.
+      </p>
+      <iframe id="eval1-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation1_eleve.html" title="P1 — Évaluation n°1 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- BÂTIMENT 5e — SYNTHÈSE P1 (code SYNBAT26) -->
     <div id="pg-batiment5e-syn" class="h">
       <div class="phdr">
@@ -5032,6 +5048,7 @@ var SEQUENCES_DEF = [
   {id:"batiment5e", ordre:10, niveau:"5ème", titre:"P1 — Aménagement d'un bâtiment", desc:"Objet technique, besoin, fonction d'usage, ERP/ERT/IGH, contraintes et normes, puis aménagement du logement étudiant en conteneur.", couleur:"#C55A11", code:"BAT26", open:true},
   {id:"batiment5e-cor", ordre:11, niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
   {id:"batiment5e-syn", ordre:12, niveau:"5ème", titre:"P1 — Synthèse Aménager un bâtiment", desc:"La synthèse à conquérir : un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète.", couleur:"#2E75B6", code:"SYNBAT26", open:true},
+  {id:"eval1-5e", ordre:13, niveau:"5ème", titre:"P1 — Évaluation n°1", desc:"Objet naturel / technique, besoin, fonction d'usage et fonction d'estime. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"EVAL1BAT", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
@@ -5317,6 +5334,13 @@ function goPage(pid) {
     } catch (e) {}
     var bIfr = document.getElementById("batiment5e-frame");
     if (bIfr) bIfr.src = bIfr.getAttribute("data-src");
+  }
+  if (pid === "pg-eval1-5e") {
+    try {
+      if (user) localStorage.setItem("batiment5e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var evIfr = document.getElementById("eval1-5e-frame");
+    if (evIfr) evIfr.src = evIfr.getAttribute("data-src");
   }
   if (pid === "pg-batiment5e-syn") {
     // Même identité que l'activité : elle ne sert qu'à l'en-tête de la feuille imprimée.
@@ -5646,6 +5670,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
+        } else if (s.id === "eval1-5e") {
+          badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "batiment5e") {
@@ -5679,6 +5705,7 @@ function renderDash() {
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
+      else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -5738,6 +5765,7 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
+    else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -6678,6 +6706,408 @@ function renderStats() {
     '<div class="stcard so"><div class="stnum">' + p + '</div><div class="stlb">En attente</div></div>' +
     '<div class="stcard srg"><div class="stnum">' + r + '</div><div class="stlb">À revoir</div></div>';
 }
+/* ════════════════════════════════════════════════════════════════════════
+   CORRECTION AUTOMATIQUE DES ÉVALUATIONS
+   Une évaluation déclare ici son barème et ses réponses attendues. Le modal
+   professeur affiche alors la copie annotée, une proposition de note calculée
+   automatiquement, et un panneau d'ajustement exercice par exercice — même
+   principe que le Devoir Commun, mais réutilisable pour toute évaluation.
+
+   Ce qui est corrigé sûrement : les questions à choix (comparaison exacte).
+   Ce qui est seulement PROPOSÉ : les réponses rédigées, repérées par mots-clés.
+   Le professeur garde la main : rien n'est enregistré sans son clic.
+   ════════════════════════════════════════════════════════════════════════ */
+
+function fmtPts(v) {
+  var n = Math.round((parseFloat(v) || 0) * 100) / 100;
+  return (n % 1 === 0) ? String(n) : String(n).replace(".", ",");
+}
+function evalNorm(t) {
+  return String(t == null ? "" : t).toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
+}
+function evalContient(t, mots) {
+  var v = evalNorm(t);
+  if (!v) return false;
+  for (var i = 0; i < mots.length; i++) if (v.indexOf(evalNorm(mots[i])) >= 0) return true;
+  return false;
+}
+/* Un verbe à l'infinitif, exigé par l'énoncé de l'exercice 3. Heuristique
+   volontairement simple : terminaison du premier mot, plus quelques verbes
+   irréguliers courants. Le professeur voit le drapeau et tranche. */
+function evalInfinitif(t) {
+  var v = evalNorm(t);
+  if (!v) return false;
+  var premier = v.split(" ")[0].replace(/[^a-z]/g, "");
+  if (premier.length < 3) return false;
+  if (/(er|ir|re|oir)$/.test(premier)) return true;
+  return ["etre", "avoir", "faire", "pouvoir", "savoir", "voir", "boire"].indexOf(premier) >= 0;
+}
+
+var EVALUATIONS = {
+
+  "eval1-5e": {
+    titre: "P1 5e — Évaluation n°1",
+    total: 10,
+    sections: [
+      { cle: "ex1", label: "① Naturel ou technique", max: 2.5 },
+      { cle: "ex2", label: "② Définitions de cours", max: 2.5 },
+      { cle: "ex3", label: "③ Besoin et fonction d'usage", max: 3 },
+      { cle: "ex4", label: "④ Étude de cas et fonction d'estime", max: 2 }
+    ],
+
+    corriger: function (f) {
+      f = f || {};
+      var pts = { ex1: 0, ex2: 0, ex3: 0, ex4: 0 };
+      var detail = [];
+
+      /* ── Exercice 1 : 10 × 0,25 pt, correction certaine ── */
+      var e1 = [
+        ["e1-1",  "Un arbre dans une forêt", "nat"],
+        ["e1-2",  "Une table en bois de chêne", "tec"],
+        ["e1-3",  "Un smartphone", "tec"],
+        ["e1-4",  "Un silex taillé par un homme préhistorique", "tec"],
+        ["e1-5",  "Un galet usé par la mer", "nat"],
+        ["e1-6",  "Une pomme sur un arbre", "nat"],
+        ["e1-7",  "Une bouteille d'eau en plastique", "tec"],
+        ["e1-8",  "Un vélo tout-terrain (VTT)", "tec"],
+        ["e1-9",  "Une groseille sauvage", "nat"],
+        ["e1-10", "Une ruche d'abeilles en bois faite par un apiculteur", "tec"]
+      ];
+      var mot = { nat: "Objet naturel", tec: "Objet technique" };
+      for (var i = 0; i < e1.length; i++) {
+        var rep = f[e1[i][0]] || "";
+        var juste = (rep === e1[i][2]);
+        if (juste) pts.ex1 += 0.25;
+        detail.push({ sec: "ex1", label: e1[i][1], rep: rep ? mot[rep] : "",
+                      attendu: mot[e1[i][2]], etat: rep ? (juste ? "ok" : "ko") : "vide",
+                      pts: juste ? 0.25 : 0, max: 0.25, sur: true });
+      }
+
+      /* ── Exercice 2 : définitions rédigées, repérage par mots-clés ── */
+      var d1 = f["e2-1"] || "";
+      var p1 = 0, note1 = [];
+      if (evalContient(d1, ["fabriqu", "realis", "cree", "construit", "concu", "modifi", "transform"])
+          && evalContient(d1, ["homme", "humain", "personne", "etre humain"])) { p1 += 0.5; }
+      else note1.push("« fabriqué ou modifié par l'Homme » non repéré");
+      if (evalContient(d1, ["besoin"])) { p1 += 0.5; }
+      else note1.push("« pour répondre à un besoin » non repéré");
+      pts.ex2 += p1;
+      detail.push({ sec: "ex2", label: "2.1 Qu'est-ce qu'un objet technique ?", rep: d1,
+                    attendu: "Un objet fabriqué ou modifié par l'Homme pour répondre à un besoin.",
+                    etat: d1 ? (p1 === 1 ? "ok" : p1 > 0 ? "partiel" : "ko") : "vide",
+                    pts: p1, max: 1, remarque: d1 ? note1.join(" · ") : "" });
+
+      var d2 = f["e2-2"] || "";
+      var p2 = evalContient(d2, ["manque", "insatisfaction", "besoin de", "envie", "necessite"]) ? 0.5 : 0;
+      pts.ex2 += p2;
+      detail.push({ sec: "ex2", label: "2.2 Qu'est-ce qu'un besoin ?", rep: d2,
+                    attendu: "Un sentiment de manque ou d'insatisfaction qui pousse un être vivant à agir.",
+                    etat: d2 ? (p2 ? "ok" : "ko") : "vide", pts: p2, max: 0.5,
+                    remarque: (d2 && !p2) ? "« manque » ou « insatisfaction » non repéré" : "" });
+
+      var d3 = f["e2-3"] || "";
+      var p3 = 0, note3 = [];
+      if (evalContient(d3, ["sert", "servir", "utilite", "utilise pour", "concu pour", "cree pour", "role"])) p3 += 0.5;
+      else note3.push("« ce à quoi l'objet sert » non repéré");
+      if (evalContient(d3, ["a quoi sert", "a quoi ca sert", "a quoi il sert", "quoi sert"])) p3 += 0.5;
+      else note3.push("la question « À quoi sert-il ? » non repérée");
+      pts.ex2 += p3;
+      detail.push({ sec: "ex2", label: "2.3 Qu'est-ce que la fonction d'usage ? Quelle question ?", rep: d3,
+                    attendu: "La fonction pour laquelle l'objet a été créé. Elle répond à : « À quoi sert-il ? »",
+                    etat: d3 ? (p3 === 1 ? "ok" : p3 > 0 ? "partiel" : "ko") : "vide",
+                    pts: p3, max: 1, remarque: d3 ? note3.join(" · ") : "" });
+
+      /* ── Exercice 3 : 6 cases × 0,5 pt.
+         Pour une fonction d'usage, l'énoncé exige un verbe à l'infinitif :
+         mot-clé seul = moitié des points, et le professeur voit pourquoi. ── */
+      var e3 = [
+        ["e3-reveil-fu",    "Réveille-matin — fonction d'usage", true,
+         ["reveill", "sonner", "avertir", "prevenir"],
+         "Réveiller l'utilisateur à l'heure choisie."],
+        ["e3-lunettes-be",  "Lunettes de vue — besoin", false,
+         ["voir", "vue", "vision", "lire", "net"],
+         "Voir net / corriger sa vue."],
+        ["e3-gourde-fu",    "Gourde en inox — fonction d'usage", true,
+         ["transport", "contenir", "conserv", "boire", "garder", "stocker"],
+         "Transporter et conserver une boisson."],
+        ["e3-usb-be",       "Clé USB — besoin", false,
+         ["fichier", "donnee", "document", "emporter", "transport", "stock", "sauvegard", "copier"],
+         "Emporter et conserver ses fichiers numériques."],
+        ["e3-parapluie-fu", "Parapluie — fonction d'usage", true,
+         ["proteg", "abriter", "couvrir", "sec", "pluie"],
+         "Protéger l'utilisateur de la pluie."],
+        ["e3-panneau-be",   "Panneau solaire — besoin", false,
+         ["electricit", "courant", "energie", "alimenter", "produire"],
+         "Disposer d'électricité / produire de l'énergie."]
+      ];
+      for (var k = 0; k < e3.length; k++) {
+        var v = f[e3[k][0]] || "", inf = e3[k][2], cle = evalContient(v, e3[k][3]);
+        var pv = 0, rq = "";
+        if (cle && (!inf || evalInfinitif(v))) pv = 0.5;
+        else if (cle) { pv = 0.25; rq = "idée juste, mais pas de verbe à l'infinitif"; }
+        else if (v) rq = "mot-clé attendu non repéré";
+        pts.ex3 += pv;
+        detail.push({ sec: "ex3", label: e3[k][1], rep: v, attendu: e3[k][4],
+                      etat: v ? (pv === 0.5 ? "ok" : pv > 0 ? "partiel" : "ko") : "vide",
+                      pts: pv, max: 0.5, remarque: rq });
+      }
+
+      /* ── Exercice 4 : étude de cas, deux réponses rédigées ── */
+      var q1 = f["e4-1"] || "", p41 = 0, n41 = [];
+      if (evalContient(q1, ["oui", "meme", "identique", "pareil"])) p41 += 0.5;
+      else n41.push("la réponse « oui, la même » n'apparaît pas");
+      if (evalContient(q1, ["transport", "porter", "ranger", "contenir", "affaire", "fourniture", "livre", "cahier", "dos"])) p41 += 0.5;
+      else n41.push("la justification (transporter ses affaires) n'apparaît pas");
+      pts.ex4 += p41;
+      detail.push({ sec: "ex4", label: "4.1 Même fonction d'usage ? Justifier", rep: q1,
+                    attendu: "Oui : les deux sacs servent à transporter des affaires scolaires. La fonction d'usage est identique ; c'est l'apparence et la marque qui changent.",
+                    etat: q1 ? (p41 === 1 ? "ok" : p41 > 0 ? "partiel" : "ko") : "vide",
+                    pts: p41, max: 1, remarque: q1 ? n41.join(" · ") : "" });
+
+      var q2 = f["e4-2"] || "", p42 = 0, n42 = [];
+      var estime = evalContient(q2, ["marque", "mode", "beau", "joli", "couleur", "apparence", "style", "look",
+                                     "design", "plaire", "gout", "regard", "copain", "camarade", "ami",
+                                     "estime", "image", "tendance", "manga"]);
+      if (estime) p42 += 0.5; else n42.push("aucun mot lié à l'apparence, la marque ou le regard des autres");
+      if (estime && evalNorm(q2).length >= 45) p42 += 0.5;
+      else if (estime) n42.push("réponse juste mais très courte, à développer");
+      pts.ex4 += p42;
+      detail.push({ sec: "ex4", label: "4.2 Pourquoi le Sac B ? La fonction d'estime", rep: q2,
+                    attendu: "Pour son apparence, sa marque, sa couleur : il plaît et donne une image valorisante auprès des autres. C'est la fonction d'estime.",
+                    etat: q2 ? (p42 === 1 ? "ok" : p42 > 0 ? "partiel" : "ko") : "vide",
+                    pts: p42, max: 1, remarque: q2 ? n42.join(" · ") : "" });
+
+      pts.ex1 = Math.round(pts.ex1 * 100) / 100;
+      return { points: pts, detail: detail };
+    },
+
+    appreciation: function (pts, note) {
+      var mention = note >= 9 ? "Excellent travail" : note >= 7.5 ? "Très bon travail"
+                  : note >= 6 ? "Bon travail" : note >= 4 ? "Travail à consolider"
+                  : "Des progrès sont nécessaires";
+      var faibles = [];
+      if (pts.ex1 < 2)   faibles.push("la distinction entre objet naturel et objet technique");
+      if (pts.ex2 < 1.75) faibles.push("les définitions du cours");
+      if (pts.ex3 < 2)   faibles.push("la formulation du besoin et de la fonction d'usage");
+      if (pts.ex4 < 1.5) faibles.push("la fonction d'estime");
+      var txt = mention + " — " + fmtPts(note) + "/10. ";
+      txt += faibles.length ? ("À revoir : " + faibles.join(", ") + ".")
+                            : "Les notions de la séquence sont maîtrisées.";
+      return txt;
+    }
+  }
+
+};
+
+/* Note affichée : celle validée par le professeur si elle existe, sinon la
+   proposition automatique. */
+function noteEvaluation(sub) {
+  if (!sub) return 0;
+  if (sub.adjustedScore !== undefined) return sub.adjustedScore;
+  var def = EVALUATIONS[sub.cap];
+  if (!def) return 0;
+  var r = def.corriger(sub.fields || {});
+  var t = 0;
+  for (var i = 0; i < def.sections.length; i++) t += r.points[def.sections[i].cle] || 0;
+  return Math.round(Math.min(def.total, t) * 100) / 100;
+}
+
+/* ── Copie annotée ─────────────────────────────────────────────────────── */
+function buildEvalModalHTML(sub) {
+  var def = EVALUATIONS[sub.cap];
+  if (!def) return "<em>Évaluation inconnue.</em>";
+  var f = sub.fields || {};
+  var r = def.corriger(f);
+  function esc(x){ return String(x == null ? "" : x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  var deco = {
+    ok:      { ico: "✅", bord: "#2E8B4A", fond: "#E8F5E9" },
+    partiel: { ico: "◐",  bord: "#C55A11", fond: "#FCE4D6" },
+    ko:      { ico: "❌", bord: "#C0392B", fond: "#FADBD8" },
+    vide:    { ico: "—",  bord: "#CBD5E0", fond: "#F4F6F8" }
+  };
+
+  var h = '<div style="background:#EDE7FF;border:1px solid #C7B6F5;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:12px">' +
+    '<strong>&#x1F4DD; ' + esc(sub.ename || "") + '</strong> — Classe ' + esc(sub.ecls || "") +
+    ' — ' + (sub.score !== undefined ? sub.score : 0) + '/' + (sub.qcmTot || 21) + ' réponses remplies</div>';
+
+  h += '<div style="background:#FFF8E1;border:1px solid #F0C36D;border-radius:6px;padding:8px 12px;font-size:12px;color:#6B4E00;margin-bottom:14px">' +
+    '<strong>Lecture de la correction :</strong> l\'exercice 1 est corrigé de façon certaine (comparaison exacte). ' +
+    'Les réponses rédigées sont seulement <strong>repérées par mots-clés</strong> : la proposition de points est une aide, ' +
+    'pas un verdict. Ajuste ci-dessous avant d\'enregistrer.</div>';
+
+  for (var si = 0; si < def.sections.length; si++) {
+    var sec = def.sections[si];
+    var lignes = r.detail.filter(function (d) { return d.sec === sec.cle; });
+    var obtenu = 0;
+    for (var a = 0; a < lignes.length; a++) obtenu += lignes[a].pts;
+    h += '<div style="display:flex;align-items:baseline;gap:9px;margin:16px 0 7px">' +
+      '<span style="font-weight:700;color:#5B34C7;font-size:13px">' + sec.label + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--td)">' +
+      fmtPts(obtenu) + '/' + fmtPts(sec.max) + ' proposés</span></div>';
+
+    /* L'exercice 1 tient dans une grille compacte : dix lignes d'une ligne. */
+    if (sec.cle === "ex1") {
+      h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
+      for (var b = 0; b < lignes.length; b++) {
+        var L = lignes[b], D = deco[L.etat];
+        h += '<div style="display:flex;align-items:center;gap:7px;background:' + D.fond +
+          ';border-left:3px solid ' + D.bord + ';border-radius:0 5px 5px 0;padding:4px 8px;font-size:12px">' +
+          '<span>' + D.ico + '</span><span style="flex:1">' + esc(L.label) + '</span>' +
+          '<span style="color:var(--td);font-size:11px">' +
+          (L.etat === "vide" ? "non répondu" : esc(L.rep) + (L.etat === "ko" ? " → " + esc(L.attendu) : "")) +
+          '</span></div>';
+      }
+      h += '</div>';
+      continue;
+    }
+
+    for (var c = 0; c < lignes.length; c++) {
+      var Q = lignes[c], DD = deco[Q.etat];
+      h += '<div style="margin-bottom:9px;border-left:3px solid ' + DD.bord + ';border-radius:0 6px 6px 0;padding-left:9px">';
+      h += '<div style="font-size:11.5px;font-weight:700;color:var(--bl);margin-bottom:3px">' +
+        DD.ico + ' ' + esc(Q.label) +
+        ' <span style="font-weight:400;color:var(--td)">(' + fmtPts(Q.pts) + '/' + fmtPts(Q.max) + ')</span></div>';
+      h += '<div style="background:' + DD.fond + ';border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap">' +
+        (Q.rep ? esc(Q.rep) : '<span style="color:var(--td);font-style:italic">Non répondu</span>') + '</div>';
+      if (Q.remarque) {
+        h += '<div style="font-size:11.5px;color:#C55A11;margin-top:3px">⚠︎ ' + esc(Q.remarque) + '</div>';
+      }
+      h += '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;' +
+        'font-size:12px;color:#1E6B3B;margin-top:4px"><strong>Attendu :</strong> ' + esc(Q.attendu) + '</div>';
+      h += '</div>';
+    }
+  }
+  return h;
+}
+
+/* ── Panneau d'ajustement du professeur ────────────────────────────────── */
+function buildEvalTeacherPanel(sub) {
+  injectDCPanelCSS();
+  var def = EVALUATIONS[sub.cap];
+  var r = def.corriger(sub.fields || {});
+  var auto = r.points;
+  var saved = sub.adjustedPts || auto;
+  var totalSauve = 0;
+  for (var i = 0; i < def.sections.length; i++) totalSauve += (saved[def.sections[i].cle] || 0);
+  totalSauve = Math.round(Math.min(def.total, totalSauve) * 100) / 100;
+  var appr = sub.appreciation || def.appreciation(saved, totalSauve);
+  _lastAutoAppr = sub.appreciation ? "" : appr;
+
+  var cles = [];
+  for (var j = 0; j < def.sections.length; j++) cles.push(def.sections[j].cle);
+
+  var h = '<div class="adj-panel">';
+  h += '<div class="adj-panel-title">✏️ Correction — ajustement des points ' +
+       '<span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(par palier de 0,25)</span></div>';
+  for (var k = 0; k < def.sections.length; k++) {
+    var sec = def.sections[k];
+    var av = Math.round((auto[sec.cle] || 0) * 100) / 100;
+    var cv = (saved[sec.cle] !== undefined) ? Math.round(saved[sec.cle] * 100) / 100 : av;
+    h += '<div class="adj-row">' +
+      '<span class="adj-lbl">' + sec.label + '</span>' +
+      '<span class="adj-auto">Auto: ' + fmtPts(av) + '/' + fmtPts(sec.max) + '</span>' +
+      '<div class="adj-ctrl">' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',-0.25)">−</button>' +
+      '<input class="adj-val" id="adj-' + sec.cle + '" type="text" value="' + cv + '" readonly>' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',0.25)">+</button>' +
+      '</div></div>';
+  }
+  h += '<div class="adj-total-box" id="adj-total-box">' +
+    '<div class="adj-total-num" id="adj-total-num">' + fmtPts(totalSauve) +
+    '<span style="font-size:16px">/' + def.total + '</span></div>' +
+    '<div class="adj-total-sub">Note — se met à jour en temps réel</div></div>';
+  h += '</div>';
+
+  h += '<div class="appr-panel">';
+  h += '<div class="appr-title">💬 Appréciation</div>';
+  h += '<div style="font-size:11px;color:var(--vt);margin-bottom:6px;font-style:italic">💡 Proposition automatique — modifiable :</div>';
+  h += '<textarea class="appr-ta" id="dc-appreciation" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
+  h += '<div class="appr-actions">';
+  h += '<button class="btn-voice" id="btn-voice-appr" onclick="startVoiceAppr()">🎤 Saisie vocale</button>';
+  h += '<button onclick="evalApprAuto(\'' + sub.cap + '\')" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Regénérer auto</button>';
+  h += '</div></div>';
+
+  h += '<div style="text-align:right;margin-top:12px">';
+  h += '<button onclick="saveEvalAdj(' + sub.id + ')" style="padding:10px 22px;background:var(--vi);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
+  h += '</div>';
+
+  /* Le total à recalculer dépend de l'évaluation ouverte : on le retient. */
+  _evalCourante = { cap: sub.cap, cles: cles, total: def.total };
+  return h;
+}
+
+var _evalCourante = null;
+function evalAdjStep(cle, maxPts, delta) {
+  var el = document.getElementById("adj-" + cle);
+  if (!el) return;
+  var v = Math.round((parseFloat(el.value) || 0) * 100) / 100;
+  v = Math.max(0, Math.min(maxPts, v + delta));
+  el.value = Math.round(v * 100) / 100;
+  evalAdjTotal();
+}
+function evalAdjTotal() {
+  if (!_evalCourante) return 0;
+  var tot = 0;
+  for (var i = 0; i < _evalCourante.cles.length; i++) {
+    var el = document.getElementById("adj-" + _evalCourante.cles[i]);
+    if (el) tot += parseFloat(el.value) || 0;
+  }
+  tot = Math.round(Math.min(tot, _evalCourante.total) * 100) / 100;
+  var nb = document.getElementById("adj-total-num");
+  if (nb) nb.innerHTML = fmtPts(tot) + '<span style="font-size:16px">/' + _evalCourante.total + '</span>';
+  var box = document.getElementById("adj-total-box");
+  if (box) {
+    var part = tot / _evalCourante.total;
+    var col = part >= 0.7 ? "#2E8B4A" : part >= 0.5 ? "#C55A11" : "#C0392B";
+    box.style.background = "linear-gradient(135deg," + col + "," + col + "cc)";
+  }
+  /* Appréciation régénérée en silence tant que le professeur ne l'a pas éditée. */
+  var ta = document.getElementById("dc-appreciation");
+  if (ta && _lastAutoAppr && ta.value === _lastAutoAppr) evalApprAuto(_evalCourante.cap, true);
+  return tot;
+}
+function evalPointsSaisis() {
+  var pts = {};
+  if (!_evalCourante) return pts;
+  for (var i = 0; i < _evalCourante.cles.length; i++) {
+    var el = document.getElementById("adj-" + _evalCourante.cles[i]);
+    pts[_evalCourante.cles[i]] = el ? (parseFloat(el.value) || 0) : 0;
+  }
+  return pts;
+}
+function evalApprAuto(cap, silencieux) {
+  var def = EVALUATIONS[cap || (_evalCourante && _evalCourante.cap)];
+  var ta = document.getElementById("dc-appreciation");
+  if (!def || !ta) return;
+  var pts = evalPointsSaisis(), tot = 0;
+  for (var c in pts) if (pts.hasOwnProperty(c)) tot += pts[c];
+  tot = Math.round(Math.min(def.total, tot) * 100) / 100;
+  var txt = def.appreciation(pts, tot);
+  ta.value = txt;
+  _lastAutoAppr = txt;
+  if (!silencieux) toast("Appréciation regénérée");
+}
+function saveEvalAdj(sid) {
+  if (!_evalCourante) return;
+  var pts = evalPointsSaisis(), tot = evalAdjTotal();
+  var ta = document.getElementById("dc-appreciation");
+  var subs = getSubs(), idx = -1;
+  for (var j = 0; j < subs.length; j++) { if (subs[j].id == sid) { idx = j; break; } }
+  if (idx < 0) { toast("Copie introuvable"); return; }
+  subs[idx].adjustedPts   = pts;
+  subs[idx].adjustedScore = tot;
+  subs[idx].appreciation  = ta ? ta.value : "";
+  subs[idx].status        = "validated";
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
+  localStorage.setItem("subs", JSON.stringify(subs));
+  renderStats(); renderSubs();
+  var ms = document.getElementById("mscore");
+  if (ms) ms.textContent = "Note validée : " + fmtPts(tot) + "/" + _evalCourante.total + " ✅ — Appréciation enregistrée";
+  toast("✅ Note enregistrée : " + fmtPts(tot) + "/" + _evalCourante.total);
+}
+
 function renderSubs() {
   var cf = document.getElementById("fcap").value;
   var sf = document.getElementById("fstat").value;
@@ -6744,6 +7174,12 @@ function renderSubs() {
       } else if (s.cap === "eau34") {
         var e3Done = (s.score !== undefined ? s.score : 0), e3Tot = (s.qcmTot || 26);
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F6B0; ' + e3Done + '/' + e3Tot + ' réponses</span>';
+      } else if (EVALUATIONS[s.cap]) {
+        /* Une évaluation affiche une note, pas un nombre de champs remplis. */
+        var noteEv = noteEvaluation(s), totEv = EVALUATIONS[s.cap].total;
+        var colEv = noteEv >= totEv * 0.7 ? "var(--vt)" : noteEv >= totEv * 0.5 ? "var(--or)" : "var(--rg)";
+        sc = '<strong style="color:' + colEv + '">' + fmtPts(noteEv) + '/' + totEv + '</strong>' +
+             '<div style="font-size:11px;color:var(--td)">' + (s.adjustedScore !== undefined ? "note validée" : "proposition auto") + '</div>';
       } else if (s.cap === "batiment5e") {
         var bDone = (s.score !== undefined ? s.score : 0), bTot = (s.qcmTot || 50);
         sc = '<span style="background:#FCE4D6;color:#C55A11;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F3D7;&#xFE0F; ' + bDone + '/' + bTot + ' réponses</span>';
@@ -7074,6 +7510,13 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P11 4e — Activités 3 et 4";
     document.getElementById("mrep").innerHTML = buildEau34ModalHTML(sub);
     document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + sub.status;
+  } else if (EVALUATIONS[sub.cap]) {
+    var evd = EVALUATIONS[sub.cap];
+    if (mh3) mh3.textContent = evd.titre + " — copie de l'élève";
+    document.getElementById("mrep").innerHTML = buildEvalModalHTML(sub) + buildEvalTeacherPanel(sub);
+    document.getElementById("mscore").textContent =
+      (sub.adjustedScore !== undefined ? "Note validée : " + fmtPts(sub.adjustedScore) : "Proposition automatique : " + fmtPts(noteEvaluation(sub)))
+      + "/" + evd.total + " – Statut : " + sub.status;
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub);
