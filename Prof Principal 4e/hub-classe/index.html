@@ -149,6 +149,36 @@ let planPublie = null;    // plan de classe publié (chaîne JSON) — onglet Pl
 let planningMenage = null; // planning ménage publié (chaîne JSON) — onglet Ménage
 let edt = null;           // {mode, url, evenements, maj} — onglet Emploi du temps
 let edtJour = "";         // jour affiché (AAAA-MM-JJ)
+let edtFrais = false;     // vrai une seule fois après « 🔄 rafraîchir » : force le serveur à relire l'agenda
+
+// ---------- v2.7 : cache local (affichage instantané) ----------
+// Chaque changement d'onglet déclenchait un aller-retour Apps Script complet (~1 à 3 s)
+// pendant lequel l'écran restait vide. On garde désormais la dernière réponse connue
+// dans le navigateur : l'onglet s'affiche tout de suite, puis se met à jour en silence.
+const CACHE_PREFIXE = "hub4g_c_";
+const CACHE_DUREES = { messages: 60e3, plan: 216e5, menage: 216e5, moi: 216e5, classe: 216e5, edt: 18e5 };
+
+function cleCache(nom) { return CACHE_PREFIXE + (session ? session.code : "?") + "_" + nom; }
+
+function litCache(nom) {
+  try {
+    const brut = localStorage.getItem(cleCache(nom));
+    if (!brut) return null;
+    const o = JSON.parse(brut);
+    if (Date.now() - o.t > (CACHE_DUREES[nom] || 6e5)) return null;
+    return o.v;
+  } catch (e) { return null; }
+}
+
+function ecritCache(nom, valeur) {
+  try { localStorage.setItem(cleCache(nom), JSON.stringify({ t: Date.now(), v: valeur })); } catch (e) {}
+}
+
+function viderCacheLocal() {
+  try {
+    Object.keys(localStorage).filter(k => k.indexOf(CACHE_PREFIXE) === 0).forEach(k => localStorage.removeItem(k));
+  } catch (e) {}
+}
 
 // ---------- accès données : backend réel ou démo locale ----------
 async function api(action, donnees = {}) {
@@ -251,6 +281,8 @@ function apiDemo(action, d) {
       return fini({ ok: true, url: bdd.divers.edtUrl, mode: "lien", evenements: [] });
     return fini({ ok: true, url: bdd.divers.edtUrl || "", mode: "ics", maj: Date.now(), evenements: edtDemo() });
   }
+  if (action === "diagnostiquerEdt")
+    return fini({ ok: true, url: bdd.divers.edtUrl || "", type: "demo", message: "Mode démo : l'agenda affiché est un exemple, aucun appel réseau n'est effectué." });
   if (action === "publierMenage") { bdd.divers.planningMenage = d.planning; return fini({ ok: true }); }
   if (action === "lireMenage") return fini({ ok: true, planning: bdd.divers.planningMenage || "" });
   if (action === "poster") {
@@ -307,6 +339,7 @@ async function connecter() {
 }
 
 function deconnecter() {
+  viderCacheLocal();
   localStorage.removeItem("hub4g_session");
   session = null;
   document.getElementById("appli").style.display = "none";
@@ -323,10 +356,42 @@ async function afficherAppli() {
   document.getElementById("ongletClasse").style.display = estProf ? "block" : "none";
   document.getElementById("ongletMoi").style.display = estProf ? "none" : "block";
   document.getElementById("ongletEdt").style.display = "block";
-  await rafraichir();
+  await demarrer();
+}
+
+// v2.7 : un seul appel au lieu de cinq. On peint d'abord ce qu'on a en cache
+// (affichage immédiat), puis on remplace par la réponse du serveur.
+async function demarrer() {
+  const enCache = litCache("messages");
+  if (enCache) { messages = enCache; }
+  if (session.role === "prof") { const c = litCache("classe"); if (c) infosClasse = c; }
+  else { const m = litCache("moi"); if (m) mesInfos = m; }
+  const pl = litCache("plan"); if (pl !== null) planPublie = pl;
+  const me = litCache("menage"); if (me !== null) planningMenage = me;
+  dessiner();
+
+  let rep;
+  try { rep = await api("bootstrap"); } catch (e) { return; }
+  if (!rep || !rep.ok) { await rafraichir(); return; }   // backend pas encore en v2.7
+  messages = rep.messages || [];
+  planPublie = rep.plan || "";
+  planningMenage = rep.planning || "";
+  if (rep.horaires) {
+    session.horaires = rep.horaires;
+    MOTS_PERSO = rep.horaires.motsPerso || [];
+    localStorage.setItem("hub4g_session", JSON.stringify(session));
+  }
+  if (session.role === "prof") infosClasse = { ok: true, infos: rep.infos || [], horaires: rep.horaires, edtUrl: rep.edtUrl || "" };
+  else if (rep.moi) mesInfos = rep.moi;
+  ecritCache("messages", messages);
+  ecritCache("plan", planPublie);
+  ecritCache("menage", planningMenage);
+  ecritCache(session.role === "prof" ? "classe" : "moi", session.role === "prof" ? infosClasse : mesInfos);
+  dessiner();
 }
 
 let rafraichirEnCours = false;
+let echecsReseau = 0;   // recul progressif du rafraîchissement auto en cas de réseau capricieux
 async function rafraichir() {
   if (rafraichirEnCours) return;
   rafraichirEnCours = true;
@@ -334,8 +399,8 @@ async function rafraichir() {
   try {
     const rep = await api("liste");
     if (rep && rep.ferme) ferme = true;
-    else if (rep && rep.ok) messages = rep.messages;
-  } catch (e) { /* réseau : on réessaiera au prochain cycle */ } finally { rafraichirEnCours = false; }
+    else if (rep && rep.ok) { messages = rep.messages; ecritCache("messages", messages); echecsReseau = 0; }
+  } catch (e) { echecsReseau++; /* réseau : on réessaiera plus tard */ } finally { rafraichirEnCours = false; }
   if (!ferme) dessiner();
 }
 
@@ -357,28 +422,43 @@ async function changerOnglet(onglet) {
   ongletActif = onglet;
   dessiner();
   if (onglet === "moi" && !mesInfos) {
+    mesInfos = litCache("moi");
+    if (mesInfos) dessiner();
     const rep = await api("infosMoi");
-    mesInfos = rep.ok ? rep : { backendObsolete: true };
+    mesInfos = rep.ok ? rep : (mesInfos || { backendObsolete: true });
+    if (rep.ok) ecritCache("moi", mesInfos);
     dessiner();
   }
   if (onglet === "classe" && !infosClasse) {
+    infosClasse = litCache("classe");
+    if (infosClasse) dessiner();
     const rep = await api("listeInfos");
-    infosClasse = rep.ok ? rep : { backendObsolete: true };
+    infosClasse = rep.ok ? rep : (infosClasse || { backendObsolete: true });
+    if (rep.ok) ecritCache("classe", infosClasse);
     dessiner();
   }
   if (onglet === "plan" && planPublie === null) {
+    planPublie = litCache("plan");
+    if (planPublie !== null) dessiner();
     const rep = await api("lirePlan");
-    planPublie = rep.ok ? (rep.plan || "") : "obsolete";
+    if (rep.ok) { planPublie = rep.plan || ""; ecritCache("plan", planPublie); }
+    else if (planPublie === null) planPublie = "obsolete";
     dessiner();
   }
   if (onglet === "edt" && edt === null) {
-    const rep = await api("lireEdt");
-    edt = (rep && rep.ok) ? rep : { mode: "obsolete", evenements: [] };
+    if (!edtFrais) { edt = litCache("edt"); if (edt) dessiner(); }
+    const rep = await api("lireEdt", edtFrais ? { frais: true } : {});
+    edtFrais = false;
+    if (rep && rep.ok) { edt = rep; ecritCache("edt", edt); }
+    else if (!edt) edt = { mode: "obsolete", evenements: [] };
     dessiner();
   }
   if (onglet === "menage" && planningMenage === null) {
+    planningMenage = litCache("menage");
+    if (planningMenage !== null) dessiner();
     const rep = await api("lireMenage");
-    planningMenage = rep.ok ? (rep.planning || "") : "obsolete";
+    if (rep.ok) { planningMenage = rep.planning || ""; ecritCache("menage", planningMenage); }
+    else if (planningMenage === null) planningMenage = "obsolete";
     dessiner();
   }
 }
@@ -534,10 +614,12 @@ function dessiner() {
       h += '<div class="carte"><b>📅 Emploi du temps de la classe</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Colle ici l\'adresse de l\'agenda de la 4G récupérée dans <b>EcoleDirecte</b> ' +
         '(Agenda → <i>Exporter / S\'abonner à l\'agenda</i>). Si c\'est un flux <b>.ics</b>, le Hub affiche directement la grille des cours ; ' +
-        'si c\'est un simple lien web, il affiche un bouton « Ouvrir l\'emploi du temps ».</p>' +
+        'si c\'est un simple lien web, il affiche un bouton « Ouvrir l\'emploi du temps ». Tu peux aussi coller ici l\'<b>identifiant d\'un agenda Google</b> ' +
+        '(…@group.calendar.google.com) : c\'est la solution de repli quand EcoleDirecte ne publie rien dans son flux.</p>' +
         '<input type="text" id="urlEdt" placeholder="https://…" style="margin-top:6px" value="' + echap((infosClasse.edtUrl || "")) + '">' +
         '<div class="ligneBtn"><button class="principal" onclick="enregistrerEdt()">Enregistrer</button>' +
-        '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="edt=null;changerOnglet(\'edt\')">Voir l\'onglet EDT</button></div>' +
+        '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="testerEdt()">🔎 Tester l\'agenda</button>' +
+        '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="rafraichirEdt()">Voir l\'onglet EDT</button></div>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">✅ L\'onglet 📅 EDT est ouvert aux élèves.</p></div>';
       const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
       h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
@@ -648,6 +730,21 @@ async function enregistrerEdt() {
   alert("Emploi du temps enregistré.");
 }
 
+async function rafraichirEdt() {
+  edt = null; edtFrais = true;          // on court-circuite le cache serveur de 30 min
+  changerOnglet("edt");
+}
+
+async function testerEdt() {
+  const rep = await api("diagnostiquerEdt");
+  if (!rep || !rep.ok) { alert(rep && rep.erreur ? rep.erreur : "Test impossible (backend à mettre à jour ?)."); return; }
+  let txt = "Adresse enregistrée :\n" + (rep.url || "(aucune)") + "\n\n" + (rep.message || "");
+  if (rep.extrait) txt += "\n\nDébut de la réponse :\n" + rep.extrait.slice(0, 200);
+  if (rep.type === "ics" && rep.nbVevent === 0)
+    txt += "\n\n➡️ Le flux est valide mais ne contient AUCUN cours : rien ne peut s'afficher dans le Hub. Vérifie dans EcoleDirecte que l'agenda exporté est bien celui des cours, ou utilise le repli agenda Google.";
+  alert(txt);
+}
+
 async function enregistrerMotsPerso() {
   const mots = document.getElementById("motsPerso").value.split(/[,\n;]/).map(s => s.trim()).filter(Boolean);
   const rep = await api("reglerMotsPerso", { motsPerso: mots });
@@ -686,6 +783,12 @@ function rendreEdt() {
         '<p style="font-size:.78rem;color:#7b8794;margin-top:6px">Affichage détaillé indisponible (backend à mettre à jour).</p>' + boutonLien + "</div>"
       : '<div class="vide">Fonction indisponible : le backend doit être mis à jour (nouvelle version du Code.gs).</div>';
 
+  if (edt.mode === "icsVide")
+    return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>📅 Emploi du temps pas encore publié</b>' +
+      '<p style="font-size:.78rem;margin-top:6px">L\'agenda de la classe est bien branché, mais il ne contient aucun cours pour l\'instant.</p>' +
+      (session.role === "prof" ? '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">' + echap(edt.erreur || "") +
+        ' — onglet <b>📋 Classe</b> → « 🔎 Tester l\'agenda » pour le détail.</p>' : "") + boutonLien + "</div>";
+
   if (edt.mode === "erreur")
     return '<div class="carte" style="border-color:#e0b84d;background:#fff7e6"><b>⚠️ Agenda momentanément illisible</b>' +
       '<p style="font-size:.78rem;margin-top:6px">' + echap(edt.erreur || "") + "</p>" + boutonLien + "</div>";
@@ -722,7 +825,7 @@ function rendreEdt() {
 
   if (lien) h += '<div style="text-align:center"><a class="lienEdt" href="' + echap(lien) + '" target="_blank" rel="noopener">Ouvrir dans EcoleDirecte</a></div>';
   h += '<div class="majEdt">Source : agenda EcoleDirecte de la classe' + (edt.maj ? " — actualisé " + quand(edt.maj) : "") +
-    ' · <a href="#" onclick="edt=null;changerOnglet(\'edt\');return false">🔄 rafraîchir</a></div>';
+    ' · <a href="#" onclick="rafraichirEdt();return false">🔄 rafraîchir</a></div>';
   return h;
 }
 
@@ -828,10 +931,30 @@ if (sessionSauvee) {
   afficherAppli();
 }
 
-// rafraîchissement auto (annonces / entraide / modération) — sauf si un élève est en train d'écrire
+// Rafraîchissement auto (annonces / entraide / modération) — sauf si un élève est en train d'écrire.
+// v2.7 : 4 s → 12 s. À 4 s, 25 élèves = ~6 requêtes/s sur le même script Apps Script :
+// elles faisaient la queue et tout le Hub devenait lent. 12 s reste largement assez réactif,
+// et le bouton « 🔄 Actualiser » force la mise à jour immédiate.
+const PERIODE_RAFRAICHIR = 12000;
+let dernierRafraichissement = 0;
+
 setInterval(() => {
-  if (session && !document.hidden && !saisieEnCours() && ["annonces", "entraide", "moderation"].indexOf(ongletActif) !== -1) rafraichir();
-}, 4000);
+  if (!session || document.hidden || saisieEnCours()) return;
+  if (["annonces", "entraide", "moderation"].indexOf(ongletActif) === -1) return;
+  // recul progressif si le réseau flanche (12 s, 24 s, 48 s… plafonné à 2 min)
+  const attente = PERIODE_RAFRAICHIR * Math.min(Math.pow(2, echecsReseau), 10);
+  if (Date.now() - dernierRafraichissement < attente) return;
+  dernierRafraichissement = Date.now();
+  rafraichir();
+}, 2000);
+
+// Retour sur l'onglet du navigateur : on remet à jour tout de suite.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && session && ["annonces", "entraide", "moderation"].indexOf(ongletActif) !== -1) {
+    dernierRafraichissement = Date.now();
+    rafraichir();
+  }
+});
 </script>
 </body>
 </html>
