@@ -42,6 +42,15 @@ ouvre son tableau de suivi, et **« ← Retour aux capsules »** le ramène.
 
 Pour retirer un accès, supprime sa ligne.
 
+## Comptes ouverts
+
+| Collègue | Identifiant | Classes |
+|---|---|---|
+| Régis LUCAS | `regis.lucas` | 5B · 5C · 5D · 5E · 5F |
+
+Les mots de passe ne sont pas repris ici : ils sont dans `index.html`, à côté de
+chaque compte.
+
 ## Une limite à connaître
 
 Le site est un **fichier statique** : `index.html` est téléchargé en entier par le
