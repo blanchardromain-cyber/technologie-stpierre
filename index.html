@@ -6838,6 +6838,9 @@ function evalContient(t, mots) {
 function evalInfinitif(t) {
   var v = evalNorm(t);
   if (!v) return false;
+  /* Les besoins s'expriment souvent par un verbe pronominal — « se nourrir »,
+     « se protéger », « s'informer » : le verbe est alors le deuxième mot. */
+  v = v.replace(/^(se |s'|s\u2019)/, "");
   var premier = v.split(" ")[0].replace(/[^a-z]/g, "");
   if (premier.length < 3) return false;
   if (/(er|ir|re|oir)$/.test(premier)) return true;
@@ -6919,26 +6922,28 @@ var EVALUATIONS = {
                     pts: p3, max: 1, remarque: d3 ? note3.join(" · ") : "" });
 
       /* ── Exercice 3 : 6 cases × 0,5 pt.
-         Pour une fonction d'usage, l'énoncé exige un verbe à l'infinitif :
-         mot-clé seul = moitié des points, et le professeur voit pourquoi. ── */
+         Le besoin comme la fonction d'usage s'écrivent avec un verbe à
+         l'infinitif — « se nourrir », « se protéger », « communiquer » en
+         activité 1. Mot-clé seul, sans infinitif : moitié des points, et le
+         professeur voit pourquoi. ── */
       var e3 = [
         ["e3-reveil-fu",    "Réveille-matin — fonction d'usage", true,
          ["reveill", "sonner", "avertir", "prevenir"],
          "Réveiller l'utilisateur à l'heure choisie."],
-        ["e3-lunettes-be",  "Lunettes de vue — besoin", false,
-         ["voir", "vue", "vision", "lire", "net"],
+        ["e3-lunettes-be",  "Lunettes de vue — besoin", true,
+         ["voir", "vue", "vision", "lire", "net", "distinguer", "corriger"],
          "Voir net / corriger sa vue."],
         ["e3-gourde-fu",    "Gourde en inox — fonction d'usage", true,
          ["transport", "contenir", "conserv", "boire", "garder", "stocker"],
          "Transporter et conserver une boisson."],
-        ["e3-usb-be",       "Clé USB — besoin", false,
-         ["fichier", "donnee", "document", "emporter", "transport", "stock", "sauvegard", "copier"],
+        ["e3-usb-be",       "Clé USB — besoin", true,
+         ["fichier", "donnee", "document", "emporter", "transport", "stock", "sauvegard", "copier", "conserv", "partager"],
          "Emporter et conserver ses fichiers numériques."],
         ["e3-parapluie-fu", "Parapluie — fonction d'usage", true,
          ["proteg", "abriter", "couvrir", "sec", "pluie"],
          "Protéger l'utilisateur de la pluie."],
-        ["e3-panneau-be",   "Panneau solaire — besoin", false,
-         ["electricit", "courant", "energie", "alimenter", "produire"],
+        ["e3-panneau-be",   "Panneau solaire — besoin", true,
+         ["electricit", "courant", "energie", "alimenter", "produire", "eclairer", "chauffer"],
          "Disposer d'électricité / produire de l'énergie."]
       ];
       for (var k = 0; k < e3.length; k++) {

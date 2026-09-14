@@ -66,9 +66,13 @@ d'élèves donnent l'idée sans citer la question : la machine le voit, à toi d
 
 ## Exercice 3 — Besoin et fonction d'usage (3 pts)
 
-0,5 pt par case. **La fonction d'usage doit commencer par un verbe à l'infinitif** :
-une idée juste sans infinitif est comptée **0,25 pt** par la machine, avec la mention
-« pas de verbe à l'infinitif ».
+0,5 pt par case. **Le besoin comme la fonction d'usage s'écrivent avec un verbe à
+l'infinitif**, suivi d'un complément — c'est la formulation vue en activité 1 :
+*se nourrir, se protéger, communiquer, être reconnu, créer*.
+
+Une idée juste sans verbe à l'infinitif est comptée **0,25 pt** par la machine, avec la
+mention « idée juste, mais pas de verbe à l'infinitif ». Les verbes pronominaux sont
+reconnus : *se protéger*, *s'informer* comptent comme des infinitifs.
 
 | Objet | Besoin | Fonction d'usage |
 |---|---|---|
@@ -77,7 +81,11 @@ une idée juste sans infinitif est comptée **0,25 pt** par la machine, avec la 
 | Gourde en inox | *(donné)* | **Transporter** et **conserver** une boisson |
 | Clé USB | **Emporter et conserver ses fichiers numériques** | *(donnée)* |
 | Parapluie | *(donné)* | **Protéger** l'utilisateur de la pluie |
-| Panneau solaire | **Disposer d'électricité / produire de l'énergie** | *(donnée)* |
+| Panneau solaire | **Produire de l'électricité / disposer d'énergie** | *(donnée)* |
+
+*Les trois besoins déjà donnés dans le sujet sont eux aussi à l'infinitif* — « Se
+réveiller à l'heure choisie », « Transporter et boire un liquide », « Se déplacer à
+pied sous la pluie » — ils servent de modèle à l'élève pour les trois qu'il rédige.
 
 ## Exercice 4 — Étude de cas et fonction d'estime (2 pts)
 
