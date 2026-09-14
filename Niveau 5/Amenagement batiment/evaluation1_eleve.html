@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 — Évaluation n°1 — 5ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --br:#C55A11; --brl:#FCE4D6;
+    --bl:#1F4E79; --bc:#2E75B6; --bp:#DEEAF1;
+    --vt:#1E6B3B; --vp:#E2EFDA;
+    --rg:#C0392B; --rgp:#FADBD8;
+    --vi:#5B34C7; --vip:#EDE7FF;
+    --gr:#F4F6F8; --gb:#E2E8F0;
+    --tx:#1A202C; --td:#4A5568;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--vi),#3A1F8C);color:#fff;padding:16px 22px;
+    position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1080px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#CDBBFF}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#CDBBFF;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#CDBBFF}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:150px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vi),#8A6BE0);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1080px;margin:0 auto;padding:22px 22px 150px}
+  .bandeau{background:linear-gradient(135deg,var(--vi),#7C4DFF);color:#fff;border-radius:var(--r);
+    padding:20px 24px;margin-bottom:18px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .bandeau::after{content:"\1F4DD";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.18}
+  .bandeau .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+  .bandeau h2{font-size:19px;font-weight:700;margin:4px 0 8px;max-width:80%}
+  .bandeau .meta{display:flex;gap:8px;flex-wrap:wrap}
+  .bandeau .meta span{background:rgba(255,255,255,.18);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600}
+
+  .consigne{display:flex;gap:12px;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);
+    padding:13px 17px;margin-bottom:18px;font-size:13.5px;color:#6B4E00;line-height:1.65}
+  .consigne b{color:#5A4000}
+
+  section.exo{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:18px;overflow:hidden}
+  .exhdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--vip);border-left:6px solid var(--vi)}
+  .exhdr .num{width:30px;height:30px;border-radius:50%;background:var(--vi);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .exhdr h3{font-size:16px;font-weight:700;color:var(--vi);flex:1}
+  .exhdr .pts{background:#fff;border:1.5px solid var(--vi);border-radius:999px;padding:3px 12px;
+    font-size:12px;font-weight:700;color:var(--vi);white-space:nowrap}
+  .exbody{padding:18px 20px 22px}
+  .consexo{font-size:14px;color:var(--td);margin-bottom:14px;line-height:1.7}
+
+  /* ═══ EXERCICE 1 — tableau de choix ═══ */
+  .choix{border:1px solid var(--gb);border-radius:10px;overflow:hidden}
+  .choix .entete{display:flex;align-items:center;gap:10px;background:var(--gr);padding:8px 14px;
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--td)}
+  .choix .entete .c1{flex:1}
+  .choix .entete .c2{width:300px;text-align:center}
+  .lig{display:flex;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid var(--gb);flex-wrap:wrap}
+  .lig .obj{flex:1;min-width:210px;display:flex;align-items:center;gap:10px;font-size:14px}
+  .lig .ico{flex:0 0 auto;width:30px;height:30px;color:var(--vi)}
+  .lig .ico svg{width:30px;height:30px;display:block}
+  /* flex:0 0 → la colonne ne rétrécit pas, sinon les deux choix passent l'un sous l'autre. */
+  .opts{display:flex;gap:6px;flex-wrap:wrap;flex:0 0 300px;justify-content:flex-end}
+  .opt{display:inline-flex;align-items:center;justify-content:center;background:#fff;border:1.5px solid var(--gb);
+    border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;
+    transition:.15s;min-width:142px;white-space:nowrap}
+  .opt:hover{border-color:var(--bc);color:var(--bl)}
+  .opt.pris{background:var(--vip);border-color:var(--vi);color:var(--vi)}
+
+  /* ═══ CHAMPS TEXTE ═══ */
+  .qbloc{margin-bottom:18px}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;margin-bottom:7px;line-height:1.6}
+  .qlabel .qn{display:inline-flex;align-items:center;justify-content:center;background:var(--vi);color:#fff;
+    border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;margin-right:8px;font-family:"DM Mono",monospace}
+  .qlabel .qp{font-size:12px;font-weight:600;color:var(--td);margin-left:6px}
+  textarea,input.txt{width:100%;border:1.5px solid var(--gb);border-radius:9px;padding:10px 12px;
+    font-family:inherit;font-size:14px;color:var(--tx);background:#fff;outline:none;resize:vertical;transition:.15s}
+  textarea{min-height:74px}
+  textarea:focus,input.txt:focus{border-color:var(--vi);box-shadow:0 0 0 3px var(--vip)}
+  textarea.filled,input.txt.filled{background:#FBFDFB;border-color:#B9D8C4}
+  .microw{display:flex;justify-content:flex-end;margin-top:5px}
+  .micbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:5px 11px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .micbtn:hover{background:var(--vip);border-color:var(--vi);color:var(--vi)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+
+  /* ═══ EXERCICE 3 — tableau besoin / fonction ═══ */
+  .tscroll{overflow-x:auto}
+  table.grid{width:100%;border-collapse:collapse;min-width:620px}
+  table.grid th{background:var(--bp);color:var(--bl);font-size:12px;text-transform:uppercase;
+    letter-spacing:.5px;padding:9px 11px;text-align:left;border:1px solid var(--gb)}
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:middle}
+  table.grid td.objet{background:var(--gr);font-weight:600;font-size:13.5px;white-space:nowrap}
+  table.grid td.objet .duo{display:flex;align-items:center;gap:9px}
+  table.grid td.objet .ico{width:26px;height:26px;color:var(--vi);flex:0 0 auto}
+  table.grid td.objet .ico svg{width:26px;height:26px;display:block}
+  td.donne{background:#F7F9FB;color:var(--td);font-size:13.5px;font-style:italic}
+  td.donne::before{content:"donné : ";font-style:normal;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.6px;color:var(--bc);font-weight:700;display:block}
+  .rappel{background:var(--bp);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;
+    padding:9px 13px;margin-bottom:13px;font-size:13px;color:var(--bl)}
+
+  /* ═══ EXERCICE 4 — les deux sacs ═══ */
+  .sacs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+  .sac{border:1.5px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center}
+  .sac h4{background:var(--gr);color:var(--tx);font-size:14px;padding:8px 12px;border-bottom:1px solid var(--gb)}
+  .sac .dessin{padding:12px}
+  .sac .dessin svg{width:100%;max-width:120px;height:auto}
+  .sac .desc{padding:0 12px 12px;font-size:13px;color:var(--td);line-height:1.55}
+  .sac .prix{display:inline-block;margin-top:6px;background:var(--vip);color:var(--vi);
+    border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gb);
+    box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:11px 22px;z-index:60}
+  .sendin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .btn{border:none;border-radius:9px;padding:11px 20px;font-family:inherit;font-size:14px;
+    font-weight:700;cursor:pointer;transition:.15s}
+  .btn-p{background:var(--vi);color:#fff}
+  .btn-p:hover{background:#4726A8}
+  .btn-p:disabled{background:var(--gb);color:var(--td);cursor:not-allowed}
+  .btn-s{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-s:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .msg{flex:1;min-width:210px;font-size:13px;line-height:1.5}
+  .msg.ok{color:var(--vt)} .msg.err{color:var(--rg)} .msg.wait{color:var(--td)}
+
+  /* ═══ IMPRESSION — sujet vierge ou copie de l'élève ═══ */
+  @media print{
+    @page{size:A4 portrait;margin:11mm 12mm}
+    header,.pbar-wrap,.sendbar,.micbtn,.microw,.consigne,.li-barre,.cl-btn{display:none!important}
+    body{background:#fff;font-size:10.5pt;line-height:1.5}
+    main{max-width:none;padding:0}
+    .entete-papier{display:flex!important}
+    .bandeau{background:none;color:var(--tx);border:1.5pt solid var(--vi);box-shadow:none;padding:6pt 10pt;margin-bottom:8pt}
+    .bandeau::after{display:none}
+    .bandeau .lb{color:var(--vi)}
+    .bandeau h2{font-size:12pt;color:#3A1F8C;max-width:none}
+    .bandeau .meta span{background:none;border:1pt solid var(--vi);color:var(--vi);font-size:8.5pt}
+    section.exo{box-shadow:none;border:none;margin-bottom:8pt;break-inside:auto}
+    .exhdr{background:none;border-left:none;border-bottom:1.2pt solid var(--vi);padding:0 0 3pt;
+      margin-bottom:6pt;break-inside:avoid;break-after:avoid}
+    .exhdr .num{width:15pt;height:15pt;font-size:9pt}
+    .exhdr h3{font-size:12pt}
+    .exbody{padding:0}
+    .consexo{font-size:9.5pt;margin-bottom:7pt}
+    .lig{padding:3.5pt 8pt;break-inside:avoid}
+    .lig .ico,.lig .ico svg{width:13pt;height:13pt}
+    .lig .obj{font-size:9.5pt}
+    .opt{font-size:8.5pt;padding:2pt 8pt;min-width:60pt}
+    .qbloc{break-inside:avoid;margin-bottom:9pt}
+    .qlabel{font-size:10pt}
+    textarea,input.txt{border:1pt solid #9AA5B1;font-size:9.5pt;min-height:52pt;background:#fff!important}
+    table.grid{min-width:0}
+    table.grid th{background:none;color:var(--bl);border:1pt solid #9AA5B1;font-size:8.5pt;padding:3pt 6pt}
+    table.grid td{border:1pt solid #9AA5B1;padding:3pt 6pt;font-size:9pt}
+    table.grid td.objet .ico,table.grid td.objet .ico svg{width:12pt;height:12pt}
+    td.donne{font-size:8.8pt}
+    .sacs{gap:8pt;margin-bottom:8pt;break-inside:avoid}
+    .sac .dessin svg{max-width:60pt}
+    .sac h4{background:none;font-size:9.5pt;padding:3pt 8pt}
+    .sac .desc{font-size:8.8pt;padding:0 8pt 6pt}
+    .rappel{background:none;border-left:2.5pt solid var(--bc);padding:4pt 8pt;font-size:9pt}
+  }
+  .entete-papier{display:none;align-items:flex-end;justify-content:space-between;gap:14px;
+    border-bottom:2.5pt solid #5B34C7;padding-bottom:5pt;margin-bottom:9pt}
+  .entete-papier .gauche .sur{font-size:8pt;letter-spacing:1.4pt;text-transform:uppercase;color:#5B34C7;font-weight:700}
+  .entete-papier .gauche h1{font-size:15pt;color:#3A1F8C;line-height:1.2}
+  .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
+  .entete-papier .droite .nom{font-weight:700;color:#1A202C;font-size:10pt}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 1</div>
+      <h1>P1 — Évaluation n°1</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 21 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="entete-papier">
+    <div class="gauche">
+      <div class="sur">Technologie · 5<sup>e</sup> · Séquence 1</div>
+      <h1>Évaluation n°1</h1>
+    </div>
+    <div class="droite">
+      <div class="nom" id="papier-nom">Nom :</div>
+      <div id="papier-date"></div>
+    </div>
+  </div>
+
+  <div class="bandeau">
+    <div class="lb">Évaluation</div>
+    <h2>Objet technique, besoin et fonction d'usage</h2>
+    <div class="meta">
+      <span>4 exercices</span><span>Noté sur 10 points</span><span>Travail individuel</span>
+    </div>
+  </div>
+
+  <div class="consigne" data-nolecture>
+    <div>
+      <b>Avant de commencer.</b> Écris ton prénom, ton nom et ta classe en haut de la page.
+      Réponds à tous les exercices, puis clique sur <b>« Envoyer au professeur »</b> en bas de l'écran.
+      Ton travail est enregistré automatiquement sur cet appareil : si tu fermes la page par erreur, tu le retrouveras.
+      Le bouton <b>« 🔊 Lecture immersive »</b> lit l'énoncé à voix haute, et <b>« Dicter »</b> te permet de répondre à la voix.
+    </div>
+  </div>
+
+  <!-- ════════════════ EXERCICE 1 ════════════════ -->
+  <section class="exo" id="ex1">
+    <div class="exhdr">
+      <span class="num">1</span>
+      <h3>Distinguer l'objet naturel de l'objet technique</h3>
+      <span class="pts">2,5 points</span>
+    </div>
+    <div class="exbody">
+      <p class="consexo">Coche la bonne case pour chaque élément proposé. <em>0,25 point par bonne réponse.</em></p>
+      <div class="choix">
+        <div class="entete"><span class="c1">Élément</span><span class="c2">Ton choix</span></div>
+
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="arbre"></span>Un arbre dans une forêt</span>
+          <span class="opts" data-champ="e1-1">
+            <label class="opt"><input type="radio" name="e1-1" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-1" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="table"></span>Une table en bois de chêne</span>
+          <span class="opts" data-champ="e1-2">
+            <label class="opt"><input type="radio" name="e1-2" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-2" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="smartphone"></span>Un smartphone</span>
+          <span class="opts" data-champ="e1-3">
+            <label class="opt"><input type="radio" name="e1-3" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-3" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="silex"></span>Un silex taillé par un homme préhistorique</span>
+          <span class="opts" data-champ="e1-4">
+            <label class="opt"><input type="radio" name="e1-4" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-4" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="galet"></span>Un galet usé par la mer</span>
+          <span class="opts" data-champ="e1-5">
+            <label class="opt"><input type="radio" name="e1-5" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-5" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="pomme"></span>Une pomme sur un arbre</span>
+          <span class="opts" data-champ="e1-6">
+            <label class="opt"><input type="radio" name="e1-6" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-6" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="bouteille"></span>Une bouteille d'eau en plastique</span>
+          <span class="opts" data-champ="e1-7">
+            <label class="opt"><input type="radio" name="e1-7" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-7" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="velo"></span>Un vélo tout-terrain (VTT)</span>
+          <span class="opts" data-champ="e1-8">
+            <label class="opt"><input type="radio" name="e1-8" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-8" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="groseille"></span>Une groseille sauvage</span>
+          <span class="opts" data-champ="e1-9">
+            <label class="opt"><input type="radio" name="e1-9" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-9" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+        <div class="lig">
+          <span class="obj"><span class="ico" data-ico="ruche"></span>Une ruche d'abeilles en bois faite par un apiculteur</span>
+          <span class="opts" data-champ="e1-10">
+            <label class="opt"><input type="radio" name="e1-10" value="nat" hidden>Objet naturel</label>
+            <label class="opt"><input type="radio" name="e1-10" value="tec" hidden>Objet technique</label>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ EXERCICE 2 ════════════════ -->
+  <section class="exo" id="ex2">
+    <div class="exhdr">
+      <span class="num">2</span>
+      <h3>Définitions de cours</h3>
+      <span class="pts">2,5 points</span>
+    </div>
+    <div class="exbody">
+      <p class="consexo">Réponds avec tes mots, en une ou deux phrases complètes.</p>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">2.1</span>Qu'est-ce qu'un <strong>objet technique</strong> en technologie&nbsp;?<span class="qp">(1 pt)</span></span>
+        <textarea id="e2-1" rows="3" placeholder="Écris ta définition…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e2-1" onclick="dicter('mic-e2-1','e2-1')">&#x1F3A4; Dicter</button></div>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">2.2</span>Qu'est-ce qu'un <strong>besoin</strong> en technologie&nbsp;?<span class="qp">(0,5 pt)</span></span>
+        <textarea id="e2-2" rows="3" placeholder="Écris ta définition…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e2-2" onclick="dicter('mic-e2-2','e2-2')">&#x1F3A4; Dicter</button></div>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">2.3</span>Qu'est-ce que la <strong>fonction d'usage</strong> d'un objet technique&nbsp;? À quelle question simple permet-elle de répondre&nbsp;?<span class="qp">(1 pt)</span></span>
+        <textarea id="e2-3" rows="3" placeholder="Écris ta définition, puis la question…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e2-3" onclick="dicter('mic-e2-3','e2-3')">&#x1F3A4; Dicter</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ EXERCICE 3 ════════════════ -->
+  <section class="exo" id="ex3">
+    <div class="exhdr">
+      <span class="num">3</span>
+      <h3>Analyse du besoin et de la fonction d'usage</h3>
+      <span class="pts">3 points</span>
+    </div>
+    <div class="exbody">
+      <p class="consexo">Complète le tableau en formulant soit le <strong>besoin</strong>, soit la <strong>fonction d'usage</strong>. <em>0,5 point par case.</em></p>
+      <div class="rappel">
+        <strong>Attention :</strong> la fonction d'usage commence <strong>obligatoirement par un verbe à l'infinitif</strong>
+        (permettre, transporter, protéger…), suivi d'un complément.
+      </div>
+      <div class="tscroll">
+        <table class="grid">
+          <tr>
+            <th style="width:22%">Objet technique</th>
+            <th style="width:39%">Besoin humain à satisfaire</th>
+            <th style="width:39%">Fonction d'usage (verbe + complément)</th>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="reveil"></span>Réveille-matin</span></td>
+            <td class="donne">Se réveiller à l'heure choisie</td>
+            <td><input class="txt" id="e3-reveil-fu" type="text" placeholder="Verbe à l'infinitif + complément"></td>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="lunettes"></span>Lunettes de vue</span></td>
+            <td><input class="txt" id="e3-lunettes-be" type="text" placeholder="Le besoin…"></td>
+            <td class="donne">Permettre à l'utilisateur de mieux voir</td>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="gourde"></span>Gourde en inox</span></td>
+            <td class="donne">Transporter et boire un liquide</td>
+            <td><input class="txt" id="e3-gourde-fu" type="text" placeholder="Verbe à l'infinitif + complément"></td>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="usb"></span>Clé USB</span></td>
+            <td><input class="txt" id="e3-usb-be" type="text" placeholder="Le besoin…"></td>
+            <td class="donne">Stocker et transférer des données numériques</td>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="parapluie"></span>Parapluie</span></td>
+            <td class="donne">Se déplacer à pied sous la pluie</td>
+            <td><input class="txt" id="e3-parapluie-fu" type="text" placeholder="Verbe à l'infinitif + complément"></td>
+          </tr>
+          <tr>
+            <td class="objet"><span class="duo"><span class="ico" data-ico="panneau"></span>Panneau solaire</span></td>
+            <td><input class="txt" id="e3-panneau-be" type="text" placeholder="Le besoin…"></td>
+            <td class="donne">Convertir la lumière du soleil en électricité</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ EXERCICE 4 ════════════════ -->
+  <section class="exo" id="ex4">
+    <div class="exhdr">
+      <span class="num">4</span>
+      <h3>Étude de cas et fonction d'estime</h3>
+      <span class="pts">2 points</span>
+    </div>
+    <div class="exbody">
+      <p class="consexo">Dans un magasin, deux sacs à dos sont présentés pour la rentrée scolaire.</p>
+
+      <div class="sacs">
+        <div class="sac">
+          <h4>Sac A</h4>
+          <div class="dessin" aria-hidden="true">
+            <svg viewBox="0 0 100 130" fill="none" stroke="#4A5568" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 46c0-15 12-26 28-26s28 11 28 26v58c0 6-5 11-11 11H33c-6 0-11-5-11-11z" fill="#E2E8F0"/>
+              <path d="M35 20c0-9 7-14 15-14s15 5 15 14"/>
+              <path d="M22 74h56"/>
+              <rect x="38" y="82" width="24" height="16" rx="3" fill="#fff"/>
+            </svg>
+          </div>
+          <div class="desc">Un sac noir très simple, sans marque visible.<br><span class="prix">15 €</span></div>
+        </div>
+        <div class="sac">
+          <h4>Sac B</h4>
+          <div class="dessin" aria-hidden="true">
+            <svg viewBox="0 0 100 130" fill="none" stroke="#B0246B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 46c0-15 12-26 28-26s28 11 28 26v58c0 6-5 11-11 11H33c-6 0-11-5-11-11z" fill="#FF7AC4"/>
+              <path d="M35 20c0-9 7-14 15-14s15 5 15 14"/>
+              <path d="M22 74h56"/>
+              <rect x="38" y="82" width="24" height="16" rx="3" fill="#fff"/>
+              <circle cx="41" cy="58" r="5" fill="#fff"/><circle cx="59" cy="58" r="5" fill="#fff"/>
+              <path d="M41 63c3 4 15 4 18 0"/>
+              <path d="M30 34l5 6M70 34l-5 6"/>
+            </svg>
+          </div>
+          <div class="desc">Un sac de marque connue, rose fluo avec des motifs mangas.<br><span class="prix">65 €</span></div>
+        </div>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">4.1</span>Ces deux sacs ont-ils la <strong>même fonction d'usage</strong>&nbsp;? Justifie ta réponse.<span class="qp">(1 pt)</span></span>
+        <textarea id="e4-1" rows="3" placeholder="Réponds par oui ou non, puis explique pourquoi…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e4-1" onclick="dicter('mic-e4-1','e4-1')">&#x1F3A4; Dicter</button></div>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">4.2</span>Pourquoi un élève choisirait-il le <strong>Sac B</strong> plutôt que le Sac A malgré l'écart de prix&nbsp;? On parle alors de <strong>fonction d'estime</strong> : pourquoi, à ton avis&nbsp;?<span class="qp">(1 pt)</span></span>
+        <textarea id="e4-2" rows="3" placeholder="Explique ce qui pousse à choisir le Sac B…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e4-2" onclick="dicter('mic-e4-2','e4-2')">&#x1F3A4; Dicter</button></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="sendbar" data-nolecture>
+  <div class="sendin">
+    <span class="msg" id="msg">Ton travail est enregistré automatiquement sur cet appareil.</span>
+    <button class="btn btn-s" id="btn-reprise" onclick="reprendreEnvoi()">&#x2935;&#xFE0F; Reprendre mon envoi</button>
+    <button class="btn btn-p" id="btn-send" onclick="envoyerAuProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P1 5e — ÉVALUATION n°1 : objet technique, besoin, fonction d'usage
+   Notée sur 10. La correction n'est PAS montrée à l'élève : les réponses
+   partent au tableau de bord du professeur, qui dispose là-bas d'une
+   correction automatique ajustable.
+   Backend partagé avec index.html (Apps Script).
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "eval1-5e";
+var CAP_LABEL   = "P1 5e — Évaluation n°1";
+var PREFILL_KEY = "batiment5e_prefill";        /* même identité que la séquence */
+var QUEUE_KEY   = "eval1_5e_offline_queue";
+var DRAFT_PFX   = "eval1_5e_draft_";
+
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* Champs texte suivis */
+var CHAMPS_TXT = ["e2-1","e2-2","e2-3",
+                  "e3-reveil-fu","e3-lunettes-be","e3-gourde-fu","e3-usb-be","e3-parapluie-fu","e3-panneau-be",
+                  "e4-1","e4-2"];
+/* Lignes à cocher de l'exercice 1 */
+var CHAMPS_QCM = ["e1-1","e1-2","e1-3","e1-4","e1-5","e1-6","e1-7","e1-8","e1-9","e1-10"];
+var TOTAL_REP  = CHAMPS_TXT.length + CHAMPS_QCM.length;   /* 21 */
+var choix = {};                                            /* réponses de l'exercice 1 */
+
+function $(id){ return document.getElementById(id); }
+function val(id){ var e = $(id); return e ? String(e.value || "").trim() : ""; }
+function slug(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function flash(html, type){
+  var m = $("msg");
+  if (!m) return;
+  m.innerHTML = html;
+  m.className = "msg " + (type || "");
+}
+
+/* ════════════ PICTOGRAMMES ════════════
+   Dessinés ici plutôt qu'importés : nets à toute taille, à l'écran comme
+   à l'impression, et rien à télécharger sur le réseau du collège. */
+var ICONES = {
+  arbre:     '<path d="M12 21v-5"/><path d="M12 16c-4 0-6.5-2.6-6.5-5.6 0-1.4.6-2.7 1.5-3.6C6.7 4.9 9 3 12 3s5.3 1.9 5 3.8c.9.9 1.5 2.2 1.5 3.6 0 3-2.5 5.6-6.5 5.6z"/>',
+  table:     '<path d="M3 9h18"/><path d="M3 9l1.5-2.5h15L21 9"/><path d="M5.5 9v11M18.5 9v11"/>',
+  smartphone:'<rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.6 5.4h2.8"/><path d="M10.6 18.6h2.8"/>',
+  silex:     '<path d="M12 2.8l7.4 6.4-3.1 10.5-8.9.5L3.6 10z"/><path d="M12 2.8L8.4 10l7.9 9.7M3.6 10l12.7-.8"/>',
+  galet:     '<path d="M3.4 14.4c0-4.2 4-7.6 9-7.6s8.2 2.6 8.2 6.1-3.4 5.9-8.6 5.9-8.6-1.6-8.6-4.4z"/><path d="M7.6 12.2c1.4-1.4 3.4-2.1 5.4-1.9"/>',
+  pomme:     '<path d="M12 7.2c-1-1-2.4-1.5-3.7-1.2C5.9 6.5 4.4 8.9 4.6 11.7c.3 4.2 3.1 8.1 5.6 8.1.8 0 1.3-.4 1.8-.4s1 .4 1.8.4c2.5 0 5.3-3.9 5.6-8.1.2-2.8-1.3-5.2-3.7-5.7-1.3-.3-2.7.2-3.7 1.2z"/><path d="M12 7.2V4.4M12 4.4c1.6 0 2.6-1 2.8-2.2-1.6-.2-2.6.7-2.8 2.2z"/>',
+  bouteille: '<path d="M9.6 2.6h4.8v2.6c0 1.1 2.2 2.3 2.2 4.6v9.6c0 1.4-1.1 2-2.4 2H9.8c-1.3 0-2.4-.6-2.4-2V9.8c0-2.3 2.2-3.5 2.2-4.6z"/><path d="M7.4 12.6h9.2"/>',
+  velo:      '<circle cx="5.6" cy="16.6" r="3.9"/><circle cx="18.4" cy="16.6" r="3.9"/><path d="M5.6 16.6l4-8.4h5.2l3.6 8.4M9.6 8.2h4.9M12.4 16.6l2.4-8.4"/>',
+  groseille: '<circle cx="8.6" cy="15.4" r="3.6"/><circle cx="15.4" cy="15.4" r="3.6"/><path d="M8.6 11.8V6.4c0-1.6 1.5-2.8 3.4-2.8s3.4 1.2 3.4 2.8v5.4"/>',
+  ruche:     '<path d="M6 20.4h12"/><path d="M7.2 16.6h9.6M6.4 12.8h11.2M7.4 9h9.2"/><path d="M5.4 20.4c0-6.6 2.9-11.8 6.6-11.8s6.6 5.2 6.6 11.8"/><path d="M10.8 20.4v-2.6h2.4v2.6"/>',
+  reveil:    '<circle cx="12" cy="13.4" r="7.4"/><path d="M12 9.4v4l2.6 1.6"/><path d="M5 5.4L7.6 3M19 5.4L16.4 3"/><path d="M7.6 20.2l-1.4 1.6M16.4 20.2l1.4 1.6"/>',
+  lunettes:  '<circle cx="6.2" cy="14.2" r="3.6"/><circle cx="17.8" cy="14.2" r="3.6"/><path d="M9.8 13.6c1.4-.8 3-.8 4.4 0"/><path d="M2.6 12.4l1.6-3.6M21.4 12.4l-1.6-3.6"/>',
+  gourde:    '<rect x="7.6" y="6.4" width="8.8" height="15" rx="2.6"/><path d="M9.8 6.4V4.2h4.4v2.2"/><path d="M10.4 2.6h3.2"/><path d="M7.6 11.4h8.8"/>',
+  usb:       '<rect x="8" y="9" width="8" height="12.4" rx="1.6"/><path d="M9.6 9V4.6h4.8V9"/><path d="M10.4 13.4h3.2M10.4 16.4h3.2"/>',
+  parapluie: '<path d="M12 12.6V19c0 1.4-1 2.4-2.3 2.4S7.4 20.4 7.4 19"/><path d="M2.6 12.6c0-5 4.2-9 9.4-9s9.4 4 9.4 9c-1.6-1.4-3.1-1.4-4.7 0-1.6-1.4-3.1-1.4-4.7 0-1.6-1.4-3.1-1.4-4.7 0-1.6-1.4-3.1-1.4-4.7 0z"/>',
+  panneau:   '<path d="M3 15.4l2.6-8.8h12.8L21 15.4z"/><path d="M6.6 15.4l1.4-8.8M17.4 15.4L16 6.6M4.4 11h15.2"/><path d="M12 15.4v5.4M9 20.8h6"/>'
+};
+function poserIcones(){
+  var zones = document.querySelectorAll("[data-ico]");
+  for (var i = 0; i < zones.length; i++){
+    var d = ICONES[zones[i].getAttribute("data-ico")];
+    if (!d) continue;
+    zones[i].innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+  }
+}
+
+/* ════════════ EXERCICE 1 — cases à cocher ════════════
+   Aucun retour « juste / faux » : c'est une évaluation, pas un entraînement. */
+function brancherChoix(){
+  var zones = document.querySelectorAll(".opts[data-champ]");
+  for (var i = 0; i < zones.length; i++){
+    (function(zone){
+      var champ = zone.getAttribute("data-champ");
+      var radios = zone.querySelectorAll("input[type=radio]");
+      for (var j = 0; j < radios.length; j++){
+        radios[j].addEventListener("change", function(){
+          choix[champ] = this.value;
+          var etiquettes = zone.querySelectorAll(".opt");
+          for (var k = 0; k < etiquettes.length; k++) etiquettes[k].classList.remove("pris");
+          this.parentNode.classList.add("pris");
+          majProgression(); enregistrerBrouillon();
+        });
+      }
+    })(zones[i]);
+  }
+}
+function appliquerChoix(){
+  for (var champ in choix){
+    if (!choix.hasOwnProperty(champ)) continue;
+    var zone = document.querySelector('.opts[data-champ="' + champ + '"]');
+    if (!zone) continue;
+    var radios = zone.querySelectorAll("input[type=radio]");
+    for (var j = 0; j < radios.length; j++){
+      if (radios[j].value === choix[champ]){
+        radios[j].checked = true;
+        radios[j].parentNode.classList.add("pris");
+      }
+    }
+  }
+}
+
+/* ════════════ DICTÉE VOCALE ════════════ */
+var _micActif = null;
+function dicter(btnId, cibleId){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
+          "(touche &#x1F3A4; en bas du clavier) ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
+  if (_micActif && _micActif.btnId === btnId){ try{ _micActif.recog.stop(); }catch(e){} return; }
+  if (_micActif){ try{ _micActif.recog.stop(); }catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(cibleId);
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arrêter"; }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", provisoire = "";
+
+  recog.onresult = function(e){
+    provisoire = "";
+    var fin = base;
+    for (var i = e.resultIndex; i < e.results.length; i++){
+      if (e.results[i].isFinal){
+        fin += (fin && !/\s$/.test(fin) ? " " : "") + e.results[i][0].transcript;
+        base = fin;
+      } else provisoire = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (provisoire ? " " + provisoire : ""); marquerRempli(ta); }
+  };
+  function arreter(){
+    if (ta && provisoire){ ta.value = base; marquerRempli(ta); }
+    _micActif = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+    majProgression(); enregistrerBrouillon();
+  }
+  recog.onerror = function(e){
+    arreter();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = arreter;
+  try { recog.start(); _micActif = { recog:recog, btnId:btnId }; }
+  catch(e){ arreter(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function marquerRempli(el){
+  if (!el || !el.classList) return;
+  el.classList.toggle("filled", String(el.value || "").trim().length > 0);
+}
+function compterRepondu(){
+  var n = 0;
+  for (var i = 0; i < CHAMPS_TXT.length; i++) if (val(CHAMPS_TXT[i])) n++;
+  for (var j = 0; j < CHAMPS_QCM.length; j++) if (choix[CHAMPS_QCM[j]]) n++;
+  return n;
+}
+function majProgression(){
+  var n = compterRepondu();
+  $("pcount").textContent = n + " / " + TOTAL_REP + " réponse" + (n > 1 ? "s" : "");
+  $("pbar-fill").style.width = (n / TOTAL_REP * 100) + "%";
+}
+
+/* ════════════ BROUILLON (par appareil) ════════════ */
+/* La clé dépend du nom, pour qu'un poste partagé garde une copie par élève.
+   Tant que l'identité n'est pas complète on écrit sous « anon » : sinon chaque
+   lettre tapée créerait un brouillon fantôme (…_l, …_le, …_lea), et l'un d'eux
+   risquerait d'être rechargé à la place du bon. */
+function cleAnonyme(){ return DRAFT_PFX + "anon"; }
+function cleBrouillon(){
+  var p = val("inp-prenom"), n = val("inp-nom");
+  if (!p || !n) return cleAnonyme();
+  return DRAFT_PFX + (slug(p + " " + n) || "anon");
+}
+function etatCourant(){
+  var champs = {};
+  for (var i = 0; i < CHAMPS_TXT.length; i++) champs[CHAMPS_TXT[i]] = val(CHAMPS_TXT[i]);
+  for (var j = 0; j < CHAMPS_QCM.length; j++) champs[CHAMPS_QCM[j]] = choix[CHAMPS_QCM[j]] || "";
+  return { p:val("inp-prenom"), n:val("inp-nom"), c:val("inp-classe"), champs:champs };
+}
+function enregistrerBrouillon(){
+  try {
+    var cle = cleBrouillon();
+    /* Garde-fou : une copie vide ne remplace jamais une copie déjà enregistrée.
+       Sans cela, le simple fait de retaper son nom au chargement écrasait le
+       travail rangé sous ce nom — avant même d'avoir pu le recharger. */
+    if (copieVierge() && localStorage.getItem(cle)) return;
+    localStorage.setItem(cle, JSON.stringify({ etat:etatCourant(), ts:Date.now() }));
+    /* L'identité vient d'être complétée : la copie commencée avant est
+       maintenant rangée sous le nom de l'élève, l'anonyme n'a plus lieu d'être. */
+    if (cle !== cleAnonyme()) localStorage.removeItem(cleAnonyme());
+  } catch(e){}
+}
+function appliquerEtat(etat){
+  if (!etat) return;
+  if (etat.p && !val("inp-prenom")) $("inp-prenom").value = etat.p;
+  if (etat.n && !val("inp-nom"))    $("inp-nom").value    = etat.n;
+  if (etat.c && !val("inp-classe")) $("inp-classe").value = etat.c;
+  var f = etat.champs || {};
+  for (var i = 0; i < CHAMPS_TXT.length; i++){
+    if (f[CHAMPS_TXT[i]] && $(CHAMPS_TXT[i])){ $(CHAMPS_TXT[i]).value = f[CHAMPS_TXT[i]]; marquerRempli($(CHAMPS_TXT[i])); }
+  }
+  for (var j = 0; j < CHAMPS_QCM.length; j++){ if (f[CHAMPS_QCM[j]]) choix[CHAMPS_QCM[j]] = f[CHAMPS_QCM[j]]; }
+  appliquerChoix();
+  majProgression();
+}
+/* Enregistrement peu après la frappe : sans cela, la dernière réponse tapée
+   n'était sauvegardée qu'en quittant le champ — perdue si l'élève ferme
+   l'onglet juste après l'avoir écrite. */
+var _minuteurBrouillon = null;
+function enregistrerBientot(){
+  clearTimeout(_minuteurBrouillon);
+  _minuteurBrouillon = setTimeout(enregistrerBrouillon, 700);
+}
+function copieVierge(){ return compterRepondu() === 0; }
+function restaurerBrouillon(){
+  try {
+    var brut = localStorage.getItem(cleBrouillon()) || localStorage.getItem(cleAnonyme());
+    if (!brut) return;
+    var d = JSON.parse(brut);
+    if (d && d.etat) appliquerEtat(d.etat);
+  } catch(e){}
+}
+
+/* ════════════ REPRENDRE UN ENVOI ════════════
+   L'élève a changé de poste, ou la tablette a effacé ses données :
+   on recharge la dernière copie qu'il a envoyée au professeur. */
+function reprendreEnvoi(){
+  var p = val("inp-prenom"), n = val("inp-nom");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!copieVierge() && !confirm("Ta copie actuelle sera remplacée par ton dernier envoi. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var btn = $("btn-reprise"); btn.disabled = true;
+  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  fetch(url).then(function(r){ return r.json(); }).then(function(data){
+    btn.disabled = false;
+    var liste = (data && data.subs) ? data.subs : (data && data.length ? data : []);
+    var moi = slug(p + " " + n), trouve = null;
+    for (var i = 0; i < liste.length; i++){
+      var s = liste[i];
+      if (s.cap !== CAP_ID) continue;
+      if (slug(s.ename || "") !== moi) continue;
+      if (!trouve || new Date(s.dateISO) > new Date(trouve.dateISO)) trouve = s;
+    }
+    if (!trouve || !trouve.fields){
+      flash("Aucun envoi retrouvé à ton nom. Vérifie l'orthographe de ton prénom et de ton nom.", "err");
+      return;
+    }
+    var etat = { p:p, n:n, c:val("inp-classe"), champs:trouve.fields };
+    appliquerEtat(etat);
+    enregistrerBrouillon();
+    flash("✅ Copie du " + new Date(trouve.dateISO).toLocaleString("fr-FR") + " rechargée. Tu peux continuer.", "ok");
+  }).catch(function(){
+    btn.disabled = false;
+    flash("La reprise n'a pas abouti (réseau ?). Préviens ton professeur.", "err");
+  });
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function urlPrete(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function mettreEnFile(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function retirerDeLaFile(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function deposerEnLocal(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+function poster(sub, fini){
+  mettreEnFile(sub);
+  if (!urlPrete()){ if (fini) fini(false); return; }
+  try {
+    fetch(APPS_SCRIPT_URL, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ retirerDeLaFile(sub); if (fini) fini(true); })
+      .catch(function(){ if (fini) fini(false); });
+  } catch(e){ if (fini) fini(false); }
+}
+function viderLaFile(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !urlPrete()) return;
+    q.forEach(function(sub){ poster(sub); });
+  } catch(e){}
+}
+function resumeOuvert(champs){
+  var bouts = [];
+  if (champs["e2-1"]) bouts.push("Objet technique : " + champs["e2-1"]);
+  if (champs["e4-2"]) bouts.push("Fonction d'estime : " + champs["e4-2"]);
+  return bouts.join("\n\n");
+}
+function fabriquerEnvoi(){
+  var etat = etatCourant();
+  var classe = etat.c ? ("5" + etat.c.toUpperCase()) : (USER.c || "");
+  var ename  = (etat.p + " " + etat.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe) || "5x") + "." + (slug(ename) || "eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: compterRepondu(),
+    qcmTot: TOTAL_REP,
+    open: resumeOuvert(etat.champs),
+    fields: etat.champs,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function envoyerAuProf(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 5A) en haut de la page.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var fait = compterRepondu();
+  if (fait < TOTAL_REP && !confirm("Il te reste " + (TOTAL_REP - fait) + " réponse(s) non remplie(s). Envoyer quand même ta copie ?")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  enregistrerBrouillon();
+  var sub = fabriquerEnvoi();
+  deposerEnLocal(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  poster(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Copie envoyée au professeur</strong> le " + new Date().toLocaleString("fr-FR") +
+            ".<br>Un nouvel envoi remplacera le précédent.", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Ta copie est <strong>conservée sur cet appareil</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ IDENTITÉ ET EN-TÊTE PAPIER ════════════ */
+function lireIdentite(){
+  try {
+    var brut = localStorage.getItem(PREFILL_KEY);
+    if (!brut) return;
+    var d = JSON.parse(brut);
+    if (!d) return;
+    USER = { id:d.id || "", p:d.p || "", n:d.n || "", c:d.c || "" };
+    if (d.p) $("inp-prenom").value = d.p;
+    if (d.n) $("inp-nom").value    = d.n;
+    if (d.c) $("inp-classe").value = String(d.c).replace(/^5/, "");
+  } catch(e){}
+}
+function majEntetePapier(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe").toUpperCase();
+  var qui = (p + " " + n).trim();
+  $("papier-nom").textContent = qui ? (qui + (c ? "  ·  5" + c : ""))
+                                    : "Nom :             Classe :";
+}
+
+/* ════════════ BARRE D'OUTILS COLLÉE SOUS L'EN-TÊTE ════════════ */
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+
+/* ════════════ DÉMARRAGE ════════════ */
+function demarrer(){
+  poserIcones();
+  brancherChoix();
+  lireIdentite();
+  restaurerBrouillon();
+  majProgression();
+  majEntetePapier();
+  calerBarreOutils();
+
+  for (var i = 0; i < CHAMPS_TXT.length; i++){
+    (function(el){
+      if (!el) return;
+      el.addEventListener("input", function(){ marquerRempli(el); majProgression(); enregistrerBientot(); });
+      el.addEventListener("blur", enregistrerBrouillon);
+    })($(CHAMPS_TXT[i]));
+  }
+  var ident = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j = 0; j < ident.length; j++){
+    $(ident[j]).addEventListener("input", function(){ majEntetePapier(); });
+    $(ident[j]).addEventListener("blur", function(){ restaurerSelonIdentite(); enregistrerBrouillon(); });
+  }
+
+  var d = new Date();
+  $("papier-date").textContent = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear();
+
+  setInterval(enregistrerBrouillon, 20000);
+  window.addEventListener("beforeunload", enregistrerBrouillon);
+  window.addEventListener("resize", calerBarreOutils);
+  document.addEventListener("confort-lecture", function(){ setTimeout(calerBarreOutils, 120); });
+  viderLaFile();
+}
+/* L'élève saisit son nom après coup : on va chercher le brouillon rangé sous
+   ce nom-là, mais seulement si la copie à l'écran est encore vide. */
+function restaurerSelonIdentite(){
+  if (copieVierge()) restaurerBrouillon();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+else demarrer();
+</script>
+
+<!-- Aménagements dys et confort de lecture : module partagé entre les capsules,
+     les réglages faits ailleurs se retrouvent ici. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+
+<!-- Lecture immersive : lit le sujet à voix haute en surlignant le texte. -->
+<script>
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in",
+  sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h2, h3, h4, .consexo, .qlabel, .rappel, .obj, .opt, .desc, td.donne, th, li, p"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+</body>
+</html>
