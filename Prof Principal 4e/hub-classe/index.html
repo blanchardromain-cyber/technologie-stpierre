@@ -150,13 +150,15 @@ let planningMenage = null; // planning ménage publié (chaîne JSON) — onglet
 let edt = null;           // {mode, url, evenements, maj} — onglet Emploi du temps
 let edtJour = "";         // jour affiché (AAAA-MM-JJ)
 let edtFrais = false;     // vrai une seule fois après « 🔄 rafraîchir » : force le serveur à relire l'agenda
+let charte = null;        // {texte, version, signee, signatures} — onglet Entraide
+let charteDepliee = false; // « revoir la charte » une fois signée
 
 // ---------- v2.7 : cache local (affichage instantané) ----------
 // Chaque changement d'onglet déclenchait un aller-retour Apps Script complet (~1 à 3 s)
 // pendant lequel l'écran restait vide. On garde désormais la dernière réponse connue
 // dans le navigateur : l'onglet s'affiche tout de suite, puis se met à jour en silence.
 const CACHE_PREFIXE = "hub4g_c_";
-const CACHE_DUREES = { messages: 60e3, plan: 216e5, menage: 216e5, moi: 216e5, classe: 216e5, edt: 18e5 };
+const CACHE_DUREES = { messages: 60e3, plan: 216e5, menage: 216e5, moi: 216e5, classe: 216e5, edt: 18e5, charte: 216e5 };
 
 function cleCache(nom) { return CACHE_PREFIXE + (session ? session.code : "?") + "_" + nom; }
 
@@ -340,6 +342,7 @@ async function connecter() {
 
 function deconnecter() {
   viderCacheLocal();
+  charte = null; charteDepliee = false;
   localStorage.removeItem("hub4g_session");
   session = null;
   document.getElementById("appli").style.display = "none";
@@ -368,6 +371,7 @@ async function demarrer() {
   else { const m = litCache("moi"); if (m) mesInfos = m; }
   const pl = litCache("plan"); if (pl !== null) planPublie = pl;
   const me = litCache("menage"); if (me !== null) planningMenage = me;
+  const ch = litCache("charte"); if (ch) charte = ch;
   dessiner();
 
   let rep;
@@ -381,6 +385,7 @@ async function demarrer() {
     MOTS_PERSO = rep.horaires.motsPerso || [];
     localStorage.setItem("hub4g_session", JSON.stringify(session));
   }
+  if (rep.charte) { charte = rep.charte; ecritCache("charte", charte); }
   if (session.role === "prof") infosClasse = { ok: true, infos: rep.infos || [], horaires: rep.horaires, edtUrl: rep.edtUrl || "" };
   else if (rep.moi) mesInfos = rep.moi;
   ecritCache("messages", messages);
@@ -421,6 +426,14 @@ function saisieEnCours() {
 async function changerOnglet(onglet) {
   ongletActif = onglet;
   dessiner();
+  if ((onglet === "entraide" || onglet === "classe") && charte === null) {
+    charte = litCache("charte");
+    if (charte) dessiner();
+    const rep = await api("lireCharte");
+    if (rep && rep.ok) { charte = rep; ecritCache("charte", charte); }
+    else if (!charte) charte = { texte: "", version: 0, signee: true };   // backend pas encore en v2.8 : on ne bloque rien
+    dessiner();
+  }
   if (onglet === "moi" && !mesInfos) {
     mesInfos = litCache("moi");
     if (mesInfos) dessiner();
@@ -460,6 +473,65 @@ async function changerOnglet(onglet) {
     if (rep.ok) { planningMenage = rep.planning || ""; ecritCache("menage", planningMenage); }
     else if (planningMenage === null) planningMenage = "obsolete";
     dessiner();
+  }
+}
+
+// ---------- v2.8 : charte de l'Entraide ----------
+// Texte stocké côté serveur, un article par ligne au format « Titre | corps ».
+function articlesCharte(texte) {
+  return String(texte || "").split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+    const i = l.indexOf("|");
+    return i === -1 ? { titre: "", corps: l } : { titre: l.slice(0, i).trim(), corps: l.slice(i + 1).trim() };
+  });
+}
+
+function rendreCharte(compacte) {
+  const arts = articlesCharte(charte && charte.texte);
+  if (!arts.length) return '<div class="vide">Aucune charte publiée pour le moment.</div>';
+  return '<ol style="margin:0;padding-left:20px;font-size:.86rem;line-height:1.55">' +
+    arts.map(a => '<li style="margin-bottom:' + (compacte ? "6px" : "10px") + '">' +
+      (a.titre ? "<b>" + echap(a.titre) + "</b> " : "") + echap(a.corps) + "</li>").join("") +
+    "</ol>";
+}
+
+async function signerCharte() {
+  const btn = document.getElementById("btnSignerCharte");
+  if (btn) { btn.disabled = true; btn.textContent = "Enregistrement…"; }
+  const rep = await api("signerCharte");
+  if (rep && rep.ok) {
+    charte.signee = true;
+    ecritCache("charte", charte);
+    dessiner();
+  } else {
+    if (btn) { btn.disabled = false; btn.textContent = "J'ai lu et je m'engage"; }
+    const z = document.getElementById("erreurCharte");
+    if (z) z.textContent = (rep && rep.erreur) || "Enregistrement impossible. Réessaie.";
+  }
+}
+
+function dessinerEtatCharte(msg, couleur) {
+  dessiner();
+  const z = document.getElementById("etatCharte");
+  if (z) { z.textContent = msg; z.style.color = couleur; }
+}
+
+async function publierCharte() {
+  const texte = document.getElementById("texteCharte").value;
+  const correction = document.getElementById("charteCorrection").checked;
+  if (!correction && !confirm("Publier une NOUVELLE VERSION de la charte ?\n\nTous les élèves devront la relire et la resigner avant de pouvoir écrire dans l'Entraide.")) return;
+  const rep = await api("publierCharte", { texte, correction: correction ? 1 : 0 });
+  const z = document.getElementById("etatCharte");
+  if (rep && rep.ok) {
+    const relu = await api("lireCharte");          // on recharge pour repartir de la version publiée
+    if (relu && relu.ok) { charte = relu; ecritCache("charte", charte); }
+    z.textContent = rep.resignature
+      ? "Publiée en version " + rep.version + " — les élèves doivent resigner."
+      : "Correction enregistrée (version " + rep.version + " inchangée, signatures conservées).";
+    z.style.color = "#2c8a5f";
+    dessinerEtatCharte(z.textContent, "#2c8a5f");
+  } else {
+    z.textContent = (rep && rep.erreur) || "Publication impossible.";
+    z.style.color = "#c0392b";
   }
 }
 
@@ -537,7 +609,23 @@ function dessiner() {
 
   if (ongletActif === "entraide") {
     const entraideFermee = session.role !== "prof" && horsPlageClient(session.horaires);
-    if (entraideFermee) {
+    // v2.8 : porte de la charte — seul l'onglet Entraide est concerné.
+    const charteAsigner = session.role === "eleve" && charte && charte.texte && !charte.signee;
+    if (charteAsigner && !entraideFermee) {
+      h += '<div class="carte" style="border-color:#2c5f8a">' +
+        '<div style="font-size:1.6rem;text-align:center">📜</div>' +
+        '<b style="display:block;text-align:center;font-size:1rem">Charte d\'utilisation de l\'Entraide</b>' +
+        '<p style="font-size:.78rem;color:#7b8794;text-align:center;margin:4px 0 12px">Écrite par la classe, le 15 septembre 2026. À lire avant de participer.</p>' +
+        rendreCharte(false) +
+        '<div style="background:#eef5fb;border-radius:8px;padding:10px 12px;margin-top:14px;font-size:.8rem">' +
+        'En signant, tu t\'engages à respecter ces règles. Ta signature est enregistrée avec ton pseudonyme et la date. ' +
+        'Tes parents ont été informés de cette charte lors de la réunion de rentrée.</div>' +
+        '<div class="ligneBtn" style="margin-top:12px;justify-content:center">' +
+        '<button class="principal" id="btnSignerCharte" onclick="signerCharte()">J\'ai lu et je m\'engage</button></div>' +
+        '<div class="erreur" id="erreurCharte" style="text-align:center"></div>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:10px;text-align:center">Les annonces, le plan de classe, le ménage et l\'emploi du temps restent accessibles sans signature.</p>' +
+        "</div>";
+    } else if (entraideFermee) {
       h += '<div class="carte" style="text-align:center;padding:26px 14px"><div style="font-size:1.8rem">🌙</div>' +
         '<b>Entraide fermée pour le moment</b>' +
         '<p style="font-size:.8rem;color:#7b8794;margin-top:8px">' + echap(messageFermeEntraideClient(session.horaires)) + "</p>" +
@@ -547,6 +635,16 @@ function dessiner() {
       '<select id="matiereQuestion" style="margin-top:6px">' + MATIERES.map(m => "<option>" + m + "</option>").join("") + "</select>" +
       '<textarea id="texteQuestion" placeholder="Ex : exercice 3 p.42, je ne comprends pas la consigne…"></textarea>' +
       '<div class="ligneBtn"><button class="principal">Publier</button><span style="font-size:.7rem;color:#7b8794">Visible par toute la classe et le prof.</span></div></form>';
+    // rappel discret de la charte (déjà signée, ou vue prof)
+    if (charte && charte.texte) {
+      h += '<div class="carte" style="padding:8px 12px">' +
+        '<div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:#52606d">' +
+        '<span>📜 Charte de l\'Entraide' + (session.role === "eleve" ? " — signée" : "") + '</span>' +
+        '<button style="margin-left:auto;font-size:.72rem;padding:2px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="charteDepliee=!charteDepliee;dessiner()">' +
+        (charteDepliee ? "masquer" : "revoir") + "</button></div>" +
+        (charteDepliee ? '<div style="margin-top:8px">' + rendreCharte(true) + "</div>" : "") +
+        "</div>";
+    }
     h += '<div class="filtres"><label>Matière : <select id="filtreMatiere" onchange="filtreMatiere=this.value;dessiner()"><option value="">Toutes</option>' +
       MATIERES.map(m => '<option' + (filtreMatiere === m ? " selected" : "") + ">" + m + "</option>").join("") + "</select></label>" +
       '<label><input type="checkbox" onchange="masquerResolues=this.checked;dessiner()"' + (masquerResolues ? " checked" : "") + "> cacher les résolues</label>" +
@@ -621,6 +719,29 @@ function dessiner() {
         '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="testerEdt()">🔎 Tester l\'agenda</button>' +
         '<button style="font-size:.72rem;padding:3px 8px;border:1px solid #b8c0cc;border-radius:12px;background:#fff;cursor:pointer" onclick="rafraichirEdt()">Voir l\'onglet EDT</button></div>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">✅ L\'onglet 📅 EDT est ouvert aux élèves.</p></div>';
+      // v2.8 — charte de l'Entraide
+      const sigs = (charte && charte.signatures) || [];
+      const elevesTotal = (infosClasse.infos || []).length;
+      h += '<div class="carte"><b>📜 Charte de l\'Entraide</b>' +
+        '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Un article par ligne, au format <b>Titre | corps de l\'article</b>. ' +
+        'Tant qu\'un élève n\'a pas signé la version courante, l\'onglet 🤝 Entraide lui affiche la charte au lieu du formulaire — ' +
+        'le reste du Hub reste ouvert.</p>' +
+        '<textarea id="texteCharte" style="width:100%;min-height:150px;margin-top:6px;font-size:.8rem;padding:8px;border:1px solid #b8c0cc;border-radius:6px">' +
+        echap((charte && charte.texte) || "") + '</textarea>' +
+        '<label style="display:block;font-size:.76rem;margin-top:8px"><input type="checkbox" id="charteCorrection"> ' +
+        'correction mineure (orthographe) — ne pas redemander la signature</label>' +
+        '<div class="ligneBtn"><button class="principal" onclick="publierCharte()">Publier la charte</button>' +
+        '<span style="font-size:.72rem;color:#7b8794">version ' + ((charte && charte.version) || "—") + '</span></div>' +
+        '<div id="etatCharte" style="font-size:.76rem;margin-top:6px;min-height:1em"></div>' +
+        '<div style="font-size:.78rem;margin-top:10px"><b>Signatures (version courante) : ' + sigs.length +
+        (elevesTotal ? " / " + elevesTotal + " élèves ayant renseigné leur casier" : "") + '</b></div>' +
+        (sigs.length
+          ? '<div style="font-size:.76rem;color:#52606d;margin-top:4px;line-height:1.7">' +
+            sigs.slice().sort((a, b) => String(a.pseudo).localeCompare(String(b.pseudo), "fr"))
+              .map(x => '<span style="display:inline-block;border:1px solid #cbd2da;border-radius:12px;padding:1px 8px;margin:1px 2px">' +
+                echap(x.pseudo) + "</span>").join("") + "</div>"
+          : '<p style="font-size:.76rem;color:#7b8794;margin-top:4px">Personne n\'a encore signé.</p>') +
+        "</div>";
       const persoActuels = (ho.motsPerso || MOTS_PERSO || []).join(", ");
       h += '<div class="carte"><b>🚫 Filtre de langage</b>' +
         '<p style="font-size:.74rem;color:#7b8794;margin-top:6px">Une liste d\'insultes et de gros mots est déjà bloquée automatiquement (accents, répétitions et déformations comprises). Ajoute ici tes mots interdits <b>en plus</b>, séparés par des virgules :</p>' +
