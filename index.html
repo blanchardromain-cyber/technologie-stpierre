@@ -1430,6 +1430,8 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </div>
         </div>
 
+        <div id="p11x2-correction"></div>
+
         <!-- COMPÉTENCE ÉVALUÉE -->
         <div style="background:#fff;border:2px solid #5C6BC0;border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
           <div style="font-size:12px;font-weight:700;color:#5C6BC0;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F3AF; Comp&eacute;tence &eacute;valu&eacute;e</div>
@@ -1652,6 +1654,8 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
               </select></div>
           </div>
         </div>
+
+        <div id="p11x1-correction"></div>
 
         <!-- COMPÉTENCE ÉVALUÉE -->
         <div style="background:#fff;border:2px solid #0288D1;border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
@@ -4249,7 +4253,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16d</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16g</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6047,6 +6051,12 @@ function checkStudentStatusChanges() {
         if (cs.appreciation && local[idx].appreciation !== cs.appreciation) { local[idx].appreciation = cs.appreciation; changed = true; }
         if (cs.adjustedScore !== undefined && cs.adjustedScore !== "" && local[idx].adjustedScore !== cs.adjustedScore) { local[idx].adjustedScore = cs.adjustedScore; changed = true; }
         if (cs.adjustedPts && JSON.stringify(local[idx].adjustedPts||null) !== JSON.stringify(cs.adjustedPts)) { local[idx].adjustedPts = cs.adjustedPts; changed = true; }
+        /* Sans le barème, l'élève voyait « 27/20 » : la note ajustée descendait
+           mais pas le dénominateur choisi par le professeur. */
+        if (cs.bareme !== undefined && cs.bareme !== "" && local[idx].bareme !== cs.bareme) { local[idx].bareme = cs.bareme; changed = true; }
+        if (cs.scoreBrut !== undefined && cs.scoreBrut !== "" && local[idx].scoreBrut !== cs.scoreBrut) { local[idx].scoreBrut = cs.scoreBrut; changed = true; }
+        if (cs.qcmTot !== undefined && cs.qcmTot !== "" && local[idx].qcmTot !== cs.qcmTot) { local[idx].qcmTot = cs.qcmTot; changed = true; }
+        if (cs.score !== undefined && cs.score !== "" && local[idx].score !== cs.score) { local[idx].score = cs.score; changed = true; }
       }
     }
     if (changed) {
@@ -6188,6 +6198,8 @@ function goPage(pid) {
        ouverture, il faut donc les créer avant de restaurer le brouillon. */
     renderP11Ex2Selects();
     restoreP11Ex2Draft();
+    renderCorrectionEleve("p11-ex2", "p11x2-correction");
+    rafraichirCorrection("p11-ex2", "p11x2-correction");
   }
   if (pid === "pg-p11-ex2-cor") { renderP11Ex2Corrige(); }
   if (pid === "pg-p11-ex1") {
@@ -6201,6 +6213,8 @@ function goPage(pid) {
     }
     restoreP11Ex1Draft();
     syncP11Ex1Besoin();
+    renderCorrectionEleve("p11-ex1", "p11x1-correction");
+    rafraichirCorrection("p11-ex1", "p11x1-correction");
   }
   if (pid === "pg-p12-ex1") {
     if (user) {
@@ -6693,6 +6707,95 @@ function updCapSidebar() {
     if (sub.status === "rejected") done.innerHTML += '<button class="btnq" style="margin-top:10px" onclick="goPage(&quot;pg-quiz&quot;)">Recommencer le quiz</button>';
   } else { no.classList.remove("h"); done.classList.add("h"); }
 }
+/* ── Retour de correction côté élève ────────────────────────────────
+   Le travail partait bien de l'élève vers le professeur, mais rien ne
+   redescendait : ni la note ajustée, ni l'appréciation. Ces trois fonctions
+   ferment la boucle — bandeau dans la capsule, carte « Mes travaux » et
+   export PDF lisent toutes la même source. */
+/* Va rechercher la correction dans le cloud à l'ouverture de la capsule.
+   Auparavant la synchronisation n'avait lieu qu'à la connexion : un élève
+   resté connecté ne voyait jamais arriver sa note. Limité à un appel toutes
+   les 20 secondes pour ne pas marteler le service. */
+var _dernierPullCorrection = 0;
+function rafraichirCorrection(cap, hoteId) {
+  if (!user || isProf) return;
+  if (!window.cloudSync || !cloudSync.hasUrl() || !cloudSync.fetchOwn) return;
+  var maintenant = Date.now();
+  if (maintenant - _dernierPullCorrection < 20000) return;
+  _dernierPullCorrection = maintenant;
+  cloudSync.fetchOwn(user.id, function (own) {
+    if (!own || !own.length) return;
+    var local = getSubs(), modifie = false;
+    for (var i = 0; i < own.length; i++) {
+      var c = own[i];
+      for (var j = 0; j < local.length; j++) {
+        if (local[j].eid !== c.eid || local[j].cap !== c.cap) continue;
+        ["status", "appreciation", "adjustedScore", "adjustedPts", "bareme", "scoreBrut", "score", "qcmTot"].forEach(function (k) {
+          if (c[k] !== undefined && c[k] !== "" && local[j][k] !== c[k]) { local[j][k] = c[k]; modifie = true; }
+        });
+      }
+    }
+    if (modifie) {
+      localStorage.setItem("subs", JSON.stringify(local));
+      try { renderCorrectionEleve(cap, hoteId); } catch (e) {}
+      try { updMyStatus(); } catch (e) {}
+    }
+  });
+}
+
+function maSoumission(cap) {
+  if (!user) return null;
+  var subs = getSubs();
+  for (var i = 0; i < subs.length; i++) {
+    if (subs[i].eid === user.id && subs[i].cap === cap) return subs[i];
+  }
+  return null;
+}
+function estCorrigee(s) {
+  return !!(s && s.status === "validated" && s.adjustedScore !== undefined && s.adjustedScore !== "");
+}
+/* Bandeau « Correction du professeur » affiché en tête de la capsule. */
+function renderCorrectionEleve(cap, hoteId) {
+  var hote = document.getElementById(hoteId);
+  if (!hote) return;
+  var s = maSoumission(cap);
+  if (!s) { hote.innerHTML = ""; return; }
+  if (s.status === "pending") {
+    hote.innerHTML = '<div style="background:#FFF8E1;border:1.5px solid #F9A825;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#5D4E00;display:flex;align-items:center;gap:10px">'
+      + '<span style="font-size:20px">&#x23F3;</span><div>Ton travail a bien été envoyé le '
+      + fmtDateTime(s.dateISO || s.date) + '. Il est <strong>en attente de correction</strong> par ton professeur.</div></div>';
+    return;
+  }
+  if (s.status === "rejected") {
+    hote.innerHTML = '<div style="background:#FFEBEE;border:1.5px solid #C62828;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#8E2018">'
+      + '<strong>&#x1F504; Travail à retravailler.</strong> Ton professeur te demande de reprendre cet exercice.'
+      + (s.appreciation ? '<div style="margin-top:8px;background:#fff;border-radius:8px;padding:9px 12px;white-space:pre-wrap">' + String(s.appreciation).replace(/</g,"&lt;") + '</div>' : '')
+      + '</div>';
+    return;
+  }
+  if (!estCorrigee(s)) { hote.innerHTML = ""; return; }
+  var bareme = s.bareme || s.qcmTot || 20;
+  var note = s.adjustedScore;
+  var pct = note / bareme * 100;
+  var coul = pct >= 75 ? "#1E6B3B" : pct >= 50 ? "#C55A11" : "#C0392B";
+  var fond = pct >= 75 ? "#E8F5E9" : pct >= 50 ? "#FFF8E1" : "#FFEBEE";
+  var h = '<div style="background:' + fond + ';border:2px solid ' + coul + ';border-radius:12px;padding:16px 20px;margin-bottom:18px">';
+  h += '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">';
+  h += '<span style="font-size:26px">&#x2705;</span>';
+  h += '<div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:700;color:' + coul + ';text-transform:uppercase;letter-spacing:.5px">Correction du professeur</div>';
+  h += '<div style="font-size:12px;color:var(--td)">Travail corrigé et validé</div></div>';
+  h += '<div style="background:' + coul + ';color:#fff;border-radius:10px;padding:8px 18px;text-align:center">';
+  h += '<div style="font-size:24px;font-weight:700;line-height:1">' + p11x1Fmt(note) + '<span style="font-size:14px">/' + bareme + '</span></div></div>';
+  h += '</div>';
+  if (s.appreciation) {
+    h += '<div style="margin-top:12px;background:#fff;border-radius:8px;padding:11px 14px;font-size:13.5px;line-height:1.6;color:var(--tx);white-space:pre-wrap">'
+       + '<strong style="color:' + coul + '">&#x1F4AC; Appréciation :</strong> ' + String(s.appreciation).replace(/</g,"&lt;") + '</div>';
+  }
+  h += '<div style="font-size:11.5px;color:var(--td);margin-top:9px;font-style:italic">Cette correction apparaît aussi dans ton export PDF.</div>';
+  h += '</div>';
+  hote.innerHTML = h;
+}
+
 function updMyStatus() {
   if (!user || isProf) return;
   var subs = getSubs(), mine = [];
@@ -6707,16 +6810,24 @@ function updMyStatus() {
   for (var i = 0; i < mine.length; i++) {
     var s = mine[i];
     html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
-    /* P11 Ex1 : la note auto reste masquée tant que le prof n'a pas validé la correction. */
+    /* Exercices notés par le professeur : la note auto reste masquée tant que la
+       correction n'est pas validée ; une fois validée, on affiche SA note et SON
+       appréciation, avec le barème qu'il a choisi. */
+    var notePr = (s.cap === "p11-ex1" || s.cap === "p11-ex2");
     var detail;
-    if (s.cap === "p11-ex1" || s.cap === "p11-ex2") {
-      detail = (s.status === "validated" && s.adjustedScore !== undefined)
-        ? 'Note : ' + p11x1Fmt(s.adjustedScore) + '/' + (s.bareme || 20)
-        : 'En attente de correction par le professeur';
+    if (estCorrigee(s)) {
+      detail = 'Note : ' + p11x1Fmt(s.adjustedScore) + '/' + (s.bareme || s.qcmTot || 20);
+    } else if (notePr) {
+      detail = 'En attente de correction par le professeur';
     } else {
       detail = 'Score QCM : ' + s.score + '/' + s.qcmTot;
     }
-    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – ' + detail + '</div></div>';
+    html += '<div style="flex:1;min-width:220px"><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – ' + detail + '</div>';
+    if (estCorrigee(s) && s.appreciation) {
+      html += '<div style="margin-top:7px;background:var(--gr);border-left:3px solid var(--vt);border-radius:6px;padding:8px 11px;font-size:12.5px;line-height:1.55;color:var(--tx);white-space:pre-wrap">'
+            + '<strong>&#x1F4AC; Appréciation :</strong> ' + String(s.appreciation).replace(/</g,"&lt;") + '</div>';
+    }
+    html += '</div>';
     html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">' + ic[s.status] + '</span><span style="font-size:13px;font-weight:600;color:' + co[s.status] + '">' + lbl[s.status] + '</span></div></div>';
   }
   cards.innerHTML = html;
@@ -7619,12 +7730,47 @@ function evalNorm(t) {
   return String(t == null ? "" : t).toLowerCase()
     .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, " ").trim();
 }
-function evalContient(t, mots) {
+/* ── Comparateur partagé de toutes les capsules évaluées ─────────────
+   evalMot renvoie 1 (mot attendu écrit correctement), 0,5 (mot
+   phonétiquement juste mais mal orthographié) ou 0 (mot absent).
+
+   C'est LE point d'extension : toute capsule évaluée — celles du registre
+   EVALUATIONS, le Devoir Commun, les exercices P11 — passe par lui, et
+   toute capsule à venir en hérite sans code supplémentaire. Il suffit de
+   multiplier les points d'une réponse par evalMot(...) au lieu de tester
+   evalContient(...).
+
+   Les clés sont ici des radicaux volontaires (« fabriqu », « proteg »,
+   « electricit ») : le point plein se joue donc sur la présence du radical,
+   et le rattrapage phonétique sur le mot entier. Le repliement phonétique
+   et la distance d'édition sont ceux de _p11phon / _p11lev (déclarations de
+   fonctions, donc utilisables ici bien que définies plus bas). */
+function evalMot(t, mots) {
   var v = evalNorm(t);
-  if (!v) return false;
-  for (var i = 0; i < mots.length; i++) if (v.indexOf(evalNorm(mots[i])) >= 0) return true;
-  return false;
+  if (!v) return 0;
+  var i;
+  for (i = 0; i < mots.length; i++) {
+    if (v.indexOf(evalNorm(mots[i])) >= 0) return 1;
+  }
+  var motsRep = v.replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim().split(" ");
+  for (i = 0; i < mots.length; i++) {
+    var cle = evalNorm(mots[i]).replace(/[^a-z0-9 ]/g, " ").trim();
+    if (cle.length < 4) continue;
+    var pc = _p11phon(cle);
+    if (!pc) continue;
+    var n = cle.split(" ").length;
+    var tol = pc.length <= 5 ? 1 : 2;
+    for (var d = 0; d + n <= motsRep.length; d++) {
+      var bout = motsRep.slice(d, d + n).join(" ");
+      var pb = _p11phon(bout);
+      if (!pb) continue;
+      if (pb === pc || _p11lev(pb, pc, tol) <= tol) return 0.5;
+    }
+  }
+  return 0;
 }
+/* Conservé pour les tests booléens : vrai seulement si le mot est bien écrit. */
+function evalContient(t, mots) { return evalMot(t, mots) === 1; }
 /* Un verbe à l'infinitif, exigé par l'énoncé de l'exercice 3. Heuristique
    volontairement simple : terminaison du premier mot, plus quelques verbes
    irréguliers courants. Le professeur voit le drapeau et tranche. */
@@ -7683,10 +7829,13 @@ var EVALUATIONS = {
       /* ── Exercice 2 : définitions rédigées, repérage par mots-clés ── */
       var d1 = f["e2-1"] || "";
       var p1 = 0, note1 = [];
-      if (evalContient(d1, ["fabriqu", "realis", "cree", "construit", "concu", "modifi", "transform"])
-          && evalContient(d1, ["homme", "humain", "personne", "etre humain"])) { p1 += 0.5; }
+      var m1a = evalMot(d1, ["fabriqu", "realis", "cree", "construit", "concu", "modifi", "transform"]);
+      var m1b = evalMot(d1, ["homme", "humain", "personne", "etre humain"]);
+      var m1 = Math.min(m1a, m1b);
+      if (m1) { p1 += 0.5 * m1; if (m1 < 1) note1.push("orthographe fautive : demi-point"); }
       else note1.push("« fabriqué ou modifié par l'Homme » non repéré");
-      if (evalContient(d1, ["besoin"])) { p1 += 0.5; }
+      var m1c = evalMot(d1, ["besoin"]);
+      if (m1c) { p1 += 0.5 * m1c; if (m1c < 1) note1.push("« besoin » mal orthographié : demi-point"); }
       else note1.push("« pour répondre à un besoin » non repéré");
       pts.ex2 += p1;
       detail.push({ sec: "ex2", label: "2.1 Qu'est-ce qu'un objet technique ?", rep: d1,
@@ -7695,18 +7844,22 @@ var EVALUATIONS = {
                     pts: p1, max: 1, remarque: d1 ? note1.join(" · ") : "" });
 
       var d2 = f["e2-2"] || "";
-      var p2 = evalContient(d2, ["manque", "insatisfaction", "besoin de", "envie", "necessite"]) ? 0.5 : 0;
+      var m2 = evalMot(d2, ["manque", "insatisfaction", "besoin de", "envie", "necessite"]);
+      var p2 = 0.5 * m2;
       pts.ex2 += p2;
       detail.push({ sec: "ex2", label: "2.2 Qu'est-ce qu'un besoin ?", rep: d2,
                     attendu: "Un sentiment de manque ou d'insatisfaction qui pousse un être vivant à agir.",
                     etat: d2 ? (p2 ? "ok" : "ko") : "vide", pts: p2, max: 0.5,
-                    remarque: (d2 && !p2) ? "« manque » ou « insatisfaction » non repéré" : "" });
+                    remarque: (d2 && !p2) ? "« manque » ou « insatisfaction » non repéré"
+                              : (m2 === 0.5 ? "orthographe fautive : demi-point" : "") });
 
       var d3 = f["e2-3"] || "";
       var p3 = 0, note3 = [];
-      if (evalContient(d3, ["sert", "servir", "utilite", "utilise pour", "concu pour", "cree pour", "role"])) p3 += 0.5;
+      var m3a = evalMot(d3, ["sert", "servir", "utilite", "utilise pour", "concu pour", "cree pour", "role"]);
+      if (m3a) { p3 += 0.5 * m3a; if (m3a < 1) note3.push("orthographe fautive : demi-point"); }
       else note3.push("« ce à quoi l'objet sert » non repéré");
-      if (evalContient(d3, ["a quoi sert", "a quoi ca sert", "a quoi il sert", "quoi sert"])) p3 += 0.5;
+      var m3b = evalMot(d3, ["a quoi sert", "a quoi ca sert", "a quoi il sert", "quoi sert"]);
+      if (m3b) { p3 += 0.5 * m3b; if (m3b < 1) note3.push("orthographe fautive : demi-point"); }
       else note3.push("la question « À quoi sert-il ? » non repérée");
       pts.ex2 += p3;
       detail.push({ sec: "ex2", label: "2.3 Qu'est-ce que la fonction d'usage ? Quelle question ?", rep: d3,
@@ -7740,11 +7893,12 @@ var EVALUATIONS = {
          "Disposer d'électricité / produire de l'énergie."]
       ];
       for (var k = 0; k < e3.length; k++) {
-        var v = f[e3[k][0]] || "", inf = e3[k][2], cle = evalContient(v, e3[k][3]);
+        var v = f[e3[k][0]] || "", inf = e3[k][2], cle = evalMot(v, e3[k][3]);
         var pv = 0, rq = "";
-        if (cle && (!inf || evalInfinitif(v))) pv = 0.5;
-        else if (cle) { pv = 0.25; rq = "idée juste, mais pas de verbe à l'infinitif"; }
+        if (cle && (!inf || evalInfinitif(v))) pv = 0.5 * cle;
+        else if (cle) { pv = 0.25 * cle; rq = "idée juste, mais pas de verbe à l'infinitif"; }
         else if (v) rq = "mot-clé attendu non repéré";
+        if (cle === 0.5) rq = (rq ? rq + " · " : "") + "orthographe fautive : points divisés par deux";
         pts.ex3 += pv;
         detail.push({ sec: "ex3", label: e3[k][1], rep: v, attendu: e3[k][4],
                       etat: v ? (pv === 0.5 ? "ok" : pv > 0 ? "partiel" : "ko") : "vide",
@@ -7753,9 +7907,11 @@ var EVALUATIONS = {
 
       /* ── Exercice 4 : étude de cas, deux réponses rédigées ── */
       var q1 = f["e4-1"] || "", p41 = 0, n41 = [];
-      if (evalContient(q1, ["oui", "meme", "identique", "pareil"])) p41 += 0.5;
+      var m41a = evalMot(q1, ["oui", "meme", "identique", "pareil"]);
+      if (m41a) { p41 += 0.5 * m41a; if (m41a < 1) n41.push("orthographe fautive : demi-point"); }
       else n41.push("la réponse « oui, la même » n'apparaît pas");
-      if (evalContient(q1, ["transport", "porter", "ranger", "contenir", "affaire", "fourniture", "livre", "cahier", "dos"])) p41 += 0.5;
+      var m41b = evalMot(q1, ["transport", "porter", "ranger", "contenir", "affaire", "fourniture", "livre", "cahier", "dos"]);
+      if (m41b) { p41 += 0.5 * m41b; if (m41b < 1) n41.push("orthographe fautive : demi-point"); }
       else n41.push("la justification (transporter ses affaires) n'apparaît pas");
       pts.ex4 += p41;
       detail.push({ sec: "ex4", label: "4.1 Même fonction d'usage ? Justifier", rep: q1,
@@ -7764,11 +7920,12 @@ var EVALUATIONS = {
                     pts: p41, max: 1, remarque: q1 ? n41.join(" · ") : "" });
 
       var q2 = f["e4-2"] || "", p42 = 0, n42 = [];
-      var estime = evalContient(q2, ["marque", "mode", "beau", "joli", "couleur", "apparence", "style", "look",
-                                     "design", "plaire", "gout", "regard", "copain", "camarade", "ami",
-                                     "estime", "image", "tendance", "manga"]);
-      if (estime) p42 += 0.5; else n42.push("aucun mot lié à l'apparence, la marque ou le regard des autres");
-      if (estime && evalNorm(q2).length >= 45) p42 += 0.5;
+      var estime = evalMot(q2, ["marque", "mode", "beau", "joli", "couleur", "apparence", "style", "look",
+                                "design", "plaire", "gout", "regard", "copain", "camarade", "ami",
+                                "estime", "image", "tendance", "manga"]);
+      if (estime) { p42 += 0.5 * estime; if (estime < 1) n42.push("orthographe fautive : demi-point"); }
+      else n42.push("aucun mot lié à l'apparence, la marque ou le regard des autres");
+      if (estime && evalNorm(q2).length >= 45) p42 += 0.5 * estime;
       else if (estime) n42.push("réponse juste mais très courte, à développer");
       pts.ex4 += p42;
       detail.push({ sec: "ex4", label: "4.2 Pourquoi le Sac B ? La fonction d'estime", rep: q2,
@@ -11197,19 +11354,21 @@ function submitDCForm(auto) {
 function scoreDC(f) {
   if (!f) return 0;
   var sc = 0;
-  function kw(v, ws) { if (!v) return false; var vl = v.toLowerCase(); for (var i=0;i<ws.length;i++){if(vl.indexOf(ws[i].toLowerCase())>=0)return true;} return false; }
+  /* kw passe par le comparateur partagé : un mot phonétiquement juste mais mal
+     orthographié rapporte un demi-point au lieu de rien. */
+  function kw(v, ws) { return evalMot(v, ws); }
   function ex(v, e) { return v && v.trim() === e.trim(); }
   function has(v, s) { return v && v.indexOf(s) >= 0; }
   // P1Q1 (3 pts)
-  if (kw(f["dc-p1q1-service"], ["sportif","utilisateur"])) sc++;
-  if (kw(f["dc-p1q1-agit"], ["fréquence","cardiaque","cœur","coeur"])) sc++;
-  if (kw(f["dc-p1q1-but"], ["fcm","fréquence","rythme","cardiaque","dépasser"])) sc++;
+  sc += kw(f["dc-p1q1-service"], ["sportif","utilisateur"]);
+  sc += kw(f["dc-p1q1-agit"], ["fréquence","cardiaque","cœur","coeur"]);
+  sc += kw(f["dc-p1q1-but"], ["fcm","fréquence","rythme","cardiaque","dépasser"]);
   // P1Q2A pieuvre — texte libre, FS figés (3 pts)
-  if (kw(f["dc-p1q2-pie1"], ["smartphone","bluetooth","téléphone","mobile","connect"])) sc++;
-  if (kw(f["dc-p1q2-pie2"], ["norme","réglementation","réglement","europe","état","sécurité","législat"])) sc++;
-  if (kw(f["dc-p1q2-pie3"], ["environnement","recyclage","recycl","écolog"])) sc++;
+  sc += kw(f["dc-p1q2-pie1"], ["smartphone","bluetooth","téléphone","mobile","connect"]);
+  sc += kw(f["dc-p1q2-pie2"], ["norme","réglementation","réglement","europe","état","sécurité","législat"]);
+  sc += kw(f["dc-p1q2-pie3"], ["environnement","recyclage","recycl","écolog"]);
   // P1Q2B tableau — FS1 seulement (1 pt), FS5 et FS8 pré-remplis (non notés)
-  if (kw(f["dc-p1q2-fs1"], ["mesurer","mesure","fréquence","cardiaque"])) sc++;
+  sc += kw(f["dc-p1q2-fs1"], ["mesurer","mesure","fréquence","cardiaque"]);
   // P1Q2C numéros de FS (3 pts)
   if (ex(f["dc-p1q2-c1"],"FS6")) sc++;
   if (ex(f["dc-p1q2-c2"],"FS3")) sc++;
@@ -11239,7 +11398,7 @@ function scoreDC(f) {
   if (ex(f["dc-p2q3-d"],"5")) sc++;
   if (ex(f["dc-p2q3-e"],"3")) sc++;
   if (ex(f["dc-p2q3-f"],"6")) sc++;
-  return Math.min(sc, 30); // plafond /30 (1 pt bonus possible sur le diagramme)
+  return Math.min(Math.round(sc * 2) / 2, 30); // plafond /30 (1 pt bonus possible sur le diagramme)
 }
 
 // ================================================================
@@ -11247,17 +11406,17 @@ function scoreDC(f) {
 // ================================================================
 function scoreDCBySection(f) {
   if (!f) return {q1:0,q2a:0,q2b:0,q2c:0,q3:0,p2q1:0,p2q2:0,p2q3:0};
-  function kw(v,ws){if(!v)return false;var vl=v.toLowerCase();for(var i=0;i<ws.length;i++){if(vl.indexOf(ws[i].toLowerCase())>=0)return true;}return false;}
+  function kw(v,ws){ return evalMot(v, ws); }
   function ex(v,e){return v&&v.trim()===e.trim();}
   function has(v,s){return v&&v.indexOf(s)>=0;}
   var s = {q1:0,q2a:0,q2b:0,q2c:0,q3:0,p2q1:0,p2q2:0,p2q3:0};
-  if(kw(f["dc-p1q1-service"],["sportif","utilisateur"]))s.q1++;
-  if(kw(f["dc-p1q1-agit"],["fréquence","cardiaque","cœur","coeur"]))s.q1++;
-  if(kw(f["dc-p1q1-but"],["fcm","fréquence","rythme","cardiaque","dépasser"]))s.q1++;
-  if(kw(f["dc-p1q2-pie1"],["communication","connexion","connect","smartphone","bluetooth","téléphone","mobile"]))s.q2a++;
-  if(kw(f["dc-p1q2-pie2"],["norme","normes","réglementation","réglement"]))s.q2a++;
-  if(kw(f["dc-p1q2-pie3"],["environnement","écolog","recyclage","recycl"]))s.q2a++;
-  if(kw(f["dc-p1q2-fs1"],["mesurer","mesure","fréquence","cardiaque"]))s.q2b++;
+  s.q1 += kw(f["dc-p1q1-service"],["sportif","utilisateur"]);
+  s.q1 += kw(f["dc-p1q1-agit"],["fréquence","cardiaque","cœur","coeur"]);
+  s.q1 += kw(f["dc-p1q1-but"],["fcm","fréquence","rythme","cardiaque","dépasser"]);
+  s.q2a += kw(f["dc-p1q2-pie1"],["communication","connexion","connect","smartphone","bluetooth","téléphone","mobile"]);
+  s.q2a += kw(f["dc-p1q2-pie2"],["norme","normes","réglementation","réglement"]);
+  s.q2a += kw(f["dc-p1q2-pie3"],["environnement","écolog","recyclage","recycl"]);
+  s.q2b += kw(f["dc-p1q2-fs1"],["mesurer","mesure","fréquence","cardiaque"]);
   if(ex(f["dc-p1q2-c1"],"FS6"))s.q2c++;
   if(ex(f["dc-p1q2-c2"],"FS3"))s.q2c++;
   if(ex(f["dc-p1q2-c3"],"FS1"))s.q2c++;
@@ -11277,6 +11436,8 @@ function scoreDCBySection(f) {
   if(has(f["dc-p2q2-dist"],"Relais"))s.p2q2++;
   if(has(f["dc-p2q2-conv"],"Moteur"))s.p2q2++;
   s.p2q2=Math.min(s.p2q2,6);
+  /* arrondi au demi-point : le comparateur peut rendre 0,5 pour une faute d'orthographe */
+  for (var _k in s) if (Object.prototype.hasOwnProperty.call(s,_k)) s[_k] = Math.round(s[_k] * 2) / 2;
   if(ex(f["dc-p2q3-a"],"7"))s.p2q3++;
   if(ex(f["dc-p2q3-b"],"2"))s.p2q3++;
   if(ex(f["dc-p2q3-c"],"1"))s.p2q3++;
@@ -12852,6 +13013,7 @@ function exportP11Ex2PDF() {
   }
   doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(40,40,40);
   doc.text("Élève : " + v("p11x2-prenom") + " " + v("p11x2-nom") + "   —   Classe : " + v("p11x2-classe"), M, Y); Y += 9;
+  Y = _pdfCorrectionEleve(doc, "p11-ex2", M, Y);
 
   titre("Partie A — Lire un diagramme FAST");
   for (var i = 0; i < P11X2_REGLES.length; i++) {
@@ -13164,7 +13326,8 @@ function p11x1Convert(totalBrut, bareme) {
   if (Number(bareme) === 30) return Math.round(totalBrut * 10) / 10;
   return Math.round(totalBrut * 20 / P11X1_TOTAL_BRUT * 2) / 2;
 }
-function p11x1Fmt(n) { return (n % 1 === 0) ? n.toFixed(0) : n.toFixed(1); }
+/* Affichage des notes : virgule décimale française (13,5 et non 13.5). */
+function p11x1Fmt(n) { return (n % 1 === 0) ? n.toFixed(0) : n.toFixed(1).replace(".", ","); }
 
 /* Appréciation automatique */
 function autoAppreciationP11Ex1(note, bareme, sec) {
@@ -13284,7 +13447,9 @@ function buildP11Ex1ModalHTML(f) {
       var coul = pts >= 1 ? "#1E6B3B" : pts > 0 ? "#C55A11" : "#C62828";
       var sgn  = pts >= 1 ? "✓" : pts > 0 ? "≈" : "✗";
       var info = pts > 0 && pts < 1 ? " title=\"Phonétiquement juste, orthographe fautive : un demi-point\"" : "";
-      pastille = '<span' + info + ' style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">' + sgn + '</span>';
+      var val  = pts >= 1 ? "1 pt" : pts > 0 ? "0,5 pt" : "0 pt";
+      pastille = '<span' + info + ' style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">'
+               + sgn + ' <span style="font-weight:600;opacity:.85">' + val + '</span></span>';
     }
     return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + lbl + pastille + '</div>' +
       '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + v + '</div></div>';
@@ -13557,6 +13722,35 @@ function _p11x1PdfDoc(titre, sousTitre, couleur) {
   try { addLogoToPdfHeader(doc, 14); } catch(e) {}
   return doc;
 }
+/* Ajoute au PDF de l'élève la note et l'appréciation du professeur, pour que
+   la copie imprimée porte la correction et pas seulement les réponses. */
+function _pdfCorrectionEleve(doc, cap, M, Y) {
+  var s = maSoumission(cap);
+  if (!estCorrigee(s)) return Y;
+  var bareme = s.bareme || s.qcmTot || 20;
+  var pct = s.adjustedScore / bareme * 100;
+  var c = pct >= 75 ? [30,107,59] : pct >= 50 ? [197,90,17] : [192,57,43];
+  doc.setFillColor(c[0], c[1], c[2]);
+  doc.roundedRect(M, Y - 4, 182, 15, 2, 2, "F");
+  doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(255,255,255);
+  doc.text("Correction du professeur", M + 4, Y + 3);
+  doc.setFontSize(13);
+  doc.text(p11x1Fmt(s.adjustedScore) + " / " + bareme, M + 178, Y + 3.5, {align:"right"});
+  Y += 17;
+  doc.setTextColor(20,20,20);
+  if (s.appreciation) {
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+    doc.text("Appréciation :", M, Y); Y += 5;
+    doc.setFont("helvetica","normal");
+    var l = doc.splitTextToSize(String(s.appreciation), 178);
+    for (var i = 0; i < l.length; i++) {
+      if (Y > 268) { doc.addPage(); Y = 22; }
+      doc.text(l[i], M + 3, Y); Y += 5;
+    }
+  }
+  return Y + 4;
+}
+
 function exportP11Ex1PDF() {
   if (!window.jspdf || !window.jspdf.jsPDF) { alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page."); return; }
   var doc = _p11x1PdfDoc("P11 — Exercice n°1 — Capteurs, actionneurs & CDCF",
@@ -13579,6 +13773,7 @@ function exportP11Ex1PDF() {
   }
   doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(40,40,40);
   doc.text("Élève : " + v("p11x1-prenom") + " " + v("p11x1-nom") + "   —   Classe : " + v("p11x1-classe"), M, Y); Y += 9;
+  Y = _pdfCorrectionEleve(doc, "p11-ex1", M, Y);
 
   titre("Partie A — Capteurs, interfaces et actionneurs");
   item("1. Capteurs", [v("p11x1-cap1"), v("p11x1-cap2"), v("p11x1-cap3")].join(" ; "));
