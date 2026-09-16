@@ -287,6 +287,29 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
   .ex2-docs-grid{grid-template-columns:1fr!important}
   .ex2-doc1-grid{grid-template-columns:1fr!important}
 }
+/* ── P11 Exercice n°2 — diagramme FAST ── */
+.p11x2-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:8px 12px;margin-bottom:16px}
+.p11x2-sel{width:100%;padding:9px 11px;border:2px solid var(--gb);border-radius:8px;background:#fff;font-family:"DM Sans",sans-serif;font-size:13.5px;color:var(--tx);cursor:pointer;outline:none;transition:border-color .2s}
+.p11x2-sel:focus{border-color:#5C6BC0}
+.p11x2-sel:valid{border-color:var(--gb)}
+.p11x2-objet{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.p11x2-photo{width:150px;flex-shrink:0;border-radius:8px;border:1px solid var(--gb);background:#fff}
+.p11x2-photo-lg{width:230px}
+.p11x2-objet p{flex:1;min-width:230px}
+.p11x2-fast{border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff}
+.p11x2-fast-head{display:grid;grid-template-columns:130px 1fr 1fr;gap:1px;background:var(--gb)}
+.p11x2-fast-head>div{background:var(--gr);padding:8px 12px;font-size:11px;font-weight:700;color:var(--td);text-transform:uppercase;letter-spacing:.5px}
+.p11x2-fast-row{display:grid;grid-template-columns:130px 1fr 1fr;gap:1px;background:var(--gb)}
+.p11x2-fast-row>div{background:#fff;padding:10px 12px;display:flex;align-items:center}
+.p11x2-rang{color:#fff;font-size:12px;font-weight:700;text-align:center;justify-content:center;line-height:1.35}
+.p11x2-rang-note{font-size:10px;font-weight:400;opacity:.85}
+@media(max-width:700px){
+  .p11x2-fast-head{display:none}
+  .p11x2-fast-row{grid-template-columns:1fr}
+  .p11x2-rang{justify-content:flex-start;text-align:left}
+  .p11x2-photo,.p11x2-photo-lg{width:100%;max-width:260px;margin:0 auto}
+}
+@media print{#pg-p11-ex2,#pg-p11-ex2-cor{display:block!important}.p11x2-tools{display:none!important}}
 /* ── P11 Exercice n°1 — bête à cornes, pieuvre, outils dys ── */
 .p11x1-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:8px 12px;margin-bottom:16px}
 .p11x1-tools-lbl{font-size:11px;font-weight:700;color:var(--td);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
@@ -329,7 +352,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
 .ctx-item-row{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;margin-bottom:8px;background:var(--gr);flex-wrap:wrap}
 .ctx-item-row.ok{background:#E8F5E9;border:1px solid var(--vt)}
 .ctx-item-row.ko{background:#FADBD8;border:1px solid var(--rg)}
-@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p11-ex1,#pg-p11-ex1-cor,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
+@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p11-ex1,#pg-p11-ex1-cor,#pg-p11-ex2,#pg-p11-ex2-cor,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
 /* ═══ DEVOIR COMMUN ═══ */
 .dc-timer-bar{position:sticky;top:58px;z-index:90;background:var(--bl);color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 -24px}
 .dc-timer{font-family:"DM Mono",monospace;font-size:22px;font-weight:700;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px;min-width:92px;text-align:center;display:inline-block;transition:background .3s}
@@ -1368,6 +1391,229 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
     <!-- ============================================================ -->
     <!-- P12 — EXERCICE n°1 — DISTRIBUTEUR DE CROQUETTES CONNECTÉ     -->
     <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- P11 — EXERCICE n°2 — LE DIAGRAMME FAST                       -->
+    <!-- ============================================================ -->
+    <div id="pg-p11-ex2" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n&deg;2 &mdash; Le diagramme FAST</h2>
+      </div>
+      <div style="max-width:940px">
+
+        <div class="p11x2-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+
+        <!-- EN-TÊTE IDENTITÉ -->
+        <div style="background:linear-gradient(135deg,#5C6BC0,#283593);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+            <span style="font-size:36px;animation:fiu .6s ease">&#x1F5FA;&#xFE0F;</span>
+            <div style="flex:1;min-width:240px">
+              <div style="font-size:18px;font-weight:700">Exercice n&deg;2 &mdash; Comment d&eacute;composer un objet technique en fonctions et solutions&nbsp;?</div>
+              <div style="font-size:13px;opacity:.9">P11 &mdash; L'eau, ressource essentielle &bull; Analyse fonctionnelle &bull; Cycle 4 &mdash; 4&egrave;me</div>
+            </div>
+            <div style="background:rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;white-space:nowrap">&#x1F4DD; &Eacute;valu&eacute;</div>
+          </div>
+          <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="p11x2-nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="p11x2-prenom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Classe</label>
+              <select id="p11x2-classe" class="p12-input" style="background:#fff;color:var(--tx);cursor:pointer">
+                <option value="">— Choisis —</option>
+                <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option>
+                <option value="4D">4D</option><option value="4E">4E</option><option value="4F">4F</option><option value="4G">4G</option>
+              </select></div>
+          </div>
+        </div>
+
+        <!-- COMPÉTENCE ÉVALUÉE -->
+        <div style="background:#fff;border:2px solid #5C6BC0;border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
+          <div style="font-size:12px;font-weight:700;color:#5C6BC0;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F3AF; Comp&eacute;tence &eacute;valu&eacute;e</div>
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px">
+              <thead><tr style="background:#E8EAF6;color:#283593">
+                <th style="padding:8px 10px;text-align:left;border:1px solid #C5CAE9">Domaine</th>
+                <th style="padding:8px 10px;text-align:left;border:1px solid #C5CAE9">Comp&eacute;tence &eacute;valu&eacute;e</th>
+                <th style="padding:8px 6px;border:1px solid #C5CAE9;width:34px">1</th>
+                <th style="padding:8px 6px;border:1px solid #C5CAE9;width:34px">2</th>
+                <th style="padding:8px 6px;border:1px solid #C5CAE9;width:34px">3</th>
+                <th style="padding:8px 6px;border:1px solid #C5CAE9;width:34px">4</th>
+              </tr></thead>
+              <tbody><tr>
+                <td style="padding:8px 10px;border:1px solid #C5CAE9;font-weight:600">D&eacute;crire et caract&eacute;riser l'organisation interne d'un objet ou d'un syst&egrave;me technique et ses &eacute;changes avec son environnement</td>
+                <td style="padding:8px 10px;border:1px solid #C5CAE9"><strong>Associer des solutions techniques &agrave; une ou des fonctions techniques</strong></td>
+                <td style="border:1px solid #C5CAE9"></td><td style="border:1px solid #C5CAE9"></td>
+                <td style="border:1px solid #C5CAE9"></td><td style="border:1px solid #C5CAE9"></td>
+              </tr></tbody>
+            </table>
+          </div>
+          <div style="font-size:11.5px;color:var(--td);margin-top:8px"><strong>1</strong> : Ma&icirc;trise insuffisante &nbsp;&bull;&nbsp; <strong>2</strong> : Ma&icirc;trise fragile &nbsp;&bull;&nbsp; <strong>3</strong> : Ma&icirc;trise satisfaisante &nbsp;&bull;&nbsp; <strong>4</strong> : Tr&egrave;s bonne ma&icirc;trise</div>
+        </div>
+
+        <!-- RAPPEL DE COURS — LIRE UN FAST -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:18px 20px;margin-bottom:22px">
+          <div style="font-size:14px;font-weight:700;color:#283593;margin-bottom:10px">&#x1F4D8; Rappel&nbsp;: qu'est-ce qu'un diagramme FAST&nbsp;?</div>
+          <p class="p11x2-lire" style="font-size:13.5px;line-height:1.65;color:var(--tx);margin:0 0 14px">
+            Le <strong>diagramme FAST</strong> (<em>Functional Analysis System Technique</em>) d&eacute;compose un objet technique&nbsp;:
+            il montre comment les <strong>fonctions techniques</strong> et les <strong>solutions techniques</strong> permettent
+            de r&eacute;aliser la <strong>fonction d'usage</strong> de l'objet.
+            Une fonction commence toujours par un <strong>verbe &agrave; l'infinitif</strong>, suivi d'un compl&eacute;ment.
+          </p>
+          <div style="text-align:center;margin-bottom:14px">
+            <img src="assets/p11-ex2/fast-schema.png" alt="Schéma d'un diagramme FAST : de gauche à droite « Comment ? », de droite à gauche « Pourquoi ? », et verticalement « Hiérarchiser »." style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px">
+            <div class="p11x2-lire" style="background:#FFEBEE;border-left:4px solid #C0392B;border-radius:8px;padding:10px 13px;font-size:13px;color:#7B1E13">
+              <strong>&#x2192; De gauche &agrave; droite</strong><br>&laquo;&nbsp;<strong>Comment</strong> r&eacute;aliser cette fonction technique&nbsp;?&nbsp;&raquo;<br>
+              <em>Gr&acirc;ce &agrave; cette solution technique.</em>
+            </div>
+            <div class="p11x2-lire" style="background:#FFEBEE;border-left:4px solid #C0392B;border-radius:8px;padding:10px 13px;font-size:13px;color:#7B1E13">
+              <strong>&#x2190; De droite &agrave; gauche</strong><br>&laquo;&nbsp;<strong>Pourquoi</strong> cette solution existe-t-elle&nbsp;?&nbsp;&raquo;<br>
+              <em>Pour r&eacute;aliser cette fonction technique.</em>
+            </div>
+            <div class="p11x2-lire" style="background:#FFF8E1;border-left:4px solid #F9A825;border-radius:8px;padding:10px 13px;font-size:13px;color:#5D4E00">
+              <strong>&#x2193; Verticalement&nbsp;: hi&eacute;rarchiser</strong><br>
+              La ligne du <strong>haut</strong> est la plus importante&nbsp;; on descend ensuite vers les fonctions secondaires.
+              <em>L'ordre des lignes compte&nbsp;!</em>
+            </div>
+          </div>
+          <div class="p11x2-lire" style="background:#E8EAF6;border-radius:8px;padding:12px 15px;margin-top:14px;font-size:13px;color:#283593;line-height:1.6">
+            &#x26A0;&#xFE0F; <strong>Attention&nbsp;:</strong> dans cet exercice, tu ne dois pas seulement <strong>associer</strong> la bonne solution
+            &agrave; la bonne fonction. Tu dois aussi les <strong>ranger dans le bon ordre</strong>, de la plus importante (en haut)
+            &agrave; la moins importante (en bas). Les deux sont not&eacute;s s&eacute;par&eacute;ment.
+          </div>
+        </div>
+
+        <!-- ═══════════════ PARTIE A — LIRE UN FAST ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#283593">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">A</span>
+          Savoir lire un diagramme FAST &mdash; 5 points
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 16px;font-style:italic">Choisis la bonne r&eacute;ponse dans chaque menu d&eacute;roulant.</p>
+          <div id="p11x2-regles-zone"></div>
+        </div>
+
+        <!-- ═══════════════ PARTIE B — SCOOTER ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#00695C">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">B</span>
+          Le scooter &mdash; 7 points
+        </div>
+        <div class="p12-part-body">
+          <div class="p11x2-objet">
+            <img src="assets/p11-ex2/scooter.png" alt="Photographie d'un scooter" class="p11x2-photo">
+            <p class="p11x2-lire" style="font-size:13px;color:var(--tx);margin:0;line-height:1.6">
+              Tu vas analyser le fonctionnement d'un <strong>scooter</strong>.<br>
+              <span style="color:var(--td)">Les trois groupes de solutions disponibles sont&nbsp;: le guidon avec la fourche et la roue avant&nbsp;;
+              le moteur avec la transmission et la roue arri&egrave;re&nbsp;; les poign&eacute;es avec les c&acirc;bles et les freins &agrave; disque.
+              Des propositions fausses ont &eacute;t&eacute; ajout&eacute;es dans les menus&nbsp;: &agrave; toi de ne pas te laisser piéger.</span>
+            </p>
+          </div>
+          <div id="p11x2-sc-zone"></div>
+        </div>
+
+        <!-- ═══════════════ PARTIE C — FEUTRE ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#AD1457">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">C</span>
+          Le feutre &mdash; 7 points
+        </div>
+        <div class="p12-part-body">
+          <div class="p11x2-objet">
+            <img src="assets/p11-ex2/feutre.png" alt="Photographie de feutres et de stylos" class="p11x2-photo">
+            <p class="p11x2-lire" style="font-size:13px;color:var(--tx);margin:0;line-height:1.6">
+              Tu vas analyser le fonctionnement d'un <strong>feutre</strong>.<br>
+              <span style="color:var(--td)">Pense &agrave; tout ce qui compose l'objet&nbsp;: ce qui d&eacute;pose l'encre sur la feuille,
+              ce qui contient l'encre, et ce qui emp&ecirc;che la pointe de s&eacute;cher.</span>
+            </p>
+          </div>
+          <div id="p11x2-fe-zone"></div>
+        </div>
+
+        <!-- ═══════════════ PARTIE D — CASQUE AUDIO ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#4527A0">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">D</span>
+          Le casque audio &mdash; 11 points
+        </div>
+        <div class="p12-part-body">
+          <div class="p11x2-objet">
+            <img src="assets/p11-ex2/casque.png" alt="Photographie d'un casque audio avec ses composants repérés : arche, coussins, écouteurs, potentiomètre, fiche et cordon" class="p11x2-photo p11x2-photo-lg">
+            <p class="p11x2-lire" style="font-size:13px;color:var(--tx);margin:0;line-height:1.6">
+              Pour &eacute;mettre de la musique, un <strong>casque audio</strong> est compos&eacute; de plusieurs &eacute;l&eacute;ments&nbsp;:
+              2&nbsp;coussins en mousse, une arche d&eacute;formable, 2&nbsp;haut-parleurs, un potentiom&egrave;tre, une fiche et un cordon.<br>
+              <span style="color:var(--td)">Pour l'ordre des lignes, suis le <strong>trajet du son</strong> dans l'appareil&nbsp;:
+              par o&ugrave; l'information entre-t-elle, que devient-elle ensuite&nbsp;?</span>
+            </p>
+          </div>
+          <div id="p11x2-ca-zone"></div>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center" data-nolecture>
+          <button onclick="saveP11Ex2Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
+          <button onclick="submitP11Ex2Form()"
+                  style="padding:14px 28px;background:#5C6BC0;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4E4; Soumettre au professeur
+          </button>
+          <button onclick="exportP11Ex2PDF()"
+                  style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4C4; Exporter en PDF
+          </button>
+          <button onclick="resetP11Ex2Form()"
+                  style="padding:12px 18px;background:#ECEFF1;color:var(--td);border:1px solid var(--gb);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
+            &#x21BA; Annuler
+          </button>
+          <div id="p11x2-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
+          <div id="p11x2-status" style="font-size:13px;color:var(--td);flex:1;min-width:200px"></div>
+        </div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p11-ex2 -->
+
+    <!-- ============================================================ -->
+    <!-- P11 — CORRIGÉ EXERCICE n°2                                   -->
+    <!-- ============================================================ -->
+    <div id="pg-p11-ex2-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrig&eacute; Exercice n&deg;2</h2>
+      </div>
+      <div style="max-width:940px">
+
+        <div style="background:linear-gradient(135deg,#1E6B3B,#43A047);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:36px">&#x1F4DA;</span>
+          <div style="flex:1;min-width:240px">
+            <div style="font-size:18px;font-weight:700">Corrig&eacute; &mdash; Le diagramme FAST</div>
+            <div style="font-size:13px;opacity:.9">P11 &bull; Exercice n&deg;2 &bull; Cycle 4 &mdash; 4&egrave;me &bull; Bar&egrave;me brut&nbsp;: 30 points</div>
+          </div>
+          <button onclick="exportP11Ex2CorPDF()" style="padding:11px 22px;background:#fff;color:#1E6B3B;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15)">
+            &#x1F4C4; Exporter en PDF
+          </button>
+        </div>
+
+        <div style="background:#FFF3E0;border-left:4px solid #FB8C00;border-radius:8px;padding:12px 18px;margin-bottom:18px;font-size:13px;color:#5D3A00">
+          &#x26A0;&#xFE0F; Ce corrig&eacute; est r&eacute;serv&eacute; au prof. Le code d'acc&egrave;s est g&eacute;r&eacute; depuis le modal Prof &gt; onglet &laquo;&nbsp;Codes d'acc&egrave;s&nbsp;&raquo;.
+        </div>
+
+        <div style="background:#E8EAF6;border-left:4px solid #5C6BC0;border-radius:8px;padding:14px 18px;margin-bottom:18px;font-size:13px;color:#283593;line-height:1.7">
+          <strong>R&egrave;gle de correction automatique appliqu&eacute;e.</strong><br>
+          &bull; <strong>Association</strong>&nbsp;: une paire &laquo;&nbsp;fonction technique &harr; solution technique&nbsp;&raquo; juste rapporte son point
+          <strong>m&ecirc;me si elle est plac&eacute;e sur la mauvaise ligne</strong> (c'est la lecture Comment&nbsp;?/Pourquoi&nbsp;?).<br>
+          &bull; <strong>Hi&eacute;rarchisation</strong>&nbsp;: un point suppl&eacute;mentaire par ligne dont la paire est juste <strong>et</strong> plac&eacute;e au bon rang.
+          Un &eacute;l&egrave;ve qui apparie bien mais range mal garde donc tous ses points d'association et perd ceux de hi&eacute;rarchisation.
+        </div>
+
+        <div id="p11x2-cor-zone"></div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p11-ex2-cor -->
+
     <!-- ============================================================ -->
     <!-- P11 — EXERCICE n°1 — CAPTEURS, ACTIONNEURS & CDCF            -->
     <!-- ============================================================ -->
@@ -4003,7 +4249,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4013,6 +4259,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
             <option value="rem1">Quiz Rem&eacute;diation P13</option>
             <option value="p12">P12 &mdash; Activit&eacute; 1 (Technologie et Alimentation)</option>
             <option value="p11-ex1">P11 &mdash; Exercice n&deg;1 (Capteurs, actionneurs &amp; CDCF)</option>
+            <option value="p11-ex2">P11 &mdash; Exercice n&deg;2 (Diagramme FAST)</option>
             <option value="p12-ex1">P12 &mdash; Exercice n&deg;1 (Distributeur de croquettes)</option>
             <option value="p12-ex2">P12 &mdash; Exercice n&deg;2 (Bac &agrave; sable connect&eacute;)</option>
             <option value="p12-act2">P12 &mdash; Activit&eacute; 2</option>
@@ -5552,6 +5799,8 @@ var SEQUENCES_DEF = [
   {id:"p12-ex1-cor", ordre:128, niveau:"4ème", titre:"P12 — Corrigé Exercice n°1", desc:"Corrigé du distributeur de croquettes. Code d'accès professeur.", couleur:"var(--vt)", code:"CORCHA26", open:true},
   {id:"p11-ex1", ordre:112, niveau:"4ème", titre:"P11 — Exercice n°1 — Capteurs, actionneurs & CDCF", desc:"Classe inversée évaluée : capteurs/actionneurs, chaînes d'information et d'énergie, bête à cornes, pieuvre et cahier des charges du pommeau de douche. Aides dys intégrées.", couleur:"#0288D1", code:"CAP26", open:true},
   {id:"p11-ex1-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Exercice n°1", desc:"Corrigé et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"CORCAP26", open:true},
+  {id:"p11-ex2", ordre:114, niveau:"4ème", titre:"P11 — Exercice n°2 — Le diagramme FAST", desc:"Évalué : lire un FAST, puis associer fonctions techniques et solutions techniques sur le scooter, le feutre et le casque audio. Menus déroulants avec propositions pièges, ordre tiré au sort. Aides dys intégrées.", couleur:"#5C6BC0", code:"FAST26", open:true},
+  {id:"p11-ex2-cor", ordre:115, niveau:"4ème", titre:"P11 — Corrigé Exercice n°2", desc:"Corrigé FAST, ordres de hiérarchisation justifiés et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"CORFAST26", open:true},
   {id:"cap1", ordre:130, niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
   {id:"rem1", ordre:131, niveau:"4\u00e8me", titre:"Rem&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
   {id:"seq2", ordre:140, niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
@@ -5926,6 +6175,21 @@ function goPage(pid) {
     }
     restoreP12Act1Draft();
   }
+  if (pid === "pg-p11-ex2") {
+    if (user) {
+      var yNom    = document.getElementById("p11x2-nom");
+      var yPrenom = document.getElementById("p11x2-prenom");
+      var yClasse = document.getElementById("p11x2-classe");
+      if (yNom    && !yNom.value)    yNom.value    = user.n;
+      if (yPrenom && !yPrenom.value) yPrenom.value = user.p;
+      if (yClasse && !yClasse.value) yClasse.value = user.c;
+    }
+    /* Les menus sont construits ici : leurs options sont mélangées à chaque
+       ouverture, il faut donc les créer avant de restaurer le brouillon. */
+    renderP11Ex2Selects();
+    restoreP11Ex2Draft();
+  }
+  if (pid === "pg-p11-ex2-cor") { renderP11Ex2Corrige(); }
   if (pid === "pg-p11-ex1") {
     if (user) {
       var wNom    = document.getElementById("p11x1-nom");
@@ -6200,6 +6464,10 @@ function renderDash() {
       } else {
         if (s.id === "p12" || s.id === "cap1") {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4DD; Activit&eacute; n&deg;1</span>';
+        } else if (s.id === "p11-ex2") {
+          badgeHtml = '<span class="badge" style="background:#E8EAF6;color:#5C6BC0;font-weight:700">&#x1F5FA;&#xFE0F; Exercice n&deg;2 &mdash; not&eacute;</span>';
+        } else if (s.id === "p11-ex2-cor") {
+          badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "p11-ex1") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#0288D1;font-weight:700">&#x1F6BF; Exercice n&deg;1 &mdash; not&eacute;</span>';
         } else if (s.id === "p11-ex1-cor") {
@@ -6241,6 +6509,8 @@ function renderDash() {
       else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
       else if (s.id === "dc")       clickAction = "onclick=\"goPage('pg-dc')\"";
       else if (s.id === "p12")      clickAction = "onclick=\"goPage('pg-p12')\"";
+      else if (s.id === "p11-ex2")  clickAction = "onclick=\"goPage('pg-p11-ex2')\"";
+      else if (s.id === "p11-ex2-cor") clickAction = "onclick=\"goPage('pg-p11-ex2-cor')\"";
       else if (s.id === "p11-ex1")  clickAction = "onclick=\"goPage('pg-p11-ex1')\"";
       else if (s.id === "p11-ex1-cor") clickAction = "onclick=\"goPage('pg-p11-ex1-cor')\"";
       else if (s.id === "p12-ex1")  clickAction = "onclick=\"goPage('pg-p12-ex1')\"";
@@ -6304,6 +6574,8 @@ function tryUnlock() {
     toast("Séquence déverrouillée !");
     if (pendingSeq === "dc")   goPage("pg-dc");
     else if (pendingSeq === "p12")  goPage("pg-p12");
+    else if (pendingSeq === "p11-ex2") goPage("pg-p11-ex2");
+    else if (pendingSeq === "p11-ex2-cor") goPage("pg-p11-ex2-cor");
     else if (pendingSeq === "p11-ex1") goPage("pg-p11-ex1");
     else if (pendingSeq === "p11-ex1-cor") goPage("pg-p11-ex1-cor");
     else if (pendingSeq === "p12-ex1") goPage("pg-p12-ex1");
@@ -6437,7 +6709,7 @@ function updMyStatus() {
     html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
     /* P11 Ex1 : la note auto reste masquée tant que le prof n'a pas validé la correction. */
     var detail;
-    if (s.cap === "p11-ex1") {
+    if (s.cap === "p11-ex1" || s.cap === "p11-ex2") {
       detail = (s.status === "validated" && s.adjustedScore !== undefined)
         ? 'Note : ' + p11x1Fmt(s.adjustedScore) + '/' + (s.bareme || 20)
         : 'En attente de correction par le professeur';
@@ -7783,6 +8055,17 @@ function renderSubs() {
       } else if (s.cap === "p12") {
         var nf = countP12Fields(s.fields);
         sc = '<span style="background:var(--op);color:var(--or);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nf.done + '/' + nf.total + ' champs</span>';
+      } else if (s.cap === "p11-ex2") {
+        var nfp12 = countP11Ex2Fields(s.fields);
+        if (s.adjustedScore !== undefined) {
+          var bx2 = s.bareme || 20;
+          var px2 = s.adjustedScore / bx2 * 100;
+          sc = '<div><strong style="color:' + (px2>=75?"var(--vt)":px2>=50?"var(--or)":"var(--rg)") + '">' + p11x1Fmt(s.adjustedScore) + '/' + bx2 + '</strong></div>';
+        } else {
+          var ax2 = p11x2TotalBrut(scoreP11Ex2BySection(s.fields || {}));
+          sc = '<span style="background:#E8EAF6;color:#5C6BC0;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(ax2) + '/30</span>'
+             + '<div style="font-size:11px;color:var(--td)">' + nfp12.done + '/' + nfp12.total + ' menus</div>';
+        }
       } else if (s.cap === "p11-ex1") {
         var nfp11 = countP11Ex1Fields(s.fields);
         if (s.adjustedScore !== undefined) {
@@ -8154,6 +8437,16 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P12 — Activité n°1 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12ModalHTML(sub.fields);
     document.getElementById("mscore").textContent = "Activité ouverte – Statut : " + sub.status;
+  } else if (sub.cap === "p11-ex2") {
+    if (mh3) mh3.textContent = "P11 — Exercice n°2 : Réponses de l'élève";
+    document.getElementById("mrep").innerHTML = buildP11Ex2ModalHTML(sub.fields || {}) + buildP11Ex2TeacherPanel(sub);
+    var _x2bar = Number(sub.bareme) || 20;
+    var _x2auto = p11x1Convert(p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {})), _x2bar);
+    document.getElementById("mscore").textContent =
+      (sub.adjustedScore !== undefined
+        ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _x2bar
+        : "Note auto : " + p11x1Fmt(_x2auto) + "/" + _x2bar + " (indicative)")
+      + " — Statut : " + sub.status;
   } else if (sub.cap === "p11-ex1") {
     if (mh3) mh3.textContent = "P11 — Exercice n°1 : Réponses de l'élève";
     /* fields peut manquer si la soumission vient d'un cloud partiel : on affiche
@@ -8236,6 +8529,7 @@ function printModalSub() {
   var answersHTML = "";
   if (sub.cap === "dc" && sub.fields)       answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p11-ex2") answersHTML = buildP11Ex2ModalHTML(sub.fields || {});
   else if (sub.cap === "p11-ex1") answersHTML = buildP11Ex1ModalHTML(sub.fields || {});
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
@@ -8327,6 +8621,7 @@ function printSubDirect(sid) {
     "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
     "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
     "p11-ex1":"P11 — Exercice n°1 (Capteurs, actionneurs & CDCF)", "p11-ex1-cor":"P11 — Corrigé Exercice n°1",
+    "p11-ex2":"P11 — Exercice n°2 (Diagramme FAST)", "p11-ex2-cor":"P11 — Corrigé Exercice n°2",
     "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
     "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
     "filius5e":"Filius 5e — Simulation réseau (binôme)",
@@ -8347,6 +8642,12 @@ function printSubDirect(sid) {
     scoreStr = "Score : " + sub.score + "/40 — Statut : " + sub.status;
   } else if (sub.cap === "p12") {
     var nf = countP12Fields(sub.fields||{}); scoreStr = nf.done + "/" + nf.total + " champs — Statut : " + sub.status;
+  } else if (sub.cap === "p11-ex2") {
+    var _b2 = Number(sub.bareme) || 20;
+    scoreStr = (sub.adjustedScore !== undefined
+      ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _b2
+      : "Note auto : " + p11x1Fmt(p11x1Convert(p11x2TotalBrut(scoreP11Ex2BySection(sub.fields||{})), _b2)) + "/" + _b2 + " (indicative)")
+      + " — Statut : " + sub.status;
   } else if (sub.cap === "p11-ex1") {
     var _b = Number(sub.bareme) || 20;
     scoreStr = (sub.adjustedScore !== undefined
@@ -8377,6 +8678,7 @@ function printSubDirect(sid) {
   var answersHTML = "";
   if (sub.cap === "dc" && sub.fields)         answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p11-ex2") answersHTML = buildP11Ex2ModalHTML(sub.fields || {});
   else if (sub.cap === "p11-ex1") answersHTML = buildP11Ex1ModalHTML(sub.fields || {});
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
@@ -8528,6 +8830,34 @@ function _buildCapsuleCSV(cap, filtered) {
         f["3-contexte"], f.bilan];
     });
     return { headers: headers, rows: rows };
+  }
+  if (cap === "p11-ex2") {
+    var hdrX2 = ["Eleve","Classe","Date","Statut","Bareme","NoteAuto30","NoteFinale"];
+    for (var hx = 0; hx < P11X2_FIELDS.length; hx++) hdrX2.push(P11X2_FIELD_LABELS[P11X2_FIELDS[hx]] || P11X2_FIELDS[hx]);
+    hdrX2.push("Appreciation");
+    var rowsX2 = filtered.map(function(x){
+      var f = x.fields || {};
+      var r = [x.ename, x.ecls, dateOf(x), x.status, (x.bareme||20),
+               p11x2TotalBrut(scoreP11Ex2BySection(f)),
+               (x.adjustedScore !== undefined ? x.adjustedScore : "")];
+      /* on exporte le libellé lisible, pas la clé interne du menu */
+      for (var q = 0; q < P11X2_FIELDS.length; q++) {
+        var fid = P11X2_FIELDS[q], val = f[fid] || "", lisible = val;
+        for (var w = 0; w < P11X2_REGLES.length; w++) {
+          if (fid === "p11x2-r" + (w + 1)) lisible = p11x2Libelle(P11X2_REGLES[w].opts, val) || val;
+        }
+        for (var z = 0; z < P11X2_OBJETS.length; z++) {
+          var ob = P11X2_OBJETS[z];
+          if (fid === "p11x2-" + ob.pref + "-usage") lisible = p11x2Libelle(ob.usageOpts, val) || val;
+          else if (fid.indexOf("p11x2-" + ob.pref + "-ft") === 0) lisible = p11x2Libelle(ob.ftOpts, val) || val;
+          else if (fid.indexOf("p11x2-" + ob.pref + "-st") === 0) lisible = p11x2Libelle(ob.stOpts, val) || val;
+        }
+        r.push(lisible);
+      }
+      r.push(x.appreciation || "");
+      return r;
+    });
+    return { headers: hdrX2, rows: rowsX2 };
   }
   if (cap === "p11-ex1") {
     var hdrP11 = ["Eleve","Classe","Date","Statut","Bareme","NoteAuto30","NoteFinale",
@@ -9812,6 +10142,7 @@ function renderEx1Stats() {
   /* Configuration par capsule supportée (Ex1, Ex2) */
   var CFG_STATS = {
     "p11-ex1": { fields: P11X1_FIELDS, labels: P11X1_FIELD_LABELS, label: "P11 Exercice n°1 — Capteurs & CDCF" },
+    "p11-ex2": { fields: P11X2_FIELDS, labels: P11X2_FIELD_LABELS, label: "P11 Exercice n°2 — Diagramme FAST" },
     "p12-ex1": { fields: EX1_FIELDS, labels: EX1_FIELD_LABELS, label: "Exercice n°1 — Distributeur" },
     "p12-ex2": { fields: EX2_FIELDS, labels: EX2_FIELD_LABELS, label: "Exercice n°2 — Bac à sable" }
   };
@@ -9940,23 +10271,23 @@ function buildP12Ex1OpenSummary(snap) {
   if (!snap) return "";
   var parts = [];
   function add(lbl, key) { if (snap[key]) parts.push(lbl + " : " + snap[key]); }
-  parts.push("=== PARTIE A — Analyser l'existant ===");
+  parts.push("--- PARTIE A : analyser l'existant ---");
   add("Q1 (fonction d'usage)","ex1-a1");
   add("Q2 (nb chats / justification)","ex1-a2");
   add("Q3 (reconnaissance)","ex1-a3");
   add("Q4 (distribution)","ex1-a4");
   add("Q5 (application mobile)","ex1-a5");
-  parts.push("\n=== PARTIE B — Bête à cornes ===");
+  parts.push("\n--- PARTIE B : bête à cornes ---");
   add("À qui","ex1-b-qui"); add("Sur quoi","ex1-b-quoi"); add("Dans quel but","ex1-b-but");
-  parts.push("\n=== PARTIE C — Exigences ===");
+  parts.push("\n--- PARTIE C : exigences ---");
   parts.push("Nourrir " + (snap["ex1-c-chats"]||"?") + " chats pendant " + (snap["ex1-c-jours"]||"?") + " jours");
   parts.push("Quantité : " + (snap["ex1-c-min"]||"?") + "–" + (snap["ex1-c-max"]||"?") + " g/jour/chat");
   parts.push("Eau : " + (snap["ex1-c-eau"]||"?") + " cl/jour/chat pendant " + (snap["ex1-c-dureeEau"]||"?") + " jours");
   add("Norme Wi-Fi","ex1-c-norme");
-  parts.push("\n=== PARTIE D — Justification ===");
+  parts.push("\n--- PARTIE D : justification ---");
   add("D1 (IEEE 802.11 ah)","ex1-d1");
   add("D2 (CEI 60901-1)","ex1-d2");
-  parts.push("\n=== PARTIE E — Algorigramme ===");
+  parts.push("\n--- PARTIE E : algorigramme ---");
   add("Décision 1","ex1-e-dec1"); add("Action 1","ex1-e-act1");
   add("Action 2","ex1-e-act2"); add("Action 3","ex1-e-act3");
   add("Question finale","ex1-e-decFin");
@@ -11823,6 +12154,743 @@ function restoreP12Act1Draft() {
 }
 
 // ================================================================
+// P11 — EXERCICE n°2 — Le diagramme FAST
+// ================================================================
+/* Les réponses sont saisies dans des menus déroulants : chaque option porte
+   une valeur courte et stable (la clé), et un libellé affiché à l'élève.
+   Des propositions fausses (leurres) sont mélangées aux bonnes, et l'ordre
+   des options est tiré au sort à chaque ouverture de la page. */
+
+var P11X2_REGLES = [
+  { q: "Dans un diagramme FAST, on lit <strong>de gauche à droite</strong> pour répondre à la question…",
+    bonne: "comment",
+    opts: [ {v:"comment", l:"Comment ?"}, {v:"pourquoi", l:"Pourquoi ?"},
+            {v:"quand", l:"Quand ?"}, {v:"combien", l:"Combien ?"} ] },
+  { q: "On lit <strong>de droite à gauche</strong> pour répondre à la question…",
+    bonne: "pourquoi",
+    opts: [ {v:"pourquoi", l:"Pourquoi ?"}, {v:"comment", l:"Comment ?"},
+            {v:"ou", l:"Où ?"}, {v:"qui", l:"Qui ?"} ] },
+  { q: "Une fonction s'écrit toujours en commençant par…",
+    bonne: "infinitif",
+    opts: [ {v:"infinitif", l:"un verbe à l'infinitif"}, {v:"nom", l:"un nom commun"},
+            {v:"adjectif", l:"un adjectif"}, {v:"article", l:"un article (le, la, les)"} ] },
+  { q: "Dans la <strong>colonne de droite</strong> d'un diagramme FAST, on trouve…",
+    bonne: "solutions",
+    opts: [ {v:"solutions", l:"les solutions techniques"}, {v:"usage", l:"la fonction d'usage"},
+            {v:"fonctions", l:"les fonctions techniques"}, {v:"nom", l:"le nom de l'objet"} ] },
+  { q: "Que signifie la flèche <strong>verticale</strong> placée à droite du diagramme&nbsp;?",
+    bonne: "hierarchie",
+    opts: [ {v:"hierarchie", l:"Les fonctions sont hiérarchisées, de la plus importante à la moins importante"},
+            {v:"temps", l:"Les fonctions se déroulent l'une après l'autre dans le temps"},
+            {v:"option", l:"Les fonctions du bas sont facultatives"},
+            {v:"bashaut", l:"Il faut lire le diagramme de bas en haut"} ] }
+];
+
+var P11X2_OBJETS = [
+  {
+    pref: "sc", nom: "Le scooter", couleur: "#00695C",
+    usage: "deplacer",
+    usageOpts: [ {v:"deplacer", l:"Se déplacer : transporter une personne sur la route"},
+                 {v:"musique", l:"Écouter de la musique"},
+                 {v:"ecrire", l:"Écrire sur un support"},
+                 {v:"marchandises", l:"Transporter des marchandises lourdes"} ],
+    lignes: [ {ft:"propulser", st:"moteur"}, {ft:"diriger", st:"guidon"}, {ft:"freiner", st:"freins"} ],
+    ftOpts: [ {v:"propulser", l:"Propulser le scooter"}, {v:"diriger", l:"Diriger le scooter"},
+              {v:"freiner", l:"Freiner le scooter"}, {v:"eclairer", l:"Éclairer la route"},
+              {v:"protegerC", l:"Protéger le conducteur"}, {v:"transporter", l:"Transporter un passager"} ],
+    stOpts: [ {v:"moteur", l:"Moteur, transmission et roue arrière"},
+              {v:"guidon", l:"Guidon, fourche et roue avant"},
+              {v:"freins", l:"Poignées, câbles et freins à disque"},
+              {v:"phare", l:"Phare et clignotants"},
+              {v:"selle", l:"Selle et repose-pieds"},
+              {v:"retro", l:"Rétroviseurs"} ],
+    pourquoi: "Un scooter sert d'abord à avancer : sans propulsion, l'objet ne remplit pas sa fonction d'usage. On peut ensuite le diriger, puis le ralentir."
+  },
+  {
+    pref: "fe", nom: "Le feutre", couleur: "#AD1457",
+    usage: "tracer",
+    usageOpts: [ {v:"tracer", l:"Écrire : laisser une trace sur un support"},
+                 {v:"deplacer", l:"Se déplacer"},
+                 {v:"musique", l:"Écouter de la musique"},
+                 {v:"decouper", l:"Découper du papier"} ],
+    lignes: [ {ft:"trace", st:"pointe"}, {ft:"stocker", st:"corps"}, {ft:"protegerP", st:"capuchon"} ],
+    ftOpts: [ {v:"trace", l:"Laisser une trace"}, {v:"stocker", l:"Stocker l'encre"},
+              {v:"protegerP", l:"Protéger la pointe"}, {v:"effacer", l:"Effacer une trace"},
+              {v:"colorer", l:"Colorer le papier tout seul"}, {v:"tenir", l:"Tenir debout sur la table"} ],
+    stOpts: [ {v:"pointe", l:"Pointe en feutre"}, {v:"corps", l:"Corps (réservoir d'encre)"},
+              {v:"capuchon", l:"Capuchon"}, {v:"agrafe", l:"Agrafe de poche"},
+              {v:"etiquette", l:"Étiquette collée"}, {v:"bille", l:"Bille en acier"} ],
+    pourquoi: "Sans trace, le feutre ne sert à rien : c'est sa fonction principale. Il faut ensuite de l'encre en réserve, puis la protéger du séchage."
+  },
+  {
+    pref: "ca", nom: "Le casque audio", couleur: "#4527A0",
+    usage: "ecouter",
+    usageOpts: [ {v:"ecouter", l:"Écouter de la musique : restituer un son à l'utilisateur"},
+                 {v:"deplacer", l:"Se déplacer"},
+                 {v:"ecrire", l:"Écrire sur un support"},
+                 {v:"filmer", l:"Enregistrer une vidéo"} ],
+    lignes: [ {ft:"transmettre", st:"cordon"}, {ft:"regler", st:"potentiometre"},
+              {ft:"transformer", st:"hp"}, {ft:"maintenir", st:"arche"}, {ft:"confort", st:"coussins"} ],
+    ftOpts: [ {v:"transmettre", l:"Transmettre le signal électrique"},
+              {v:"regler", l:"Régler le volume"},
+              {v:"transformer", l:"Transformer le signal électrique en son"},
+              {v:"maintenir", l:"Maintenir le casque sur la tête"},
+              {v:"confort", l:"Assurer le confort et isoler des bruits extérieurs"},
+              {v:"amplifier", l:"Amplifier la lumière"},
+              {v:"recharger", l:"Recharger la batterie du téléphone"},
+              {v:"afficher", l:"Afficher le titre du morceau"} ],
+    stOpts: [ {v:"cordon", l:"Une fiche et un cordon"}, {v:"potentiometre", l:"Un potentiomètre"},
+              {v:"hp", l:"2 haut-parleurs"}, {v:"arche", l:"Une arche déformable"},
+              {v:"coussins", l:"2 coussins en mousse"}, {v:"ecran", l:"Un écran tactile"},
+              {v:"batterie", l:"Une batterie lithium"}, {v:"micro", l:"Un micro antibruit"} ],
+    pourquoi: "On suit le trajet du son : le signal entre par le cordon, il est réglé, puis transformé en son. Viennent ensuite les fonctions de support : tenir le casque, puis le rendre confortable."
+  }
+];
+
+/* Liste des champs (ordre d'affichage) */
+var P11X2_FIELDS = (function () {
+  var a = [];
+  for (var i = 1; i <= P11X2_REGLES.length; i++) a.push("p11x2-r" + i);
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    a.push("p11x2-" + ob.pref + "-usage");
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      a.push("p11x2-" + ob.pref + "-ft" + j);
+      a.push("p11x2-" + ob.pref + "-st" + j);
+    }
+  }
+  return a;
+})();
+
+var P11X2_FIELD_LABELS = (function () {
+  var m = {};
+  for (var i = 1; i <= P11X2_REGLES.length; i++) m["p11x2-r" + i] = "A" + i + " — Règle de lecture";
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    m["p11x2-" + ob.pref + "-usage"] = ob.nom + " — Fonction d'usage";
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      m["p11x2-" + ob.pref + "-ft" + j] = ob.nom + " — Ligne " + j + " : fonction";
+      m["p11x2-" + ob.pref + "-st" + j] = ob.nom + " — Ligne " + j + " : solution";
+    }
+  }
+  return m;
+})();
+
+/* Barème brut : 30 points */
+var P11X2_SECTIONS = [
+  {k:"regles",  max:5, lbl:"A — Lire un FAST"},
+  {k:"scAssoc", max:4, lbl:"B — Scooter : usage + associations"},
+  {k:"scHier",  max:3, lbl:"B — Scooter : hiérarchisation"},
+  {k:"feAssoc", max:4, lbl:"C — Feutre : usage + associations"},
+  {k:"feHier",  max:3, lbl:"C — Feutre : hiérarchisation"},
+  {k:"caAssoc", max:6, lbl:"D — Casque : usage + associations"},
+  {k:"caHier",  max:5, lbl:"D — Casque : hiérarchisation"}
+];
+
+function p11x2Objet(pref) {
+  for (var i = 0; i < P11X2_OBJETS.length; i++) if (P11X2_OBJETS[i].pref === pref) return P11X2_OBJETS[i];
+  return null;
+}
+function p11x2Libelle(opts, v) {
+  for (var i = 0; i < opts.length; i++) if (opts[i].v === v) return opts[i].l;
+  return "";
+}
+
+/* ── Correction automatique ──────────────────────────────────────
+   Règle demandée : une paire « fonction ↔ solution » juste rapporte son
+   point même si elle est placée sur la mauvaise ligne (lecture Comment ? /
+   Pourquoi ?). La hiérarchisation est notée à part : un point par ligne
+   dont la paire est juste ET placée au bon rang. */
+function scoreP11Ex2BySection(f) {
+  var s = {regles:0, scAssoc:0, scHier:0, feAssoc:0, feHier:0, caAssoc:0, caHier:0};
+  if (!f) return s;
+  var i;
+  for (i = 0; i < P11X2_REGLES.length; i++) {
+    if (f["p11x2-r" + (i + 1)] === P11X2_REGLES[i].bonne) s.regles++;
+  }
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    var kA = ob.pref + "Assoc", kH = ob.pref + "Hier";
+    if (f["p11x2-" + ob.pref + "-usage"] === ob.usage) s[kA]++;
+    var attendu = {};
+    for (i = 0; i < ob.lignes.length; i++) attendu[ob.lignes[i].ft] = ob.lignes[i].st;
+    var dejaVues = [];
+    for (i = 1; i <= ob.lignes.length; i++) {
+      var ft = f["p11x2-" + ob.pref + "-ft" + i];
+      var st = f["p11x2-" + ob.pref + "-st" + i];
+      if (!ft || !st) continue;
+      /* association correcte, quelle que soit la ligne — et une seule fois par paire */
+      if (attendu[ft] === st && dejaVues.indexOf(ft) === -1) { s[kA]++; dejaVues.push(ft); }
+      /* hiérarchisation : la paire juste est en plus au bon rang */
+      if (ob.lignes[i - 1].ft === ft && ob.lignes[i - 1].st === st) s[kH]++;
+    }
+  }
+  for (i = 0; i < P11X2_SECTIONS.length; i++) {
+    var sec = P11X2_SECTIONS[i];
+    s[sec.k] = Math.min(s[sec.k], sec.max);
+  }
+  return s;
+}
+function p11x2TotalBrut(sec) {
+  var t = 0;
+  for (var i = 0; i < P11X2_SECTIONS.length; i++) t += (sec[P11X2_SECTIONS[i].k] || 0);
+  return Math.round(Math.min(t, 30) * 10) / 10;
+}
+
+function autoAppreciationP11Ex2(note, bareme, sec) {
+  var pct = note / Number(bareme) * 100;
+  var mention = pct >= 90 ? "Excellente analyse fonctionnelle"
+              : pct >= 75 ? "Très bonne analyse fonctionnelle"
+              : pct >= 60 ? "Bon travail"
+              : pct >= 40 ? "Travail à consolider"
+              : "Des progrès sont nécessaires";
+  var lacunes = [];
+  if (sec.regles < 4) lacunes.push("la lecture du diagramme (Comment ? / Pourquoi ?)");
+  var assoc = (sec.scAssoc || 0) + (sec.feAssoc || 0) + (sec.caAssoc || 0);
+  var hier  = (sec.scHier || 0) + (sec.feHier || 0) + (sec.caHier || 0);
+  if (assoc < 10) lacunes.push("l'association entre fonctions techniques et solutions techniques");
+  if (hier < 8)   lacunes.push("la hiérarchisation des fonctions (la plus importante en haut)");
+  var txt = mention + " — " + p11x1Fmt(note) + "/" + bareme + ". ";
+  if (lacunes.length) txt += "Points à renforcer : " + lacunes.join(", ") + ".";
+  else txt += "Les solutions techniques sont correctement associées aux fonctions et bien hiérarchisées.";
+  if (assoc >= 10 && hier < 8) {
+    txt += " Les associations sont justes : c'est l'ordre d'importance des lignes qu'il faut retravailler.";
+  }
+  return txt;
+}
+
+/* ── Construction des menus déroulants (options mélangées) ─────── */
+function p11x2Melange(t) {
+  var a = t.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+function p11x2Select(id, opts, placeholder) {
+  var h = '<select id="' + id + '" class="p11x2-sel">';
+  h += '<option value="">' + (placeholder || "— Choisis —") + '</option>';
+  var m = p11x2Melange(opts);
+  for (var i = 0; i < m.length; i++) {
+    h += '<option value="' + m[i].v + '">' + m[i].l + '</option>';
+  }
+  return h + '</select>';
+}
+
+/* Rend les menus de la page élève. Les valeurs déjà saisies sont conservées :
+   on les relit avant de reconstruire, puis on les réapplique. */
+function renderP11Ex2Selects() {
+  var garde = {};
+  for (var i = 0; i < P11X2_FIELDS.length; i++) {
+    var el = document.getElementById(P11X2_FIELDS[i]);
+    if (el) garde[P11X2_FIELDS[i]] = el.value;
+  }
+
+  var z = document.getElementById("p11x2-regles-zone");
+  if (z) {
+    var h = "";
+    for (i = 0; i < P11X2_REGLES.length; i++) {
+      var r = P11X2_REGLES[i];
+      h += '<div class="p12-phase" style="background:#E8EAF6">'
+         + '<div class="p11x2-lire" style="font-size:13px;font-weight:700;color:#283593;margin-bottom:8px">'
+         + (i + 1) + '. ' + r.q + '</div>'
+         + p11x2Select("p11x2-r" + (i + 1), r.opts) + '</div>';
+    }
+    z.innerHTML = h;
+  }
+
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    var zone = document.getElementById("p11x2-" + ob.pref + "-zone");
+    if (!zone) continue;
+    var b = '<div class="p12-phase" style="background:#fff;border:1px solid var(--gb)">';
+    b += '<div class="p11x2-lire" style="font-size:13px;font-weight:700;color:' + ob.couleur + ';margin-bottom:8px">'
+       + 'Quelle est la <strong>fonction d\'usage</strong> de cet objet&nbsp;?</div>';
+    b += p11x2Select("p11x2-" + ob.pref + "-usage", ob.usageOpts);
+    b += '</div>';
+
+    b += '<div class="p11x2-fast">';
+    b += '<div class="p11x2-fast-head">'
+       + '<div>&#x2193; Ordre d\'importance</div>'
+       + '<div>Fonctions techniques</div>'
+       + '<div>Solutions techniques</div></div>';
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      var rang = j === 1 ? "1<sup>re</sup> ligne<br><span class='p11x2-rang-note'>la plus importante</span>"
+               : (j === ob.lignes.length ? j + "<sup>e</sup> ligne<br><span class='p11x2-rang-note'>la moins importante</span>"
+                                         : j + "<sup>e</sup> ligne");
+      b += '<div class="p11x2-fast-row">'
+         + '<div class="p11x2-rang" style="background:' + ob.couleur + '">' + rang + '</div>'
+         + '<div>' + p11x2Select("p11x2-" + ob.pref + "-ft" + j, ob.ftOpts, "— Fonction —") + '</div>'
+         + '<div>' + p11x2Select("p11x2-" + ob.pref + "-st" + j, ob.stOpts, "— Solution —") + '</div>'
+         + '</div>';
+    }
+    b += '</div>';
+    zone.innerHTML = b;
+  }
+
+  /* Réapplication des valeurs + branchement de la sauvegarde automatique */
+  for (i = 0; i < P11X2_FIELDS.length; i++) {
+    var fid = P11X2_FIELDS[i];
+    var e2 = document.getElementById(fid);
+    if (!e2) continue;
+    if (garde[fid]) e2.value = garde[fid];
+    e2.addEventListener("change", function () { saveP11Ex2Draft(false); });
+  }
+}
+
+/* ── Formulaire élève ──────────────────────────────────────────── */
+function snapP11Ex2() {
+  var snap = {};
+  for (var i = 0; i < P11X2_FIELDS.length; i++) {
+    var el = document.getElementById(P11X2_FIELDS[i]);
+    snap[P11X2_FIELDS[i]] = el ? (el.value || "") : "";
+  }
+  return snap;
+}
+function saveP11Ex2Draft() {
+  if (!user) return;
+  try { localStorage.setItem("p11_ex2_" + user.id, JSON.stringify(snapP11Ex2())); } catch(e) {}
+}
+function restoreP11Ex2Draft() {
+  if (!user) return;
+  var raw = null;
+  try { raw = localStorage.getItem("p11_ex2_" + user.id); } catch(e) {}
+  if (!raw) return;
+  var snap = {};
+  try { snap = JSON.parse(raw) || {}; } catch(e) { return; }
+  for (var k in snap) {
+    if (Object.prototype.hasOwnProperty.call(snap, k)) {
+      var el = document.getElementById(k);
+      if (el && !el.value) el.value = snap[k];
+    }
+  }
+}
+function resetP11Ex2Form() {
+  if (!confirm("Effacer toutes tes réponses pour cet exercice ?")) return;
+  for (var i = 0; i < P11X2_FIELDS.length; i++) {
+    var el = document.getElementById(P11X2_FIELDS[i]);
+    if (el) el.value = "";
+  }
+  if (user) { try { localStorage.removeItem("p11_ex2_" + user.id); } catch(e) {} }
+  var st = document.getElementById("p11x2-status");
+  if (st) { st.innerHTML = "Brouillon effacé."; st.style.color = "var(--td)"; }
+  toast("Brouillon effacé");
+}
+function countP11Ex2Fields(fields) {
+  if (!fields) return {done:0, total:P11X2_FIELDS.length};
+  var done = 0;
+  for (var i = 0; i < P11X2_FIELDS.length; i++) {
+    var v = fields[P11X2_FIELDS[i]];
+    if (v !== undefined && v !== null && String(v).trim() !== "") done++;
+  }
+  return {done:done, total:P11X2_FIELDS.length};
+}
+
+function buildP11Ex2OpenSummary(snap) {
+  if (!snap) return "";
+  var parts = ["--- PARTIE A : lire un FAST ---"];
+  for (var i = 0; i < P11X2_REGLES.length; i++) {
+    var v = snap["p11x2-r" + (i + 1)];
+    parts.push("Règle " + (i + 1) + " : " + (p11x2Libelle(P11X2_REGLES[i].opts, v) || "—"));
+  }
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    parts.push("--- " + ob.nom + " ---");
+    parts.push("Fonction d'usage : " + (p11x2Libelle(ob.usageOpts, snap["p11x2-" + ob.pref + "-usage"]) || "—"));
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      parts.push("Ligne " + j + " : "
+        + (p11x2Libelle(ob.ftOpts, snap["p11x2-" + ob.pref + "-ft" + j]) || "—")
+        + "  ->  "
+        + (p11x2Libelle(ob.stOpts, snap["p11x2-" + ob.pref + "-st" + j]) || "—"));
+    }
+  }
+  return parts.join("\n");
+}
+
+/* ── Vue prof : la copie relue, avec le détail de la correction ── */
+function buildP11Ex2ModalHTML(f) {
+  f = f || {};
+  function part(lbl, color) {
+    return '<div style="font-weight:700;color:' + color + ';font-size:12px;margin:14px 0 6px;border-bottom:2px solid ' + color + ';padding-bottom:3px">' + lbl + '</div>';
+  }
+  function pastille(ok, titre) {
+    var coul = ok ? "#1E6B3B" : "#C62828";
+    return '<span title="' + titre + '" style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">' + (ok ? "✓" : "✗") + '</span>';
+  }
+  function ligne(lbl, texte, ok, titre) {
+    return '<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px">'
+      + '<div style="min-width:118px;font-size:11px;font-weight:700;color:#5C6BC0;text-transform:uppercase;letter-spacing:.4px;padding-top:3px">' + lbl + '</div>'
+      + '<div style="flex:1;background:var(--gr);border-radius:6px;padding:6px 10px;font-size:13px;color:var(--tx)">'
+      + (texte || '<span style="color:var(--td);font-style:italic">Non renseigné</span>')
+      + (ok === undefined ? "" : pastille(ok, titre)) + '</div></div>';
+  }
+
+  var h = part("PARTIE A — Lire un diagramme FAST", "#283593");
+  for (var i = 0; i < P11X2_REGLES.length; i++) {
+    var v = f["p11x2-r" + (i + 1)];
+    h += ligne("Règle " + (i + 1), p11x2Libelle(P11X2_REGLES[i].opts, v),
+               v ? v === P11X2_REGLES[i].bonne : undefined, "Réponse attendue : " + p11x2Libelle(P11X2_REGLES[i].opts, P11X2_REGLES[i].bonne));
+  }
+
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    h += part(ob.nom.toUpperCase(), ob.couleur);
+    var vu = f["p11x2-" + ob.pref + "-usage"];
+    h += ligne("Fonction d'usage", p11x2Libelle(ob.usageOpts, vu),
+               vu ? vu === ob.usage : undefined, "Attendu : " + p11x2Libelle(ob.usageOpts, ob.usage));
+    var attendu = {};
+    for (var k = 0; k < ob.lignes.length; k++) attendu[ob.lignes[k].ft] = ob.lignes[k].st;
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      var ft = f["p11x2-" + ob.pref + "-ft" + j], st = f["p11x2-" + ob.pref + "-st" + j];
+      var txt = (p11x2Libelle(ob.ftOpts, ft) || "—") + '  &rarr;  ' + (p11x2Libelle(ob.stOpts, st) || "—");
+      var assocOk = !!(ft && st && attendu[ft] === st);
+      var rangOk  = !!(ft && st && ob.lignes[j - 1].ft === ft && ob.lignes[j - 1].st === st);
+      var badge = "";
+      if (ft && st) {
+        badge = assocOk
+          ? (rangOk ? '<span style="margin-left:8px;font-size:10.5px;font-weight:700;color:#1E6B3B;background:#E8F5E9;border-radius:9px;padding:2px 8px">association ✓ &nbsp;rang ✓</span>'
+                    : '<span style="margin-left:8px;font-size:10.5px;font-weight:700;color:#C55A11;background:#FFF8E1;border-radius:9px;padding:2px 8px">association ✓ &nbsp;rang ✗</span>')
+          : '<span style="margin-left:8px;font-size:10.5px;font-weight:700;color:#C62828;background:#FFEBEE;border-radius:9px;padding:2px 8px">association ✗</span>';
+      }
+      h += '<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px">'
+        + '<div style="min-width:118px;font-size:11px;font-weight:700;color:#5C6BC0;text-transform:uppercase;letter-spacing:.4px;padding-top:3px">Ligne ' + j + '</div>'
+        + '<div style="flex:1;background:var(--gr);border-radius:6px;padding:6px 10px;font-size:13px;color:var(--tx)">' + txt + badge + '</div></div>';
+    }
+    h += '<div style="font-size:11.5px;color:var(--td);font-style:italic;margin:4px 0 2px">Ordre attendu : '
+      + (function () {
+          var l = [];
+          for (var m = 0; m < ob.lignes.length; m++) l.push((m + 1) + ". " + p11x2Libelle(ob.ftOpts, ob.lignes[m].ft));
+          return l.join(" · ");
+        })() + '</div>';
+  }
+  return h;
+}
+
+/* ── Panneau prof : correction auto + ajustement + barème ─────── */
+var _p11x2LastAutoAppr = "";
+
+function buildP11Ex2TeacherPanel(sub) {
+  injectDCPanelCSS();
+  var f = sub.fields || {};
+  var sec = scoreP11Ex2BySection(f);
+  var saved = sub.adjustedPts || sec;
+  var bareme = Number(sub.bareme) || 20;
+  var savedTotal = p11x2TotalBrut(saved);
+  var appr = sub.appreciation || autoAppreciationP11Ex2(p11x1Convert(savedTotal, bareme), bareme, saved);
+  _p11x2LastAutoAppr = sub.appreciation ? "" : appr;
+
+  function adjRow(key, label, maxPts, autoVal, curVal) {
+    var v = (typeof curVal !== "undefined") ? curVal : autoVal;
+    return '<div class="adj-row">'
+      + '<span class="adj-lbl">' + label + '</span>'
+      + '<span class="adj-auto">Auto: ' + autoVal + '/' + maxPts + '</span>'
+      + '<div class="adj-ctrl">'
+      + '<button class="adj-btn" onclick="p11x2AdjStep(\'' + key + '\',' + maxPts + ',-0.5)">−</button>'
+      + '<input class="adj-val" id="p11x2adj-' + key + '" type="text" value="' + v + '" readonly>'
+      + '<button class="adj-btn" onclick="p11x2AdjStep(\'' + key + '\',' + maxPts + ',0.5)">+</button>'
+      + '</div></div>';
+  }
+
+  var code = (getCodes()["p11-ex2"] || "").toUpperCase();
+  var h = '';
+  h += '<div style="background:#E8EAF6;border:1.5px solid #5C6BC0;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">';
+  h += '<div style="font-size:20px">🔑</div>';
+  h += '<div><div style="font-size:11px;font-weight:700;color:#283593;text-transform:uppercase;letter-spacing:.5px">Code de l\'exercice à communiquer aux élèves</div>';
+  h += '<div style="font-family:\'DM Mono\',monospace;font-size:22px;font-weight:700;color:#283593;letter-spacing:4px">' + (code || '—') + '</div></div></div>';
+
+  h += '<div class="adj-panel" style="border-color:#5C6BC0">';
+  h += '<div class="adj-panel-title" style="color:#5C6BC0">✏️ Correction automatique <span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(ajustable par palier de 0,5)</span></div>';
+  h += '<div style="font-size:11.5px;color:var(--td);background:var(--gr);border-radius:8px;padding:7px 11px;margin-bottom:10px;line-height:1.6">'
+     + '<strong>Association</strong> : la paire fonction ↔ solution est juste, même placée sur la mauvaise ligne. &nbsp;·&nbsp; '
+     + '<strong>Hiérarchisation</strong> : la paire est juste <em>et</em> au bon rang.</div>';
+
+  h += '<div style="display:flex;align-items:center;gap:10px;background:#F1F8E9;border:1px solid #C8E6C9;border-radius:8px;padding:8px 12px;margin-bottom:10px;flex-wrap:wrap">';
+  h += '<span style="font-size:12px;font-weight:700;color:#1E6B3B">Barème</span>';
+  h += '<select id="p11x2-bareme" onchange="p11x2AdjUpdateTotal()" style="padding:5px 10px;border:1.5px solid #C8E6C9;border-radius:7px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:600;cursor:pointer">';
+  h += '<option value="20"' + (bareme === 20 ? ' selected' : '') + '>Note sur 20</option>';
+  h += '<option value="30"' + (bareme === 30 ? ' selected' : '') + '>Note sur 30</option>';
+  h += '</select>';
+  h += '<span style="font-size:11.5px;color:var(--td);font-style:italic">Total brut sur 30 ; conversion sur 20 arrondie au demi-point.</span>';
+  h += '</div>';
+
+  for (var i = 0; i < P11X2_SECTIONS.length; i++) {
+    var S = P11X2_SECTIONS[i];
+    h += adjRow(S.k, S.lbl, S.max, sec[S.k], saved[S.k]);
+  }
+
+  h += '<div class="adj-total-box" id="p11x2-total-box">'
+    + '<div class="adj-total-num" id="p11x2-total-num">' + p11x1Fmt(p11x1Convert(savedTotal, bareme)) + '<span style="font-size:16px">/' + bareme + '</span></div>'
+    + '<div class="adj-total-sub" id="p11x2-total-sub">Total brut : ' + p11x1Fmt(savedTotal) + '/30 — se met à jour en temps réel</div>'
+    + '</div>';
+  h += '</div>';
+
+  h += '<div class="appr-panel">';
+  h += '<div class="appr-title">💬 Appréciation pédagogique</div>';
+  h += '<div style="font-size:11px;color:var(--vt);margin-bottom:6px;font-style:italic">💡 Suggestion automatique — modifiable :</div>';
+  h += '<textarea class="appr-ta" id="p11x2-appreciation" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
+  h += '<div class="appr-actions">';
+  h += '<button onclick="p11x2ResetApprAuto()" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Regénérer auto</button>';
+  h += '</div></div>';
+
+  h += '<div style="text-align:right;margin-top:12px">';
+  h += '<button onclick="saveP11Ex2Adj(' + sub.id + ')" style="padding:10px 22px;background:#5C6BC0;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
+  h += '</div>';
+  return h;
+}
+
+function p11x2ReadAdj() {
+  var pts = {};
+  for (var i = 0; i < P11X2_SECTIONS.length; i++) {
+    var el = document.getElementById("p11x2adj-" + P11X2_SECTIONS[i].k);
+    pts[P11X2_SECTIONS[i].k] = el ? (parseFloat(el.value) || 0) : 0;
+  }
+  return pts;
+}
+function p11x2AdjStep(key, maxPts, delta) {
+  var el = document.getElementById("p11x2adj-" + key);
+  if (!el) return;
+  var v = Math.round((parseFloat(el.value) || 0) * 10) / 10;
+  v = Math.max(0, Math.min(maxPts, v + delta));
+  v = Math.round(v * 10) / 10;
+  el.value = (v % 1 === 0) ? v.toFixed(0) : v.toFixed(1);
+  p11x2AdjUpdateTotal();
+}
+function p11x2AdjUpdateTotal() {
+  var brut = p11x2TotalBrut(p11x2ReadAdj());
+  var bs = document.getElementById("p11x2-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  var note = p11x1Convert(brut, bareme);
+  var nb = document.getElementById("p11x2-total-num");
+  if (nb) nb.innerHTML = p11x1Fmt(note) + '<span style="font-size:16px">/' + bareme + '</span>';
+  var sb = document.getElementById("p11x2-total-sub");
+  if (sb) sb.textContent = "Total brut : " + p11x1Fmt(brut) + "/30 — se met à jour en temps réel";
+  var box = document.getElementById("p11x2-total-box");
+  if (box) {
+    var pct = note / bareme * 100;
+    var col = pct >= 75 ? "#2E8B4A" : pct >= 50 ? "#C55A11" : "#C0392B";
+    box.style.background = "linear-gradient(135deg," + col + "," + col + "cc)";
+  }
+  p11x2AutoApprIfUntouched();
+}
+function _p11x2ComputeAutoAppr() {
+  var pts = p11x2ReadAdj();
+  var bs = document.getElementById("p11x2-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  return autoAppreciationP11Ex2(p11x1Convert(p11x2TotalBrut(pts), bareme), bareme, pts);
+}
+function p11x2ResetApprAuto() {
+  var ta = document.getElementById("p11x2-appreciation");
+  if (!ta) return;
+  ta.value = _p11x2ComputeAutoAppr();
+  _p11x2LastAutoAppr = ta.value;
+}
+function p11x2AutoApprIfUntouched() {
+  var ta = document.getElementById("p11x2-appreciation");
+  if (!ta) return;
+  if (ta.value === _p11x2LastAutoAppr) {
+    var n = _p11x2ComputeAutoAppr();
+    ta.value = n;
+    _p11x2LastAutoAppr = n;
+  }
+}
+function saveP11Ex2Adj(sid) {
+  var pts = p11x2ReadAdj();
+  var bs = document.getElementById("p11x2-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  var brut = p11x2TotalBrut(pts);
+  var note = p11x1Convert(brut, bareme);
+  var ta = document.getElementById("p11x2-appreciation");
+  var subs = getSubs(), idx = -1;
+  for (var j = 0; j < subs.length; j++) { if (subs[j].id == sid) { idx = j; break; } }
+  if (idx < 0) { toast("Soumission introuvable"); return; }
+  subs[idx].adjustedPts   = pts;
+  subs[idx].bareme        = bareme;
+  subs[idx].scoreBrut     = brut;
+  subs[idx].adjustedScore = note;
+  subs[idx].appreciation  = ta ? ta.value : "";
+  subs[idx].status        = "validated";
+  subs[idx].score         = note;
+  subs[idx].qcmTot        = bareme;
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  localStorage.setItem("subs", JSON.stringify(subs));
+  renderStats(); renderSubs();
+  var ms = document.getElementById("mscore");
+  if (ms) ms.textContent = "Note : " + p11x1Fmt(note) + "/" + bareme + " ✅ — Appréciation enregistrée";
+  toast("✅ Note enregistrée — " + p11x1Fmt(note) + "/" + bareme);
+}
+
+/* ── Soumission ────────────────────────────────────────────────── */
+function submitP11Ex2Form() {
+  var nom    = (document.getElementById("p11x2-nom").value    || "").trim();
+  var prenom = (document.getElementById("p11x2-prenom").value || "").trim();
+  var classe = (document.getElementById("p11x2-classe").value || "").trim();
+  if (!nom || !prenom) { alert("Identifiant non détecté — reconnecte-toi."); return; }
+  if (!classe) { alert("Merci de choisir ta classe."); return; }
+
+  var snap = snapP11Ex2();
+  var nf = countP11Ex2Fields(snap);
+  if (!nf.done) { alert("Aucune réponse saisie. Remplis l'exercice avant de soumettre."); return; }
+  if (nf.done < 15 && !confirm("Tu n'as répondu qu'à " + nf.done + " menu(s) sur " + nf.total + ". Envoyer quand même au professeur ?")) return;
+
+  if (user) { try { localStorage.setItem("p11_ex2_" + user.id, JSON.stringify(snap)); } catch(e) {} }
+
+  var brut = p11x2TotalBrut(scoreP11Ex2BySection(snap));
+  var eid  = user ? user.id : (prenom.toLowerCase().replace(/\s/g,"") + "." + nom.toLowerCase().replace(/\s/g,""));
+  var sub = {
+    id: Date.now(), eid: eid, ename: prenom + " " + nom, ecls: classe,
+    cap: "p11-ex2", caplbl: "P11 — Exercice n°2 (Diagramme FAST)",
+    score: p11x1Convert(brut, 20), qcmTot: 20, scoreBrut: brut, bareme: 20,
+    open: buildP11Ex2OpenSummary(snap), fields: snap,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(), status: "pending"
+  };
+  var allSubs = getSubs();
+  allSubs = allSubs.filter(function(x){ return !(x.eid === sub.eid && x.cap === "p11-ex2"); });
+  allSubs.push(sub);
+  localStorage.setItem("subs", JSON.stringify(allSubs));
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(sub); } catch(e) {}
+
+  var st = document.getElementById("p11x2-status");
+  if (st) {
+    st.innerHTML = "&#x2705; Travail soumis le " + new Date().toLocaleString("fr-FR") +
+                   ". Ton professeur le corrigera.";
+    st.style.color = "var(--vt)";
+  }
+  toast("Exercice soumis ✅");
+  try { updMyStatus(); } catch(e) {}
+}
+
+/* ── Corrigé (page prof) ───────────────────────────────────────── */
+function renderP11Ex2Corrige() {
+  var z = document.getElementById("p11x2-cor-zone");
+  if (!z) return;
+  var h = '<div class="p12-part-hdr" style="background:#283593">'
+        + '<span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">A</span>'
+        + 'Lire un diagramme FAST &mdash; 5 pts</div><div class="p12-part-body">';
+  for (var i = 0; i < P11X2_REGLES.length; i++) {
+    h += '<div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>'
+       + (i + 1) + '. </strong>' + P11X2_REGLES[i].q + '<br><em>&rarr; '
+       + p11x2Libelle(P11X2_REGLES[i].opts, P11X2_REGLES[i].bonne) + '</em></div>';
+  }
+  h += '</div>';
+
+  var lettres = ["B", "C", "D"];
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    var tot = 1 + ob.lignes.length * 2;
+    h += '<div class="p12-part-hdr" style="background:' + ob.couleur + '">'
+       + '<span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">'
+       + lettres[o] + '</span>' + ob.nom + ' &mdash; ' + tot + ' pts</div><div class="p12-part-body">';
+    h += '<div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:10px"><strong>Fonction d\'usage (1 pt)&nbsp;:</strong> <em>'
+       + p11x2Libelle(ob.usageOpts, ob.usage) + '</em></div>';
+    h += '<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff">'
+       + '<thead><tr style="background:' + ob.couleur + ';color:#fff">'
+       + '<th style="padding:9px 12px;text-align:left;border:1px solid var(--gb);width:120px">Rang</th>'
+       + '<th style="padding:9px 12px;text-align:left;border:1px solid var(--gb)">Fonction technique</th>'
+       + '<th style="padding:9px 12px;text-align:left;border:1px solid var(--gb)">Solution technique</th>'
+       + '</tr></thead><tbody>';
+    for (var j = 0; j < ob.lignes.length; j++) {
+      h += '<tr><td style="padding:9px 12px;border:1px solid var(--gb);font-weight:700;background:var(--gr)">'
+         + (j + 1) + (j === 0 ? '<sup>re</sup> ligne' : '<sup>e</sup> ligne') + '</td>'
+         + '<td style="padding:9px 12px;border:1px solid var(--gb);background:var(--vp)">' + p11x2Libelle(ob.ftOpts, ob.lignes[j].ft) + '</td>'
+         + '<td style="padding:9px 12px;border:1px solid var(--gb);background:var(--vp)">' + p11x2Libelle(ob.stOpts, ob.lignes[j].st) + '</td></tr>';
+    }
+    h += '</tbody></table></div>';
+    h += '<div style="background:#FFF8E1;border-left:4px solid #FBC02D;border-radius:8px;padding:11px 15px;margin-top:12px;font-size:13px;color:#5D4E00">'
+       + '<strong>Pourquoi cet ordre&nbsp;?</strong> ' + ob.pourquoi + '</div>';
+    h += '<div style="font-size:12.5px;color:var(--td);margin-top:10px">Bar&egrave;me&nbsp;: 1 pt fonction d\'usage &bull; '
+       + ob.lignes.length + ' pts d\'association (paire juste, m&ecirc;me mal plac&eacute;e) &bull; '
+       + ob.lignes.length + ' pts de hi&eacute;rarchisation (paire juste et au bon rang).</div>';
+    h += '</div>';
+  }
+
+  h += '<div style="background:#FFF8E1;border-left:4px solid #FBC02D;border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:#5D4E00">'
+     + '&#x1F4A1; <strong>Conversion de la note.</strong> Le bar&egrave;me brut est sur <strong>30 points</strong>. '
+     + 'Dans le modal Prof, le s&eacute;lecteur &laquo;&nbsp;Bar&egrave;me&nbsp;&raquo; affiche la note sur <strong>/30</strong> ou la convertit sur <strong>/20</strong> (arrondi au demi-point).</div>';
+  z.innerHTML = h;
+}
+
+/* ── Exports PDF ───────────────────────────────────────────────── */
+function exportP11Ex2PDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page."); return; }
+  var doc = _p11x1PdfDoc("P11 — Exercice n°2 — Le diagramme FAST",
+                         "Associer des solutions techniques à des fonctions techniques", [92,107,192]);
+  var M = 14, Y = 36, lh = 5.2;
+  function v(id) { var el = document.getElementById(id); return el ? el.value : ""; }
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function titre(t) {
+    chk(14); doc.setFillColor(232,234,246); doc.rect(M, Y-4, 182, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(40,53,147);
+    doc.text(t, M+2, Y+1.5); Y += 11;
+  }
+  function item(lbl, txt) {
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+    chk(10); doc.text(lbl, M, Y); Y += lh;
+    doc.setFont("helvetica","normal"); doc.setTextColor(20,20,20);
+    var lines = doc.splitTextToSize(txt || "—", 178);
+    for (var i = 0; i < lines.length; i++) { chk(6); doc.text(lines[i], M+3, Y); Y += lh; }
+    Y += 1.5;
+  }
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(40,40,40);
+  doc.text("Élève : " + v("p11x2-prenom") + " " + v("p11x2-nom") + "   —   Classe : " + v("p11x2-classe"), M, Y); Y += 9;
+
+  titre("Partie A — Lire un diagramme FAST");
+  for (var i = 0; i < P11X2_REGLES.length; i++) {
+    item("Règle " + (i + 1), p11x2Libelle(P11X2_REGLES[i].opts, v("p11x2-r" + (i + 1))));
+  }
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    titre(ob.nom);
+    item("Fonction d'usage", p11x2Libelle(ob.usageOpts, v("p11x2-" + ob.pref + "-usage")));
+    for (var j = 1; j <= ob.lignes.length; j++) {
+      item("Ligne " + j,
+        (p11x2Libelle(ob.ftOpts, v("p11x2-" + ob.pref + "-ft" + j)) || "—") + "   ->   " +
+        (p11x2Libelle(ob.stOpts, v("p11x2-" + ob.pref + "-st" + j)) || "—"));
+    }
+  }
+  doc.save("P11_Exercice2_" + (v("p11x2-nom") || "eleve") + "_" + (v("p11x2-prenom") || "") + ".pdf");
+}
+
+function exportP11Ex2CorPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page."); return; }
+  var doc = _p11x1PdfDoc("P11 — Corrigé Exercice n°2 — Diagramme FAST", "Barème brut : 30 points — convertible sur 20", [30,107,59]);
+  var M = 14, Y = 36, lh = 5.2;
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function titre(t) {
+    chk(14); doc.setFillColor(226,239,218); doc.rect(M, Y-4, 182, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(30,107,59);
+    doc.text(t, M+2, Y+1.5); Y += 11;
+  }
+  function item(lbl, txt) {
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+    chk(10); doc.text(lbl, M, Y); Y += lh;
+    doc.setFont("helvetica","normal"); doc.setTextColor(20,20,20);
+    var lines = doc.splitTextToSize(txt, 178);
+    for (var i = 0; i < lines.length; i++) { chk(6); doc.text(lines[i], M+3, Y); Y += lh; }
+    Y += 1.5;
+  }
+  titre("Partie A — Lire un diagramme FAST (5 pts)");
+  for (var i = 0; i < P11X2_REGLES.length; i++) {
+    item("Règle " + (i + 1), p11x2Libelle(P11X2_REGLES[i].opts, P11X2_REGLES[i].bonne));
+  }
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o];
+    titre(ob.nom + " (" + (1 + ob.lignes.length * 2) + " pts)");
+    item("Fonction d'usage (1 pt)", p11x2Libelle(ob.usageOpts, ob.usage));
+    for (var j = 0; j < ob.lignes.length; j++) {
+      item("Ligne " + (j + 1),
+        p11x2Libelle(ob.ftOpts, ob.lignes[j].ft) + "   ->   " + p11x2Libelle(ob.stOpts, ob.lignes[j].st));
+    }
+    item("Pourquoi cet ordre ?", ob.pourquoi);
+  }
+  titre("Règle de correction");
+  item("Association", "Une paire fonction <-> solution juste rapporte son point même si elle est placée sur la mauvaise ligne.");
+  item("Hiérarchisation", "Un point supplémentaire par ligne dont la paire est juste ET placée au bon rang.");
+  doc.save("P11_Exercice2_Corrige.pdf");
+}
+
+// ================================================================
 // P11 — EXERCICE n°1 — Capteurs, actionneurs & cahier des charges
 // ================================================================
 /* Liste des IDs des champs — utilisée par save/restore/snap/export */
@@ -11879,10 +12947,105 @@ function _p11has(t, list) {
   return false;
 }
 
+/* ── Tolérance orthographique ───────────────────────────────────
+   Un mot juste vaut 1 point ; un mot phonétiquement juste mais mal
+   orthographié vaut 0,5 point ; un mot faux vaut 0.
+   Exemple visé : un verbe du 3e groupe en « -ir » écrit « -iren ».
+
+   _p11phon replie l'écriture sur une forme phonétique approchée du
+   français (ph→f, qu→k, eau→o, lettres doubles réduites, consonnes et
+   « e » muets finaux supprimés…). Deux graphies qui se prononcent de la
+   même façon donnent alors la même chaîne. On tolère en plus une petite
+   distance d'édition, pour les fautes qui déforment un peu le son. */
+function _p11phon(v) {
+  var t = _p11norm(v);
+  if (!t) return "";
+  t = t.replace(/ph/g, "f")
+       .replace(/qu/g, "k")
+       .replace(/gu([eiy])/g, "g$1")
+       .replace(/eau/g, "o").replace(/au/g, "o").replace(/ou/g, "u")
+       .replace(/ai|ei/g, "e").replace(/oi/g, "wa")
+       .replace(/c([eiy])/g, "s$1").replace(/ch/g, "s").replace(/c/g, "k")
+       .replace(/x/g, "ks").replace(/y/g, "i").replace(/gn/g, "n")
+       .replace(/([aeiou])s([aeiou])/g, "$1z$2")
+       .replace(/h/g, "")
+       .replace(/(er|ez|ai)$/g, "e")
+       .replace(/(.)\1+/g, "$1")
+       .replace(/[edstxzp]+$/g, "");
+  return t;
+}
+
+/* Distance de Levenshtein, bornée : on s'arrête dès qu'on dépasse max. */
+function _p11lev(a, b, max) {
+  if (a === b) return 0;
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  var prev = [], cur = [], i, j;
+  for (j = 0; j <= b.length; j++) prev[j] = j;
+  for (i = 1; i <= a.length; i++) {
+    cur[0] = i;
+    var best = cur[0];
+    for (j = 1; j <= b.length; j++) {
+      var cout = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
+      cur[j] = Math.min(cur[j - 1] + 1, prev[j] + 1, prev[j - 1] + cout);
+      if (cur[j] < best) best = cur[j];
+    }
+    if (best > max) return max + 1;
+    for (j = 0; j <= b.length; j++) prev[j] = cur[j];
+  }
+  return prev[b.length];
+}
+
+/* Le mot-clé est-il présent tel quel dans la réponse ?
+   On exige le MOT ENTIER (pluriel en -s/-x toléré) et non un simple morceau :
+   sans cela « acquérirent » vaudrait le point plein puisqu'il contient
+   « acquerir », alors que c'est justement la faute qu'on veut demi-compter.
+   Une clé terminée par « * » est un radical : le préfixe suffit
+   (« econom* » accepte « économiser », « économie », « économique »). */
+function _p11exact(mots, cle) {
+  var radical = /\*$/.test(cle);
+  var c = radical ? cle.slice(0, -1) : cle;
+  var n = c.split(" ").length;
+  for (var d = 0; d + n <= mots.length; d++) {
+    var bout = mots.slice(d, d + n).join(" ");
+    if (radical) { if (bout.indexOf(c) === 0) return true; }
+    else if (bout === c || bout === c + "s" || bout === c + "x") return true;
+  }
+  return false;
+}
+
+/* Compare une réponse d'élève à une liste de mots-clés attendus.
+   Renvoie 1 (juste), 0.5 (phonétiquement juste, orthographe fautive) ou 0. */
+function _p11match(v, list) {
+  var t = _p11norm(v);
+  if (!t) return 0;
+  var mots = t.split(" ");
+  var i;
+  for (i = 0; i < list.length; i++) {
+    if (_p11exact(mots, list[i].trim())) return 1;      /* écriture correcte */
+  }
+  /* Rattrapage phonétique, mot à mot (ou groupe de mots pour les clés composées) */
+  for (i = 0; i < list.length; i++) {
+    var cle = list[i].trim().replace(/\*$/, "");
+    if (cle.length < 4) continue;                  /* trop court : pas de tolérance */
+    var pc = _p11phon(cle);
+    if (!pc) continue;
+    var n = cle.split(" ").length;
+    var tol = pc.length <= 5 ? 1 : 2;
+    for (var d = 0; d + n <= mots.length; d++) {
+      var bout = mots.slice(d, d + n).join(" ");
+      var pb = _p11phon(bout);
+      if (!pb) continue;
+      if (pb === pc) return 0.5;
+      if (_p11lev(pb, pc, tol) <= tol) return 0.5;
+    }
+  }
+  return 0;
+}
+
 var P11X1_KW = {
   capteur:   ["capteur","detecteur","sonde","thermometre","ultrason","infrarouge","photoresistance","ldr",
               "bouton","interrupteur","fin de course","potentiometre","temperature","luminosite","humidite",
-              "presence","fumee","distance","debit","pression","son ","microphone","co2"],
+              "presence","fumee","distance","debit","pression","son","microphone","co2"],
   interface: ["arduino","raspberry","microbit","micro bit","micro:bit","carte","microcontroleur","micro controleur",
               "automate","esp32","esp8266","nano","uno","programmable","interface"],
   actionneur:["moteur","buzzer","led","diode","electrovanne","vanne","verin","haut parleur","hautparleur",
@@ -11898,14 +13061,14 @@ var P11X1_KW = {
   produit:["pommeau","douchette","douche"],
   qui:["utilisateur","usager","personne","client","consommateur","gens","humain","individu","habitant"],
   butDouche:["douche","laver","lavage","toilette"],
-  butEco:["econom","quantite","consommation","gaspill","facture","maitris","reduire","limiter","debit","moins d eau"],
+  butEco:["econom*","quantite","consommation","gaspill*","facture","maitris*","reduire","limiter","debit","moins d eau"],
   fp1:["douche"],
-  fp2:["facture","economi","consommation","depense"],
+  fp2:["facture","economi*","consommation","depense"],
   fc1:["flexible","visser","pas de vis","standard","tuyau"],
-  fc2:["ergonom","forme","main","prise en main","tenir"],
+  fc2:["ergonom*","forme","main","prise en main","tenir"],
   fc3:["renouvelable","hydraulique","turbine","verte","propre"],
   dFp1c:["debit","jet"],
-  dFp2:["facture","economi","consommation"],
+  dFp2:["facture","economi*","consommation"],
   dFc3:["renouvelable","hydraulique"]
 };
 
@@ -11922,7 +13085,8 @@ function scoreP11Ex1BySection(f) {
       var n = _p11norm(f[ids[j]]);
       if (!n) continue;
       if (vus.indexOf(n) !== -1) continue;      /* doublon → pas de point */
-      if (_p11has(n, kw)) { pts++; vus.push(n); }
+      var m = _p11match(f[ids[j]], kw);         /* 1, 0.5 (orthographe) ou 0 */
+      if (m > 0) { pts += m; vus.push(n); }
     }
     return pts;
   }
@@ -11931,42 +13095,41 @@ function scoreP11Ex1BySection(f) {
   s.act  = famille(["p11x1-act1","p11x1-act2","p11x1-act3"], P11X1_KW.actionneur);
 
   /* A4 — chaîne d'information (ordre attendu) */
-  if (_p11has(_p11norm(f["p11x1-ci1"]), P11X1_KW.ci1)) s.ci++;
-  if (_p11has(_p11norm(f["p11x1-ci2"]), P11X1_KW.ci2)) s.ci++;
-  if (_p11has(_p11norm(f["p11x1-ci3"]), P11X1_KW.ci3)) s.ci++;
+  s.ci += _p11match(f["p11x1-ci1"], P11X1_KW.ci1);
+  s.ci += _p11match(f["p11x1-ci2"], P11X1_KW.ci2);
+  s.ci += _p11match(f["p11x1-ci3"], P11X1_KW.ci3);
 
   /* A5 — chaîne d'énergie (ordre attendu) */
-  if (_p11has(_p11norm(f["p11x1-ce1"]), P11X1_KW.ce1)) s.ce++;
-  if (_p11has(_p11norm(f["p11x1-ce2"]), P11X1_KW.ce2)) s.ce++;
-  if (_p11has(_p11norm(f["p11x1-ce3"]), P11X1_KW.ce3)) s.ce++;
-  if (_p11has(_p11norm(f["p11x1-ce4"]), P11X1_KW.ce4)) s.ce++;
+  s.ce += _p11match(f["p11x1-ce1"], P11X1_KW.ce1);
+  s.ce += _p11match(f["p11x1-ce2"], P11X1_KW.ce2);
+  s.ce += _p11match(f["p11x1-ce3"], P11X1_KW.ce3);
+  s.ce += _p11match(f["p11x1-ce4"], P11X1_KW.ce4);
 
   /* B — bête à cornes (1+1+1+2) */
-  if (_p11has(_p11norm(f["p11x1-b-produit"]), P11X1_KW.produit)) s.bete++;
-  if (_p11has(_p11norm(f["p11x1-b-qui"]), P11X1_KW.qui)) s.bete++;
-  if (_p11norm(f["p11x1-b-quoi"]).indexOf("eau") !== -1) s.bete++;
-  t = _p11norm(f["p11x1-b-but"]);
-  if (_p11has(t, P11X1_KW.butDouche)) s.bete++;
-  if (_p11has(t, P11X1_KW.butEco)) s.bete++;
+  s.bete += _p11match(f["p11x1-b-produit"], P11X1_KW.produit);
+  s.bete += _p11match(f["p11x1-b-qui"], P11X1_KW.qui);
+  s.bete += _p11match(f["p11x1-b-quoi"], ["eau"]);
+  s.bete += _p11match(f["p11x1-b-but"], P11X1_KW.butDouche);
+  s.bete += _p11match(f["p11x1-b-but"], P11X1_KW.butEco);
 
   /* C — pieuvre (1 pt par fonction) */
-  if (_p11has(_p11norm(f["p11x1-c-fp1"]), P11X1_KW.fp1)) s.pie++;
-  if (_p11has(_p11norm(f["p11x1-c-fp2"]), P11X1_KW.fp2)) s.pie++;
-  if (_p11has(_p11norm(f["p11x1-c-fc1"]), P11X1_KW.fc1)) s.pie++;
-  if (_p11has(_p11norm(f["p11x1-c-fc2"]), P11X1_KW.fc2)) s.pie++;
-  if (_p11has(_p11norm(f["p11x1-c-fc3"]), P11X1_KW.fc3)) s.pie++;
+  s.pie += _p11match(f["p11x1-c-fp1"], P11X1_KW.fp1);
+  s.pie += _p11match(f["p11x1-c-fp2"], P11X1_KW.fp2);
+  s.pie += _p11match(f["p11x1-c-fc1"], P11X1_KW.fc1);
+  s.pie += _p11match(f["p11x1-c-fc2"], P11X1_KW.fc2);
+  s.pie += _p11match(f["p11x1-c-fc3"], P11X1_KW.fc3);
 
   /* D — extrait du CDCF (4 pts) */
-  if (_p11has(_p11norm(f["p11x1-d-fp1c"]), P11X1_KW.dFp1c)) s.cdcf++;
+  s.cdcf += _p11match(f["p11x1-d-fp1c"], P11X1_KW.dFp1c);
   t = _p11norm(f["p11x1-d-fp1n"]);
-  if (/(^|\s)(8|9|10)(\s|$)/.test(t) && _p11has(t, ["litre","l min","minute","lmin"])) s.cdcf++;
-  if (_p11has(_p11norm(f["p11x1-d-fp2lib"]), P11X1_KW.dFp2)) s.cdcf++;
-  if (_p11has(_p11norm(f["p11x1-d-fc3lib"]), P11X1_KW.dFc3)) s.cdcf++;
+  if (/(^|\s)(8|9|10)(\s|$)/.test(t) && _p11match(f["p11x1-d-fp1n"], ["litre","l min","minute","lmin"]) > 0) s.cdcf++;
+  s.cdcf += _p11match(f["p11x1-d-fp2lib"], P11X1_KW.dFp2);
+  s.cdcf += _p11match(f["p11x1-d-fc3lib"], P11X1_KW.dFc3);
 
   /* Sécurité : plafonner chaque section à son maximum */
   for (i = 0; i < P11X1_SECTIONS.length; i++) {
     var sec = P11X1_SECTIONS[i];
-    s[sec.k] = Math.min(s[sec.k], sec.max);
+    s[sec.k] = Math.min(Math.round(s[sec.k] * 2) / 2, sec.max);
   }
   return s;
 }
@@ -12093,19 +13256,25 @@ function buildP11Ex1OpenSummary(snap) {
 function buildP11Ex1ModalHTML(f) {
   f = f || {};
   function esc(s) { return String(s === undefined || s === null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-  function row(lbl, key, ok) {
+  /* pts : 1 = juste (✓), 0.5 = phonétiquement juste mais mal orthographié (≈), 0 = faux (✗) */
+  function row(lbl, key, pts) {
     var raw = f[key];
     var vide = (raw === undefined || raw === null || String(raw).trim() === "");
     var v = vide ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>' : esc(raw);
-    var pastille = (ok === undefined) ? ""
-      : '<span style="font-size:11px;font-weight:700;margin-left:6px;color:' + (ok ? "#1E6B3B" : "#C62828") + '">' + (ok ? "✓" : "✗") + '</span>';
+    var pastille = "";
+    if (pts !== undefined && !vide) {
+      var coul = pts >= 1 ? "#1E6B3B" : pts > 0 ? "#C55A11" : "#C62828";
+      var sgn  = pts >= 1 ? "✓" : pts > 0 ? "≈" : "✗";
+      var info = pts > 0 && pts < 1 ? " title=\"Phonétiquement juste, orthographe fautive : un demi-point\"" : "";
+      pastille = '<span' + info + ' style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">' + sgn + '</span>';
+    }
     return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + lbl + pastille + '</div>' +
       '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + v + '</div></div>';
   }
   function part(lbl, color) {
     return '<div style="font-weight:700;color:' + color + ';font-size:12px;margin:14px 0 6px;border-bottom:2px solid ' + color + ';padding-bottom:3px">' + lbl + '</div>';
   }
-  function kw(key, list) { return _p11has(_p11norm(f[key]), list); }
+  function kw(key, list) { return _p11match(f[key], list); }
 
   var h = part("PARTIE A — Capteurs, interfaces, actionneurs", "#01579B");
   h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px">';
@@ -12132,7 +13301,7 @@ function buildP11Ex1ModalHTML(f) {
   h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px">';
   h += row("Produit","p11x1-b-produit", kw("p11x1-b-produit", P11X1_KW.produit));
   h += row("À qui rend-il service ?","p11x1-b-qui", kw("p11x1-b-qui", P11X1_KW.qui));
-  h += row("Sur quoi agit-il ?","p11x1-b-quoi", _p11norm(f["p11x1-b-quoi"]).indexOf("eau") !== -1);
+  h += row("Sur quoi agit-il ?","p11x1-b-quoi", _p11match(f["p11x1-b-quoi"], ["eau"]));
   h += '</div>';
   h += row("Dans quel but ?","p11x1-b-but", kw("p11x1-b-but", P11X1_KW.butDouche));
   h += part("PARTIE C — Pieuvre", "#7B1FA2");
@@ -12144,7 +13313,7 @@ function buildP11Ex1ModalHTML(f) {
   h += part("PARTIE D — Extrait du CDCF", "#1E6B3B");
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
   h += row("FP1 — critère","p11x1-d-fp1c", kw("p11x1-d-fp1c", P11X1_KW.dFp1c));
-  h += row("FP1 — niveau","p11x1-d-fp1n", /(^|\s)(8|9|10)(\s|$)/.test(_p11norm(f["p11x1-d-fp1n"])) && _p11has(_p11norm(f["p11x1-d-fp1n"]), ["litre","l min","minute","lmin"]));
+  h += row("FP1 — niveau","p11x1-d-fp1n", (/(^|\s)(8|9|10)(\s|$)/.test(_p11norm(f["p11x1-d-fp1n"])) && _p11match(f["p11x1-d-fp1n"], ["litre","l min","minute","lmin"]) > 0) ? 1 : 0);
   h += '</div>';
   h += row("FP2 — libellé","p11x1-d-fp2lib", kw("p11x1-d-fp2lib", P11X1_KW.dFp2));
   h += row("FC3 — libellé","p11x1-d-fc3lib", kw("p11x1-d-fc3lib", P11X1_KW.dFc3));
@@ -12185,6 +13354,10 @@ function buildP11Ex1TeacherPanel(sub) {
 
   h += '<div class="adj-panel" style="border-color:#0288D1">';
   h += '<div class="adj-panel-title" style="color:#0288D1">✏️ Correction automatique <span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(indicative — ajustable par palier de 0,5)</span></div>';
+  h += '<div style="font-size:11.5px;color:var(--td);background:var(--gr);border-radius:8px;padding:7px 11px;margin-bottom:10px">'
+    + '<strong style="color:#1E6B3B">✓</strong> réponse juste &nbsp;·&nbsp; '
+    + '<strong style="color:#C55A11">≈</strong> phonétiquement juste mais orthographe fautive (demi-point) &nbsp;·&nbsp; '
+    + '<strong style="color:#C62828">✗</strong> réponse fausse</div>';
 
   h += '<div style="display:flex;align-items:center;gap:10px;background:#F1F8E9;border:1px solid #C8E6C9;border-radius:8px;padding:8px 12px;margin-bottom:10px;flex-wrap:wrap">';
   h += '<span style="font-size:12px;font-weight:700;color:#1E6B3B">Barème</span>';
@@ -12494,6 +13667,24 @@ restoreP12Ex2Draft = function() {
   } catch(e) {}
 };
 
+// ── P11 Exercice 2 — brouillon horodaté ───────────────
+var _origSaveP11Ex2Draft = saveP11Ex2Draft;
+saveP11Ex2Draft = function(showFeedback) {
+  if (!user) return;
+  var snap = snapP11Ex2();
+  snap._savedAt = _draftTs();
+  try { localStorage.setItem("p11_ex2_" + user.id, JSON.stringify(snap)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("p11x2-draft-status", snap._savedAt);
+};
+var _origRestoreP11Ex2Draft = restoreP11Ex2Draft;
+restoreP11Ex2Draft = function() {
+  _origRestoreP11Ex2Draft();
+  try {
+    var raw = localStorage.getItem("p11_ex2_" + user.id);
+    if (raw) { var d = JSON.parse(raw); _showDraftStatus("p11x2-draft-status", d._savedAt || null); }
+  } catch(e) {}
+};
+
 // ── P11 Exercice 1 — brouillon horodaté ───────────────
 var _origSaveP11Ex1Draft = saveP11Ex1Draft;
 saveP11Ex1Draft = function(showFeedback) {
@@ -12565,10 +13756,10 @@ restoreA2Draft = function() {
 </script>
 
 <!-- Aménagements dys — portée limitée à la page P11 Exercice n°1 -->
-<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools", racine:"#pg-p11-ex1", fonts:"pp4g/fonts/" };</script>
+<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2", fonts:"pp4g/fonts/" };</script>
 <script src="assets/js/confort-lecture.js" defer></script>
-<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1", hote:".p11x1-tools", sectionsFermees:"",
-  selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire" };</script>
+<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
+  selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire, .p11x2-lire" };</script>
 <script src="assets/js/lecture-immersive.js" defer></script>
 </body>
 </html>
