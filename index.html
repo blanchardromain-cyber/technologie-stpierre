@@ -4253,7 +4253,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16i</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16k</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4287,6 +4287,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
             <option value="">Toutes les classes</option>
           </select>
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
+          <button onclick="printCopiesFiltrees()" title="Imprime en une seule fois toutes les copies correspondant aux filtres ci-dessus (capsule, statut, classe, recherche), une par page, précédées d'un récapitulatif avec les notes et la moyenne." style="padding:7px 13px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer les copies</button>
           <button onclick="exportCSVAll()" title="Sélectionne une capsule pour exporter les détails de cette capsule uniquement. Sans filtre, exporte tout. Les filtres classe/statut/recherche sont aussi appliqués." style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
         </div>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
@@ -8764,152 +8765,259 @@ function printModalSub() {
   w.focus();
 }
 
-// ── Impression directe depuis le tableau (sans ouvrir le modal) ──────────
+// ================================================================
+// IMPRESSION DES COPIES — pièces communes
+// ================================================================
+/* La mise en page d'une copie était écrite en trois exemplaires (modal,
+   impression directe, et maintenant impression groupée). Les quatre fonctions
+   ci-dessous en sont la seule source : une capsule ajoutée plus tard n'a qu'à
+   être déclarée ici pour être imprimable partout. */
+
+function _ficheEsc(s) { return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+var FICHE_TITRES = {
+  "dc":"Devoir Commun", "dc-corrige":"DC — Corrigé",
+  "cap1":"Capsule n°1 — Biomimétisme", "rem1":"Quiz Remédiation P13",
+  "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
+  "p11-ex1":"P11 — Exercice n°1 (Capteurs, actionneurs & CDCF)", "p11-ex1-cor":"P11 — Corrigé Exercice n°1",
+  "p11-ex2":"P11 — Exercice n°2 (Diagramme FAST)", "p11-ex2-cor":"P11 — Corrigé Exercice n°2",
+  "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
+  "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
+  "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
+  "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4",
+  "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1"
+};
+function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
+function ficheNiveau(sub) {
+  return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
+       || sub.cap === "batiment5e" || sub.cap === "eval1-5e") ? "5ᵉ" : "4ᵉ";
+}
+
+/* Ligne de score affichée en tête de copie. */
+var FICHE_STATUTS = { pending:"en attente de correction", validated:"corrigé et validé", rejected:"à retravailler" };
+function ficheScoreTexte(sub) {
+  var st = " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  if (sub.cap === "dc") {
+    if (sub.adjustedScore !== undefined) return "Note ajustée : " + sub.adjustedScore + "/30" + st;
+    var d = scoreDCBySection(sub.fields || {});
+    var a = Math.min(30, (d.q1||0)+(d.q2a||0)+(d.q2b||0)+(d.q2c||0)+(d.q3||0)+(d.p2q1||0)+(d.p2q2||0)+(d.p2q3||0));
+    return "Note auto : " + a + "/30 (indicative)" + st;
+  }
+  if (sub.cap === "p11-ex1" || sub.cap === "p11-ex2") {
+    var b = Number(sub.bareme) || 20;
+    if (sub.adjustedScore !== undefined) return "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + b + st;
+    var brut = sub.cap === "p11-ex1"
+      ? p11x1TotalBrut(scoreP11Ex1BySection(sub.fields || {}))
+      : p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {}));
+    return "Note auto : " + p11x1Fmt(p11x1Convert(brut, b)) + "/" + b + " (indicative)" + st;
+  }
+  if (sub.cap === "rem1") return "Score : " + sub.score + "/40" + st;
+  if (sub.cap === "p12")  { var n0 = countP12Fields(sub.fields||{}); return n0.done + "/" + n0.total + " champs" + st; }
+  if (sub.cap === "p12-ex1") { var n1 = countP12Ex1Fields(sub.fields||{}); return n1.done + "/" + n1.total + " champs" + st; }
+  if (sub.cap === "p12-ex2") {
+    var n2 = countP12Ex2Fields(sub.fields||{});
+    var q3 = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
+    return n2.done + "/" + n2.total + " champs" + (q3 ? " (Q3 ✓)" : "") + st;
+  }
+  var totaux = { eau4e:49, eau34:26, reseau5e:24, filius5e:21, maison5e:16 };
+  if (totaux[sub.cap]) return (sub.score !== undefined ? sub.score : 0) + "/" + (sub.qcmTot || totaux[sub.cap]) + " réponses" + st;
+  if (sub.adjustedScore !== undefined) return "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + (sub.bareme || sub.qcmTot || 20) + st;
+  return "Score QCM : " + sub.score + "/" + sub.qcmTot + st;
+}
+
+/* Réponses de l'élève, rendues par le constructeur propre à la capsule. */
+function ficheReponsesHTML(sub) {
+  var f = sub.fields;
+  if (sub.cap === "dc" && f)         return buildDCModalHTML(f, sub.score);
+  if (sub.cap === "p12" && f)        return buildP12ModalHTML(f);
+  if (sub.cap === "p11-ex1")         return buildP11Ex1ModalHTML(f || {});
+  if (sub.cap === "p11-ex2")         return buildP11Ex2ModalHTML(f || {});
+  if (sub.cap === "p12-ex1" && f)    return buildP12Ex1ModalHTML(f);
+  if (sub.cap === "p12-ex2" && f)    return buildP12Ex2ModalHTML(f);
+  if (sub.cap === "eau4e")           return buildEauModalHTML(sub);
+  if (sub.cap === "eau34")           return buildEau34ModalHTML(sub);
+  if (sub.cap === "batiment5e")      return buildBatimentModalHTML(sub);
+  if (sub.cap === "reseau5e")        return buildReseauModalHTML(sub);
+  if (sub.cap === "filius5e")        return buildFiliusModalHTML(sub);
+  if (sub.cap === "maison5e")        return buildMaisonModalHTML(sub);
+  return '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + _ficheEsc(sub.open || "(pas de réponse)") + '</p>';
+}
+
+/* Évaluation du professeur : le détail par critère pour le Devoir Commun,
+   la note et l'appréciation pour toutes les autres capsules corrigées. */
+function ficheEvalProfHTML(sub) {
+  if (sub.cap === "dc") {
+    var cles  = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
+    var maxes = {q1:3,q2a:3,q2b:1,q2c:3,q3:4,p2q1:4,p2q2:6,p2q3:6};
+    var lbls  = {q1:"① Bête à cornes",q2a:"② A) Pieuvre — FS",q2b:"② B) Tableau FS1",q2c:"② C) Numéros de FS",q3:"③ Matières",p2q1:"① Schéma fonctionnel",p2q2:"② Diagramme fonctionnel",p2q3:"③ Logigramme"};
+    var parts = {q1:"Partie 1 — Cardiofréquencemètre",q2a:"Partie 1 — Cardiofréquencemètre",q2b:"Partie 1 — Cardiofréquencemètre",q2c:"Partie 1 — Cardiofréquencemètre",q3:"Partie 1 — Cardiofréquencemètre",p2q1:"Partie 2 — Aquaponie",p2q2:"Partie 2 — Aquaponie",p2q3:"Partie 2 — Aquaponie"};
+    var pts = sub.adjustedPts || {}, derniere = "", total = 0, x = "";
+    x += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">';
+    x += '<thead><tr style="background:#1F4E79;color:#fff"><th style="padding:7px 10px;text-align:left">Critère</th><th style="padding:7px 10px;text-align:center;width:80px">Points</th><th style="padding:7px 10px;text-align:center;width:60px">/ Max</th></tr></thead><tbody>';
+    for (var k = 0; k < cles.length; k++) {
+      var c = cles[k], v = Math.round((parseFloat(pts[c]) || 0) * 10) / 10;
+      total += v;
+      if (parts[c] !== derniere) {
+        derniere = parts[c];
+        x += '<tr style="background:#DEEAF1"><td colspan="3" style="padding:5px 10px;font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.5px">' + _ficheEsc(derniere) + '</td></tr>';
+      }
+      var css = v >= maxes[c] ? "color:#1E6B3B" : v === 0 ? "color:#C0392B" : "color:#1F4E79";
+      x += '<tr style="background:' + (k % 2 === 0 ? "#f9f9f9" : "#fff") + ';border-bottom:1px solid #eee"><td style="padding:6px 10px">' + _ficheEsc(lbls[c]) + '</td><td style="padding:6px 10px;text-align:center;font-weight:700;' + css + '">' + v + '</td><td style="padding:6px 10px;text-align:center;color:#999">/' + maxes[c] + '</td></tr>';
+    }
+    total = Math.min(30, Math.round(total * 10) / 10);
+    x += '<tr style="background:#1F4E79;color:#fff;font-weight:700"><td style="padding:9px 10px">NOTE FINALE</td><td style="padding:9px 10px;text-align:center;font-size:17px">' + total + '</td><td style="padding:9px 10px;text-align:center">/ 30</td></tr>';
+    x += '</tbody></table>';
+    if (sub.appreciation) x += _ficheApprHTML(sub.appreciation);
+    return x;
+  }
+  if (sub.adjustedScore === undefined || sub.adjustedScore === "") return "";
+  var bar = sub.bareme || sub.qcmTot || 20;
+  var pct = sub.adjustedScore / bar * 100;
+  var col = pct >= 75 ? "#1E6B3B" : pct >= 50 ? "#C55A11" : "#C0392B";
+  var y = '<div style="display:flex;align-items:center;gap:14px;background:' + col + ';color:#fff;border-radius:8px;padding:11px 16px">'
+        + '<div style="flex:1;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Note attribuée</div>'
+        + '<div style="font-size:21px;font-weight:700">' + p11x1Fmt(sub.adjustedScore) + '<span style="font-size:13px"> / ' + bar + '</span></div></div>';
+  if (sub.appreciation) y += _ficheApprHTML(sub.appreciation);
+  return y;
+}
+function _ficheApprHTML(txt) {
+  return '<div style="padding:12px 14px;background:#E2EFDA;border-left:4px solid #2E8B4A;border-radius:6px;margin-top:10px">'
+    + '<div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Appréciation pédagogique</div>'
+    + '<div style="font-size:13px;line-height:1.6;color:#1A202C">' + _ficheEsc(txt).replace(/\n/g, "<br>") + '</div></div>';
+}
+
+/* Feuille de style commune aux fenêtres d'impression. */
+function _ficheCSS() {
+  return ':root{--bl:#1F4E79;--bc:#2E75B6;--bp:#DEEAF1;--vt:#1E6B3B;--vc:#2E8B4A;--vp:#E2EFDA;--or:#C55A11;--op:#FCE4D6;--vi:#7B2C8B;--vip:#EAD4F4;--gr:#F4F6F8;--gb:#E2E8F0;--tx:#1A202C;--td:#4A5568;--rg:#C0392B}'
+    + '*{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",Arial,sans-serif;color:#1A202C;background:#fff}'
+    + '.ph{background:#1F4E79;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start}'
+    + '.ph h1{font-size:15px;font-weight:700;margin-bottom:3px}.ph .sub{font-size:11px;opacity:.8}'
+    + '.ph-r{text-align:right}.ph-r .name{font-size:14px;font-weight:700}.ph-r .cls{font-size:11px;opacity:.8;margin-top:2px}'
+    + '.pb{padding:16px 20px}.st{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #DEEAF1;padding-bottom:4px;margin:14px 0 10px}'
+    + '.sc{background:#F4F6F8;border-radius:6px;padding:8px 12px;font-size:12px;color:#4A5568;margin:0 0 10px}'
+    + '.copie{page-break-after:always;break-after:page}.copie:last-child{page-break-after:auto;break-after:auto}'
+    + 'button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}'
+    + '@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}';
+}
+/* Le corps d'une copie : en-tête, score, réponses, évaluation. */
+function ficheCopieHTML(sub) {
+  var x = '<div class="copie">';
+  x += '<div class="ph"><div><h1>' + _ficheEsc(ficheTitre(sub)) + '</h1>'
+     + '<div class="sub">Collège Saint-Pierre — Les Essarts | Technologie ' + ficheNiveau(sub) + ' | ' + fmtDateTime(sub.dateISO || sub.date) + '</div></div>'
+     + '<div class="ph-r"><div class="name">' + _ficheEsc(sub.ename) + '</div><div class="cls">' + _ficheEsc(sub.ecls || "") + '</div></div></div>';
+  x += '<div class="pb">';
+  var sc = ficheScoreTexte(sub);
+  if (sc) x += '<div class="sc">' + _ficheEsc(sc) + '</div>';
+  var ev = ficheEvalProfHTML(sub);
+  if (ev) x += '<div class="st">Évaluation du professeur</div>' + ev;
+  x += '<div class="st"' + (ev ? ' style="margin-top:18px"' : '') + '>Réponses de l\'élève</div>';
+  x += ficheReponsesHTML(sub);
+  x += '</div></div>';
+  return x;
+}
+function _ficheOuvrir(titreOnglet, corps) {
+  var w = window.open("", "_blank", "width=900,height=800");
+  if (!w) { toast("Popup bloqué — autorise les popups pour ce site puis réessaie."); return null; }
+  w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>' + _ficheEsc(titreOnglet) + '<\/title>');
+  w.document.write('<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">');
+  w.document.write('<style>' + _ficheCSS() + '<\/style><\/head><body>');
+  w.document.write(corps);
+  w.document.write('<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},500);});<\/script>');
+  w.document.write('<\/body><\/html>');
+  w.document.close();
+  w.focus();
+  return w;
+}
+
+// ── Impression directe d'une copie depuis le tableau ────────────────────
 function printSubDirect(sid) {
   var subs = getSubs(), sub = null;
   for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { sub = subs[i]; break; } }
   if (!sub) return;
+  _ficheOuvrir("Impression — " + sub.ename, ficheCopieHTML(sub));
+}
 
-  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-  /* Titre de la capsule */
-  var capTitles = {
-    "dc":"Devoir Commun", "dc-corrige":"DC — Corrigé",
-    "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
-    "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
-    "p11-ex1":"P11 — Exercice n°1 (Capteurs, actionneurs & CDCF)", "p11-ex1-cor":"P11 — Corrigé Exercice n°1",
-    "p11-ex2":"P11 — Exercice n°2 (Diagramme FAST)", "p11-ex2-cor":"P11 — Corrigé Exercice n°2",
-    "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
-    "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
-    "filius5e":"Filius 5e — Simulation réseau (binôme)",
-    "maison5e":"Maison 5e — Mon réseau à la maison",
-    "eau4e":"P11 4e — Activités 1 et 2",
-    "eau34":"P11 4e — Activités 3 et 4"
-  };
-  var titre = sub.caplbl || capTitles[sub.cap] || ("Capsule " + sub.cap);
-  var dateStr = fmtDateTime(sub.dateISO || sub.date);
-
-  /* Score */
-  var scoreStr = "";
-  if (sub.cap === "dc") {
-    if (sub.adjustedScore !== undefined) scoreStr = "Note ajustée : " + sub.adjustedScore + "/30";
-    else { var _sec = scoreDCBySection(sub.fields || {}); var _auto = Math.min(30,(_sec.q1||0)+(_sec.q2a||0)+(_sec.q2b||0)+(_sec.q2c||0)+(_sec.q3||0)+(_sec.p2q1||0)+(_sec.p2q2||0)+(_sec.p2q3||0)); scoreStr = "Note auto : " + _auto + "/30 (indicative)"; }
-    scoreStr += " — Statut : " + sub.status;
-  } else if (sub.cap === "rem1") {
-    scoreStr = "Score : " + sub.score + "/40 — Statut : " + sub.status;
-  } else if (sub.cap === "p12") {
-    var nf = countP12Fields(sub.fields||{}); scoreStr = nf.done + "/" + nf.total + " champs — Statut : " + sub.status;
-  } else if (sub.cap === "p11-ex2") {
-    var _b2 = Number(sub.bareme) || 20;
-    scoreStr = (sub.adjustedScore !== undefined
-      ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _b2
-      : "Note auto : " + p11x1Fmt(p11x1Convert(p11x2TotalBrut(scoreP11Ex2BySection(sub.fields||{})), _b2)) + "/" + _b2 + " (indicative)")
-      + " — Statut : " + sub.status;
-  } else if (sub.cap === "p11-ex1") {
-    var _b = Number(sub.bareme) || 20;
-    scoreStr = (sub.adjustedScore !== undefined
-      ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _b
-      : "Note auto : " + p11x1Fmt(p11x1Convert(p11x1TotalBrut(scoreP11Ex1BySection(sub.fields||{})), _b)) + "/" + _b + " (indicative)")
-      + " — Statut : " + sub.status;
-  } else if (sub.cap === "p12-ex1") {
-    var nfx = countP12Ex1Fields(sub.fields||{}); scoreStr = nfx.done + "/" + nfx.total + " champs — Statut : " + sub.status;
-  } else if (sub.cap === "p12-ex2") {
-    var nfy = countP12Ex2Fields(sub.fields||{});
-    var q3ok = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
-    scoreStr = nfy.done + "/" + nfy.total + " champs" + (q3ok ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
-  } else if (sub.cap === "eau4e") {
-    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||49) + " réponses — Statut : " + sub.status;
-  } else if (sub.cap === "eau34") {
-    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + sub.status;
-  } else if (sub.cap === "reseau5e") {
-    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
-  } else if (sub.cap === "filius5e") {
-    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||21) + " réponses — Statut : " + sub.status;
-  } else if (sub.cap === "maison5e") {
-    scoreStr = (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||16) + " réponses — Statut : " + sub.status;
-  } else {
-    scoreStr = "Score QCM : " + sub.score + "/" + sub.qcmTot + " — Statut : " + sub.status;
+// ── Impression groupée : toutes les copies du filtre courant ────────────
+/* Reprend exactement les filtres de la barre du tableau de bord (capsule,
+   statut, classe, recherche). Les copies sortent triées par classe puis par
+   nom, une par page, précédées d'un récapitulatif. */
+function subsFiltrees() {
+  function val(id) { var e = document.getElementById(id); return e ? e.value : ""; }
+  var cf = val("fcap"), sf = val("fstat"), clf = val("fclass"), se = (val("fsearch") || "").toLowerCase();
+  var subs = subsVisibles(), out = [];
+  for (var i = 0; i < subs.length; i++) {
+    var s = subs[i];
+    if (cf && s.cap !== cf) continue;
+    if (sf && s.status !== sf) continue;
+    if (clf && s.ecls !== clf) continue;
+    if (se && (s.ename||"").toLowerCase().indexOf(se) < 0 && (s.ecls||"").toLowerCase().indexOf(se) < 0) continue;
+    out.push(s);
   }
+  out.sort(function (a, b) {
+    var ca = (a.ecls||""), cb = (b.ecls||"");
+    if (ca !== cb) return ca < cb ? -1 : 1;
+    return (a.ename||"").localeCompare(b.ename||"", "fr");
+  });
+  return { liste: out, cap: cf, statut: sf, classe: clf, recherche: se };
+}
 
-  /* Réponses */
-  var answersHTML = "";
-  if (sub.cap === "dc" && sub.fields)         answersHTML = buildDCModalHTML(sub.fields, sub.score);
-  else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
-  else if (sub.cap === "p11-ex2") answersHTML = buildP11Ex2ModalHTML(sub.fields || {});
-  else if (sub.cap === "p11-ex1") answersHTML = buildP11Ex1ModalHTML(sub.fields || {});
-  else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
-  else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
-  else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
-  else if (sub.cap === "eau34") answersHTML = buildEau34ModalHTML(sub);
-  else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
-  else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
-  else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
-  else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
-  else answersHTML = '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + esc(sub.open || "(pas de réponse)") + '</p>';
+function printCopiesFiltrees() {
+  var r = subsFiltrees();
+  if (!r.liste.length) { toast("Aucune copie ne correspond aux filtres."); return; }
 
-  /* Évaluation prof (DC) — depuis données stockées */
-  var evalHTML = "";
-  if (sub.cap === "dc") {
-    var adjKeys  = ["q1","q2a","q2b","q2c","q3","p2q1","p2q2","p2q3"];
-    var adjMaxes = {q1:3,q2a:3,q2b:1,q2c:3,q3:4,p2q1:4,p2q2:6,p2q3:6};
-    var adjLbls  = {q1:"① Bête à cornes",q2a:"② A) Pieuvre — FS",q2b:"② B) Tableau FS1",q2c:"② C) Numéros de FS",q3:"③ Matières",p2q1:"① Schéma fonctionnel",p2q2:"② Diagramme fonctionnel",p2q3:"③ Logigramme"};
-    var adjParts = {q1:"Partie 1 — Cardiofréquencemètre",q2a:"Partie 1 — Cardiofréquencemètre",q2b:"Partie 1 — Cardiofréquencemètre",q2c:"Partie 1 — Cardiofréquencemètre",q3:"Partie 1 — Cardiofréquencemètre",p2q1:"Partie 2 — Aquaponie",p2q2:"Partie 2 — Aquaponie",p2q3:"Partie 2 — Aquaponie"};
-    var storedPts = sub.adjustedPts || {};
-    var lastPart = "", total = 0;
-    evalHTML += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">';
-    evalHTML += '<thead><tr style="background:#1F4E79;color:#fff"><th style="padding:7px 10px;text-align:left">Critère</th><th style="padding:7px 10px;text-align:center;width:80px">Points</th><th style="padding:7px 10px;text-align:center;width:60px">/ Max</th></tr></thead><tbody>';
-    for (var k = 0; k < adjKeys.length; k++) {
-      var ak = adjKeys[k];
-      var v = Math.round((parseFloat(storedPts[ak])||0)*10)/10;
-      total += v;
-      if (adjParts[ak] !== lastPart) {
-        lastPart = adjParts[ak];
-        evalHTML += '<tr style="background:#DEEAF1"><td colspan="3" style="padding:5px 10px;font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.5px">'+esc(lastPart)+'</td></tr>';
-      }
-      var rowBg = k%2===0?"#f9f9f9":"#fff";
-      var valCss = v>=adjMaxes[ak]?"color:#1E6B3B":v===0?"color:#C0392B":"color:#1F4E79";
-      evalHTML += '<tr style="background:'+rowBg+';border-bottom:1px solid #eee"><td style="padding:6px 10px">'+esc(adjLbls[ak])+'</td><td style="padding:6px 10px;text-align:center;font-weight:700;'+valCss+'">'+v+'</td><td style="padding:6px 10px;text-align:center;color:#999">/'+adjMaxes[ak]+'</td></tr>';
-    }
-    total = Math.min(30, Math.round(total*10)/10);
-    evalHTML += '<tr style="background:#1F4E79;color:#fff;font-weight:700"><td style="padding:9px 10px">NOTE FINALE</td><td style="padding:9px 10px;text-align:center;font-size:17px">'+total+'</td><td style="padding:9px 10px;text-align:center">/ 30</td></tr>';
-    evalHTML += '</tbody></table>';
-    if (sub.appreciation && sub.appreciation.trim()) {
-      evalHTML += '<div style="padding:12px 14px;background:#E2EFDA;border-left:4px solid #2E8B4A;border-radius:6px;margin-top:10px">';
-      evalHTML += '<div style="font-size:11px;font-weight:700;color:#1E6B3B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Appréciation pédagogique</div>';
-      evalHTML += '<div style="font-size:13px;line-height:1.6;color:#1A202C">'+esc(sub.appreciation).replace(/\n/g,"<br>")+'</div></div>';
-    }
+  var libStatut = {pending:"en attente", validated:"validées", rejected:"à revoir"};
+  var portee = [];
+  portee.push(r.cap ? (FICHE_TITRES[r.cap] || r.cap) : "toutes les capsules");
+  portee.push(r.classe ? "classe " + r.classe : "toutes les classes");
+  portee.push(r.statut ? "copies " + (libStatut[r.statut] || r.statut) : "tous les statuts");
+  if (r.recherche) portee.push('recherche « ' + r.recherche + ' »');
+
+  var nonCorrigees = 0;
+  for (var i = 0; i < r.liste.length; i++) if (r.liste[i].status !== "validated") nonCorrigees++;
+  var msg = "Imprimer " + r.liste.length + " copie" + (r.liste.length > 1 ? "s" : "") + " ?\n\n" + portee.join("\n");
+  if (nonCorrigees) msg += "\n\nAttention : " + nonCorrigees + " copie(s) ne sont pas encore validées.";
+  if (!confirm(msg)) return;
+
+  /* Récapitulatif en première page */
+  var rec = '<div class="copie"><div class="ph"><div><h1>Copies corrigées — récapitulatif</h1>'
+    + '<div class="sub">Collège Saint-Pierre — Les Essarts | Technologie | ' + new Date().toLocaleDateString("fr-FR") + '</div></div>'
+    + '<div class="ph-r"><div class="name">' + r.liste.length + ' copie' + (r.liste.length > 1 ? 's' : '') + '</div></div></div>';
+  rec += '<div class="pb"><div class="sc">' + _ficheEsc(portee.join("  ·  ")) + '</div>';
+  rec += '<table style="width:100%;border-collapse:collapse;font-size:12.5px">'
+       + '<thead><tr style="background:#1F4E79;color:#fff">'
+       + '<th style="padding:7px 10px;text-align:left;width:34px">#</th>'
+       + '<th style="padding:7px 10px;text-align:left">Élève</th>'
+       + '<th style="padding:7px 10px;text-align:left;width:64px">Classe</th>'
+       + '<th style="padding:7px 10px;text-align:left">Capsule</th>'
+       + '<th style="padding:7px 10px;text-align:center;width:90px">Note</th></tr></thead><tbody>';
+  var somme = 0, nbNotes = 0;
+  for (var j = 0; j < r.liste.length; j++) {
+    var s = r.liste[j];
+    var bar = s.bareme || s.qcmTot || 20;
+    var note = "—";
+    if (s.adjustedScore !== undefined && s.adjustedScore !== "") {
+      note = p11x1Fmt(s.adjustedScore) + " / " + bar;
+      somme += (s.adjustedScore / bar) * 20; nbNotes++;
+    } else if (s.status !== "validated") { note = "non corrigée"; }
+    rec += '<tr style="background:' + (j % 2 === 0 ? "#f9f9f9" : "#fff") + ';border-bottom:1px solid #eee">'
+         + '<td style="padding:6px 10px;color:#999">' + (j + 1) + '</td>'
+         + '<td style="padding:6px 10px;font-weight:600">' + _ficheEsc(s.ename) + '</td>'
+         + '<td style="padding:6px 10px">' + _ficheEsc(s.ecls || "") + '</td>'
+         + '<td style="padding:6px 10px;color:#4A5568">' + _ficheEsc(ficheTitre(s)) + '</td>'
+         + '<td style="padding:6px 10px;text-align:center;font-weight:700">' + _ficheEsc(note) + '</td></tr>';
   }
-
-  var cssVars = ':root{--bl:#1F4E79;--bc:#2E75B6;--bp:#DEEAF1;--vt:#1E6B3B;--vc:#2E8B4A;--vp:#E2EFDA;--or:#C55A11;--op:#FCE4D6;--vi:#7B2C8B;--vip:#EAD4F4;--gr:#F4F6F8;--gb:#E2E8F0;--tx:#1A202C;--td:#4A5568;--rg:#C0392B}';
-
-  var w = window.open("","_blank","width=860,height=760");
-  if (!w) { toast("Popup bloqué — autorise les popups pour ce site puis réessaie."); return; }
-
-  w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Impression — '+esc(sub.ename)+'<\/title>');
-  w.document.write('<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">');
-  w.document.write('<style>'+cssVars+'*{margin:0;padding:0;box-sizing:border-box}body{font-family:"DM Sans",Arial,sans-serif;color:#1A202C;background:#fff}');
-  w.document.write('.ph{background:#1F4E79;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start}');
-  w.document.write('.ph h1{font-size:15px;font-weight:700;margin-bottom:3px}.ph .sub{font-size:11px;opacity:.8}');
-  w.document.write('.ph-r{text-align:right}.ph-r .name{font-size:14px;font-weight:700}.ph-r .cls{font-size:11px;opacity:.8;margin-top:2px}');
-  w.document.write('.pb{padding:16px 20px}.st{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #DEEAF1;padding-bottom:4px;margin:14px 0 10px}');
-  w.document.write('.sc{background:#F4F6F8;border-radius:6px;padding:8px 12px;font-size:12px;color:#4A5568;margin:0 0 10px}');
-  w.document.write('button,.adj-btn,.btn-voice{display:none!important}input.adj-val{border:none!important;background:transparent!important;font-weight:700;color:#1F4E79;font-size:14px;text-align:center}');
-  w.document.write('@media print{@page{size:A4 portrait;margin:12mm 10mm}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}<\/style><\/head><body>');
-
-  w.document.write('<div class="ph"><div><h1>'+esc(titre)+'<\/h1><div class="sub">Collège Saint-Pierre — Les Essarts | Technologie '+((sub.cap==="reseau5e"||sub.cap==="filius5e"||sub.cap==="maison5e")?"5ᵉ":"4ᵉ")+' | '+dateStr+'<\/div><\/div><div class="ph-r"><div class="name">'+esc(sub.ename)+'<\/div><div class="cls">'+esc(sub.ecls||"")+'<\/div><\/div><\/div>');
-  w.document.write('<div class="pb">');
-  if (scoreStr) w.document.write('<div class="sc">'+esc(scoreStr)+'<\/div>');
-  w.document.write('<div class="st">Réponses de l’élève<\/div>');
-  w.document.write(answersHTML);
-  if (evalHTML) {
-    w.document.write('<div class="st" style="margin-top:18px">Évaluation du professeur<\/div>');
-    w.document.write(evalHTML);
+  rec += '</tbody></table>';
+  if (nbNotes) {
+    rec += '<div style="margin-top:12px;background:#DEEAF1;border-radius:6px;padding:9px 13px;font-size:13px;font-weight:700;color:#1F4E79">'
+         + 'Moyenne des ' + nbNotes + ' copie' + (nbNotes > 1 ? 's' : '') + ' corrigée' + (nbNotes > 1 ? 's' : '')
+         + ' : ' + p11x1Fmt(Math.round(somme / nbNotes * 10) / 10) + ' / 20</div>';
   }
-  w.document.write('<\/div>');
-  w.document.write('<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>');
-  w.document.write('<\/body><\/html>');
-  w.document.close();
-  w.focus();
+  rec += '</div></div>';
+
+  var corps = rec;
+  for (var k = 0; k < r.liste.length; k++) corps += ficheCopieHTML(r.liste[k]);
+
+  _ficheOuvrir("Impression — " + r.liste.length + " copies", corps);
 }
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
