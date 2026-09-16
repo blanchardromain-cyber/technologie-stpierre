@@ -4253,7 +4253,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16g</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16i</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -11499,10 +11499,11 @@ function buildDCTeacherPanel(sub) {
   var autoTotal = sec.q1+sec.q2a+sec.q2b+sec.q2c+sec.q3+sec.p2q1+sec.p2q2+sec.p2q3;
   autoTotal = Math.min(autoTotal,30);
   var savedTotal = Math.min(30, (saved.q1||0)+(saved.q2a||0)+(saved.q2b||0)+(saved.q2c||0)+(saved.q3||0)+(saved.p2q1||0)+(saved.p2q2||0)+(saved.p2q3||0));
-  var appr = sub.appreciation || autoAppreciation(savedTotal, sec);
-  // Tracking pour auto-régénération silencieuse (3b) : si pas de personnalisation prof,
-  // le texte initial EST l'auto-générée → on s'en souvient pour pouvoir le remplacer.
-  _lastAutoAppr = sub.appreciation ? "" : appr;
+  /* Même correctif que pour les exercices P11 : une suggestion automatique déjà
+     enregistrée doit rester régénérable, sinon elle se fige sur l'ancienne note. */
+  var dcApprAuto = apprEstAutomatique(sub.appreciation);
+  var appr = dcApprAuto ? autoAppreciation(savedTotal, sec) : sub.appreciation;
+  _lastAutoAppr = dcApprAuto ? appr : "";
 
   function adjRow(key, label, maxPts, autoVal, curVal) {
     var v = (typeof curVal !== "undefined") ? curVal : autoVal;
@@ -11665,6 +11666,11 @@ function saveDCAdj(sid) {
   var tot=Math.round(Math.min(30,pts.q1+pts.q2a+pts.q2b+pts.q2c+pts.q3+pts.p2q1+pts.p2q2+pts.p2q3)*10)/10;
   var apprTa=document.getElementById("dc-appreciation");
   var appr=apprTa?apprTa.value:"";
+  /* La suggestion automatique est recalculée sur la note réellement enregistrée. */
+  if (apprEstAutomatique(appr)) {
+    appr=autoAppreciation(tot,pts);
+    if (apprTa) apprTa.value=appr;
+  }
   var subs=getSubs(), idx=-1;
   for(var j=0;j<subs.length;j++){if(subs[j].id==sid){idx=j;break;}}
   if(idx<0){toast("Soumission introuvable");return;}
@@ -12756,8 +12762,11 @@ function buildP11Ex2TeacherPanel(sub) {
   var saved = sub.adjustedPts || sec;
   var bareme = Number(sub.bareme) || 20;
   var savedTotal = p11x2TotalBrut(saved);
-  var appr = sub.appreciation || autoAppreciationP11Ex2(p11x1Convert(savedTotal, bareme), bareme, saved);
-  _p11x2LastAutoAppr = sub.appreciation ? "" : appr;
+  var apprAuto2 = apprEstAutomatique(sub.appreciation);
+  var appr = apprAuto2
+    ? autoAppreciationP11Ex2(p11x1Convert(savedTotal, bareme), bareme, saved)
+    : sub.appreciation;
+  _p11x2LastAutoAppr = apprAuto2 ? appr : "";
 
   function adjRow(key, label, maxPts, autoVal, curVal) {
     var v = (typeof curVal !== "undefined") ? curVal : autoVal;
@@ -12807,10 +12816,10 @@ function buildP11Ex2TeacherPanel(sub) {
   h += '<div class="appr-panel">';
   h += '<div class="appr-title">💬 Appréciation pédagogique</div>';
   h += '<div style="font-size:11px;color:var(--vt);margin-bottom:6px;font-style:italic">💡 Suggestion automatique — modifiable :</div>';
-  h += '<textarea class="appr-ta" id="p11x2-appreciation" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
+  h += '<textarea class="appr-ta" id="p11x2-appreciation" oninput="apprMajAvert(&quot;p11x2&quot;)" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
   h += '<div class="appr-actions">';
   h += '<button onclick="p11x2ResetApprAuto()" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Regénérer auto</button>';
-  h += '</div></div>';
+  h += '</div><div id="p11x2-appr-avert"></div></div>';
 
   h += '<div style="text-align:right;margin-top:12px">';
   h += '<button onclick="saveP11Ex2Adj(' + sub.id + ')" style="padding:10px 22px;background:#5C6BC0;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
@@ -12851,6 +12860,7 @@ function p11x2AdjUpdateTotal() {
     box.style.background = "linear-gradient(135deg," + col + "," + col + "cc)";
   }
   p11x2AutoApprIfUntouched();
+  apprAvertirIncoherence("p11x2-appreciation", "p11x2-appr-avert", note, bareme);
 }
 function _p11x2ComputeAutoAppr() {
   var pts = p11x2ReadAdj();
@@ -12863,6 +12873,8 @@ function p11x2ResetApprAuto() {
   if (!ta) return;
   ta.value = _p11x2ComputeAutoAppr();
   _p11x2LastAutoAppr = ta.value;
+  var _n = apprNoteCourante("p11x2");
+  apprAvertirIncoherence("p11x2-appreciation", "p11x2-appr-avert", _n.note, _n.bareme);
 }
 function p11x2AutoApprIfUntouched() {
   var ta = document.getElementById("p11x2-appreciation");
@@ -12887,13 +12899,18 @@ function saveP11Ex2Adj(sid) {
   subs[idx].bareme        = bareme;
   subs[idx].scoreBrut     = brut;
   subs[idx].adjustedScore = note;
-  subs[idx].appreciation  = ta ? ta.value : "";
+  var apprTxt2 = ta ? ta.value : "";
+  /* Si le texte enregistré est encore la suggestion automatique, on le recalcule
+     sur la note réellement enregistrée : les deux ne peuvent plus diverger. */
+  if (apprEstAutomatique(apprTxt2)) apprTxt2 = autoAppreciationP11Ex2(note, bareme, pts);
+  subs[idx].appreciation  = apprTxt2;
   subs[idx].status        = "validated";
   subs[idx].score         = note;
   subs[idx].qcmTot        = bareme;
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
+  if (ta) ta.value = apprTxt2;
   var ms = document.getElementById("mscore");
   if (ms) ms.textContent = "Note : " + p11x1Fmt(note) + "/" + bareme + " ✅ — Appréciation enregistrée";
   toast("✅ Note enregistrée — " + p11x1Fmt(note) + "/" + bareme);
@@ -13506,6 +13523,57 @@ function buildP11Ex1ModalHTML(f) {
 /* ── Panneau prof : correction automatique + ajustement + barème ── */
 var _p11x1LastAutoAppr = "";
 
+/* ── Appréciation : automatique ou rédigée par le professeur ? ──────
+   Une appréciation déjà enregistrée peut être la suggestion automatique que
+   le professeur a validée telle quelle. Si on la traite comme un texte écrit
+   à la main, elle n'est plus jamais régénérée : au passage de correction
+   suivant la note bouge mais pas le texte, et la copie affiche « 19,5/20 »
+   au-dessus d'une appréciation qui annonce « 20/20 ».
+   On reconnaît une suggestion automatique à sa mention d'ouverture, qui est
+   toujours l'une de celles produites par les générateurs. */
+var _APPR_MENTIONS_AUTO = [
+  "Excellent travail de recherche", "Très bon travail de recherche",
+  "Excellente analyse fonctionnelle", "Très bonne analyse fonctionnelle",
+  "Excellent travail", "Très bon travail",
+  "Bon travail", "Travail à consolider", "Des progrès sont nécessaires"
+];
+/* Note actuellement affichée dans le panneau, quel que soit l'exercice ouvert. */
+function apprNoteCourante(prefixe) {
+  var bs = document.getElementById(prefixe + "-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  var brut = prefixe === "p11x2" ? p11x2TotalBrut(p11x2ReadAdj()) : p11x1TotalBrut(p11x1ReadAdj());
+  return { note: p11x1Convert(brut, bareme), bareme: bareme };
+}
+function apprEstAutomatique(txt) {
+  var t = String(txt == null ? "" : txt);
+  if (!t) return true;
+  for (var i = 0; i < _APPR_MENTIONS_AUTO.length; i++) {
+    if (t.indexOf(_APPR_MENTIONS_AUTO[i] + " —") === 0) return true;
+  }
+  return false;
+}
+/* Filet de sécurité : si le professeur a personnalisé son texte et que la note
+   qu'il y mentionne ne correspond plus aux points, on le lui signale au lieu de
+   réécrire sa rédaction à sa place. */
+/* Appelé pendant la frappe du professeur. */
+function apprMajAvert(prefixe) {
+  var n = apprNoteCourante(prefixe);
+  apprAvertirIncoherence(prefixe + "-appreciation", prefixe + "-appr-avert", n.note, n.bareme);
+}
+function apprAvertirIncoherence(idTa, idAvert, note, bareme) {
+  var ta = document.getElementById(idTa), av = document.getElementById(idAvert);
+  if (!av) return;
+  if (!ta) { av.innerHTML = ""; return; }
+  var m = String(ta.value || "").match(/(\d+(?:[.,]\d+)?)\s*\/\s*(\d+)\b/);
+  if (!m) { av.innerHTML = ""; return; }
+  var n = parseFloat(m[1].replace(",", ".")), b = parseFloat(m[2]);
+  if (Math.abs(n - note) < 0.01 && b === Number(bareme)) { av.innerHTML = ""; return; }
+  av.innerHTML = '<div style="background:#FFF3E0;border-left:3px solid #FB8C00;border-radius:6px;'
+    + 'padding:7px 10px;margin-top:7px;font-size:11.5px;color:#7A4A00">&#x26A0;&#xFE0F; '
+    + 'L\'appréciation annonce <strong>' + m[0] + '</strong> alors que la note est <strong>'
+    + p11x1Fmt(note) + '/' + bareme + '</strong>. Clique sur &laquo;&nbsp;Reg&eacute;n&eacute;rer auto&nbsp;&raquo; ou corrige le texte.</div>';
+}
+
 function buildP11Ex1TeacherPanel(sub) {
   injectDCPanelCSS();                       /* réutilise les styles .adj-* du Devoir Commun */
   var f = sub.fields || {};
@@ -13513,8 +13581,11 @@ function buildP11Ex1TeacherPanel(sub) {
   var saved = sub.adjustedPts || sec;
   var bareme = Number(sub.bareme) || 20;
   var savedTotal = p11x1TotalBrut(saved);
-  var appr = sub.appreciation || autoAppreciationP11Ex1(p11x1Convert(savedTotal, bareme), bareme, saved);
-  _p11x1LastAutoAppr = sub.appreciation ? "" : appr;
+  var apprAuto = apprEstAutomatique(sub.appreciation);
+  var appr = apprAuto
+    ? autoAppreciationP11Ex1(p11x1Convert(savedTotal, bareme), bareme, saved)
+    : sub.appreciation;
+  _p11x1LastAutoAppr = apprAuto ? appr : "";
 
   function adjRow(key, label, maxPts, autoVal, curVal) {
     var v = (typeof curVal !== "undefined") ? curVal : autoVal;
@@ -13565,10 +13636,10 @@ function buildP11Ex1TeacherPanel(sub) {
   h += '<div class="appr-panel">';
   h += '<div class="appr-title">💬 Appréciation pédagogique</div>';
   h += '<div style="font-size:11px;color:var(--vt);margin-bottom:6px;font-style:italic">💡 Suggestion automatique — modifiable :</div>';
-  h += '<textarea class="appr-ta" id="p11x1-appreciation" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
+  h += '<textarea class="appr-ta" id="p11x1-appreciation" oninput="apprMajAvert(&quot;p11x1&quot;)" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
   h += '<div class="appr-actions">';
   h += '<button onclick="p11x1ResetApprAuto()" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Regénérer auto</button>';
-  h += '</div></div>';
+  h += '</div><div id="p11x1-appr-avert"></div></div>';
 
   h += '<div style="text-align:right;margin-top:12px">';
   h += '<button onclick="saveP11Ex1Adj(' + sub.id + ')" style="padding:10px 22px;background:#0288D1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
@@ -13609,6 +13680,7 @@ function p11x1AdjUpdateTotal() {
     box.style.background = "linear-gradient(135deg," + col + "," + col + "cc)";
   }
   p11x1AutoApprIfUntouched();
+  apprAvertirIncoherence("p11x1-appreciation", "p11x1-appr-avert", note, bareme);
 }
 function _p11x1ComputeAutoAppr() {
   var pts = p11x1ReadAdj();
@@ -13621,6 +13693,8 @@ function p11x1ResetApprAuto() {
   if (!ta) return;
   ta.value = _p11x1ComputeAutoAppr();
   _p11x1LastAutoAppr = ta.value;
+  var _n = apprNoteCourante("p11x1");
+  apprAvertirIncoherence("p11x1-appreciation", "p11x1-appr-avert", _n.note, _n.bareme);
 }
 function p11x1AutoApprIfUntouched() {
   var ta = document.getElementById("p11x1-appreciation");
@@ -13645,13 +13719,16 @@ function saveP11Ex1Adj(sid) {
   subs[idx].bareme        = bareme;
   subs[idx].scoreBrut     = brut;
   subs[idx].adjustedScore = note;
-  subs[idx].appreciation  = ta ? ta.value : "";
+  var apprTxt = ta ? ta.value : "";
+  if (apprEstAutomatique(apprTxt)) apprTxt = autoAppreciationP11Ex1(note, bareme, pts);
+  subs[idx].appreciation  = apprTxt;
   subs[idx].status        = "validated";
   subs[idx].score         = note;
   subs[idx].qcmTot        = bareme;
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
+  if (ta) ta.value = apprTxt;
   var ms = document.getElementById("mscore");
   if (ms) ms.textContent = "Note : " + p11x1Fmt(note) + "/" + bareme + " ✅ — Appréciation enregistrée";
   toast("✅ Note enregistrée — " + p11x1Fmt(note) + "/" + bareme);
