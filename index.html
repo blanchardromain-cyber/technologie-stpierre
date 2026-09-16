@@ -4249,7 +4249,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16d</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9260,6 +9260,22 @@ var cloudSync = (function () {
   var OFFLINE_KEY = "subs_offline_queue";
   var hasUrl = function () { return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; };
 
+  /* Garde-fou : une page ouverte en local (serveur de test, fichier) ne doit JAMAIS
+     écrire dans le classeur de production. Le backend fait un upsert sur (eid + cap) :
+     une soumission de test faite en local sous le nom d'un élève réel écrasait
+     purement et simplement sa vraie copie. La lecture (pull) reste autorisée. */
+  var enLocal = (function () {
+    var hn = (location.hostname || "").toLowerCase();
+    return hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "";
+  })();
+  function refuseEcritureLocale(quoi) {
+    try {
+      console.warn("[cloudSync] Page servie en local (" + (location.hostname || "fichier") +
+        ") : " + quoi + " vers le classeur de production a été bloqué. " +
+        "Les données restent en file locale.");
+    } catch (e) {}
+  }
+
   function queue(sub) {
     try {
       var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
@@ -9295,6 +9311,7 @@ var cloudSync = (function () {
   function send(sub, onDone) {
     sub = sanitizeForSheet(sub);
     queue(sub);
+    if (enLocal) { refuseEcritureLocale("l'envoi d'une soumission"); if (onDone) onDone(false); return; }
     if (!hasUrl()) { if (onDone) onDone(false); return; }
     try {
       fetch(APPS_SCRIPT_URL, {
@@ -9391,6 +9408,7 @@ var cloudSync = (function () {
   /* Suppression hard côté cloud — POST {action:"delete", id, eid, cap}
      Apps Script doit avoir un handler doPost qui supprime la ligne correspondante. */
   function del(sub, onDone) {
+    if (enLocal) { refuseEcritureLocale("une suppression"); if (onDone) onDone(false); return; }
     if (!hasUrl()) { if (onDone) onDone(false); return; }
     try {
       fetch(APPS_SCRIPT_URL, {
