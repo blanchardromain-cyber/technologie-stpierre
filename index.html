@@ -287,6 +287,35 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
   .ex2-docs-grid{grid-template-columns:1fr!important}
   .ex2-doc1-grid{grid-template-columns:1fr!important}
 }
+/* ── P11 Exercice n°1 — bête à cornes, pieuvre, outils dys ── */
+.p11x1-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:8px 12px;margin-bottom:16px}
+.p11x1-tools-lbl{font-size:11px;font-weight:700;color:var(--td);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
+.bac-row{display:flex;gap:16px;align-items:flex-end}
+.bac-col{flex:1;min-width:0}
+.bac-q{font-size:12px;font-weight:700;color:#01579B;text-align:center;margin-bottom:8px;min-height:34px;display:flex;align-items:flex-end;justify-content:center}
+.bac-ell{border:2px solid #0288D1;background:#E1F5FE;border-radius:50%;height:104px;display:flex;align-items:center;justify-content:center;padding:0 20px}
+.bac-ell input{width:100%;border:none;background:transparent;text-align:center;font-family:inherit;font-size:14px;font-weight:700;color:#01579B;outline:none}
+.bac-ell input::placeholder{color:#90CAF9;font-weight:600}
+.bac-svg{display:block;width:100%;height:70px}
+.bac-svg path{fill:none;stroke:#0288D1;stroke-width:2.5}
+.bac-center{background:#0288D1;border-radius:50%;max-width:340px;margin:0 auto;padding:24px 22px;text-align:center;box-shadow:0 6px 16px rgba(2,136,209,.3)}
+.bac-center input{width:100%;border:none;background:transparent;text-align:center;font-family:inherit;font-size:15px;font-weight:800;color:#fff;outline:none}
+.bac-center input::placeholder{color:#B3E5FC;font-weight:600}
+.bac-plabel{text-align:center;font-size:12px;font-style:italic;color:var(--td);margin-top:8px}
+.bac-stem{width:2.5px;height:30px;background:#0288D1;margin:4px auto 0}
+.bac-goal{display:flex;gap:16px;align-items:center}
+.bac-goal .gbox{flex:1;min-width:0}
+.bac-goal .gside{width:170px;font-size:12px;font-weight:700;color:#01579B}
+.bac-mirror{display:inline-block;min-width:170px;border-bottom:2px dashed #0288D1;text-align:center;font-weight:700;color:#01579B;padding:0 8px}
+.bac-mirror:empty::before{content:"…";color:#90CAF9;font-weight:600}
+.bac-mirror.block{display:block;min-width:0;width:100%;margin-top:8px}
+.pie-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.pie-item{background:#fff;border:1px solid var(--gb);border-radius:10px;padding:10px 12px}
+.pie-code{display:inline-block;background:#0288D1;color:#fff;font-weight:700;font-size:12px;border-radius:6px;padding:3px 10px;margin-bottom:6px}
+.pie-code.fc{background:#7B1FA2}
+.pie-liens{font-size:11.5px;color:var(--td);font-style:italic;margin-bottom:6px}
+@media(max-width:700px){.bac-row{flex-direction:column;align-items:stretch}.bac-svg{display:none}.bac-goal{flex-direction:column;align-items:stretch}.bac-goal .gside{width:auto;text-align:center}}
+@media print{#pg-p11-ex1,#pg-p11-ex1-cor{display:block!important}.p11x1-tools{display:none!important}}
 @media print{#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor{display:block!important}.btn-mic{display:none!important}}
 /* ── Contextes d'apparition ── */
 .ctx-card{border-radius:12px;padding:16px;border-left:5px solid;transition:transform .2s,box-shadow .2s}
@@ -300,7 +329,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
 .ctx-item-row{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;margin-bottom:8px;background:var(--gr);flex-wrap:wrap}
 .ctx-item-row.ok{background:#E8F5E9;border:1px solid var(--vt)}
 .ctx-item-row.ko{background:#FADBD8;border:1px solid var(--rg)}
-@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
+@media print{body>*{display:none!important}#app{display:block!important}.hdr{display:none!important}.main>div{display:none!important}#pg-rem-form,#pg-p11-ex1,#pg-p11-ex1-cor,#pg-p12,#pg-p12-ex1,#pg-p12-ex1-cor,#pg-p12-ex2,#pg-p12-ex2-cor,#pg-p12-cor-a1,#pg-p12-cor-a2{display:block!important}button{display:none!important}#fiche-corrige,#p12-corrige{display:block!important}.btn-mic{display:none!important}}
 /* ═══ DEVOIR COMMUN ═══ */
 .dc-timer-bar{position:sticky;top:58px;z-index:90;background:var(--bl);color:#fff;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 -24px}
 .dc-timer{font-family:"DM Mono",monospace;font-size:22px;font-weight:700;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px;min-width:92px;text-align:center;display:inline-block;transition:background .3s}
@@ -1339,6 +1368,444 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
     <!-- ============================================================ -->
     <!-- P12 — EXERCICE n°1 — DISTRIBUTEUR DE CROQUETTES CONNECTÉ     -->
     <!-- ============================================================ -->
+    <!-- ============================================================ -->
+    <!-- P11 — EXERCICE n°1 — CAPTEURS, ACTIONNEURS & CDCF            -->
+    <!-- ============================================================ -->
+    <div id="pg-p11-ex1" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n&deg;1 &mdash; Capteurs, actionneurs &amp; cahier des charges</h2>
+      </div>
+      <div style="max-width:920px">
+
+        <!-- BARRE OUTILS DYS -->
+        <div class="p11x1-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+
+        <!-- EN-TÊTE IDENTITÉ -->
+        <div style="background:linear-gradient(135deg,#0288D1,#01579B);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
+            <span style="font-size:36px;animation:fiu .6s ease">&#x1F6BF;</span>
+            <div style="flex:1;min-width:240px">
+              <div style="font-size:18px;font-weight:700">Exercice n&deg;1 &mdash; Comment d&eacute;crire un objet technique et le besoin auquel il r&eacute;pond&nbsp;?</div>
+              <div style="font-size:13px;opacity:.9">P11 &mdash; L'eau, ressource essentielle &bull; Classe invers&eacute;e &bull; Cycle 4 &mdash; 4&egrave;me</div>
+            </div>
+            <div style="background:rgba(255,255,255,.22);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;white-space:nowrap">&#x1F4DD; &Eacute;valu&eacute;</div>
+          </div>
+          <div style="background:rgba(255,255,255,.18);border-radius:8px;padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Nom</label>
+              <input type="text" id="p11x1-nom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Pr&eacute;nom</label>
+              <input type="text" id="p11x1-prenom" class="p12-input" style="background:#fff;color:var(--tx)" readonly></div>
+            <div><label style="font-size:12px;font-weight:600;opacity:.85;display:block;margin-bottom:4px">Classe</label>
+              <select id="p11x1-classe" class="p12-input" style="background:#fff;color:var(--tx);cursor:pointer">
+                <option value="">— Choisis —</option>
+                <option value="4A">4A</option><option value="4B">4B</option><option value="4C">4C</option>
+                <option value="4D">4D</option><option value="4E">4E</option><option value="4F">4F</option><option value="4G">4G</option>
+              </select></div>
+          </div>
+        </div>
+
+        <!-- COMPÉTENCE ÉVALUÉE -->
+        <div style="background:#fff;border:2px solid #0288D1;border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
+          <div style="font-size:12px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F3AF; Comp&eacute;tence &eacute;valu&eacute;e</div>
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px">
+              <thead><tr style="background:#E1F5FE;color:#01579B">
+                <th style="padding:8px 10px;text-align:left;border:1px solid #B3E5FC">Domaine</th>
+                <th style="padding:8px 10px;text-align:left;border:1px solid #B3E5FC">Comp&eacute;tence &eacute;valu&eacute;e</th>
+                <th style="padding:8px 6px;border:1px solid #B3E5FC;width:34px">1</th>
+                <th style="padding:8px 6px;border:1px solid #B3E5FC;width:34px">2</th>
+                <th style="padding:8px 6px;border:1px solid #B3E5FC;width:34px">3</th>
+                <th style="padding:8px 6px;border:1px solid #B3E5FC;width:34px">4</th>
+              </tr></thead>
+              <tbody><tr>
+                <td style="padding:8px 10px;border:1px solid #B3E5FC;font-weight:600">D&eacute;crire les liens entre usages et &eacute;volutions technologiques des objets et des syst&egrave;mes techniques</td>
+                <td style="padding:8px 10px;border:1px solid #B3E5FC"><strong>CT1.1</strong> : Collecter, trier et analyser des donn&eacute;es</td>
+                <td style="border:1px solid #B3E5FC"></td><td style="border:1px solid #B3E5FC"></td>
+                <td style="border:1px solid #B3E5FC"></td><td style="border:1px solid #B3E5FC"></td>
+              </tr></tbody>
+            </table>
+          </div>
+          <div style="font-size:11.5px;color:var(--td);margin-top:8px"><strong>1</strong> : Ma&icirc;trise insuffisante &nbsp;&bull;&nbsp; <strong>2</strong> : Ma&icirc;trise fragile &nbsp;&bull;&nbsp; <strong>3</strong> : Ma&icirc;trise satisfaisante &nbsp;&bull;&nbsp; <strong>4</strong> : Tr&egrave;s bonne ma&icirc;trise</div>
+        </div>
+
+        <!-- MISSION -->
+        <div style="background:#E1F5FE;border:2px dashed #0288D1;border-radius:10px;padding:14px 20px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px">
+          <span style="font-size:22px;flex-shrink:0">&#x1F3AF;</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Ta mission</div>
+            <div class="p11x1-lire" style="font-size:14px;color:#01579B;line-height:1.55">Toutes les r&eacute;ponses se trouvent dans les <strong>deux ressources ci-dessous</strong> et dans ton <strong>cours de 5&deg;</strong>. Tu n'as pas &agrave; inventer&nbsp;: tu dois <strong>chercher</strong>, <strong>lire</strong> et <strong>recopier l'information utile</strong>. Prends le temps de parcourir les animations avant de r&eacute;pondre.</div>
+          </div>
+        </div>
+
+        <!-- RESSOURCES -->
+        <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:18px 20px;margin-bottom:22px">
+          <div style="font-size:12px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">&#x1F517; Tes ressources de recherche</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+            <a href="https://techno-flash.com/animations/CAIkf46es/capteurs_actionneurs_interface.html" target="_blank" rel="noopener"
+               style="display:block;background:#E1F5FE;border-left:4px solid #0288D1;border-radius:8px;padding:12px 14px;text-decoration:none;color:#01579B">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.8">Ressource 1 &mdash; parties A</div>
+              <div style="font-size:14px;font-weight:700;margin-top:3px">&#x1F916; Capteurs, actionneurs, interface</div>
+              <div style="font-size:12px;margin-top:3px;opacity:.85">techno-flash.com &mdash; s'ouvre dans un nouvel onglet</div>
+            </a>
+            <a href="https://techno-flash.com/animations/cahier_des_charges/cahier_des_charges_fonctionnel.html" target="_blank" rel="noopener"
+               style="display:block;background:#F3E5F5;border-left:4px solid #7B1FA2;border-radius:8px;padding:12px 14px;text-decoration:none;color:#4A148C">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.8">Ressource 2 &mdash; parties B, C, D</div>
+              <div style="font-size:14px;font-weight:700;margin-top:3px">&#x1F4CB; Le cahier des charges fonctionnel</div>
+              <div style="font-size:12px;margin-top:3px;opacity:.85">techno-flash.com &mdash; pommeau de douche &eacute;coresponsable</div>
+            </a>
+          </div>
+          <div style="font-size:12px;color:var(--td);margin-top:12px;font-style:italic">&#x1F4A1; Astuce&nbsp;: dans la ressource 2, utilise le menu de gauche (Introduction, &Eacute;tape 1, &Eacute;tape 2, &Eacute;tape 3) et laisse l'animation se d&eacute;rouler jusqu'au bout.</div>
+        </div>
+
+        <!-- ═══════════════ PARTIE A ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#01579B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">A</span>
+          Capteurs, interfaces et actionneurs
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 16px;font-style:italic">Utilise la <strong>ressource 1</strong> (onglets &laquo;&nbsp;Capteurs Actionneurs Interface&nbsp;&raquo; et &laquo;&nbsp;Exemples&nbsp;&raquo;).</p>
+
+          <div class="p12-phase" style="background:#E1F5FE">
+            <div style="font-size:13px;font-weight:700;color:#01579B;margin-bottom:10px">1. Donne <strong>trois exemples de capteurs</strong>.</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+              <div class="dictee-wrap"><input type="text" id="p11x1-cap1" class="p12-input" placeholder="Capteur n°1…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-cap1" onclick="toggleDictation('p11x1-cap1','mic-p11x1-cap1')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-cap2" class="p12-input" placeholder="Capteur n°2…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-cap2" onclick="toggleDictation('p11x1-cap2','mic-p11x1-cap2')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-cap3" class="p12-input" placeholder="Capteur n°3…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-cap3" onclick="toggleDictation('p11x1-cap3','mic-p11x1-cap3')" style="bottom:9px">&#x1F3A4;</button></div>
+            </div>
+          </div>
+
+          <div class="p12-phase" style="background:#E1F5FE">
+            <div style="font-size:13px;font-weight:700;color:#01579B;margin-bottom:10px">2. Donne <strong>trois exemples d'interfaces</strong> (cartes programmables).</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+              <div class="dictee-wrap"><input type="text" id="p11x1-int1" class="p12-input" placeholder="Interface n°1…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-int1" onclick="toggleDictation('p11x1-int1','mic-p11x1-int1')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-int2" class="p12-input" placeholder="Interface n°2…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-int2" onclick="toggleDictation('p11x1-int2','mic-p11x1-int2')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-int3" class="p12-input" placeholder="Interface n°3…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-int3" onclick="toggleDictation('p11x1-int3','mic-p11x1-int3')" style="bottom:9px">&#x1F3A4;</button></div>
+            </div>
+          </div>
+
+          <div class="p12-phase" style="background:#E1F5FE">
+            <div style="font-size:13px;font-weight:700;color:#01579B;margin-bottom:10px">3. Donne <strong>trois exemples d'actionneurs</strong>.</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+              <div class="dictee-wrap"><input type="text" id="p11x1-act1" class="p12-input" placeholder="Actionneur n°1…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-act1" onclick="toggleDictation('p11x1-act1','mic-p11x1-act1')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-act2" class="p12-input" placeholder="Actionneur n°2…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-act2" onclick="toggleDictation('p11x1-act2','mic-p11x1-act2')" style="bottom:9px">&#x1F3A4;</button></div>
+              <div class="dictee-wrap"><input type="text" id="p11x1-act3" class="p12-input" placeholder="Actionneur n°3…" style="padding-right:50px"><button class="btn-mic" data-nolecture id="mic-p11x1-act3" onclick="toggleDictation('p11x1-act3','mic-p11x1-act3')" style="bottom:9px">&#x1F3A4;</button></div>
+            </div>
+          </div>
+
+          <div class="p12-phase" style="background:#E8F5E9">
+            <div style="font-size:13px;font-weight:700;color:#1E6B3B;margin-bottom:6px">4. La <strong>cha&icirc;ne d'information</strong> est compos&eacute;e de <strong>3 fonctions &eacute;l&eacute;mentaires</strong> (ou blocs fonctionnels). Compl&egrave;te-la.</div>
+            <div style="font-size:12px;color:var(--td);font-style:italic;margin-bottom:10px">Chaque bloc s'&eacute;crit avec un <strong>verbe &agrave; l'infinitif</strong>. Cherche dans ton cours de 5&deg;.</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center">
+              <div style="flex:1;min-width:150px"><div style="font-size:11px;font-weight:700;color:#1E6B3B;text-align:center;margin-bottom:4px">Bloc 1</div><input type="text" id="p11x1-ci1" class="p12-input" placeholder="…" style="text-align:center"></div>
+              <span style="font-size:22px;color:#1E6B3B;font-weight:700">&#x2192;</span>
+              <div style="flex:1;min-width:150px"><div style="font-size:11px;font-weight:700;color:#1E6B3B;text-align:center;margin-bottom:4px">Bloc 2</div><input type="text" id="p11x1-ci2" class="p12-input" placeholder="…" style="text-align:center"></div>
+              <span style="font-size:22px;color:#1E6B3B;font-weight:700">&#x2192;</span>
+              <div style="flex:1;min-width:150px"><div style="font-size:11px;font-weight:700;color:#1E6B3B;text-align:center;margin-bottom:4px">Bloc 3</div><input type="text" id="p11x1-ci3" class="p12-input" placeholder="…" style="text-align:center"></div>
+            </div>
+          </div>
+
+          <div class="p12-phase" style="background:#FFF8E1">
+            <div style="font-size:13px;font-weight:700;color:#7D6608;margin-bottom:6px">5. Utilise ton cours de 5&deg; et compl&egrave;te la <strong>cha&icirc;ne d'&eacute;nergie</strong> (4 blocs).</div>
+            <div style="font-size:12px;color:var(--td);font-style:italic;margin-bottom:10px">L&agrave; aussi, un <strong>verbe &agrave; l'infinitif</strong> par bloc.</div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center">
+              <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:#7D6608;text-align:center;margin-bottom:4px">Bloc 1</div><input type="text" id="p11x1-ce1" class="p12-input" placeholder="…" style="text-align:center"></div>
+              <span style="font-size:20px;color:#7D6608;font-weight:700">&#x2192;</span>
+              <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:#7D6608;text-align:center;margin-bottom:4px">Bloc 2</div><input type="text" id="p11x1-ce2" class="p12-input" placeholder="…" style="text-align:center"></div>
+              <span style="font-size:20px;color:#7D6608;font-weight:700">&#x2192;</span>
+              <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:#7D6608;text-align:center;margin-bottom:4px">Bloc 3</div><input type="text" id="p11x1-ce3" class="p12-input" placeholder="…" style="text-align:center"></div>
+              <span style="font-size:20px;color:#7D6608;font-weight:700">&#x2192;</span>
+              <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:#7D6608;text-align:center;margin-bottom:4px">Bloc 4</div><input type="text" id="p11x1-ce4" class="p12-input" placeholder="…" style="text-align:center"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ PARTIE B ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#0288D1">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">B</span>
+          La b&ecirc;te &agrave; cornes du pommeau de douche
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 16px;font-style:italic">Utilise la <strong>ressource 2</strong>, menu &laquo;&nbsp;&Eacute;tape 1&nbsp;&raquo;.</p>
+
+          <div class="p12-phase" style="background:#E1F5FE">
+            <div class="bac-row">
+              <div class="bac-col">
+                <div class="bac-q">&#x1F465; &Agrave; qui le produit rend-il service&nbsp;?</div>
+                <div class="bac-ell"><input type="text" id="p11x1-b-qui" placeholder="Écris ta réponse…" autocomplete="off"></div>
+              </div>
+              <div class="bac-col">
+                <div class="bac-q">&#x1F4A7; Sur quoi le produit agit-il&nbsp;?</div>
+                <div class="bac-ell"><input type="text" id="p11x1-b-quoi" placeholder="Écris ta réponse…" autocomplete="off"></div>
+              </div>
+            </div>
+
+            <svg class="bac-svg" viewBox="0 0 1000 70" preserveAspectRatio="none" aria-hidden="true" data-nolecture>
+              <path d="M165,0 C165,40 340,36 430,70"></path>
+              <path d="M835,0 C835,40 660,36 570,70"></path>
+            </svg>
+
+            <div class="bac-center"><input type="text" id="p11x1-b-produit" placeholder="Nom de l'objet technique étudié…" autocomplete="off"></div>
+            <div class="bac-plabel">Produit ou service</div>
+            <div class="bac-stem"></div>
+
+            <div class="bac-goal">
+              <div class="gbox">
+                <div class="dictee-wrap">
+                  <textarea id="p11x1-b-but" rows="3" class="p12-ta" placeholder="Écris ta réponse…"></textarea>
+                  <button class="btn-mic" data-nolecture id="mic-p11x1-b-but" onclick="toggleDictation('p11x1-b-but','mic-p11x1-b-but')">&#x1F3A4;</button>
+                </div>
+              </div>
+              <div class="gside">&#x1F3AF; Dans quel but le produit existe-t-il&nbsp;?</div>
+            </div>
+          </div>
+
+          <div class="p12-phase" style="background:#fff;border:1px solid var(--gb)">
+            <div style="font-size:13px;font-weight:700;color:#01579B;margin-bottom:8px">Expression du besoin <span style="font-size:11px;font-weight:400;color:var(--td)">(se compl&egrave;te toute seule)</span></div>
+            <p style="font-size:15px;line-height:2.3;margin:0;color:var(--tx)">
+              L'objet technique nomm&eacute; <span class="bac-mirror" id="p11x1-mP"></span>
+              rend service &agrave; <span class="bac-mirror" id="p11x1-mA"></span>
+              en agissant sur <span class="bac-mirror" id="p11x1-mB"></span>
+              pour satisfaire le besoin&nbsp;:
+              <span class="bac-mirror block" id="p11x1-mC"></span>
+            </p>
+          </div>
+        </div>
+
+        <!-- ═══════════════ PARTIE C ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#7B1FA2">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">C</span>
+          La pieuvre du pommeau de douche
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 12px;font-style:italic">Utilise la <strong>ressource 2</strong>, menu &laquo;&nbsp;&Eacute;tape 2&nbsp;&raquo;.</p>
+
+          <div class="p11x1-lire" style="background:#F3E5F5;border-left:4px solid #7B1FA2;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#4A148C;line-height:1.65">
+            Les <strong>six &eacute;l&eacute;ments du milieu ext&eacute;rieur</strong> sont d&eacute;j&agrave; plac&eacute;s&nbsp;:
+            <strong>l'eau</strong>, <strong>l'utilisateur</strong>, <strong>la facture d'eau</strong>, <strong>le flexible</strong>, <strong>la main</strong>, <strong>l'&eacute;nergie</strong>.<br>
+            &Agrave; toi de <strong>r&eacute;diger chaque fonction</strong> avec une phrase courte commen&ccedil;ant par un <strong>verbe &agrave; l'infinitif</strong>.
+            Une <strong>FP</strong> (fonction principale) relie <strong>deux</strong> &eacute;l&eacute;ments&nbsp;; une <strong>FC</strong> (fonction contrainte) n'en relie qu'<strong>un seul</strong>.
+          </div>
+
+          <div class="pie-grid">
+            <div class="pie-item">
+              <span class="pie-code">FP1</span>
+              <div class="pie-liens">Relie&nbsp;: l'eau &harr; l'utilisateur</div>
+              <div class="dictee-wrap"><textarea id="p11x1-c-fp1" rows="2" class="p12-ta" placeholder="Verbe à l'infinitif…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-c-fp1" onclick="toggleDictation('p11x1-c-fp1','mic-p11x1-c-fp1')">&#x1F3A4;</button></div>
+            </div>
+            <div class="pie-item">
+              <span class="pie-code">FP2</span>
+              <div class="pie-liens">Relie&nbsp;: l'utilisateur &harr; la facture d'eau</div>
+              <div class="dictee-wrap"><textarea id="p11x1-c-fp2" rows="2" class="p12-ta" placeholder="Verbe à l'infinitif…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-c-fp2" onclick="toggleDictation('p11x1-c-fp2','mic-p11x1-c-fp2')">&#x1F3A4;</button></div>
+            </div>
+            <div class="pie-item">
+              <span class="pie-code fc">FC1</span>
+              <div class="pie-liens">Contrainte&nbsp;: le flexible</div>
+              <div class="dictee-wrap"><textarea id="p11x1-c-fc1" rows="2" class="p12-ta" placeholder="Verbe à l'infinitif…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-c-fc1" onclick="toggleDictation('p11x1-c-fc1','mic-p11x1-c-fc1')">&#x1F3A4;</button></div>
+            </div>
+            <div class="pie-item">
+              <span class="pie-code fc">FC2</span>
+              <div class="pie-liens">Contrainte&nbsp;: la main</div>
+              <div class="dictee-wrap"><textarea id="p11x1-c-fc2" rows="2" class="p12-ta" placeholder="Verbe à l'infinitif…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-c-fc2" onclick="toggleDictation('p11x1-c-fc2','mic-p11x1-c-fc2')">&#x1F3A4;</button></div>
+            </div>
+            <div class="pie-item">
+              <span class="pie-code fc">FC3</span>
+              <div class="pie-liens">Contrainte&nbsp;: l'&eacute;nergie</div>
+              <div class="dictee-wrap"><textarea id="p11x1-c-fc3" rows="2" class="p12-ta" placeholder="Verbe à l'infinitif…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-c-fc3" onclick="toggleDictation('p11x1-c-fc3','mic-p11x1-c-fc3')">&#x1F3A4;</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ PARTIE D ═══════════════ -->
+        <div class="p12-part-hdr" style="background:#1E6B3B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">D</span>
+          L'extrait du cahier des charges fonctionnel
+        </div>
+        <div class="p12-part-body">
+          <p style="font-size:13px;color:var(--td);margin:0 0 12px;font-style:italic">Utilise la <strong>ressource 2</strong>, menu &laquo;&nbsp;&Eacute;tape 3&nbsp;&raquo;. Un <strong>crit&egrave;re</strong> est une caract&eacute;ristique observable ou mesurable&nbsp;; un <strong>niveau</strong> est une valeur chiffr&eacute;e &agrave; respecter.</p>
+
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff">
+              <thead><tr style="background:#1E6B3B;color:#fff">
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9;width:36%">Fonctions</th>
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9;width:28%">Crit&egrave;res</th>
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9">Niveaux</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;background:#F1F8E9"><strong>FP1</strong> Prendre une douche confortablement</td>
+                  <td style="padding:7px 10px;border:1px solid #C8E6C9"><input type="text" id="p11x1-d-fp1c" class="p12-input" placeholder="Critère…"></td>
+                  <td style="padding:7px 10px;border:1px solid #C8E6C9"><input type="text" id="p11x1-d-fp1n" class="p12-input" placeholder="Niveau chiffré…"></td>
+                </tr>
+                <tr>
+                  <td style="padding:7px 10px;border:1px solid #C8E6C9;background:#F1F8E9">
+                    <div style="font-weight:700;margin-bottom:4px">FP2</div>
+                    <div class="dictee-wrap"><textarea id="p11x1-d-fp2lib" rows="2" class="p12-ta" placeholder="Rédige la fonction FP2…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-d-fp2lib" onclick="toggleDictation('p11x1-d-fp2lib','mic-p11x1-d-fp2lib')">&#x1F3A4;</button></div>
+                  </td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;color:var(--td)">Couleur de l'eau <span style="font-size:11px;font-style:italic">(donn&eacute;)</span></td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;font-size:12.5px;line-height:1.7;color:var(--td)">
+                    <span style="color:#1E6B3B;font-weight:700">Vert</span>&nbsp;: quantit&eacute; d'eau &lt; 30 L<br>
+                    <span style="color:#C55A11;font-weight:700">Orange</span>&nbsp;: quantit&eacute; d'eau &gt; 30 L<br>
+                    <span style="color:#C0392B;font-weight:700">Rouge</span>&nbsp;: quantit&eacute; d'eau &gt; 50 L
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:7px 10px;border:1px solid #C8E6C9;background:#F1F8E9">
+                    <div style="font-weight:700;margin-bottom:4px">FC3</div>
+                    <div class="dictee-wrap"><textarea id="p11x1-d-fc3lib" rows="2" class="p12-ta" placeholder="Rédige la fonction contrainte FC3…"></textarea><button class="btn-mic" data-nolecture id="mic-p11x1-d-fc3lib" onclick="toggleDictation('p11x1-d-fc3lib','mic-p11x1-d-fc3lib')">&#x1F3A4;</button></div>
+                  </td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;color:var(--td)">&Eacute;nergie hydraulique <span style="font-size:11px;font-style:italic">(donn&eacute;)</span></td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;color:var(--td)">Dur&eacute;e de vie sup&eacute;rieure &agrave; 5 ans <span style="font-size:11px;font-style:italic">(donn&eacute;)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BOUTONS D'ACTION -->
+        <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center" data-nolecture>
+          <button onclick="saveP11Ex1Draft(true)"
+                  style="padding:14px 24px;background:#00796B;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4BE; Enregistrer le brouillon
+          </button>
+          <button onclick="submitP11Ex1Form()"
+                  style="padding:14px 28px;background:#0288D1;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4E4; Soumettre au professeur
+          </button>
+          <button onclick="exportP11Ex1PDF()"
+                  style="padding:14px 24px;background:var(--bl);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px">
+            &#x1F4C4; Exporter en PDF
+          </button>
+          <button onclick="resetP11Ex1Form()"
+                  style="padding:12px 18px;background:#ECEFF1;color:var(--td);border:1px solid var(--gb);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">
+            &#x21BA; Annuler
+          </button>
+          <div id="p11x1-draft-status" style="font-size:12px;color:#546E7A;flex:1;min-width:180px"></div>
+          <div id="p11x1-status" style="font-size:13px;color:var(--td);flex:1;min-width:200px"></div>
+        </div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p11-ex1 -->
+
+    <!-- ============================================================ -->
+    <!-- P11 — CORRIGÉ EXERCICE n°1                                   -->
+    <!-- ============================================================ -->
+    <div id="pg-p11-ex1-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrig&eacute; Exercice n&deg;1</h2>
+      </div>
+      <div style="max-width:920px">
+
+        <div style="background:linear-gradient(135deg,#1E6B3B,#43A047);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <span style="font-size:36px">&#x1F4DA;</span>
+          <div style="flex:1;min-width:240px">
+            <div style="font-size:18px;font-weight:700">Corrig&eacute; &mdash; Capteurs, actionneurs &amp; cahier des charges</div>
+            <div style="font-size:13px;opacity:.9">P11 &bull; Exercice n&deg;1 &bull; Cycle 4 &mdash; 4&egrave;me &bull; Bar&egrave;me brut&nbsp;: 30 points</div>
+          </div>
+          <button onclick="exportP11Ex1CorPDF()" style="padding:11px 22px;background:#fff;color:#1E6B3B;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15)">
+            &#x1F4C4; Exporter en PDF
+          </button>
+        </div>
+
+        <div style="background:#FFF3E0;border-left:4px solid #FB8C00;border-radius:8px;padding:12px 18px;margin-bottom:18px;font-size:13px;color:#5D3A00">
+          &#x26A0;&#xFE0F; Ce corrig&eacute; est r&eacute;serv&eacute; au prof. Le code d'acc&egrave;s est g&eacute;r&eacute; depuis le modal Prof &gt; onglet &laquo;&nbsp;Codes d'acc&egrave;s&nbsp;&raquo;.
+        </div>
+
+        <!-- PARTIE A -->
+        <div class="p12-part-hdr" style="background:#01579B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">A</span>
+          Capteurs, interfaces et actionneurs &mdash; 13 pts
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>1. Capteurs (3 pts &mdash; 1 pt par exemple)&nbsp;:</strong> <em>capteur de temp&eacute;rature, capteur de position, capteur de luminosit&eacute;, d&eacute;tecteur de fum&eacute;e, capteur de distance (ultrasons), capteur infrarouge (suiveur de ligne), capteur de d&eacute;bit d'eau, capteur de son, capteur de CO2&hellip;</em></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>2. Interfaces (3 pts)&nbsp;:</strong> <em>carte Arduino, carte Raspberry Pi, carte micro:bit, carte &eacute;lectronique programmable, microcontr&ocirc;leur.</em> <span style="color:var(--td)">L'interface est le &laquo;&nbsp;cerveau&nbsp;&raquo; du syst&egrave;me embarqu&eacute;&nbsp;: elle re&ccedil;oit les informations des capteurs et les traite gr&acirc;ce &agrave; un programme.</span></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>3. Actionneurs (3 pts)&nbsp;:</strong> <em>moteur, buzzer, LED, &eacute;lectrovanne, v&eacute;rin, haut-parleur, afficheur, relais, r&eacute;sistance chauffante&hellip;</em> <span style="color:var(--td)">Les actionneurs sont les &laquo;&nbsp;muscles&nbsp;&raquo;&nbsp;: ils re&ccedil;oivent les ordres de l'interface et convertissent l'&eacute;nergie pour r&eacute;aliser des actions.</span></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>4. Cha&icirc;ne d'information (3 pts)&nbsp;:</strong> <em><strong>ACQU&Eacute;RIR</strong> &rarr; <strong>TRAITER</strong> &rarr; <strong>COMMUNIQUER</strong></em>. <span style="color:var(--td)">Acqu&eacute;rir = les capteurs&nbsp;; Traiter = l'interface&nbsp;; Communiquer = transmettre l'ordre aux actionneurs ou l'information &agrave; l'utilisateur.</span></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)"><strong>5. Cha&icirc;ne d'&eacute;nergie (4 pts)&nbsp;:</strong> <em><strong>ALIMENTER</strong> &rarr; <strong>DISTRIBUER</strong> &rarr; <strong>CONVERTIR</strong> &rarr; <strong>TRANSMETTRE</strong></em>. <span style="color:var(--td)">Accepter &laquo;&nbsp;stocker&nbsp;&raquo; pour Alimenter et &laquo;&nbsp;agir&nbsp;&raquo; en fin de cha&icirc;ne.</span></div>
+        </div>
+
+        <!-- PARTIE B -->
+        <div class="p12-part-hdr" style="background:#0288D1">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">B</span>
+          B&ecirc;te &agrave; cornes &mdash; 5 pts
+        </div>
+        <div class="p12-part-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px" class="ex1-bete-grid">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#01579B;text-align:center;margin-bottom:6px;text-transform:uppercase">&#x1F465; &Agrave; qui rend-il service&nbsp;? <span style="font-weight:400">(1 pt)</span></div>
+              <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin:0">&Agrave; l'<strong>utilisateur</strong> (la personne qui prend sa douche).</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="background:#0288D1;color:#fff;border-radius:50%;width:140px;height:140px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:13px;padding:12px;line-height:1.25">POMMEAU DE DOUCHE<br><span style="font-size:11px;font-weight:400">(1 pt)</span></div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#01579B;text-align:center;margin-bottom:6px;text-transform:uppercase">&#x1F4A7; Sur quoi agit-il&nbsp;? <span style="font-weight:400">(1 pt)</span></div>
+              <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin:0">Sur <strong>l'eau</strong> (la quantit&eacute; d'eau utilis&eacute;e).</div>
+            </div>
+          </div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)"><strong>&#x1F3AF; Dans quel but&nbsp;? (2 pts)&nbsp;:</strong> <em>Pour permettre de <strong>prendre une douche</strong> &mdash; et, pour le pommeau &eacute;coresponsable, en <strong>ma&icirc;trisant la quantit&eacute; d'eau utilis&eacute;e</strong> (&eacute;conomiser l'eau).</em> <span style="color:var(--td)">1 pt pour &laquo;&nbsp;prendre une douche&nbsp;&raquo;, 1 pt pour l'id&eacute;e d'&eacute;conomie / de ma&icirc;trise de la consommation.</span></div>
+          <div style="background:#E1F5FE;border-radius:8px;padding:12px 16px;margin-top:10px;font-size:13.5px;line-height:1.8;color:#01579B">
+            <strong>Phrase attendue&nbsp;:</strong> L'objet technique nomm&eacute; <strong>pommeau de douche</strong> rend service &agrave; <strong>l'utilisateur</strong> en agissant sur <strong>l'eau</strong> pour satisfaire le besoin&nbsp;: <strong>prendre une douche en ma&icirc;trisant la quantit&eacute; d'eau consomm&eacute;e</strong>.
+          </div>
+        </div>
+
+        <!-- PARTIE C -->
+        <div class="p12-part-hdr" style="background:#7B1FA2">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">C</span>
+          Pieuvre &mdash; 5 pts (1 pt par fonction)
+        </div>
+        <div class="p12-part-body">
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>FP1</strong> (l'eau &harr; l'utilisateur)&nbsp;: <em>Prendre une douche confortablement.</em></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>FP2</strong> (l'utilisateur &harr; la facture d'eau)&nbsp;: <em>Diminuer la facture d'eau de l'utilisateur.</em></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>FC1</strong> (le flexible)&nbsp;: <em>Pouvoir se visser &agrave; un flexible standard.</em></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:8px"><strong>FC2</strong> (la main)&nbsp;: <em>Avoir une forme ergonomique.</em></div>
+          <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt)"><strong>FC3</strong> (l'&eacute;nergie)&nbsp;: <em>Utiliser une &eacute;nergie renouvelable.</em></div>
+          <div style="font-size:12px;color:var(--td);margin-top:10px;font-style:italic">Toute formulation &eacute;quivalente commen&ccedil;ant par un verbe &agrave; l'infinitif est accept&eacute;e.</div>
+        </div>
+
+        <!-- PARTIE D -->
+        <div class="p12-part-hdr" style="background:#1E6B3B">
+          <span style="background:rgba(255,255,255,.2);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700">D</span>
+          Extrait du CDCF &mdash; 4 pts
+        </div>
+        <div class="p12-part-body">
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff">
+              <thead><tr style="background:#1E6B3B;color:#fff">
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9">Fonctions</th>
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9">Crit&egrave;res</th>
+                <th style="padding:9px 12px;text-align:left;border:1px solid #C8E6C9">Niveaux</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9"><strong>FP1</strong> Prendre une douche confortablement</td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;background:var(--vp)"><strong>D&eacute;bit</strong> <span style="font-size:11px">(1 pt)</span><br>Type de jet</td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;background:var(--vp)"><strong>8 &agrave; 10 litres par minute</strong> <span style="font-size:11px">(1 pt)</span><br>3 &agrave; 5 types&nbsp;: tonic, pluie, massage&hellip;</td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;background:var(--vp)"><strong>FP2</strong> <strong>Diminuer la facture d'eau de l'utilisateur</strong> <span style="font-size:11px">(1 pt)</span></td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9">Couleur de l'eau</td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;font-size:12.5px;line-height:1.7">Vert&nbsp;: &lt; 30 L &bull; Orange&nbsp;: &gt; 30 L &bull; Rouge&nbsp;: &gt; 50 L</td>
+                </tr>
+                <tr>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9;background:var(--vp)"><strong>FC3</strong> <strong>Utiliser une &eacute;nergie renouvelable</strong> <span style="font-size:11px">(1 pt)</span></td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9">&Eacute;nergie hydraulique</td>
+                  <td style="padding:9px 12px;border:1px solid #C8E6C9">Dur&eacute;e de vie sup&eacute;rieure &agrave; 5 ans</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="background:#FFF8E1;border-left:4px solid #FBC02D;border-radius:8px;padding:12px 16px;margin-top:14px;font-size:13px;color:#5D4E00">
+            &#x1F4A1; <strong>Conversion de la note.</strong> Le bar&egrave;me brut est sur <strong>30 points</strong>. Dans le modal Prof, le s&eacute;lecteur &laquo;&nbsp;Bar&egrave;me&nbsp;&raquo; permet d'afficher la note sur <strong>/30</strong> ou de la convertir sur <strong>/20</strong> (arrondi au demi-point).
+          </div>
+        </div>
+
+      </div><!-- fin max-width -->
+    </div><!-- fin pg-p11-ex1-cor -->
+
     <div id="pg-p12-ex1" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
@@ -3542,6 +4009,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
             <option value="cap1">Capsule n°1 &mdash; Biomimétisme</option>
             <option value="rem1">Quiz Rem&eacute;diation P13</option>
             <option value="p12">P12 &mdash; Activit&eacute; 1 (Technologie et Alimentation)</option>
+            <option value="p11-ex1">P11 &mdash; Exercice n&deg;1 (Capteurs, actionneurs &amp; CDCF)</option>
             <option value="p12-ex1">P12 &mdash; Exercice n&deg;1 (Distributeur de croquettes)</option>
             <option value="p12-ex2">P12 &mdash; Exercice n&deg;2 (Bac &agrave; sable connect&eacute;)</option>
             <option value="p12-act2">P12 &mdash; Activit&eacute; 2</option>
@@ -5079,6 +5547,8 @@ var SEQUENCES_DEF = [
   {id:"p12-act3", ordre:126, niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 3", desc:"Atelier Algorigrammes — Comment programmer un système automatisé ?", couleur:"#4338CA", code:"ACT326", open:true},
   {id:"p12-ex1", ordre:127, niveau:"4ème", titre:"P12 — Exercice n°1 — Distributeur de croquettes", desc:"Comment adapter la quantité de nourriture à un animal ?", couleur:"#C2185B", code:"CHA26", open:true},
   {id:"p12-ex1-cor", ordre:128, niveau:"4ème", titre:"P12 — Corrigé Exercice n°1", desc:"Corrigé du distributeur de croquettes. Code d'accès professeur.", couleur:"var(--vt)", code:"CORCHA26", open:true},
+  {id:"p11-ex1", ordre:112, niveau:"4ème", titre:"P11 — Exercice n°1 — Capteurs, actionneurs & CDCF", desc:"Classe inversée évaluée : capteurs/actionneurs, chaînes d'information et d'énergie, bête à cornes, pieuvre et cahier des charges du pommeau de douche. Aides dys intégrées.", couleur:"#0288D1", code:"CAP26", open:true},
+  {id:"p11-ex1-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Exercice n°1", desc:"Corrigé et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"CORCAP26", open:true},
   {id:"cap1", ordre:130, niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"BIO26", open:true},
   {id:"rem1", ordre:131, niveau:"4\u00e8me", titre:"Rem&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"REM26", open:true},
   {id:"seq2", ordre:140, niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
@@ -5453,6 +5923,18 @@ function goPage(pid) {
     }
     restoreP12Act1Draft();
   }
+  if (pid === "pg-p11-ex1") {
+    if (user) {
+      var wNom    = document.getElementById("p11x1-nom");
+      var wPrenom = document.getElementById("p11x1-prenom");
+      var wClasse = document.getElementById("p11x1-classe");
+      if (wNom    && !wNom.value)    wNom.value    = user.n;
+      if (wPrenom && !wPrenom.value) wPrenom.value = user.p;
+      if (wClasse && !wClasse.value) wClasse.value = user.c;
+    }
+    restoreP11Ex1Draft();
+    syncP11Ex1Besoin();
+  }
   if (pid === "pg-p12-ex1") {
     if (user) {
       var xNom    = document.getElementById("ex1-nom");
@@ -5715,6 +6197,10 @@ function renderDash() {
       } else {
         if (s.id === "p12" || s.id === "cap1") {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4DD; Activit&eacute; n&deg;1</span>';
+        } else if (s.id === "p11-ex1") {
+          badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#0288D1;font-weight:700">&#x1F6BF; Exercice n&deg;1 &mdash; not&eacute;</span>';
+        } else if (s.id === "p11-ex1-cor") {
+          badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "p12-ex1") {
           badgeHtml = '<span class="badge" style="background:#FCE4EC;color:#C2185B;font-weight:700">&#x1F408; Exercice n&deg;1</span>';
         } else if (s.id === "p12-ex1-cor") {
@@ -5752,6 +6238,8 @@ function renderDash() {
       else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
       else if (s.id === "dc")       clickAction = "onclick=\"goPage('pg-dc')\"";
       else if (s.id === "p12")      clickAction = "onclick=\"goPage('pg-p12')\"";
+      else if (s.id === "p11-ex1")  clickAction = "onclick=\"goPage('pg-p11-ex1')\"";
+      else if (s.id === "p11-ex1-cor") clickAction = "onclick=\"goPage('pg-p11-ex1-cor')\"";
       else if (s.id === "p12-ex1")  clickAction = "onclick=\"goPage('pg-p12-ex1')\"";
       else if (s.id === "p12-ex1-cor") clickAction = "onclick=\"goPage('pg-p12-ex1-cor')\"";
       else if (s.id === "p12-ex2")  clickAction = "onclick=\"goPage('pg-p12-ex2')\"";
@@ -5813,6 +6301,8 @@ function tryUnlock() {
     toast("Séquence déverrouillée !");
     if (pendingSeq === "dc")   goPage("pg-dc");
     else if (pendingSeq === "p12")  goPage("pg-p12");
+    else if (pendingSeq === "p11-ex1") goPage("pg-p11-ex1");
+    else if (pendingSeq === "p11-ex1-cor") goPage("pg-p11-ex1-cor");
     else if (pendingSeq === "p12-ex1") goPage("pg-p12-ex1");
     else if (pendingSeq === "p12-ex1-cor") goPage("pg-p12-ex1-cor");
     else if (pendingSeq === "p12-ex2") goPage("pg-p12-ex2");
@@ -5942,7 +6432,16 @@ function updMyStatus() {
   for (var i = 0; i < mine.length; i++) {
     var s = mine[i];
     html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
-    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – Score QCM : ' + s.score + '/' + s.qcmTot + '</div></div>';
+    /* P11 Ex1 : la note auto reste masquée tant que le prof n'a pas validé la correction. */
+    var detail;
+    if (s.cap === "p11-ex1") {
+      detail = (s.status === "validated" && s.adjustedScore !== undefined)
+        ? 'Note : ' + p11x1Fmt(s.adjustedScore) + '/' + (s.bareme || 20)
+        : 'En attente de correction par le professeur';
+    } else {
+      detail = 'Score QCM : ' + s.score + '/' + s.qcmTot;
+    }
+    html += '<div><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – ' + detail + '</div></div>';
     html += '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">' + ic[s.status] + '</span><span style="font-size:13px;font-weight:600;color:' + co[s.status] + '">' + lbl[s.status] + '</span></div></div>';
   }
   cards.innerHTML = html;
@@ -7281,6 +7780,17 @@ function renderSubs() {
       } else if (s.cap === "p12") {
         var nf = countP12Fields(s.fields);
         sc = '<span style="background:var(--op);color:var(--or);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nf.done + '/' + nf.total + ' champs</span>';
+      } else if (s.cap === "p11-ex1") {
+        var nfp11 = countP11Ex1Fields(s.fields);
+        if (s.adjustedScore !== undefined) {
+          var bp11 = s.bareme || 20;
+          var pctp11 = s.adjustedScore / bp11 * 100;
+          sc = '<div><strong style="color:' + (pctp11>=75?"var(--vt)":pctp11>=50?"var(--or)":"var(--rg)") + '">' + p11x1Fmt(s.adjustedScore) + '/' + bp11 + '</strong></div>';
+        } else {
+          var autoP11 = p11x1TotalBrut(scoreP11Ex1BySection(s.fields || {}));
+          sc = '<span style="background:#E1F5FE;color:#0288D1;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(autoP11) + '/30</span>'
+             + '<div style="font-size:11px;color:var(--td)">' + nfp11.done + '/' + nfp11.total + ' champs</div>';
+        }
       } else if (s.cap === "p12-ex1") {
         var nfx = countP12Ex1Fields(s.fields);
         sc = '<span style="background:#FCE4EC;color:#C2185B;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">' + nfx.done + '/' + nfx.total + ' champs</span>';
@@ -7641,6 +8151,17 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P12 — Activité n°1 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12ModalHTML(sub.fields);
     document.getElementById("mscore").textContent = "Activité ouverte – Statut : " + sub.status;
+  } else if (sub.cap === "p11-ex1" && sub.fields) {
+    if (mh3) mh3.textContent = "P11 — Exercice n°1 : Réponses de l'élève";
+    document.getElementById("mrep").innerHTML = buildP11Ex1ModalHTML(sub.fields) + buildP11Ex1TeacherPanel(sub);
+    var _p11sec = scoreP11Ex1BySection(sub.fields);
+    var _p11bar = Number(sub.bareme) || 20;
+    var _p11auto = p11x1Convert(p11x1TotalBrut(_p11sec), _p11bar);
+    document.getElementById("mscore").textContent =
+      (sub.adjustedScore !== undefined
+        ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _p11bar
+        : "Note auto : " + p11x1Fmt(_p11auto) + "/" + _p11bar + " (indicative)")
+      + " — Statut : " + sub.status;
   } else if (sub.cap === "p12-ex1" && sub.fields) {
     if (mh3) mh3.textContent = "P12 — Exercice n°1 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12Ex1ModalHTML(sub.fields);
@@ -7709,6 +8230,7 @@ function printModalSub() {
   var answersHTML = "";
   if (sub.cap === "dc" && sub.fields)       answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)  answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p11-ex1" && sub.fields) answersHTML = buildP11Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
@@ -7798,6 +8320,7 @@ function printSubDirect(sid) {
     "dc":"Devoir Commun", "dc-corrige":"DC — Corrigé",
     "cap1":"Capsule n°1 — Biomimetìsme", "rem1":"Quiz Remédiation P13",
     "p12":"P12 — Activité 1", "p12-ex1":"P12 — Exercice n°1",
+    "p11-ex1":"P11 — Exercice n°1 (Capteurs, actionneurs & CDCF)", "p11-ex1-cor":"P11 — Corrigé Exercice n°1",
     "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
     "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
     "filius5e":"Filius 5e — Simulation réseau (binôme)",
@@ -7818,6 +8341,12 @@ function printSubDirect(sid) {
     scoreStr = "Score : " + sub.score + "/40 — Statut : " + sub.status;
   } else if (sub.cap === "p12") {
     var nf = countP12Fields(sub.fields||{}); scoreStr = nf.done + "/" + nf.total + " champs — Statut : " + sub.status;
+  } else if (sub.cap === "p11-ex1") {
+    var _b = Number(sub.bareme) || 20;
+    scoreStr = (sub.adjustedScore !== undefined
+      ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _b
+      : "Note auto : " + p11x1Fmt(p11x1Convert(p11x1TotalBrut(scoreP11Ex1BySection(sub.fields||{})), _b)) + "/" + _b + " (indicative)")
+      + " — Statut : " + sub.status;
   } else if (sub.cap === "p12-ex1") {
     var nfx = countP12Ex1Fields(sub.fields||{}); scoreStr = nfx.done + "/" + nfx.total + " champs — Statut : " + sub.status;
   } else if (sub.cap === "p12-ex2") {
@@ -7842,6 +8371,7 @@ function printSubDirect(sid) {
   var answersHTML = "";
   if (sub.cap === "dc" && sub.fields)         answersHTML = buildDCModalHTML(sub.fields, sub.score);
   else if (sub.cap === "p12" && sub.fields)    answersHTML = buildP12ModalHTML(sub.fields);
+  else if (sub.cap === "p11-ex1" && sub.fields) answersHTML = buildP11Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex1" && sub.fields) answersHTML = buildP12Ex1ModalHTML(sub.fields);
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
@@ -7992,6 +8522,31 @@ function _buildCapsuleCSV(cap, filtered) {
         f["3-contexte"], f.bilan];
     });
     return { headers: headers, rows: rows };
+  }
+  if (cap === "p11-ex1") {
+    var hdrP11 = ["Eleve","Classe","Date","Statut","Bareme","NoteAuto30","NoteFinale",
+      "Capteur1","Capteur2","Capteur3","Interface1","Interface2","Interface3",
+      "Actionneur1","Actionneur2","Actionneur3",
+      "Info1","Info2","Info3","Energie1","Energie2","Energie3","Energie4",
+      "B-Produit","B-Qui","B-Quoi","B-But",
+      "C-FP1","C-FP2","C-FC1","C-FC2","C-FC3",
+      "D-FP1-Critere","D-FP1-Niveau","D-FP2","D-FC3","Appreciation"];
+    var rowsP11 = filtered.map(function(x){
+      var f = x.fields || {};
+      var auto = p11x1TotalBrut(scoreP11Ex1BySection(f));
+      return [x.ename, x.ecls, dateOf(x), x.status, (x.bareme||20), auto,
+        (x.adjustedScore !== undefined ? x.adjustedScore : ""),
+        f["p11x1-cap1"], f["p11x1-cap2"], f["p11x1-cap3"],
+        f["p11x1-int1"], f["p11x1-int2"], f["p11x1-int3"],
+        f["p11x1-act1"], f["p11x1-act2"], f["p11x1-act3"],
+        f["p11x1-ci1"], f["p11x1-ci2"], f["p11x1-ci3"],
+        f["p11x1-ce1"], f["p11x1-ce2"], f["p11x1-ce3"], f["p11x1-ce4"],
+        f["p11x1-b-produit"], f["p11x1-b-qui"], f["p11x1-b-quoi"], f["p11x1-b-but"],
+        f["p11x1-c-fp1"], f["p11x1-c-fp2"], f["p11x1-c-fc1"], f["p11x1-c-fc2"], f["p11x1-c-fc3"],
+        f["p11x1-d-fp1c"], f["p11x1-d-fp1n"], f["p11x1-d-fp2lib"], f["p11x1-d-fc3lib"],
+        (x.appreciation || "")];
+    });
+    return { headers: hdrP11, rows: rowsP11 };
   }
   if (cap === "p12-ex1") {
     var hdrEx1 = ["Eleve","Classe","Date","Statut",
@@ -9236,6 +9791,7 @@ function renderEx1Stats() {
   var capF = (document.getElementById("fcap") || {}).value || "";
   /* Configuration par capsule supportée (Ex1, Ex2) */
   var CFG_STATS = {
+    "p11-ex1": { fields: P11X1_FIELDS, labels: P11X1_FIELD_LABELS, label: "P11 Exercice n°1 — Capteurs & CDCF" },
     "p12-ex1": { fields: EX1_FIELDS, labels: EX1_FIELD_LABELS, label: "Exercice n°1 — Distributeur" },
     "p12-ex2": { fields: EX2_FIELDS, labels: EX2_FIELD_LABELS, label: "Exercice n°2 — Bac à sable" }
   };
@@ -11246,6 +11802,642 @@ function restoreP12Act1Draft() {
   _showDraftStatus("p12-draft-status", data._savedAt || null);
 }
 
+// ================================================================
+// P11 — EXERCICE n°1 — Capteurs, actionneurs & cahier des charges
+// ================================================================
+/* Liste des IDs des champs — utilisée par save/restore/snap/export */
+var P11X1_FIELDS = [
+  "p11x1-cap1","p11x1-cap2","p11x1-cap3",
+  "p11x1-int1","p11x1-int2","p11x1-int3",
+  "p11x1-act1","p11x1-act2","p11x1-act3",
+  "p11x1-ci1","p11x1-ci2","p11x1-ci3",
+  "p11x1-ce1","p11x1-ce2","p11x1-ce3","p11x1-ce4",
+  "p11x1-b-produit","p11x1-b-qui","p11x1-b-quoi","p11x1-b-but",
+  "p11x1-c-fp1","p11x1-c-fp2","p11x1-c-fc1","p11x1-c-fc2","p11x1-c-fc3",
+  "p11x1-d-fp1c","p11x1-d-fp1n","p11x1-d-fp2lib","p11x1-d-fc3lib"
+];
+
+var P11X1_FIELD_LABELS = {
+  "p11x1-cap1":"A1 — Capteur 1", "p11x1-cap2":"A1 — Capteur 2", "p11x1-cap3":"A1 — Capteur 3",
+  "p11x1-int1":"A2 — Interface 1", "p11x1-int2":"A2 — Interface 2", "p11x1-int3":"A2 — Interface 3",
+  "p11x1-act1":"A3 — Actionneur 1", "p11x1-act2":"A3 — Actionneur 2", "p11x1-act3":"A3 — Actionneur 3",
+  "p11x1-ci1":"A4 — Info bloc 1", "p11x1-ci2":"A4 — Info bloc 2", "p11x1-ci3":"A4 — Info bloc 3",
+  "p11x1-ce1":"A5 — Énergie bloc 1", "p11x1-ce2":"A5 — Énergie bloc 2",
+  "p11x1-ce3":"A5 — Énergie bloc 3", "p11x1-ce4":"A5 — Énergie bloc 4",
+  "p11x1-b-produit":"B — Produit", "p11x1-b-qui":"B — À qui ?",
+  "p11x1-b-quoi":"B — Sur quoi ?", "p11x1-b-but":"B — Dans quel but ?",
+  "p11x1-c-fp1":"C — FP1", "p11x1-c-fp2":"C — FP2",
+  "p11x1-c-fc1":"C — FC1", "p11x1-c-fc2":"C — FC2", "p11x1-c-fc3":"C — FC3",
+  "p11x1-d-fp1c":"D — FP1 critère", "p11x1-d-fp1n":"D — FP1 niveau",
+  "p11x1-d-fp2lib":"D — FP2 libellé", "p11x1-d-fc3lib":"D — FC3 libellé"
+};
+
+/* Sections du barème brut (total 30 pts) */
+var P11X1_SECTIONS = [
+  {k:"cap",  max:3, lbl:"A1 — Trois capteurs"},
+  {k:"intf", max:3, lbl:"A2 — Trois interfaces"},
+  {k:"act",  max:3, lbl:"A3 — Trois actionneurs"},
+  {k:"ci",   max:3, lbl:"A4 — Chaîne d'information"},
+  {k:"ce",   max:4, lbl:"A5 — Chaîne d'énergie"},
+  {k:"bete", max:5, lbl:"B — Bête à cornes"},
+  {k:"pie",  max:5, lbl:"C — Pieuvre"},
+  {k:"cdcf", max:4, lbl:"D — Extrait du CDCF"}
+];
+var P11X1_TOTAL_BRUT = 30;
+
+/* ── Correction automatique par mots-clés ───────────────────────
+   Chaque réponse est comparée à une liste de mots-clés attendus, après
+   normalisation (minuscules, accents supprimés). La note obtenue est
+   INDICATIVE : le prof l'ajuste au demi-point dans le modal. */
+function _p11norm(v) {
+  return String(v || "").toLowerCase()
+    .normalize("NFD").replace(new RegExp("[\\u0300-\\u036f]", "g"), "")
+    .replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+function _p11has(t, list) {
+  for (var i = 0; i < list.length; i++) { if (t.indexOf(list[i]) !== -1) return true; }
+  return false;
+}
+
+var P11X1_KW = {
+  capteur:   ["capteur","detecteur","sonde","thermometre","ultrason","infrarouge","photoresistance","ldr",
+              "bouton","interrupteur","fin de course","potentiometre","temperature","luminosite","humidite",
+              "presence","fumee","distance","debit","pression","son ","microphone","co2"],
+  interface: ["arduino","raspberry","microbit","micro bit","micro:bit","carte","microcontroleur","micro controleur",
+              "automate","esp32","esp8266","nano","uno","programmable","interface"],
+  actionneur:["moteur","buzzer","led","diode","electrovanne","vanne","verin","haut parleur","hautparleur",
+              "afficheur","ecran","relais","servo","pompe","lampe","sonnerie","resistance chauffante",
+              "actionneur","ventilateur","sirene"],
+  ci1:["acquerir","acquisition","capter","saisir"],
+  ci2:["traiter","traitement"],
+  ci3:["communiquer","communication","transmettre","restituer","informer"],
+  ce1:["alimenter","alimentation","stocker","stockage"],
+  ce2:["distribuer","distribution"],
+  ce3:["convertir","conversion"],
+  ce4:["transmettre","transmission","agir","action"],
+  produit:["pommeau","douchette","douche"],
+  qui:["utilisateur","usager","personne","client","consommateur","gens","humain","individu","habitant"],
+  butDouche:["douche","laver","lavage","toilette"],
+  butEco:["econom","quantite","consommation","gaspill","facture","maitris","reduire","limiter","debit","moins d eau"],
+  fp1:["douche"],
+  fp2:["facture","economi","consommation","depense"],
+  fc1:["flexible","visser","pas de vis","standard","tuyau"],
+  fc2:["ergonom","forme","main","prise en main","tenir"],
+  fc3:["renouvelable","hydraulique","turbine","verte","propre"],
+  dFp1c:["debit","jet"],
+  dFp2:["facture","economi","consommation"],
+  dFc3:["renouvelable","hydraulique"]
+};
+
+/* Calcule le score automatique par section (objet {cap, intf, act, ci, ce, bete, pie, cdcf}) */
+function scoreP11Ex1BySection(f) {
+  var s = {cap:0, intf:0, act:0, ci:0, ce:0, bete:0, pie:0, cdcf:0};
+  if (!f) return s;
+  var i, t;
+
+  /* A1 / A2 / A3 — 1 pt par exemple valide et NON dupliqué */
+  function famille(ids, kw) {
+    var pts = 0, vus = [];
+    for (var j = 0; j < ids.length; j++) {
+      var n = _p11norm(f[ids[j]]);
+      if (!n) continue;
+      if (vus.indexOf(n) !== -1) continue;      /* doublon → pas de point */
+      if (_p11has(n, kw)) { pts++; vus.push(n); }
+    }
+    return pts;
+  }
+  s.cap  = famille(["p11x1-cap1","p11x1-cap2","p11x1-cap3"], P11X1_KW.capteur);
+  s.intf = famille(["p11x1-int1","p11x1-int2","p11x1-int3"], P11X1_KW.interface);
+  s.act  = famille(["p11x1-act1","p11x1-act2","p11x1-act3"], P11X1_KW.actionneur);
+
+  /* A4 — chaîne d'information (ordre attendu) */
+  if (_p11has(_p11norm(f["p11x1-ci1"]), P11X1_KW.ci1)) s.ci++;
+  if (_p11has(_p11norm(f["p11x1-ci2"]), P11X1_KW.ci2)) s.ci++;
+  if (_p11has(_p11norm(f["p11x1-ci3"]), P11X1_KW.ci3)) s.ci++;
+
+  /* A5 — chaîne d'énergie (ordre attendu) */
+  if (_p11has(_p11norm(f["p11x1-ce1"]), P11X1_KW.ce1)) s.ce++;
+  if (_p11has(_p11norm(f["p11x1-ce2"]), P11X1_KW.ce2)) s.ce++;
+  if (_p11has(_p11norm(f["p11x1-ce3"]), P11X1_KW.ce3)) s.ce++;
+  if (_p11has(_p11norm(f["p11x1-ce4"]), P11X1_KW.ce4)) s.ce++;
+
+  /* B — bête à cornes (1+1+1+2) */
+  if (_p11has(_p11norm(f["p11x1-b-produit"]), P11X1_KW.produit)) s.bete++;
+  if (_p11has(_p11norm(f["p11x1-b-qui"]), P11X1_KW.qui)) s.bete++;
+  if (_p11norm(f["p11x1-b-quoi"]).indexOf("eau") !== -1) s.bete++;
+  t = _p11norm(f["p11x1-b-but"]);
+  if (_p11has(t, P11X1_KW.butDouche)) s.bete++;
+  if (_p11has(t, P11X1_KW.butEco)) s.bete++;
+
+  /* C — pieuvre (1 pt par fonction) */
+  if (_p11has(_p11norm(f["p11x1-c-fp1"]), P11X1_KW.fp1)) s.pie++;
+  if (_p11has(_p11norm(f["p11x1-c-fp2"]), P11X1_KW.fp2)) s.pie++;
+  if (_p11has(_p11norm(f["p11x1-c-fc1"]), P11X1_KW.fc1)) s.pie++;
+  if (_p11has(_p11norm(f["p11x1-c-fc2"]), P11X1_KW.fc2)) s.pie++;
+  if (_p11has(_p11norm(f["p11x1-c-fc3"]), P11X1_KW.fc3)) s.pie++;
+
+  /* D — extrait du CDCF (4 pts) */
+  if (_p11has(_p11norm(f["p11x1-d-fp1c"]), P11X1_KW.dFp1c)) s.cdcf++;
+  t = _p11norm(f["p11x1-d-fp1n"]);
+  if (/(^|\s)(8|9|10)(\s|$)/.test(t) && _p11has(t, ["litre","l min","minute","lmin"])) s.cdcf++;
+  if (_p11has(_p11norm(f["p11x1-d-fp2lib"]), P11X1_KW.dFp2)) s.cdcf++;
+  if (_p11has(_p11norm(f["p11x1-d-fc3lib"]), P11X1_KW.dFc3)) s.cdcf++;
+
+  /* Sécurité : plafonner chaque section à son maximum */
+  for (i = 0; i < P11X1_SECTIONS.length; i++) {
+    var sec = P11X1_SECTIONS[i];
+    s[sec.k] = Math.min(s[sec.k], sec.max);
+  }
+  return s;
+}
+
+/* Total brut (sur 30) à partir d'un objet de sections */
+function p11x1TotalBrut(sec) {
+  var t = 0;
+  for (var i = 0; i < P11X1_SECTIONS.length; i++) t += (sec[P11X1_SECTIONS[i].k] || 0);
+  return Math.round(Math.min(t, P11X1_TOTAL_BRUT) * 10) / 10;
+}
+
+/* Conversion du total brut (/30) vers le barème choisi (20 ou 30), arrondi au demi-point */
+function p11x1Convert(totalBrut, bareme) {
+  if (Number(bareme) === 30) return Math.round(totalBrut * 10) / 10;
+  return Math.round(totalBrut * 20 / P11X1_TOTAL_BRUT * 2) / 2;
+}
+function p11x1Fmt(n) { return (n % 1 === 0) ? n.toFixed(0) : n.toFixed(1); }
+
+/* Appréciation automatique */
+function autoAppreciationP11Ex1(note, bareme, sec) {
+  var pct = note / Number(bareme) * 100;
+  var mention = pct >= 90 ? "Excellent travail de recherche"
+              : pct >= 75 ? "Très bon travail de recherche"
+              : pct >= 60 ? "Bon travail"
+              : pct >= 40 ? "Travail à consolider"
+              : "Des progrès sont nécessaires";
+  var lacunes = [];
+  if ((sec.cap + sec.intf + sec.act) < 7) lacunes.push("l'identification des capteurs, interfaces et actionneurs");
+  if (sec.ci < 2) lacunes.push("la chaîne d'information");
+  if (sec.ce < 3) lacunes.push("la chaîne d'énergie");
+  if (sec.bete < 4) lacunes.push("la bête à cornes");
+  if (sec.pie < 4) lacunes.push("la pieuvre et les fonctions de service");
+  if (sec.cdcf < 3) lacunes.push("les critères et niveaux du cahier des charges");
+  var txt = mention + " — " + p11x1Fmt(note) + "/" + bareme + ". ";
+  if (lacunes.length) txt += "Points à renforcer : " + lacunes.join(", ") + ".";
+  else txt += "Les données ont été collectées, triées et analysées avec rigueur.";
+  return txt;
+}
+
+/* ── Formulaire élève ──────────────────────────────────────────── */
+function snapP11Ex1() {
+  var snap = {};
+  for (var i = 0; i < P11X1_FIELDS.length; i++) {
+    var el = document.getElementById(P11X1_FIELDS[i]);
+    snap[P11X1_FIELDS[i]] = el ? (el.value || "").trim() : "";
+  }
+  return snap;
+}
+function saveP11Ex1Draft() {
+  if (!user) return;
+  try { localStorage.setItem("p11_ex1_" + user.id, JSON.stringify(snapP11Ex1())); } catch(e) {}
+}
+function restoreP11Ex1Draft() {
+  if (!user) return;
+  var raw = null;
+  try { raw = localStorage.getItem("p11_ex1_" + user.id); } catch(e) {}
+  if (!raw) return;
+  var snap = {};
+  try { snap = JSON.parse(raw) || {}; } catch(e) { return; }
+  for (var k in snap) {
+    if (Object.prototype.hasOwnProperty.call(snap, k)) {
+      var el = document.getElementById(k);
+      if (el && !el.value) el.value = snap[k];
+    }
+  }
+  syncP11Ex1Besoin();
+}
+function resetP11Ex1Form() {
+  if (!confirm("Effacer toutes tes réponses pour cet exercice ?")) return;
+  for (var i = 0; i < P11X1_FIELDS.length; i++) {
+    var el = document.getElementById(P11X1_FIELDS[i]);
+    if (el) el.value = "";
+  }
+  if (user) { try { localStorage.removeItem("p11_ex1_" + user.id); } catch(e) {} }
+  syncP11Ex1Besoin();
+  var st = document.getElementById("p11x1-status");
+  if (st) { st.innerHTML = "Brouillon effacé."; st.style.color = "var(--td)"; }
+  toast("Brouillon effacé");
+}
+function countP11Ex1Fields(fields) {
+  if (!fields) return {done:0, total:P11X1_FIELDS.length};
+  var done = 0;
+  for (var i = 0; i < P11X1_FIELDS.length; i++) {
+    var v = fields[P11X1_FIELDS[i]];
+    if (v !== undefined && v !== null && String(v).trim() !== "") done++;
+  }
+  return {done:done, total:P11X1_FIELDS.length};
+}
+
+/* Phrase « expression du besoin » qui se complète en direct */
+function syncP11Ex1Besoin() {
+  function val(id) { var el = document.getElementById(id); return el ? (el.value || "").trim() : ""; }
+  function put(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+  put("p11x1-mP", val("p11x1-b-produit"));
+  put("p11x1-mA", val("p11x1-b-qui"));
+  put("p11x1-mB", val("p11x1-b-quoi"));
+  put("p11x1-mC", val("p11x1-b-but"));
+}
+
+/* Résumé texte (colonne « open » du tableau de bord) */
+function buildP11Ex1OpenSummary(snap) {
+  if (!snap) return "";
+  var parts = [];
+  function add(lbl, key) { if (snap[key]) parts.push(lbl + " : " + snap[key]); }
+  parts.push("=== PARTIE A — Capteurs / interfaces / actionneurs ===");
+  add("Capteurs", "p11x1-cap1"); add("Capteurs", "p11x1-cap2"); add("Capteurs", "p11x1-cap3");
+  add("Interfaces", "p11x1-int1"); add("Interfaces", "p11x1-int2"); add("Interfaces", "p11x1-int3");
+  add("Actionneurs", "p11x1-act1"); add("Actionneurs", "p11x1-act2"); add("Actionneurs", "p11x1-act3");
+  parts.push("Chaîne d'information : " + [snap["p11x1-ci1"], snap["p11x1-ci2"], snap["p11x1-ci3"]].join(" → "));
+  parts.push("Chaîne d'énergie : " + [snap["p11x1-ce1"], snap["p11x1-ce2"], snap["p11x1-ce3"], snap["p11x1-ce4"]].join(" → "));
+  parts.push("=== PARTIE B — Bête à cornes ===");
+  add("Produit", "p11x1-b-produit"); add("À qui", "p11x1-b-qui");
+  add("Sur quoi", "p11x1-b-quoi"); add("Dans quel but", "p11x1-b-but");
+  parts.push("=== PARTIE C — Pieuvre ===");
+  add("FP1", "p11x1-c-fp1"); add("FP2", "p11x1-c-fp2");
+  add("FC1", "p11x1-c-fc1"); add("FC2", "p11x1-c-fc2"); add("FC3", "p11x1-c-fc3");
+  parts.push("=== PARTIE D — CDCF ===");
+  add("FP1 critère", "p11x1-d-fp1c"); add("FP1 niveau", "p11x1-d-fp1n");
+  add("FP2", "p11x1-d-fp2lib"); add("FC3", "p11x1-d-fc3lib");
+  return parts.join("\n");
+}
+
+/* Vue prof — réponses de l'élève, avec pastille ✓ / ✗ par item */
+function buildP11Ex1ModalHTML(f) {
+  if (!f) return "<em>Aucune donnée</em>";
+  function esc(s) { return String(s === undefined || s === null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+  function row(lbl, key, ok) {
+    var raw = f[key];
+    var vide = (raw === undefined || raw === null || String(raw).trim() === "");
+    var v = vide ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>' : esc(raw);
+    var pastille = (ok === undefined) ? ""
+      : '<span style="font-size:11px;font-weight:700;margin-left:6px;color:' + (ok ? "#1E6B3B" : "#C62828") + '">' + (ok ? "✓" : "✗") + '</span>';
+    return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + lbl + pastille + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + v + '</div></div>';
+  }
+  function part(lbl, color) {
+    return '<div style="font-weight:700;color:' + color + ';font-size:12px;margin:14px 0 6px;border-bottom:2px solid ' + color + ';padding-bottom:3px">' + lbl + '</div>';
+  }
+  function kw(key, list) { return _p11has(_p11norm(f[key]), list); }
+
+  var h = part("PARTIE A — Capteurs, interfaces, actionneurs", "#01579B");
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px">';
+  h += row("Capteur 1","p11x1-cap1", kw("p11x1-cap1", P11X1_KW.capteur));
+  h += row("Capteur 2","p11x1-cap2", kw("p11x1-cap2", P11X1_KW.capteur));
+  h += row("Capteur 3","p11x1-cap3", kw("p11x1-cap3", P11X1_KW.capteur));
+  h += row("Interface 1","p11x1-int1", kw("p11x1-int1", P11X1_KW.interface));
+  h += row("Interface 2","p11x1-int2", kw("p11x1-int2", P11X1_KW.interface));
+  h += row("Interface 3","p11x1-int3", kw("p11x1-int3", P11X1_KW.interface));
+  h += row("Actionneur 1","p11x1-act1", kw("p11x1-act1", P11X1_KW.actionneur));
+  h += row("Actionneur 2","p11x1-act2", kw("p11x1-act2", P11X1_KW.actionneur));
+  h += row("Actionneur 3","p11x1-act3", kw("p11x1-act3", P11X1_KW.actionneur));
+  h += '</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px">';
+  h += row("Info — bloc 1","p11x1-ci1", kw("p11x1-ci1", P11X1_KW.ci1));
+  h += row("Info — bloc 2","p11x1-ci2", kw("p11x1-ci2", P11X1_KW.ci2));
+  h += row("Info — bloc 3","p11x1-ci3", kw("p11x1-ci3", P11X1_KW.ci3));
+  h += row("Énergie — bloc 1","p11x1-ce1", kw("p11x1-ce1", P11X1_KW.ce1));
+  h += row("Énergie — bloc 2","p11x1-ce2", kw("p11x1-ce2", P11X1_KW.ce2));
+  h += row("Énergie — bloc 3","p11x1-ce3", kw("p11x1-ce3", P11X1_KW.ce3));
+  h += row("Énergie — bloc 4","p11x1-ce4", kw("p11x1-ce4", P11X1_KW.ce4));
+  h += '</div>';
+  h += part("PARTIE B — Bête à cornes", "#0288D1");
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px">';
+  h += row("Produit","p11x1-b-produit", kw("p11x1-b-produit", P11X1_KW.produit));
+  h += row("À qui rend-il service ?","p11x1-b-qui", kw("p11x1-b-qui", P11X1_KW.qui));
+  h += row("Sur quoi agit-il ?","p11x1-b-quoi", _p11norm(f["p11x1-b-quoi"]).indexOf("eau") !== -1);
+  h += '</div>';
+  h += row("Dans quel but ?","p11x1-b-but", kw("p11x1-b-but", P11X1_KW.butDouche));
+  h += part("PARTIE C — Pieuvre", "#7B1FA2");
+  h += row("FP1 (eau ↔ utilisateur)","p11x1-c-fp1", kw("p11x1-c-fp1", P11X1_KW.fp1));
+  h += row("FP2 (utilisateur ↔ facture d'eau)","p11x1-c-fp2", kw("p11x1-c-fp2", P11X1_KW.fp2));
+  h += row("FC1 (le flexible)","p11x1-c-fc1", kw("p11x1-c-fc1", P11X1_KW.fc1));
+  h += row("FC2 (la main)","p11x1-c-fc2", kw("p11x1-c-fc2", P11X1_KW.fc2));
+  h += row("FC3 (l'énergie)","p11x1-c-fc3", kw("p11x1-c-fc3", P11X1_KW.fc3));
+  h += part("PARTIE D — Extrait du CDCF", "#1E6B3B");
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+  h += row("FP1 — critère","p11x1-d-fp1c", kw("p11x1-d-fp1c", P11X1_KW.dFp1c));
+  h += row("FP1 — niveau","p11x1-d-fp1n", /(^|\s)(8|9|10)(\s|$)/.test(_p11norm(f["p11x1-d-fp1n"])) && _p11has(_p11norm(f["p11x1-d-fp1n"]), ["litre","l min","minute","lmin"]));
+  h += '</div>';
+  h += row("FP2 — libellé","p11x1-d-fp2lib", kw("p11x1-d-fp2lib", P11X1_KW.dFp2));
+  h += row("FC3 — libellé","p11x1-d-fc3lib", kw("p11x1-d-fc3lib", P11X1_KW.dFc3));
+  return h;
+}
+
+/* ── Panneau prof : correction automatique + ajustement + barème ── */
+var _p11x1LastAutoAppr = "";
+
+function buildP11Ex1TeacherPanel(sub) {
+  injectDCPanelCSS();                       /* réutilise les styles .adj-* du Devoir Commun */
+  var f = sub.fields || {};
+  var sec = scoreP11Ex1BySection(f);
+  var saved = sub.adjustedPts || sec;
+  var bareme = Number(sub.bareme) || 20;
+  var savedTotal = p11x1TotalBrut(saved);
+  var appr = sub.appreciation || autoAppreciationP11Ex1(p11x1Convert(savedTotal, bareme), bareme, saved);
+  _p11x1LastAutoAppr = sub.appreciation ? "" : appr;
+
+  function adjRow(key, label, maxPts, autoVal, curVal) {
+    var v = (typeof curVal !== "undefined") ? curVal : autoVal;
+    return '<div class="adj-row">'
+      + '<span class="adj-lbl">' + label + '</span>'
+      + '<span class="adj-auto">Auto: ' + autoVal + '/' + maxPts + '</span>'
+      + '<div class="adj-ctrl">'
+      + '<button class="adj-btn" onclick="p11x1AdjStep(\'' + key + '\',' + maxPts + ',-0.5)">−</button>'
+      + '<input class="adj-val" id="p11adj-' + key + '" type="text" value="' + v + '" readonly>'
+      + '<button class="adj-btn" onclick="p11x1AdjStep(\'' + key + '\',' + maxPts + ',0.5)">+</button>'
+      + '</div></div>';
+  }
+
+  var code = (getCodes()["p11-ex1"] || "").toUpperCase();
+  var h = '';
+  h += '<div style="background:#E1F5FE;border:1.5px solid #0288D1;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:12px">';
+  h += '<div style="font-size:20px">🔑</div>';
+  h += '<div><div style="font-size:11px;font-weight:700;color:#01579B;text-transform:uppercase;letter-spacing:.5px">Code de l\'exercice à communiquer aux élèves</div>';
+  h += '<div style="font-family:\'DM Mono\',monospace;font-size:22px;font-weight:700;color:#01579B;letter-spacing:4px">' + (code || '—') + '</div></div></div>';
+
+  h += '<div class="adj-panel" style="border-color:#0288D1">';
+  h += '<div class="adj-panel-title" style="color:#0288D1">✏️ Correction automatique <span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(indicative — ajustable par palier de 0,5)</span></div>';
+
+  h += '<div style="display:flex;align-items:center;gap:10px;background:#F1F8E9;border:1px solid #C8E6C9;border-radius:8px;padding:8px 12px;margin-bottom:10px;flex-wrap:wrap">';
+  h += '<span style="font-size:12px;font-weight:700;color:#1E6B3B">Barème</span>';
+  h += '<select id="p11x1-bareme" onchange="p11x1AdjUpdateTotal()" style="padding:5px 10px;border:1.5px solid #C8E6C9;border-radius:7px;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:600;cursor:pointer">';
+  h += '<option value="20"' + (bareme === 20 ? ' selected' : '') + '>Note sur 20</option>';
+  h += '<option value="30"' + (bareme === 30 ? ' selected' : '') + '>Note sur 30</option>';
+  h += '</select>';
+  h += '<span style="font-size:11.5px;color:var(--td);font-style:italic">Le total brut est sur 30&nbsp;; la conversion sur 20 est arrondie au demi-point.</span>';
+  h += '</div>';
+
+  for (var i = 0; i < P11X1_SECTIONS.length; i++) {
+    var S = P11X1_SECTIONS[i];
+    h += adjRow(S.k, S.lbl, S.max, sec[S.k], saved[S.k]);
+  }
+
+  h += '<div class="adj-total-box" id="p11x1-total-box">'
+    + '<div class="adj-total-num" id="p11x1-total-num">' + p11x1Fmt(p11x1Convert(savedTotal, bareme)) + '<span style="font-size:16px">/' + bareme + '</span></div>'
+    + '<div class="adj-total-sub" id="p11x1-total-sub">Total brut : ' + p11x1Fmt(savedTotal) + '/30 — se met à jour en temps réel</div>'
+    + '</div>';
+  h += '</div>';
+
+  h += '<div class="appr-panel">';
+  h += '<div class="appr-title">💬 Appréciation pédagogique</div>';
+  h += '<div style="font-size:11px;color:var(--vt);margin-bottom:6px;font-style:italic">💡 Suggestion automatique — modifiable :</div>';
+  h += '<textarea class="appr-ta" id="p11x1-appreciation" placeholder="Saisir l\'appréciation...">' + appr + '</textarea>';
+  h += '<div class="appr-actions">';
+  h += '<button onclick="p11x1ResetApprAuto()" style="padding:7px 14px;background:var(--bp);color:var(--bl);border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700">🔄 Regénérer auto</button>';
+  h += '</div></div>';
+
+  h += '<div style="text-align:right;margin-top:12px">';
+  h += '<button onclick="saveP11Ex1Adj(' + sub.id + ')" style="padding:10px 22px;background:#0288D1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
+  h += '</div>';
+  return h;
+}
+
+function p11x1ReadAdj() {
+  var pts = {};
+  for (var i = 0; i < P11X1_SECTIONS.length; i++) {
+    var el = document.getElementById("p11adj-" + P11X1_SECTIONS[i].k);
+    pts[P11X1_SECTIONS[i].k] = el ? (parseFloat(el.value) || 0) : 0;
+  }
+  return pts;
+}
+function p11x1AdjStep(key, maxPts, delta) {
+  var el = document.getElementById("p11adj-" + key);
+  if (!el) return;
+  var v = Math.round((parseFloat(el.value) || 0) * 10) / 10;
+  v = Math.max(0, Math.min(maxPts, v + delta));
+  v = Math.round(v * 10) / 10;
+  el.value = (v % 1 === 0) ? v.toFixed(0) : v.toFixed(1);
+  p11x1AdjUpdateTotal();
+}
+function p11x1AdjUpdateTotal() {
+  var brut = p11x1TotalBrut(p11x1ReadAdj());
+  var bs = document.getElementById("p11x1-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  var note = p11x1Convert(brut, bareme);
+  var nb = document.getElementById("p11x1-total-num");
+  if (nb) nb.innerHTML = p11x1Fmt(note) + '<span style="font-size:16px">/' + bareme + '</span>';
+  var sb = document.getElementById("p11x1-total-sub");
+  if (sb) sb.textContent = "Total brut : " + p11x1Fmt(brut) + "/30 — se met à jour en temps réel";
+  var box = document.getElementById("p11x1-total-box");
+  if (box) {
+    var pct = note / bareme * 100;
+    var col = pct >= 75 ? "#2E8B4A" : pct >= 50 ? "#C55A11" : "#C0392B";
+    box.style.background = "linear-gradient(135deg," + col + "," + col + "cc)";
+  }
+  p11x1AutoApprIfUntouched();
+}
+function _p11x1ComputeAutoAppr() {
+  var pts = p11x1ReadAdj();
+  var bs = document.getElementById("p11x1-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  return autoAppreciationP11Ex1(p11x1Convert(p11x1TotalBrut(pts), bareme), bareme, pts);
+}
+function p11x1ResetApprAuto() {
+  var ta = document.getElementById("p11x1-appreciation");
+  if (!ta) return;
+  ta.value = _p11x1ComputeAutoAppr();
+  _p11x1LastAutoAppr = ta.value;
+}
+function p11x1AutoApprIfUntouched() {
+  var ta = document.getElementById("p11x1-appreciation");
+  if (!ta) return;
+  if (ta.value === _p11x1LastAutoAppr) {
+    var n = _p11x1ComputeAutoAppr();
+    ta.value = n;
+    _p11x1LastAutoAppr = n;
+  }
+}
+function saveP11Ex1Adj(sid) {
+  var pts = p11x1ReadAdj();
+  var bs = document.getElementById("p11x1-bareme");
+  var bareme = bs ? Number(bs.value) : 20;
+  var brut = p11x1TotalBrut(pts);
+  var note = p11x1Convert(brut, bareme);
+  var ta = document.getElementById("p11x1-appreciation");
+  var subs = getSubs(), idx = -1;
+  for (var j = 0; j < subs.length; j++) { if (subs[j].id == sid) { idx = j; break; } }
+  if (idx < 0) { toast("Soumission introuvable"); return; }
+  subs[idx].adjustedPts   = pts;
+  subs[idx].bareme        = bareme;
+  subs[idx].scoreBrut     = brut;
+  subs[idx].adjustedScore = note;
+  subs[idx].appreciation  = ta ? ta.value : "";
+  subs[idx].status        = "validated";
+  subs[idx].score         = note;
+  subs[idx].qcmTot        = bareme;
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  localStorage.setItem("subs", JSON.stringify(subs));
+  renderStats(); renderSubs();
+  var ms = document.getElementById("mscore");
+  if (ms) ms.textContent = "Note : " + p11x1Fmt(note) + "/" + bareme + " ✅ — Appréciation enregistrée";
+  toast("✅ Note enregistrée — " + p11x1Fmt(note) + "/" + bareme);
+}
+
+/* ── Soumission élève ──────────────────────────────────────────── */
+function submitP11Ex1Form() {
+  var nom    = (document.getElementById("p11x1-nom").value    || "").trim();
+  var prenom = (document.getElementById("p11x1-prenom").value || "").trim();
+  var classe = (document.getElementById("p11x1-classe").value || "").trim();
+  if (!nom || !prenom) { alert("Identifiant non détecté — reconnecte-toi."); return; }
+  if (!classe) { alert("Merci de choisir ta classe."); return; }
+
+  var snap = snapP11Ex1();
+  var anyFilled = false;
+  for (var i = 0; i < P11X1_FIELDS.length; i++) { if (snap[P11X1_FIELDS[i]]) { anyFilled = true; break; } }
+  if (!anyFilled) { alert("Aucune réponse saisie. Remplis l'exercice avant de soumettre."); return; }
+
+  var nf = countP11Ex1Fields(snap);
+  if (nf.done < 15 && !confirm("Tu n'as rempli que " + nf.done + " réponse(s) sur " + nf.total + ". Envoyer quand même au professeur ?")) return;
+
+  if (user) { try { localStorage.setItem("p11_ex1_" + user.id, JSON.stringify(snap)); } catch(e) {} }
+
+  var sec  = scoreP11Ex1BySection(snap);
+  var brut = p11x1TotalBrut(sec);
+  var eid  = user ? user.id : (prenom.toLowerCase().replace(/\s/g,"") + "." + nom.toLowerCase().replace(/\s/g,""));
+  var sub = {
+    id: Date.now(),
+    eid: eid,
+    ename: prenom + " " + nom,
+    ecls: classe,
+    cap: "p11-ex1",
+    caplbl: "P11 — Exercice n°1 (Capteurs, actionneurs & CDCF)",
+    score: p11x1Convert(brut, 20), qcmTot: 20,
+    scoreBrut: brut, bareme: 20,
+    open: buildP11Ex1OpenSummary(snap),
+    fields: snap,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+  var allSubs = getSubs();
+  allSubs = allSubs.filter(function(x){ return !(x.eid === sub.eid && x.cap === "p11-ex1"); });
+  allSubs.push(sub);
+  localStorage.setItem("subs", JSON.stringify(allSubs));
+  try { if (window.cloudSync && cloudSync.send) cloudSync.send(sub); } catch(e) {}
+
+  var st = document.getElementById("p11x1-status");
+  if (st) {
+    st.innerHTML = "&#x2705; Travail soumis le " + new Date().toLocaleString("fr-FR") +
+                   ". Ton professeur le corrigera. Tu peux cliquer sur &laquo;&nbsp;Exporter en PDF&nbsp;&raquo; pour garder une copie.";
+    st.style.color = "var(--vt)";
+  }
+  toast("Exercice soumis ✅");
+  try { updMyStatus(); } catch(e) {}
+}
+
+/* ── Exports PDF ───────────────────────────────────────────────── */
+function _p11x1PdfDoc(titre, sousTitre, couleur) {
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({ unit:"mm", format:"a4" });
+  doc.setFillColor(couleur[0], couleur[1], couleur[2]);
+  doc.rect(0, 0, 210, 28, "F");
+  doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.setTextColor(255,255,255);
+  doc.text(titre, 105, 13, {align:"center"});
+  doc.setFontSize(10);
+  doc.text(sousTitre, 105, 21, {align:"center"});
+  try { addLogoToPdfHeader(doc, 14); } catch(e) {}
+  return doc;
+}
+function exportP11Ex1PDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page."); return; }
+  var doc = _p11x1PdfDoc("P11 — Exercice n°1 — Capteurs, actionneurs & CDCF",
+                         "CT1.1 : Collecter, trier et analyser des données", [2,136,209]);
+  var M = 14, Y = 36, lh = 5.2;
+  function v(id) { var el = document.getElementById(id); return el ? ((el.value || "").trim() || "—") : "—"; }
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function titre(t) {
+    chk(14); doc.setFillColor(225,245,254); doc.rect(M, Y-4, 182, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(1,87,155);
+    doc.text(t, M+2, Y+1.5); Y += 11;
+  }
+  function item(lbl, txt) {
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+    chk(10); doc.text(lbl, M, Y); Y += lh;
+    doc.setFont("helvetica","normal"); doc.setTextColor(20,20,20);
+    var lines = doc.splitTextToSize(txt, 178);
+    for (var i = 0; i < lines.length; i++) { chk(6); doc.text(lines[i], M+3, Y); Y += lh; }
+    Y += 1.5;
+  }
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(40,40,40);
+  doc.text("Élève : " + v("p11x1-prenom") + " " + v("p11x1-nom") + "   —   Classe : " + v("p11x1-classe"), M, Y); Y += 9;
+
+  titre("Partie A — Capteurs, interfaces et actionneurs");
+  item("1. Capteurs", [v("p11x1-cap1"), v("p11x1-cap2"), v("p11x1-cap3")].join(" ; "));
+  item("2. Interfaces", [v("p11x1-int1"), v("p11x1-int2"), v("p11x1-int3")].join(" ; "));
+  item("3. Actionneurs", [v("p11x1-act1"), v("p11x1-act2"), v("p11x1-act3")].join(" ; "));
+  item("4. Chaîne d'information", [v("p11x1-ci1"), v("p11x1-ci2"), v("p11x1-ci3")].join("  ->  "));
+  item("5. Chaîne d'énergie", [v("p11x1-ce1"), v("p11x1-ce2"), v("p11x1-ce3"), v("p11x1-ce4")].join("  ->  "));
+
+  titre("Partie B — Bête à cornes du pommeau de douche");
+  item("Produit", v("p11x1-b-produit"));
+  item("À qui rend-il service ?", v("p11x1-b-qui"));
+  item("Sur quoi agit-il ?", v("p11x1-b-quoi"));
+  item("Dans quel but ?", v("p11x1-b-but"));
+
+  titre("Partie C — Pieuvre");
+  item("FP1 (eau / utilisateur)", v("p11x1-c-fp1"));
+  item("FP2 (utilisateur / facture d'eau)", v("p11x1-c-fp2"));
+  item("FC1 (le flexible)", v("p11x1-c-fc1"));
+  item("FC2 (la main)", v("p11x1-c-fc2"));
+  item("FC3 (l'énergie)", v("p11x1-c-fc3"));
+
+  titre("Partie D — Extrait du cahier des charges fonctionnel");
+  item("FP1 — critère / niveau", v("p11x1-d-fp1c") + "  /  " + v("p11x1-d-fp1n"));
+  item("FP2 — libellé", v("p11x1-d-fp2lib"));
+  item("FC3 — libellé", v("p11x1-d-fc3lib"));
+
+  doc.save("P11_Exercice1_" + v("p11x1-nom") + "_" + v("p11x1-prenom") + ".pdf");
+}
+function exportP11Ex1CorPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) { alert("jsPDF non chargé. Vérifie ta connexion internet puis recharge la page."); return; }
+  var doc = _p11x1PdfDoc("P11 — Corrigé Exercice n°1", "Barème brut : 30 points — convertible sur 20", [30,107,59]);
+  var M = 14, Y = 36, lh = 5.2;
+  function chk(need) { if (Y + (need || 10) > 272) { doc.addPage(); Y = 22; } }
+  function titre(t) {
+    chk(14); doc.setFillColor(226,239,218); doc.rect(M, Y-4, 182, 8, "F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.setTextColor(30,107,59);
+    doc.text(t, M+2, Y+1.5); Y += 11;
+  }
+  function item(lbl, txt) {
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor(60,60,60);
+    chk(10); doc.text(lbl, M, Y); Y += lh;
+    doc.setFont("helvetica","normal"); doc.setTextColor(20,20,20);
+    var lines = doc.splitTextToSize(txt, 178);
+    for (var i = 0; i < lines.length; i++) { chk(6); doc.text(lines[i], M+3, Y); Y += lh; }
+    Y += 1.5;
+  }
+  titre("Partie A — 13 pts");
+  item("1. Capteurs (3 pts)", "capteur de température, de position, de luminosité, détecteur de fumée, capteur de distance (ultrasons), capteur infrarouge, capteur de débit d'eau...");
+  item("2. Interfaces (3 pts)", "carte Arduino, carte Raspberry Pi, carte micro:bit, microcontrôleur. L'interface reçoit les informations des capteurs et les traite grâce à un programme.");
+  item("3. Actionneurs (3 pts)", "moteur, buzzer, LED, électrovanne, vérin, pompe, afficheur, relais... Ils convertissent l'énergie pour réaliser les actions.");
+  item("4. Chaîne d'information (3 pts)", "ACQUÉRIR -> TRAITER -> COMMUNIQUER");
+  item("5. Chaîne d'énergie (4 pts)", "ALIMENTER -> DISTRIBUER -> CONVERTIR -> TRANSMETTRE");
+  titre("Partie B — Bête à cornes — 5 pts");
+  item("Produit (1 pt)", "Le pommeau de douche (écoresponsable).");
+  item("À qui rend-il service ? (1 pt)", "À l'utilisateur.");
+  item("Sur quoi agit-il ? (1 pt)", "Sur l'eau (la quantité d'eau utilisée).");
+  item("Dans quel but ? (2 pts)", "Prendre une douche (1 pt) en maîtrisant la quantité d'eau consommée / en économisant l'eau (1 pt).");
+  titre("Partie C — Pieuvre — 5 pts");
+  item("FP1", "Prendre une douche confortablement.");
+  item("FP2", "Diminuer la facture d'eau de l'utilisateur.");
+  item("FC1", "Pouvoir se visser à un flexible standard.");
+  item("FC2", "Avoir une forme ergonomique.");
+  item("FC3", "Utiliser une énergie renouvelable.");
+  titre("Partie D — CDCF — 4 pts");
+  item("FP1 — critère / niveau (2 pts)", "Débit / 8 à 10 litres par minute. (Second critère : type de jet — 3 à 5 types : tonic, pluie, massage...)");
+  item("FP2 — libellé (1 pt)", "Diminuer la facture d'eau de l'utilisateur. Critère : couleur de l'eau. Niveaux : vert < 30 L, orange > 30 L, rouge > 50 L.");
+  item("FC3 — libellé (1 pt)", "Utiliser une énergie renouvelable. Critère : énergie hydraulique. Niveau : durée de vie supérieure à 5 ans.");
+  doc.save("P11_Exercice1_Corrige.pdf");
+}
+
 // ── Exercice 1 — enrichissement des fonctions existantes ────────
 var _origSaveP12Ex1Draft = saveP12Ex1Draft;
 saveP12Ex1Draft = function(showFeedback) {
@@ -11282,6 +12474,24 @@ restoreP12Ex2Draft = function() {
   } catch(e) {}
 };
 
+// ── P11 Exercice 1 — brouillon horodaté ───────────────
+var _origSaveP11Ex1Draft = saveP11Ex1Draft;
+saveP11Ex1Draft = function(showFeedback) {
+  if (!user) return;
+  var snap = snapP11Ex1();
+  snap._savedAt = _draftTs();
+  try { localStorage.setItem("p11_ex1_" + user.id, JSON.stringify(snap)); } catch(e) {}
+  if (showFeedback) _showDraftStatus("p11x1-draft-status", snap._savedAt);
+};
+var _origRestoreP11Ex1Draft = restoreP11Ex1Draft;
+restoreP11Ex1Draft = function() {
+  _origRestoreP11Ex1Draft();
+  try {
+    var raw = localStorage.getItem("p11_ex1_" + user.id);
+    if (raw) { var d = JSON.parse(raw); _showDraftStatus("p11x1-draft-status", d._savedAt || null); }
+  } catch(e) {}
+};
+
 // ── Activité 2 — enrichissement de saveA2Draft ──────────────────
 var _origSaveA2Draft = saveA2Draft;
 saveA2Draft = function(showFeedback) {
@@ -11310,6 +12520,14 @@ restoreA2Draft = function() {
     var el = document.getElementById(id);
     if (el) el.addEventListener("input", onInput(saveP12Act1Draft));
   });
+  P11X1_FIELDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", onInput(saveP11Ex1Draft));
+  });
+  ["p11x1-b-produit","p11x1-b-qui","p11x1-b-quoi","p11x1-b-but"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("input", syncP11Ex1Besoin);
+  });
   EX1_FIELDS.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.addEventListener("input", onInput(saveP12Ex1Draft));
@@ -11325,5 +12543,12 @@ restoreA2Draft = function() {
 })();
 
 </script>
+
+<!-- Aménagements dys — portée limitée à la page P11 Exercice n°1 -->
+<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools", racine:"#pg-p11-ex1", fonts:"pp4g/fonts/" };</script>
+<script src="assets/js/confort-lecture.js" defer></script>
+<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1", hote:".p11x1-tools", sectionsFermees:"",
+  selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire" };</script>
+<script src="assets/js/lecture-immersive.js" defer></script>
 </body>
 </html>
