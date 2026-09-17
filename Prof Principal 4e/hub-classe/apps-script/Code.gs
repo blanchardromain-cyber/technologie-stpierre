@@ -1,11 +1,18 @@
 /**
- * Hub de classe 4G — backend Apps Script. VERSION 2.
+ * Hub de classe 4G — backend Apps Script. VERSION 2.8.
  * Onglets : Codes, Messages, Signalements + (v2) Infos, Divers.
  * Nouveautés v2 : horaires d'ouverture (blocage élèves hors plage), casier + référents
  * absence par élève, plan de classe publié (pseudonymisé).
  * Nouveauté v2.5 : emploi du temps de la classe — l'URL de l'agenda EcoleDirecte est réglée
  * par le prof (onglet Classe) ; si c'est un flux .ics, le serveur le lit et le décode ici
  * (le navigateur des élèves ne peut pas le faire : CORS). Résultat mis en cache 30 min.
+ * Nouveauté v2.7 (performance) : cache de lecture des onglets Codes/Divers/Messages,
+ * verrou global réservé aux écritures, et action « bootstrap » qui renvoie en un seul
+ * aller-retour ce que le Hub demandait en cinq. Après mise à jour, exécuter une fois
+ * viderCachesLecture() si un réglage semble figé.
+ * Nouveauté v2.8 : charte d'utilisation de l'Entraide, co-construite avec les élèves,
+ * signée par chacun (onglet Signatures). Sans signature de la version courante, un élève
+ * voit la charte à la place du formulaire d'Entraide — le reste du Hub reste ouvert.
  * ⚠️ Le fuseau du projet Apps Script doit être « Europe/Paris » (Projet > Paramètres).
  * MISE À JOUR d'un déploiement existant : coller ce code, exécuter initialiser() une fois,
  * puis Déployer > Gérer les déploiements > ✏️ > Nouvelle version (l'URL ne change pas).
@@ -51,6 +58,8 @@ function initialiser() {
     classeur.insertSheet(NOM_FEUILLE_SIGNALEMENTS).appendRow(["ts", "codeAuteur", "idMessage", "extrait"]);
   if (!classeur.getSheetByName(NOM_FEUILLE_INFOS))
     classeur.insertSheet(NOM_FEUILLE_INFOS).appendRow(["pseudo", "casier", "referent1", "referent2", "maj"]);
+  if (!classeur.getSheetByName(NOM_FEUILLE_SIGNATURES))
+    classeur.insertSheet(NOM_FEUILLE_SIGNATURES).appendRow(["ts", "code", "pseudo", "version"]);
   if (!classeur.getSheetByName(NOM_FEUILLE_DIVERS)) {
     var d = classeur.insertSheet(NOM_FEUILLE_DIVERS);
     d.appendRow(["cle", "valeur"]);
@@ -65,16 +74,161 @@ function initialiser() {
   // Colonne des valeurs en TEXTE : empêche Sheets de convertir « 07:30 » en date (bug « samedi »).
   feuille(NOM_FEUILLE_DIVERS).getRange("B:B").setNumberFormat("@");
   if (!lireDivers("joursOuverts")) ecrireDivers("joursOuverts", "1,2,3,4,5,6,7"); // migration v2 -> v2.2
+  if (!lireDivers("charteTexte")) ecrireDivers("charteTexte", CHARTE_DEFAUT);      // migration v2.7 -> v2.8
+  if (!lireDivers("charteVersion")) ecrireDivers("charteVersion", "1");
   // ré-écrit les heures au propre si elles avaient été converties en date
   ecrireDivers("ouverture", lireHeure("ouverture") || "07:30");
   ecrireDivers("fermeture", lireHeure("fermeture") || "21:00");
 }
 
 function horairesActuels() {
+  var d = diversTout();   // une seule lecture (au lieu de 4) et mise en cache
   return {
-    ouverture: lireHeure("ouverture"), fermeture: lireHeure("fermeture"), jours: lireDivers("joursOuverts"),
-    motsPerso: lireDivers("motsPerso").split(",").map(function (s) { return s.trim(); }).filter(String)
+    ouverture: formatHeure(d.ouverture), fermeture: formatHeure(d.fermeture),
+    jours: d.joursOuverts == null ? "" : String(d.joursOuverts),
+    motsPerso: String(d.motsPerso == null ? "" : d.motsPerso).split(",").map(function (s) { return s.trim(); }).filter(String)
   };
+}
+
+/** "HH:mm" en gérant le cas où Sheets a stocké l'heure comme Date. */
+function formatHeure(v) {
+  if (v == null || v === "") return "";
+  if (v instanceof Date) return ("0" + v.getHours()).slice(-2) + ":" + ("0" + v.getMinutes()).slice(-2);
+  return String(v).slice(0, 5);
+}
+
+// ---------- v2.7 : cache de lecture (performance) ----------
+// Avant : chaque requête relisait intégralement les onglets Codes et Divers
+// (4 lectures rien que pour les horaires) — d'où la latence ressentie par les élèves.
+// Désormais ces deux onglets, qui changent très rarement, sont mémorisés :
+//   • memo   = mémoire de l'exécution en cours (0 lecture supplémentaire) ;
+//   • cache  = CacheService partagé entre toutes les exécutions (60 s).
+var CACHE_LECTURE_S = 60;      // Codes / Divers
+var CACHE_MESSAGES_S = 5;      // Messages : absorbe les rafraîchissements simultanés
+var memo = {};
+
+function cacheScript() { return CacheService.getScriptCache(); }
+
+function viderCachesLecture() {
+  memo = {};
+  cacheScript().removeAll(["hubCodes", "hubDivers", "hubMessages", "hubSignatures"]);
+}
+
+/** Toutes les clés de l'onglet Divers en un seul objet. */
+function diversTout() {
+  if (memo.divers) return memo.divers;
+  var brut = cacheScript().get("hubDivers");
+  if (brut) { try { return (memo.divers = JSON.parse(brut)); } catch (e) {} }
+  var m = {}, f = feuille(NOM_FEUILLE_DIVERS);
+  if (f) {
+    var lignes = f.getDataRange().getValues();
+    for (var i = 1; i < lignes.length; i++) if (lignes[i][0]) m[lignes[i][0]] = lignes[i][1];
+  }
+  var serialise = JSON.stringify(m);
+  if (serialise.length < 90000) cacheScript().put("hubDivers", serialise, CACHE_LECTURE_S);
+  return (memo.divers = m);
+}
+
+/** Onglet Codes mémorisé : [[code, pseudo, role], …] sans l'en-tête. */
+function codesTout() {
+  if (memo.codes) return memo.codes;
+  var brut = cacheScript().get("hubCodes");
+  if (brut) { try { return (memo.codes = JSON.parse(brut)); } catch (e) {} }
+  var lignes = feuille(NOM_FEUILLE_CODES).getDataRange().getValues().slice(1)
+    .filter(function (l) { return l[0]; })
+    .map(function (l) { return [String(l[0]), String(l[1]), String(l[2])]; });
+  var serialise = JSON.stringify(lignes);
+  if (serialise.length < 90000) cacheScript().put("hubCodes", serialise, CACHE_LECTURE_S);
+  return (memo.codes = lignes);
+}
+
+/** Lignes brutes de l'onglet Messages, mémorisées 5 s (les élèves rafraîchissent en même temps). */
+function messagesTout() {
+  if (memo.messages) return memo.messages;
+  var brut = cacheScript().get("hubMessages");
+  if (brut) { try { return (memo.messages = JSON.parse(brut)); } catch (e) {} }
+  var lignes = feuille(NOM_FEUILLE_MESSAGES).getDataRange().getValues();
+  var serialise = JSON.stringify(lignes);
+  if (serialise.length < 90000) cacheScript().put("hubMessages", serialise, CACHE_MESSAGES_S);
+  return (memo.messages = lignes);
+}
+
+function invaliderMessages() { memo.messages = null; cacheScript().remove("hubMessages"); }
+function invaliderDivers() { memo.divers = null; cacheScript().remove("hubDivers"); }
+
+// Actions en lecture seule : elles ne prennent PAS le verrou global.
+// C'était la cause principale de la latence : 25 élèves qui rafraîchissent toutes
+// les 4 s faisaient la queue derrière un LockService unique.
+var ACTIONS_LECTURE = {
+  liste: 1, infosMoi: 1, listeInfos: 1, lirePlan: 1, lireMenage: 1, lireEdt: 1, bootstrap: 1, lireCharte: 1
+};
+
+// ---------- v2.8 : charte d'utilisation de l'Entraide ----------
+// Co-construite avec les élèves. Tant qu'un élève n'a pas signé la version courante,
+// l'onglet Entraide lui affiche la charte au lieu du formulaire. Le reste du Hub
+// (annonces, plan, ménage, EDT) n'est jamais bloqué par la charte.
+// Format du texte : un article par ligne, « Titre | corps de l'article ».
+var NOM_FEUILLE_SIGNATURES = "Signatures";
+var CHARTE_DEFAUT = "Nous posons des questions claires.|On dit à quelle matière et à quel exercice on est, on écrit correctement, et on explique où on bloque. Une question soignée, c'est déjà du respect pour celui qui va répondre. Aucune question n'est bête ; une question bâclée, oui.\nNous restons dans le sujet du cours.|L'Entraide sert au travail scolaire. Ce n'est ni une messagerie, ni un espace de discussion libre.\nNous écrivons avec politesse.|Pas d'insulte, pas de grossièreté, pas de moquerie — même pour rire, même entre copains. Ce qui est écrit reste écrit et tout le monde le lit.\nNous ne visons personne.|On ne cite pas le nom d'un élève ou d'un adulte pour s'en plaindre ou s'en moquer. Viser quelqu'un, surtout de façon répétée, porte un nom : c'est du harcèlement, et ça n'a pas sa place ici.\nNous n'envoyons ni photo ni document personnel.|Une image peut montrer un nom, une écriture reconnaissable ou un visage. C'est le droit à l'image de chacun, et la modération automatique ne sait pas lire une image.\nNous signalons ce qui dépasse.|Signaler n'est pas dénoncer : c'est protéger la classe. Si un message met quelqu'un mal à l'aise, on clique sur « Signaler », même quand on n'est pas la personne visée. Le filtre bloque les gros mots, il ne bloque pas tout — le reste dépend de nous.";
+
+function charteActuelle() {
+  var d = diversTout();
+  var texte = d.charteTexte == null ? "" : String(d.charteTexte);
+  var version = parseInt(d.charteVersion, 10);
+  return { texte: texte, version: isNaN(version) ? 1 : version };
+}
+
+/** Signatures mémorisées : { "CODE|version": date } */
+function signaturesTout() {
+  if (memo.signatures) return memo.signatures;
+  var f = feuille(NOM_FEUILLE_SIGNATURES);
+  var lignes = f ? f.getDataRange().getValues().slice(1) : [];
+  return (memo.signatures = lignes.filter(function (l) { return l[1]; })
+    .map(function (l) { return { ts: l[0], code: String(l[1]), pseudo: String(l[2]), version: parseInt(l[3], 10) || 1 }; }));
+}
+
+function aSigne(u, version) {
+  var code = String(u.code).trim().toUpperCase();
+  return signaturesTout().some(function (x) {
+    return x.code.trim().toUpperCase() === code && x.version === version;
+  });
+}
+
+function lireCharte(u) {
+  var c = charteActuelle();
+  var r = { ok: true, texte: c.texte, version: c.version, signee: u.role === "prof" ? true : aSigne(u, c.version) };
+  if (u.role === "prof") r.signatures = signaturesTout()
+    .filter(function (x) { return x.version === c.version; })
+    .map(function (x) { return { pseudo: x.pseudo, ts: x.ts }; });
+  return r;
+}
+
+function signerCharte(u) {
+  if (u.role !== "eleve") return { ok: false, erreur: "Réservé aux élèves." };
+  var c = charteActuelle();
+  if (!c.texte) return { ok: false, erreur: "Aucune charte publiée pour le moment." };
+  if (aSigne(u, c.version)) return { ok: true, deja: true, signee: true, version: c.version };
+  var f = feuille(NOM_FEUILLE_SIGNATURES);
+  if (!f) return { ok: false, erreur: "Onglet Signatures absent : exécute initialiser()." };
+  f.appendRow([new Date(), u.code, u.pseudo, c.version]);
+  memo.signatures = null;
+  cacheScript().remove("hubSignatures");
+  return { ok: true, signee: true, version: c.version };
+}
+
+/**
+ * Publication par le prof. Par défaut la version est incrémentée : tous les élèves
+ * doivent resigner. « correction » = true pour une simple faute d'orthographe,
+ * la version ne bouge pas et les signatures restent valables.
+ */
+function publierCharte(d, u) {
+  if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+  var texte = String(d.texte || "").slice(0, 8000);
+  var c = charteActuelle();
+  var nouvelle = d.correction ? c.version : c.version + 1;
+  ecrireDivers("charteTexte", texte);
+  ecrireDivers("charteVersion", String(nouvelle));
+  return { ok: true, version: nouvelle, resignature: !d.correction };
 }
 
 function doPost(e) {
@@ -100,20 +254,7 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// Lit une heure "HH:mm" en gérant le cas où Sheets l'a stockée comme Date.
-function lireHeure(cle) {
-  var f = feuille(NOM_FEUILLE_DIVERS);
-  if (!f) return "";
-  var lignes = f.getDataRange().getValues();
-  for (var i = 1; i < lignes.length; i++) {
-    if (lignes[i][0] === cle) {
-      var v = lignes[i][1];
-      if (v instanceof Date) return ("0" + v.getHours()).slice(-2) + ":" + ("0" + v.getMinutes()).slice(-2);
-      return String(v).slice(0, 5);
-    }
-  }
-  return "";
-}
+function lireHeure(cle) { return formatHeure(diversTout()[cle]); }
 
 function horsPlage(h) {
   // jour de la semaine (1 = lundi … 7 = dimanche)
@@ -135,34 +276,52 @@ function messageFerme(h) {
 
 function trouverUtilisateur(code) {
   if (!code) return null;
-  var lignes = feuille(NOM_FEUILLE_CODES).getDataRange().getValues();
-  for (var i = 1; i < lignes.length; i++)
-    if (String(lignes[i][0]).trim().toUpperCase() === String(code).trim().toUpperCase())
+  var cherche = String(code).trim().toUpperCase();
+  var lignes = codesTout();
+  for (var i = 0; i < lignes.length; i++)
+    if (lignes[i][0].trim().toUpperCase() === cherche)
       return { code: lignes[i][0], pseudo: lignes[i][1], role: lignes[i][2] };
   return null;
 }
 
+/** Pseudos des élèves (onglet Codes, mémorisé). */
+function pseudosEleves() {
+  return codesTout().filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
+}
+
 function lireDivers(cle) {
-  var f = feuille(NOM_FEUILLE_DIVERS);
-  if (!f) return "";
-  var lignes = f.getDataRange().getValues();
-  for (var i = 1; i < lignes.length; i++) if (lignes[i][0] === cle) return String(lignes[i][1]);
-  return "";
+  var v = diversTout()[cle];
+  return v == null ? "" : String(v);
 }
 
 function ecrireDivers(cle, valeur) {
   var f = feuille(NOM_FEUILLE_DIVERS);
   var lignes = f.getDataRange().getValues();
   for (var i = 1; i < lignes.length; i++)
-    if (lignes[i][0] === cle) { var cell = f.getRange(i + 1, 2); cell.setNumberFormat("@"); cell.setValue(valeur); return; }
+    if (lignes[i][0] === cle) { var cell = f.getRange(i + 1, 2); cell.setNumberFormat("@"); cell.setValue(valeur); invaliderDivers(); return; }
   f.appendRow([cle, valeur]);
+  invaliderDivers();
 }
 
 function traiter(d, u) {
+  // Lectures : pas de verrou (sinon tous les élèves font la queue) — v2.7
+  if (ACTIONS_LECTURE[d.action]) return executer(d, u);
   var verrou = LockService.getScriptLock();
   verrou.waitLock(10000);
   try {
+    return executer(d, u);
+  } finally {
+    verrou.releaseLock();
+  }
+}
+
+function executer(d, u) {
+  {
     switch (d.action) {
+      case "bootstrap": return bootstrap(u);
+      case "lireCharte": return lireCharte(u);
+      case "signerCharte": return signerCharte(u);
+      case "publierCharte": return publierCharte(d, u);
       case "liste": return listerMessages(u);
       case "poster": return poster(d, u);
       case "merci": return modifier(d.id, u, function (m) {
@@ -213,12 +372,34 @@ function traiter(d, u) {
         if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
         return reglerEdt(d);
       case "lireEdt":
-        return lireEdt();
+        return lireEdt(d);
+      case "diagnostiquerEdt":
+        if (u.role !== "prof") return { ok: false, erreur: "Réservé au professeur." };
+        return diagnostiquerEdt();
       default: return { ok: false, erreur: "Action inconnue." };
     }
-  } finally {
-    verrou.releaseLock();
   }
+}
+
+/**
+ * v2.7 — un seul aller-retour au lieu de cinq.
+ * Le Hub demandait successivement liste / infosMoi / lirePlan / lireMenage (+ EDT) :
+ * chaque appel coûtait un aller-retour Apps Script complet. « bootstrap » renvoie tout
+ * d'un coup à la connexion ; l'emploi du temps reste à part (lecture réseau plus lourde).
+ */
+function bootstrap(u) {
+  var estProf = u.role === "prof";
+  var r = {
+    ok: true,
+    messages: listerMessages(u).messages,
+    plan: lireDivers("planClasse"),
+    planning: lireDivers("planningMenage"),
+    horaires: horairesActuels(),
+    charte: lireCharte(u)
+  };
+  if (estProf) { r.infos = lireInfos(); r.edtUrl = lireDivers("edtUrl"); }
+  else r.moi = infosMoi(u);
+  return r;
 }
 
 // ---------- Report des retenues dans le registre partagé (générateur → Sheet) ----------
@@ -275,8 +456,7 @@ function lireInfos() {
 
 function infosMoi(u) {
   var mienne = lireInfos().filter(function (x) { return x.pseudo === u.pseudo; })[0] || {};
-  var eleves = feuille(NOM_FEUILLE_CODES).getDataRange().getValues().slice(1)
-    .filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
+  var eleves = pseudosEleves();
   return { ok: true, casier: mienne.casier || "", referent1: mienne.referent1 || "", referent2: mienne.referent2 || "", eleves: eleves };
 }
 
@@ -285,8 +465,7 @@ function majInfos(d, u) {
   var casier = String(d.casier || "").slice(0, 6);
   var r1 = String(d.referent1 || ""), r2 = String(d.referent2 || "");
   if (r1 || r2) {
-    var pseudos = feuille(NOM_FEUILLE_CODES).getDataRange().getValues().slice(1)
-      .filter(function (l) { return l[2] === "eleve"; }).map(function (l) { return l[1]; });
+    var pseudos = pseudosEleves();
     if (r1 && (pseudos.indexOf(r1) === -1 || r1 === u.pseudo)) return { ok: false, erreur: "Référent 1 invalide." };
     if (r2 && (pseudos.indexOf(r2) === -1 || r2 === u.pseudo || r2 === r1)) return { ok: false, erreur: "Référent 2 invalide." };
   }
@@ -304,7 +483,7 @@ function majInfos(d, u) {
 
 // ---------- Messages (inchangé v1) ----------
 function listerMessages(u) {
-  var lignes = feuille(NOM_FEUILLE_MESSAGES).getDataRange().getValues();
+  var lignes = messagesTout();
   var estProf = u.role === "prof";
   var resultat = [];
   for (var i = 1; i < lignes.length; i++) {
@@ -320,6 +499,13 @@ function listerMessages(u) {
 }
 
 function poster(d, u) {
+  // Charte : un élève qui n'a pas signé la version courante ne peut pas écrire
+  // dans l'Entraide (les annonces du prof et le reste du Hub ne sont pas concernés).
+  if (u.role === "eleve" && d.type !== "annonce") {
+    var c = charteActuelle();
+    if (c.texte && !aSigne(u, c.version))
+      return { ok: false, erreur: "Il faut d'abord lire et signer la charte de l'Entraide." };
+  }
   var texte = String(d.texte || "").trim().slice(0, 1200);
   if (!texte) return { ok: false, erreur: "Message vide." };
   if (contientInsulte(texte)) return { ok: false, erreur: "Message refusé : vocabulaire interdit." };
@@ -329,12 +515,13 @@ function poster(d, u) {
     Utilities.getUuid().slice(0, 8), Date.now(), u.code, u.pseudo, u.role,
     d.type, d.parentId || "", d.matiere || "", texte, 0, 0, "", 0
   ]);
+  invaliderMessages();
   return { ok: true };
 }
 
 function modifier(id, u, calcul) {
   var f = feuille(NOM_FEUILLE_MESSAGES);
-  var lignes = f.getDataRange().getValues();
+  var lignes = f.getDataRange().getValues();   // lecture directe : on écrit par numéro de ligne
   var colonnes = { resolu: 10, masque: 11, merciPar: 12 };
   for (var i = 1; i < lignes.length; i++) {
     if (lignes[i][0] === id) {
@@ -342,6 +529,7 @@ function modifier(id, u, calcul) {
       var maj = calcul(m);
       if (!maj) return { ok: false, erreur: "Non autorisé." };
       for (var cle in maj) f.getRange(i + 1, colonnes[cle]).setValue(maj[cle]);
+      invaliderMessages();
       return { ok: true };
     }
   }
@@ -355,6 +543,7 @@ function signaler(d, u) {
     if (lignes[i][0] === d.id) {
       f.getRange(i + 1, 13).setValue((lignes[i][12] || 0) + 1);
       feuille(NOM_FEUILLE_SIGNALEMENTS).appendRow([new Date(), u.code, d.id, String(lignes[i][8]).slice(0, 120)]);
+      invaliderMessages();
       return { ok: true };
     }
   }
@@ -374,41 +563,137 @@ function estFluxIcs(url) {
   return /\.ics(\?|#|$)/.test(u) || u.indexOf("ical") !== -1 || u.indexOf("format=ics") !== -1;
 }
 
+/** Identifiant d'agenda Google (repli : « …@group.calendar.google.com » ou l'adresse Gmail du prof). */
+function estAgendaGoogle(v) {
+  return /^[^\s@]+@([a-z0-9.\-]+\.)?(group\.calendar\.google\.com|gmail\.com|googlemail\.com)$/i.test(String(v || "").trim());
+}
+
 function reglerEdt(d) {
   var url = String(d.url || "").trim().slice(0, 500);
-  if (url && !/^https?:\/\//i.test(url))
-    return { ok: false, erreur: "L'adresse doit commencer par https://" };
+  if (url && !/^https?:\/\//i.test(url) && !estAgendaGoogle(url))
+    return { ok: false, erreur: "Attendu : une adresse https:// (flux .ics ou lien web) ou un identifiant d'agenda Google (…@group.calendar.google.com)." };
   ecrireDivers("edtUrl", url);
   CacheService.getScriptCache().remove("edt");   // l'ancien agenda ne doit pas survivre au changement
   return { ok: true };
 }
 
-function lireEdt() {
+function lireEdt(d) {
   var url = lireDivers("edtUrl");
+  var frais = !!(d && d.frais);                       // « 🔄 rafraîchir » : on ignore vraiment le cache
   if (!url) return { ok: true, url: "", mode: "vide", evenements: [] };
-  if (!estFluxIcs(url)) return { ok: true, url: url, mode: "lien", evenements: [] };
 
   var cache = CacheService.getScriptCache();
-  var enCache = cache.get("edt");
-  if (enCache) {
-    var prec = JSON.parse(enCache);
-    if (prec.url === url) return prec;
+  if (frais) cache.remove("edt");
+  else {
+    var enCache = cache.get("edt");
+    if (enCache) {
+      var prec = JSON.parse(enCache);
+      if (prec.url === url) return prec;
+    }
   }
+
+  // Repli agenda Google : lu directement par le script, sans HTTP ni CORS.
+  if (estAgendaGoogle(url)) {
+    var repGcal = lireAgendaGoogle(url);
+    memoriserEdt(cache, repGcal);
+    return repGcal;
+  }
+
+  if (!estFluxIcs(url)) return { ok: true, url: url, mode: "lien", evenements: [] };
 
   var reponse;
   try {
-    var http = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
-    if (http.getResponseCode() >= 400)
+    var http = UrlFetchApp.fetch(url, {
+      muteHttpExceptions: true,
+      followRedirects: true,
+      headers: {                                       // certains serveurs refusent les robots sans en-têtes
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "Accept": "text/calendar, text/plain, */*"
+      }
+    });
+    var code = http.getResponseCode();
+    if (code >= 400)
       return { ok: true, url: url, mode: "erreur", evenements: [],
-               erreur: "L'agenda a répondu " + http.getResponseCode() + " (lien expiré ou privé ?)." };
-    reponse = { ok: true, url: url, mode: "ics", maj: Date.now(), evenements: analyserIcs(http.getContentText()) };
+               erreur: "L'agenda a répondu " + code + " (lien expiré ou privé ?)." };
+    var texte = http.getContentText();
+    if (texte.indexOf("BEGIN:VCALENDAR") === -1)
+      return { ok: true, url: url, mode: "erreur", evenements: [],
+               erreur: "Le lien ne renvoie pas un agenda iCalendar (réponse : " +
+                       String(texte).slice(0, 120).replace(/\s+/g, " ") + "…)." };
+    if (texte.indexOf("BEGIN:VEVENT") === -1)
+      return { ok: true, url: url, mode: "icsVide", maj: Date.now(), evenements: [],
+               erreur: "L'agenda est bien joignable mais il est VIDE : EcoleDirecte ne publie aucun cours dans ce flux." };
+    reponse = { ok: true, url: url, mode: "ics", maj: Date.now(), evenements: analyserIcs(texte) };
   } catch (err) {
     return { ok: true, url: url, mode: "erreur", evenements: [],
              erreur: "Agenda injoignable : " + (err && err.message ? err.message : err) };
   }
-  var serialise = JSON.stringify(reponse);
-  if (serialise.length < 90000) cache.put("edt", serialise, EDT_CACHE_SECONDES);  // limite CacheService
+  memoriserEdt(cache, reponse);
   return reponse;
+}
+
+function memoriserEdt(cache, reponse) {
+  var serialise = JSON.stringify(reponse);
+  if (serialise.length < 90000) cache.put("edt", serialise, EDT_CACHE_SECONDES);   // limite CacheService
+}
+
+/** Repli : l'emploi du temps vit dans un agenda Google (le prof y importe l'ics d'ED ou le saisit). */
+function lireAgendaGoogle(id) {
+  var agenda;
+  try { agenda = CalendarApp.getCalendarById(String(id).trim()); }
+  catch (err) {
+    return { ok: true, url: "", mode: "erreur", evenements: [],
+             erreur: "Agenda Google illisible : " + (err && err.message ? err.message : err) };
+  }
+  if (!agenda)
+    return { ok: true, url: "", mode: "erreur", evenements: [],
+             erreur: "Agenda Google introuvable (identifiant incorrect, ou agenda non partagé avec le compte qui exécute le script)." };
+
+  var min = new Date(); min.setHours(0, 0, 0, 0); min.setDate(min.getDate() - EDT_JOURS_AVANT);
+  var max = new Date(); max.setHours(23, 59, 59, 999); max.setDate(max.getDate() + EDT_JOURS_APRES);
+  var seances = agenda.getEvents(min, max).map(function (ev) {
+    var journee = ev.isAllDayEvent();
+    var debut = ev.getStartTime(), fin = ev.getEndTime();
+    return {
+      jour: Utilities.formatDate(debut, fuseau(), "yyyy-MM-dd"),
+      debut: journee ? "" : Utilities.formatDate(debut, fuseau(), "HH:mm"),
+      fin: journee ? "" : Utilities.formatDate(fin, fuseau(), "HH:mm"),
+      titre: String(ev.getTitle() || "Cours").slice(0, 120),
+      salle: String(ev.getLocation() || "").slice(0, 60),
+      journee: journee
+    };
+  });
+  seances.sort(function (a, b) { return a.jour === b.jour ? a.debut.localeCompare(b.debut) : a.jour.localeCompare(b.jour); });
+  if (!seances.length)
+    return { ok: true, url: "", mode: "icsVide", maj: Date.now(), evenements: [],
+             erreur: "L'agenda Google « " + agenda.getName() + " » ne contient aucun cours sur la période." };
+  return { ok: true, url: "", mode: "ics", source: "google", maj: Date.now(), evenements: seances.slice(0, 400) };
+}
+
+/** Bouton « Tester l'agenda » (prof) : dit exactement ce que le serveur reçoit, sans cache. */
+function diagnostiquerEdt() {
+  var url = lireDivers("edtUrl");
+  if (!url) return { ok: true, url: "", type: "vide", message: "Aucune adresse enregistrée." };
+  if (estAgendaGoogle(url)) {
+    var r = lireAgendaGoogle(url);
+    return { ok: true, url: url, type: "google", nbEvenements: (r.evenements || []).length,
+             message: r.erreur || ((r.evenements || []).length + " cours lus dans l'agenda Google.") };
+  }
+  if (!estFluxIcs(url)) return { ok: true, url: url, type: "lien", message: "Lien web simple : les élèves voient un bouton d'ouverture." };
+  try {
+    var http = UrlFetchApp.fetch(url, {
+      muteHttpExceptions: true, followRedirects: true,
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+                 "Accept": "text/calendar, text/plain, */*" }
+    });
+    var texte = http.getContentText();
+    var nb = (texte.match(/BEGIN:VEVENT/g) || []).length;
+    return { ok: true, url: url, type: "ics", code: http.getResponseCode(), taille: texte.length,
+             nbVevent: nb, extrait: texte.slice(0, 300),
+             message: "HTTP " + http.getResponseCode() + " · " + texte.length + " caractères · " + nb + " événement(s) dans le flux." };
+  } catch (err) {
+    return { ok: true, url: url, type: "ics", message: "Flux injoignable : " + (err && err.message ? err.message : err) };
+  }
 }
 
 /** Décode un fichier iCalendar en séances normalisées {jour, debut, fin, titre, salle, journee}. */
@@ -501,7 +786,7 @@ function dateIcs(valeur) {
 }
 
 function detexteIcs(valeur) {
-  return String(valeur).replace(/\\n/gi, " ").replace(/\\,/g, ",").replace(/\;/g, ";").replace(/\\\\/g, "\\").trim();
+  return String(valeur).replace(/\\n/gi, " ").replace(/\\,/g, ",").replace(/\\;/g, ";").replace(/\\\\/g, "\\").trim();
 }
 
 function fuseau() {
