@@ -4259,7 +4259,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17d</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17f</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4426,7 +4426,7 @@ body.est-prof .prof-only{display:block}
       </div>
       <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
         <h3 style="color:var(--vt)">&#x1F4DA; Corrigé, aménagements et notes d'organisation &mdash; 4<sup>e</sup></h3>
-        <p style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
+        <p class="prof-only" style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
           Compétence <strong>CT 2.5</strong> &mdash; identifier un besoin et énoncer un problème technique.
           Les réponses ouvertes (bilan, gaspillages observés, justifications) admettent d'autres
           formulations : les exemples ci-dessous servent de repère de correction.
@@ -4446,6 +4446,7 @@ body.est-prof .prof-only{display:block}
           L'élève envoie <strong>un seul travail</strong>. Pour ne traiter que l'activité 1 en première
           séance, replier les parties 5 à 8 avec le bouton &laquo;&nbsp;Tout ouvrir / fermer&nbsp;&raquo;.</p>
 
+          <div class="prof-only">
           <h4 class="bat-cor-h">Organisation</h4>
           <table class="bat-cor-t">
             <tr><td class="k">Modalité</td><td>Individuelle (identité pré-remplie depuis le compte élève). Le simulateur de la partie 5 se fait <strong>en binôme</strong>.</td></tr>
@@ -4456,6 +4457,7 @@ body.est-prof .prof-only{display:block}
             <tr><td class="k">Auto-correction</td><td>8 exercices se corrigent seuls dans la fiche, avec un retour explicatif.</td></tr>
             <tr><td class="k">Code élève</td><td><strong>EAU26</strong> &mdash; modifiable dans l'onglet &laquo;&nbsp;Codes d'accès&nbsp;&raquo;.</td></tr>
           </table>
+          </div>
 
           <h4 class="bat-cor-h">Ressources ouvertes depuis la fiche</h4>
           <table class="bat-cor-t">
@@ -4468,7 +4470,7 @@ body.est-prof .prof-only{display:block}
           &laquo;&nbsp;Tous les utilisateurs disposant du lien&nbsp;&raquo;, sinon les élèves tombent sur une demande d'autorisation.</p>
 
           <h4 class="bat-cor-h">Activité 1 &mdash; 1. Une ressource précieuse</h4>
-          <p class="bat-cor-p"><strong>Échauffement vrai / faux (auto-corrigé).</strong></p>
+          <p class="bat-cor-p"><strong>Échauffement vrai / faux.</strong></p>
           <table class="bat-cor-t">
             <tr><th>Affirmation</th><th style="width:80px">Réponse</th><th>Pourquoi</th></tr>
             <tr><td>Moins de 1 % de l'eau de la planète est de l'eau douce facilement accessible.</td><td class="ok">Vrai</td><td>La Terre est couverte à 70 % d'eau, mais presque tout est salé.</td></tr>
@@ -4483,7 +4485,7 @@ body.est-prof .prof-only{display:block}
           (environ un litre sur cinq en France). La gaspiller, c'est gaspiller une ressource limitée et de l'énergie.</p>
 
           <h4 class="bat-cor-h">2. D'où provient l'eau&nbsp;?</h4>
-          <p class="bat-cor-p"><strong>2.1 (auto-corrigé).</strong> L'eau est captée à partir&nbsp;:</p>
+          <p class="bat-cor-p"><strong>2.1.</strong> L'eau est captée à partir&nbsp;:</p>
           <ul class="bat-cor-l">
             <li>d'une <strong>source</strong> qui sort naturellement de terre&nbsp;;</li>
             <li>d'un <strong>cours d'eau</strong> (rivière, fleuve, retenue de barrage)&nbsp;;</li>
@@ -4498,7 +4500,7 @@ body.est-prof .prof-only{display:block}
           <h4 class="bat-cor-h">3. Comment l'eau devient-elle potable&nbsp;?</h4>
           <p class="bat-cor-p"><strong>3.1 &mdash; Définition.</strong> Une eau potable est une eau
           <strong>que l'on peut boire sans risque pour la santé</strong>.</p>
-          <p class="bat-cor-p"><strong>3.2 (auto-corrigé) &mdash; Ordre du traitement et solution technique&nbsp;:</strong></p>
+          <p class="bat-cor-p"><strong>3.2 &mdash; Ordre du traitement et solution technique&nbsp;:</strong></p>
           <table class="bat-cor-t">
             <tr><th style="width:70px">Ordre</th><th>Étape</th><th>Solution technique</th></tr>
             <tr><td class="k">1</td><td>Coagulation-floculation</td><td class="ok">Injection de réactifs</td></tr>
@@ -4511,13 +4513,13 @@ body.est-prof .prof-only{display:block}
           particules en suspension).</p>
 
           <h4 class="bat-cor-h">4. Comment l'eau arrive-t-elle au robinet&nbsp;?</h4>
-          <p class="bat-cor-p"><strong>4.1 (auto-corrigé).</strong> 1 : le <strong>réservoir</strong> (souvent semi-enterré)
+          <p class="bat-cor-p"><strong>4.1.</strong> 1 : le <strong>réservoir</strong> (souvent semi-enterré)
           &mdash; 2 : la <strong>pompe de relevage</strong> &mdash; 3 : le <strong>château d'eau</strong>.</p>
           <p class="bat-cor-p"><strong>4.2 &mdash; Fonction d'usage du château d'eau.</strong>
           <strong>Stocker l'eau en hauteur pour donner de la pression</strong> et alimenter les robinets en continu.
           On attend un verbe à l'infinitif : situé plus haut que les habitations, le château d'eau laisse l'eau
           redescendre par son propre poids.</p>
-          <p class="bat-cor-p"><strong>4.3 (auto-corrigé) &mdash; Le cycle domestique de l'eau.</strong>
+          <p class="bat-cor-p"><strong>4.3 &mdash; Le cycle domestique de l'eau.</strong>
           Captage &rarr; Usine de potabilisation &rarr; Château d'eau &rarr; Robinet &rarr; Égouts et collecteurs
           &rarr; Station d'épuration. Insister sur les <strong>deux circuits</strong> : celui qui apporte l'eau propre,
           et celui qui emporte l'eau sale pour la dépolluer avant de la rendre au milieu naturel.</p>
@@ -4526,7 +4528,7 @@ body.est-prof .prof-only{display:block}
           <p class="bat-cor-p"><strong>5.1.</strong> Valeur libre, à comparer à l'ordre de grandeur :
           <strong>45 à 55 m³ par personne et par an</strong> (environ 148 L par jour). Les résultats du simulateur varient
           selon le foyer : c'est l'occasion de faire dire <em>pourquoi</em>.</p>
-          <p class="bat-cor-p"><strong>5.2 (auto-corrigé) &mdash; Répartition moyenne en France&nbsp;:</strong></p>
+          <p class="bat-cor-p"><strong>5.2 &mdash; Répartition moyenne en France&nbsp;:</strong></p>
           <table class="bat-cor-t">
             <tr><th>Hygiène corporelle</th><th>Chasse d'eau</th><th>Linge</th><th>Vaisselle</th><th>Autres</th></tr>
             <tr><td class="ok">≈ 39 %</td><td class="ok">≈ 20 %</td><td class="ok">≈ 12 %</td><td class="ok">≈ 10 %</td><td class="ok">≈ 19 %</td></tr>
@@ -4536,10 +4538,10 @@ body.est-prof .prof-only{display:block}
           on ne boit qu'<strong>environ 1 %</strong> de l'eau potable qu'on paie &mdash; un chiffre qui marque les élèves.</p>
 
           <h4 class="bat-cor-h">6. Lire une facture d'eau</h4>
-          <p class="bat-cor-p"><strong>6.1 (auto-corrigé).</strong> Prix unitaire HT : <strong>1,162 € / m³</strong>
+          <p class="bat-cor-p"><strong>6.1.</strong> Prix unitaire HT : <strong>1,162 € / m³</strong>
           (ligne &laquo;&nbsp;Consommation Vendée Eau &mdash; tarif Bleu 1<sup>er</sup> semestre 2025&nbsp;&raquo;).
           Piège : la ligne au-dessus affiche <strong>1,17 €</strong>, c'est le tarif du <strong>semestre précédent</strong>.</p>
-          <p class="bat-cor-p"><strong>6.2 (auto-corrigé) &mdash; Les données de la feuille (B2 à B11).</strong>
+          <p class="bat-cor-p"><strong>6.2 &mdash; Les données de la feuille (B2 à B11).</strong>
           La feuille estime la facture <strong>annuelle</strong> de l'élève : B2 vient de <strong>son</strong> simulateur (question 5.1),
           B3 à B6 se relèvent sur la facture de M. Dupont. Le résultat est donc différent d'un élève à l'autre.</p>
           <table class="bat-cor-t">
@@ -4554,7 +4556,7 @@ body.est-prof .prof-only{display:block}
           il renvoie l'élève à l'endroit du document (&laquo;&nbsp;verso, bloc Redevances Agence de l'eau&nbsp;&raquo;) et signale les
           trois confusions fréquentes &mdash; le tarif 1,17 € du <strong>semestre précédent</strong>, l'abonnement <strong>semestriel</strong>
           pris pour un abonnement annuel, et le <strong>montant</strong> de TVA pris pour le <strong>taux</strong>.</p>
-          <p class="bat-cor-p"><strong>6.3 (auto-corrigé) &mdash; Formules attendues&nbsp;:</strong></p>
+          <p class="bat-cor-p"><strong>6.3 &mdash; Formules attendues&nbsp;:</strong></p>
           <table class="bat-cor-t">
             <tr><th style="width:70px">Cellule</th><th>Libellé</th><th>Formule</th></tr>
             <tr><td class="k">B7</td><td>Total eau (€)</td><td class="ok">=B2*B3</td></tr>
@@ -4593,7 +4595,7 @@ body.est-prof .prof-only{display:block}
           dépollution des eaux usées, 18 % pour les taxes et redevances.</p>
 
           <h4 class="bat-cor-h">7. Où gaspille-t-on l'eau&nbsp;?</h4>
-          <p class="bat-cor-p"><strong>7.1 (auto-corrigé) &mdash; Associations&nbsp;:</strong></p>
+          <p class="bat-cor-p"><strong>7.1 &mdash; Associations&nbsp;:</strong></p>
           <table class="bat-cor-t">
             <tr><th>Gaspillage</th><th>Geste économe</th></tr>
             <tr><td>Laisser couler l'eau pendant le brossage des dents</td><td class="ok">Fermer le robinet ; poser un mousseur (limiteur de débit)</td></tr>
@@ -4612,7 +4614,7 @@ body.est-prof .prof-only{display:block}
           Faire multiplier par le nombre d'élèves du collège pour l'effet de bascule.</p>
 
           <h4 class="bat-cor-h">8. Vers une solution technique</h4>
-          <p class="bat-cor-p"><strong>8.1 (auto-corrigé) &mdash; QCM.</strong> La bonne réponse est
+          <p class="bat-cor-p"><strong>8.1 &mdash; QCM.</strong> La bonne réponse est
           <strong>le robinet automatique à détection de présence</strong> : il ne laisse couler l'eau que lorsque des mains sont
           détectées, donc il agit tout seul, sans dépendre de la bonne volonté de chacun. L'affiche relève de la sensibilisation,
           pas de la solution technique ; le seau ne réduit pas la consommation ; un réservoir plus grand ne change rien au gaspillage.</p>
@@ -4623,6 +4625,7 @@ body.est-prof .prof-only{display:block}
           d'un m³, la part de l'hygiène et de la chasse d'eau, la différence entre un geste (qui dépend de nous) et un objet
           technique (qui agit tout seul).</p>
 
+          <div class="prof-only">
           <h4 class="bat-cor-h">Aménagements pour les élèves à besoins particuliers</h4>
           <p class="bat-cor-p">Tout est accessible depuis la barre d'outils de la fiche, sans installation ni compte.
           Les réglages sont enregistrés sur l'appareil et <strong>communs à toutes les capsules</strong> : l'élève ne les
@@ -4647,6 +4650,8 @@ body.est-prof .prof-only{display:block}
           ponctuation</strong> ; et la fiche est entièrement <strong>imprimable</strong> pour les élèves dont le PAP prévoit un
           support papier.</p>
 
+          <div class="prof-only">
+          </div>
           <h4 class="bat-cor-h">Notes techniques</h4>
           <ul class="bat-cor-l">
             <li>Fichier autonome : il fonctionne aussi ouvert directement (<code>Niveau 4/P11 Eau ressource essentielle/eau_eleve.html</code>), hors du site.</li>
@@ -4655,6 +4660,7 @@ body.est-prof .prof-only{display:block}
             <li>Le mini-tableur est <strong>identique</strong> à l'outil autonome utilisé en classe (<code>techno-p11-eau/tableur-facture.html</code>) : mêmes libellés repris de la facture, mêmes données à relever, même aide graduée, mêmes messages d'erreur. Intégré à la fiche, il remonte en plus dans le tableau de bord avec le reste du travail.</li>
             <li>Modules partagés réutilisables : <code>assets/js/confort-lecture.js</code> et <code>assets/js/lecture-immersive.js</code>.</li>
           </ul>
+          </div>
 
         </div>
       </div>
@@ -4686,7 +4692,7 @@ body.est-prof .prof-only{display:block}
       </div>
       <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
         <h3 style="color:var(--vt)">&#x1F4DA; Corrigé et notes d'organisation &mdash; Activités 3 et 4</h3>
-        <p style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
+        <p class="prof-only" style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
           Compétence <strong>CT 2.5</strong> &mdash; identifier un besoin et énoncer un problème technique ;
           identifier les conditions et contraintes (normes et règlements). Objet étudié : le
           <strong>robinet automatique à détection</strong>, solution technique dégagée à la fin de l'activité 2.
@@ -4703,6 +4709,7 @@ body.est-prof .prof-only{display:block}
             </div>
           </div>
 
+          <div class="prof-only">
           <h4 class="bat-cor-h">Organisation</h4>
           <table class="bat-cor-t">
             <tr><td class="k">Modalité</td><td>Individuelle (identité pré-remplie depuis le compte élève).</td></tr>
@@ -4713,6 +4720,7 @@ body.est-prof .prof-only{display:block}
             <tr><td class="k">Auto-correction</td><td>QQOQCP, bête à cornes, les deux chiffres de l'IP, le 2<sup>e</sup> chiffre minimum, l'indice complet et le quiz IP.</td></tr>
             <tr><td class="k">Code élève</td><td><strong>EAU34</strong> &mdash; modifiable dans l'onglet &laquo;&nbsp;Codes d'accès&nbsp;&raquo;.</td></tr>
           </table>
+          </div>
 
           <h4 class="bat-cor-h">Ressources ouvertes depuis la fiche</h4>
           <table class="bat-cor-t">
@@ -4731,7 +4739,7 @@ body.est-prof .prof-only{display:block}
           <p class="bat-cor-p">On attend un <strong>verbe à l'infinitif</strong>. Sont valorisés : la mention du
           <em>sans contact</em> (hygiène) et celle du <em>déclenchement automatique</em> (économie d'eau).</p>
 
-          <h4 class="bat-cor-h">2. La méthode QQOQCP (auto-corrigé)</h4>
+          <h4 class="bat-cor-h">2. La méthode QQOQCP</h4>
           <table class="bat-cor-t">
             <tr><th style="width:90px">Méthode</th><th>Question</th><th>Réponse attendue</th></tr>
             <tr><td class="k">Quoi&nbsp;?</td><td>À quel besoin répond l'objet&nbsp;?</td><td class="ok">Distribuer de l'eau automatiquement, sans contact.</td></tr>
@@ -4747,7 +4755,7 @@ body.est-prof .prof-only{display:block}
           séquence, sans rapport avec le corrigé S3. Elles ont été remplacées par les six réponses du robinet.
           L'ordre des propositions est mélangé mais <strong>stable</strong> : un élève qui rouvre la fiche les retrouve dans le même ordre.</p>
 
-          <h4 class="bat-cor-h">3. La bête à cornes (auto-corrigé)</h4>
+          <h4 class="bat-cor-h">3. La bête à cornes</h4>
           <table class="bat-cor-t">
             <tr><td class="k">À qui le produit rend-il service&nbsp;?</td><td class="ok">Aux utilisateurs (et au gestionnaire de l'établissement)</td></tr>
             <tr><td class="k">Sur quoi le produit agit-il&nbsp;?</td><td class="ok">Sur l'eau (le débit, l'écoulement)</td></tr>
@@ -4775,22 +4783,22 @@ body.est-prof .prof-only{display:block}
           (sécurité, qualité, compatibilité…).</strong></p>
 
           <h4 class="bat-cor-h">6. L'indice de protection IP</h4>
-          <p class="bat-cor-p"><strong>6.1 (auto-corrigé).</strong> Le <strong>1<sup>er</sup> chiffre</strong> indique la protection contre
+          <p class="bat-cor-p"><strong>6.1.</strong> Le <strong>1<sup>er</sup> chiffre</strong> indique la protection contre
           <strong>les corps solides et les poussières</strong> (0 à 6). Le <strong>2<sup>e</sup> chiffre</strong> indique la protection contre
           <strong>l'eau et les liquides</strong> (0 à 8).</p>
           <p class="bat-cor-p"><strong>6.2 &mdash;</strong> Le tableau de la norme est donné <strong>en entier</strong> dans la fiche (chiffres 0 à 7),
           comme dans la version longue du document S3. La fiche S4 séparée n'en donnait qu'un extrait (0, 4, 5, 6, 7) ; c'est la version
           complète qui a été retenue, plus utile pour justifier un choix.</p>
-          <p class="bat-cor-p"><strong>6.3 (auto-corrigé) &mdash; Quel 2<sup>e</sup> chiffre minimum&nbsp;?</strong>
+          <p class="bat-cor-p"><strong>6.3 &mdash; Quel 2<sup>e</sup> chiffre minimum&nbsp;?</strong>
           <strong>Au moins 4</strong> : protection contre les <strong>projections d'eau de toutes directions</strong>, ce que subit un robinet
           près d'un point d'eau. Un <strong>5</strong> (jets d'eau à la lance) est encore plus sûr pour la partie électrique.
           La correction distingue trois cas : 4 est validé ; une valeur supérieure est acceptée avec la remarque que le minimum demandé reste 4 ;
           une valeur inférieure est refusée avec l'explication.</p>
-          <p class="bat-cor-p"><strong>6.4 (auto-corrigé) &mdash; Un indice IP complet.</strong> <strong>IP65</strong> : 6 = totalement étanche
+          <p class="bat-cor-p"><strong>6.4 &mdash; Un indice IP complet.</strong> <strong>IP65</strong> : 6 = totalement étanche
           aux poussières, 5 = protégé contre les jets d'eau. La fiche accepte tout indice dont le 1<sup>er</sup> chiffre est &ge; 5 et le
           2<sup>e</sup> &ge; 4, et rappelle IP65 comme repère dans tous les cas.</p>
 
-          <h4 class="bat-cor-h">7. Quiz &mdash; L'indice de protection (auto-corrigé)</h4>
+          <h4 class="bat-cor-h">7. Quiz &mdash; L'indice de protection</h4>
           <table class="bat-cor-t">
             <tr><th style="width:40px">#</th><th>Question</th><th>Réponse</th></tr>
             <tr><td class="k">1</td><td>Que protège le 1<sup>er</sup> chiffre&nbsp;?</td><td class="ok">Contre les corps solides et les poussières</td></tr>
@@ -4814,6 +4822,7 @@ body.est-prof .prof-only{display:block}
             <li><strong>Indice IP :</strong> 1<sup>er</sup> chiffre = solides et poussières (0 &rarr; 6), 2<sup>e</sup> chiffre = eau (0 &rarr; 8). En milieu humide, 2<sup>e</sup> chiffre élevé (ex. <strong>IP65</strong>).</li>
           </ul>
 
+          <div class="prof-only">
           <h4 class="bat-cor-h">Notes techniques</h4>
           <ul class="bat-cor-l">
             <li>Fichier autonome : il fonctionne aussi ouvert directement (<code>Niveau 4/P11 Eau ressource essentielle/eau34_eleve.html</code>).</li>
@@ -4821,6 +4830,7 @@ body.est-prof .prof-only{display:block}
             <li>Envoi : même backend Apps Script que les autres capsules (<code>cap: "eau34"</code>), avec file d'attente hors ligne.</li>
             <li>La bête à cornes est dessinée en HTML et SVG (pas d'image) : nette à toutes les tailles, y compris au vidéoprojecteur et au réglage &laquo;&nbsp;A++++&nbsp;&raquo;. Sur téléphone, les deux cornes passent l'une sous l'autre.</li>
           </ul>
+          </div>
 
         </div>
       </div>
@@ -6016,11 +6026,43 @@ function doProfLogin() {
   }
   user = {id:"prof", p:"Prof", n:"Blanchard", c:"", niveau:""}; isProf = true; launch();
 }
+/* ── Contrôle de la règle « préparation de séance réservée au professeur » ──
+   Un corrigé s'ouvre aux élèves après l'évaluation : il ne doit pas leur montrer
+   l'organisation de la séance, les notes techniques ni les repères de correction.
+   Ces blocs se marquent d'une classe .prof-only. Comme une règle écrite finit par
+   s'oublier, ce contrôle liste dans la console, pour le professeur uniquement,
+   les corrigés où un bloc réservé aurait été laissé visible. */
+var PROF_ONLY_TITRES = ["Organisation", "Notes techniques", "Aménagements pour les élèves"];
+function verifierCorriges() {
+  if (!isProf) return;
+  var pages = document.querySelectorAll('[id^="pg-"]');
+  var oublis = [];
+  for (var i = 0; i < pages.length; i++) {
+    var id = pages[i].id;
+    if (!/cor/.test(id)) continue;
+    var titres = pages[i].querySelectorAll("h4");
+    for (var j = 0; j < titres.length; j++) {
+      var t = (titres[j].textContent || "").trim();
+      for (var k = 0; k < PROF_ONLY_TITRES.length; k++) {
+        if (t.indexOf(PROF_ONLY_TITRES[k]) !== 0) continue;
+        if (!titres[j].closest(".prof-only")) oublis.push(id + " → « " + t + " »");
+      }
+    }
+  }
+  if (oublis.length) {
+    try {
+      console.warn("[corrigés] Bloc de préparation visible par les élèves — à envelopper dans "
+        + 'un <div class="prof-only"> :\n  ' + oublis.join("\n  "));
+    } catch (e) {}
+  }
+}
+
 /* Marque la session en cours : conditionne l'affichage des blocs .prof-only.
    Les comptes enseignants collègues sont des professeurs eux aussi : ils ont
    besoin de la préparation de séance autant que le compte administrateur. */
 function majClasseProf() {
   try { document.body.classList.toggle("est-prof", !!isProf || !!isCollegue); } catch (e) {}
+  try { verifierCorriges(); } catch (e) {}
 }
 
 function launch() {
@@ -8525,8 +8567,9 @@ function printEau34Corrige() { imprimerCorrigeP11("eau34-cor-body", "Corrigé P1
 function printEauCorrige()   { imprimerCorrigeP11("eau-cor-body",   "Corrigé P11 4e — L'eau, ressource essentielle"); }
 /* Mise en page commune aux corrigés imprimables de la séquence P11. */
 function imprimerCorrigeP11(idCorps, titre) {
-  var corps = document.getElementById(idCorps);
-  if (!corps) return;
+  var corpsHTML = _corpsCorrigePourImpression(idCorps);
+  if (corpsHTML === null) return;
+  var corps = { innerHTML: corpsHTML };
   var w = window.open('', '_blank');
   var d = new Date();
   function p2(n){ return n < 10 ? '0' + n : '' + n; }
