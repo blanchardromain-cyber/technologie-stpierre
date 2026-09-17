@@ -149,12 +149,40 @@
   .msg.ok{color:var(--vt)} .msg.err{color:var(--rg)} .msg.wait{color:var(--td)}
 
   /* ═══ IMPRESSION — sujet vierge ou copie de l'élève ═══ */
+  /* ── Correction du professeur ──────────────────────────────────────
+     Le travail partait vers le professeur sans que rien ne redescende :
+     ni la note, ni le détail par exercice, ni l'appréciation. Ce bloc les
+     affiche dès que la copie est validée, à l'écran comme sur le papier. */
+  .corr-prof{border:2px solid var(--vt,#1E6B3B);border-radius:12px;padding:14px 18px;margin:0 0 18px;background:#E8F5E9}
+  .corr-prof.moyen{border-color:#C55A11;background:#FCE4D6}
+  .corr-prof.faible{border-color:#C0392B;background:#FADBD8}
+  .corr-tete{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .corr-tete .lb{flex:1;min-width:170px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1E6B3B}
+  .corr-prof.moyen .corr-tete .lb{color:#C55A11}
+  .corr-prof.faible .corr-tete .lb{color:#C0392B}
+  .corr-note{background:#1E6B3B;color:#fff;border-radius:10px;padding:7px 18px;font-size:23px;font-weight:700;line-height:1}
+  .corr-prof.moyen .corr-note{background:#C55A11}
+  .corr-prof.faible .corr-note{background:#C0392B}
+  .corr-note small{font-size:13px;font-weight:600}
+  .corr-tab{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;background:#fff;border-radius:8px;overflow:hidden}
+  .corr-tab th{background:#1E6B3B;color:#fff;padding:6px 10px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  .corr-prof.moyen .corr-tab th{background:#C55A11}
+  .corr-prof.faible .corr-tab th{background:#C0392B}
+  .corr-tab td{padding:6px 10px;border-bottom:1px solid #E2E8F0}
+  .corr-tab tr:last-child td{border-bottom:none}
+  .corr-tab .pts{text-align:center;font-weight:700;white-space:nowrap}
+  .corr-appr{margin-top:12px;background:#fff;border-radius:8px;padding:10px 13px;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+  .corr-attente{border:1.5px dashed #C55A11;background:#FFF8E1;color:#5D4E00;border-radius:10px;padding:11px 16px;margin:0 0 18px;font-size:13px}
+
   @media print{
     @page{size:A4 portrait;margin:11mm 12mm}
     header,.pbar-wrap,.sendbar,.micbtn,.microw,.consigne,.li-barre,.cl-btn{display:none!important}
     body{background:#fff;font-size:10.5pt;line-height:1.5}
     main{max-width:none;padding:0}
     .entete-papier{display:flex!important}
+    .corr-prof,.corr-attente{break-inside:avoid;page-break-inside:avoid}
+    .corr-prof{background:#fff!important;border-width:1.5pt}
+    .corr-note{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .bandeau{background:none;color:var(--tx);border:1.5pt solid var(--vi);box-shadow:none;padding:6pt 10pt;margin-bottom:8pt}
     .bandeau::after{display:none}
     .bandeau .lb{color:var(--vi)}
@@ -239,6 +267,8 @@
       <span>4 exercices</span><span>Noté sur 10 points</span><span>Travail individuel</span>
     </div>
   </div>
+
+  <div id="bloc-correction"></div>
 
   <div class="consigne" data-nolecture>
     <div>
@@ -912,11 +942,101 @@ function calerBarreOutils(){
   if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
 }
 
+/* ════════════ CORRECTION DU PROFESSEUR ════════════
+   La copie corrigée redescend par localStorage.subs, alimenté par le site.
+   On affiche la note, le détail par exercice et l'appréciation — à l'écran
+   et sur l'impression, qui ne montrait jusqu'ici que les réponses. */
+var CORR_SECTIONS = [
+  { cle:"ex1", label:"① Objet naturel ou technique", max:2.5 },
+  { cle:"ex2", label:"② Définitions de cours",       max:2.5 },
+  { cle:"ex3", label:"③ Besoin et fonction d'usage",  max:3 },
+  { cle:"ex4", label:"④ Étude de cas et fonction d'estime", max:2 }
+];
+var CORR_TOTAL = 10;
+function corrSections(){
+  /* Le site porte la définition de référence ; on la préfère si la capsule est
+     ouverte dans le site, et on garde la copie locale si elle est ouverte seule. */
+  try {
+    var d = window.parent && window.parent !== window && window.parent.EVALUATIONS
+          && window.parent.EVALUATIONS["eval1-5e"];
+    if (d && d.sections && d.sections.length) { CORR_TOTAL = d.total || CORR_TOTAL; return d.sections; }
+  } catch(e){}
+  return CORR_SECTIONS;
+}
+function corrMaSoumission(){
+  if (!USER || !USER.id) return null;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++){
+      if (subs[i].eid === USER.id && subs[i].cap === "eval1-5e") return subs[i];
+    }
+  } catch(e){}
+  return null;
+}
+function corrFmt(n){
+  n = Math.round(Number(n) * 100) / 100;
+  return (n % 1 === 0) ? String(n) : String(n).replace(".", ",");
+}
+function afficherCorrectionProf(){
+  var hote = document.getElementById("bloc-correction");
+  if (!hote) return;
+  var s = corrMaSoumission();
+  if (!s){ hote.innerHTML = ""; return; }
+
+  if (s.status === "pending"){
+    hote.innerHTML = '<div class="corr-attente">&#x23F3; Ta copie a bien été envoyée. '
+      + 'Elle est <b>en attente de correction</b> par ton professeur.</div>';
+    return;
+  }
+  if (s.status === "rejected"){
+    hote.innerHTML = '<div class="corr-attente" style="border-color:#C0392B;background:#FADBD8;color:#8E2018">'
+      + '<b>&#x1F504; Travail à retravailler.</b> Ton professeur te demande de reprendre cette évaluation.'
+      + (s.appreciation ? '<div class="corr-appr">' + String(s.appreciation).replace(/</g,"&lt;") + '</div>' : '')
+      + '</div>';
+    return;
+  }
+  if (s.status !== "validated" || s.adjustedScore === undefined || s.adjustedScore === ""){
+    hote.innerHTML = ""; return;
+  }
+
+  var sections = corrSections();
+  var note = Number(s.adjustedScore);
+  var pct  = note / CORR_TOTAL * 100;
+  var classe = pct >= 75 ? "" : pct >= 50 ? " moyen" : " faible";
+  var pts = s.adjustedPts || {};
+
+  var x = '<div class="corr-prof' + classe + '">';
+  x += '<div class="corr-tete"><div class="lb">&#x2705; Correction du professeur</div>'
+     + '<div class="corr-note">' + corrFmt(note) + '<small> / ' + CORR_TOTAL + '</small></div></div>';
+
+  var detail = false;
+  for (var i = 0; i < sections.length; i++){
+    if (pts[sections[i].cle] !== undefined){ detail = true; break; }
+  }
+  if (detail){
+    x += '<table class="corr-tab"><thead><tr><th>Détail de la notation</th><th class="pts">Points</th></tr></thead><tbody>';
+    for (var j = 0; j < sections.length; j++){
+      var sec = sections[j];
+      var v = pts[sec.cle];
+      x += '<tr><td>' + sec.label + '</td><td class="pts">'
+         + (v === undefined ? "—" : corrFmt(v)) + ' / ' + corrFmt(sec.max) + '</td></tr>';
+    }
+    x += '</tbody></table>';
+  }
+  if (s.appreciation){
+    x += '<div class="corr-appr"><b>&#x1F4AC; Appréciation :</b> '
+       + String(s.appreciation).replace(/</g,"&lt;") + '</div>';
+  }
+  x += '</div>';
+  hote.innerHTML = x;
+}
+
 /* ════════════ DÉMARRAGE ════════════ */
 function demarrer(){
   poserIcones();
   brancherChoix();
   lireIdentite();
+  afficherCorrectionProf();
   restaurerBrouillon();
   majProgression();
   majEntetePapier();
