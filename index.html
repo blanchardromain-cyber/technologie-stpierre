@@ -4259,7 +4259,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17f</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17g</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4685,6 +4685,23 @@ body.est-prof .prof-only{display:block}
     </div>
 
     <!-- P11 4e — CORRIGÉ ACTIVITÉS 3 ET 4 (réservé au professeur, code COREAU34) -->
+    <!-- P11 4e — SYNTHÈSE INTERMÉDIAIRE (capsule embarquée, rien à envoyer) -->
+    <div id="pg-eau4e-syn" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Synth&egrave;se interm&eacute;diaire : concevoir un objet technique (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La synth&egrave;se des quatre outils de conception &mdash; b&ecirc;te &agrave; cornes, pieuvre, cahier des charges, normes &mdash;
+        &agrave; <strong>conqu&eacute;rir notion par notion</strong> : un petit d&eacute;fi, puis la d&eacute;finition se d&eacute;voile.
+        Rien n'est not&eacute; et rien n'est &agrave; envoyer. Le bouton <strong>&laquo;&nbsp;Imprimer ma synth&egrave;se&nbsp;&raquo;</strong> sort la fiche
+        compl&egrave;te et correcte, avec ses sch&eacute;mas, identique pour tous les &eacute;l&egrave;ves.
+      </p>
+      <iframe id="eau4e-syn-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/synthese_eleve.html" title="Synthèse intermédiaire : concevoir un objet technique (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
     <div id="pg-eau34-cor" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
@@ -5813,6 +5830,7 @@ var SEQUENCES_DEF = [
   {id:"eau4e-cor", ordre:111, niveau:"4ème", titre:"P11 — Corrigé Activités 1 et 2", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU26", open:true},
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"EAU34", open:true},
   {id:"eau34-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Activités 3 et 4", desc:"Corrigé détaillé des activités 3 et 4. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU34", open:true},
+  {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"SYNEAU26", open:true},
   {id:"p12", ordre:120, niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
   {id:"p12-cor-a1", ordre:121, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-act2", ordre:122, niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
@@ -6177,6 +6195,14 @@ function goPage(pid) {
     } catch (e) {}
     var eIfr = document.getElementById("eau4e-frame");
     if (eIfr) eIfr.src = eIfr.getAttribute("data-src");
+  }
+  if (pid === "pg-eau4e-syn") {
+    // Même identité que les activités P11 : elle ne sert qu'à l'en-tête de la feuille imprimée.
+    try {
+      if (user) localStorage.setItem("eau34_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var synIfr = document.getElementById("eau4e-syn-frame");
+    if (synIfr) synIfr.src = synIfr.getAttribute("data-src");
   }
   if (pid === "pg-eau34") {
     try {
@@ -6566,6 +6592,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
+        } else if (s.id === "eau4e-syn") {
+          badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
         } else if (s.id === "eval1-5e") {
@@ -6602,6 +6630,7 @@ function renderDash() {
       else if (s.id === "rem1")     clickAction = "onclick=\"goPage('pg-rem')\"";
       else if (s.id === "eau4e")     clickAction = "onclick=\"goPage('pg-eau4e')\"";
       else if (s.id === "eau4e-cor") clickAction = "onclick=\"goPage('pg-eau4e-cor')\"";
+      else if (s.id === "eau4e-syn") clickAction = "onclick=\"goPage('pg-eau4e-syn')\"";
       else if (s.id === "eau34")     clickAction = "onclick=\"goPage('pg-eau34')\"";
       else if (s.id === "eau34-cor") clickAction = "onclick=\"goPage('pg-eau34-cor')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
@@ -6666,6 +6695,7 @@ function tryUnlock() {
     else if (pendingSeq === "p12-cor-a2") goPage("pg-p12-cor-a2");
     else if (pendingSeq === "eau4e") goPage("pg-eau4e");
     else if (pendingSeq === "eau4e-cor") goPage("pg-eau4e-cor");
+    else if (pendingSeq === "eau4e-syn") goPage("pg-eau4e-syn");
     else if (pendingSeq === "eau34") goPage("pg-eau34");
     else if (pendingSeq === "eau34-cor") goPage("pg-eau34-cor");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
