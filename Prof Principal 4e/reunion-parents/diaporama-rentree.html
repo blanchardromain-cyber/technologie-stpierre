@@ -23,6 +23,8 @@
   .encadre { background: rgba(240,180,41,.12); border-left: 6px solid #f0b429; padding: 14px 20px; font-size: 1.4rem; margin-top: 18px; }
   .pied { position: fixed; bottom: 14px; left: 0; right: 0; text-align: center; font-size: .85rem; color: #7b93a6; }
   .pastille { display:inline-block; padding:2px 12px; border-radius:20px; font-size:1.1rem; margin:3px; }
+  .shot { background: #fff; padding: 10px; border-radius: 14px; box-shadow: 0 10px 34px rgba(0,0,0,.4); display: inline-block; }
+  .shot img { display: block; border-radius: 6px; }
 </style>
 </head>
 <body>
@@ -35,6 +37,20 @@
     <li>Année scolaire <span id="annee">2026-2027</span></li>
     <li><b>Lundi 14 septembre 2026 — 18 h 30</b></li>
   </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">La classe de 4G</div>
+  <h2>25 élèves, une classe à découvrir</h2>
+  <div class="deux">
+    <div style="flex:1">
+      <ul>
+        <li><b>11 garçons</b> · <b>14 filles</b></li>
+        <li>LV2 : <b>espagnol</b></li>
+      </ul>
+    </div>
+    <div class="shot"><img src="../donnees/diaporama/trombinoscope-4G.png" alt="Trombinoscope de la classe" style="max-width:44vw;max-height:64vh" onerror="this.parentNode.style.display='none'"></div>
+  </div>
 </section>
 
 <section class="diapo">
@@ -64,6 +80,29 @@
 </section>
 
 <section class="diapo">
+  <div class="etape">La vie du collège</div>
+  <h2>La catéchèse au collège Saint Pierre</h2>
+  <ul>
+    <li>Un temps d'échange entre jeunes sur des questions de <b>foi, de société, de vivre ensemble</b> <span class="accent">— extrait du projet pastoral du collège</span></li>
+    <li>Les élèves participants sont invités à <b>animer les célébrations</b> du collège (Vivre Ensemble, Noël, Carême)</li>
+    <li>Ouvert aux volontaires de <b>4e et 3e</b> — rencontres le <b>jeudi en semaine impaire, 17h15–18h15</b></li>
+  </ul>
+  <div class="encadre">Inscription auprès de la vie scolaire ou du CDI, puis mail de confirmation aux parents.</div>
+</section>
+
+<section class="diapo">
+  <div class="etape">L'emploi du temps</div>
+  <h2>Semaine paire</h2>
+  <div class="shot"><img src="img/edt-semaine-paire.png" alt="Emploi du temps, semaine paire" style="max-width:80vw;max-height:66vh" onerror="this.parentNode.style.display='none'"></div>
+</section>
+
+<section class="diapo">
+  <div class="etape">L'emploi du temps</div>
+  <h2>Semaine impaire</h2>
+  <div class="shot"><img src="img/edt-semaine-impaire.png" alt="Emploi du temps, semaine impaire" style="max-width:80vw;max-height:66vh" onerror="this.parentNode.style.display='none'"></div>
+</section>
+
+<section class="diapo">
   <div class="etape">Les outils de la classe</div>
   <h2>Un espace en ligne pour les élèves</h2>
   <div class="deux">
@@ -73,10 +112,21 @@
         <li><b>Carnet de bord</b> : le suivi du règlement</li>
         <li><b>Inscriptions PSC1</b> : la formation aux premiers secours</li>
       </ul>
-      <div class="encadre">Accès par le <b>code personnel</b> de votre enfant. Lien également sur EcoleDirecte.</div>
+      <div class="encadre">Accès par le <b>code personnel</b> de votre enfant — via le lien sur <b>EcoleDirecte</b>, ou en l'ajoutant en <b>favori</b> du navigateur.</div>
     </div>
     <div class="qr"><img src="../eleves/qr-espace-eleves.png" alt="QR code espace élèves" onerror="this.parentNode.style.display='none'"></div>
   </div>
+</section>
+
+<section class="diapo">
+  <div class="etape">Le Hub de classe</div>
+  <h2>L'entraide entre élèves</h2>
+  <ul>
+    <li>Un <b>mur d'entraide modéré</b> — pas un réseau social : accessible depuis un <b>navigateur</b>, aucun smartphone nécessaire</li>
+    <li><b>Modération</b> : filtre anti-insultes, aucun message privé, bouton de signalement, tableau de suivi côté professeur</li>
+    <li><b>Charte d'utilisation</b> co-construite avec les élèves en vie de classe (séance du 14/09)</li>
+    <li><b>Horaires d'ouverture</b> définis par le professeur — le Hub se ferme en dehors de la plage autorisée</li>
+  </ul>
 </section>
 
 <section class="diapo">
@@ -84,9 +134,20 @@
   <h2>Le suivi du règlement, en clair</h2>
   <ul>
     <li>Les remarques (travail / attitude) sont notées dans le <b>carnet papier</b>, que vous signez</li>
+    <li>L'élève <b>reporte lui-même</b> sa remarque en ligne → <b>notification automatique</b> au professeur principal, jauge <b>n/5</b> visible par trimestre</li>
     <li>Un <b>tableau de bord</b> permet au PP de suivre l'ensemble</li>
     <li>À 5 remarques sur un trimestre : <b>entretien</b> avec l'élève pour trouver des solutions</li>
   </ul>
+</section>
+
+<section class="diapo">
+  <div class="etape">Vie de classe</div>
+  <h2>Le binôme d'absences</h2>
+  <ul>
+    <li>Chaque élève a un <b>référent</b> (1 obligatoire, 1 facultatif) désigné dans la classe</li>
+    <li>En cas d'absence, le référent transmet les <b>devoirs et informations</b> manquées</li>
+  </ul>
+  <div class="shot"><img src="../donnees/diaporama/binome-absences-4G.png" alt="Binômes d'absence de la classe" style="max-width:60vw;max-height:56vh" onerror="this.parentNode.style.display='none'"></div>
 </section>
 
 <section class="diapo">
