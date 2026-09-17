@@ -4253,7 +4253,7 @@ body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-16k</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -8590,11 +8590,11 @@ function openModal(sid) {
     document.getElementById("mrep").innerHTML = buildDCModalHTML(sub.fields, sub.score) + buildDCTeacherPanel(sub);
     var _sec = scoreDCBySection(sub.fields);
     var _autoTotal = Math.min(30,(_sec.q1||0)+(_sec.q2a||0)+(_sec.q2b||0)+(_sec.q2c||0)+(_sec.q3||0)+(_sec.p2q1||0)+(_sec.p2q2||0)+(_sec.p2q3||0));
-    document.getElementById("mscore").textContent = (sub.adjustedScore !== undefined ? "Note ajustée : "+sub.adjustedScore+"/30" : "Note auto : "+_autoTotal+"/30 (indicative)") + " – Statut : " + sub.status;
+    document.getElementById("mscore").textContent = (sub.adjustedScore !== undefined ? "Note ajustée : "+sub.adjustedScore+"/30" : "Note auto : "+_autoTotal+"/30 (indicative)") + " – Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "p12" && sub.fields) {
     if (mh3) mh3.textContent = "P12 — Activité n°1 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12ModalHTML(sub.fields);
-    document.getElementById("mscore").textContent = "Activité ouverte – Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activité ouverte – Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "p11-ex2") {
     if (mh3) mh3.textContent = "P11 — Exercice n°2 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP11Ex2ModalHTML(sub.fields || {}) + buildP11Ex2TeacherPanel(sub);
@@ -8604,7 +8604,7 @@ function openModal(sid) {
       (sub.adjustedScore !== undefined
         ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _x2bar
         : "Note auto : " + p11x1Fmt(_x2auto) + "/" + _x2bar + " (indicative)")
-      + " — Statut : " + sub.status;
+      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "p11-ex1") {
     if (mh3) mh3.textContent = "P11 — Exercice n°1 : Réponses de l'élève";
     /* fields peut manquer si la soumission vient d'un cloud partiel : on affiche
@@ -8618,53 +8618,53 @@ function openModal(sid) {
       (sub.adjustedScore !== undefined
         ? "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + _p11bar
         : "Note auto : " + p11x1Fmt(_p11auto) + "/" + _p11bar + " (indicative)")
-      + " — Statut : " + sub.status;
+      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "p12-ex1" && sub.fields) {
     if (mh3) mh3.textContent = "P12 — Exercice n°1 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12Ex1ModalHTML(sub.fields);
     var nfp = countP12Ex1Fields(sub.fields);
-    document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp.done + "/" + nfp.total + " champs remplis — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp.done + "/" + nfp.total + " champs remplis — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "p12-ex2" && sub.fields) {
     if (mh3) mh3.textContent = "P12 — Exercice n°2 : Réponses de l'élève";
     document.getElementById("mrep").innerHTML = buildP12Ex2ModalHTML(sub.fields);
     var nfp2 = countP12Ex2Fields(sub.fields);
     var q3okM = String(sub.fields["ex2-q3"]||"").trim() === "54";
-    document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Exercice ouvert — " + nfp2.done + "/" + nfp2.total + " champs remplis" + (q3okM ? " (Q3 ✓)" : "") + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "eau4e") {
     if (mh3) mh3.textContent = "P11 4e — Activités 1 et 2";
     document.getElementById("mrep").innerHTML = buildEauModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activités 1 et 2 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||49) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activités 1 et 2 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||49) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "eau34") {
     if (mh3) mh3.textContent = "P11 4e — Activités 3 et 4";
     document.getElementById("mrep").innerHTML = buildEau34ModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (EVALUATIONS[sub.cap]) {
     var evd = EVALUATIONS[sub.cap];
     if (mh3) mh3.textContent = evd.titre + " — copie de l'élève";
     document.getElementById("mrep").innerHTML = buildEvalModalHTML(sub) + buildEvalTeacherPanel(sub);
     document.getElementById("mscore").textContent =
       (sub.adjustedScore !== undefined ? "Note validée : " + fmtPts(sub.adjustedScore) : "Proposition automatique : " + fmtPts(noteEvaluation(sub)))
-      + "/" + evd.total + " – Statut : " + sub.status;
+      + "/" + evd.total + " – Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activité individuelle — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activité individuelle — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "reseau5e") {
     if (mh3) mh3.textContent = "Réseau 5e — Manipulation (binôme)";
     document.getElementById("mrep").innerHTML = buildReseauModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activité binôme — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activité binôme — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||24) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "filius5e") {
     if (mh3) mh3.textContent = "Filius 5e — Simulation réseau (binôme)";
     document.getElementById("mrep").innerHTML = buildFiliusModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activité Filius — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||21) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activité Filius — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||21) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "maison5e") {
     if (mh3) mh3.textContent = "Maison 5e — Mon réseau à la maison";
     document.getElementById("mrep").innerHTML = buildMaisonModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activité maison — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||16) + " réponses — Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Activité maison — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||16) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else {
     if (mh3) mh3.textContent = "Réponse ouverte — Question 10";
     document.getElementById("mrep").textContent = sub.open || "(pas de réponse)";
-    document.getElementById("mscore").textContent = "Score QCM : " + sub.score + "/" + sub.qcmTot + " – Statut : " + sub.status;
+    document.getElementById("mscore").textContent = "Score QCM : " + sub.score + "/" + sub.qcmTot + " – Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   }
   document.getElementById("modal").classList.remove("h");
 }
@@ -8811,6 +8811,12 @@ function ficheScoreTexte(sub) {
       : p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {}));
     return "Note auto : " + p11x1Fmt(p11x1Convert(brut, b)) + "/" + b + " (indicative)" + st;
   }
+  if (EVALUATIONS[sub.cap]) {
+    var dEv = EVALUATIONS[sub.cap];
+    return (sub.adjustedScore !== undefined
+      ? "Note validée : " + fmtPts(sub.adjustedScore)
+      : "Proposition automatique : " + fmtPts(noteEvaluation(sub))) + "/" + dEv.total + st;
+  }
   if (sub.cap === "rem1") return "Score : " + sub.score + "/40" + st;
   if (sub.cap === "p12")  { var n0 = countP12Fields(sub.fields||{}); return n0.done + "/" + n0.total + " champs" + st; }
   if (sub.cap === "p12-ex1") { var n1 = countP12Ex1Fields(sub.fields||{}); return n1.done + "/" + n1.total + " champs" + st; }
@@ -8828,6 +8834,7 @@ function ficheScoreTexte(sub) {
 /* Réponses de l'élève, rendues par le constructeur propre à la capsule. */
 function ficheReponsesHTML(sub) {
   var f = sub.fields;
+  if (EVALUATIONS[sub.cap])          return buildEvalModalHTML(sub);
   if (sub.cap === "dc" && f)         return buildDCModalHTML(f, sub.score);
   if (sub.cap === "p12" && f)        return buildP12ModalHTML(f);
   if (sub.cap === "p11-ex1")         return buildP11Ex1ModalHTML(f || {});
@@ -8869,6 +8876,32 @@ function ficheEvalProfHTML(sub) {
     x += '</tbody></table>';
     if (sub.appreciation) x += _ficheApprHTML(sub.appreciation);
     return x;
+  }
+  /* Capsules du registre EVALUATIONS : le détail par exercice, points retenus
+     face au maximum, puis la note et l'appréciation. */
+  if (EVALUATIONS[sub.cap]) {
+    var dv = EVALUATIONS[sub.cap];
+    var auto = dv.corriger(sub.fields || {}).points;
+    var rete = sub.adjustedPts || auto;
+    var noteEv = noteEvaluation(sub), tot = 0, z = "";
+    z += '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px">';
+    z += '<thead><tr style="background:#5B34C7;color:#fff"><th style="padding:7px 10px;text-align:left">Exercice</th>'
+       + '<th style="padding:7px 10px;text-align:center;width:90px">Points</th>'
+       + '<th style="padding:7px 10px;text-align:center;width:60px">/ Max</th></tr></thead><tbody>';
+    for (var q = 0; q < dv.sections.length; q++) {
+      var sq = dv.sections[q], vq = Math.round((parseFloat(rete[sq.cle]) || 0) * 100) / 100;
+      tot += vq;
+      var cq = vq >= sq.max ? "color:#1E6B3B" : vq === 0 ? "color:#C0392B" : "color:#5B34C7";
+      z += '<tr style="background:' + (q % 2 === 0 ? "#f9f9f9" : "#fff") + ';border-bottom:1px solid #eee">'
+         + '<td style="padding:6px 10px">' + _ficheEsc(sq.label) + '</td>'
+         + '<td style="padding:6px 10px;text-align:center;font-weight:700;' + cq + '">' + fmtPts(vq) + '</td>'
+         + '<td style="padding:6px 10px;text-align:center;color:#999">/' + sq.max + '</td></tr>';
+    }
+    z += '<tr style="background:#5B34C7;color:#fff;font-weight:700"><td style="padding:9px 10px">NOTE FINALE</td>'
+       + '<td style="padding:9px 10px;text-align:center;font-size:17px">' + fmtPts(noteEv) + '</td>'
+       + '<td style="padding:9px 10px;text-align:center">/ ' + dv.total + '</td></tr></tbody></table>';
+    if (sub.appreciation) z += _ficheApprHTML(sub.appreciation);
+    return z;
   }
   if (sub.adjustedScore === undefined || sub.adjustedScore === "") return "";
   var bar = sub.bareme || sub.qcmTot || 20;
