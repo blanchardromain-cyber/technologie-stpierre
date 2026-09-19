@@ -1727,11 +1727,33 @@ function storeLocalSub(sub){
     localStorage.setItem("subs", JSON.stringify(subs));
   } catch(e){}
 }
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production.
+   Le backend fait un upsert sur (eid + cap) : une soumission de test faite en local
+   sous le nom d'un élève réel écraserait sa vraie copie, sans aucun signal (no-cors).
+   Seul un déploiement de TEST, branché sur une copie du classeur et désigné par
+   localStorage.apps_script_url_test, débloque l'écriture. "" = envoi refusé. */
+function urlEcriture(){
+  var hn = (location.hostname || "").toLowerCase();
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  try {
+    var u = localStorage.getItem("apps_script_url_test") || "";
+    if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
+  } catch(e){}
+  return "";
+}
+function refuserEcritureLocale(){
+  try {
+    console.warn("[capsule] Page servie en local (" + (location.hostname || "fichier") +
+      ") : l'envoi vers le classeur de production a été bloqué. Le travail reste en file locale.");
+  } catch(e){}
+}
 function postSub(sub, onDone){
   queueSub(sub);
+  var cible = urlEcriture();
+  if (!cible){ refuserEcritureLocale(); if (onDone) onDone(false); return; }
   if (!hasUrl()){ if (onDone) onDone(false); return; }
   try {
-    fetch(APPS_SCRIPT_URL, {
+    fetch(cible, {
       method:"POST", mode:"no-cors",
       headers:{ "Content-Type":"text/plain;charset=utf-8" },
       body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
@@ -1742,7 +1764,7 @@ function postSub(sub, onDone){
 function flushQueue(){
   try {
     var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
-    if (!q.length || !hasUrl()) return;
+    if (!q.length || !hasUrl() || !urlEcriture()) return;
     q.forEach(function(sub){ postSub(sub); });
   } catch(e){}
 }
