@@ -1519,13 +1519,12 @@ function envoiLocal(eid){
 }
 function envoiCloud(eid, onDone){
   if (!hasUrl() || !eid){ onDone(null); return; }
-  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
-  fetch(url).then(function(r){ return r.json(); }).then(function(d){
-    if (!d || !d.ok || !d.subs || !d.subs.length){ onDone(null); return; }
-    var miens = d.subs.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+  lireEnvois(eid, function(liste){
+    if (!liste || !liste.length){ onDone(null); return; }
+    var miens = liste.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
     miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
     onDone(miens[0] || null);
-  }).catch(function(){ onDone(null); });
+  });
 }
 function plusRecent(a, b){
   if (!a) return b; if (!b) return a;
@@ -1561,6 +1560,7 @@ function reprendreDernierEnvoi(){
   var local = envoiLocal(eid);
   envoiCloud(eid, function(distant){
     var sub = plusRecent(local, distant);
+    if (envoiVerrouille(local) || envoiVerrouille(distant) || copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
     if (!sub){
       flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err");
       return;
@@ -1583,8 +1583,12 @@ function proposerReprise(){
     ban.hidden = false;
   }
   var local = envoiLocal(eid);
+  if (copieLocaleVerrouillee() || envoiVerrouille(local)) return;
   if (local) afficher(local);
-  envoiCloud(eid, function(distant){ afficher(plusRecent(local, distant)); });
+  envoiCloud(eid, function(distant){
+    if (envoiVerrouille(distant)){ var ban = $("reprise"); if (ban) ban.hidden = true; return; }
+    afficher(plusRecent(local, distant));
+  });
 }
 
 /* ════════════ MESSAGES ════════════ */
@@ -1633,6 +1637,67 @@ function buildOpenSummary(state){
              " (" + repChips + " classés)\n• Contrainte / norme : " + okCN + "/" + QCM_IDS.length);
   lines.push("— Plan du conteneur —\n" + planSummary());
   return lines.join("\n\n");
+}
+
+/* ════════════ VERROU DE CONSULTATION ════════════
+   Le professeur peut verrouiller une copie rendue (champ « locked », venu du
+   serveur). Elle ne se recharge plus dans la fiche et ne se renvoie plus ; la
+   saisie en cours et le brouillon ne sont jamais touchés. */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++)
+      if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+/* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
+function urlLecture(){
+  try {
+    var hn = (location.hostname || "").toLowerCase();
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      if (/^https:\/\/script\.google\.com\//.test(u)) return u;
+    }
+  } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+/* Copies d'un élève : action « own » (une copie verrouillée revient sans son contenu),
+   repli sur « list » tant que le serveur n'est pas à jour, sauf si sansRepli. */
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){
+      lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); });
+      return;
+    }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if (document.getElementById("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou";
+  v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+/* Au chargement, pour l'élève identifié par son compte uniquement. */
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    for (var i = 0; i < liste.length; i++)
+      if (liste[i] && liste[i].eid === USER.id && liste[i].cap === CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
 }
 
 /* ════════════ ENVOI AU PROFESSEUR ════════════ */
@@ -1704,6 +1769,7 @@ function makeSub(){
   };
 }
 function sendToProf(){
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
   var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
   if (!p || !n){
     flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err");
@@ -1838,6 +1904,7 @@ function initActivite(){
   buildStepBank();
   buildPalette();
   readPrefill();
+  controlerVerrou();
   restoreDraft();
   wireFields();
   addMicButtons();

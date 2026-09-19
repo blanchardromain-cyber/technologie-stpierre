@@ -200,6 +200,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 /* Mode collègue : ni codes d'accès, ni configuration, ni export global. */
 body.mode-collegue #pt-g,body.mode-collegue #pt-c,
 body.mode-collegue button[onclick="exportCSVAll()"]{display:none!important}
+body.mode-collegue .btn-verrou{display:none!important}
 .sgr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
 .stcard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px}
 .stnum{font-size:30px;font-weight:700}
@@ -4259,7 +4260,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-17g</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-19a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4295,6 +4296,9 @@ body.est-prof .prof-only{display:block}
           <input class="si" id="fsearch" placeholder="Rechercher un élève..." oninput="renderSubs()">
           <button onclick="printCopiesFiltrees()" title="Imprime en une seule fois toutes les copies correspondant aux filtres ci-dessus (capsule, statut, classe, recherche), une par page, précédées d'un récapitulatif avec les notes et la moyenne." style="padding:7px 13px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer les copies</button>
           <button onclick="exportCSVAll()" title="Sélectionne une capsule pour exporter les détails de cette capsule uniquement. Sans filtre, exporte tout. Les filtres classe/statut/recherche sont aussi appliqués." style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
+          <button class="btn-verrou" onclick="verrouillerSelection(true)" title="Verrouille la consultation des copies correspondant aux filtres ci-dessus (une capsule doit être choisie). L'élève garde sa note et l'appréciation, mais ne peut plus rouvrir, modifier ni exporter son travail." style="padding:7px 13px;background:#5F6B7A;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F512; Verrouiller la sélection</button>
+          <button class="btn-verrou" onclick="verrouillerSelection(false)" title="Rend la consultation aux élèves pour les copies correspondant aux filtres ci-dessus." style="padding:7px 13px;background:#fff;color:#5F6B7A;border:1px solid #5F6B7A;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F513; Déverrouiller la sélection</button>
+          <span class="btn-verrou" id="nb-verrou" style="font-size:12px;color:var(--td);align-self:center"></span>
         </div>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
           <table class="stbl"><thead><tr><th>Élève</th><th>Classe</th><th>Activité</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
@@ -6135,6 +6139,9 @@ function checkStudentStatusChanges() {
         if (cs.scoreBrut !== undefined && cs.scoreBrut !== "" && local[idx].scoreBrut !== cs.scoreBrut) { local[idx].scoreBrut = cs.scoreBrut; changed = true; }
         if (cs.qcmTot !== undefined && cs.qcmTot !== "" && local[idx].qcmTot !== cs.qcmTot) { local[idx].qcmTot = cs.qcmTot; changed = true; }
         if (cs.score !== undefined && cs.score !== "" && local[idx].score !== cs.score) { local[idx].score = cs.score; changed = true; }
+        /* Verrou : recopié qu'il soit vrai OU faux (un déverrouillage doit redescendre),
+           mais seulement s'il change — une copie jamais verrouillée n'est pas touchée. */
+        if (cs.locked !== undefined && (local[idx].locked === true) !== (cs.locked === true)) { local[idx].locked = (cs.locked === true); changed = true; }
       }
     }
     if (changed) {
@@ -6181,6 +6188,16 @@ function doLogout() {
 // NAVIGATION
 // ================================================================
 function goPage(pid) {
+  /* Copie rendue verrouillée par le professeur : ni la page ni son iframe ne s'ouvrent. */
+  if (copieVerrouillee(capDePage(pid))) { capsuleIndisponible(); return; }
+  /* Copie déjà rendue : le verrou a pu être posé depuis la connexion. Contrôle en
+     arrière-plan, sans retarder l'ouverture ; s'il est arrivé, retour au tableau de bord. */
+  if (user && !estSessionProf() && maSoumission(capDePage(pid))) {
+    verifierVerrouEleve(function () {
+      var pg = document.getElementById(pid);
+      if (copieVerrouillee(capDePage(pid)) && pg && !pg.classList.contains("h")) { goPage("pg-dash"); toast(MSG_VERROU); }
+    });
+  }
   // Couper son SWF P12 si on quitte la page P12
   var prevP12 = !document.getElementById("pg-p12").classList.contains("h");
   if (prevP12 && pid !== "pg-p12") pauseP12Swf();
@@ -6607,8 +6624,12 @@ function renderDash() {
           badgeHtml = '<span class="badge bv">&#x1F680; Classe invers&eacute;e</span>';
         }
       }
+      /* Copie verrouillée : le statut et la note restent affichés, l'ouverture non. */
+      var copieFermee = !!(mySub && mySub.locked === true && !isCollegue);
+      if (copieFermee) badgeHtml += '<span class="badge" style="background:#F1F3F5;color:#5F6B7A">Consultation indisponible</span>';
       var clickAction = "";
       if (!isOpen) clickAction = "";
+      else if (copieFermee) clickAction = "onclick=\"capsuleIndisponible()\"";
       else if (isLocked) clickAction = "onclick=\"openGate('" + s.id + "')\"";
       else if (s.id === "dc")       clickAction = "onclick=\"goPage('pg-dc')\"";
       else if (s.id === "p12")      clickAction = "onclick=\"goPage('pg-p12')\"";
@@ -6824,6 +6845,9 @@ function rafraichirCorrection(cap, hoteId) {
         ["status", "appreciation", "adjustedScore", "adjustedPts", "bareme", "scoreBrut", "score", "qcmTot"].forEach(function (k) {
           if (c[k] !== undefined && c[k] !== "" && local[j][k] !== c[k]) { local[j][k] = c[k]; modifie = true; }
         });
+        /* « locked » est dans la liste blanche, mais pas dans la boucle : celle-ci ignore
+           les valeurs vides et un déverrouillage (false) ne redescendrait jamais. */
+        if (c.locked !== undefined && (local[j].locked === true) !== (c.locked === true)) { local[j].locked = (c.locked === true); modifie = true; }
       }
     }
     if (modifie) {
@@ -8304,6 +8328,7 @@ function renderSubs() {
   var ic = {pending:"&#x23F3;", validated:"&#x2705;", rejected:"&#x274C;"};
   var lbl = {pending:"En attente", validated:"Validé", rejected:"À revoir"};
   var bs = {pending:"background:var(--op);color:var(--or)", validated:"background:var(--vp);color:var(--vt)", rejected:"background:#FADBD8;color:var(--rg)"};
+  majCompteurVerrous(filtered);
   var tb = document.getElementById("stbody");
   if (!filtered.length) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--td)">Aucune soumission</td></tr>'; }
   else {
@@ -8379,7 +8404,7 @@ function renderSubs() {
         sc = '<strong style="color:' + (s.score >= 7 ? "var(--vt)" : s.score >= 5 ? "var(--or)" : "var(--rg)") + '">' + s.score + '/' + s.qcmTot + '</strong>';
       }
       var capTag = s.caplbl ? '<div style="font-size:10px;color:var(--td);margin-top:2px">' + s.caplbl + '</div>' : '';
-      rows += '<tr><td><strong>' + s.ename + '</strong>' + capTag + '</td><td>' + s.ecls + '</td><td>' + sc + '</td>';
+      rows += '<tr><td><strong>' + s.ename + '</strong>' + (s.locked === true ? ' <span title="Consultation verrouillée pour l\'élève" style="font-size:12px">&#x1F512;</span>' : '') + capTag + '</td><td>' + s.ecls + '</td><td>' + sc + '</td>';
       rows += '<td style="font-size:12px">' + fmtDateTime(s.dateISO || s.date) + '</td>';
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
       rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
@@ -8704,6 +8729,7 @@ function openModal(sid) {
   if (!sub) return;
   modalId = sid;
   document.getElementById("minfo").textContent = sub.ename + " – " + sub.ecls + " – " + fmtDateTime(sub.dateISO || sub.date);
+  majVerrouModal(sub);
   var mh3 = document.querySelector("#modal .mcard h3");
   if (sub.cap === "dc" && sub.fields) {
     if (mh3) mh3.textContent = "Devoir Commun : Réponses de l'élève";
@@ -9118,12 +9144,7 @@ function printCopiesFiltrees() {
   var r = subsFiltrees();
   if (!r.liste.length) { toast("Aucune copie ne correspond aux filtres."); return; }
 
-  var libStatut = {pending:"en attente", validated:"validées", rejected:"à revoir"};
-  var portee = [];
-  portee.push(r.cap ? (FICHE_TITRES[r.cap] || r.cap) : "toutes les capsules");
-  portee.push(r.classe ? "classe " + r.classe : "toutes les classes");
-  portee.push(r.statut ? "copies " + (libStatut[r.statut] || r.statut) : "tous les statuts");
-  if (r.recherche) portee.push('recherche « ' + r.recherche + ' »');
+  var portee = porteeFiltres(r);
 
   var nonCorrigees = 0;
   for (var i = 0; i < r.liste.length; i++) if (r.liste[i].status !== "validated") nonCorrigees++;
@@ -9694,6 +9715,37 @@ var cloudSync = (function () {
     } catch (e) {}
   }
 
+  /* Test en local : un déploiement Apps Script de TEST, branché sur une COPIE du
+     classeur, se désigne par localStorage.apps_script_url_test. Seule une page servie
+     en local le lit, et l'écriture n'est débloquée que vers cette URL-là : la
+     production reste inaccessible en écriture depuis localhost (règle 4). */
+  var URL_TEST = (function () {
+    if (!enLocal) return "";
+    try {
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      return (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) ? u : "";
+    } catch (e) { return ""; }
+  })();
+  var ecritureBloquee = enLocal && !URL_TEST;
+  function base() { return URL_TEST || APPS_SCRIPT_URL; }
+  if (URL_TEST) { try { console.warn("[cloudSync] Déploiement de TEST : " + URL_TEST); } catch (e) {} }
+
+  /* Clé professeur : ferme la liste complète des copies côté serveur. Saisie une fois
+     par poste, gardée dans ce navigateur, jamais écrite dans la page. */
+  function paramCleProf() {
+    try { var k = localStorage.getItem("prof_api_key") || ""; return k ? "&key=" + encodeURIComponent(k) : ""; } catch (e) { return ""; }
+  }
+
+  /* Verrou de consultation : bascules envoyées depuis ce poste et pas encore relues.
+     Elles priment sur une relecture trop précoce du classeur (2 minutes au plus). */
+  var _bascules = {};
+  function verrouServeur(k, v) {
+    var b = _bascules[k];
+    if (b && Date.now() - b.t < 120000) return b.v;
+    return v === true || v === "TRUE" || v === "true";
+  }
+  function oublierBascule(k) { delete _bascules[k]; }
+
   function queue(sub) {
     try {
       var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
@@ -9719,7 +9771,7 @@ var cloudSync = (function () {
   function sanitizeForSheet(sub) {
     try {
       var c = JSON.parse(JSON.stringify(sub));
-      ["open", "caplbl", "ename", "appreciation"].forEach(function (k) {
+      ["open", "caplbl", "ename", "appreciation", "lockedBy"].forEach(function (k) {
         if (typeof c[k] === "string" && /^[=+@]/.test(c[k])) c[k] = " " + c[k];
       });
       return c;
@@ -9728,11 +9780,16 @@ var cloudSync = (function () {
 
   function send(sub, onDone) {
     sub = sanitizeForSheet(sub);
+    /* Envoi fait depuis une session professeur : sur une copie verrouillée, le serveur
+       laisse passer vos corrections et refuse le renvoi de l'élève. La marque voyage
+       dans la file d'attente (envoi différé) ; absente de COLUMNS, elle n'est jamais
+       écrite dans le classeur. */
+    if (estSessionProf()) sub._parProf = true;
     queue(sub);
-    if (enLocal) { refuseEcritureLocale("l'envoi d'une soumission"); if (onDone) onDone(false); return; }
+    if (ecritureBloquee) { refuseEcritureLocale("l'envoi d'une soumission"); if (onDone) onDone(false); return; }
     if (!hasUrl()) { if (onDone) onDone(false); return; }
     try {
-      fetch(APPS_SCRIPT_URL, {
+      fetch(base(), {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -9761,11 +9818,15 @@ var cloudSync = (function () {
      On garde la version la plus récente (par dateISO) en cas de conflit. */
   function pull(onDone) {
     if (!hasUrl()) { if (onDone) onDone(false, "no-url"); return; }
-    var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+    var url = base() + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + paramCleProf() + "&t=" + Date.now();
     fetch(url)
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data || !data.ok || !Array.isArray(data.subs)) {
+          /* Liste fermée par le serveur tant que la clé professeur manque ou diffère. */
+          if (data && (data.error === "prof_key_required" || data.error === "bad_prof_key")) {
+            try { signalerCleProf(data.error); } catch (e) {}
+          }
           if (onDone) onDone(false, data && data.error);
           return;
         }
@@ -9781,8 +9842,13 @@ var cloudSync = (function () {
         // (le prof a pu valider/rejeter avant que la sync ait lieu)
         data.subs.forEach(function (s) {
           var k = keyOf(s);
+          /* Verrou : piloté par le serveur seul. Recopié même quand la version locale
+             prime (statut déjà tranché), sinon un verrou posé depuis un autre poste
+             n'apparaîtrait jamais ici. */
+          if (s.locked !== undefined) s.locked = verrouServeur(k, s.locked);
           var existing = byKey[k];
           if (!existing) { byKey[k] = s; return; }
+          if (s.locked !== undefined) existing.locked = s.locked;
           var sLocalDt = new Date(existing.dateISO || 0).getTime();
           var sRemoteDt = new Date(s.dateISO || 0).getTime();
           // Statut local non-"pending" prime (le prof a déjà tranché)
@@ -9810,15 +9876,35 @@ var cloudSync = (function () {
 
   /* 2c — Récupère uniquement les soumissions d'un élève donné depuis le cloud,
      sans toucher à localStorage.subs (utilisé pour détecter changements de statut). */
-  function fetchOwn(eid, onDone) {
+  /* Action « own » : le serveur ne renvoie que les copies de cet élève, et pour une
+     copie verrouillée les seules métadonnées (statut, note, barème, appréciation),
+     jamais le corps du travail. Repli sur « list » tant que le serveur n'est pas à jour. */
+  function fetchOwn(eid, onDone, sansRepli) {
     if (!hasUrl() || !eid) { if (onDone) onDone([]); return; }
-    var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
-    fetch(url)
+    function rendre(subs) {
+      var own = subs.filter(function(s){ return s.eid === eid; });
+      own.forEach(function(s){
+        if (s.locked !== undefined) s.locked = (s.locked === true || s.locked === "TRUE" || s.locked === "true");
+      });
+      if (onDone) onDone(own);
+    }
+    function viaList() {
+      var url = base() + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+      fetch(url)
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if (!data || !data.ok || !Array.isArray(data.subs)) { if (onDone) onDone([]); return; }
+          rendre(data.subs);
+        })
+        .catch(function(){ if (onDone) onDone([]); });
+    }
+    var urlOwn = base() + "?action=own&secret=" + encodeURIComponent(SYNC_SECRET) + "&eid=" + encodeURIComponent(eid) + "&t=" + Date.now();
+    fetch(urlOwn)
       .then(function(r){ return r.json(); })
       .then(function(data){
-        if (!data || !data.ok || !Array.isArray(data.subs)) { if (onDone) onDone([]); return; }
-        var own = data.subs.filter(function(s){ return s.eid === eid; });
-        if (onDone) onDone(own);
+        if (data && data.ok && Array.isArray(data.subs)) { rendre(data.subs); return; }
+        if (data && data.error === "unknown_action" && !sansRepli) { viaList(); return; }
+        if (onDone) onDone([]);
       })
       .catch(function(){ if (onDone) onDone([]); });
   }
@@ -9826,10 +9912,10 @@ var cloudSync = (function () {
   /* Suppression hard côté cloud — POST {action:"delete", id, eid, cap}
      Apps Script doit avoir un handler doPost qui supprime la ligne correspondante. */
   function del(sub, onDone) {
-    if (enLocal) { refuseEcritureLocale("une suppression"); if (onDone) onDone(false); return; }
+    if (ecritureBloquee) { refuseEcritureLocale("une suppression"); if (onDone) onDone(false); return; }
     if (!hasUrl()) { if (onDone) onDone(false); return; }
     try {
-      fetch(APPS_SCRIPT_URL, {
+      fetch(base(), {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -9845,13 +9931,320 @@ var cloudSync = (function () {
     } catch (e) { if (onDone) onDone(false); }
   }
 
+  /* Verrou de consultation, n copies en UN appel : POST {action:"lock", locked, keys}.
+     Seule écriture de la colonne « locked » ; un envoi ordinaire la préserve.
+     mode no-cors : on ne lit pas la réponse, d'où la relecture par listRaw. */
+  function lock(keys, locked, by, onDone) {
+    locked = locked === true;
+    if (ecritureBloquee) { refuseEcritureLocale("un verrouillage"); if (onDone) onDone(false); return; }
+    if (!hasUrl() || !keys || !keys.length) { if (onDone) onDone(false); return; }
+    var t = Date.now();
+    keys.forEach(function (k) { _bascules[k.eid + "::" + k.cap] = { v: locked, t: t }; });
+    var par = sanitizeForSheet({ lockedBy: String(by || "") }).lockedBy;
+    try {
+      fetch(base(), {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, action: "lock", locked: locked, by: par, at: new Date().toISOString(), keys: keys })
+      }).then(function () { if (onDone) onDone(true); })
+        .catch(function () { if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+
+  /* Relecture brute du classeur (sans fusion locale) : sert à vérifier un verrouillage. */
+  function listRaw(onDone) {
+    if (!hasUrl()) { onDone(null); return; }
+    fetch(base() + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + paramCleProf() + "&t=" + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) { onDone(d && d.ok && Array.isArray(d.subs) ? d.subs : null); })
+      .catch(function () { onDone(null); });
+  }
+
   /* Exposition de l'URL et du secret pour les appels utilitaires (notif_settings, etc.) */
   function url()    { return APPS_SCRIPT_URL; }
   function secret() { return SYNC_SECRET; }
-  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del, fetchOwn: fetchOwn, url: url, secret: secret };
+  return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del, fetchOwn: fetchOwn, url: url, secret: secret,
+           lock: lock, listRaw: listRaw, oublierBascule: oublierBascule };
 })();
 // Au chargement de la page : on tente de rejouer ce qui n'avait pas pu partir
 try { cloudSync.flush(); } catch (e) {}
+
+// ================================================================
+// VERROU DE CONSULTATION D'UNE COPIE RENDUE
+// Champ « locked » d'une soumission, orthogonal au statut. Posé par le professeur,
+// écrit par le seul serveur (action "lock"), il redescend à l'élève par fetchOwn.
+// Absent = non verrouillé. Le professeur et les collègues ne sont jamais bloqués.
+// La note et l'appréciation redescendent toujours ; seul le travail est inaccessible.
+// À ne pas confondre avec getUnlocked() / unlocked_<eid> : code d'accès de séquence.
+// ================================================================
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function estSessionProf() {
+  try { return !!(isProf || isCollegue); } catch (e) { return false; }
+}
+function copieVerrouillee(cap) {
+  if (!cap || !user || estSessionProf()) return false;
+  var subs = getSubs();
+  for (var i = 0; i < subs.length; i++) {
+    if (subs[i].eid === user.id && subs[i].cap === cap && subs[i].locked === true) return true;
+  }
+  return false;
+}
+/* Page → capsule : « pg-<id> » par défaut, sauf les pages qui portent un autre nom. */
+var _PAGE_CAP = { "pg-cap": "cap1", "pg-rem": "rem1", "pg-rem-form": "rem1", "pg-rem-quiz": "rem1", "pg-dc": "dc" };
+function capDePage(pid) {
+  if (_PAGE_CAP[pid]) return _PAGE_CAP[pid];
+  return (pid && pid.indexOf("pg-") === 0) ? pid.slice(3) : "";
+}
+function capsuleIndisponible() { toast(MSG_VERROU); verifierVerrouEleve(null); }
+
+/* En cours de session, le verrou (ou le déverrouillage) arrive par une relecture légère
+   (action « own », jamais la liste complète), au plus toutes les 15 s. Rien n'est
+   redessiné si rien n'a changé : sans verrou, l'élève ne voit aucune différence. */
+var _dernierControleVerrou = 0;
+function verifierVerrouEleve(apres) {
+  if (!user || estSessionProf() || !window.cloudSync || !cloudSync.hasUrl()) return;
+  var t = Date.now();
+  if (t - _dernierControleVerrou < 15000) return;
+  _dernierControleVerrou = t;
+  cloudSync.fetchOwn(user.id, function (own) {
+    if (!own || !own.length) return;
+    var local = getSubs(), change = false;
+    own.forEach(function (c) {
+      if (c.locked === undefined) return;
+      for (var j = 0; j < local.length; j++) {
+        if (local[j].eid === c.eid && local[j].cap === c.cap && (local[j].locked === true) !== (c.locked === true)) {
+          local[j].locked = (c.locked === true); change = true;
+        }
+      }
+    });
+    if (!change) return;
+    localStorage.setItem("subs", JSON.stringify(local));
+    try { renderDash(); } catch (e) {}
+    if (apres) apres();
+  }, true);
+}
+
+/* Exports PDF élève : défense en profondeur, les boutons étant déjà dans des pages
+   que goPage n'ouvre plus. Enveloppés au chargement, quand toutes les fonctions existent. */
+window.addEventListener("load", function () {
+  var cibles = { exportP11Ex1PDF: "p11-ex1", exportP11Ex2PDF: "p11-ex2", exportP12Ex1PDF: "p12-ex1",
+                 exportP12Ex2PDF: "p12-ex2", exportP12PDF: "p12", exportFichePDF: "rem1" };
+  Object.keys(cibles).forEach(function (nom) {
+    var f = window[nom];
+    if (typeof f !== "function") { try { console.warn("[verrou] export introuvable : " + nom); } catch (e) {} return; }
+    window[nom] = function () {
+      if (copieVerrouillee(cibles[nom])) { capsuleIndisponible(); return; }
+      return f.apply(this, arguments);
+    };
+  });
+});
+
+/* ── Côté professeur ── */
+var _verrouEnCours = false, _cleProfDemandee = false;
+
+function signalerCleProf(err) {
+  if (!isProf || _cleProfDemandee) return;
+  _cleProfDemandee = true;
+  var k = prompt((err === "bad_prof_key"
+      ? "La clé professeur enregistrée sur ce poste n'est pas la bonne.\n\n"
+      : "Le serveur demande la clé professeur pour afficher les soumissions.\n\n")
+    + "Saisissez-la (Apps Script › Paramètres du projet › Propriétés du script › PROF_KEY). "
+    + "Elle reste sur ce poste et n'est jamais écrite dans la page.");
+  if (k === null || !String(k).trim()) return;
+  try { localStorage.setItem("prof_api_key", String(k).trim()); } catch (e) {}
+  _cleProfDemandee = false;
+  setTimeout(function () { try { refreshProf(); } catch (e) {} }, 50);
+}
+
+/* Portée des filtres en clair — partagée par l'impression et le verrouillage en lot. */
+function porteeFiltres(r) {
+  var libStatut = {pending:"en attente", validated:"validées", rejected:"à revoir"};
+  var portee = [];
+  portee.push(r.cap ? (FICHE_TITRES[r.cap] || r.cap) : "toutes les capsules");
+  portee.push(r.classe ? "classe " + r.classe : "toutes les classes");
+  portee.push(r.statut ? "copies " + (libStatut[r.statut] || r.statut) : "tous les statuts");
+  if (r.recherche) portee.push('recherche « ' + r.recherche + ' »');
+  return portee;
+}
+
+function majCompteurVerrous(filtres) {
+  var el = document.getElementById("nb-verrou");
+  if (!el) return;
+  var tous = subsVisibles(), total = 0, ici = 0;
+  for (var i = 0; i < tous.length; i++) if (tous[i].locked === true) total++;
+  for (var j = 0; j < (filtres || []).length; j++) if (filtres[j].locked === true) ici++;
+  el.textContent = total
+    ? "🔒 " + ici + " verrouillée" + (ici > 1 ? "s" : "") + " dans la sélection · " + total + " au total"
+    : "🔒 Aucune copie verrouillée";
+}
+
+function majVerrouModal(sub) {
+  var info = document.getElementById("minfo");
+  if (!info) return;
+  var box = document.getElementById("mverrou");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "mverrou";
+    box.style.cssText = "display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 2px;font-size:12.5px;color:var(--td)";
+    info.parentNode.insertBefore(box, info.nextSibling);
+  }
+  if (!sub || isCollegue) { box.innerHTML = ""; box.style.display = "none"; return; }
+  box.style.display = "flex";
+  var v = sub.locked === true;
+  box.innerHTML = (v
+      ? '<span style="font-weight:700;color:#7D6608">🔒 Consultation verrouillée pour l\'élève'
+        + (sub.lockedAt && !isNaN(new Date(sub.lockedAt)) ? ' depuis le ' + _ficheEsc(new Date(sub.lockedAt).toLocaleString("fr-FR", {dateStyle: "short", timeStyle: "short"})) : '') + '</span>'
+      : '<span>Consultation ouverte pour l\'élève</span>')
+    + '<button type="button" onclick="basculerVerrou(' + sub.id + ')" style="padding:4px 10px;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;'
+    + (v ? 'background:#fff;color:#5F6B7A;border:1px solid #5F6B7A">🔓 Déverrouiller' : 'background:#5F6B7A;color:#fff;border:none">🔒 Verrouiller')
+    + '</button>';
+}
+
+function basculerVerrou(sid) {
+  if (isCollegue) return;
+  if (_verrouEnCours) { toast("Un verrouillage est déjà en cours."); return; }
+  var subs = getSubs(), sub = null;
+  for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { sub = subs[i]; break; } }
+  if (!sub) return;
+  var verrouiller = sub.locked !== true;
+  var tete = (verrouiller ? "Verrouiller" : "Déverrouiller") + " la consultation de cette copie ?";
+  var msg = tete + "\n\n" + (sub.ename || sub.eid) + " — " + (sub.ecls || "") + " — " + ficheTitre(sub)
+    + (verrouiller ? "\n\nL'élève ne pourra plus rouvrir, modifier ni exporter son travail. Sa note et l'appréciation restent visibles." : "");
+  if (!confirm(msg)) return;
+  appliquerVerrous([sub], verrouiller);
+}
+
+function verrouillerSelection(verrouiller) {
+  if (isCollegue) return;
+  if (_verrouEnCours) { toast("Un verrouillage est déjà en cours."); return; }
+  var r = subsFiltrees();
+  var fait = verrouiller ? "verrouillé" : "déverrouillé";
+  /* Garde-fou : un verrouillage de masse ne part jamais d'un filtre vide. */
+  if (verrouiller && !r.cap) {
+    alert("Choisissez d'abord une capsule dans le filtre.\n\nLe verrouillage en lot porte exactement sur les copies affichées : "
+      + "sans capsule choisie, il toucherait toutes les capsules de tous les élèves.\n\nRien n'a été verrouillé.");
+    return;
+  }
+  if (!r.liste.length) {
+    alert("Aucune copie ne correspond aux filtres actifs :\n\n" + porteeFiltres(r).join("\n") + "\n\nRien n'a été " + fait + ".");
+    return;
+  }
+  var cibles = [], deja = 0;
+  for (var i = 0; i < r.liste.length; i++) {
+    if ((r.liste[i].locked === true) === verrouiller) deja++; else cibles.push(r.liste[i]);
+  }
+  if (!cibles.length) {
+    alert("Les " + r.liste.length + " copie(s) de la sélection sont déjà " + (verrouiller ? "verrouillées" : "déverrouillées") + " :\n\n"
+      + porteeFiltres(r).join("\n") + "\n\nRien n'a été " + fait + ".");
+    return;
+  }
+  var msg = (verrouiller ? "Verrouiller " : "Déverrouiller ") + cibles.length + " copie" + (cibles.length > 1 ? "s" : "") + " ?\n\n"
+    + porteeFiltres(r).join("\n");
+  if (deja) msg += "\n\n" + deja + " autre(s) copie(s) de la sélection " + (deja > 1 ? "le sont" : "l'est") + " déjà : inchangée(s).";
+  msg += verrouiller
+    ? "\n\nLes élèves concernés ne pourront plus rouvrir, modifier ni exporter leur travail. Leur note et l'appréciation restent visibles. Réversible à tout moment."
+    : "\n\nLes élèves concernés retrouveront l'accès à leur travail.";
+  if (!confirm(msg)) return;
+  appliquerVerrous(cibles, verrouiller);
+}
+
+function afficherProgVerrou(txt, fin) {
+  var el = document.getElementById("verrou-prog");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "verrou-prog";
+    el.setAttribute("role", "status");
+    el.style.cssText = "position:fixed;right:18px;bottom:18px;z-index:9999;max-width:380px;background:#1F2D3D;color:#fff;padding:11px 15px;border-radius:10px;font-size:13px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.25);white-space:pre-line";
+    document.body.appendChild(el);
+  }
+  el.textContent = txt;
+  el.style.display = "block";
+  clearTimeout(el._t);
+  if (fin) el._t = setTimeout(function () { el.style.display = "none"; }, 12000);
+}
+
+/* Reflète localement un verrou (intention, puis état réellement relu sur le serveur). */
+function majVerrousLocaux(liste, etatParCle, par) {
+  var subs = getSubs(), quand = new Date().toISOString();
+  for (var i = 0; i < subs.length; i++) {
+    var k = subs[i].eid + "::" + subs[i].cap;
+    if (!etatParCle.hasOwnProperty(k)) continue;
+    if (etatParCle[k] === true) {
+      subs[i].locked = true;
+      if (par) { subs[i].lockedAt = quand; subs[i].lockedBy = par; }
+    } else {
+      subs[i].locked = false; delete subs[i].lockedAt; delete subs[i].lockedBy;
+    }
+  }
+  localStorage.setItem("subs", JSON.stringify(subs));
+  try { renderSubs(); } catch (e) {}
+  try {
+    if (modalId !== null) {
+      for (var j = 0; j < subs.length; j++) if (subs[j].id == modalId) { majVerrouModal(subs[j]); break; }
+    }
+  } catch (e) {}
+}
+
+/* Envoi séquentiel par paquets (un appel serveur par paquet), progression, puis
+   relecture du classeur : le bilan compte ce que le serveur a réellement enregistré. */
+function appliquerVerrous(cibles, verrouiller) {
+  if (!cloudSync.hasUrl()) { alert("Aucun serveur configuré : rien n'a été modifié."); return; }
+  _verrouEnCours = true;
+  var PAQUET = 25, paquets = [];
+  for (var i = 0; i < cibles.length; i += PAQUET) paquets.push(cibles.slice(i, i + PAQUET));
+  var par = ((user && ((user.p || "") + " " + (user.n || ""))) || "Professeur").trim();
+  var intention = {};
+  cibles.forEach(function (s) { intention[s.eid + "::" + s.cap] = verrouiller; });
+  majVerrousLocaux(cibles, intention, par);
+  var envoyees = 0, horsLigne = 0;
+  afficherProgVerrou((verrouiller ? "Verrouillage" : "Déverrouillage") + " : envoi 0 / " + cibles.length + "…");
+  (function suivant(n) {
+    if (n >= paquets.length) { setTimeout(function () { verifierVerrous(cibles, verrouiller, horsLigne); }, 1500); return; }
+    var p = paquets[n];
+    cloudSync.lock(p.map(function (s) { return { eid: s.eid, cap: s.cap }; }), verrouiller, par, function (ok) {
+      if (ok) envoyees += p.length; else horsLigne += p.length;
+      afficherProgVerrou((verrouiller ? "Verrouillage" : "Déverrouillage") + " : envoi " + (envoyees + horsLigne) + " / " + cibles.length + "…");
+      setTimeout(function () { suivant(n + 1); }, 400);
+    });
+  })(0);
+}
+
+function verifierVerrous(cibles, verrouiller, horsLigne) {
+  afficherProgVerrou("Vérification auprès du serveur…");
+  cloudSync.listRaw(function (serveur) {
+    _verrouEnCours = false;
+    var mot = verrouiller ? "verrouillée" : "déverrouillée";
+    if (serveur === null) {
+      var m0 = cibles.length + " copie(s) envoyée(s), mais le serveur n'a pas pu être relu : état NON confirmé.\n"
+        + "Cliquez sur Actualiser dans quelques instants et contrôlez les cadenas.";
+      if (horsLigne) m0 += "\n\n" + horsLigne + " envoi(s) n'ont pas pu partir (réseau).";
+      afficherProgVerrou(m0, true);
+      alert(m0);
+      return;
+    }
+    var idx = {};
+    serveur.forEach(function (s) { idx[(s.eid || "") + "::" + (s.cap || "")] = s; });
+    var ok = 0, ko = [], reel = {};
+    cibles.forEach(function (c) {
+      var k = c.eid + "::" + c.cap, s = idx[k];
+      cloudSync.oublierBascule(k);
+      var etat = s ? (s.locked === true || s.locked === "TRUE" || s.locked === "true") : null;
+      if (etat === verrouiller) ok++;
+      else { ko.push(c); if (etat !== null) reel[k] = etat; }
+    });
+    /* Le tableau suit le serveur : une copie non confirmée reprend son état réel. */
+    if (Object.keys(reel).length) majVerrousLocaux(ko, reel, "");
+    var bilan = "Bilan : " + ok + " copie" + (ok > 1 ? "s " : " ") + mot + (ok > 1 ? "s" : "") + ", " + ko.length + " échec" + (ko.length > 1 ? "s" : "") + ".";
+    if (!ko.length) { afficherProgVerrou(bilan, true); toast(bilan); return; }
+    var noms = ko.slice(0, 15).map(function (c) { return "– " + (c.ename || c.eid) + " (" + (c.ecls || "?") + ")"; }).join("\n");
+    if (ko.length > 15) noms += "\n… et " + (ko.length - 15) + " autre(s)";
+    var m = bilan + "\n\nNon enregistré(s) sur le serveur :\n" + noms;
+    if (!ok) m += "\n\nAucune copie n'a été modifiée : le serveur Apps Script est-il à jour (action « lock ») ?";
+    afficherProgVerrou(bilan, true);
+    alert(m);
+  });
+}
 
 // ================================================================
 // 40 QUESTIONS — QUIZ REMÉDIATION

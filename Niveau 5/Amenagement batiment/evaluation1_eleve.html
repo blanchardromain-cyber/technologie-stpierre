@@ -761,13 +761,15 @@ function reprendreEnvoi(){
     flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
     $(p ? "inp-nom" : "inp-prenom").focus(); return;
   }
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
   if (!copieVierge() && !confirm("Ta copie actuelle sera remplacée par ton dernier envoi. Continuer ?")) return;
   flash("⟳ Recherche de ton dernier envoi…", "wait");
   var btn = $("btn-reprise"); btn.disabled = true;
-  var url = APPS_SCRIPT_URL + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
-  fetch(url).then(function(r){ return r.json(); }).then(function(data){
+  var classeR = val("inp-classe") ? ("5" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  var eidNom  = CAP_ID + "." + (slug(classeR) || "5x") + "." + (slug(p + " " + n) || "eleve");
+  lireEnvoisMoi([USER.id, eidNom], function(liste){
     btn.disabled = false;
-    var liste = (data && data.subs) ? data.subs : (data && data.length ? data : []);
+    if (liste === null){ flash("La reprise n'a pas abouti (réseau ?). Préviens ton professeur.", "err"); return; }
     var moi = slug(p + " " + n), trouve = null;
     for (var i = 0; i < liste.length; i++){
       var s = liste[i];
@@ -775,6 +777,7 @@ function reprendreEnvoi(){
       if (slug(s.ename || "") !== moi) continue;
       if (!trouve || new Date(s.dateISO) > new Date(trouve.dateISO)) trouve = s;
     }
+    if (envoiVerrouille(trouve) || copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
     if (!trouve || !trouve.fields){
       flash("Aucun envoi retrouvé à ton nom. Vérifie l'orthographe de ton prénom et de ton nom.", "err");
       return;
@@ -783,10 +786,78 @@ function reprendreEnvoi(){
     appliquerEtat(etat);
     enregistrerBrouillon();
     flash("✅ Copie du " + new Date(trouve.dateISO).toLocaleString("fr-FR") + " rechargée. Tu peux continuer.", "ok");
-  }).catch(function(){
-    btn.disabled = false;
-    flash("La reprise n'a pas abouti (réseau ?). Préviens ton professeur.", "err");
   });
+}
+
+/* ════════════ VERROU DE CONSULTATION ════════════
+   Le professeur peut verrouiller une copie rendue (champ « locked », venu du
+   serveur). Elle ne se recharge plus dans la fiche et ne se renvoie plus ; la
+   saisie en cours et le brouillon ne sont jamais touchés. */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++)
+      if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+/* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
+function urlLecture(){
+  try {
+    var hn = (location.hostname || "").toLowerCase();
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      if (/^https:\/\/script\.google\.com\//.test(u)) return u;
+    }
+  } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+/* Copies d'un élève : action « own » (une copie verrouillée revient sans son contenu),
+   repli sur « list » tant que le serveur n'est pas à jour, sauf si sansRepli. */
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){
+      lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); });
+      return;
+    }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if (document.getElementById("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou";
+  v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+/* Au chargement, pour l'élève identifié par son compte uniquement. */
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    for (var i = 0; i < liste.length; i++)
+      if (liste[i] && liste[i].eid === USER.id && liste[i].cap === CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
+}
+
+/* Plusieurs identifiants possibles (compte, ou nom saisi hors du site) : on les lit tous. */
+function lireEnvoisMoi(eids, onDone){
+  var vus = {}, liste = [], echec = true, i = 0;
+  eids = eids.filter(function(e){ if (!e || vus[e]) return false; vus[e] = 1; return true; });
+  (function suivant(){
+    if (i >= eids.length){ onDone(echec ? null : liste); return; }
+    lireEnvois(eids[i++], function(r){ if (r){ echec = false; liste = liste.concat(r); } suivant(); });
+  })();
 }
 
 /* ════════════ ENVOI AU PROFESSEUR ════════════ */
@@ -861,6 +932,7 @@ function fabriquerEnvoi(){
   };
 }
 function envoyerAuProf(){
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
   var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
   if (!p || !n){
     flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
@@ -1036,6 +1108,7 @@ function demarrer(){
   poserIcones();
   brancherChoix();
   lireIdentite();
+  controlerVerrou();
   afficherCorrectionProf();
   restaurerBrouillon();
   majProgression();
