@@ -69,6 +69,19 @@ aucun signal, l'envoi se faisant en `no-cors`. `cloudSync.send` et
 `cloudSync.delete` refusent d'écrire depuis `localhost`, `127.0.0.1`, `::1` ou un
 fichier local. La lecture reste permise.
 
+Les capsules servies en iframe ont **chacune leur propre fonction d'envoi** : le
+garde-fou y est repris sous le nom `urlEcriture()`, qui renvoie `""` quand
+l'écriture est refusée — `postSub` / `poster` et le rejeu de la file d'attente
+s'arrêtent là, le travail restant en file locale. Une page locale peut malgré tout
+écrire dans un **déploiement de TEST**, branché sur une copie du classeur, désigné
+par `localStorage.apps_script_url_test`.
+
+Angle mort à connaître : les capsules P2, P3 et P4 sont servies depuis leurs
+propres dépôts (`reseau-5e`, `filius-5e`, `maison-5e`). Ouvrir `index.html` en
+local n'y change rien — l'iframe charge la page GitHub Pages, dont l'origine n'est
+pas locale, et l'envoi part donc bien en production. Pour tester ces trois
+capsules, il faut servir **leur dépôt** en local.
+
 ## 5. Le corrigé du professeur redescend jusqu'à l'élève
 
 Le travail ne doit pas circuler dans un seul sens. Une fois la copie validée,
