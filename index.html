@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20f</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20g</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -14473,21 +14473,38 @@ function buildP11Ex1ModalHTML(f) {
   f = f || {};
   function esc(s) { return String(s === undefined || s === null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
   /* pts : 1 = juste (✓), 0.5 = phonétiquement juste mais mal orthographié (≈), 0 = faux (✗) */
-  function row(lbl, key, pts) {
+  /* Une pastille : ✓ 1 pt, ≈ 0,5 pt (orthographe) ou ✗ 0 pt. « nom » n'est rempli
+     que lorsqu'une même réponse est jugée sur plusieurs critères, pour dire lequel. */
+  function pastille(pts, nom) {
+    var coul = pts >= 1 ? "#1E6B3B" : pts > 0 ? "#C55A11" : "#C62828";
+    var sgn  = pts >= 1 ? "✓" : pts > 0 ? "≈" : "✗";
+    var info = pts > 0 && pts < 1 ? " title=\"Phonétiquement juste, orthographe fautive : un demi-point\"" : "";
+    var val  = pts >= 1 ? "1 pt" : pts > 0 ? "0,5 pt" : "0 pt";
+    return '<span' + info + ' style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">'
+         + sgn + ' ' + (nom ? '<span style="font-weight:600">' + nom + '</span> ' : '')
+         + '<span style="font-weight:600;opacity:.85">' + val + '</span></span>';
+  }
+  function ligne(tete, valeur) {
+    return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + tete + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + valeur + '</div></div>';
+  }
+  function valeurOuVide(key) {
     var raw = f[key];
-    var vide = (raw === undefined || raw === null || String(raw).trim() === "");
-    var v = vide ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>' : esc(raw);
-    var pastille = "";
-    if (pts !== undefined && !vide) {
-      var coul = pts >= 1 ? "#1E6B3B" : pts > 0 ? "#C55A11" : "#C62828";
-      var sgn  = pts >= 1 ? "✓" : pts > 0 ? "≈" : "✗";
-      var info = pts > 0 && pts < 1 ? " title=\"Phonétiquement juste, orthographe fautive : un demi-point\"" : "";
-      var val  = pts >= 1 ? "1 pt" : pts > 0 ? "0,5 pt" : "0 pt";
-      pastille = '<span' + info + ' style="font-size:11px;font-weight:700;margin-left:6px;color:' + coul + '">'
-               + sgn + ' <span style="font-weight:600;opacity:.85">' + val + '</span></span>';
-    }
-    return '<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#0288D1;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">' + lbl + pastille + '</div>' +
-      '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' + v + '</div></div>';
+    if (raw === undefined || raw === null || String(raw).trim() === "")
+      return { vide: true, html: '<span style="color:var(--td);font-style:italic">Non renseigné</span>' };
+    return { vide: false, html: esc(raw) };
+  }
+  function row(lbl, key, pts) {
+    var r = valeurOuVide(key);
+    return ligne(lbl + ((pts !== undefined && !r.vide) ? pastille(pts) : ""), r.html);
+  }
+  /* Une réponse notée sur plusieurs critères. « Dans quel but ? » en compte deux —
+     l'usage et la maîtrise de la consommation — et vaut donc 2 pts au corrigé :
+     n'en afficher qu'un seul donnait quatre questions à 1 pt sous un total de 5. */
+  function rowMulti(lbl, key, criteres) {
+    var r = valeurOuVide(key), tete = lbl;
+    if (!r.vide) for (var i = 0; i < criteres.length; i++) tete += pastille(criteres[i].pts, criteres[i].nom);
+    return ligne(tete, r.html);
   }
   function part(lbl, color) {
     return '<div style="font-weight:700;color:' + color + ';font-size:12px;margin:14px 0 6px;border-bottom:2px solid ' + color + ';padding-bottom:3px">' + lbl + '</div>';
@@ -14521,7 +14538,10 @@ function buildP11Ex1ModalHTML(f) {
   h += row("À qui rend-il service ?","p11x1-b-qui", kw("p11x1-b-qui", P11X1_KW.qui));
   h += row("Sur quoi agit-il ?","p11x1-b-quoi", _p11match(f["p11x1-b-quoi"], ["eau"]));
   h += '</div>';
-  h += row("Dans quel but ?","p11x1-b-but", kw("p11x1-b-but", P11X1_KW.butDouche));
+  h += rowMulti("Dans quel but ?", "p11x1-b-but", [
+    { nom: "prendre une douche", pts: kw("p11x1-b-but", P11X1_KW.butDouche) },
+    { nom: "économiser l'eau",   pts: kw("p11x1-b-but", P11X1_KW.butEco)    }
+  ]);
   h += part("PARTIE C — Pieuvre", "#7B1FA2");
   h += row("FP1 (eau ↔ utilisateur)","p11x1-c-fp1", kw("p11x1-c-fp1", P11X1_KW.fp1));
   h += row("FP2 (utilisateur ↔ facture d'eau)","p11x1-c-fp2", kw("p11x1-c-fp2", P11X1_KW.fp2));
