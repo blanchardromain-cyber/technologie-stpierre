@@ -3,7 +3,7 @@
 À appliquer dans l'éditeur Apps Script du classeur des soumissions. Le fichier
 `apps-script-backend.gs` du dépôt date du 19 mai : **votre version en production a
 divergé** (elle connaît `appreciation`, `bareme`…). Ne la remplacez donc pas en bloc :
-appliquez les six modifications ci-dessous **par recherche d'ancre** (Ctrl+F dans
+appliquez les sept modifications ci-dessous **par recherche d'ancre** (Ctrl+F dans
 l'éditeur) : chacune est un morceau du diff, commenté. Un récapitulatif est en fin
 de document.
 
@@ -15,6 +15,7 @@ de document.
 | `POST` ordinaire (upsert) | tous | **préserve** le verrou en place ; sur une copie verrouillée, refuse l'envoi s'il ne porte pas `_parProf` (renvoi d'un élève) |
 | `GET ?action=own&eid=…` | élève, iframes | ses seules copies ; une copie verrouillée revient **sans son contenu** (statut, note, barème, appréciation seulement) |
 | `GET ?action=list` | professeur | inchangé tant que la propriété `PROF_KEY` n'existe pas ; ensuite exige `&key=` |
+| `verrous_config` (GET / POST) | page professeur | liste des **capsules armées** : toute copie qui arrive sur une capsule armée **naît verrouillée**. L'écriture exige toujours `PROF_KEY` |
 
 Le nouvel `index.html` fonctionne **avec l'ancien backend** (repli automatique sur
 `list`) : l'ordre de déploiement ci-dessous n'a pas de fenêtre de panne.
@@ -22,7 +23,7 @@ Le nouvel `index.html` fonctionne **avec l'ancien backend** (repli automatique s
 ## Ordre de déploiement
 
 1. **Tester sur une copie** (recommandé, voir « Tester en local »).
-2. **Backend de production** : appliquer les 6 modifications, enregistrer, puis
+2. **Backend de production** : appliquer les 7 modifications, enregistrer, puis
    *Déployer › Gérer les déploiements › ✏️ › Version : Nouvelle version › Déployer*
    (l'URL `/exec` ne change pas). Sans `PROF_KEY`, rien ne change pour personne.
 3. **Mise en ligne d'`index.html`** (push, marqueur `build 2026-09-19a`).
@@ -30,11 +31,13 @@ Le nouvel `index.html` fonctionne **avec l'ancien backend** (repli automatique s
    `PROF_KEY` — *Paramètres du projet (⚙️) › Propriétés du script › Ajouter* —
    avec une valeur longue et aléatoire. À la synchronisation suivante, la page
    professeur la demande une fois par poste et la garde dans ce navigateur.
+   **L'armement d'une capsule (§7) n'est utilisable qu'à partir de cette étape** :
+   avancez-la si vous voulez armer une capsule avant une évaluation.
 
 **Retour arrière** : supprimer `PROF_KEY` rouvre `list` instantanément. Le reste se
 défait en redéployant la version précédente (*Gérer les déploiements › Version*).
 
-## Les six modifications
+## Les sept modifications
 
 ### 1. `COLUMNS` — trois colonnes EN FIN de liste
 
@@ -246,6 +249,87 @@ function _assurerEntetes(sheet) {
 `lockedAt`, `lockedBy` dans les trois dernières colonnes de `COLUMNS`. Si une de ces
 cellules portait déjà un autre nom, elle n'est pas écrasée et `lock` répondra
 `colonnes_verrou_absentes` : le bilan de la page le signalera (0 verrouillée).
+
+### 7. Armement d'une capsule (onglet « Verrous » de la page professeur)
+
+Une capsule **armée** fait naître verrouillée toute copie qui arrive ensuite. La liste
+est une propriété de script : aucune colonne du classeur n'est utilisée.
+
+a) Coller ces trois fonctions **avant** `function _json(obj) {` :
+
+```js
+// VERROU — Capsules armées : toute copie qui ARRIVE sur l'une d'elles naît
+// verrouillée. La liste est une propriété de script, aucune colonne n'est utilisée.
+function _capsArmees() {
+  try {
+    var v = PropertiesService.getScriptProperties().getProperty('CAPSULES_ARMEES');
+    var a = v ? JSON.parse(v) : [];
+    return Array.isArray(a) ? a : [];
+  } catch (e) { return []; }
+}
+function _cleProfOk(fournie) {
+  var cle = PropertiesService.getScriptProperties().getProperty('PROF_KEY');
+  return !cle || fournie === cle;
+}
+// Pose le verrou sur une ligne EN COURS DE CRÉATION si sa capsule est armée.
+function _naissanceVerrouillee(row, cap) {
+  if (_capsArmees().indexOf(String(cap)) < 0) return row;
+  var iL = COLUMNS.indexOf('locked');
+  if (iL < 0) return row;
+  row[iL] = true;
+  row[iL + 1] = new Date().toISOString();
+  row[iL + 2] = 'Verrouillage automatique';
+  return row;
+}
+```
+
+b) Dans `_upsert` (§4), remplacer **les deux** `sheet.appendRow(row);` par :
+
+```js
+      sheet.appendRow(_naissanceVerrouillee(row, cap));
+```
+
+c) Dans `doPost`, **au-dessus** du handler `lock` ajouté au §2 :
+
+```js
+    // === VERROU — Capsules armées (action:"verrous_config") ===============
+    if (body.action === 'verrous_config') {
+      // Clé EXIGÉE pour écrire, même si PROF_KEY n'est pas encore posée : sinon le
+      // secret public suffirait à désarmer une capsule avant l'évaluation.
+      var cleA = PropertiesService.getScriptProperties().getProperty('PROF_KEY');
+      if (!cleA) return _json({ ok: false, error: 'prof_key_required' });
+      if (body.key !== cleA) return _json({ ok: false, error: 'bad_prof_key' });
+      var capsA = Array.isArray(body.caps) ? body.caps.map(String) : [];
+      PropertiesService.getScriptProperties().setProperty('CAPSULES_ARMEES', JSON.stringify(capsA));
+      return _json({ ok: true, caps: capsA });
+    }
+```
+
+d) Dans `doGet`, **au-dessus** du bloc `own` ajouté au §5c :
+
+```js
+  // VERROU — Capsules armées : lecture de la liste (réservée au professeur).
+  if (p.action === 'verrous_config') {
+    if (p.secret !== SHARED_SECRET) {
+      return _json({ ok: false, error: 'bad_secret' });
+    }
+    if (!_cleProfOk(p.key)) {
+      return _json({ ok: false, error: p.key ? 'bad_prof_key' : 'prof_key_required' });
+    }
+    return _json({ ok: true, caps: _capsArmees() });
+  }
+```
+
+> **L'armement ne fonctionne qu'une fois `PROF_KEY` créée** (étape 4 du déploiement).
+> C'est voulu : sans elle, le secret public suffirait à un élève pour désarmer une
+> capsule avant l'évaluation. La page l'explique et n'envoie rien tant que la clé
+> manque sur le poste.
+
+Trois choses à savoir, que l'onglet rappelle :
+
+- **armer n'est pas verrouiller** : les copies déjà rendues gardent leur état ;
+- **désarmer ne déverrouille pas** les copies déjà verrouillées ;
+- une copie envoyée **hors ligne** puis remontée après le désarmement naît ouverte.
 
 ## Tester en local sans toucher au classeur de production
 

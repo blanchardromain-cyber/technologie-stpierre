@@ -4245,6 +4245,7 @@ body.est-prof .prof-only{display:block}
       <div class="ptabs">
         <button class="ptab on" id="pt-s" onclick="pTab('s')">&#x1F4CA; Suivi validations</button>
         <button class="ptab" id="pt-g" onclick="pTab('g')">&#x1F513; Codes accès</button>
+        <button class="ptab" id="pt-v" onclick="pTab('v')">&#x1F512; Verrous</button>
         <button class="ptab" id="pt-c" onclick="pTab('c')">&#x2699;&#xFE0F; Configuration</button>
       </div>
 
@@ -4334,6 +4335,20 @@ body.est-prof .prof-only{display:block}
           </p>
           <div id="gate-config-list"></div>
         </div>
+      </div>
+
+      <!-- VERROUS -->
+      <div id="pverrous" class="h">
+        <div class="stit">&#x1F512; Verrouillage des copies</div>
+        <p style="font-size:13px;color:var(--td);max-width:780px;line-height:1.6;margin:6px 0 16px">
+          Une capsule <strong>arm&eacute;e</strong> verrouille chaque copie <strong>d&egrave;s son arriv&eacute;e</strong> :
+          l'&eacute;l&egrave;ve ne peut plus la rouvrir, la modifier ni l'exporter. Sa note et l'appr&eacute;ciation lui restent
+          visibles, et le verrou se retire &agrave; tout moment.<br>
+          <strong>Armer n'agit que sur les copies &agrave; venir.</strong> Pour celles qui sont d&eacute;j&agrave; rendues, utilisez
+          &laquo;&nbsp;Verrouiller les copies d&eacute;j&agrave; rendues&nbsp;&raquo; ci-dessous, ou les boutons de l'onglet Suivi
+          pour une port&eacute;e filtr&eacute;e (classe, statut).
+        </p>
+        <div id="verrous-list"></div>
       </div>
 
       <!-- CONFIG -->
@@ -7819,10 +7834,13 @@ function pTab(t) {
   document.getElementById("pt-s").classList.toggle("on", t === "s");
   document.getElementById("pt-g").classList.toggle("on", t === "g");
   document.getElementById("pt-c").classList.toggle("on", t === "c");
+  document.getElementById("pt-v").classList.toggle("on", t === "v");
   document.getElementById("psuivi").classList.toggle("h", t !== "s");
   document.getElementById("pgates").classList.toggle("h", t !== "g");
   document.getElementById("pconfig").classList.toggle("h", t !== "c");
-  if (isCollegue) return;                 /* ni codes d'accès, ni mots de passe */
+  document.getElementById("pverrous").classList.toggle("h", t !== "v");
+  if (isCollegue) return;                 /* ni codes d'accès, ni mots de passe, ni verrous */
+  if (t === "v") { renderVerrous(); chargerCapsArmees(); }
   if (t === "g") renderGates();
   if (t === "c") renderConfig();
 }
@@ -9952,6 +9970,36 @@ var cloudSync = (function () {
     } catch (e) { if (onDone) onDone(false); }
   }
 
+  /* Capsules armées : liste tenue par le serveur (c'est lui qui pose le verrou à
+     l'arrivée d'une copie). Lecture et écriture réservées au professeur par la même
+     clé que la liste des copies. */
+  function capsArmees(onDone) {
+    if (!hasUrl()) { onDone(null); return; }
+    fetch(base() + "?action=verrous_config&secret=" + encodeURIComponent(SYNC_SECRET) + paramCleProf() + "&t=" + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && (d.error === "prof_key_required" || d.error === "bad_prof_key")) {
+          try { signalerCleProf(d.error); } catch (e) {}
+        }
+        onDone(d && d.ok && Array.isArray(d.caps) ? d.caps : null);
+      })
+      .catch(function () { onDone(null); });
+  }
+  function setCapsArmees(caps, onDone) {
+    if (ecritureBloquee) { refuseEcritureLocale("l'armement d'une capsule"); if (onDone) onDone(false); return; }
+    if (!hasUrl()) { if (onDone) onDone(false); return; }
+    var cle = ""; try { cle = localStorage.getItem("prof_api_key") || ""; } catch (e) {}
+    try {
+      fetch(base(), {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ secret: SYNC_SECRET, action: "verrous_config", key: cle, caps: caps })
+      }).then(function () { if (onDone) onDone(true); })
+        .catch(function () { if (onDone) onDone(false); });
+    } catch (e) { if (onDone) onDone(false); }
+  }
+
   /* Relecture brute du classeur (sans fusion locale) : sert à vérifier un verrouillage. */
   function listRaw(onDone) {
     if (!hasUrl()) { onDone(null); return; }
@@ -9965,7 +10013,8 @@ var cloudSync = (function () {
   function url()    { return APPS_SCRIPT_URL; }
   function secret() { return SYNC_SECRET; }
   return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del, fetchOwn: fetchOwn, url: url, secret: secret,
-           lock: lock, listRaw: listRaw, oublierBascule: oublierBascule };
+           lock: lock, listRaw: listRaw, oublierBascule: oublierBascule,
+           capsArmees: capsArmees, setCapsArmees: setCapsArmees };
 })();
 // Au chargement de la page : on tente de rejouer ce qui n'avait pas pu partir
 try { cloudSync.flush(); } catch (e) {}
@@ -10115,6 +10164,150 @@ function basculerVerrou(sid) {
   appliquerVerrous([sub], verrouiller);
 }
 
+/* ── Armement d'une capsule ──────────────────────────────────────────────────
+   Une capsule armée fait naître verrouillée toute copie qui arrive ensuite : le
+   verrou est posé par le SERVEUR à la création de la ligne, rien n'est demandé au
+   navigateur de l'élève. Armer n'est pas verrouiller : les copies déjà rendues
+   gardent leur état, dans un sens comme dans l'autre. */
+var _capsArmees = null;          /* null = pas encore lue (ou serveur pas à jour) */
+var _armementEnCours = false;
+
+/* Capsules pouvant recevoir une copie : celles du filtre, complétées par FICHE_TITRES
+   (une capsule récente peut manquer au filtre). Les corrigés sont écartés. */
+function capsulesConnues() {
+  var vues = {}, liste = [];
+  function estCorrige(id) { return /(^|-)cor(-|$)|corrige/.test(id); }
+  var sel = document.getElementById("fcap");
+  if (sel) {
+    for (var i = 0; i < sel.options.length; i++) {
+      var o = sel.options[i];
+      if (!o.value || vues[o.value] || estCorrige(o.value)) continue;
+      vues[o.value] = 1; liste.push({ cap: o.value, titre: o.textContent });
+    }
+  }
+  Object.keys(FICHE_TITRES).forEach(function (k) {
+    if (vues[k] || estCorrige(k)) return;
+    vues[k] = 1; liste.push({ cap: k, titre: FICHE_TITRES[k] });
+  });
+  return liste;
+}
+
+function chargerCapsArmees(apres) {
+  if (!window.cloudSync || !cloudSync.capsArmees) return;
+  cloudSync.capsArmees(function (caps) {
+    _capsArmees = caps;
+    try { renderVerrous(); } catch (e) {}
+    if (apres) apres(caps);
+  });
+}
+
+function renderVerrous() {
+  var hote = document.getElementById("verrous-list");
+  if (!hote || isCollegue) return;
+  var subs = subsVisibles(), parCap = {};
+  for (var i = 0; i < subs.length; i++) {
+    var s = subs[i];
+    if (!parCap[s.cap]) parCap[s.cap] = { total: 0, verrou: 0 };
+    parCap[s.cap].total++;
+    if (s.locked === true) parCap[s.cap].verrou++;
+  }
+  var html = "";
+  if (_capsArmees === null) {
+    html += '<div style="background:#FEF9E7;border:1px solid #F5D76E;border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:13px;color:#7D6608">'
+         + "La liste des capsules armées n'a pas pu être lue sur le serveur : l'armement est indisponible. "
+         + "Backend Apps Script pas encore à jour, clé professeur manquante, ou réseau."
+         + '</div>';
+  }
+  capsulesConnues().forEach(function (c) {
+    var armee = !!(_capsArmees && _capsArmees.indexOf(c.cap) >= 0);
+    var st = parCap[c.cap] || { total: 0, verrou: 0 };
+    var aVerrouiller = st.total - st.verrou;
+    html += '<div class="code-config-row">';
+    html += '<div style="flex:1"><div style="font-weight:700;font-size:13px">' + _ficheEsc(c.titre) + '</div>';
+    html += '<div style="font-size:12px;color:var(--td)">'
+         + (st.total ? (st.total + ' copie' + (st.total > 1 ? 's' : '') + ' rendue' + (st.total > 1 ? 's' : '')
+                        + ' · ' + st.verrou + ' verrouillée' + (st.verrou > 1 ? 's' : ''))
+                     : 'aucune copie rendue')
+         + '</div></div>';
+    if (aVerrouiller > 0) {
+      html += '<button onclick="verrouillerRendues(\'' + c.cap + '\')" title="Verrouille les copies déjà rendues sur cette capsule, toutes classes confondues."'
+           + ' style="padding:7px 12px;background:#fff;color:#5F6B7A;border:1px solid #5F6B7A;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:DM Sans,sans-serif">'
+           + 'Verrouiller les ' + aVerrouiller + ' copie(s) déjà rendue(s)</button>';
+    }
+    html += '<span style="font-size:12px;font-weight:700;min-width:104px;text-align:right;color:' + (armee ? '#7D6608' : 'var(--td)') + '">'
+         + (armee ? '🔒 Armée' : 'Non armée') + '</span>';
+    html += '<button onclick="basculerArmement(\'' + c.cap + '\')"'
+         + ' style="padding:7px 13px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:DM Sans,sans-serif;'
+         + (armee ? 'background:#fff;color:#5F6B7A;border:1px solid #5F6B7A">Désarmer' : 'background:#5F6B7A;color:#fff;border:none">Armer')
+         + '</button>';
+    html += '</div>';
+  });
+  hote.innerHTML = html;
+}
+
+function basculerArmement(cap) {
+  if (isCollegue || _armementEnCours) return;
+  if (_capsArmees === null) {
+    alert("La liste des capsules armées n'a pas pu être lue sur le serveur.\n\nRien n'a été modifié. Vérifiez que le backend Apps Script est à jour et que la clé professeur est enregistrée sur ce poste, puis rouvrez l'onglet.");
+    return;
+  }
+  /* Sans clé professeur, le serveur refuse d'écrire : autrement, n'importe qui
+     disposant du secret public pourrait désarmer une capsule avant l'évaluation. */
+  var cle = ""; try { cle = localStorage.getItem("prof_api_key") || ""; } catch (e) {}
+  if (!cle) {
+    alert("L'armement exige la clé professeur.\n\nCréez la propriété PROF_KEY dans Apps Script (Paramètres du projet › Propriétés du script), puis actualisez les soumissions : la clé vous sera demandée une fois sur ce poste.\n\nRien n'a été modifié.");
+    return;
+  }
+  var armee = _capsArmees.indexOf(cap) >= 0;
+  var titre = FICHE_TITRES[cap] || cap;
+  var msg = armee
+    ? "Désarmer « " + titre + " » ?\n\nLes copies rendues À PARTIR DE MAINTENANT resteront consultables par les élèves.\n\nLes copies déjà verrouillées le restent : déverrouillez-les depuis l'onglet Suivi si besoin."
+    : "Armer « " + titre + " » ?\n\nToute copie rendue À PARTIR DE MAINTENANT sera verrouillée dès son arrivée : l'élève ne pourra plus la rouvrir, la modifier ni l'exporter. Sa note et l'appréciation resteront visibles.\n\nLes copies DÉJÀ rendues ne sont pas touchées.";
+  if (!confirm(msg)) return;
+  _armementEnCours = true;
+  var voulu = _capsArmees.filter(function (c) { return c !== cap; });
+  if (!armee) voulu.push(cap);
+  afficherProgVerrou((armee ? "Désarmement" : "Armement") + " de « " + titre + " »…");
+  cloudSync.setCapsArmees(voulu, function () {
+    /* L'envoi part en no-cors : on relit le serveur pour savoir ce qu'il a retenu. */
+    setTimeout(function () {
+      cloudSync.capsArmees(function (caps) {
+        _armementEnCours = false;
+        _capsArmees = caps;
+        try { renderVerrous(); } catch (e) {}
+        if (caps === null) {
+          var m0 = "Demande envoyée, mais le serveur n'a pas pu être relu : état NON confirmé.\nRouvrez l'onglet Verrous dans quelques instants.";
+          afficherProgVerrou(m0, true); alert(m0); return;
+        }
+        if ((caps.indexOf(cap) >= 0) === !armee) {
+          var m1 = (armee ? "Désarmée : " : "Armée : ") + titre;
+          afficherProgVerrou(m1, true); toast(m1); return;
+        }
+        afficherProgVerrou("Échec de l'armement de « " + titre + " »", true);
+        alert("Échec : le serveur n'a pas enregistré la demande pour « " + titre + " ».\n\n"
+            + "Backend Apps Script à jour (action « verrous_config ») ? Clé professeur correcte ?");
+      });
+    }, 1200);
+  });
+}
+
+/* Copies déjà rendues sur une capsule, toutes classes confondues. Pour une portée
+   plus fine (une seule classe), les boutons de l'onglet Suivi suivent les filtres. */
+function verrouillerRendues(cap) {
+  if (isCollegue || _verrouEnCours) return;
+  var titre = FICHE_TITRES[cap] || cap;
+  var cibles = subsVisibles().filter(function (s) { return s.cap === cap && s.locked !== true; });
+  if (!cibles.length) { alert("Aucune copie à verrouiller sur « " + titre + " »."); return; }
+  var classes = {};
+  cibles.forEach(function (s) { if (s.ecls) classes[s.ecls] = 1; });
+  var msg = "Verrouiller " + cibles.length + " copie" + (cibles.length > 1 ? "s" : "") + " déjà rendue"
+    + (cibles.length > 1 ? "s" : "") + " sur « " + titre + " » ?\n\n"
+    + "Classes concernées : " + (Object.keys(classes).sort().join(", ") || "—") + "\n\n"
+    + "Les élèves ne pourront plus rouvrir, modifier ni exporter leur travail. Note et appréciation restent visibles. Réversible à tout moment.";
+  if (!confirm(msg)) return;
+  appliquerVerrous(cibles, true);
+}
+
 function verrouillerSelection(verrouiller) {
   if (isCollegue) return;
   if (_verrouEnCours) { toast("Un verrouillage est déjà en cours."); return; }
@@ -10179,6 +10372,7 @@ function majVerrousLocaux(liste, etatParCle, par) {
   }
   localStorage.setItem("subs", JSON.stringify(subs));
   try { renderSubs(); } catch (e) {}
+  try { if (document.getElementById("verrous-list")) renderVerrous(); } catch (e) {}
   try {
     if (modalId !== null) {
       for (var j = 0; j < subs.length; j++) if (subs[j].id == modalId) { majVerrouModal(subs[j]); break; }
