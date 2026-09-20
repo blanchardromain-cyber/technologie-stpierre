@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -14114,14 +14114,23 @@ function _p11match(v, list) {
 }
 
 var P11X1_KW = {
+  /* Un eleve nomme souvent l'instrument sans le mot « capteur » devant : anemometre,
+     girouette, hygrometre… Ces reponses etaient refusees alors qu'elles sont justes. */
   capteur:   ["capteur","detecteur","sonde","thermometre","ultrason","infrarouge","photoresistance","ldr",
               "bouton","interrupteur","fin de course","potentiometre","temperature","luminosite","humidite",
-              "presence","fumee","distance","debit","pression","son","microphone","co2"],
+              "presence","fumee","distance","debit","pression","son","microphone","co2",
+              "anemometre","girouette","pluviometre","hygrometre","barometre","thermistance",
+              "accelerometre","gyroscope","telemetre","cellule","photodiode",
+              "suiveur de ligne","suivi de ligne","suivi en ligne"],
   interface: ["arduino","raspberry","microbit","micro bit","micro:bit","carte","microcontroleur","micro controleur",
-              "automate","esp32","esp8266","nano","uno","programmable","interface"],
+              "automate","esp32","esp8266","nano","uno","programmable","interface",
+              "makeblock","mbot","orion","grove","shield","pico","stm32",
+              "partie commande","unite de traitement","microprocesseur","processeur"],
   actionneur:["moteur","buzzer","led","diode","electrovanne","vanne","verin","haut parleur","hautparleur",
               "afficheur","ecran","relais","servo","pompe","lampe","sonnerie","resistance chauffante",
-              "actionneur","ventilateur","sirene"],
+              "actionneur","ventilateur","sirene",
+              "ampoule","radiateur","chauffage","climatisation","electroaimant","bobine","piston",
+              "resistance","avertisseur","alarme"],
   ci1:["acquerir","acquisition","capter","saisir"],
   ci2:["traiter","traitement"],
   ci3:["communiquer","communication","transmettre","restituer","informer"],
@@ -14139,6 +14148,10 @@ var P11X1_KW = {
   fc2:["ergonom*","forme","main","prise en main","tenir"],
   fc3:["renouvelable","hydraulique","turbine","verte","propre"],
   dFp1c:["debit","jet"],
+  /* Unite du niveau FP1. Se contenter de « minute » validait « 8 a 10 lettres par
+     minute » ; ignorer le symbole « L » refusait « 8 a 10 L », pourtant exact.
+     On exige donc un mot de la famille du litre, symbole compris. */
+  dFp1n:["litre","l","l min","lmin","l minute"],
   dFp2:["facture","economi*","consommation"],
   dFc3:["renouvelable","hydraulique"]
 };
@@ -14193,7 +14206,9 @@ function scoreP11Ex1BySection(f) {
   /* D — extrait du CDCF (4 pts) */
   s.cdcf += _p11match(f["p11x1-d-fp1c"], P11X1_KW.dFp1c);
   t = _p11norm(f["p11x1-d-fp1n"]);
-  if (/(^|\s)(8|9|10)(\s|$)/.test(t) && _p11match(f["p11x1-d-fp1n"], ["litre","l min","minute","lmin"]) > 0) s.cdcf++;
+  /* Le demi-point remonte jusqu'ici : « lettres » pour « litres » est une faute de
+     dictee, pas une reponse fausse. */
+  if (/(^|\s)(8|9|10)(\s|$)/.test(t)) s.cdcf += _p11match(f["p11x1-d-fp1n"], P11X1_KW.dFp1n);
   s.cdcf += _p11match(f["p11x1-d-fp2lib"], P11X1_KW.dFp2);
   s.cdcf += _p11match(f["p11x1-d-fc3lib"], P11X1_KW.dFc3);
 
@@ -14387,7 +14402,8 @@ function buildP11Ex1ModalHTML(f) {
   h += part("PARTIE D — Extrait du CDCF", "#1E6B3B");
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
   h += row("FP1 — critère","p11x1-d-fp1c", kw("p11x1-d-fp1c", P11X1_KW.dFp1c));
-  h += row("FP1 — niveau","p11x1-d-fp1n", (/(^|\s)(8|9|10)(\s|$)/.test(_p11norm(f["p11x1-d-fp1n"])) && _p11match(f["p11x1-d-fp1n"], ["litre","l min","minute","lmin"]) > 0) ? 1 : 0);
+  h += row("FP1 — niveau","p11x1-d-fp1n", /(^|\s)(8|9|10)(\s|$)/.test(_p11norm(f["p11x1-d-fp1n"]))
+        ? _p11match(f["p11x1-d-fp1n"], P11X1_KW.dFp1n) : 0);
   h += '</div>';
   h += row("FP2 — libellé","p11x1-d-fp2lib", kw("p11x1-d-fp2lib", P11X1_KW.dFp2));
   h += row("FC3 — libellé","p11x1-d-fc3lib", kw("p11x1-d-fc3lib", P11X1_KW.dFc3));
