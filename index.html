@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20d</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -8108,6 +8108,46 @@ var EVALUATIONS = {
                             : "Les notions de la séquence sont maîtrisées.";
       return txt;
     }
+  },
+
+  /* Aménager un bâtiment — évaluation NOTÉE À LA MAIN : toutes les réponses sont
+     rédigées, aucune n'est vérifiable par comparaison. Le cadre sert ici à donner
+     au professeur un seul écran (points par partie, appréciation, note), pas une
+     proposition automatique : d'où « manuel: true », qui évite d'afficher 0/20
+     comme si la copie avait été corrigée. */
+  "batiment5e": {
+    titre: "P1 5e — Aménager un bâtiment",
+    total: 20,
+    manuel: true,
+    sections: [
+      { cle: "b1", label: "① Objet naturel / objet technique", max: 3 },
+      { cle: "b2", label: "② Produit et besoin",               max: 3 },
+      { cle: "b3", label: "③ Fonction d'usage",                max: 3 },
+      { cle: "b4", label: "④ Le collège (ERP / ERT / IGH)",    max: 4 },
+      { cle: "b5", label: "⑤ Contraintes et normes",           max: 4 },
+      { cle: "b6", label: "⑥ Modélisation",                    max: 3 }
+    ],
+
+    corriger: function () {
+      return { points: { b1: 0, b2: 0, b3: 0, b4: 0, b5: 0, b6: 0 }, detail: [] };
+    },
+
+    appreciation: function (pts, note) {
+      var mention = note >= 16 ? "Excellent travail" : note >= 14 ? "Très bon travail"
+                  : note >= 12 ? "Bon travail" : note >= 10 ? "Travail satisfaisant"
+                  : note >= 8 ? "Travail à consolider" : "Des progrès sont nécessaires";
+      var faibles = [];
+      if ((pts.b1 || 0) < 2)   faibles.push("la distinction entre objet naturel et objet technique");
+      if ((pts.b2 || 0) < 2)   faibles.push("le produit et le besoin");
+      if ((pts.b3 || 0) < 2)   faibles.push("la fonction d'usage");
+      if ((pts.b4 || 0) < 2.5) faibles.push("le classement du collège (ERP, ERT, IGH)");
+      if ((pts.b5 || 0) < 2.5) faibles.push("les contraintes et les normes");
+      if ((pts.b6 || 0) < 2)   faibles.push("la modélisation du plan");
+      var txt = mention + " — " + fmtPts(note) + "/20. ";
+      txt += faibles.length ? ("À revoir : " + faibles.join(", ") + ".")
+                            : "Les notions de la séquence sont maîtrisées.";
+      return txt;
+    }
   }
 
 };
@@ -8123,6 +8163,46 @@ function noteEvaluation(sub) {
   var t = 0;
   for (var i = 0; i < def.sections.length; i++) t += r.points[def.sections[i].cle] || 0;
   return Math.round(Math.min(def.total, t) * 100) / 100;
+}
+
+/* Note d'une évaluation, en toutes lettres. Une capsule notée à la main n'affiche
+   pas « 0/20 » avant correction : elle annonce qu'elle reste à noter. */
+function texteNoteEval(sub) {
+  var d = EVALUATIONS[sub.cap];
+  if (!d) return "";
+  if (sub.adjustedScore !== undefined && sub.adjustedScore !== "") {
+    return "Note validée : " + fmtPts(sub.adjustedScore) + "/" + d.total;
+  }
+  return d.manuel ? "À noter (sur " + d.total + ")"
+                  : "Proposition automatique : " + fmtPts(noteEvaluation(sub)) + "/" + d.total;
+}
+
+/* Note automatique proposée, toutes capsules confondues ("" si non calculable). */
+function noteAutoDe(sub) {
+  if (!sub) return "";
+  var d = EVALUATIONS[sub.cap];
+  if (d) {
+    if (d.manuel) return "";
+    var r = d.corriger(sub.fields || {}), t = 0;
+    for (var i = 0; i < d.sections.length; i++) t += r.points[d.sections[i].cle] || 0;
+    return Math.round(Math.min(d.total, t) * 100) / 100;
+  }
+  var b = Number(sub.bareme) || 20;
+  if (sub.cap === "p11-ex1") return p11x1Convert(p11x1TotalBrut(scoreP11Ex1BySection(sub.fields || {})), b);
+  if (sub.cap === "p11-ex2") return p11x1Convert(p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {})), b);
+  if (sub.cap === "dc") {
+    var x = scoreDCBySection(sub.fields || {});
+    return Math.min(30, (x.q1||0)+(x.q2a||0)+(x.q2b||0)+(x.q2c||0)+(x.q3||0)+(x.p2q1||0)+(x.p2q2||0)+(x.p2q3||0));
+  }
+  return "";
+}
+function baremeDe(sub) {
+  if (!sub) return "";
+  if (sub.bareme) return sub.bareme;
+  if (EVALUATIONS[sub.cap]) return EVALUATIONS[sub.cap].total;
+  if (sub.cap === "dc") return 30;
+  if (sub.cap === "p11-ex1" || sub.cap === "p11-ex2") return 20;
+  return "";
 }
 
 /* ── Copie annotée ─────────────────────────────────────────────────────── */
@@ -8310,6 +8390,9 @@ function saveEvalAdj(sid) {
   if (idx < 0) { toast("Copie introuvable"); return; }
   subs[idx].adjustedPts   = pts;
   subs[idx].adjustedScore = tot;
+  /* Sans le barème, l'élève lisait « 15/50 » : son affichage retombait sur qcmTot,
+     qui compte des champs remplis, pas des points (règle 5 du CLAUDE.md). */
+  subs[idx].bareme        = _evalCourante.total;
   subs[idx].appreciation  = ta ? ta.value : "";
   subs[idx].status        = "validated";
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
@@ -8411,13 +8494,18 @@ function renderSubs() {
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F6B0; ' + e3Done + '/' + e3Tot + ' réponses</span>';
       } else if (EVALUATIONS[s.cap]) {
         /* Une évaluation affiche une note, pas un nombre de champs remplis. */
-        var noteEv = noteEvaluation(s), totEv = EVALUATIONS[s.cap].total;
-        var colEv = noteEv >= totEv * 0.7 ? "var(--vt)" : noteEv >= totEv * 0.5 ? "var(--or)" : "var(--rg)";
-        sc = '<strong style="color:' + colEv + '">' + fmtPts(noteEv) + '/' + totEv + '</strong>' +
-             '<div style="font-size:11px;color:var(--td)">' + (s.adjustedScore !== undefined ? "note validée" : "proposition auto") + '</div>';
-      } else if (s.cap === "batiment5e") {
-        var bDone = (s.score !== undefined ? s.score : 0), bTot = (s.qcmTot || 50);
-        sc = '<span style="background:#FCE4D6;color:#C55A11;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F3D7;&#xFE0F; ' + bDone + '/' + bTot + ' réponses</span>';
+        var defEv = EVALUATIONS[s.cap], totEv = defEv.total;
+        var notee = s.adjustedScore !== undefined && s.adjustedScore !== "";
+        if (!notee && defEv.manuel) {
+          /* Notée à la main : annoncer 0/20 avant correction serait un contresens. */
+          sc = '<span style="background:#FCE4D6;color:#C55A11;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x270F;&#xFE0F; à noter /' + totEv + '</span>' +
+               '<div style="font-size:11px;color:var(--td)">' + (s.score !== undefined ? s.score : 0) + '/' + (s.qcmTot || 0) + ' réponses</div>';
+        } else {
+          var noteEv = noteEvaluation(s);
+          var colEv = noteEv >= totEv * 0.7 ? "var(--vt)" : noteEv >= totEv * 0.5 ? "var(--or)" : "var(--rg)";
+          sc = '<strong style="color:' + colEv + '">' + fmtPts(noteEv) + '/' + totEv + '</strong>' +
+               '<div style="font-size:11px;color:var(--td)">' + (notee ? "note validée" : "proposition auto") + '</div>';
+        }
       } else if (s.cap === "reseau5e") {
         var rDone = (s.score !== undefined ? s.score : 0), rTot = (s.qcmTot || 24);
         sc = '<span style="background:#E0F7FF;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F310; ' + rDone + '/' + rTot + ' réponses</span>';
@@ -8811,6 +8899,13 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P11 4e — Activités 3 et 4";
     document.getElementById("mrep").innerHTML = buildEau34ModalHTML(sub);
     document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  } else if (sub.cap === "batiment5e") {
+    if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
+    /* Copie de l'élève, puis le panneau de points : tout se corrige sur un écran. */
+    document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub) + buildEvalTeacherPanel(sub);
+    document.getElementById("mscore").textContent = texteNoteEval(sub)
+      + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses"
+      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (EVALUATIONS[sub.cap]) {
     var evd = EVALUATIONS[sub.cap];
     if (mh3) mh3.textContent = evd.titre + " — copie de l'élève";
@@ -8818,10 +8913,6 @@ function openModal(sid) {
     document.getElementById("mscore").textContent =
       (sub.adjustedScore !== undefined ? "Note validée : " + fmtPts(sub.adjustedScore) : "Proposition automatique : " + fmtPts(noteEvaluation(sub)))
       + "/" + evd.total + " – Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
-  } else if (sub.cap === "batiment5e") {
-    if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
-    document.getElementById("mrep").innerHTML = buildBatimentModalHTML(sub);
-    document.getElementById("mscore").textContent = "Activité individuelle — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "reseau5e") {
     if (mh3) mh3.textContent = "Réseau 5e — Manipulation (binôme)";
     document.getElementById("mrep").innerHTML = buildReseauModalHTML(sub);
@@ -8984,12 +9075,7 @@ function ficheScoreTexte(sub) {
       : p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {}));
     return "Note auto : " + p11x1Fmt(p11x1Convert(brut, b)) + "/" + b + " (indicative)" + st;
   }
-  if (EVALUATIONS[sub.cap]) {
-    var dEv = EVALUATIONS[sub.cap];
-    return (sub.adjustedScore !== undefined
-      ? "Note validée : " + fmtPts(sub.adjustedScore)
-      : "Proposition automatique : " + fmtPts(noteEvaluation(sub))) + "/" + dEv.total + st;
-  }
+  if (EVALUATIONS[sub.cap]) return texteNoteEval(sub) + st;
   if (sub.cap === "rem1") return "Score : " + sub.score + "/40" + st;
   if (sub.cap === "p12")  { var n0 = countP12Fields(sub.fields||{}); return n0.done + "/" + n0.total + " champs" + st; }
   if (sub.cap === "p12-ex1") { var n1 = countP12Ex1Fields(sub.fields||{}); return n1.done + "/" + n1.total + " champs" + st; }
@@ -9007,7 +9093,6 @@ function ficheScoreTexte(sub) {
 /* Réponses de l'élève, rendues par le constructeur propre à la capsule. */
 function ficheReponsesHTML(sub) {
   var f = sub.fields;
-  if (EVALUATIONS[sub.cap])          return buildEvalModalHTML(sub);
   if (sub.cap === "dc" && f)         return buildDCModalHTML(f, sub.score);
   if (sub.cap === "p12" && f)        return buildP12ModalHTML(f);
   if (sub.cap === "p11-ex1")         return buildP11Ex1ModalHTML(f || {});
@@ -9020,6 +9105,9 @@ function ficheReponsesHTML(sub) {
   if (sub.cap === "reseau5e")        return buildReseauModalHTML(sub);
   if (sub.cap === "filius5e")        return buildFiliusModalHTML(sub);
   if (sub.cap === "maison5e")        return buildMaisonModalHTML(sub);
+  /* Placé APRÈS les rendus propres à chaque capsule : une capsule qui a le sien
+     le garde, et seules les évaluations sans rendu dédié prennent la copie annotée. */
+  if (EVALUATIONS[sub.cap])          return buildEvalModalHTML(sub);
   return '<p style="font-size:14px;line-height:1.7;white-space:pre-wrap">' + _ficheEsc(sub.open || "(pas de réponse)") + '</p>';
 }
 
@@ -9528,6 +9616,21 @@ function exportCSV() {
    - Si un filtre capsule est actif → exporte UNIQUEMENT cette capsule avec tous ses détails saisis.
    - Sinon → export complet, tous types confondus (comportement historique).
    Dans les deux cas, on respecte AUSSI les filtres classe / statut / recherche actifs. */
+/* Les branches détaillées d'export n'avaient pas toutes de colonne de note :
+   l'évaluation 5e et le bâtiment exportaient les réponses sans le résultat. */
+function _ajouterColonnesNotes(schema, subs) {
+  if (schema.headers.indexOf("NoteFinale") >= 0) return schema;   // déjà présentes
+  return {
+    headers: schema.headers.concat(["Bareme", "NoteAuto", "NoteFinale", "Appreciation"]),
+    rows: schema.rows.map(function (ligne, i) {
+      var x = subs[i] || {};
+      return ligne.concat([baremeDe(x), noteAutoDe(x),
+        (x.adjustedScore !== undefined && x.adjustedScore !== "" ? x.adjustedScore : ""),
+        x.appreciation || ""]);
+    })
+  };
+}
+
 function exportCSVAll() {
   var allSubs = getSubs();
   if (!allSubs.length) { toast("Aucune donnée à exporter"); return; }
@@ -9553,7 +9656,7 @@ function exportCSVAll() {
 
   // === Cas 1 : un filtre capsule est actif → export détaillé spécifique ===
   if (capF) {
-    var schema = _buildCapsuleCSV(capF, filtered);
+    var schema = _ajouterColonnesNotes(_buildCapsuleCSV(capF, filtered), filtered);
     var lines = [schema.headers.map(_csvEscape).join(";")];
     for (var i = 0; i < schema.rows.length; i++) {
       lines.push(schema.rows[i].map(_csvEscape).join(";"));
@@ -9570,20 +9673,24 @@ function exportCSVAll() {
 
   var csvParts = [];
   if (otherSet.length) {
-    var oLines = ["Eleve;Classe;Capsule;Score;Date;Statut;Reponse ouverte"];
+    var oLines = ["Eleve;Classe;Capsule;Score;Date;Statut;Bareme;NoteAuto;NoteFinale;Appreciation;Reponse ouverte"];
     for (var j = 0; j < otherSet.length; j++) {
       var x = otherSet[j];
       oLines.push([
         _csvEscape(x.ename), _csvEscape(x.ecls), _csvEscape(x.caplbl || x.cap),
         _csvEscape((x.score||0) + "/" + (x.qcmTot||0)),
         _csvEscape(fmtDateTime(x.dateISO || x.date)),
-        _csvEscape(x.status), _csvEscape(x.open || "")
+        _csvEscape(x.status),
+        _csvEscape(baremeDe(x)), _csvEscape(noteAutoDe(x)),
+        _csvEscape(x.adjustedScore !== undefined && x.adjustedScore !== "" ? x.adjustedScore : ""),
+        _csvEscape(x.appreciation || ""),
+        _csvEscape(x.open || "")
       ].join(";"));
     }
     csvParts.push(oLines.join("\n"));
   }
   if (p12Set.length) {
-    var p12Schema = _buildCapsuleCSV("p12", p12Set);
+    var p12Schema = _ajouterColonnesNotes(_buildCapsuleCSV("p12", p12Set), p12Set);
     var pLines = [p12Schema.headers.map(_csvEscape).join(";")];
     for (var k = 0; k < p12Schema.rows.length; k++) {
       pLines.push(p12Schema.rows[k].map(_csvEscape).join(";"));
