@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6831,7 +6831,11 @@ function updCapSidebar() {
     no.classList.add("h"); done.classList.remove("h");
     var lbl = {pending:"En attente de validation", validated:"Validé – Mission avancée débloquée !", rejected:"À revoir – Repasse le quiz"};
     var bg = {pending:"var(--op)", validated:"var(--vp)", rejected:"#FADBD8"};
-    document.getElementById("qres").innerHTML = '<div style="background:' + bg[sub.status] + ';border-radius:8px;padding:11px"><div style="font-weight:700;font-size:13px">' + lbl[sub.status] + '</div><div style="font-size:12px;margin-top:3px;color:var(--td)">Score QCM : ' + sub.score + '/' + sub.qcmTot + '</div></div>';
+    /* Le score ne s'affiche qu'une fois le travail validé (même règle partout). */
+    var detQ = sub.status === "validated"
+      ? 'Score QCM : ' + sub.score + '/' + sub.qcmTot
+      : (sub.status === "rejected" ? 'Repasse le quiz quand tu veux' : 'En attente de correction par ton professeur');
+    document.getElementById("qres").innerHTML = '<div style="background:' + bg[sub.status] + ';border-radius:8px;padding:11px"><div style="font-weight:700;font-size:13px">' + lbl[sub.status] + '</div><div style="font-size:12px;margin-top:3px;color:var(--td)">' + detQ + '</div></div>';
     if (sub.status === "rejected") done.innerHTML += '<button class="btnq" style="margin-top:10px" onclick="goPage(&quot;pg-quiz&quot;)">Recommencer le quiz</button>';
   } else { no.classList.remove("h"); done.classList.add("h"); }
 }
@@ -6941,17 +6945,21 @@ function updMyStatus() {
   for (var i = 0; i < mine.length; i++) {
     var s = mine[i];
     html += '<div style="background:#fff;border-radius:12px;box-shadow:var(--sh);border:1px solid var(--gb);padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">';
-    /* Exercices notés par le professeur : la note auto reste masquée tant que la
-       correction n'est pas validée ; une fois validée, on affiche SA note et SON
-       appréciation, avec le barème qu'il a choisi. */
-    var notePr = (s.cap === "p11-ex1" || s.cap === "p11-ex2");
+    /* Aucun chiffre avant validation, pour TOUTES les capsules : un score affiché
+       dès l'envoi vaut note aux yeux de l'élève, et circule avant la correction.
+       L'exception ne valait que pour les deux exercices P11, et n'avait pas suivi
+       les capsules ajoutées depuis. Le score automatique d'un quiz reste affiché
+       par l'activité elle-même, au moment où l'élève la termine. */
     var detail;
     if (estCorrigee(s)) {
       detail = 'Note : ' + p11x1Fmt(s.adjustedScore) + '/' + (s.bareme || s.qcmTot || 20);
-    } else if (notePr) {
-      detail = 'En attente de correction par le professeur';
+    } else if (s.status === "validated") {
+      /* Validé sans note ajustée (quiz simple) : le score n'est plus un secret. */
+      detail = (s.qcmTot ? 'Score : ' + s.score + '/' + s.qcmTot : 'Travail validé');
+    } else if (s.status === "rejected") {
+      detail = 'À retravailler — vois le message de ton professeur';
     } else {
-      detail = 'Score QCM : ' + s.score + '/' + s.qcmTot;
+      detail = 'En attente de correction par le professeur';
     }
     html += '<div style="flex:1;min-width:220px"><div style="font-weight:700;font-size:13px">' + s.caplbl + '</div><div style="font-size:12px;color:var(--td)">Soumis le ' + fmtDateTime(s.dateISO || s.date) + ' – ' + detail + '</div>';
     if (estCorrigee(s) && s.appreciation) {
@@ -12637,6 +12645,23 @@ function buildStudentResultBanner() {
     if (subs[i].eid === user.id && subs[i].cap === "dc") { sub = subs[i]; break; }
   }
   if (!sub) return "";
+  /* Rien de chiffré tant que le professeur n'a pas validé : il note souvent une
+     copie encore en attente, et cette note descendait aussitôt jusqu'à l'élève. */
+  if (sub.status !== "validated") {
+    var enAttente = sub.status === "rejected";
+    var hAtt = '<div style="background:' + (enAttente ? '#FFEBEE' : '#FFF8E1')
+      + ';border:1.5px solid ' + (enAttente ? '#C62828' : '#F9A825')
+      + ';border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:13.5px;color:'
+      + (enAttente ? '#8E2018' : '#5D4E00') + '">';
+    hAtt += enAttente
+      ? '<strong>&#x1F504; Travail à retravailler.</strong> Ton professeur te demande de reprendre ce devoir.'
+      : '<strong>&#x23F3; Devoir envoyé.</strong> Il est en attente de correction par ton professeur : ta note s\'affichera ici une fois la correction validée.';
+    if (enAttente && sub.appreciation) {
+      hAtt += '<div style="margin-top:9px;background:#fff;border-radius:8px;padding:9px 12px;white-space:pre-wrap">'
+            + String(sub.appreciation).replace(/</g, "&lt;") + '</div>';
+    }
+    return hAtt + '</div>';
+  }
   var score = sub.adjustedScore !== undefined ? sub.adjustedScore : sub.score;
   var appr = sub.appreciation || "";
   var col = score >= 24 ? "#2E8B4A" : score >= 15 ? "#C55A11" : "#C0392B";
@@ -12647,7 +12672,7 @@ function buildStudentResultBanner() {
   if (sub.adjustedScore !== undefined) {
     h += '<div style="font-size:12px;opacity:.7;margin-top:2px">✅ Note ajustée par le professeur</div>';
   } else {
-    h += '<div style="font-size:12px;opacity:.6;margin-top:2px">Note indicative — correction prof en attente</div>';
+    h += '<div style="font-size:12px;opacity:.6;margin-top:2px">Corrigé automatiquement, validé par le professeur</div>';
   }
   if (appr) {
     h += '<div style="background:rgba(255,255,255,.12);border-radius:8px;padding:12px;margin-top:12px;font-size:13px;line-height:1.6;text-align:left">';
