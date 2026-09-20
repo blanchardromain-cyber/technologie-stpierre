@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20e</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20f</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -8535,6 +8535,14 @@ function renderSubs() {
       rows += '<td><span class="badge" style="' + bs[s.status] + '">' + ic[s.status] + ' ' + lbl[s.status] + '</span></td>';
       rows += '<td><button class="btnr" onclick="openModal(' + sid + ')">Lire réponse</button>';
       rows += '<button class="btni" onclick="printSubDirect(' + sid + ')" title="Imprimer ce travail (réponses + note + appréciation)">🖨️</button>';
+      /* Bascule du verrou sans ouvrir la copie : même confirmation et même
+         relecture du serveur que le bouton du modal. Le cadenas à côté du nom
+         reste un simple indicateur. */
+      if (!isCollegue) {
+        rows += '<button class="btni" title="' + (s.locked === true
+            ? 'Rendre la consultation à l\'élève' : 'Verrouiller la consultation pour l\'élève')
+          + '" onclick="basculerVerrou(' + sid + ')">' + (s.locked === true ? '&#x1F513;' : '&#x1F512;') + '</button>';
+      }
       if (s.status !== "validated") rows += '<button class="btnv" onclick="updSub(' + sid + ', \'validated\')">&#x2705;</button>';
       if (s.status !== "rejected")  rows += '<button class="btnx" onclick="updSub(' + sid + ', \'rejected\')">&#x274C;</button>';
       if (!isCollegue) rows += '<button class="btnx" style="background:var(--rg,#c0392b);margin-left:4px" title="Supprimer cette soumission" onclick="deleteSub(' + sid + ')">🗑️</button>';
