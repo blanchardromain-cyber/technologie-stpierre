@@ -110,6 +110,34 @@ L'impression d'une copie passe par `ficheTitre` / `ficheScoreTexte` /
 `ficheReponsesHTML` / `ficheEvalProfHTML` / `ficheCopieHTML` : déclarer la
 capsule à ce seul endroit la rend imprimable partout, à l'unité comme en lot.
 
+**La question « cette capsule est-elle notée ? » se pose à la conception, pas
+après coup.** Si la réponse est oui, on écrit sa grille dans `EVALUATIONS` en
+même temps que la capsule : parties, points par partie, total. La capsule hérite
+alors de tout l'enchaînement — note au tableau de bord, panneau d'ajustement
+dans le modal, validation, note dans la copie imprimée et dans l'export CSV.
+Posée après, la question coûte bien plus cher : les capsules eau 4e, bâtiment 5e
+et réseau ont vécu des mois en n'affichant qu'un **nombre de champs remplis**,
+sans aucun moyen de saisir une note.
+
+Deux cas, et il faut trancher dès le départ :
+
+- **Réponses vérifiables** (choix, ordre, associations, valeurs) : `corriger()`
+  propose une note, le professeur l'ajuste. C'est le cas de P11 exercices 1 et 2,
+  et de l'évaluation 5e.
+- **Réponses rédigées** : aucune proposition n'est possible, on déclare la grille
+  avec `manuel: true`. Le tableau de bord affiche alors « à noter /20 » et non un
+  « 0/20 » qui ferait croire à une copie déjà corrigée. C'est le cas d'Aménager
+  un bâtiment.
+
+Quand une capsule a son propre rendu de copie (`buildXxxModalHTML`), sa branche
+doit passer **avant** `EVALUATIONS[sub.cap]` dans `openModal` et dans
+`ficheReponsesHTML` : sinon la copie annotée générique, vide faute de correction
+automatique, s'affiche à la place des réponses de l'élève.
+
+Enfin, la note enregistrée doit écrire `bareme` sur la soumission. Sans lui,
+l'affichage élève retombe sur `qcmTot`, qui compte des champs remplis et non des
+points : l'élève lisait « 16/50 » (règle 5).
+
 ## 7. Divers
 
 - Les notes s'affichent avec la **virgule décimale française** (`p11x1Fmt`).
