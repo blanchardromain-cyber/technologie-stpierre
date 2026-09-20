@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20d</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20e</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5615,6 +5615,9 @@ function addLogoToPdfHeader(doc, M) {
 var ELEVES = [
   /* Accompagnant (AESH) : accès aux capsules pour suivre les élèves, sans être compté comme élève */
   {id:"mickael.bretin", p:"Mickaël", n:"BRETIN", c:"AESH", niveau:"Accompagnement", pwd:"mic8055", role:"aesh"},
+  /* Compte de test du professeur : ouvre les capsules comme un élève, sans compter
+     comme élève (role) — il n'apparaît donc pas dans les relances de travaux manquants. */
+  {id:"romain.blanchard", p:"Romain", n:"BLANCHARD", c:"4T", niveau:"4ème", pwd:"rom1234", role:"test"},
   {id:"valentin.amiand", p:"Valentin", n:"AMIAND", c:"4A", niveau:"4ème", pwd:"val8055"},
   {id:"ines.baranger", p:"Ines", n:"BARANGER", c:"4A", niveau:"4ème", pwd:"ine8360"},
   {id:"agnes.bidet", p:"Agnès", n:"BIDET", c:"4A", niveau:"4ème", pwd:"agn6307"},
@@ -8162,7 +8165,9 @@ function noteEvaluation(sub) {
   var r = def.corriger(sub.fields || {});
   var t = 0;
   for (var i = 0; i < def.sections.length; i++) t += r.points[def.sections[i].cle] || 0;
-  return Math.round(Math.min(def.total, t) * 100) / 100;
+  /* Demi-point, comme pour P11 : la correction automatique travaille au quart de
+     point, mais une note affichée au centième (7,13/10) ne veut rien dire. */
+  return Math.round(Math.min(def.total, t) * 2) / 2;
 }
 
 /* Note d'une évaluation, en toutes lettres. Une capsule notée à la main n'affiche
@@ -8283,7 +8288,7 @@ function buildEvalTeacherPanel(sub) {
   var saved = sub.adjustedPts || auto;
   var totalSauve = 0;
   for (var i = 0; i < def.sections.length; i++) totalSauve += (saved[def.sections[i].cle] || 0);
-  totalSauve = Math.round(Math.min(def.total, totalSauve) * 100) / 100;
+  totalSauve = Math.round(Math.min(def.total, totalSauve) * 2) / 2;
   var appr = sub.appreciation || def.appreciation(saved, totalSauve);
   _lastAutoAppr = sub.appreciation ? "" : appr;
 
@@ -8292,18 +8297,20 @@ function buildEvalTeacherPanel(sub) {
 
   var h = '<div class="adj-panel">';
   h += '<div class="adj-panel-title">✏️ Correction — ajustement des points ' +
-       '<span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(par palier de 0,25)</span></div>';
+       '<span style="font-size:11px;font-weight:400;color:var(--td);margin-left:4px">(par palier de 0,5)</span></div>';
   for (var k = 0; k < def.sections.length; k++) {
     var sec = def.sections[k];
-    var av = Math.round((auto[sec.cle] || 0) * 100) / 100;
-    var cv = (saved[sec.cle] !== undefined) ? Math.round(saved[sec.cle] * 100) / 100 : av;
+    /* Points proposés arrondis au demi-point, comme la note : la somme affichée
+       est alors exactement celle des lignes, sans reliquat au centième. */
+    var av = Math.round((auto[sec.cle] || 0) * 2) / 2;
+    var cv = (saved[sec.cle] !== undefined) ? Math.round(saved[sec.cle] * 2) / 2 : av;
     h += '<div class="adj-row">' +
       '<span class="adj-lbl">' + sec.label + '</span>' +
       '<span class="adj-auto">Auto: ' + fmtPts(av) + '/' + fmtPts(sec.max) + '</span>' +
       '<div class="adj-ctrl">' +
-      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',-0.25)">−</button>' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',-0.5)">−</button>' +
       '<input class="adj-val" id="adj-' + sec.cle + '" type="text" value="' + cv + '" readonly>' +
-      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',0.25)">+</button>' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',0.5)">+</button>' +
       '</div></div>';
   }
   h += '<div class="adj-total-box" id="adj-total-box">' +
@@ -8334,9 +8341,9 @@ var _evalCourante = null;
 function evalAdjStep(cle, maxPts, delta) {
   var el = document.getElementById("adj-" + cle);
   if (!el) return;
-  var v = Math.round((parseFloat(el.value) || 0) * 100) / 100;
+  var v = Math.round((parseFloat(el.value) || 0) * 2) / 2;
   v = Math.max(0, Math.min(maxPts, v + delta));
-  el.value = Math.round(v * 100) / 100;
+  el.value = Math.round(v * 2) / 2;
   evalAdjTotal();
 }
 function evalAdjTotal() {
@@ -8346,7 +8353,7 @@ function evalAdjTotal() {
     var el = document.getElementById("adj-" + _evalCourante.cles[i]);
     if (el) tot += parseFloat(el.value) || 0;
   }
-  tot = Math.round(Math.min(tot, _evalCourante.total) * 100) / 100;
+  tot = Math.round(Math.min(tot, _evalCourante.total) * 2) / 2;
   var nb = document.getElementById("adj-total-num");
   if (nb) nb.innerHTML = fmtPts(tot) + '<span style="font-size:16px">/' + _evalCourante.total + '</span>';
   var box = document.getElementById("adj-total-box");
@@ -8375,7 +8382,7 @@ function evalApprAuto(cap, silencieux) {
   if (!def || !ta) return;
   var pts = evalPointsSaisis(), tot = 0;
   for (var c in pts) if (pts.hasOwnProperty(c)) tot += pts[c];
-  tot = Math.round(Math.min(def.total, tot) * 100) / 100;
+  tot = Math.round(Math.min(def.total, tot) * 2) / 2;
   var txt = def.appreciation(pts, tot);
   ta.value = txt;
   _lastAutoAppr = txt;
@@ -8460,8 +8467,11 @@ function renderSubs() {
           var px2 = s.adjustedScore / bx2 * 100;
           sc = '<div><strong style="color:' + (px2>=75?"var(--vt)":px2>=50?"var(--or)":"var(--rg)") + '">' + p11x1Fmt(s.adjustedScore) + '/' + bx2 + '</strong></div>';
         } else {
-          var ax2 = p11x2TotalBrut(scoreP11Ex2BySection(s.fields || {}));
-          sc = '<span style="background:#E8EAF6;color:#5C6BC0;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(ax2) + '/30</span>'
+          /* Le brut est sur 30 ; ce qui intéresse le professeur, c'est la note sur son
+             barème — celle-là même qui sera enregistrée s'il valide sans rien changer. */
+          var bx2auto = Number(s.bareme) || 20;
+          var ax2 = p11x1Convert(p11x2TotalBrut(scoreP11Ex2BySection(s.fields || {})), bx2auto);
+          sc = '<span style="background:#E8EAF6;color:#5C6BC0;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(ax2) + '/' + bx2auto + '</span>'
              + '<div style="font-size:11px;color:var(--td)">' + nfp12.done + '/' + nfp12.total + ' menus</div>';
         }
       } else if (s.cap === "p11-ex1") {
@@ -8471,8 +8481,9 @@ function renderSubs() {
           var pctp11 = s.adjustedScore / bp11 * 100;
           sc = '<div><strong style="color:' + (pctp11>=75?"var(--vt)":pctp11>=50?"var(--or)":"var(--rg)") + '">' + p11x1Fmt(s.adjustedScore) + '/' + bp11 + '</strong></div>';
         } else {
-          var autoP11 = p11x1TotalBrut(scoreP11Ex1BySection(s.fields || {}));
-          sc = '<span style="background:#E1F5FE;color:#0288D1;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(autoP11) + '/30</span>'
+          var bp11auto = Number(s.bareme) || 20;
+          var autoP11 = p11x1Convert(p11x1TotalBrut(scoreP11Ex1BySection(s.fields || {})), bp11auto);
+          sc = '<span style="background:#E1F5FE;color:#0288D1;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">Auto ' + p11x1Fmt(autoP11) + '/' + bp11auto + '</span>'
              + '<div style="font-size:11px;color:var(--td)">' + nfp11.done + '/' + nfp11.total + ' champs</div>';
         }
       } else if (s.cap === "p12-ex1") {
@@ -14336,7 +14347,10 @@ function p11x1TotalBrut(sec) {
 
 /* Conversion du total brut (/30) vers le barème choisi (20 ou 30), arrondi au demi-point */
 function p11x1Convert(totalBrut, bareme) {
-  if (Number(bareme) === 30) return Math.round(totalBrut * 10) / 10;
+  /* Demi-point systématique, y compris sur un barème de 30 : une note de bulletin
+     ne se lit pas au dixième. */
+  var b = Number(bareme) || 20;
+  if (b === 30) return Math.round(totalBrut * 2) / 2;
   return Math.round(totalBrut * 20 / P11X1_TOTAL_BRUT * 2) / 2;
 }
 /* Affichage des notes : virgule décimale française (13,5 et non 13.5). */
