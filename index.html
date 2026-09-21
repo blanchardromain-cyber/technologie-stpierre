@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-20g</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-21a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6223,6 +6223,12 @@ function goPage(pid) {
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
+  /* Modules dys partagés par plusieurs pages (P11 exercices 1 et 2) : leurs boutons
+     suivent la page affichée. Sans effet pour les autres pages. */
+  try {
+    if (window.LectureImmersive && LectureImmersive.placer) LectureImmersive.placer();
+    if (window.ConfortLecture && ConfortLecture.placer) ConfortLecture.placer();
+  } catch (e) {}
   if (pid === "pg-eau4e") {
     // Pré-remplit l'identité de l'élève connecté (même origine → localStorage).
     try {
