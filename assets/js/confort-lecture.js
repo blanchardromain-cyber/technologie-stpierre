@@ -153,8 +153,11 @@
 
     /* La taille agit par zoom sur la zone de contenu : l'en-tête, la barre
        d'outils et la barre d'envoi gardent leur place et restent atteignables. */
-    var racine = document.querySelector(RACINE);
-    if (racine) racine.style.zoom = TAILLES[etat.taille] === 1 ? "" : TAILLES[etat.taille];
+    /* Toutes les zones listées, pas seulement la première : chaque page d'une
+       capsule multi-pages doit suivre le réglage. */
+    var racines = document.querySelectorAll(RACINE);
+    for (var ri = 0; ri < racines.length; ri++)
+      racines[ri].style.zoom = TAILLES[etat.taille] === 1 ? "" : TAILLES[etat.taille];
 
     cl.toggle("cl-interligne", etat.interligne > 0);
     s.setProperty("--cl-interligne", INTERLIGNES[etat.interligne] || "");
@@ -323,6 +326,21 @@
   }
 
   /* ── Bouton dans la barre d'outils ──────────────────────────────────── */
+  /* hote peut lister plusieurs sélecteurs (capsule multi-pages) : on retient
+     l'élément affiché, et placer() suit les changements de page. */
+  var enveloppe = null;
+  function estVisible(el) { return !!(el.offsetParent || el.getClientRects().length); }
+  function premierVisible(sel) {
+    var t = document.querySelectorAll(sel);
+    for (var i = 0; i < t.length; i++) if (estVisible(t[i])) return t[i];
+    return t[0] || null;
+  }
+  function placer() {
+    if (!enveloppe) return;
+    var hote = premierVisible(HOTE);
+    if (hote && enveloppe.parentNode !== hote) hote.appendChild(enveloppe);
+  }
+
   function construireBouton() {
     bouton = document.createElement("button");
     bouton.type = "button";
@@ -331,11 +349,11 @@
     bouton.innerHTML = "&#x1F441;&#xFE0F; Confort de lecture";
     bouton.addEventListener("click", ouvrir);
 
-    var enveloppe = document.createElement("span");
+    enveloppe = document.createElement("span");
     enveloppe.setAttribute("data-nolecture", "");
     enveloppe.appendChild(bouton);
 
-    var hote = document.querySelector(HOTE);
+    var hote = premierVisible(HOTE);
     if (hote) hote.appendChild(enveloppe);
     else {
       enveloppe.style.cssText = "position:fixed;left:14px;bottom:112px;z-index:70;background:#fff;" +
@@ -369,6 +387,7 @@
   else init();
 
   window.ConfortLecture = {
+    placer: placer,
     ouvrir: ouvrir,
     fermer: fermer,
     reglages: function () { var c = {}; for (var k in etat) if (etat.hasOwnProperty(k)) c[k] = etat[k]; return c; },
