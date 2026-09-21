@@ -327,7 +327,7 @@
 
   /* ── Bouton dans la barre d'outils ──────────────────────────────────── */
   /* hote peut lister plusieurs sélecteurs (capsule multi-pages) : on retient
-     l'élément affiché, et placer() suit les changements de page. */
+     l'élément affiché, et placerBouton() suit les changements de page. */
   var enveloppe = null;
   function estVisible(el) { return !!(el.offsetParent || el.getClientRects().length); }
   function premierVisible(sel) {
@@ -335,7 +335,9 @@
     for (var i = 0; i < t.length; i++) if (estVisible(t[i])) return t[i];
     return t[0] || null;
   }
-  function placer() {
+  /* Nommée placerBouton : `placer(y)` existe déjà plus haut (position de la règle et
+     du masque de lecture) et les déclarations de fonction se remplacent entre elles. */
+  function placerBouton() {
     if (!enveloppe) return;
     var hote = premierVisible(HOTE);
     if (hote && enveloppe.parentNode !== hote) hote.appendChild(enveloppe);
@@ -387,7 +389,7 @@
   else init();
 
   window.ConfortLecture = {
-    placer: placer,
+    placer: placerBouton,
     ouvrir: ouvrir,
     fermer: fermer,
     reglages: function () { var c = {}; for (var k in etat) if (etat.hasOwnProperty(k)) c[k] = etat[k]; return c; },
