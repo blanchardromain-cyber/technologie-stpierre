@@ -31,6 +31,16 @@
     "h1, h2, h3, h4, .qlabel, .lesson, .hint, .legend, p, li, figcaption, td, th, .chip, .cbline label, summary";
   var CLE_VITESSE = "lecture_immersive_vitesse";
 
+  /* hote et racine peuvent lister plusieurs sélecteurs (une capsule réunissant
+     plusieurs pages). On ne retient alors que l'élément actuellement affiché :
+     querySelector renvoyait le premier du document, même masqué. */
+  function estVisible(el) { return !!(el.offsetParent || el.getClientRects().length); }
+  function premierVisible(sel) {
+    var t = document.querySelectorAll(sel);
+    for (var i = 0; i < t.length; i++) if (estVisible(t[i])) return t[i];
+    return t[0] || null;
+  }
+
   var synth = window.speechSynthesis;
   var blocs = [], index = -1, motsCourants = [], bornes = [], enPause = false, enLecture = false;
   var voixFr = null, tickReprise = null, boundaryVu = false, motActif = null;
@@ -100,7 +110,7 @@
     });
   }
   function construireBlocs() {
-    var racine = document.querySelector(RACINE) || document.body;
+    var racine = premierVisible(RACINE) || document.body;
     var trouves = [].slice.call(racine.querySelectorAll(SELECTEURS));
     blocs = trouves.filter(function (el) {
       if (el.closest("[data-nolecture]")) return false;
@@ -332,7 +342,7 @@
     elBarre.appendChild(elBtn); elBarre.appendChild(elPause);
     elBarre.appendChild(elStop); elBarre.appendChild(elVit);
 
-    var hote = document.querySelector(HOTE);
+    var hote = premierVisible(HOTE);
     if (hote) hote.appendChild(elBarre);
     else {
       elBarre.style.cssText = "position:fixed;left:14px;bottom:70px;z-index:70;background:#fff;" +
@@ -340,6 +350,17 @@
       document.body.appendChild(elBarre);
     }
     majBarre();
+  }
+
+  /* Déplace la barre vers la page affichée. Appelée par l'application à chaque
+     changement de page ; sans effet quand il n'y a qu'un seul hôte. */
+  function placer() {
+    if (!elBarre) return;
+    var hote = premierVisible(HOTE);
+    if (hote && elBarre.parentNode !== hote) {
+      if (enLecture) stop();                  /* on ne lit pas une page qu'on vient de quitter */
+      hote.appendChild(elBarre);
+    }
   }
 
   /* ── Départ ─────────────────────────────────────────────────────────── */
@@ -368,7 +389,7 @@
   else init();
 
   window.LectureImmersive = {
-    demarrer: demarrer, pause: pause, stop: stop,
+    demarrer: demarrer, pause: pause, stop: stop, placer: placer,
     actif: function () { return enLecture; },
     motParMot: function () { return boundaryVu; }
   };
