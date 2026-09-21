@@ -150,3 +150,11 @@ points : l'élève lisait « 16/50 » (règle 5).
   sélecteurs de lecture doivent couvrir les `div` de consigne, et les boutons
   micro porter `data-nolecture` pour que la synthèse vocale ne prononce pas
   l'emoji.
+- **Une capsule qui réunit plusieurs pages** (P11 exercices 1 et 2 partagent une même
+  config dys) : `hote` et `racine` peuvent lister plusieurs sélecteurs, et les deux modules
+  ne retiennent que l'élément **affiché**. Le bouton suit la page grâce à `placer()`, appelé
+  par `goPage` ; le zoom du confort s'applique à toutes les zones listées. Avant ce
+  correctif, `querySelector` ne renvoyait que le premier élément du document : en
+  fusionnant deux pages dans une config, l'exercice 1 avait perdu tous ses boutons sans
+  la moindre erreur. Toute nouvelle page à aménagements dys s'ajoute à cette liste, puis
+  se teste **page par page**, pas seulement la dernière ajoutée.
