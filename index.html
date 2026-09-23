@@ -8235,11 +8235,6 @@ function buildEvalModalHTML(sub) {
     '<strong>&#x1F4DD; ' + esc(sub.ename || "") + '</strong> — Classe ' + esc(sub.ecls || "") +
     ' — ' + (sub.score !== undefined ? sub.score : 0) + '/' + (sub.qcmTot || 21) + ' réponses remplies</div>';
 
-  h += '<div style="background:#FFF8E1;border:1px solid #F0C36D;border-radius:6px;padding:8px 12px;font-size:12px;color:#6B4E00;margin-bottom:14px">' +
-    '<strong>Lecture de la correction :</strong> l\'exercice 1 est corrigé de façon certaine (comparaison exacte). ' +
-    'Les réponses rédigées sont seulement <strong>repérées par mots-clés</strong> : la proposition de points est une aide, ' +
-    'pas un verdict. Ajuste ci-dessous avant d\'enregistrer.</div>';
-
   for (var si = 0; si < def.sections.length; si++) {
     var sec = def.sections[si];
     var lignes = r.detail.filter(function (d) { return d.sec === sec.cle; });
