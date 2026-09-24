@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24d</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24e</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -8672,6 +8672,29 @@ function evalApprAuto(cap, silencieux) {
   _lastAutoAppr = txt;
   if (!silencieux) toast("Appréciation regénérée");
 }
+/* P11 4e — Évaluation n°1 : la note validée part aussi au classeur « Report des notes »
+   (Apps Script Eval1-Report.gs, dépôt techno-p11-eau), sur la ligne de l'élève dans l'onglet de sa
+   classe, à côté des élèves qui ont passé l'épreuve papier. Points de la grille (sur 20) remis sur 40.
+   Le script refuse d'écrire sur une ligne du parcours papier et le note dans son Journal.
+   Règle 4 : jamais depuis une page servie en local. */
+var P11_EVAL1_REPORT_URL = "https://script.google.com/macros/s/AKfycbxJiben3o6Gl908s9jLvtXCI-Sz0wcKckOmh7mdpnvgEw0nFySfH0LS_KkOBfl5Q8lTUg/exec";
+var P11_EVAL1_REPORT_SECRET = "P11-EVAL1-2026";
+function reporterP11Eval1(sub) {
+  var hn = (location.hostname || "").toLowerCase();
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
+    try { console.warn("[p11-eval1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
+    return;
+  }
+  var pts = {}, a = sub.adjustedPts || {};
+  ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "C1", "C2", "C3"].forEach(function (q) { pts[q] = (Number(a[q]) || 0) * 2; });
+  var corps = JSON.stringify({ secret: P11_EVAL1_REPORT_SECRET, source: "capsule", classe: sub.ecls || "", eleve: sub.ename || "",
+                               pts: pts, note: fmtPts(sub.adjustedScore), detail: "validée depuis le tableau de bord du site" });
+  fetch(P11_EVAL1_REPORT_URL, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
+    if (o && o.ok && o.statut === "papier") toast("⚠️ Classeur de notes : ligne de l'épreuve papier, report refusé (voir le Journal)");
+    else if (o && o.ok) toast("📊 Note reportée au classeur de notes" + (o.statut === "ajoute" ? " (élève ajouté : nom à vérifier)" : ""));
+    else toast("⚠️ Classeur de notes : report refusé (" + (o && o.erreur || "?") + ")");
+  }).catch(function () { toast("⚠️ Classeur de notes : report impossible (réseau ?). Revalider plus tard."); });
+}
 function saveEvalAdj(sid) {
   if (!_evalCourante) return;
   var pts = evalPointsSaisis(), tot = evalAdjTotal();
@@ -8687,6 +8710,7 @@ function saveEvalAdj(sid) {
   subs[idx].appreciation  = ta ? ta.value : "";
   subs[idx].status        = "validated";
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
+  if (subs[idx].cap === "p11-eval1") reporterP11Eval1(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
   var ms = document.getElementById("mscore");
