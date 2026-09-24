@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P1 — Évaluation n°2 — 5ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --br:#C55A11; --brl:#FCE4D6;
+    --bl:#1F4E79; --bc:#2E75B6; --bp:#DEEAF1;
+    --vt:#1E6B3B; --vp:#E2EFDA;
+    --rg:#C0392B; --rgp:#FADBD8;
+    --vi:#5B34C7; --vip:#EDE7FF;
+    --gr:#F4F6F8; --gb:#E2E8F0;
+    --tx:#1A202C; --td:#4A5568;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--vi),#3A1F8C);color:#fff;padding:16px 22px;
+    position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1080px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#CDBBFF}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#CDBBFF;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#CDBBFF}
+  .fld input[readonly]{background:rgba(255,255,255,.72);color:#2D3748;cursor:default}
+  .fld input[readonly]:focus{border-color:transparent}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:150px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vi),#8A6BE0);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1080px;margin:0 auto;padding:22px 22px 150px}
+  .bandeau{background:linear-gradient(135deg,var(--vi),#7C4DFF);color:#fff;border-radius:var(--r);
+    padding:20px 24px;margin-bottom:18px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .bandeau::after{content:"\1F3D7\FE0F";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.18}
+  .bandeau .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+  .bandeau h2{font-size:19px;font-weight:700;margin:4px 0 8px;max-width:80%}
+  .bandeau p{font-size:13.5px;max-width:78%;opacity:.95;margin-bottom:10px;line-height:1.55}
+  .bandeau .meta{display:flex;gap:8px;flex-wrap:wrap}
+  .bandeau .meta span{background:rgba(255,255,255,.18);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600}
+
+  .consigne{display:flex;gap:12px;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);
+    padding:13px 17px;margin-bottom:18px;font-size:13.5px;color:#6B4E00;line-height:1.65}
+  .consigne b{color:#5A4000}
+
+  section.exo{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:18px;overflow:hidden}
+  .exhdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--vip);border-left:6px solid var(--vi)}
+  .exhdr .num{width:30px;height:30px;border-radius:50%;background:var(--vi);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .exhdr h3{font-size:16px;font-weight:700;color:var(--vi);flex:1}
+  .exhdr .pts{background:#fff;border:1.5px solid var(--vi);border-radius:999px;padding:3px 12px;
+    font-size:12px;font-weight:700;color:var(--vi);white-space:nowrap}
+  .exbody{padding:18px 20px 22px}
+  .consexo{font-size:14px;color:var(--td);margin-bottom:14px;line-height:1.7}
+  .contexte{display:flex;gap:10px;align-items:flex-start;background:var(--bp);border-left:4px solid var(--bc);
+    border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:14px;font-size:13.5px;color:var(--bl);line-height:1.6}
+  .contexte .pic{flex:0 0 auto;font-size:18px;line-height:1.2}
+
+  /* ═══ CHAMPS TEXTE ═══ */
+  .qbloc{margin-bottom:18px}
+  .qbloc:last-child{margin-bottom:0}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;margin-bottom:7px;line-height:1.6}
+  .qlabel .qn{display:inline-flex;align-items:center;justify-content:center;background:var(--vi);color:#fff;
+    border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;margin-right:8px;font-family:"DM Mono",monospace}
+  .qlabel .qp{font-size:12px;font-weight:600;color:var(--td);margin-left:6px}
+  textarea,input.txt{width:100%;border:1.5px solid var(--gb);border-radius:9px;padding:10px 12px;
+    font-family:inherit;font-size:14px;color:var(--tx);background:#fff;outline:none;resize:vertical;transition:.15s}
+  textarea{min-height:74px}
+  textarea:focus,input.txt:focus{border-color:var(--vi);box-shadow:0 0 0 3px var(--vip)}
+  textarea.filled,input.txt.filled{background:#FBFDFB;border-color:#B9D8C4}
+  .microw{display:flex;justify-content:flex-end;margin-top:5px}
+  .micbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:5px 11px;
+    font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .micbtn:hover{background:var(--vip);border-color:var(--vi);color:var(--vi)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+  .avecmic{display:flex;gap:6px;align-items:center}
+  .avecmic .micbtn{flex:0 0 auto;padding:8px 10px}
+
+  /* ═══ EXERCICE 1 — tableau des contraintes ═══ */
+  .tscroll{overflow-x:auto}
+  table.grid{width:100%;border-collapse:collapse;min-width:560px}
+  table.grid th{background:var(--bp);color:var(--bl);font-size:12px;text-transform:uppercase;
+    letter-spacing:.5px;padding:9px 11px;text-align:left;border:1px solid var(--gb)}
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:middle}
+  table.grid td.rang{width:44px;text-align:center;font-weight:700;color:var(--vi);background:var(--gr)}
+
+  /* ═══ EXERCICE 2 — les quatre lits ═══ */
+  .lits{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .lit{position:relative;display:flex;flex-direction:column;border:2px solid var(--gb);border-radius:12px;
+    background:#fff;cursor:pointer;overflow:hidden;transition:.15s}
+  .lit:hover{border-color:var(--bc);box-shadow:0 4px 14px rgba(46,117,182,.15)}
+  .lit.pris{border-color:var(--vi);box-shadow:0 0 0 3px var(--vip)}
+  .lit .lettre{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--gr);
+    border:1.5px solid var(--gb);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--td)}
+  .lit.pris .lettre{background:var(--vi);border-color:var(--vi);color:#fff}
+  .lit .photo{height:140px;display:flex;align-items:center;justify-content:center;padding:14px 10px 6px;background:#FBFBFD}
+  .lit .photo img{max-width:100%;max-height:118px;display:block}
+  .lit-cap{font-size:13.5px;font-weight:700;padding:8px 11px 2px;line-height:1.35}
+  .lit-desc{font-size:12.5px;color:var(--td);padding:0 11px 11px;line-height:1.45}
+  .lit .choisi{display:none;background:var(--vi);color:#fff;font-size:11.5px;font-weight:700;text-align:center;padding:4px;margin-top:auto}
+  .lit.pris .choisi{display:block}
+
+  /* ═══ EXERCICE 3 — tableaux d'isolants ═══ */
+  table.iso{width:100%;border-collapse:collapse;min-width:520px}
+  table.iso th{background:var(--bp);color:var(--bl);font-size:12px;text-transform:uppercase;letter-spacing:.5px;
+    padding:9px 11px;border:1px solid var(--gb);text-align:center}
+  table.iso th:first-child{text-align:left}
+  table.iso td{border:1px solid var(--gb);padding:0;font-size:14.5px}
+  table.iso tr:nth-child(even) td{background:#FAFBFC}
+  table.iso tr:hover td{background:#F1ECFF}
+  table.iso td.nom{padding:9px 12px;font-weight:600}
+  /* Chiffres alignés, sans la police à chasse fixe : ses zéros barrés
+     (« Ø,Ø3Ø ») gênent la lecture des élèves dys. */
+  table.iso td.val{padding:9px 12px;text-align:center;font-variant-numeric:tabular-nums;font-size:15.5px;font-weight:600}
+  table.iso td.case{width:132px;text-align:center}
+  table.iso label.coche{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 8px;cursor:pointer;
+    font-size:12.5px;font-weight:600;color:var(--td);user-select:none}
+  .boite{width:22px;height:22px;border:2px solid #9AA5B1;border-radius:5px;background:#fff;display:inline-flex;
+    align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex:0 0 auto}
+  .rond{border-radius:50%}
+  label.coche.pris .boite{background:var(--vi);border-color:var(--vi)}
+  label.coche.pris .boite::after{content:"\2713"}
+  label.coche.pris .rond::after{content:"\25CF";font-size:12px}
+  label.coche.pris{color:var(--vi)}
+  table.iso tr.choisie td{background:var(--vip)!important}
+  .tag{display:none;margin-left:8px;background:#FFF3C4;color:#7D5A00;border:1px solid #E8B84B;border-radius:999px;
+    padding:0 8px;font-size:11px;font-weight:700;white-space:nowrap;vertical-align:middle}
+  tr.du-31 .tag{display:inline-block}
+  .compteur{display:inline-block;margin-top:9px;font-size:13px;font-weight:600;color:var(--td)}
+  .compteur.plein{color:var(--vt)}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gb);
+    box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:11px 22px;z-index:60}
+  .sendin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .btn{border:none;border-radius:9px;padding:11px 20px;font-family:inherit;font-size:14px;
+    font-weight:700;cursor:pointer;transition:.15s}
+  .btn-p{background:var(--vi);color:#fff}
+  .btn-p:hover{background:#4726A8}
+  .btn-p:disabled{background:var(--gb);color:var(--td);cursor:not-allowed}
+  .btn-s{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-s:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .msg{flex:1;min-width:210px;font-size:13px;line-height:1.5}
+  .msg.ok{color:var(--vt)} .msg.err{color:var(--rg)} .msg.wait{color:var(--td)}
+
+  @media (max-width:760px){
+    .lits{grid-template-columns:1fr 1fr}
+    .bandeau h2,.bandeau p{max-width:none}
+  }
+
+  /* ── Correction du professeur (identique à l'évaluation n°1) ── */
+  .corr-prof{border:2px solid var(--vt,#1E6B3B);border-radius:12px;padding:14px 18px;margin:0 0 18px;background:#E8F5E9}
+  .corr-prof.moyen{border-color:#C55A11;background:#FCE4D6}
+  .corr-prof.faible{border-color:#C0392B;background:#FADBD8}
+  .corr-tete{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .corr-tete .lb{flex:1;min-width:170px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1E6B3B}
+  .corr-prof.moyen .corr-tete .lb{color:#C55A11}
+  .corr-prof.faible .corr-tete .lb{color:#C0392B}
+  .corr-note{background:#1E6B3B;color:#fff;border-radius:10px;padding:7px 18px;font-size:23px;font-weight:700;line-height:1}
+  .corr-prof.moyen .corr-note{background:#C55A11}
+  .corr-prof.faible .corr-note{background:#C0392B}
+  .corr-note small{font-size:13px;font-weight:600}
+  .corr-tab{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px;background:#fff;border-radius:8px;overflow:hidden}
+  .corr-tab th{background:#1E6B3B;color:#fff;padding:6px 10px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+  .corr-prof.moyen .corr-tab th{background:#C55A11}
+  .corr-prof.faible .corr-tab th{background:#C0392B}
+  .corr-tab td{padding:6px 10px;border-bottom:1px solid #E2E8F0}
+  .corr-tab tr:last-child td{border-bottom:none}
+  .corr-tab .pts{text-align:center;font-weight:700;white-space:nowrap}
+  .corr-appr{margin-top:12px;background:#fff;border-radius:8px;padding:10px 13px;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+  .corr-attente{border:1.5px dashed #C55A11;background:#FFF8E1;color:#5D4E00;border-radius:10px;padding:11px 16px;margin:0 0 18px;font-size:13px}
+
+  @media print{
+    @page{size:A4 portrait;margin:11mm 12mm}
+    header,.pbar-wrap,.sendbar,.micbtn,.microw,.consigne,.li-barre,.cl-btn,.compteur{display:none!important}
+    body{background:#fff;font-size:10.5pt;line-height:1.5}
+    main{max-width:none;padding:0}
+    .entete-papier{display:flex!important}
+    .corr-prof,.corr-attente{break-inside:avoid;page-break-inside:avoid}
+    .corr-prof{background:#fff!important;border-width:1.5pt}
+    .corr-note{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .bandeau{background:none;color:var(--tx);border:1.5pt solid var(--vi);box-shadow:none;padding:6pt 10pt;margin-bottom:8pt}
+    .bandeau::after{display:none}
+    .bandeau .lb{color:var(--vi)}
+    .bandeau h2{font-size:12pt;color:#3A1F8C;max-width:none}
+    .bandeau p{font-size:9pt;max-width:none;margin-bottom:4pt}
+    .bandeau .meta span{background:none;border:1pt solid var(--vi);color:var(--vi);font-size:8.5pt}
+    section.exo{box-shadow:none;border:none;margin-bottom:8pt;break-inside:auto}
+    .exhdr{background:none;border-left:none;border-bottom:1.2pt solid var(--vi);padding:0 0 3pt;
+      margin-bottom:6pt;break-inside:avoid;break-after:avoid}
+    .exhdr .num{width:15pt;height:15pt;font-size:9pt}
+    .exhdr h3{font-size:12pt}
+    .exbody{padding:0}
+    .consexo,.contexte{font-size:9.5pt;margin-bottom:7pt}
+    .contexte{background:none;border-left:2.5pt solid var(--bc);padding:3pt 8pt}
+    .qbloc{break-inside:avoid;margin-bottom:9pt}
+    .qlabel{font-size:10pt}
+    textarea,input.txt{border:1pt solid #9AA5B1;font-size:9.5pt;min-height:22pt;background:#fff!important}
+    textarea{min-height:52pt}
+    table.grid,table.iso{min-width:0;break-inside:avoid}
+    table.grid th,table.iso th{background:none;color:var(--bl);border:1pt solid #9AA5B1;font-size:8.5pt;padding:3pt 6pt}
+    table.grid td,table.iso td{border:1pt solid #9AA5B1;font-size:9pt}
+    table.grid td{padding:3pt 6pt}
+    table.iso td.nom,table.iso td.val{padding:3pt 6pt;font-size:9pt}
+    table.iso label.coche{padding:2pt 4pt;font-size:8.5pt}
+    table.iso tr:nth-child(even) td{background:#fff}
+    .boite{-webkit-print-color-adjust:exact;print-color-adjust:exact;width:12pt;height:12pt;font-size:9pt}
+    .lits{gap:6pt;margin-bottom:8pt;break-inside:avoid}
+    .lit{border-width:1pt}
+    .lit.pris{border:2pt solid var(--vi);box-shadow:none}
+    .lit .photo{height:70pt;padding:4pt}
+    .lit .photo img{max-height:62pt}
+    .lit-cap{font-size:9pt;padding:3pt 6pt 0}
+    .lit-desc{font-size:8pt;padding:0 6pt 4pt}
+    .lit .choisi{-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:8pt;padding:1pt}
+  }
+  .entete-papier{display:none;align-items:flex-end;justify-content:space-between;gap:14px;
+    border-bottom:2.5pt solid #5B34C7;padding-bottom:5pt;margin-bottom:9pt}
+  .entete-papier .gauche .sur{font-size:8pt;letter-spacing:1.4pt;text-transform:uppercase;color:#5B34C7;font-weight:700}
+  .entete-papier .gauche h1{font-size:15pt;color:#3A1F8C;line-height:1.2}
+  .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
+  .entete-papier .droite .nom{font-weight:700;color:#1A202C;font-size:10pt}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 1</div>
+      <h1>P1 — Évaluation n°2</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 11 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="entete-papier">
+    <div class="gauche">
+      <div class="sur">Technologie · 5<sup>e</sup> · Séquence 1</div>
+      <h1>Évaluation n°2</h1>
+    </div>
+    <div class="droite">
+      <div class="nom" id="papier-nom">Nom :</div>
+      <div id="papier-date"></div>
+    </div>
+  </div>
+
+  <div class="bandeau">
+    <div class="lb">Évaluation</div>
+    <h2>Contraintes, solutions et matériaux</h2>
+    <p>Tu reprends ton rôle d'architecte du logement étudiant en conteneur : lire le cahier des charges,
+       choisir le mobilier de la chambre, puis l'isolant des murs.</p>
+    <div class="meta">
+      <span>3 exercices</span><span>Noté sur 10 points</span><span>Travail individuel</span>
+    </div>
+  </div>
+
+  <div id="bloc-correction"></div>
+
+  <div class="consigne" data-nolecture>
+    <div>
+      <b>Avant de commencer.</b> Écris ton prénom, ton nom et ta classe en haut de la page.
+      Réponds à tous les exercices, puis clique sur <b>« Envoyer au professeur »</b> en bas de l'écran.
+      Attention : <b>une fois envoyée, ta copie peut être verrouillée</b> — relis-toi avant d'envoyer.
+      Ton travail est enregistré automatiquement sur cet appareil : si tu fermes la page par erreur, tu le retrouveras.
+      Le bouton <b>« 🔊 Lecture immersive »</b> lit l'énoncé à voix haute, et <b>« 🎤 »</b> te permet de répondre à la voix.
+    </div>
+  </div>
+
+  <!-- ════════════════ EXERCICE 1 ════════════════ -->
+  <section class="exo" id="ex1">
+    <div class="exhdr">
+      <span class="num">1</span>
+      <h3>Identifier les contraintes d'un cahier des charges</h3>
+      <span class="pts">5 points</span>
+    </div>
+    <div class="exbody">
+      <div class="contexte"><span class="pic" aria-hidden="true">&#x1F4CB;</span>
+        <div>Avant de dessiner le moindre plan, l'architecte lit le cahier des charges du logement.
+        Il y trouve tout ce qu'il devra respecter.</div></div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">1.1</span>D'après tes connaissances du cours, qu'est-ce qu'une <strong>contrainte</strong> en technologie&nbsp;?<span class="qp">(2 pts)</span></span>
+        <textarea id="e1-def" rows="3" placeholder="Une contrainte, c'est…"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e1-def" data-nolecture onclick="dicter('mic-e1-def','e1-def')">&#x1F3A4; Dicter</button></div>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">1.2</span>Complète le tableau ci-dessous : donne <strong>trois types de contraintes différents</strong>, avec pour chacun un exemple concret.<span class="qp">(3 pts)</span></span>
+        <div class="tscroll">
+          <table class="grid">
+            <tr>
+              <th style="width:44px">N°</th>
+              <th style="width:36%">Type de contrainte</th>
+              <th>Exemple concret de contrainte</th>
+            </tr>
+            <tr>
+              <td class="rang">1</td>
+              <td><div class="avecmic"><input class="txt" id="e1-t1" type="text" placeholder="Type…"><button class="micbtn" id="mic-e1-t1" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-t1','e1-t1')">&#x1F3A4;</button></div></td>
+              <td><div class="avecmic"><input class="txt" id="e1-x1" type="text" placeholder="Exemple…"><button class="micbtn" id="mic-e1-x1" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-x1','e1-x1')">&#x1F3A4;</button></div></td>
+            </tr>
+            <tr>
+              <td class="rang">2</td>
+              <td><div class="avecmic"><input class="txt" id="e1-t2" type="text" placeholder="Type…"><button class="micbtn" id="mic-e1-t2" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-t2','e1-t2')">&#x1F3A4;</button></div></td>
+              <td><div class="avecmic"><input class="txt" id="e1-x2" type="text" placeholder="Exemple…"><button class="micbtn" id="mic-e1-x2" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-x2','e1-x2')">&#x1F3A4;</button></div></td>
+            </tr>
+            <tr>
+              <td class="rang">3</td>
+              <td><div class="avecmic"><input class="txt" id="e1-t3" type="text" placeholder="Type…"><button class="micbtn" id="mic-e1-t3" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-t3','e1-t3')">&#x1F3A4;</button></div></td>
+              <td><div class="avecmic"><input class="txt" id="e1-x3" type="text" placeholder="Exemple…"><button class="micbtn" id="mic-e1-x3" data-nolecture title="Dicter" aria-label="Dicter" onclick="dicter('mic-e1-x3','e1-x3')">&#x1F3A4;</button></div></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ EXERCICE 2 ════════════════ -->
+  <section class="exo" id="ex2">
+    <div class="exhdr">
+      <span class="num">2</span>
+      <h3>Valider une solution technique de mobilier</h3>
+      <span class="pts">2 points</span>
+    </div>
+    <div class="exbody">
+      <div class="contexte"><span class="pic" aria-hidden="true">&#x1F6CF;&#xFE0F;</span>
+        <div>La chambre de l'étudiant est petite. Voici quatre solutions de couchage proposées par le fabricant de mobilier.</div></div>
+
+      <div class="lits" data-champ="e2-lit">
+        <label class="lit"><input type="radio" name="e2-lit" value="a" hidden>
+          <span class="lettre">a</span>
+          <span class="photo"><img src="ressources/eval2_lit_a.png" alt="Lit simple"></span>
+          <span class="lit-cap">Lit simple</span>
+          <span class="lit-desc">Il permet de se reposer.</span>
+          <span class="choisi" data-nolecture>&#x2714; Mon choix</span>
+        </label>
+        <label class="lit"><input type="radio" name="e2-lit" value="b" hidden>
+          <span class="lettre">b</span>
+          <span class="photo"><img src="ressources/eval2_lit_b.png" alt="Lit avec tiroirs de rangement"></span>
+          <span class="lit-cap">Lit avec tiroirs de rangement</span>
+          <span class="lit-desc">Il permet de se reposer et offre des espaces de rangement.</span>
+          <span class="choisi" data-nolecture>&#x2714; Mon choix</span>
+        </label>
+        <label class="lit"><input type="radio" name="e2-lit" value="c" hidden>
+          <span class="lettre">c</span>
+          <span class="photo"><img src="ressources/eval2_lit_c.png" alt="Lit avec matelas supplémentaire"></span>
+          <span class="lit-cap">Lit avec matelas supplémentaire</span>
+          <span class="lit-desc">Un second matelas se range sous le premier.</span>
+          <span class="choisi" data-nolecture>&#x2714; Mon choix</span>
+        </label>
+        <label class="lit"><input type="radio" name="e2-lit" value="d" hidden>
+          <span class="lettre">d</span>
+          <span class="photo"><img src="ressources/eval2_lit_d.png" alt="Lit mezzanine avec bureau intégré"></span>
+          <span class="lit-cap">Lit mezzanine avec bureau intégré</span>
+          <span class="lit-desc">Le lit est en hauteur, au-dessus d'un bureau et d'étagères.</span>
+          <span class="choisi" data-nolecture>&#x2714; Mon choix</span>
+        </label>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">2.1</span>Tu dois choisir la solution de couchage la plus appropriée pour <strong>optimiser une petite chambre d'étudiant</strong> en université. Quel lit choisirais-tu&nbsp;? Clique sur ton choix ci-dessus, puis <strong>justifie</strong> en expliquant comment il répond aux contraintes de l'étudiant.<span class="qp">(2 pts)</span></span>
+        <textarea id="e2-just" rows="3" placeholder="J'ai choisi le lit … parce qu'il permet de …"></textarea>
+        <div class="microw"><button class="micbtn" id="mic-e2-just" data-nolecture onclick="dicter('mic-e2-just','e2-just')">&#x1F3A4; Dicter</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ EXERCICE 3 ════════════════ -->
+  <section class="exo" id="ex3">
+    <div class="exhdr">
+      <span class="num">3</span>
+      <h3>Choisir un matériau isolant performant</h3>
+      <span class="pts">3 points</span>
+    </div>
+    <div class="exbody">
+      <div class="contexte"><span class="pic" aria-hidden="true">&#x1F9F1;</span>
+        <div>Les murs en acier du conteneur laissent facilement passer la chaleur : l'hiver, l'étudiant aurait froid.
+        Il faut les isoler.</div></div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">3.1</span>La <strong>conductivité thermique</strong> mesure la capacité d'un matériau à laisser passer la chaleur.
+          <strong>Plus elle est faible, plus le matériau isole.</strong> Coche dans le tableau les <strong>quatre matériaux les plus isolants</strong>.<span class="qp">(2 pts)</span></span>
+        <div class="tscroll">
+          <table class="iso" data-coches="e3-1">
+            <tr><th>Produit d'isolation</th><th>Conductivité thermique</th><th>Ton choix</th></tr>
+            <tr><td class="nom">Laine de verre</td><td class="val">0,030</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="verre" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Laine de roche</td><td class="val">0,034</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="roche" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Polystyrène</td><td class="val">0,030</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="polystyrene" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">XPS</td><td class="val">0,029</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="xps" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Polyuréthane</td><td class="val">0,021</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="pu" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Fibre de bois</td><td class="val">0,038</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="bois" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Laine de mouton</td><td class="val">0,039</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="mouton" hidden><span class="boite"></span>Cocher</label></td></tr>
+            <tr><td class="nom">Textiles recyclés</td><td class="val">0,039</td>
+              <td class="case"><label class="coche"><input type="checkbox" value="textile" hidden><span class="boite"></span>Cocher</label></td></tr>
+          </table>
+        </div>
+        <span class="compteur" id="compteur-31" data-nolecture>0 matériau coché sur 4</span>
+      </div>
+
+      <div class="qbloc">
+        <span class="qlabel"><span class="qn">3.2</span>Parmi tes quatre choix précédents, le client veut le matériau <strong>à la fois le moins épais et le moins cher</strong>.
+          Coche l'<strong>unique</strong> case correspondant au meilleur compromis.<span class="qp">(1 pt)</span></span>
+        <div class="tscroll">
+          <table class="iso" data-champ="e3-2">
+            <tr><th>Nature de l'isolant</th><th>Épaisseur en mm</th><th>Prix en € au m²</th><th>Ton choix</th></tr>
+            <tr data-mat="textile"><td class="nom">Textile recyclé<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">170</td><td class="val">12,77</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="textile" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="liege"><td class="nom">Liège expansé<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">150</td><td class="val">49,89</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="liege" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="roche"><td class="nom">Laine de roche<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">145</td><td class="val">13,01</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="roche" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="xps"><td class="nom">XPS<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">140</td><td class="val">24,81</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="xps" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="bois"><td class="nom">Fibre de bois<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">140</td><td class="val">18,04</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="bois" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="verre"><td class="nom">Laine de verre<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">120</td><td class="val">11,16</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="verre" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="polystyrene"><td class="nom">Polystyrène<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">120</td><td class="val">19,58</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="polystyrene" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+            <tr data-mat="pu"><td class="nom">Polyuréthane<span class="tag" data-nolecture>coché en 3.1</span></td><td class="val">100</td><td class="val">34,95</td>
+              <td class="case"><label class="coche"><input type="radio" name="e3-2" value="pu" hidden><span class="boite rond"></span>Choisir</label></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="sendbar" data-nolecture>
+  <div class="sendin">
+    <span class="msg" id="msg">Ton travail est enregistré automatiquement sur cet appareil.</span>
+    <button class="btn btn-s" id="btn-reprise" onclick="reprendreEnvoi()">&#x2935;&#xFE0F; Reprendre mon envoi</button>
+    <button class="btn btn-p" id="btn-send" onclick="envoyerAuProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P1 5e — ÉVALUATION n°2 : contraintes, solution de mobilier, isolant
+   Notée sur 10. La correction n'est PAS montrée à l'élève : les réponses
+   partent au tableau de bord du professeur (EVALUATIONS["eval2-5e"] dans
+   index.html), qui dispose là-bas d'une correction automatique ajustable.
+   Envoi, brouillon, reprise et verrou : repris tels quels de l'évaluation n°1.
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "eval2-5e";
+var CAP_LABEL   = "P1 5e — Évaluation n°2";
+var PREFILL_KEY = "batiment5e_prefill";        /* même identité que la séquence */
+var QUEUE_KEY   = "eval2_5e_offline_queue";
+var DRAFT_PFX   = "eval2_5e_draft_";
+
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* Champs texte suivis */
+var CHAMPS_TXT = ["e1-def","e1-t1","e1-x1","e1-t2","e1-x2","e1-t3","e1-x3","e2-just"];
+/* Choix uniques (boutons radio) */
+var CHAMPS_QCM = ["e2-lit","e3-2"];
+/* Cases multiples : la question 3.1, quatre cases au plus */
+var CHAMP_COCHES = "e3-1", MAX_COCHES = 4;
+var TOTAL_REP  = CHAMPS_TXT.length + CHAMPS_QCM.length + 1;   /* 11 */
+var choix = {};                                                /* réponses radio */
+var coches = [];                                               /* matériaux cochés en 3.1 */
+var ORDRE_31 = ["verre","roche","polystyrene","xps","pu","bois","mouton","textile"];
+
+function $(id){ return document.getElementById(id); }
+function val(id){ var e = $(id); return e ? String(e.value || "").trim() : ""; }
+function slug(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function flash(html, type){
+  var m = $("msg");
+  if (!m) return;
+  m.innerHTML = html;
+  m.className = "msg " + (type || "");
+}
+
+/* ════════════ CHOIX UNIQUES — lits et question 3.2 ════════════
+   Aucun retour « juste / faux » : c'est une évaluation, pas un entraînement. */
+function brancherChoix(){
+  var zones = document.querySelectorAll("[data-champ]");
+  for (var i = 0; i < zones.length; i++){
+    (function(zone){
+      var champ = zone.getAttribute("data-champ");
+      var radios = zone.querySelectorAll("input[type=radio]");
+      for (var j = 0; j < radios.length; j++){
+        radios[j].addEventListener("change", function(){
+          choix[champ] = this.value;
+          marquerChoix(zone, this.value);
+          majProgression(); enregistrerBrouillon();
+        });
+      }
+    })(zones[i]);
+  }
+}
+/* Étiquette choisie en évidence ; dans un tableau, toute la ligne. */
+function marquerChoix(zone, valeur){
+  var radios = zone.querySelectorAll("input[type=radio]");
+  for (var k = 0; k < radios.length; k++){
+    var pris = radios[k].value === valeur;
+    radios[k].checked = pris;
+    radios[k].parentNode.classList.toggle("pris", pris);
+    var tr = radios[k].closest ? radios[k].closest("tr") : null;
+    if (tr) tr.classList.toggle("choisie", pris);
+  }
+}
+function appliquerChoix(){
+  for (var champ in choix){
+    if (!choix.hasOwnProperty(champ)) continue;
+    var zone = document.querySelector('[data-champ="' + champ + '"]');
+    if (zone) marquerChoix(zone, choix[champ]);
+  }
+}
+
+/* ════════════ QUESTION 3.1 — quatre cases au plus ════════════ */
+function brancherCoches(){
+  var zone = document.querySelector('[data-coches="' + CHAMP_COCHES + '"]');
+  if (!zone) return;
+  var boites = zone.querySelectorAll("input[type=checkbox]");
+  for (var i = 0; i < boites.length; i++){
+    boites[i].addEventListener("change", function(){
+      if (this.checked && coches.length >= MAX_COCHES){
+        this.checked = false;
+        flash("✋ Tu as déjà coché <strong>quatre matériaux</strong>. Décoche-en un avant d'en choisir un autre.", "err");
+        return;
+      }
+      var v = this.value;
+      coches = coches.filter(function(x){ return x !== v; });
+      if (this.checked) coches.push(v);
+      appliquerCoches();
+      majProgression(); enregistrerBrouillon();
+    });
+  }
+}
+function appliquerCoches(){
+  var zone = document.querySelector('[data-coches="' + CHAMP_COCHES + '"]');
+  if (!zone) return;
+  var boites = zone.querySelectorAll("input[type=checkbox]");
+  for (var i = 0; i < boites.length; i++){
+    var pris = coches.indexOf(boites[i].value) >= 0;
+    boites[i].checked = pris;
+    boites[i].parentNode.classList.toggle("pris", pris);
+    var tr = boites[i].closest ? boites[i].closest("tr") : null;
+    if (tr) tr.classList.toggle("choisie", pris);
+  }
+  /* Rappel des choix de 3.1 dans le tableau de 3.2 : croiser deux tableaux
+     de mémoire est une difficulté de lecture, pas la compétence évaluée. */
+  var lignes = document.querySelectorAll("[data-mat]");
+  for (var j = 0; j < lignes.length; j++)
+    lignes[j].classList.toggle("du-31", coches.indexOf(lignes[j].getAttribute("data-mat")) >= 0);
+  var c = $("compteur-31");
+  if (c){
+    c.textContent = coches.length + " matériau" + (coches.length > 1 ? "x" : "") + " coché" + (coches.length > 1 ? "s" : "") + " sur 4";
+    c.classList.toggle("plein", coches.length === MAX_COCHES);
+  }
+}
+function cochesTexte(){
+  return ORDRE_31.filter(function(k){ return coches.indexOf(k) >= 0; }).join(",");
+}
+
+/* ════════════ DICTÉE VOCALE ════════════ */
+var _micActif = null;
+function dicter(btnId, cibleId){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> " +
+          "(touche &#x1F3A4; en bas du clavier) ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
+  if (_micActif && _micActif.btnId === btnId){ try{ _micActif.recog.stop(); }catch(e){} return; }
+  if (_micActif){ try{ _micActif.recog.stop(); }catch(e){} }
+
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(cibleId);
+  var libelle = btn ? btn.innerHTML : "";
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9;" + (btn.textContent.length > 3 ? " Arrêter" : ""); }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", provisoire = "";
+
+  recog.onresult = function(e){
+    provisoire = "";
+    var fin = base;
+    for (var i = e.resultIndex; i < e.results.length; i++){
+      if (e.results[i].isFinal){
+        fin += (fin && !/\s$/.test(fin) ? " " : "") + e.results[i][0].transcript;
+        base = fin;
+      } else provisoire = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (provisoire ? " " + provisoire : ""); marquerRempli(ta); }
+  };
+  function arreter(){
+    if (ta && provisoire){ ta.value = base; marquerRempli(ta); }
+    _micActif = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = libelle; }
+    majProgression(); enregistrerBrouillon();
+  }
+  recog.onerror = function(e){
+    arreter();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = arreter;
+  try { recog.start(); _micActif = { recog:recog, btnId:btnId }; }
+  catch(e){ arreter(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function marquerRempli(el){
+  if (!el || !el.classList) return;
+  el.classList.toggle("filled", String(el.value || "").trim().length > 0);
+}
+function compterRepondu(){
+  var n = 0;
+  for (var i = 0; i < CHAMPS_TXT.length; i++) if (val(CHAMPS_TXT[i])) n++;
+  for (var j = 0; j < CHAMPS_QCM.length; j++) if (choix[CHAMPS_QCM[j]]) n++;
+  if (coches.length === MAX_COCHES) n++;
+  return n;
+}
+/* Une copie commencée n'est pas vide, même si la question 3.1 n'a que deux cases. */
+function copieVierge(){ return compterRepondu() === 0 && coches.length === 0; }
+function majProgression(){
+  var n = compterRepondu();
+  $("pcount").textContent = n + " / " + TOTAL_REP + " réponse" + (n > 1 ? "s" : "");
+  $("pbar-fill").style.width = (n / TOTAL_REP * 100) + "%";
+}
+
+/* ════════════ BROUILLON (par appareil) ════════════ */
+/* La clé dépend du nom, pour qu'un poste partagé garde une copie par élève.
+   Tant que l'identité n'est pas complète on écrit sous « anon ». */
+function cleAnonyme(){ return DRAFT_PFX + "anon"; }
+function cleBrouillon(){
+  if (USER.id) return DRAFT_PFX + USER.id;
+  var p = val("inp-prenom"), n = val("inp-nom");
+  if (!p || !n) return cleAnonyme();
+  return DRAFT_PFX + (slug(p + " " + n) || "anon");
+}
+function etatCourant(){
+  var champs = {};
+  for (var i = 0; i < CHAMPS_TXT.length; i++) champs[CHAMPS_TXT[i]] = val(CHAMPS_TXT[i]);
+  for (var j = 0; j < CHAMPS_QCM.length; j++) champs[CHAMPS_QCM[j]] = choix[CHAMPS_QCM[j]] || "";
+  champs[CHAMP_COCHES] = cochesTexte();
+  return { p:val("inp-prenom"), n:val("inp-nom"), c:val("inp-classe"), champs:champs };
+}
+function enregistrerBrouillon(){
+  try {
+    var cle = cleBrouillon();
+    /* Garde-fou : une copie vide ne remplace jamais une copie déjà enregistrée. */
+    if (copieVierge() && localStorage.getItem(cle)) return;
+    localStorage.setItem(cle, JSON.stringify({ etat:etatCourant(), ts:Date.now() }));
+    if (cle !== cleAnonyme()) localStorage.removeItem(cleAnonyme());
+  } catch(e){}
+}
+function appliquerEtat(etat){
+  if (!etat) return;
+  if (etat.p && !val("inp-prenom")) $("inp-prenom").value = etat.p;
+  if (etat.n && !val("inp-nom"))    $("inp-nom").value    = etat.n;
+  if (etat.c && !val("inp-classe")) $("inp-classe").value = etat.c;
+  var f = etat.champs || {};
+  for (var i = 0; i < CHAMPS_TXT.length; i++){
+    if (f[CHAMPS_TXT[i]] && $(CHAMPS_TXT[i])){ $(CHAMPS_TXT[i]).value = f[CHAMPS_TXT[i]]; marquerRempli($(CHAMPS_TXT[i])); }
+  }
+  for (var j = 0; j < CHAMPS_QCM.length; j++){ if (f[CHAMPS_QCM[j]]) choix[CHAMPS_QCM[j]] = f[CHAMPS_QCM[j]]; }
+  if (f[CHAMP_COCHES]) coches = String(f[CHAMP_COCHES]).split(",").filter(function(k){ return ORDRE_31.indexOf(k) >= 0; }).slice(0, MAX_COCHES);
+  appliquerChoix();
+  appliquerCoches();
+  majProgression();
+}
+var _minuteurBrouillon = null;
+function enregistrerBientot(){
+  clearTimeout(_minuteurBrouillon);
+  _minuteurBrouillon = setTimeout(enregistrerBrouillon, 700);
+}
+function restaurerBrouillon(){
+  try {
+    var brut = localStorage.getItem(cleBrouillon()) || localStorage.getItem(cleAnonyme());
+    if (!brut) return;
+    var d = JSON.parse(brut);
+    if (d && d.etat) appliquerEtat(d.etat);
+  } catch(e){}
+}
+
+/* ════════════ REPRENDRE UN ENVOI ════════════ */
+function reprendreEnvoi(){
+  var p = val("inp-prenom"), n = val("inp-nom");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+  if (!copieVierge() && !confirm("Ta copie actuelle sera remplacée par ton dernier envoi. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var btn = $("btn-reprise"); btn.disabled = true;
+  var classeR = val("inp-classe") ? ("5" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  var eidNom  = CAP_ID + "." + (slug(classeR) || "5x") + "." + (slug(p + " " + n) || "eleve");
+  lireEnvoisMoi([USER.id, eidNom], function(liste){
+    btn.disabled = false;
+    if (liste === null){ flash("La reprise n'a pas abouti (réseau ?). Préviens ton professeur.", "err"); return; }
+    var moi = slug(p + " " + n), trouve = null;
+    for (var i = 0; i < liste.length; i++){
+      var s = liste[i];
+      if (s.cap !== CAP_ID) continue;
+      if (slug(s.ename || "") !== moi) continue;
+      if (!trouve || new Date(s.dateISO) > new Date(trouve.dateISO)) trouve = s;
+    }
+    if (envoiVerrouille(trouve) || copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+    if (!trouve || !trouve.fields){
+      flash("Aucun envoi retrouvé à ton nom. Vérifie l'orthographe de ton prénom et de ton nom.", "err");
+      return;
+    }
+    coches = []; choix = {};
+    appliquerEtat({ p:p, n:n, c:val("inp-classe"), champs:trouve.fields });
+    enregistrerBrouillon();
+    flash("✅ Copie du " + new Date(trouve.dateISO).toLocaleString("fr-FR") + " rechargée. Tu peux continuer.", "ok");
+  });
+}
+
+/* ════════════ VERROU DE CONSULTATION ════════════
+   Le professeur peut verrouiller une copie rendue, ou armer la capsule pour que
+   toute copie naisse verrouillée (champ « locked », venu du serveur). Elle ne se
+   recharge plus et ne se renvoie plus ; le brouillon n'est jamais touché. */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++)
+      if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+function urlLecture(){
+  try {
+    var hn = (location.hostname || "").toLowerCase();
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      if (/^https:\/\/script\.google\.com\//.test(u)) return u;
+    }
+  } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){
+      lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); });
+      return;
+    }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if (document.getElementById("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou";
+  v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    for (var i = 0; i < liste.length; i++)
+      if (liste[i] && liste[i].eid === USER.id && liste[i].cap === CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
+}
+function lireEnvoisMoi(eids, onDone){
+  var vus = {}, liste = [], echec = true, i = 0;
+  eids = eids.filter(function(e){ if (!e || vus[e]) return false; vus[e] = 1; return true; });
+  (function suivant(){
+    if (i >= eids.length){ onDone(echec ? null : liste); return; }
+    lireEnvois(eids[i++], function(r){ if (r){ echec = false; liste = liste.concat(r); } suivant(); });
+  })();
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function urlPrete(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function mettreEnFile(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function retirerDeLaFile(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function deposerEnLocal(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production.
+   Seul un déploiement de TEST, désigné par localStorage.apps_script_url_test,
+   débloque l'écriture. "" = envoi refusé. */
+function urlEcriture(){
+  var hn = (location.hostname || "").toLowerCase();
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  try {
+    var u = localStorage.getItem("apps_script_url_test") || "";
+    if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
+  } catch(e){}
+  return "";
+}
+function refuserEcritureLocale(){
+  try {
+    console.warn("[capsule] Page servie en local (" + (location.hostname || "fichier") +
+      ") : l'envoi vers le classeur de production a été bloqué. Le travail reste en file locale.");
+  } catch(e){}
+}
+function poster(sub, fini){
+  mettreEnFile(sub);
+  var cible = urlEcriture();
+  if (!cible){ refuserEcritureLocale(); if (fini) fini(false); return; }
+  if (!urlPrete()){ if (fini) fini(false); return; }
+  try {
+    fetch(cible, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ retirerDeLaFile(sub); if (fini) fini(true); })
+      .catch(function(){ if (fini) fini(false); });
+  } catch(e){ if (fini) fini(false); }
+}
+function viderLaFile(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !urlPrete() || !urlEcriture()) return;
+    q.forEach(function(sub){ poster(sub); });
+  } catch(e){}
+}
+function resumeOuvert(champs){
+  var bouts = [];
+  if (champs["e1-def"]) bouts.push("Contrainte : " + champs["e1-def"]);
+  if (champs["e2-just"]) bouts.push("Lit " + (champs["e2-lit"] || "?") + " : " + champs["e2-just"]);
+  return bouts.join("\n\n");
+}
+function fabriquerEnvoi(){
+  var etat = etatCourant();
+  var classe = etat.c ? ("5" + etat.c.toUpperCase()) : (USER.c || "");
+  var ename  = (etat.p + " " + etat.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe) || "5x") + "." + (slug(ename) || "eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: compterRepondu(),
+    qcmTot: TOTAL_REP,
+    open: resumeOuvert(etat.champs),
+    fields: etat.champs,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function envoyerAuProf(){
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la page.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 5A) en haut de la page.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var fait = compterRepondu();
+  var avert = fait < TOTAL_REP ? ("Il te reste " + (TOTAL_REP - fait) + " réponse(s) non remplie(s).\n\n") : "";
+  if (!confirm(avert + "Envoyer ta copie au professeur ?\nUne fois envoyée, elle peut être verrouillée : relis-toi bien avant.")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  enregistrerBrouillon();
+  var sub = fabriquerEnvoi();
+  deposerEnLocal(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  poster(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Copie envoyée au professeur</strong> le " + new Date().toLocaleString("fr-FR") + ".", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Ta copie est <strong>conservée sur cet appareil</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ IDENTITÉ ET EN-TÊTE PAPIER ════════════ */
+function lireIdentite(){
+  try {
+    var brut = localStorage.getItem(PREFILL_KEY);
+    if (!brut) return;
+    var d = JSON.parse(brut);
+    if (!d) return;
+    USER = { id:d.id || "", p:d.p || "", n:d.n || "", c:d.c || "" };
+    if (d.p) $("inp-prenom").value = d.p;
+    if (d.n) $("inp-nom").value    = d.n;
+    if (d.c) $("inp-classe").value = String(d.c).replace(/^5/, "");
+    verrouillerIdentite();
+  } catch(e){}
+}
+function verrouillerIdentite(){
+  if (!USER.p || !USER.n) return;
+  var champs = ["inp-prenom","inp-nom","inp-classe"];
+  for (var i = 0; i < champs.length; i++){
+    var e = $(champs[i]);
+    if (!e) continue;
+    e.readOnly = true;
+    e.tabIndex = -1;
+    e.title = "Identité de ton compte — elle ne se modifie pas ici.";
+  }
+  var z = document.querySelector(".ident");
+  if (z && !document.getElementById("ident-compte")){
+    var n = document.createElement("div");
+    n.id = "ident-compte";
+    n.setAttribute("data-nolecture","");
+    n.textContent = "\u{1F512} identité de ton compte";
+    n.style.cssText = "flex-basis:100%;font-size:10.5px;color:#CDBBFF;letter-spacing:.3px";
+    z.appendChild(n);
+  }
+}
+function majEntetePapier(){
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe").toUpperCase();
+  var qui = (p + " " + n).trim();
+  $("papier-nom").textContent = qui ? (qui + (c ? "  ·  5" + c : ""))
+                                    : "Nom :             Classe :";
+}
+
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+
+/* ════════════ CORRECTION DU PROFESSEUR ════════════
+   La copie corrigée redescend par localStorage.subs, alimenté par le site. */
+var CORR_SECTIONS = [
+  { cle:"cc",  label:"① Contraintes d'un cahier des charges", max:5 },
+  { cle:"mob", label:"② Solution technique de mobilier",      max:2 },
+  { cle:"iso", label:"③ Matériau isolant",                    max:3 }
+];
+var CORR_TOTAL = 10;
+function corrSections(){
+  try {
+    var d = window.parent && window.parent !== window && window.parent.EVALUATIONS
+          && window.parent.EVALUATIONS[CAP_ID];
+    if (d && d.sections && d.sections.length) { CORR_TOTAL = d.total || CORR_TOTAL; return d.sections; }
+  } catch(e){}
+  return CORR_SECTIONS;
+}
+function corrMaSoumission(){
+  if (!USER || !USER.id) return null;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++){
+      if (subs[i].eid === USER.id && subs[i].cap === CAP_ID) return subs[i];
+    }
+  } catch(e){}
+  return null;
+}
+function corrFmt(n){
+  n = Math.round(Number(n) * 100) / 100;
+  return (n % 1 === 0) ? String(n) : String(n).replace(".", ",");
+}
+function afficherCorrectionProf(){
+  var hote = document.getElementById("bloc-correction");
+  if (!hote) return;
+  var s = corrMaSoumission();
+  if (!s){ hote.innerHTML = ""; return; }
+
+  if (s.status === "pending"){
+    hote.innerHTML = '<div class="corr-attente">&#x23F3; Ta copie a bien été envoyée. '
+      + 'Elle est <b>en attente de correction</b> par ton professeur.</div>';
+    return;
+  }
+  if (s.status === "rejected"){
+    hote.innerHTML = '<div class="corr-attente" style="border-color:#C0392B;background:#FADBD8;color:#8E2018">'
+      + '<b>&#x1F504; Travail à retravailler.</b> Ton professeur te demande de reprendre cette évaluation.'
+      + (s.appreciation ? '<div class="corr-appr">' + String(s.appreciation).replace(/</g,"&lt;") + '</div>' : '')
+      + '</div>';
+    return;
+  }
+  if (s.status !== "validated" || s.adjustedScore === undefined || s.adjustedScore === ""){
+    hote.innerHTML = ""; return;
+  }
+
+  var sections = corrSections();
+  var note = Number(s.adjustedScore);
+  var pct  = note / CORR_TOTAL * 100;
+  var classe = pct >= 75 ? "" : pct >= 50 ? " moyen" : " faible";
+  var pts = s.adjustedPts || {};
+
+  var x = '<div class="corr-prof' + classe + '">';
+  x += '<div class="corr-tete"><div class="lb">&#x2705; Correction du professeur</div>'
+     + '<div class="corr-note">' + corrFmt(note) + '<small> / ' + CORR_TOTAL + '</small></div></div>';
+
+  var detail = false;
+  for (var i = 0; i < sections.length; i++){
+    if (pts[sections[i].cle] !== undefined){ detail = true; break; }
+  }
+  if (detail){
+    x += '<table class="corr-tab"><thead><tr><th>Détail de la notation</th><th class="pts">Points</th></tr></thead><tbody>';
+    for (var j = 0; j < sections.length; j++){
+      var sec = sections[j];
+      var v = pts[sec.cle];
+      x += '<tr><td>' + sec.label + '</td><td class="pts">'
+         + (v === undefined ? "—" : corrFmt(v)) + ' / ' + corrFmt(sec.max) + '</td></tr>';
+    }
+    x += '</tbody></table>';
+  }
+  if (s.appreciation){
+    x += '<div class="corr-appr"><b>&#x1F4AC; Appréciation :</b> '
+       + String(s.appreciation).replace(/</g,"&lt;") + '</div>';
+  }
+  x += '</div>';
+  hote.innerHTML = x;
+}
+
+/* ════════════ DÉMARRAGE ════════════ */
+function demarrer(){
+  brancherChoix();
+  brancherCoches();
+  lireIdentite();
+  controlerVerrou();
+  afficherCorrectionProf();
+  restaurerBrouillon();
+  appliquerCoches();
+  majProgression();
+  majEntetePapier();
+  calerBarreOutils();
+
+  for (var i = 0; i < CHAMPS_TXT.length; i++){
+    (function(el){
+      if (!el) return;
+      el.addEventListener("input", function(){ marquerRempli(el); majProgression(); enregistrerBientot(); });
+      el.addEventListener("blur", enregistrerBrouillon);
+    })($(CHAMPS_TXT[i]));
+  }
+  var ident = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j = 0; j < ident.length; j++){
+    $(ident[j]).addEventListener("input", function(){ majEntetePapier(); });
+    $(ident[j]).addEventListener("blur", function(){ restaurerSelonIdentite(); enregistrerBrouillon(); });
+  }
+
+  var d = new Date();
+  $("papier-date").textContent = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear();
+
+  setInterval(enregistrerBrouillon, 20000);
+  window.addEventListener("beforeunload", enregistrerBrouillon);
+  window.addEventListener("resize", calerBarreOutils);
+  document.addEventListener("confort-lecture", function(){ setTimeout(calerBarreOutils, 120); });
+  viderLaFile();
+}
+function restaurerSelonIdentite(){
+  if (copieVierge()) restaurerBrouillon();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+else demarrer();
+</script>
+
+<!-- Aménagements dys et confort de lecture : module partagé entre les capsules,
+     les réglages faits ailleurs se retrouvent ici. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+
+<!-- Lecture immersive : lit le sujet à voix haute en surlignant le texte. -->
+<script>
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in",
+  sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h2, h3, .bandeau p, .contexte div, .qlabel, .lit-cap, .lit-desc, th, td.nom, td.val, li, p"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+</body>
+</html>
