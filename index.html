@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24e</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24f</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -15064,6 +15064,28 @@ function p11x1AutoApprIfUntouched() {
     _p11x1LastAutoAppr = n;
   }
 }
+/* P11 4e — Exercice n°1 : la note validée part aussi au classeur « Evaluation P11 — Exercice n°1 »
+   (Apps Script Ex1-Report.gs, dépôt techno-p11-eau), sur la ligne de l'élève dans l'onglet de sa classe.
+   Le script refuse d'écrire sur une ligne saisie à la main et le note dans son Journal.
+   URL vide = report désactivé. Règle 4 : jamais depuis une page servie en local. */
+var P11_EX1_REPORT_URL = "";
+var P11_EX1_REPORT_SECRET = "P11-EX1-2026";
+function reporterP11Ex1(sub) {
+  if (!P11_EX1_REPORT_URL) return;
+  var hn = (location.hostname || "").toLowerCase();
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
+    try { console.warn("[p11-ex1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
+    return;
+  }
+  var corps = JSON.stringify({ secret: P11_EX1_REPORT_SECRET, classe: sub.ecls || "", eleve: sub.ename || "",
+                               pts: sub.adjustedPts || {}, note: p11x1Fmt(sub.adjustedScore), bareme: sub.bareme,
+                               appreciation: sub.appreciation || "" });
+  fetch(P11_EX1_REPORT_URL, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
+    if (o && o.ok && o.statut === "manuel") toast("⚠️ Classeur de notes : ligne saisie à la main, report refusé (voir le Journal)");
+    else if (o && o.ok) toast("📊 Note reportée au classeur de notes" + (o.statut === "ajoute" ? " (élève ajouté : nom à vérifier)" : ""));
+    else toast("⚠️ Classeur de notes : report refusé (" + (o && o.erreur || "?") + ")");
+  }).catch(function () { toast("⚠️ Classeur de notes : report impossible (réseau ?). Revalider plus tard."); });
+}
 function saveP11Ex1Adj(sid) {
   var pts = p11x1ReadAdj();
   var bs = document.getElementById("p11x1-bareme");
@@ -15085,6 +15107,7 @@ function saveP11Ex1Adj(sid) {
   subs[idx].score         = note;
   subs[idx].qcmTot        = bareme;
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  reporterP11Ex1(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
   if (ta) ta.value = apprTxt;
