@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24h</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24i</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -15071,29 +15071,62 @@ function p11x1AutoApprIfUntouched() {
    URL vide = report désactivé. Règle 4 : jamais depuis une page servie en local. */
 var P11_EX1_REPORT_URL = "https://script.google.com/macros/s/AKfycbzFN9T1Hpm9aH0qibzHw3WdhyaYfShzvXVNagK4fHhhdqsTMoH_7A2okaRoKSuaTW1i/exec";
 var P11_EX1_REPORT_SECRET = "P11-EX1-2026";
-function reporterP11Ex1(sub) {
-  if (!P11_EX1_REPORT_URL) return;
+/* Un envoi = une promesse { ok, statut | erreur }. Google répond parfois par une page d'erreur
+   (script occupé) : jusqu'à 3 essais espacés avant d'abandonner. */
+function envoyerP11Ex1(sub) {
+  if (!P11_EX1_REPORT_URL) return Promise.resolve({ ok: false, erreur: "URL absente" });
   var hn = (location.hostname || "").toLowerCase();
   if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
     try { console.warn("[p11-ex1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
-    return;
+    return Promise.resolve({ ok: false, erreur: "page locale" });
   }
   var corps = JSON.stringify({ secret: P11_EX1_REPORT_SECRET, classe: sub.ecls || "", eleve: sub.ename || "",
                                pts: sub.adjustedPts || {}, note: p11x1Fmt(sub.adjustedScore), bareme: sub.bareme,
                                appreciation: sub.appreciation || "" });
-  fetch(P11_EX1_REPORT_URL, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
+  function essai(n) {
+    return fetch(P11_EX1_REPORT_URL, { method: "POST", body: corps })
+      .then(function (r) { return r.json(); })
+      .catch(function (e) {
+        if (n >= 3) return { ok: false, erreur: "réseau" };
+        return new Promise(function (ok) { setTimeout(ok, 3000 * n); }).then(function () { return essai(n + 1); });
+      });
+  }
+  return essai(1);
+}
+function reporterP11Ex1(sub) {
+  if (!P11_EX1_REPORT_URL) return;
+  envoyerP11Ex1(sub).then(function (o) {
+    if (o && o.erreur === "page locale") return;
     if (o && o.ok && o.statut === "manuel") toast("⚠️ Classeur de notes : ligne saisie à la main, report refusé (voir le Journal)");
     else if (o && o.ok) toast("📊 Note reportée au classeur de notes" + (o.statut === "ajoute" ? " (élève ajouté : nom à vérifier)" : ""));
-    else toast("⚠️ Classeur de notes : report refusé (" + (o && o.erreur || "?") + ")");
-  }).catch(function () { toast("⚠️ Classeur de notes : report impossible (réseau ?). Revalider plus tard."); });
+    else toast("⚠️ Classeur de notes : report impossible (" + (o && o.erreur || "?") + "). Revalider plus tard.");
+  });
 }
-/* Import des copies validées avant le branchement du classeur : une copie toutes les 1,5 s. */
+/* Import des copies validées : une copie après l'autre (on attend la réponse du classeur),
+   puis un bilan qui nomme les élèves non reportés. */
 function reporterToutP11Ex1() {
   var l = getSubs().filter(function (s) { return s.cap === "p11-ex1" && s.status === "validated" && s.adjustedScore !== undefined; });
   if (!l.length) { toast("Aucune copie validée de l'Exercice n°1"); return; }
-  if (!confirm(l.length + " copie(s) validée(s) à reporter au classeur de notes. Laisser la page ouverte environ " + Math.ceil(l.length * 1.5) + " s. Continuer ?")) return;
-  l.forEach(function (s, i) { setTimeout(function () { reporterP11Ex1(s); }, i * 1500); });
-  setTimeout(function () { toast("📤 " + l.length + " copie(s) envoyée(s) — vérifier le Journal et les lignes orangées"); }, l.length * 1500 + 2000);
+  if (!confirm(l.length + " copie(s) validée(s) à reporter au classeur de notes, une par une (quelques minutes). Laisser la page ouverte. Continuer ?")) return;
+  var bilan = { note: [], ajoute: [], manuel: [], echec: [] }, i = 0;
+  function suivant() {
+    if (i >= l.length) {
+      var t = "Report terminé : " + bilan.note.length + " noté(s)";
+      if (bilan.ajoute.length) t += "\n\nAjoutés en bas d'onglet (nom à vérifier) :\n" + bilan.ajoute.join("\n");
+      if (bilan.manuel.length) t += "\n\nRefusés (ligne saisie à la main) :\n" + bilan.manuel.join("\n");
+      if (bilan.echec.length) t += "\n\nNON reportés (relancer le bouton plus tard) :\n" + bilan.echec.join("\n");
+      alert(t);
+      return;
+    }
+    var s = l[i++], nom = (s.ecls || "?") + " — " + (s.ename || "?");
+    toast("📤 Report " + i + "/" + l.length + " : " + (s.ename || ""));
+    envoyerP11Ex1(s).then(function (o) {
+      if (o && o.ok && bilan[o.statut]) bilan[o.statut].push(nom);
+      else bilan.echec.push(nom + " (" + (o && o.erreur || "?") + ")");
+      suivant();
+    });
+  }
+  suivant();
 }
 function saveP11Ex1Adj(sid) {
   var pts = p11x1ReadAdj();
