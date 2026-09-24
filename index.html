@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-23a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4282,6 +4282,7 @@ body.est-prof .prof-only{display:block}
             <option value="eau34">P11 4e &mdash; Activit&eacute;s 3 et 4</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
+            <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -4900,6 +4901,22 @@ body.est-prof .prof-only{display:block}
         Le sujet est lisible à voix haute (<strong>&laquo;&nbsp;Lecture immersive&nbsp;&raquo;</strong>) et les réponses peuvent être dictées.
       </p>
       <iframe id="eval1-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation1_eleve.html" title="P1 — Évaluation n°1 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- BÂTIMENT 5e — ÉVALUATION n°2 (code EVAL2BAT) -->
+    <div id="pg-eval2-5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Évaluation n°2 (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle notée sur 10</strong>, trois exercices : contraintes, choix d'un lit, choix d'un isolant.
+        La copie part au tableau de bord <strong>pré-corrigée</strong>. Pense à <strong>armer la capsule</strong> (onglet Verrous)
+        avant la séance : chaque copie rendue sera alors verrouillée dès son envoi.
+      </p>
+      <iframe id="eval2-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation2_eleve.html" title="P1 — Évaluation n°2 (5e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -5844,6 +5861,7 @@ var SEQUENCES_DEF = [
   {id:"batiment5e-cor", ordre:11, niveau:"5ème", titre:"P1 — Corrigé Aménagement d'un bâtiment", desc:"Corrigé détaillé et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"CORBAT26", open:true},
   {id:"batiment5e-syn", ordre:12, niveau:"5ème", titre:"P1 — Synthèse Aménager un bâtiment", desc:"La synthèse à conquérir : un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète.", couleur:"#2E75B6", code:"SYNBAT26", open:true},
   {id:"eval1-5e", ordre:13, niveau:"5ème", titre:"P1 — Évaluation n°1", desc:"Objet naturel / technique, besoin, fonction d'usage et fonction d'estime. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"EVAL1BAT", open:true},
+  {id:"eval2-5e", ordre:14, niveau:"5ème", titre:"P1 — Évaluation n°2", desc:"Contraintes d'un cahier des charges, choix d'un mobilier, choix d'un isolant. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"EVAL2BAT", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"RES26", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"FIL26", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"CORFIL26", open:true},
@@ -6267,6 +6285,13 @@ function goPage(pid) {
     var evIfr = document.getElementById("eval1-5e-frame");
     if (evIfr) evIfr.src = evIfr.getAttribute("data-src");
   }
+  if (pid === "pg-eval2-5e") {
+    try {
+      if (user) localStorage.setItem("batiment5e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var ev2Ifr = document.getElementById("eval2-5e-frame");
+    if (ev2Ifr) ev2Ifr.src = ev2Ifr.getAttribute("data-src");
+  }
   if (pid === "pg-batiment5e-syn") {
     // Même identité que l'activité : elle ne sert qu'à l'en-tête de la feuille imprimée.
     try {
@@ -6637,7 +6662,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
-        } else if (s.id === "eval1-5e") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -6682,6 +6707,7 @@ function renderDash() {
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
+      else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -6747,6 +6773,7 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
+    else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -8119,6 +8146,182 @@ var EVALUATIONS = {
     }
   },
 
+  /* P1 5e — Évaluation n°2 : contraintes, solution de mobilier, isolant.
+     Exercice 3 : cases à cocher, correction certaine. Exercices 1 et 2 :
+     repérage de mots-clés, indicatif — le professeur ajuste. */
+  "eval2-5e": {
+    titre: "P1 5e — Évaluation n°2",
+    total: 10,
+    sections: [
+      { cle: "cc",  label: "① Contraintes d'un cahier des charges", max: 5 },
+      { cle: "mob", label: "② Solution technique de mobilier",      max: 2 },
+      { cle: "iso", label: "③ Matériau isolant",                    max: 3, compact: true }
+    ],
+
+    corriger: function (f) {
+      f = f || {};
+      var pts = { cc: 0, mob: 0, iso: 0 };
+      var detail = [];
+      function etat(v, p, max) { return v ? (p >= max ? "ok" : p > 0 ? "partiel" : "ko") : "vide"; }
+
+      /* ── 1.1 Définition : « imposée » (1 pt) + « par qui / limite les choix » (1 pt) ── */
+      var d = f["e1-def"] || "", p11 = 0, n11 = [];
+      var mA = evalMot(d, ["impos", "oblig", "exig", "respect", "condition", "demande", "il faut", "doit"]);
+      if (mA) { p11 += mA; if (mA < 1) n11.push("orthographe fautive : demi-point"); }
+      else n11.push("l'idée d'une condition imposée, à respecter, n'est pas repérée");
+      var mB = evalMot(d, ["limit", "restrein", "empech", "client", "entreprise", "collectivit",
+                           "reglementation", "la loi", "les lois", "une loi", "concepteur"]);
+      if (mB) { p11 += mB; if (mB < 1) n11.push("orthographe fautive : demi-point"); }
+      else n11.push("ni qui l'impose (client, réglementation…), ni qu'elle limite les choix du concepteur");
+      pts.cc += p11;
+      detail.push({ sec: "cc", label: "1.1 Qu'est-ce qu'une contrainte ?", rep: d,
+                    attendu: "Une demande ou une condition imposée par le client, l'entreprise, la collectivité ou la réglementation. Elle limite les choix du concepteur.",
+                    etat: etat(d, p11, 2), pts: p11, max: 2, remarque: d ? n11.join(" · ") : "" });
+
+      /* ── 1.2 Trois lignes : type reconnu (0,5) + exemple cohérent avec ce type (0,5) ── */
+      var TYPES = [
+        { nom: "technique", exemple: "la solidité", t: ["techni", "technique"],
+          ex: ["solid", "resist", "robust", "dimension", "taille", "poids", "lourd", "fonctionn", "materiau",
+               "stable", "charge", "mesur", "surface", "hauteur", "largeur", "longueur", "metre"] },
+        { nom: "réglementaire", exemple: "les normes", t: ["reglement", "reglementaire", "legal", "legisl", "norme", "juridi"],
+          ex: ["norme", "la loi", "une loi", "les lois", "regle", "reglement", "permis", "pmr", "accessib",
+               "handicap", "autoris", "obligat", "interdi"] },
+        { nom: "environnementale", exemple: "des matériaux recyclables", t: ["environnement", "environnementale", "ecolog", "ecologique"],
+          ex: ["environnement", "recycl", "pollu", "ecolog", "energ", "isol", "carbone", "dechet", "durable",
+               "nature", "planete", "biodegrad", "renouvel", "consomm"] },
+        { nom: "sécuritaire", exemple: "la protection des biens et des personnes", t: ["securit", "securitaire", "securite"],
+          ex: ["protection", "proteg", "secur", "incendie", "bless", "danger", "accident", "personnes", "biens",
+               "alarme", "secours", "extincteur", "chute", "garde-corps"] },
+        { nom: "esthétique", exemple: "la forme, la couleur", t: ["esthet", "esthetique"],
+          ex: ["forme", "couleur", "beau", "belle", "joli", "apparence", "design", "style", "look", "decor",
+               "aspect", "harmon"] },
+        { nom: "économique", exemple: "le budget", t: ["econom", "economique", "financ", "financiere", "budget"],
+          ex: ["budget", "prix", "cout", "argent", "cher", "euro", "€", "depense", "financ", "econom",
+               "moins de", "pas plus de"] },
+        { nom: "temporelle", exemple: "le délai", t: ["tempor", "temporelle", "delai", "temps"],
+          ex: ["delai", "temps", "date", "duree", "jour", "semaine", "mois", "annee", "heure", "avant", "termin",
+               "livr", "rapide", "vite", "calendrier", "planning"] }
+      ];
+      function typeDe(txt) {
+        var meilleur = null, m = 0;
+        for (var i = 0; i < TYPES.length; i++) {
+          var s = evalMot(txt, TYPES[i].t);
+          if (s > m) { m = s; meilleur = TYPES[i]; }
+        }
+        return meilleur ? { type: meilleur, m: m } : null;
+      }
+      function typeDeLExemple(txt, sauf) {
+        for (var i = 0; i < TYPES.length; i++)
+          if (TYPES[i] !== sauf && evalMot(txt, TYPES[i].ex) === 1) return TYPES[i];
+        return null;
+      }
+      var listeTypes = "technique, réglementaire, environnementale, sécuritaire, esthétique, économique ou temporelle";
+      var vus = {};
+      for (var r = 1; r <= 3; r++) {
+        var ty = f["e1-t" + r] || "", ex = f["e1-x" + r] || "", pr = 0, rq = [];
+        var reco = ty ? typeDe(ty) : null;
+        if (reco && vus[reco.type.nom]) {
+          rq.push("même type qu'une ligne précédente : trois types différents sont attendus");
+        } else if (reco) {
+          vus[reco.type.nom] = 1;
+          pr += 0.5 * reco.m;
+          rq.push("type reconnu : contrainte " + reco.type.nom + (reco.m < 1 ? " (mal orthographié : demi-point)" : ""));
+          var mx = evalMot(ex, reco.type.ex);
+          if (mx) { pr += 0.5 * mx; if (mx < 1) rq.push("exemple mal orthographié : demi-point"); }
+          else if (ex) {
+            var autre = typeDeLExemple(ex, reco.type);
+            rq.push(autre ? "l'exemple évoque plutôt une contrainte " + autre.nom
+                          : "exemple non relié au type par la machine : à vérifier");
+          } else rq.push("exemple manquant");
+        } else if (ty || ex) {
+          rq.push("type de contrainte non reconnu : à vérifier");
+        }
+        pr = Math.round(pr * 100) / 100;
+        if (pr >= 1) rq = [];               /* ligne juste : rien à signaler */
+        pts.cc += pr;
+        detail.push({ sec: "cc", label: "1.2 Ligne " + r + " — type et exemple",
+                      rep: (ty || ex) ? ("Type : " + (ty || "—") + "\nExemple : " + (ex || "—")) : "",
+                      attendu: reco ? ("Contrainte " + reco.type.nom + " — par exemple : " + reco.type.exemple + ".")
+                                    : ("Un type (" + listeTypes + ") et un exemple qui lui correspond."),
+                      etat: etat(ty || ex, pr, 1), pts: pr, max: 1, remarque: (ty || ex) ? rq.join(" · ") : "" });
+      }
+
+      /* ── 2 Lit : choix du d (1 pt) + justification, 0,25 par idée (1 pt) ── */
+      var NOMS_LITS = { a: "a) Lit simple", b: "b) Lit avec tiroirs de rangement",
+                        c: "c) Lit avec matelas supplémentaire", d: "d) Lit mezzanine avec bureau intégré" };
+      var lit = f["e2-lit"] || "", pl = lit === "d" ? 1 : 0;
+      pts.mob += pl;
+      detail.push({ sec: "mob", label: "2.1 Lit choisi", rep: lit ? (NOMS_LITS[lit] || lit) : "",
+                    attendu: NOMS_LITS.d, etat: lit ? (pl ? "ok" : "ko") : "vide", pts: pl, max: 1 });
+      var just = f["e2-just"] || "", pj = 0, manquent = [];
+      var IDEES = [
+        { nom: "dormir", mots: ["dormir", "coucher", "couchage", "se reposer", "repos", "sommeil", "nuit"] },
+        { nom: "travailler (bureau)", mots: ["travail", "bureau", "devoir", "etudi", "reviser", "ordinateur", "ecrire"] },
+        { nom: "ranger (étagères)", mots: ["rang", "etagere", "placard", "armoire", "stock", "affaires"] },
+        { nom: "gagner de la place", mots: ["espace", "place", "petit", "reduit", "gagn", "optimis", "surface",
+                                            "encombr", "hauteur", "en haut", "au dessus", "au-dessus", "superpos"] }
+      ];
+      for (var k = 0; k < IDEES.length; k++) {
+        var mi = evalMot(just, IDEES[k].mots);
+        if (mi) pj += 0.25 * mi; else manquent.push(IDEES[k].nom);
+      }
+      var rqj = [];
+      if (manquent.length && just) rqj.push("idée non repérée : " + manquent.join(", "));
+      if (lit !== "d" && pj > 0.5) { pj = 0.5; rqj.push("justification d'un autre lit que le d : plafonnée à 0,5"); }
+      pj = Math.min(1, Math.round(pj * 100) / 100);
+      pts.mob += pj;
+      detail.push({ sec: "mob", label: "2.1 Justification", rep: just,
+                    attendu: "Le lit mezzanine permet de dormir (lit), de travailler (bureau) et de ranger (étagères) dans un espace réduit.",
+                    etat: etat(just, pj, 1), pts: pj, max: 1, remarque: rqj.join(" · ") });
+
+      /* ── 3.1 Quatre matériaux les plus isolants : 0,5 par bon matériau coché ── */
+      var MATS = [
+        ["verre", "Laine de verre", "0,030", true], ["roche", "Laine de roche", "0,034", false],
+        ["polystyrene", "Polystyrène", "0,030", true], ["xps", "XPS", "0,029", true],
+        ["pu", "Polyuréthane", "0,021", true], ["bois", "Fibre de bois", "0,038", false],
+        ["mouton", "Laine de mouton", "0,039", false], ["textile", "Textiles recyclés", "0,039", false]
+      ];
+      var coches = String(f["e3-1"] || "").split(",").filter(function (x) { return x; });
+      for (var m = 0; m < MATS.length; m++) {
+        var c = coches.indexOf(MATS[m][0]) >= 0, attendu = MATS[m][3];
+        var pm = (c && attendu) ? 0.5 : 0;
+        pts.iso += pm;
+        detail.push({ sec: "iso", label: "3.1 " + MATS[m][1] + " (" + MATS[m][2] + ")",
+                      rep: coches.length ? (c ? "cochée" : "non cochée") : "",
+                      attendu: attendu ? "à cocher" : "à laisser", sur: true,
+                      etat: coches.length ? (c === attendu ? "ok" : "ko") : "vide", pts: pm, max: attendu ? 0.5 : 0 });
+      }
+
+      /* ── 3.2 Meilleur compromis épaisseur / prix : la laine de verre (1 pt) ── */
+      var NOMS32 = { textile: "Textile recyclé", liege: "Liège expansé", roche: "Laine de roche", xps: "XPS",
+                     bois: "Fibre de bois", verre: "Laine de verre", polystyrene: "Polystyrène", pu: "Polyuréthane" };
+      var c32 = f["e3-2"] || "", p32 = c32 === "verre" ? 1 : 0;
+      pts.iso += p32;
+      detail.push({ sec: "iso", label: "3.2 Meilleur compromis (moins épais et moins cher)",
+                    rep: c32 ? (NOMS32[c32] || c32) : "", attendu: "Laine de verre (120 mm, 11,16 €)",
+                    etat: c32 ? (p32 ? "ok" : "ko") : "vide", pts: p32, max: 1 });
+
+      pts.cc = Math.round(pts.cc * 100) / 100;
+      pts.mob = Math.round(pts.mob * 100) / 100;
+      pts.iso = Math.round(pts.iso * 100) / 100;
+      return { points: pts, detail: detail };
+    },
+
+    appreciation: function (pts, note) {
+      var mention = note >= 9 ? "Excellent travail" : note >= 7.5 ? "Très bon travail"
+                  : note >= 6 ? "Bon travail" : note >= 4 ? "Travail à consolider"
+                  : "Des progrès sont nécessaires";
+      var faibles = [];
+      if ((pts.cc || 0) < 3.5)  faibles.push("la notion de contrainte et ses différents types");
+      if ((pts.mob || 0) < 1.5) faibles.push("la justification d'une solution technique par les contraintes");
+      if ((pts.iso || 0) < 2)   faibles.push("la lecture d'un tableau de caractéristiques (conductivité, épaisseur, prix)");
+      var txt = mention + " — " + fmtPts(note) + "/10. ";
+      txt += faibles.length ? ("À revoir : " + faibles.join(", ") + ".")
+                            : "Les notions de la séquence sont maîtrisées.";
+      return txt;
+    }
+  },
+
   /* Aménager un bâtiment — évaluation NOTÉE À LA MAIN : toutes les réponses sont
      rédigées, aucune n'est vérifiable par comparaison. Le cadre sert ici à donner
      au professeur un seul écran (points par partie, appréciation, note), pas une
@@ -8245,8 +8448,9 @@ function buildEvalModalHTML(sub) {
       '<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--td)">' +
       fmtPts(obtenu) + '/' + fmtPts(sec.max) + ' proposés</span></div>';
 
-    /* L'exercice 1 tient dans une grille compacte : dix lignes d'une ligne. */
-    if (sec.cle === "ex1") {
+    /* Cases à cocher (exercice 1 de l'éval. n°1, section « compact ») : une grille
+       compacte, une réponse par ligne. */
+    if (sec.cle === "ex1" || sec.compact) {
       h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
       for (var b = 0; b < lignes.length; b++) {
         var L = lignes[b], D = deco[L.etat];
@@ -9069,12 +9273,13 @@ var FICHE_TITRES = {
   "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4",
-  "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1"
+  "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
+  "eval2-5e":"P1 5e — Évaluation n°2"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
-       || sub.cap === "batiment5e" || sub.cap === "eval1-5e") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
