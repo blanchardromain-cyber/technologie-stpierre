@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24d</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4280,6 +4280,7 @@ body.est-prof .prof-only{display:block}
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
             <option value="eau4e">P11 4e &mdash; Activit&eacute;s 1 et 2</option>
             <option value="eau34">P11 4e &mdash; Activit&eacute;s 3 et 4</option>
+            <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
@@ -4920,6 +4921,26 @@ body.est-prof .prof-only{display:block}
         avant la séance : chaque copie rendue sera alors verrouillée dès son envoi.
       </p>
       <iframe id="eval2-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation2_eleve.html" title="P1 — Évaluation n°2 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — ÉVALUATION n°1 (code EVALEAU1) -->
+    <div id="pg-p11-eval1" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Évaluation n°1 : le robot explorateur (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle notée sur 20</strong> : le besoin, le cahier des charges et le coût d'une fuite au tableur.
+        Le document technique s'ouvre avec le bouton en haut de la capsule. Envoie ta copie au professeur à la fin.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Version numérique complète, pour les élèves qui ne passent pas l'épreuve papier (aménagements dys, absents).
+        La copie arrive <strong>pré-corrigée</strong> au tableau de bord (réponses rédigées : proposition par mots-clés, à relire).
+        Pense à <strong>armer la capsule</strong> (onglet Verrous) avant la séance.
+      </p>
+      <iframe id="p11-eval1-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation1_eleve.html" title="P11 — Évaluation n°1 (4e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -5874,6 +5895,7 @@ var SEQUENCES_DEF = [
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"EAU34", open:true},
   {id:"eau34-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Activités 3 et 4", desc:"Corrigé détaillé des activités 3 et 4. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU34", open:true},
   {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"SYNEAU26", open:true},
+  {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"EVALEAU1", open:true},
   {id:"p12", ordre:120, niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
   {id:"p12-cor-a1", ordre:121, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
   {id:"p12-act2", ordre:122, niveau:"4ème", titre:"P12 &mdash; Technologie &amp; Alimentation &mdash; Activité 2", desc:"Comment les inventions participent-elles à l’évolution des objets ?", couleur:"var(--or)", code:"ACT226", open:true},
@@ -6295,6 +6317,13 @@ function goPage(pid) {
     var ev2Ifr = document.getElementById("eval2-5e-frame");
     if (ev2Ifr) ev2Ifr.src = ev2Ifr.getAttribute("data-src");
   }
+  if (pid === "pg-p11-eval1") {
+    try {
+      if (user) localStorage.setItem("p11eval1_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var p11e1Ifr = document.getElementById("p11-eval1-frame");
+    if (p11e1Ifr) p11e1Ifr.src = p11e1Ifr.getAttribute("data-src");
+  }
   if (pid === "pg-batiment5e-syn") {
     // Même identité que l'activité : elle ne sert qu'à l'en-tête de la feuille imprimée.
     try {
@@ -6665,7 +6694,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "p11-eval1") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -6711,6 +6740,7 @@ function renderDash() {
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
+      else if (s.id === "p11-eval1") clickAction = "onclick=\"goPage('pg-p11-eval1')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
@@ -6777,6 +6807,7 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
+    else if (pendingSeq === "p11-eval1") goPage("pg-p11-eval1");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -8325,6 +8356,51 @@ var EVALUATIONS = {
     }
   },
 
+  /* P11 4e — Évaluation n°1. La capsule corrige elle-même (même moteur que la page du
+     tableur, mots-clés à tolérance orthographique pour les réponses rédigées) et transmet
+     le détail dans fields.corr : [question, item, points bruts, max brut, réponse, attendu].
+     Le barème brut est sur 40 ; le site note sur 20, d'où la division par 2. */
+  "p11-eval1": {
+    titre: "P11 4e — Évaluation n°1",
+    total: 20,
+    sections: [
+      { cle: "Q1", label: "Q1 — QQOQCP",                      max: 2 },
+      { cle: "Q2", label: "Q2 — Bête à cornes et besoin",     max: 2 },
+      { cle: "Q3", label: "Q3 — Indice de protection IP",     max: 2 },
+      { cle: "Q4", label: "Q4 — Pieuvre : FP ou FC",          max: 2 },
+      { cle: "Q5", label: "Q5 — Cahier des charges",          max: 4 },
+      { cle: "Q6", label: "Q6 — Conformité du prototype",     max: 2 },
+      { cle: "C1", label: "C1 — Tableur : les données",       max: 1, compact: true },
+      { cle: "C2", label: "C2 — Tableur : les formules",      max: 3, compact: true },
+      { cle: "C3", label: "C3 — Tableur : le coût de la fuite", max: 2, compact: true }
+    ],
+    corriger: function (f) {
+      f = f || {};
+      var pts = { Q1: 0, Q2: 0, Q3: 0, Q4: 0, Q5: 0, Q6: 0, C1: 0, C2: 0, C3: 0 }, detail = [], lignes = [];
+      try { lignes = JSON.parse(f.corr || "[]"); } catch (e) { lignes = []; }
+      for (var i = 0; i < lignes.length; i++) {
+        var l = lignes[i], p = (Number(l[2]) || 0) / 2, max = (Number(l[3]) || 0) / 2, rep = String(l[4] == null ? "" : l[4]);
+        if (pts[l[0]] === undefined) continue;
+        pts[l[0]] += p;
+        detail.push({ sec: l[0], label: l[0] + " — " + l[1], rep: rep, attendu: l[5] || "",
+                      etat: rep ? (p >= max ? "ok" : p > 0 ? "partiel" : "ko") : "vide", pts: p, max: max,
+                      remarque: (rep && p < max && /^(Q1|Q2|Q3|Q5|Q6)$/.test(l[0])) ? "réponse rédigée : proposition par mots-clés, à relire" : "" });
+      }
+      for (var k in pts) pts[k] = Math.round(pts[k] * 100) / 100;
+      return { points: pts, detail: detail };
+    },
+    appreciation: function (pts, note) {
+      var mention = note >= 18 ? "Excellent travail" : note >= 15 ? "Très bon travail"
+                  : note >= 12 ? "Bon travail" : note >= 8 ? "Travail à consolider" : "Des progrès sont nécessaires";
+      var faibles = [];
+      if ((pts.Q1 || 0) + (pts.Q2 || 0) + (pts.Q3 || 0) < 3.6) faibles.push("l'analyse du besoin (QQOQCP, bête à cornes, indice IP)");
+      if ((pts.Q4 || 0) + (pts.Q5 || 0) + (pts.Q6 || 0) < 4.8) faibles.push("la lecture et l'écriture d'un cahier des charges");
+      if ((pts.C1 || 0) + (pts.C2 || 0) + (pts.C3 || 0) < 3.6) faibles.push("les formules du tableur");
+      return mention + " — " + fmtPts(note) + "/20. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "."
+                                                                     : "Les notions de la première partie de P11 sont maîtrisées.");
+    }
+  },
+
   /* Aménager un bâtiment — évaluation NOTÉE À LA MAIN : toutes les réponses sont
      rédigées, aucune n'est vérifiable par comparaison. Le cadre sert ici à donner
      au professeur un seul écran (points par partie, appréciation, note), pas une
@@ -9277,7 +9353,7 @@ var FICHE_TITRES = {
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
-  "eval2-5e":"P1 5e — Évaluation n°2"
+  "eval2-5e":"P1 5e — Évaluation n°2", "p11-eval1":"P11 4e — Évaluation n°1"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
