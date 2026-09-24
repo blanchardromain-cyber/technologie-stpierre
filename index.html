@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24i</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24j</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9260,7 +9260,16 @@ function openModal(sid) {
   document.getElementById("modal").classList.remove("h");
 }
 function closeModal() { document.getElementById("modal").classList.add("h"); modalId = null; }
-function fromModal(st) { if (modalId !== null) updSub(modalId, st); closeModal(); }
+function fromModal(st) {
+  if (modalId !== null) {
+    updSub(modalId, st);
+    if (st === "validated") {
+      var sv = getSubs().filter(function (x) { return x.id == modalId; })[0];
+      if (sv && sv.cap === "p11-ex1") reporterP11Ex1(sv);
+    }
+  }
+  closeModal();
+}
 
 function printModalSub() {
   if (modalId === null) return;
@@ -15080,9 +15089,14 @@ function envoyerP11Ex1(sub) {
     try { console.warn("[p11-ex1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return Promise.resolve({ ok: false, erreur: "page locale" });
   }
+  /* Copie validée par le bouton « Valider » du bas du modal : aucune note enregistrée,
+     on reporte la correction automatique, comme l'affiche le tableau de bord. */
+  var bar = Number(sub.bareme) || 20;
+  var pts = sub.adjustedPts || scoreP11Ex1BySection(sub.fields || {});
+  var note = sub.adjustedScore !== undefined ? sub.adjustedScore : p11x1Convert(p11x1TotalBrut(pts), bar);
   var corps = JSON.stringify({ secret: P11_EX1_REPORT_SECRET, classe: sub.ecls || "", eleve: sub.ename || "",
-                               pts: sub.adjustedPts || {}, note: p11x1Fmt(sub.adjustedScore), bareme: sub.bareme,
-                               appreciation: sub.appreciation || "" });
+                               pts: pts, note: p11x1Fmt(note), bareme: bar,
+                               appreciation: sub.appreciation || autoAppreciationP11Ex1(note, bar, pts) });
   function essai(n) {
     return fetch(P11_EX1_REPORT_URL, { method: "POST", body: corps })
       .then(function (r) { return r.json(); })
@@ -15105,7 +15119,7 @@ function reporterP11Ex1(sub) {
 /* Import des copies validées : une copie après l'autre (on attend la réponse du classeur),
    puis un bilan qui nomme les élèves non reportés. */
 function reporterToutP11Ex1() {
-  var l = getSubs().filter(function (s) { return s.cap === "p11-ex1" && s.status === "validated" && s.adjustedScore !== undefined; });
+  var l = getSubs().filter(function (s) { return s.cap === "p11-ex1" && s.status === "validated"; });
   if (!l.length) { toast("Aucune copie validée de l'Exercice n°1"); return; }
   if (!confirm(l.length + " copie(s) validée(s) à reporter au classeur de notes, une par une (quelques minutes). Laisser la page ouverte. Continuer ?")) return;
   var bilan = { note: [], ajoute: [], manuel: [], echec: [] }, i = 0;
