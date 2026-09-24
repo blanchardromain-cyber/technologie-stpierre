@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Évaluation n°1 · Le robot explorateur et le coût de l'eau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1F3864;--blue:#2E75B6;--light:#DEEAF6;--lighter:#EAF1FA;--ok:#1E8E5A;--ko:#C0392B;--grey:#6b7280;
+        --creme:#FFF8E7;--vert:#EEF7F1;--form:#FFFDF5;--gris:#E7E9EE;--line:#cbd6e4}
+  *{box-sizing:border-box}
+  html{scroll-padding-top:70px}
+  body{font-family:'Inter',Arial,sans-serif;margin:0;background:#f4f7fb;color:#1f2430;line-height:1.6;font-size:16px;
+       font-variant-numeric:tabular-nums}
+  /* barre d'outils : les modules dys y posent leurs boutons */
+  .pbar{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid #e4ebf3;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .pbar-in{max-width:1400px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pbar-in .ttl{font-weight:800;color:var(--navy);font-size:14px;margin-right:auto}
+  .pbar-in .prog{font-size:13px;color:var(--grey)}
+  .tbtn{background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:9px;padding:6px 12px;font:600 14px 'Inter',Arial,sans-serif;cursor:pointer}
+  .tbtn:hover{background:var(--lighter)}
+  main{max-width:1400px;margin:0 auto;padding:18px 16px 60px}
+  header.band{background:var(--navy);color:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 6px 18px rgba(31,56,100,.18)}
+  header.band .k{font-size:12px;letter-spacing:.04em;color:#bcd2ee;font-weight:600}
+  header.band h1{margin:6px 0 0;font-size:23px;font-weight:800;line-height:1.3}
+  header.band p{margin:6px 0 0;color:#dce8f8;font-size:15px}
+  .card{background:#fff;border:1px solid #e4ebf3;border-radius:14px;padding:20px 22px;margin-top:18px;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .narrow{max-width:760px;margin-left:auto;margin-right:auto}
+  h2{color:var(--navy);font-size:20px;margin:0 0 4px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+     border-bottom:3px solid var(--blue);padding-bottom:6px}
+  h2 .comp{color:var(--blue);font-size:15px;font-weight:700}
+  h3{color:var(--navy);font-size:17px;margin:22px 0 8px}
+  h3 .num{color:var(--blue);margin-right:6px}
+  h3 .pts{color:var(--grey);font-size:13px;font-weight:600;margin-left:6px}
+  .consigne{margin:0 0 10px}
+  label.lbl{display:block;font-weight:600;color:var(--navy);font-size:14px;margin:12px 0 4px}
+  input[type=text],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:16px 'Inter',Arial,sans-serif;
+       background:#fff;color:#1f2430;line-height:1.5}
+  textarea{min-height:64px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,117,182,.18)}
+  input:disabled,select:disabled,textarea:disabled{background:#f3f5f8;color:#1f2430;opacity:1}
+  .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:160px}
+  .champ{display:flex;gap:6px;align-items:flex-start}.champ>input,.champ>textarea{flex:1}
+  .mic{flex:none;background:var(--lighter);border:1px solid var(--line);border-radius:9px;width:42px;height:44px;cursor:pointer;font-size:18px}
+  .mic.on{background:#fde2df;border-color:var(--ko)}
+  .rappel{background:var(--lighter);border-left:5px solid var(--blue);padding:10px 14px;border-radius:8px;font-size:15px;color:var(--navy);margin:8px 0 12px}
+  .creme{background:var(--creme);border-left-color:#E0B65C}
+  .vert{background:var(--vert);border-left-color:var(--ok)}
+  table.t{border-collapse:collapse;width:100%;font-size:15px}
+  table.t th{background:var(--blue);color:#fff;padding:8px;text-align:center;font-weight:700}
+  table.t td{border:1px solid var(--line);padding:6px 8px;vertical-align:middle}
+  table.t td.q{background:var(--lighter);color:var(--navy);font-weight:700;text-align:center;white-space:nowrap}
+  table.t td.ex{color:var(--grey);font-style:italic}
+  .tscroll{overflow-x:auto}
+  /* bête à cornes */
+  .bac{display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--navy);border-radius:12px;overflow:hidden}
+  .bac>div{padding:12px}
+  .bac .obj{grid-column:1/3;background:var(--navy);color:#fff;text-align:center;font-weight:800;letter-spacing:.05em;padding:10px}
+  .bac .but{grid-column:1/3}
+  .bac .g{border-right:1px solid var(--line)}
+  .phrase{line-height:2.6;font-size:16px}
+  .phrase input{display:inline-block;width:auto;min-width:210px;max-width:100%;padding:6px 10px}
+  .choix{display:flex;gap:18px;margin:6px 0}
+  .choix label{display:flex;gap:6px;align-items:center;font-weight:600;cursor:pointer}
+  .choix input{width:20px;height:20px}
+  /* document technique */
+  .layout{display:grid;grid-template-columns:minmax(360px,42%) 1fr;gap:22px;align-items:start;margin-top:18px}
+  .layout.dt-ferme{grid-template-columns:1fr}
+  .layout.dt-ferme #dt{display:none}
+  #dt{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;margin-top:0}
+  #dt h2{font-size:17px}
+  #dt h4{color:var(--blue);margin:14px 0 6px;font-size:15px}
+  ol.dt1{list-style:none;margin:0;padding:0}
+  ol.dt1 li{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed #e4ebf3;font-size:15px}
+  ol.dt1 li b.pu{color:var(--blue);font-size:18px;flex:none;width:24px;text-align:center}
+  table.dt td,table.dt th{font-size:14px;padding:4px 7px}
+  table.dt td.k{background:var(--lighter);color:var(--navy);font-weight:700}
+  .illus{width:100%;height:auto;border-radius:10px;border:1px solid #e4ebf3;margin:4px 0 8px}
+  .dtnote{font-size:13px;color:var(--grey);font-style:italic}
+  #copie .card:first-child{margin-top:0}
+  .layout>*{min-width:0}          /* sans cela, un tableau large élargit la grille au lieu de défiler dans son cadre */
+  /* mini-tableur */
+  table.ss{border-collapse:collapse;width:100%;font-size:15px;min-width:620px}
+  table.ss th,table.ss td{border:1px solid #c4d0e0;padding:0}
+  table.ss thead th{background:var(--navy);color:#fff;text-align:center;padding:6px;font-weight:700}
+  table.ss .rh{background:var(--lighter);color:var(--navy);text-align:center;font-weight:700;width:34px}
+  table.ss td.lbl{background:#f3f7fc;color:var(--navy);font-weight:600;padding:7px 10px}
+  table.ss td.cell{position:relative;min-width:170px}
+  table.ss td.cell input{border:none;border-radius:0;width:100%;padding:8px 80px 8px 10px;background:transparent;font-size:15px}
+  table.ss td.cell input:focus{box-shadow:inset 0 0 0 2px var(--blue)}
+  table.ss td.don{background:var(--vert)} table.ss td.don input{font-weight:700;color:#13633d}
+  table.ss td.form{background:var(--form)}
+  table.ss td.ttc{background:var(--light)} table.ss td.ttc input{font-weight:800;color:var(--navy)}
+  table.ss td.fixe{background:var(--gris);color:var(--navy);font-weight:700;text-align:right;padding:7px 10px}
+  table.ss td.lien{background:var(--gris);color:var(--grey);font-style:italic;text-align:right;padding:7px 10px}
+  table.ss td.vide{background:#d9d9d9}
+  .chip{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--lighter);color:var(--navy);border-radius:6px;padding:1px 7px;font-size:13px;font-weight:700;pointer-events:none}
+  .legende{font-size:13.5px;color:var(--grey);margin-top:6px}
+  .legende span{display:inline-block;width:14px;height:14px;border:1px solid #c4d0e0;vertical-align:-2px;margin:0 4px 0 10px;border-radius:3px}
+  /* boutons, messages */
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:12px 18px;font:700 16px 'Inter',Arial,sans-serif;cursor:pointer;margin:14px 8px 0 0}
+  .btn:hover{background:#255f96}
+  .btn.sec{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+  .btn.ok{background:var(--ok)}
+  .btn:disabled{background:#9bb6d4;border-color:#9bb6d4;color:#fff;cursor:not-allowed}
+  .msg{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:15px}
+  .msg.ok{background:#e7f6ee;color:#13633d;border-left:5px solid var(--ok)}
+  .msg.ko{background:#fbeae8;color:#8e2018;border-left:5px solid var(--ko)}
+  .msg.info{background:var(--lighter);color:var(--navy);border-left:5px solid var(--blue)}
+  .cache{display:none!important}
+  /* résultat */
+  .note{font-size:46px;font-weight:800;color:var(--navy);line-height:1.1}
+  .echelles button{background:#fff;border:2px solid var(--blue);color:var(--blue);border-radius:8px;padding:5px 12px;font:700 14px 'Inter',Arial,sans-serif;cursor:pointer;margin-right:6px}
+  .echelles button.act{background:var(--blue);color:#fff}
+  .niv{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700;color:#fff}
+  table.res td,table.res th{font-size:14px}
+  table.res td.n{text-align:center;white-space:nowrap}
+  .footer{color:var(--grey);font-size:11px;text-align:center;margin-top:26px}
+  .privacy{font-size:12px;color:var(--grey);margin-top:12px;border-top:1px dashed #d6deea;padding-top:10px}
+  .prof-bandeau{background:#FDF1DC;border:1px solid #F0D089;color:#6B4A00;border-radius:10px;padding:8px 12px;font-size:14px;margin-top:12px}
+  @media (max-width:1050px){
+    .layout{grid-template-columns:1fr}
+    #dt{position:fixed;top:56px;left:8px;right:8px;bottom:8px;max-height:none;z-index:50;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+    .layout:not(.dt-ouvert) #dt{display:none}
+  }
+  @media (max-width:600px){
+    .pbar-in{padding:6px 10px;gap:6px}
+    .pbar-in .ttl{display:none}
+    .pbar-in .prog{width:100%;font-size:12px}
+    .tbtn{padding:4px 9px;font-size:13px}
+    main{padding:12px 10px 50px}
+    .card{padding:16px 14px}
+    header.band h1{font-size:20px}
+    .bac{grid-template-columns:1fr}.bac .obj,.bac .but{grid-column:1}.bac .g{border-right:none;border-bottom:1px solid var(--line)}
+  }
+  @media print{
+    .pbar,.btn,.mic,.tbtn,#gate,#ident,.no-print,.cl-regle,.cl-masque{display:none!important}
+    body{background:#fff;font-size:12px}
+    .layout{display:block}
+    #dt{display:none!important}
+    .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pbar-in">
+  <span class="ttl">P11 · Évaluation n°1</span>
+  <span class="prog" id="prog"></span>
+  <button type="button" class="tbtn cache" id="btnDT" data-nolecture>📄 Document technique</button>
+</div></div>
+
+<main>
+  <header class="band">
+    <div class="k">TECHNOLOGIE · Cycle 4 · 4ᵉ &nbsp;|&nbsp; P11 — L'eau, ressource essentielle</div>
+    <h1>Évaluation n°1 — Le besoin, le cahier des charges et le coût de l'eau</h1>
+    <p>Objet étudié : le robot explorateur de la société Robot Scan</p>
+  </header>
+
+  <!-- identité : remplie par le compte du site ; saisie seulement hors du site -->
+  <section class="card narrow cache" id="ident">
+    <h2>Qui es-tu ?</h2>
+    <div class="row">
+      <div><label class="lbl" for="nom">Nom</label><input type="text" id="nom" autocomplete="off" placeholder="MARTIN"></div>
+      <div><label class="lbl" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off" placeholder="Léa"></div>
+      <div style="max-width:170px"><label class="lbl" for="classe">Classe</label>
+        <select id="classe"><option value="" selected disabled>Choisir…</option>
+        <option>4A</option><option>4B</option><option>4C</option><option>4D</option><option>4E</option><option>4F</option><option>4G</option></select></div>
+    </div>
+    <button type="button" class="btn" id="btnStart">Commencer</button>
+    <div class="msg ko cache" id="identMsg"></div>
+  </section>
+
+  <!-- 3. l'évaluation -->
+  <div class="rappel consignes-eval">
+    <b>Consignes.</b> Tu as 50 minutes. Le document technique (DT) s'ouvre avec le bouton <b>📄 Document technique</b>,
+    en haut de la page. Tes réponses sont enregistrées au fur et à mesure. À la fin, clique sur
+    <b>Envoyer ma copie au professeur</b>.
+  </div>
+  <div class="layout cache" id="layout">
+    <aside class="card" id="dt" aria-label="Document technique">
+      <h2>Document technique <button type="button" class="tbtn" id="btnDTfermer" data-nolecture>✕ Fermer</button></h2>
+      <svg class='illus' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 340' width='900' height='340' role='img' aria-label='Robot explorateur dans une canalisation enterrée qui fuit'><title>Robot explorateur dans une canalisation enterrée qui fuit</title>
+<rect x='0' y='0' width='900' height='340' fill='#C9A66B'/>
+<circle cx='0' cy='0' r='3' fill='#B08A52'/>
+<circle cx='97' cy='53' r='3' fill='#B08A52'/>
+<circle cx='194' cy='106' r='3' fill='#B08A52'/>
+<circle cx='291' cy='159' r='3' fill='#B08A52'/>
+<circle cx='388' cy='212' r='3' fill='#B08A52'/>
+<circle cx='485' cy='265' r='3' fill='#B08A52'/>
+<circle cx='582' cy='318' r='3' fill='#B08A52'/>
+<circle cx='679' cy='31' r='3' fill='#B08A52'/>
+<circle cx='776' cy='84' r='3' fill='#B08A52'/>
+<circle cx='873' cy='137' r='3' fill='#B08A52'/>
+<circle cx='70' cy='190' r='3' fill='#B08A52'/>
+<circle cx='167' cy='243' r='3' fill='#B08A52'/>
+<circle cx='264' cy='296' r='3' fill='#B08A52'/>
+<circle cx='361' cy='9' r='3' fill='#B08A52'/>
+<circle cx='458' cy='62' r='3' fill='#B08A52'/>
+<circle cx='555' cy='115' r='3' fill='#B08A52'/>
+<circle cx='652' cy='168' r='3' fill='#B08A52'/>
+<circle cx='749' cy='221' r='3' fill='#B08A52'/>
+<circle cx='846' cy='274' r='3' fill='#B08A52'/>
+<circle cx='43' cy='327' r='3' fill='#B08A52'/>
+<circle cx='140' cy='40' r='3' fill='#B08A52'/>
+<circle cx='237' cy='93' r='3' fill='#B08A52'/>
+<circle cx='334' cy='146' r='3' fill='#B08A52'/>
+<circle cx='431' cy='199' r='3' fill='#B08A52'/>
+<circle cx='528' cy='252' r='3' fill='#B08A52'/>
+<circle cx='625' cy='305' r='3' fill='#B08A52'/>
+<circle cx='722' cy='18' r='3' fill='#B08A52'/>
+<circle cx='819' cy='71' r='3' fill='#B08A52'/>
+<circle cx='16' cy='124' r='3' fill='#B08A52'/>
+<circle cx='113' cy='177' r='3' fill='#B08A52'/>
+<circle cx='210' cy='230' r='3' fill='#B08A52'/>
+<circle cx='307' cy='283' r='3' fill='#B08A52'/>
+<circle cx='404' cy='336' r='3' fill='#B08A52'/>
+<circle cx='501' cy='49' r='3' fill='#B08A52'/>
+<circle cx='598' cy='102' r='3' fill='#B08A52'/>
+<circle cx='695' cy='155' r='3' fill='#B08A52'/>
+<circle cx='792' cy='208' r='3' fill='#B08A52'/>
+<circle cx='889' cy='261' r='3' fill='#B08A52'/>
+<circle cx='86' cy='314' r='3' fill='#B08A52'/>
+<circle cx='183' cy='27' r='3' fill='#B08A52'/>
+<circle cx='280' cy='80' r='3' fill='#B08A52'/>
+<circle cx='377' cy='133' r='3' fill='#B08A52'/>
+<circle cx='474' cy='186' r='3' fill='#B08A52'/>
+<circle cx='571' cy='239' r='3' fill='#B08A52'/>
+<circle cx='668' cy='292' r='3' fill='#B08A52'/>
+<circle cx='765' cy='5' r='3' fill='#B08A52'/>
+<circle cx='862' cy='58' r='3' fill='#B08A52'/>
+<circle cx='59' cy='111' r='3' fill='#B08A52'/>
+<circle cx='156' cy='164' r='3' fill='#B08A52'/>
+<circle cx='253' cy='217' r='3' fill='#B08A52'/>
+<circle cx='350' cy='270' r='3' fill='#B08A52'/>
+<circle cx='447' cy='323' r='3' fill='#B08A52'/>
+<circle cx='544' cy='36' r='3' fill='#B08A52'/>
+<circle cx='641' cy='89' r='3' fill='#B08A52'/>
+<circle cx='738' cy='142' r='3' fill='#B08A52'/>
+<circle cx='835' cy='195' r='3' fill='#B08A52'/>
+<circle cx='32' cy='248' r='3' fill='#B08A52'/>
+<circle cx='129' cy='301' r='3' fill='#B08A52'/>
+<circle cx='226' cy='14' r='3' fill='#B08A52'/>
+<circle cx='323' cy='67' r='3' fill='#B08A52'/>
+<rect x='0' y='0' width='900' height='34' fill='#8FBF6A'/>
+<rect x='0' y='70' width='900' height='230' fill='#9AA7B5'/>
+<rect x='0' y='88' width='900' height='194' fill='#EAF1FA'/>
+<rect x='0' y='262' width='900' height='20' fill='#4FA3E0' opacity='0.35'/>
+<path d='M640,70 l10,10 l-8,6 l12,12' stroke='#3D4A5C' stroke-width='4' fill='none'/>
+<path d='M628,40 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M640,54 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M652,40 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M664,54 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/>
+<path d='M652,98 q4,30 -6,60' stroke='#4FA3E0' stroke-width='6' fill='none' stroke-linecap='round'/>
+<g transform='translate(250,262) scale(1.0)'>
+<polygon points='262,-86 420,-140 420,-20' fill='#FFE89A' opacity='0.55'/>
+<rect x='10' y='-92' width='240' height='56' rx='12' fill='#2E75B6' stroke='#1F3864' stroke-width='3'/>
+<rect x='24' y='-82' width='96' height='34' rx='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<text x='72' y='-59' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>12 V</text>
+<rect x='196' y='-128' width='14' height='40' fill='#1F3864'/>
+<rect x='176' y='-158' width='70' height='36' rx='8' fill='#1F3864'/>
+<circle cx='238' cy='-140' r='13' fill='#0B1733' stroke='#DEEAF6' stroke-width='3'/>
+<circle cx='242' cy='-144' r='4' fill='#9CC3E8'/>
+<rect x='246' y='-90' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<rect x='246' y='-74' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<circle cx='255' cy='-50' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<circle cx='255' cy='-36' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<line x1='30' y1='-92' x2='22' y2='-150' stroke='#1F3864' stroke-width='4' stroke-linecap='round'/>
+<circle cx='22' cy='-153' r='6' fill='#1F3864'/>
+<circle cx='48' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='48' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='108' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='108' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='168' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='168' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='222' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='222' cy='-24' r='9' fill='#9AA3B2'/>
+</g>
+<text x='24' y='24' font-family='Arial, Helvetica, sans-serif' font-size='18' font-weight='700' fill='#1F3864'>Sol</text>
+<text x='24' y='112' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>Canalisation enterrée</text>
+<text x='700' y='60' font-family='Arial, Helvetica, sans-serif' font-size='18' font-weight='700' fill='#1F3864'>Fuite</text>
+<text x='24' y='328' font-family='Arial, Helvetica, sans-serif' font-size='16' fill='#1F3864'>Le robot explorateur filme l’intérieur du tuyau.</text>
+</svg>
+      <h4>DT1 — La demande de la société Robot Scan</h4>
+      <ol class="dt1" id="dt1"></ol>
+      <h4>DT2 — Fiche technique du prototype RS-1 (proposé par le bureau d'études)</h4>
+      <svg class='illus' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 840 330' width='840' height='330' role='img' aria-label='Prototype RS-1 du robot explorateur, légendé'><title>Prototype RS-1 du robot explorateur, légendé</title>
+<rect x='0' y='0' width='840' height='330' rx='14' fill='#FFFFFF'/>
+<line x1='40' y1='268' x2='720' y2='268' stroke='#9AA7B5' stroke-width='3'/>
+<g transform='translate(230,268) scale(1.0)'>
+<polygon points='262,-86 420,-140 420,-20' fill='#FFE89A' opacity='0.55'/>
+<rect x='10' y='-92' width='240' height='56' rx='12' fill='#2E75B6' stroke='#1F3864' stroke-width='3'/>
+<rect x='24' y='-82' width='96' height='34' rx='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<text x='72' y='-59' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>12 V</text>
+<rect x='196' y='-128' width='14' height='40' fill='#1F3864'/>
+<rect x='176' y='-158' width='70' height='36' rx='8' fill='#1F3864'/>
+<circle cx='238' cy='-140' r='13' fill='#0B1733' stroke='#DEEAF6' stroke-width='3'/>
+<circle cx='242' cy='-144' r='4' fill='#9CC3E8'/>
+<rect x='246' y='-90' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<rect x='246' y='-74' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<circle cx='255' cy='-50' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<circle cx='255' cy='-36' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<line x1='30' y1='-92' x2='22' y2='-150' stroke='#1F3864' stroke-width='4' stroke-linecap='round'/>
+<circle cx='22' cy='-153' r='6' fill='#1F3864'/>
+<circle cx='48' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='48' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='108' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='108' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='168' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='168' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='222' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='222' cy='-24' r='9' fill='#9AA3B2'/>
+</g>
+<line x1='470' y1='128' x2='560' y2='54' stroke='#1F3864' stroke-width='2'/>
+<circle cx='470' cy='128' r='5' fill='#1F3864'/>
+<text x='586' y='60' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Caméra sans fil</text>
+<line x1='488' y1='184' x2='590' y2='144' stroke='#1F3864' stroke-width='2'/>
+<circle cx='488' cy='184' r='5' fill='#1F3864'/>
+<text x='616' y='150' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Phares à LED</text>
+<line x1='252' y1='118' x2='220' y2='54' stroke='#1F3864' stroke-width='2'/>
+<circle cx='252' cy='118' r='5' fill='#1F3864'/>
+<text x='96' y='60' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Antenne radio</text>
+<line x1='300' y1='196' x2='220' y2='144' stroke='#1F3864' stroke-width='2'/>
+<circle cx='300' cy='196' r='5' fill='#1F3864'/>
+<text x='96' y='150' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Batterie 12 V</text>
+<line x1='338' y1='250' x2='220' y2='234' stroke='#1F3864' stroke-width='2'/>
+<circle cx='338' cy='250' r='5' fill='#1F3864'/>
+<text x='96' y='240' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Roues motrices</text>
+<line x1='486' y1='226' x2='590' y2='232' stroke='#1F3864' stroke-width='2'/>
+<circle cx='486' cy='226' r='5' fill='#1F3864'/>
+<text x='616' y='238' font-family='Arial, Helvetica, sans-serif' font-size='19' fill='#1F3864'>Capteur à ultrasons</text>
+<text x='420' y='312' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='16' fill='#6B7280'>Longueur 30 cm · masse 3,2 kg</text>
+</svg>
+      <div class="tscroll"><table class="t dt" id="dt2"></table></div>
+      <h4>DT3 — L'indice de protection IP</h4>
+      <p class="dtnote">L'indice IP s'écrit avec deux chiffres, par exemple IP64. Plus le chiffre est grand, mieux l'objet est protégé.</p>
+      <div class="tscroll"><table class="t dt" id="dt3"><thead><tr><th>Chiffre</th><th>1ᵉʳ chiffre : protection contre les solides et les poussières</th><th>2ᵉ chiffre : protection contre l'eau</th></tr></thead><tbody></tbody></table></div>
+    </aside>
+
+    <div id="copie">
+      <!-- PARTIE A -->
+      <section class="card" id="partA">
+        <h2>Partie A — Le besoin <span class="comp">CT 2.5 · 12 points</span></h2>
+
+        <h3><span class="num">Q1</span>Le QQOQCP<span class="pts">(4 pts)</span></h3>
+        <p class="consigne">Lis le DT1. Complète le QQOQCP du robot explorateur. Deux lignes sont déjà remplies pour t'aider.</p>
+        <div class="tscroll"><table class="t">
+          <thead><tr><th>Question</th><th>Ce que l'on cherche</th><th>Ta réponse</th></tr></thead>
+          <tbody>
+            <tr><td class="q">Quoi ?</td><td>À quel besoin répond le robot ?</td><td><div class="champ"><input type="text" id="q1_quoi"></div></td></tr>
+            <tr><td class="q">Qui ?</td><td>Qui est concerné ?</td><td><div class="champ"><input type="text" id="q1_qui"></div></td></tr>
+            <tr><td class="q">Où ?</td><td>À quel endroit ?</td><td><div class="champ"><input type="text" id="q1_ou"></div></td></tr>
+            <tr><td class="q">Quand ?</td><td>À quel moment ?</td><td class="ex">Exemple : à tout moment de l'année (ligne ①).</td></tr>
+            <tr><td class="q">Comment ?</td><td>Avec quoi ?</td><td class="ex">Exemple : avec un robot télécommandé qui filme.</td></tr>
+            <tr><td class="q">Pourquoi ?</td><td>Pour quelle raison ce besoin apparaît-il ?</td><td><div class="champ"><input type="text" id="q1_pourquoi"></div></td></tr>
+          </tbody></table></div>
+
+        <h3><span class="num">Q2</span>La bête à cornes<span class="pts">(4 pts)</span></h3>
+        <p class="consigne">Complète la bête à cornes du robot explorateur, puis écris la phrase qui exprime le besoin.</p>
+        <div class="bac">
+          <div class="g"><label class="lbl" for="q2_aqui">À qui le robot rend-il service ?</label><div class="champ"><input type="text" id="q2_aqui"></div></div>
+          <div><label class="lbl" for="q2_surquoi">Sur quoi le robot agit-il ?</label><div class="champ"><input type="text" id="q2_surquoi"></div></div>
+          <div class="obj">ROBOT EXPLORATEUR</div>
+          <div class="but"><label class="lbl" for="q2_but">Dans quel but le robot existe-t-il ?</label><div class="champ"><input type="text" id="q2_but"></div></div>
+        </div>
+        <p class="lbl" style="margin-top:14px">Le besoin :</p>
+        <p class="phrase">L'objet technique nommé <input type="text" id="q2_p_nom" aria-label="nom de l'objet">
+          rend service à <input type="text" id="q2_p_aqui" aria-label="à qui">
+          en agissant sur <input type="text" id="q2_p_surquoi" aria-label="sur quoi">
+          pour <input type="text" id="q2_p_but" aria-label="dans quel but">.</p>
+
+        <h3><span class="num">Q3</span>L'indice de protection<span class="pts">(4 pts)</span></h3>
+        <p class="consigne">Pour répondre à la ligne ⑤ du DT1, le robot doit avoir l'indice de protection IP64. Utilise le tableau DT3.</p>
+        <label class="lbl" for="q3_a">a) Que signifie le 1ᵉʳ chiffre (6) ?</label><div class="champ"><input type="text" id="q3_a"></div>
+        <label class="lbl" for="q3_b">b) Que signifie le 2ᵉ chiffre (4) ?</label><div class="champ"><input type="text" id="q3_b"></div>
+        <p class="lbl">c) Cet indice est-il adapté au robot ? Réponds par oui ou non, puis justifie avec la ligne ⑤ du DT1.</p>
+        <div class="choix" role="radiogroup"><label><input type="radio" name="q3_c" value="oui"> Oui</label><label><input type="radio" name="q3_c" value="non"> Non</label></div>
+        <div class="champ"><textarea id="q3_just" aria-label="justification"></textarea></div>
+      </section>
+
+      <!-- PARTIE B -->
+      <section class="card" id="partB">
+        <h2>Partie B — Le cahier des charges <span class="comp">CT 2.1 · 16 points</span></h2>
+
+        <h3><span class="num">Q4</span>La pieuvre : FP ou FC ?<span class="pts">(4 pts)</span></h3>
+        <div class="rappel">Rappel : sur la pieuvre, une fonction principale (FP) relie deux éléments du milieu extérieur (EME)
+          en passant par l'objet ; une fonction contrainte (FC) relie l'objet à un seul EME.</div>
+        <p class="consigne">Pour chaque fonction du robot, choisis FP ou FC, puis le ou les EME reliés.</p>
+        <div class="tscroll"><table class="t" id="q4tab">
+          <thead><tr><th>Fonction du robot</th><th>FP ou FC ?</th><th>EME relié(s)</th></tr></thead><tbody></tbody></table></div>
+
+        <h3><span class="num">Q5</span>Le cahier des charges fonctionnel<span class="pts">(8 pts)</span></h3>
+        <p class="consigne">Complète le cahier des charges fonctionnel du robot à l'aide du DT1. Un niveau s'écrit avec un nombre et son unité.</p>
+        <div class="tscroll"><table class="t" id="q5tab">
+          <thead><tr><th>Rep.</th><th>Fonction</th><th>Critère</th><th>Niveau</th></tr></thead><tbody></tbody></table></div>
+
+        <h3><span class="num">Q6</span>Le prototype respecte-t-il le cahier des charges ?<span class="pts">(4 pts)</span></h3>
+        <p class="consigne">Le bureau d'études propose le prototype RS-1 (DT2). Compare-le au cahier des charges (DT1).</p>
+        <p class="lbl">a) Cite une exigence que le prototype respecte. Justifie en comparant la valeur demandée (DT1) et la valeur du prototype (DT2).</p>
+        <label class="lbl" for="q6a_ex">Exigence</label><select id="q6a_ex"></select>
+        <div class="row"><div><label class="lbl" for="q6a_dem">Valeur demandée (DT1)</label><div class="champ"><input type="text" id="q6a_dem"></div></div>
+          <div><label class="lbl" for="q6a_pro">Valeur du prototype (DT2)</label><div class="champ"><input type="text" id="q6a_pro"></div></div></div>
+        <p class="lbl" style="margin-top:18px">b) Une exigence n'est pas respectée. Laquelle ? Justifie de la même façon.</p>
+        <label class="lbl" for="q6b_ex">Exigence</label><select id="q6b_ex"></select>
+        <div class="row"><div><label class="lbl" for="q6b_dem">Valeur demandée (DT1)</label><div class="champ"><input type="text" id="q6b_dem"></div></div>
+          <div><label class="lbl" for="q6b_pro">Valeur du prototype (DT2)</label><div class="champ"><input type="text" id="q6b_pro"></div></div></div>
+      </section>
+
+      <!-- PARTIE C -->
+      <section class="card" id="partC">
+        <h2>Partie C — Le coût d'une fuite <span class="comp">CT 5.1 · 12 points</span></h2>
+        <svg class='illus' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 330' width='900' height='330' role='img' aria-label='Fuite sur la canalisation enterrée entre le compteur et la maison'><title>Fuite sur la canalisation enterrée entre le compteur et la maison</title>
+<rect x='0' y='0' width='900' height='330' fill='#EAF4FB'/>
+<rect x='0' y='150' width='900' height='180' fill='#C9A66B'/>
+<circle cx='0' cy='160' r='3' fill='#B08A52'/>
+<circle cx='83' cy='201' r='3' fill='#B08A52'/>
+<circle cx='166' cy='242' r='3' fill='#B08A52'/>
+<circle cx='249' cy='283' r='3' fill='#B08A52'/>
+<circle cx='332' cy='324' r='3' fill='#B08A52'/>
+<circle cx='415' cy='200' r='3' fill='#B08A52'/>
+<circle cx='498' cy='241' r='3' fill='#B08A52'/>
+<circle cx='581' cy='282' r='3' fill='#B08A52'/>
+<circle cx='664' cy='323' r='3' fill='#B08A52'/>
+<circle cx='747' cy='199' r='3' fill='#B08A52'/>
+<circle cx='830' cy='240' r='3' fill='#B08A52'/>
+<circle cx='13' cy='281' r='3' fill='#B08A52'/>
+<circle cx='96' cy='322' r='3' fill='#B08A52'/>
+<circle cx='179' cy='198' r='3' fill='#B08A52'/>
+<circle cx='262' cy='239' r='3' fill='#B08A52'/>
+<circle cx='345' cy='280' r='3' fill='#B08A52'/>
+<circle cx='428' cy='321' r='3' fill='#B08A52'/>
+<circle cx='511' cy='197' r='3' fill='#B08A52'/>
+<circle cx='594' cy='238' r='3' fill='#B08A52'/>
+<circle cx='677' cy='279' r='3' fill='#B08A52'/>
+<circle cx='760' cy='320' r='3' fill='#B08A52'/>
+<circle cx='843' cy='196' r='3' fill='#B08A52'/>
+<circle cx='26' cy='237' r='3' fill='#B08A52'/>
+<circle cx='109' cy='278' r='3' fill='#B08A52'/>
+<circle cx='192' cy='319' r='3' fill='#B08A52'/>
+<circle cx='275' cy='195' r='3' fill='#B08A52'/>
+<circle cx='358' cy='236' r='3' fill='#B08A52'/>
+<circle cx='441' cy='277' r='3' fill='#B08A52'/>
+<circle cx='524' cy='318' r='3' fill='#B08A52'/>
+<circle cx='607' cy='194' r='3' fill='#B08A52'/>
+<circle cx='690' cy='235' r='3' fill='#B08A52'/>
+<circle cx='773' cy='276' r='3' fill='#B08A52'/>
+<circle cx='856' cy='317' r='3' fill='#B08A52'/>
+<circle cx='39' cy='193' r='3' fill='#B08A52'/>
+<circle cx='122' cy='234' r='3' fill='#B08A52'/>
+<circle cx='205' cy='275' r='3' fill='#B08A52'/>
+<circle cx='288' cy='316' r='3' fill='#B08A52'/>
+<circle cx='371' cy='192' r='3' fill='#B08A52'/>
+<circle cx='454' cy='233' r='3' fill='#B08A52'/>
+<circle cx='537' cy='274' r='3' fill='#B08A52'/>
+<circle cx='620' cy='315' r='3' fill='#B08A52'/>
+<circle cx='703' cy='191' r='3' fill='#B08A52'/>
+<circle cx='786' cy='232' r='3' fill='#B08A52'/>
+<circle cx='869' cy='273' r='3' fill='#B08A52'/>
+<circle cx='52' cy='314' r='3' fill='#B08A52'/>
+<rect x='0' y='140' width='900' height='14' fill='#8FBF6A'/>
+<rect x='610' y='50' width='220' height='100' fill='#FFFFFF' stroke='#1F3864' stroke-width='3'/>
+<polygon points='595,52 720,8 845,52' fill='#2E75B6' stroke='#1F3864' stroke-width='3'/>
+<rect x='640' y='80' width='40' height='34' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<rect x='740' y='90' width='40' height='60' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<rect x='90' y='132' width='90' height='36' fill='#9AA7B5' stroke='#1F3864' stroke-width='2'/>
+<circle cx='135' cy='150' r='13' fill='#FFFFFF' stroke='#1F3864' stroke-width='3'/>
+<line x1='135' y1='150' x2='143' y2='144' stroke='#1F3864' stroke-width='2'/>
+<path d='M135,168 L135,240 L700,240 L700,150' fill='none' stroke='#6E7C8C' stroke-width='18' stroke-linejoin='round'/>
+<path d='M135,168 L135,240 L700,240 L700,150' fill='none' stroke='#EAF1FA' stroke-width='8' stroke-linejoin='round'/>
+<path d='M420,232 l8,-6 l6,8' stroke='#3D4A5C' stroke-width='3' fill='none'/>
+<ellipse cx='430' cy='262' rx='70' ry='18' fill='#4FA3E0' opacity='0.45'/>
+<path d='M404,250 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M418,264 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M432,250 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/><path d='M446,264 q-6,10 0,14 q6,-4 0,-14z' fill='#4FA3E0'/>
+<g transform='translate(250,238) scale(0.28)'>
+<rect x='10' y='-92' width='240' height='56' rx='12' fill='#2E75B6' stroke='#1F3864' stroke-width='3'/>
+<rect x='24' y='-82' width='96' height='34' rx='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<text x='72' y='-59' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>12 V</text>
+<rect x='196' y='-128' width='14' height='40' fill='#1F3864'/>
+<rect x='176' y='-158' width='70' height='36' rx='8' fill='#1F3864'/>
+<circle cx='238' cy='-140' r='13' fill='#0B1733' stroke='#DEEAF6' stroke-width='3'/>
+<circle cx='242' cy='-144' r='4' fill='#9CC3E8'/>
+<rect x='246' y='-90' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<rect x='246' y='-74' width='14' height='10' rx='3' fill='#FFF3B0' stroke='#C9A227' stroke-width='2'/>
+<circle cx='255' cy='-50' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<circle cx='255' cy='-36' r='6' fill='#DEEAF6' stroke='#1F3864' stroke-width='2'/>
+<line x1='30' y1='-92' x2='22' y2='-150' stroke='#1F3864' stroke-width='4' stroke-linecap='round'/>
+<circle cx='22' cy='-153' r='6' fill='#1F3864'/>
+<circle cx='48' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='48' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='108' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='108' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='168' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='168' cy='-24' r='9' fill='#9AA3B2'/>
+<circle cx='222' cy='-24' r='24' fill='#2B2B2B' stroke='#1F3864' stroke-width='2'/>
+<circle cx='222' cy='-24' r='9' fill='#9AA3B2'/>
+</g>
+<text x='60' y='122' font-family='Arial, Helvetica, sans-serif' font-size='18' font-weight='700' fill='#1F3864'>Compteur</text>
+<text x='230' y='292' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>Canalisation enterrée</text>
+<text x='470' y='300' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#C0392B'>Fuite : 35 m³ perdus en un an</text>
+<text x='742' y='80' font-family='Arial, Helvetica, sans-serif' font-size='17' font-weight='700' fill='#1F3864'>Maison</text>
+</svg>
+        <div class="rappel"><b>La situation.</b> Chez la famille Martin, la consommation d'eau a bondi. Le robot explorateur a trouvé
+          la cause : une fuite sur la canalisation enterrée, entre le compteur et la maison. Cette fuite a fait perdre 35 m³
+          d'eau en un an. Sans la fuite, la famille consomme 110 m³ par an. Tu vas calculer ce que cette fuite coûte, avec
+          la même feuille de calcul qu'en séance 2.</div>
+        <div class="rappel creme"><b>Les données de la facture (les mêmes qu'en séance 2).</b> Prix de l'eau (Vendée Eau) :
+          1,162 € HT par m³ · Redevances de l'Agence de l'eau : 0,408 € HT par m³ · Abonnement : 43,00 € HT par semestre
+          (6 mois) · TVA : 5,5 %.</div>
+        <h3><span class="num">C1</span>Les données<span class="pts">(2 pts)</span></h3>
+        <p class="consigne">Écris en B2 la consommation sans fuite, en C2 la consommation avec la fuite, et en B5 l'abonnement pour une année. Les cellules grises sont déjà remplies ou se calculent seules.</p>
+        <h3><span class="num">C2</span>Les formules<span class="pts">(6 pts)</span></h3>
+        <p class="consigne">Écris les formules de B7, B9 et B10 (colonne « Sans fuite »). Une formule commence par = et utilise les références des cellules (B2, B3…).</p>
+        <p class="consigne" style="color:var(--navy)">Comme en séance 2, B6 (montant de la TVA) et B8 (total des redevances) sont fournies : elles se calculent seules.</p>
+        <h3><span class="num">C3</span>Le coût de la fuite<span class="pts">(4 pts)</span></h3>
+        <p class="consigne">Complète la colonne « Avec la fuite » : écris les formules de C7, C9 et C10 (tu peux recopier celles de la colonne B). En C11, écris la formule qui calcule le coût de la fuite.</p>
+
+        <div class="tscroll"><table class="ss" id="ss">
+          <thead><tr><th class="rh"></th><th>A</th><th>B</th><th>C</th></tr></thead><tbody></tbody></table></div>
+        <div class="legende"><span style="background:var(--vert)"></span>données à écrire<span style="background:var(--form)"></span>formules à écrire<span style="background:var(--gris)"></span>déjà rempli ou calculé seul</div>
+        <button type="button" class="btn sec" id="btnRecopie" data-nolecture>⇥ Recopier B7:B10 vers C7:C10</button>
+        <p class="legende" style="margin-left:0">Comme la poignée de recopie d'un tableur : les références se décalent d'une colonne (B2 devient C2). La ligne 8, fournie, ne bouge pas.</p>
+        <p class="phrase" style="margin-top:14px">Recopie le résultat de C11 : la fuite coûte
+          <input type="text" id="c3_phrase" inputmode="decimal" style="min-width:130px;width:130px" aria-label="coût de la fuite en euros"> € par an.</p>
+      </section>
+
+      <!-- FIN -->
+      <section class="card" id="fin">
+        <h2>Fin de l'évaluation</h2>
+        <div id="bloc-correction"></div>
+        <p class="consigne">Relis tes réponses, puis envoie ta copie. Tu peux la renvoyer tant que ton professeur ne l'a pas verrouillée :
+          c'est le dernier envoi qui compte.</p>
+        <button type="button" class="btn ok" id="btnEnvoyer">📤 Envoyer ma copie au professeur</button>
+        <button type="button" class="btn sec" id="btnReprise">↩ Reprendre mon dernier envoi</button>
+        <button type="button" class="btn sec" id="btnImprimer">🖨️ Imprimer ma copie</button>
+        <div class="msg info cache" id="msg"></div>
+        <p class="privacy">🔒 Ta copie part au tableau de bord de ton professeur, comme les autres capsules du site.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="footer">Collège Saint Pierre – Les Essarts · P11 · Évaluation n°1 · <span id="build">build 2026-09-24b</span></div>
+</main>
+
+<!-- Aménagements dys et confort de lecture : modules partagés du site. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in", sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h1, h2, h3, .consigne, .rappel, header.band p, ol.dt1 li, .dtnote, th, td, p.lbl, label.lbl, .phrase, .choix label"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   P11 — ÉVALUATION N°1 · capsule numérique (version papier : P11_evaluation_1/)
+   Le contenu pédagogique et les réponses attendues sont dans CORRIGE, ci-dessous.
+   ═══════════════════════════════════════════════════════════════════════════ */
+"use strict";
+/* Même backend que toutes les capsules du site (tableau de bord du professeur). */
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "p11-eval1";
+var CAP_LABEL   = "P11 4e — Évaluation n°1";
+var PREFILL_KEY = "p11eval1_prefill";          /* déposée par goPage('pg-p11-eval1') */
+var QUEUE_KEY   = "p11_eval1_offline_queue";
+var DRAFT_PFX   = "p11_eval1_draft_";
+
+var CORRIGE = {
+  dt1: [
+    "La société Robot Scan inspecte les réseaux d'eau souterrains. Ses techniciens doivent localiser les fuites d'eau dans des canalisations enterrées, où un être humain ne peut pas entrer. Des fuites peuvent apparaître à tout moment de l'année.",
+    "Robot Scan veut un robot explorateur qui transporte une caméra sans fil. Il filme avec une résolution de 1080 pixels. Les techniciens regardent les images sur un écran de contrôle.",
+    "Le robot est télécommandé, sans fil, jusqu'à une distance de 20 mètres environ.",
+    "Il doit fonctionner au moins 30 minutes sans être rechargé. Pour la sécurité, il est alimenté en très basse tension.",
+    "Il doit résister à l'humidité, à de faibles écoulements d'eau et à de légers chocs.",
+    "Il doit se déplacer dans l'obscurité (luminosité inférieure à 3 lux), sur des sols plats ou en pente jusqu'à 20 %, lisses ou accidentés.",
+    "Il doit supporter des températures de −10 °C à 80 °C.",
+    "Une assistance automatique l'arrête à 10 cm de la fuite, pour la filmer de près.",
+    "Il doit être solide, fiable et démontable, pour être réparé facilement. Son prix ne doit pas dépasser 2 000 € TTC (sans la caméra)."
+  ],
+  dt2: [["Caméra","sans fil, vidéo en 1080 pixels"],["Éclairage","2 phares à LED : filme dans le noir complet (0 lux)"],
+        ["Télécommande","sans fil (radio), portée 25 m"],["Batterie","12 V (très basse tension), autonomie 45 min"],
+        ["Déplacement","4 roues motrices, pentes jusqu'à 25 %"],["Températures d'utilisation","de −10 °C à 60 °C"],
+        ["Indice de protection","IP64"],["Approche automatique","capteur à ultrasons, arrêt à 10 cm"],
+        ["Prix de vente","1 850 € TTC (sans la caméra)"],["Masse","3,2 kg"]],
+  dt3: [["0","Non protégé","Non protégé"],["1","Solides de plus de 50 mm","Gouttes d'eau qui tombent verticalement"],
+        ["2","Solides de plus de 12,5 mm","Gouttes d'eau jusqu'à 15° de la verticale"],["3","Solides de plus de 2,5 mm","Pluie jusqu'à 60° de la verticale"],
+        ["4","Solides de plus de 1 mm","Projections d'eau de toutes directions"],["5","Protégé contre les poussières","Jets d'eau à la lance"],
+        ["6","Totalement protégé contre les poussières","Paquets de mer (projections puissantes)"],["7","—","Immersion temporaire"],["8","—","Immersion permanente"]],
+  eme: ["techniciens","canalisations","obscurité","températures","énergie","budget","humidité"],
+  q4: [ {f:"Permettre aux techniciens d'observer l'intérieur des canalisations", type:"FP", eme:["techniciens","canalisations"]},
+        {f:"Se déplacer sans lumière (moins de 3 lux)", type:"FC", eme:["obscurité"]},
+        {f:"Fonctionner avec une batterie en très basse tension", type:"FC", eme:["énergie"]},
+        {f:"Coûter moins de 2 000 €", type:"FC", eme:["budget"]} ],
+  /* Q5 : null = case à compléter ; id = identifiant du champ */
+  q5: [ ["FP1","Explorer des lieux difficiles d'accès","Lieux",{id:"q5_fp1"}],
+        ["FC1","Évoluer dans des lieux obscurs","Luminosité",{id:"q5_fc1"}],
+        ["FC2",{id:"q5_fc2"},"Indice de protection","IP64"],
+        ["FC3","Filmer l'intérieur des canalisations","Résolution",{id:"q5_fc3"}],
+        ["FC4","Être piloté à distance",{id:"q5_fc4"},"Sans fil, 20 m"],
+        ["FC5","Fonctionner sans être rechargé","Autonomie",{id:"q5_fc5"}],
+        ["FC6","Supporter des températures extrêmes","Plage de températures",{id:"q5_fc6"}],
+        ["FC7","Respecter le budget","Coût",{id:"q5_fc7"}] ],
+  /* Q6 : exigences du DT1 ; [demandé, prototype] = nombres attendus dans la justification */
+  q6: [ {v:"camera", t:"la résolution de la caméra", ok:true,  n:["1080","1080"]},
+        {v:"eclairage", t:"la luminosité (obscurité)", ok:true, n:["3","0"]},
+        {v:"telecommande", t:"la portée de la télécommande", ok:true, n:["20","25"]},
+        {v:"batterie", t:"l'autonomie de la batterie", ok:true, n:["30","45"]},
+        {v:"pente", t:"la pente", ok:true, n:["20","25"]},
+        {v:"temperatures", t:"les températures", ok:false, n:["80","60"]},
+        {v:"ip", t:"l'indice de protection", ok:true, n:["64","64"]},
+        {v:"approche", t:"l'approche automatique", ok:true, n:["10","10"]},
+        {v:"prix", t:"le prix", ok:true, n:["2000","1850"]},
+        {v:"masse", t:"la masse", ok:null, n:[]} ],
+  attendu: {
+    q1_quoi:"Localiser les fuites d'eau dans les canalisations souterraines.", q1_qui:"Les techniciens de Robot Scan.",
+    q1_ou:"Dans les canalisations enterrées (réseaux d'eau souterrains).", q1_pourquoi:"Les fuites gaspillent l'eau ; un humain ne peut pas entrer dans les canalisations.",
+    q2_aqui:"Aux techniciens de Robot Scan.", q2_surquoi:"Sur les canalisations (souterraines).", q2_but:"Localiser les fuites d'eau.",
+    q2_phrase:"robot explorateur / aux techniciens de Robot Scan / les canalisations souterraines / localiser les fuites d'eau",
+    q3_a:"Totalement protégé contre les poussières.", q3_b:"Protégé contre les projections d'eau de toutes directions.",
+    q3_c:"Oui : il doit résister à l'humidité et à de faibles écoulements d'eau (ligne ⑤).",
+    q5_fp1:"Canalisations souterraines", q5_fc1:"< 3 lux", q5_fc2:"Résister à l'humidité et aux écoulements d'eau",
+    q5_fc3:"1080 pixels", q5_fc4:"Portée (distance)", q5_fc5:"30 min au moins", q5_fc6:"de −10 °C à 80 °C", q5_fc7:"2 000 € TTC maximum",
+    q6a:"une exigence respectée + les deux valeurs (ex. autonomie : 30 min → 45 min)", q6b:"les températures : 80 °C demandés, 60 °C seulement",
+    c1:"B2 = 110 ; C2 = 145 ; B5 = 86", c3_phrase:"57,97 €"
+  },
+  /* partie C : valeurs de l'énoncé et formules attendues */
+  feuille: { B2:110, C2:145, B3:1.162, B4:0.408, B5:86, B6:5.5 },
+  formules: null   /* voir TABLEUR_FORMULES, dans le moteur */
+};
+
+/* ─── mots-clés (convention P11 : mot entier = point plein, « * » = radical ;
+       chaque liste contient aussi le mot entier, sinon la tolérance orthographique ne joue pas) ─── */
+var MC = {
+  fuite: ["fuite*","fuite","fuites"],
+  techniciens: ["technicien*","technicien","techniciens","robot scan","societe","entreprise*","entreprise"],
+  canalisations: ["canalisation*","canalisation","canalisations","souterrain*","souterraine","sous terre","reseau*","reseaux",
+                  "tuyau*","tuyaux","egout*","egouts","enterre*","enterree","conduite*","conduites"],
+  pourquoi: ["gaspill*","gaspillage","gaspiller","fuite*","fuite","perte*","pertes","perd*","perdre","econom*","economiser",
+             "inaccessible*","inaccessible","cher","cout*","couter","facture*","facture","peut pas","ne peut","impossible","acces","entrer"],
+  but_verbe: ["localis*","localiser","trouv*","trouver","detect*","detecter","rep*","reperer","identifi*","identifier",
+              "cherch*","chercher","voir","film*","filmer","observ*","observer","inspect*","inspecter"],
+  poussiere: ["poussiere*","poussiere","poussieres"],
+  projection: ["projection*","projection","projections","projete*","eclabouss*","eclaboussure"],
+  humidite: ["humid*","humidite","ecoulement*","ecoulement","ecoulements","eau","mouill*","mouiller","pluie","projection*","projection"],
+  immersion: ["immersion*","immersion","immerge*","plong*","plonger","noye*","noyer","rempli*"],
+  resister: ["resist*","resister","supporter","support*","proteg*","proteger","etanche*","etanche"],
+  critere_portee: ["portee","distance","communication","liaison","rayon","telecommande"]
+};
+
+/* ═══ outils texte (repris du site Technologie : _p11norm / _p11phon / _p11lev / _p11match) ═══ */
+function norm(v){
+  return String(v||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[’']/g," ").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+}
+function phon(v){
+  var t=norm(v); if(!t) return "";
+  return t.replace(/ph/g,"f").replace(/qu/g,"k").replace(/gu([eiy])/g,"g$1")
+    .replace(/eau/g,"o").replace(/au/g,"o").replace(/ou/g,"u").replace(/ai|ei/g,"e").replace(/oi/g,"wa")
+    .replace(/c([eiy])/g,"s$1").replace(/ch/g,"s").replace(/c/g,"k").replace(/x/g,"ks").replace(/y/g,"i").replace(/gn/g,"n")
+    .replace(/([aeiou])s([aeiou])/g,"$1z$2").replace(/h/g,"").replace(/(er|ez|ai)$/g,"e")
+    .replace(/(.)\1+/g,"$1").replace(/[edstxzp]+$/g,"");
+}
+function lev(a,b,max){
+  if(a===b) return 0; if(Math.abs(a.length-b.length)>max) return max+1;
+  var prev=[],cur=[],i,j; for(j=0;j<=b.length;j++) prev[j]=j;
+  for(i=1;i<=a.length;i++){ cur[0]=i; var best=cur[0];
+    for(j=1;j<=b.length;j++){ var c=a.charAt(i-1)===b.charAt(j-1)?0:1; cur[j]=Math.min(cur[j-1]+1,prev[j]+1,prev[j-1]+c); if(cur[j]<best) best=cur[j]; }
+    if(best>max) return max+1; for(j=0;j<=b.length;j++) prev[j]=cur[j]; }
+  return prev[b.length];
+}
+function exact(mots,cle){
+  var rad=/\*$/.test(cle), c=rad?cle.slice(0,-1):cle, n=c.split(" ").length;
+  for(var d=0;d+n<=mots.length;d++){ var b=mots.slice(d,d+n).join(" ");
+    if(rad){ if(b.indexOf(c)===0) return true; } else if(b===c||b===c+"s"||b===c+"x") return true; }
+  return false;
+}
+/* 1 = mot attendu bien écrit · 0,5 = phonétiquement juste mais mal orthographié · 0 = absent */
+function match(v,liste){
+  var t=norm(v); if(!t) return 0; var mots=t.split(" "), i;
+  for(i=0;i<liste.length;i++) if(exact(mots,liste[i])) return 1;
+  for(i=0;i<liste.length;i++){ var cle=liste[i].replace(/\*$/,""); if(cle.length<4) continue;
+    var pc=phon(cle); if(!pc) continue; var n=cle.split(" ").length, tol=pc.length<=5?1:2;
+    for(var d=0;d+n<=mots.length;d++){ var pb=phon(mots.slice(d,d+n).join(" ")); if(!pb) continue;
+      if(pb===pc||lev(pb,pc,tol)<=tol) return 0.5; } }
+  return 0;
+}
+/* nombres présents dans une réponse (« 2 000 » → 2000, « 1,5 » → 1.5, « −10 » → -10) */
+function nombres(v){
+  var s=String(v||"").replace(/[−–]/g,"-").replace(/(\d)[\s  ](?=\d{3}\b)/g,"$1");
+  var m=s.match(/-?\d+(?:[.,]\d+)?/g)||[]; return m.map(function(x){ return parseFloat(x.replace(",",".")); });
+}
+function contientNombre(v,n){ return nombres(v).some(function(x){ return Math.abs(Math.abs(x)-Math.abs(n))<1e-9; }); }
+
+/* ═══ état, outils ═══ */
+function $(id){ return document.getElementById(id); }
+var ETAT = { rep:{}, cells:{} };
+var USER = { id:"", p:"", n:"", c:"" };
+function flash(id,html,type){ var b=$(id); if(!b) return; b.className="msg "+(type||"info"); b.innerHTML=html; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function fr(x,dec){ if(x==null||isNaN(x)) return "?"; return Number(x).toLocaleString("fr-FR",{minimumFractionDigits:dec||0,maximumFractionDigits:dec==null?2:dec}); }
+
+/* ═══ construction de la page ═══ */
+var PU=["①","②","③","④","⑤","⑥","⑦","⑧","⑨"];
+function construire(){
+  $("dt1").innerHTML=CORRIGE.dt1.map(function(t,i){ return "<li><b class=\"pu\">"+PU[i]+"</b><span>"+esc(t)+"</span></li>"; }).join("");
+  var moitie=Math.ceil(CORRIGE.dt2.length/2), r="";
+  for(var i=0;i<moitie;i++){ var a=CORRIGE.dt2[i], b=CORRIGE.dt2[i+moitie]||["",""];
+    r+="<tr><td class=\"k\">"+esc(a[0])+"</td><td>"+esc(a[1])+"</td><td class=\"k\">"+esc(b[0])+"</td><td>"+esc(b[1])+"</td></tr>"; }
+  $("dt2").innerHTML=r;
+  $("dt3").querySelector("tbody").innerHTML=CORRIGE.dt3.map(function(l){ return "<tr><td class=\"q\">"+l[0]+"</td><td>"+esc(l[1])+"</td><td>"+esc(l[2])+"</td></tr>"; }).join("");
+  // Q4
+  var opts=function(){ return "<option value=\"\">…</option>"+CORRIGE.eme.map(function(e){ return "<option>"+e+"</option>"; }).join(""); };
+  $("q4tab").querySelector("tbody").innerHTML=CORRIGE.q4.map(function(l,i){
+    return "<tr><td>"+esc(l.f)+"</td><td style=\"width:120px\"><select id=\"q4_t"+i+"\" aria-label=\"FP ou FC\"><option value=\"\">…</option><option>FP</option><option>FC</option></select></td>"+
+      "<td style=\"width:"+(i===0?"330":"190")+"px\"><div class=\"row\" style=\"gap:6px\"><div style=\"min-width:120px\"><select id=\"q4_e"+i+"a\" aria-label=\"EME\">"+opts()+"</select></div>"+
+      (i===0?"<div style=\"min-width:120px\"><select id=\"q4_e"+i+"b\" aria-label=\"deuxième EME\">"+opts()+"</select></div>":"")+"</div></td></tr>";
+  }).join("");
+  // Q5
+  $("q5tab").querySelector("tbody").innerHTML=CORRIGE.q5.map(function(l){
+    return "<tr><td class=\"q\">"+l[0]+"</td>"+l.slice(1).map(function(c){
+      return typeof c==="string" ? "<td>"+esc(c)+"</td>" : "<td><div class=\"champ\"><input type=\"text\" id=\""+c.id+"\"></div></td>"; }).join("")+"</tr>";
+  }).join("");
+  // Q6
+  var o="<option value=\"\">Choisir une exigence…</option>"+CORRIGE.q6.map(function(x){ return "<option value=\""+x.v+"\">"+esc(x.t.charAt(0).toUpperCase()+x.t.slice(1))+"</option>"; }).join("");
+  $("q6a_ex").innerHTML=o; $("q6b_ex").innerHTML=o;
+  construireTableur($("ss").querySelector("tbody"));
+  // dictée sur chaque champ texte
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR) document.querySelectorAll("#copie .champ").forEach(function(ch){
+    var champ=ch.querySelector("input,textarea"); if(!champ) return;
+    var b=document.createElement("button"); b.type="button"; b.className="mic"; b.title="Dicter ma réponse"; b.setAttribute("data-nolecture","");
+    b.textContent="🎤"; b.addEventListener("click",function(){ dicter(b,champ,SR); }); ch.appendChild(b);
+  });
+}
+var reco=null;
+function dicter(btn,champ,SR){
+  if(reco){ reco.stop(); return; }
+  reco=new SR(); reco.lang="fr-FR"; reco.interimResults=false; btn.classList.add("on");
+  reco.onresult=function(e){ var t=e.results[0][0].transcript; champ.value=(champ.value?champ.value.replace(/\s+$/,"")+" ":"")+t; champ.dispatchEvent(new Event("input",{bubbles:true})); };
+  reco.onend=function(){ btn.classList.remove("on"); reco=null; };
+  reco.onerror=reco.onend; try{ reco.start(); }catch(e){ reco.onend(); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOTEUR DU MINI-TABLEUR — partagé par la capsule (Site Techno) et par la page
+   evaluation-1-tableur.html (techno-p11-eau). Ne pas modifier les pages générées :
+   modifier ce fichier, puis relancer build_capsule.py.
+   Besoins côté page : ETAT.cells, $(id), fr(x,dec), esc(s), et les cellules #ss.
+   ═══════════════════════════════════════════════════════════════════════════ */
+var TABLEUR_FORMULES = { B7:"=B2*B3", B9:"=B7+B8+B5", B10:"=B9+B6", C7:"=C2*C3", C9:"=C7+C8+C5", C10:"=C9+C6", C11:"=C10-B10" };
+var TABLEUR_BAREME = { B7:2, B9:2, B10:2 };
+/* nombres présents dans un texte (« 57,97 € » → 57.97) */
+function nombresTexte(v){
+  var s=String(v||"").replace(/[\u2212\u2013]/g,"-").replace(/(\d)[\s\u00a0\u202f](?=\d{3}\b)/g,"$1");
+  var m=s.match(/-?\d+(?:[.,]\d+)?/g)||[]; return m.map(function(x){ return parseFloat(x.replace(",",".")); });
+}
+function construireTableur(tbody){
+  var lignes=[[1,"Libellé","Sans fuite","Avec la fuite"],[2,"Consommation sur l'année (m³)","",""],
+    [3,"Consommation Vendée Eau — prix unitaire HT (€/m³)","1,162","=B3"],[4,"Redevances Agence de l'eau (€/m³)","0,408","=B4"],
+    [5,"Abonnement pour l'année (€)","","=B5"],[6,"Montant de la TVA (€) — 5,5 % du sous-total HT","FOURNI","FOURNI"],[7,"Total eau (€)","",""],
+    [8,"Total des redevances (€)","FOURNI","FOURNI"],[9,"Sous-total HT (€)","",""],[10,"TOTAL TTC (€)","",""],[11,"Coût de la fuite sur un an (€)",null,""]];
+  tbody.innerHTML=lignes.map(function(l){
+    var n=l[0]; if(n===1) return "<tr><td class=\"rh\">1</td><td class=\"lbl\"><b>Libellé</b></td><td class=\"lbl\" style=\"text-align:center\"><b>Sans fuite</b></td><td class=\"lbl\" style=\"text-align:center\"><b>Avec la fuite</b></td></tr>";
+    var t="<tr><td class=\"rh\">"+n+"</td><td class=\"lbl\"><b>"+esc(l[1])+"</b></td>";
+    [["B",l[2]],["C",l[3]]].forEach(function(p){ var ref=p[0]+n, v=p[1];
+      if(v===null) t+="<td class=\"vide\"></td>";
+      else if(v==="FOURNI") t+="<td class=\"lien\" id=\"td-"+ref+"\"><span id=\"lien-"+ref+"\"></span> <small title=\"calculé seul\">🔒</small></td>";
+      else if(v==="") { var cls=(ref==="B2"||ref==="C2"||ref==="B5")?"don":(n>=10?"ttc":"form");
+        t+="<td class=\"cell "+cls+"\" id=\"td-"+ref+"\"><input type=\"text\" id=\""+ref+"\" data-ref=\""+ref+"\" autocomplete=\"off\" spellcheck=\"false\" aria-label=\"cellule "+ref+"\""+(cls==="don"?" inputmode=\"decimal\"":"")+"><span class=\"chip\" id=\"chip-"+ref+"\"></span></td>"; }
+      else if(v.charAt(0)==="=") t+="<td class=\"lien\" id=\"td-"+ref+"\"><span id=\"lien-"+ref+"\"></span> <small>("+v+")</small></td>";
+      else t+="<td class=\"fixe\">"+v+"</td>";
+    });
+    return t+"</tr>";
+  }).join("");
+}
+/* ═══ mini-tableur : analyse et calcul des formules (+ − × ÷, %, parenthèses, SOMME) ═══ */
+function contenu(ref,cells){
+  if(ref==="B3") return "1.162"; if(ref==="B4") return "0.408"; if(ref==="B6") return "5.5";
+  if(/^C[3-5]$/.test(ref)) return "=B"+ref.slice(1);
+  if(ref==="B1"||ref==="C1"||ref==="B11") return "";
+  return String(cells[ref]||"").trim();
+}
+function analyser(src){           // src sans le « = » ; renvoie un arbre ou lève une erreur
+  var s=src.replace(/\s+/g,"").toUpperCase(), i=0;
+  function voir(){ return s.charAt(i); }
+  function expr(){ var g=terme(); while(voir()==="+"||voir()==="-"){ var op=s.charAt(i++); g={op:op,a:g,b:terme()}; } return g; }
+  function terme(){ var g=facteur(); while(voir()==="*"||voir()==="/"){ var op=s.charAt(i++); g={op:op,a:g,b:facteur()}; } return g; }
+  function facteur(){ if(voir()==="-"){ i++; return {op:"neg",a:facteur()}; } if(voir()==="+"){ i++; return facteur(); }
+    var p=primaire(); while(voir()==="%"){ i++; p={op:"pct",a:p}; } return p; }
+  function primaire(){
+    var m;
+    if(voir()==="("){ i++; var e=expr(); if(voir()!==")") throw "parenthèse"; i++; return e; }
+    if((m=/^(SOMME|SUM)\(/.exec(s.slice(i)))){ i+=m[0].length; var args=[];
+      if(voir()!==")") for(;;){ args.push(argument()); if(voir()===";"||voir()===","){ i++; continue; } break; }
+      if(voir()!==")") throw "parenthèse"; i++; return {op:"somme",args:args}; }
+    if((m=/^\$?([A-Z])\$?(\d+)/.exec(s.slice(i)))){ i+=m[0].length; return {op:"ref",ref:m[1]+m[2]}; }
+    if((m=/^\d+(?:[.,]\d+)?/.exec(s.slice(i)))){ i+=m[0].length; return {op:"num",v:parseFloat(m[0].replace(",",".")),txt:m[0]}; }
+    throw "symbole";
+  }
+  function argument(){ var m=/^\$?([A-Z])\$?(\d+):\$?([A-Z])\$?(\d+)/.exec(s.slice(i));
+    if(m){ i+=m[0].length; return {op:"plage",c1:m[1],l1:+m[2],c2:m[3],l2:+m[4]}; } return expr(); }
+  var arbre=expr(); if(i<s.length) throw "symbole"; return arbre;
+}
+function evaluer(n,val){
+  switch(n.op){
+    case "num": return n.v; case "ref": return val(n.ref); case "neg": return -evaluer(n.a,val); case "pct": return evaluer(n.a,val)/100;
+    case "+": return evaluer(n.a,val)+evaluer(n.b,val); case "-": return evaluer(n.a,val)-evaluer(n.b,val);
+    case "*": return evaluer(n.a,val)*evaluer(n.b,val); case "/": return evaluer(n.a,val)/evaluer(n.b,val);
+    case "somme": return n.args.reduce(function(t,a){
+      if(a.op!=="plage") return t+evaluer(a,val);
+      for(var c=a.c1.charCodeAt(0);c<=a.c2.charCodeAt(0);c++) for(var l=a.l1;l<=a.l2;l++){ var x=val(String.fromCharCode(c)+l); if(!isNaN(x)) t+=x; }
+      return t; },0);
+  }
+  return NaN;
+}
+function refsDe(n,out){ out=out||[]; if(!n) return out;
+  if(n.op==="ref") out.push(n.ref);
+  if(n.op==="plage") for(var c=n.c1.charCodeAt(0);c<=n.c2.charCodeAt(0);c++) for(var l=n.l1;l<=n.l2;l++) out.push(String.fromCharCode(c)+l);
+  ["a","b"].forEach(function(k){ if(n[k]) refsDe(n[k],out); }); if(n.args) n.args.forEach(function(a){ refsDe(a,out); }); return out; }
+function nombresDe(n,out){ out=out||[]; if(!n) return out; if(n.op==="num") out.push(n.v);
+  ["a","b"].forEach(function(k){ if(n[k]) nombresDe(n[k],out); }); if(n.args) n.args.forEach(function(a){ nombresDe(a,out); }); return out; }
+/* Cellules fournies, comme dans le mini-tableur de la séance 2 : arrondies au centime et verrouillées. */
+function r2(x){ return isNaN(x)?NaN:Math.round((x+1e-9)*100)/100; }
+var FOURNIES = {
+  B8:function(v){ return r2(v("B2")*v("B4")); }, C8:function(v){ return r2(v("C2")*v("C4")); },
+  B6:function(v){ return r2(v("B9")*5.5/100); }, C6:function(v){ return r2(v("C9")*5.5/100); }
+};
+/* feuille : valeur d'une cellule, avec détection des renvois circulaires */
+function feuille(cells,forcees){
+  var cache={}, pile=[];
+  function val(ref){
+    if(forcees && Object.prototype.hasOwnProperty.call(forcees,ref)) return forcees[ref];
+    if(Object.prototype.hasOwnProperty.call(cache,ref)) return cache[ref];
+    if(FOURNIES[ref]){ cache[ref]=FOURNIES[ref](val); return cache[ref]; }
+    var c=contenu(ref,cells); if(c===""){ cache[ref]=0; return 0; }     // cellule vide = 0, comme dans un tableur
+    if(c.charAt(0)!=="="){ var x=parseFloat(c.replace(",",".")); cache[ref]=(/^-?\d+(?:[.,]\d+)?$/.test(c))?x:NaN; return cache[ref]; }
+    if(pile.indexOf(ref)>=0) return NaN;
+    pile.push(ref); var r=NaN; try{ r=evaluer(analyser(c.slice(1)),val); }catch(e){ r=NaN; } pile.pop();
+    if(!isFinite(r)) r=NaN; cache[ref]=r; return r;
+  }
+  return val;
+}
+function recalculer(){
+  var val=feuille(ETAT.cells);
+  document.querySelectorAll("#ss input[data-ref]").forEach(function(inp){
+    var ref=inp.getAttribute("data-ref"), chip=$("chip-"+ref), c=String(ETAT.cells[ref]||"").trim();
+    if(!chip) return;
+    if(c.charAt(0)!=="="){ chip.textContent=""; return; }
+    var v=val(ref); chip.textContent=isNaN(v)?"#ERREUR":fr(v,2)+" €";
+  });
+  ["C3","C4","C5","B6","C6","B8","C8"].forEach(function(ref){ var v=val(ref), s=$("lien-"+ref);
+    if(s) s.textContent=isNaN(v)?"":(/[68]$/.test(ref)?fr(v,2)+" €":fr(v,ref==="C5"?2:3)); });
+}
+/* recopie vers la droite : toutes les références relatives se décalent d'une colonne */
+function decaler(f){ return String(f).replace(/(\$?)([A-Z])(\$?)(\d+)/gi,function(m,d1,col,d2,lig){
+  return d1 ? m : String.fromCharCode(col.toUpperCase().charCodeAt(0)+1)+d2+lig; }); }
+
+/* ═══ correction ═══ */
+function noterFormule(ref,cells){
+  /* La formule est jugée dans une feuille « idéale » : données justes et autres cellules à leur valeur attendue.
+     Une formule juste reste donc juste si une donnée ou une autre formule est fausse (pas de double peine). */
+  var c=String(cells[ref]||"").trim(), max=TABLEUR_BAREME[ref]||1;
+  if(!c) return {p:0,max:max,why:"vide"};
+  if(c.charAt(0)!=="=") return {p:0,max:max,why:"pas de signe ="};
+  var arbre; try{ arbre=analyser(c.slice(1)); }catch(e){ return {p:0,max:max,why:"formule illisible"}; }
+  var ideal=idealValeurs(), v=evaluer(arbre,function(r){ return ideal.hasOwnProperty(r)?ideal[r]:NaN; });
+  var refs=refsDe(arbre), nums=nombresDe(arbre).filter(function(x){ return x!==100; });
+  if(arbre.op==="num") return {p:0,max:max,why:"résultat tapé à la main, pas une formule"};
+  var juste=Math.abs(v-ideal[ref])<0.011;
+  if(!refs.length) return juste ? {p:max/2,max:max,why:"nombres recopiés au lieu des références"} : {p:0,max:max,why:"aucune référence de cellule"};
+  if(juste) return nums.length ? {p:max/2,max:max,why:"nombre recopié au lieu d'une référence"} : {p:max,max:max,why:"juste"};
+  return {p:0,max:max,why:"résultat faux"};
+}
+var IDEAL=null;
+function idealValeurs(){
+  if(IDEAL) return IDEAL;
+  var cells={B2:"110",C2:"145",B5:"86"}; Object.keys(TABLEUR_FORMULES).forEach(function(k){ cells[k]=TABLEUR_FORMULES[k]; });
+  var val=feuille(cells), o={}; "B2 B3 B4 B5 B6 C2 C3 C4 C5 C6 B7 B8 B9 B10 C7 C8 C9 C10 C11".split(" ").forEach(function(r){ o[r]=val(r); });
+  return (IDEAL=o);
+}
+/* Bouton « Recopier » : lignes 7, 9 et 10 (la ligne 8 est fournie), références décalées d'une colonne. */
+function recopierColonne(cells){
+  ["7","9","10"].forEach(function(l){ var b=String(cells["B"+l]||"").trim(); cells["C"+l]= b.charAt(0)==="=" ? decaler(b) : b; });
+}
+/* Partie C : C1 (données), C2 (formules B7, B9, B10), C3 (colonne C, C11, phrase). item(q, intitulé, points, max, réponse, attendu). */
+function corrigerPartieC(C, phrase, item){
+  // C1
+  var num=function(r){ var v=feuille(C)(r); return v; };
+  item("C1","B2 (sans fuite)",Math.abs(num("B2")-110)<1e-9?0.5:0,0.5,C.B2,"110");
+  item("C1","C2 (avec la fuite)",Math.abs(num("C2")-145)<1e-9?0.5:0,0.5,C.C2,"145 (ou =B2+35)");
+  item("C1","B5 (abonnement annuel)",Math.abs(num("B5")-86)<1e-9?1:0,1,C.B5,"86 (43 × 2)");
+  // C2
+  ["B7","B9","B10"].forEach(function(r){ var x=noterFormule(r,C); item("C2",r,x.p,x.max,C[r],TABLEUR_FORMULES[r]+(x.why!=="juste"?"  ("+x.why+")":"")); });
+  // C3 : C7, C9, C10 justes, ou recopie fidèle de la formule de B (pas de double peine)
+  var justesC=0;
+  ["C7","C9","C10"].forEach(function(r){
+    var x=noterFormule(r,C), bF=String(C["B"+r.slice(1)]||"").trim(), cF=String(C[r]||"").trim().toUpperCase().replace(/\s+/g,"");
+    var recopie = bF.charAt(0)==="=" && cF===decaler(bF).toUpperCase().replace(/\s+/g,"");
+    if(x.p===x.max||recopie) justesC++;
+  });
+  item("C3","C7, C9, C10 ("+justesC+"/3 justes)",justesC===3?2:(justesC===2?1:0),2,["C7","C9","C10"].map(function(r){ return C[r]||"…"; }).join(" ; "),"=C2*C3 ; =C7+C8+C5 ; =C9+C6");
+  var x11=noterFormule("C11",C); item("C3","C11",x11.p,1,C.C11,"=C10-B10"+(x11.why!=="juste"?"  ("+x11.why+")":""));
+  var v11=feuille(C)("C11"), saisi=nombresTexte(phrase)[0];
+  var okPh = saisi!=null && ((!isNaN(v11)&&Math.abs(saisi-v11)<0.011)||Math.abs(saisi-57.97)<0.011);
+  item("C3","Phrase (coût de la fuite)",okPh?1:0,1,phrase,"57,97 €");
+
+}
+
+function corriger(){
+  var R=ETAT.rep, C=ETAT.cells, d=[];      // d : détail [question, item, points, max, réponse, attendu]
+  function item(q,it,p,max,rep,att){ d.push({q:q,it:it,p:Math.min(p,max),max:max,rep:rep,att:att}); }
+  var m;
+  // Q1
+  m=match(R.q1_quoi,MC.fuite); item("Q1","Quoi ?",m||( (match(R.q1_quoi,MC.but_verbe)||match(R.q1_quoi,MC.canalisations))?0.5:0 ),1,R.q1_quoi,CORRIGE.attendu.q1_quoi);
+  item("Q1","Qui ?",match(R.q1_qui,MC.techniciens),1,R.q1_qui,CORRIGE.attendu.q1_qui);
+  item("Q1","Où ?",match(R.q1_ou,MC.canalisations),1,R.q1_ou,CORRIGE.attendu.q1_ou);
+  item("Q1","Pourquoi ?",match(R.q1_pourquoi,MC.pourquoi),1,R.q1_pourquoi,CORRIGE.attendu.q1_pourquoi);
+  // Q2
+  item("Q2","À qui ?",match(R.q2_aqui,MC.techniciens),1,R.q2_aqui,CORRIGE.attendu.q2_aqui);
+  m=match(R.q2_surquoi,MC.canalisations); item("Q2","Sur quoi ?",m||(match(R.q2_surquoi,["eau","fuite*","fuite"])?0.5:0),1,R.q2_surquoi,CORRIGE.attendu.q2_surquoi);
+  m=match(R.q2_but,MC.fuite); item("Q2","Dans quel but ?",m?m:(match(R.q2_but,["gaspill*","gaspillage","econom*","economiser"])?0.5:0),1,R.q2_but,CORRIGE.attendu.q2_but);
+  var ph=[match(R.q2_p_nom,["robot*","robot"])>0, match(R.q2_p_aqui,MC.techniciens)>0, match(R.q2_p_surquoi,MC.canalisations.concat(["eau"]))>0,
+          match(R.q2_p_but,MC.fuite.concat(["gaspill*","gaspillage","econom*","economiser"]))>0].filter(Boolean).length;
+  item("Q2","Phrase du besoin",ph===4?1:(ph===3?0.5:0),1,[R.q2_p_nom,R.q2_p_aqui,R.q2_p_surquoi,R.q2_p_but].join(" / "),CORRIGE.attendu.q2_phrase);
+  // Q3
+  item("Q3","a) 1ᵉʳ chiffre",match(R.q3_a,MC.poussiere)||(match(R.q3_a,["solide*","solides"])?0.5:0),1,R.q3_a,CORRIGE.attendu.q3_a);
+  m=match(R.q3_b,MC.projection); item("Q3","b) 2ᵉ chiffre",m||(match(R.q3_b,["eau"])?0.5:0),1,R.q3_b,CORRIGE.attendu.q3_b);
+  item("Q3","c) oui / non",R.q3_c==="oui"?1:0,1,R.q3_c||"",CORRIGE.attendu.q3_c);
+  item("Q3","c) justification",Math.max(match(R.q3_just,MC.humidite),match(R.q3_just,MC.immersion)),1,R.q3_just,"ligne ⑤ : humidité, écoulements");
+  // Q4
+  CORRIGE.q4.forEach(function(l,i){
+    var t=R["q4_t"+i]===l.type?0.5:0, e=[R["q4_e"+i+"a"],R["q4_e"+i+"b"]].filter(Boolean);
+    var eOk=l.eme.length===2 ? (e.length===2 && e.indexOf(l.eme[0])>=0 && e.indexOf(l.eme[1])>=0) : (e[0]===l.eme[0]);
+    item("Q4","Ligne "+(i+1),t+(eOk?0.5:0),1,(R["q4_t"+i]||"…")+" — "+(e.join(" + ")||"…"),l.type+" — "+l.eme.join(" + "));
+  });
+  // Q5
+  var n1080=/1080\s*(p\b|px|pix)/i.test(R.q5_fc3||"")||/1080p/i.test(norm(R.q5_fc3));
+  var q5={
+    q5_fp1: match(R.q5_fp1,MC.canalisations),
+    q5_fc1: contientNombre(R.q5_fc1,3) ? (/lux/i.test(R.q5_fc1)?1:0.5) : 0,
+    q5_fc2: match(R.q5_fc2,MC.humidite) ? (match(R.q5_fc2,MC.resister)?1:0.5) : 0,
+    q5_fc3: contientNombre(R.q5_fc3,1080)||/1080/.test(R.q5_fc3||"") ? (n1080||/pixel/i.test(R.q5_fc3)?1:0.5) : 0,
+    q5_fc4: match(R.q5_fc4,MC.critere_portee),
+    q5_fc5: (contientNombre(R.q5_fc5,30) ? (/min/i.test(R.q5_fc5)?1:0.5) : 0) || (/demi.?heure|1\/2\s*h/i.test(R.q5_fc5||"")?1:0),
+    q5_fc6: (contientNombre(R.q5_fc6,10)&&contientNombre(R.q5_fc6,80)) ? (/°|degr|\bc\b/i.test(R.q5_fc6)?1:0.5) : ((contientNombre(R.q5_fc6,80)||contientNombre(R.q5_fc6,10))?0.5:0),
+    q5_fc7: contientNombre(R.q5_fc7,2000) ? (/€|euro/i.test(R.q5_fc7)?1:0.5) : 0
+  };
+  CORRIGE.q5.forEach(function(l){ l.forEach(function(c){ if(c&&c.id) item("Q5",l[0],q5[c.id],1,R[c.id],CORRIGE.attendu[c.id]); }); });
+  // Q6
+  function q6(ex,dem,pro,attenduOk){
+    var e=CORRIGE.q6.filter(function(x){ return x.v===ex; })[0];
+    var pe = e && e.ok===attenduOk ? 1 : 0, pv=0;
+    if(pe){ var a=contientNombre(dem,e.n[0])||(e.v==="eclairage"&&/noir|obscur/i.test(dem)), b=contientNombre(pro,e.n[1])||(e.v==="eclairage"&&/noir/i.test(pro));
+      pv=(a&&b)?1:((a||b)?0.5:0); }
+    return [pe,pv,e?e.t:""];
+  }
+  var a=q6(R.q6a_ex,R.q6a_dem,R.q6a_pro,true), b=q6(R.q6b_ex,R.q6b_dem,R.q6b_pro,false);
+  item("Q6","a) exigence respectée",a[0],1,a[2],"toute exigence respectée (sauf températures)");
+  item("Q6","a) comparaison des valeurs",a[1],1,(R.q6a_dem||"…")+" / "+(R.q6a_pro||"…"),CORRIGE.attendu.q6a);
+  item("Q6","b) exigence non respectée",b[0],1,b[2],"les températures");
+  item("Q6","b) comparaison des valeurs",b[1],1,(R.q6b_dem||"…")+" / "+(R.q6b_pro||"…"),"80 °C demandés / 60 °C");
+  corrigerPartieC(C, R.c3_phrase, item);
+  var tot={}; d.forEach(function(x){ tot[x.q]=(tot[x.q]||0)+x.p; });
+  var brut=d.reduce(function(s,x){ return s+x.p; },0);
+  return {detail:d, parQ:tot, brut:Math.round(brut*100)/100};
+}
+/* ═══ barème (points bruts sur 40 ; le site note sur 20 = brut ÷ 2) ═══ */
+var BAREME_Q=[["Q1","CT 2.5",4,"QQOQCP"],["Q2","CT 2.5",4,"Bête à cornes et besoin"],["Q3","CT 2.5",4,"Indice de protection IP"],
+  ["Q4","CT 2.1",4,"Pieuvre : FP ou FC"],["Q5","CT 2.1",8,"Cahier des charges fonctionnel"],["Q6","CT 2.1",4,"Conformité du prototype"],
+  ["C1","CT 5.1",2,"Tableur : les données"],["C2","CT 5.1",6,"Tableur : les formules"],["C3","CT 5.1",4,"Tableur : le coût de la fuite"]];
+
+/* ═══ champs, brouillon ═══ */
+function champs(){ return document.querySelectorAll("#copie input[id], #copie select[id], #copie textarea[id], #copie input[type=radio]"); }
+function lireChamps(){
+  champs().forEach(function(el){
+    if(el.type==="radio"){ if(el.checked) ETAT.rep[el.name]=el.value; return; }
+    if(el.hasAttribute("data-ref")) ETAT.cells[el.getAttribute("data-ref")]=el.value; else ETAT.rep[el.id]=el.value;
+  });
+}
+function ecrireChamps(){
+  champs().forEach(function(el){
+    if(el.type==="radio"){ el.checked=ETAT.rep[el.name]===el.value; return; }
+    var v=el.hasAttribute("data-ref")?ETAT.cells[el.getAttribute("data-ref")]:ETAT.rep[el.id]; if(v!=null) el.value=v;
+  });
+  recalculer();
+}
+function compterRepondu(){
+  var tot=0, faits=0;
+  champs().forEach(function(el){ if(el.type==="radio") return; tot++; if(String(el.value||"").trim()) faits++; });
+  tot++; if(ETAT.rep.q3_c) faits++;
+  return {tot:tot,faits:faits};
+}
+function majProgression(){
+  var p=compterRepondu(), qui=(val("prenom")+" "+val("nom")).trim();
+  $("prog").textContent=(qui?qui+" · "+val("classe")+" · ":"")+p.faits+"/"+p.tot+" réponses";
+}
+function val(id){ var e=$(id); return e?String(e.value||"").trim():""; }
+function slug(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function cleBrouillon(){ return DRAFT_PFX+(USER.id || slug(val("prenom")+" "+val("nom")) || "anon"); }
+function enregistrerBrouillon(){
+  try{
+    var p=compterRepondu(); if(!p.faits && localStorage.getItem(cleBrouillon())) return;   // une copie vide n'écrase jamais un brouillon
+    localStorage.setItem(cleBrouillon(), JSON.stringify({rep:ETAT.rep,cells:ETAT.cells,ts:Date.now()}));
+  }catch(e){ flash("msg","⚠️ Ton travail ne peut pas être enregistré sur cet appareil (navigation privée ?). Ne ferme pas la page.","ko"); }
+}
+var minuteur=null; function sauverBientot(){ clearTimeout(minuteur); minuteur=setTimeout(enregistrerBrouillon,500); majProgression(); }
+function restaurerBrouillon(){
+  try{ var d=JSON.parse(localStorage.getItem(cleBrouillon())||"null"); if(d){ ETAT.rep=d.rep||{}; ETAT.cells=d.cells||{}; } }catch(e){}
+}
+
+/* ═══ identité : donnée par le compte du site (clé PREFILL_KEY), sinon saisie ═══ */
+function lireIdentite(){
+  try{
+    var d=JSON.parse(localStorage.getItem(PREFILL_KEY)||"null"); if(!d) return false;
+    USER={ id:d.id||"", p:d.p||"", n:d.n||"", c:d.c||"" };
+    if(!USER.p||!USER.n) return false;
+    $("prenom").value=USER.p; $("nom").value=USER.n;
+    if(USER.c) $("classe").value=String(USER.c).toUpperCase();
+    ["prenom","nom","classe"].forEach(function(k){ var e=$(k); e.disabled=true; e.title="Identité de ton compte — elle ne se modifie pas ici."; });
+    return true;
+  }catch(e){ return false; }
+}
+function ouvrirCopie(){
+  $("ident").classList.add("cache"); $("layout").classList.remove("cache"); $("btnDT").classList.remove("cache");
+  DT_OUVERT = window.innerWidth>1050; majDT();
+  restaurerBrouillon(); ecrireChamps(); majProgression();
+  controlerVerrou(); afficherCorrectionProf(); viderLaFile();
+}
+function demarrer(){
+  if(!val("nom")||!val("prenom")||!val("classe")){ flash("identMsg","Écris ton nom, ton prénom et choisis ta classe.","ko"); return; }
+  $("nom").value=val("nom").toUpperCase();
+  ouvrirCopie();
+}
+
+/* Document technique : colonne fixe à gauche sur grand écran, panneau par-dessus la copie sur petit écran. */
+var DT_OUVERT=true;
+function majDT(){
+  var l=$("layout"), large=window.innerWidth>1050;
+  l.classList.toggle("dt-ferme", large && !DT_OUVERT);
+  l.classList.toggle("dt-ouvert", !large && DT_OUVERT);
+  $("btnDT").textContent = DT_OUVERT ? "📄 Masquer le document technique" : "📄 Document technique";
+}
+
+/* ═══ verrou de consultation (le professeur peut verrouiller une copie rendue) ═══ */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked===true || sub.locked==="TRUE" || sub.locked==="true"); }
+function copieLocaleVerrouillee(){
+  if(!USER.id) return false;
+  try{ var subs=JSON.parse(localStorage.getItem("subs")||"[]");
+    for(var i=0;i<subs.length;i++) if(subs[i] && subs[i].eid===USER.id && subs[i].cap===CAP_ID && envoiVerrouille(subs[i])) return true;
+  }catch(e){}
+  return false;
+}
+function estLocal(){ var hn=(location.hostname||"").toLowerCase(); return hn==="localhost"||hn==="127.0.0.1"||hn==="::1"||hn===""; }
+function urlLecture(){
+  if(estLocal()){ try{ var u=localStorage.getItem("apps_script_url_test")||""; if(/^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){} }
+  return APPS_SCRIPT_URL;
+}
+function lireEnvois(eid, onDone, sansRepli){
+  if(!eid){ onDone(null); return; }
+  var base=urlLecture(), q="&secret="+encodeURIComponent(SYNC_SECRET)+"&t="+Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base+"?action=own&eid="+encodeURIComponent(eid)+q, function(d){
+    if(d && d.ok && d.subs){ onDone(d.subs); return; }
+    if(d && d.error==="unknown_action" && !sansRepli){ lire(base+"?action=list"+q, function(d2){ onDone(d2&&d2.ok&&d2.subs?d2.subs:null); }); return; }
+    onDone(null);
+  });
+}
+function lireEnvoisMoi(eids, onDone){
+  var vus={}, liste=[], echec=true, i=0;
+  eids=eids.filter(function(e){ if(!e||vus[e]) return false; vus[e]=1; return true; });
+  (function suivant(){ if(i>=eids.length){ onDone(echec?null:liste); return; }
+    lireEnvois(eids[i++], function(r){ if(r){ echec=false; liste=liste.concat(r); } suivant(); }); })();
+}
+function voileVerrou(){
+  if($("voile-verrou")) return;
+  var v=document.createElement("div"); v.id="voile-verrou"; v.setAttribute("role","alert");
+  v.style.cssText="position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent=MSG_VERROU; document.body.appendChild(v);
+}
+function controlerVerrou(){
+  if(!USER.id) return;
+  if(copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){ if(!liste) return;
+    for(var i=0;i<liste.length;i++) if(liste[i] && liste[i].eid===USER.id && liste[i].cap===CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
+}
+
+/* ═══ envoi au professeur : même backend et même file d'attente que les autres capsules du site ═══ */
+function urlPrete(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL")<0; }
+function mettreEnFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); q=q.filter(function(x){ return x.eid!==sub.eid; }); q.push(sub); localStorage.setItem(QUEUE_KEY,JSON.stringify(q)); }catch(e){} }
+function retirerDeLaFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); localStorage.setItem(QUEUE_KEY,JSON.stringify(q.filter(function(x){ return x.eid!==sub.eid; }))); }catch(e){} }
+function deposerEnLocal(sub){ try{ var s=JSON.parse(localStorage.getItem("subs")||"[]"); s=s.filter(function(x){ return !(x.eid===sub.eid && x.cap===sub.cap); }); s.push(sub); localStorage.setItem("subs",JSON.stringify(s)); }catch(e){} }
+/* Règle 4 du site : une page servie en local n'écrit jamais dans le classeur de production. "" = envoi refusé. */
+function urlEcriture(){
+  if(!estLocal()) return APPS_SCRIPT_URL;
+  try{ var u=localStorage.getItem("apps_script_url_test")||""; if(u && u!==APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){}
+  return "";
+}
+function poster(sub, fini){
+  mettreEnFile(sub);
+  var cible=urlEcriture();
+  if(!cible){ try{ console.warn("[capsule] page servie en local : envoi vers la production bloqué, travail gardé en file locale."); }catch(e){} if(fini) fini(false); return; }
+  if(!urlPrete()){ if(fini) fini(false); return; }
+  fetch(cible,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({secret:SYNC_SECRET,sub:sub})})
+    .then(function(){ retirerDeLaFile(sub); if(fini) fini(true); }).catch(function(){ if(fini) fini(false); });
+}
+function viderLaFile(){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); if(!q.length||!urlPrete()||!urlEcriture()) return; q.forEach(function(s){ poster(s); }); }catch(e){} }
+/* Le résumé part dans une cellule du classeur : jamais de « = » en tête (règle 3 du site). */
+function resumeOuvert(){
+  var R=ETAT.rep, b=[];
+  if(R.q1_quoi) b.push("Q1 Quoi : "+R.q1_quoi);
+  if(R.q3_just) b.push("Q3 c : "+(R.q3_c||"?")+" — "+R.q3_just);
+  if(R.q5_fc2) b.push("Q5 FC2 : "+R.q5_fc2);
+  if(R.c3_phrase) b.push("C3 : la fuite coûte "+R.c3_phrase+" €");
+  return b.join("\n");
+}
+function fabriquerEnvoi(){
+  var r=corriger(), fields={};
+  Object.keys(ETAT.rep).forEach(function(k){ fields[k]=String(ETAT.rep[k]==null?"":ETAT.rep[k]); });
+  Object.keys(ETAT.cells).forEach(function(k){ fields["t_"+k]=String(ETAT.cells[k]==null?"":ETAT.cells[k]); });
+  /* Correction calculée ici, relue par EVALUATIONS["p11-eval1"] dans le tableau de bord (ajustable). */
+  fields.corr=JSON.stringify(r.detail.map(function(x){ return [x.q,x.it,x.p,x.max,String(x.rep==null?"":x.rep).slice(0,300),x.att]; }));
+  fields.brut=String(r.brut);
+  var ename=(val("prenom")+" "+val("nom")).trim(), classe=USER.c||val("classe");
+  var p=compterRepondu();
+  return { id:Date.now(), eid:USER.id||(CAP_ID+"."+(slug(classe)||"4x")+"."+(slug(ename)||"eleve")), ename:ename||"Élève", ecls:classe,
+    cap:CAP_ID, caplbl:CAP_LABEL, score:p.faits, qcmTot:p.tot, open:resumeOuvert(), fields:fields,
+    date:new Date().toLocaleDateString("fr-FR"), dateISO:new Date().toISOString(), status:"pending" };
+}
+function envoyerAuProf(){
+  if(copieLocaleVerrouillee()){ flash("msg",MSG_VERROU,"ko"); return; }
+  lireChamps(); var p=compterRepondu(), vides=p.tot-p.faits;
+  if(!window.confirm((vides?"Il te reste "+vides+" réponse(s) vide(s).\n\n":"")+"Envoyer ta copie au professeur ?\nUne fois envoyée, elle peut être verrouillée : relis-toi bien avant.")) return;
+  var btn=$("btnEnvoyer"); btn.disabled=true; flash("msg","⟳ Envoi en cours…","info");
+  enregistrerBrouillon();
+  var sub=fabriquerEnvoi(); deposerEnLocal(sub);
+  try{ if(window.parent && window.parent!==window && window.parent.renderDash) window.parent.renderDash(); }catch(e){}
+  poster(sub, function(ok){
+    btn.disabled=false;
+    if(ok) flash("msg","✅ <b>Copie envoyée au professeur</b> le "+new Date().toLocaleString("fr-FR")+". Ta note s'affichera ici quand il l'aura validée.","ok");
+    else flash("msg","⚠️ L'envoi n'a pas abouti (réseau ?). Ta copie est <b>conservée sur cet appareil</b> et repartira automatiquement. Préviens ton professeur.","ko");
+  });
+}
+function reprendreEnvoi(){
+  if(!val("prenom")||!val("nom")){ flash("msg","✋ Il manque ton nom et ton prénom.","ko"); return; }
+  if(copieLocaleVerrouillee()){ flash("msg",MSG_VERROU,"ko"); return; }
+  lireChamps(); if(compterRepondu().faits && !window.confirm("Ta copie actuelle sera remplacée par ton dernier envoi. Continuer ?")) return;
+  flash("msg","⟳ Recherche de ton dernier envoi…","info");
+  var ename=val("prenom")+" "+val("nom"), eidNom=CAP_ID+"."+(slug(USER.c||val("classe"))||"4x")+"."+slug(ename);
+  lireEnvoisMoi([USER.id,eidNom], function(liste){
+    if(liste===null){ flash("msg","La reprise n'a pas abouti (réseau ?). Préviens ton professeur.","ko"); return; }
+    var moi=slug(ename), trouve=null;
+    liste.forEach(function(s){ if(s.cap===CAP_ID && slug(s.ename||"")===moi && (!trouve || new Date(s.dateISO)>new Date(trouve.dateISO))) trouve=s; });
+    if(envoiVerrouille(trouve)){ flash("msg",MSG_VERROU,"ko"); return; }
+    if(!trouve || !trouve.fields){ flash("msg","Aucun envoi retrouvé à ton nom.","ko"); return; }
+    ETAT.rep={}; ETAT.cells={};
+    Object.keys(trouve.fields).forEach(function(k){ if(k==="corr"||k==="brut") return; if(k.indexOf("t_")===0) ETAT.cells[k.slice(2)]=trouve.fields[k]; else ETAT.rep[k]=trouve.fields[k]; });
+    ecrireChamps(); enregistrerBrouillon(); majProgression();
+    flash("msg","✅ Copie du "+new Date(trouve.dateISO).toLocaleString("fr-FR")+" rechargée. Tu peux continuer.","ok");
+  });
+}
+
+/* ═══ la correction du professeur redescend (localStorage.subs, alimenté par le site) ═══ */
+var CORR_SECTIONS=BAREME_Q.map(function(q){ return {cle:q[0],label:q[0]+" — "+q[3],max:q[2]/2}; });
+var CORR_TOTAL=20;
+function corrSections(){
+  try{ var d=window.parent && window.parent!==window && window.parent.EVALUATIONS && window.parent.EVALUATIONS[CAP_ID];
+    if(d && d.sections && d.sections.length){ CORR_TOTAL=d.total||CORR_TOTAL; return d.sections; } }catch(e){}
+  return CORR_SECTIONS;
+}
+function afficherCorrectionProf(){
+  var hote=$("bloc-correction"), s=null; if(!hote) return;
+  try{ var subs=JSON.parse(localStorage.getItem("subs")||"[]"); subs.forEach(function(x){ if(USER.id && x.eid===USER.id && x.cap===CAP_ID) s=x; }); }catch(e){}
+  if(!s){ hote.innerHTML=""; return; }
+  if(s.status==="pending"){ hote.innerHTML='<div class="rappel">⏳ Ta copie a bien été envoyée. Elle est <b>en attente de correction</b> par ton professeur.</div>'; return; }
+  if(s.status==="rejected"){ hote.innerHTML='<div class="msg ko"><b>🔄 À retravailler.</b> Ton professeur te demande de reprendre cette évaluation.'+(s.appreciation?'<br>'+esc(s.appreciation):'')+'</div>'; return; }
+  if(s.status!=="validated" || s.adjustedScore===undefined || s.adjustedScore===""){ hote.innerHTML=""; return; }
+  var sec=corrSections(), pts=s.adjustedPts||{};
+  var x='<div class="rappel" style="border-left-color:#1E8E5A;background:#e7f6ee"><b>✅ Correction du professeur</b> : <span style="font-size:22px;font-weight:800">'+fr(Number(s.adjustedScore))+' / '+CORR_TOTAL+'</span>';
+  if(sec.some(function(z){ return pts[z.cle]!==undefined; }))
+    x+='<table class="t res" style="margin-top:8px"><tbody>'+sec.map(function(z){ return '<tr><td>'+esc(z.label)+'</td><td class="n">'+(pts[z.cle]===undefined?"—":fr(pts[z.cle]))+' / '+fr(z.max)+'</td></tr>'; }).join("")+'</tbody></table>';
+  if(s.appreciation) x+='<div style="margin-top:8px"><b>💬 Appréciation :</b> '+esc(s.appreciation)+'</div>';
+  hote.innerHTML=x+'</div>';
+}
+
+/* ═══ démarrage ═══ */
+document.addEventListener("DOMContentLoaded",function(){
+  construire();
+  $("btnStart").addEventListener("click",demarrer);
+  $("btnEnvoyer").addEventListener("click",envoyerAuProf);
+  $("btnReprise").addEventListener("click",reprendreEnvoi);
+  $("btnImprimer").addEventListener("click",function(){ window.print(); });
+  $("btnDT").addEventListener("click",function(){ DT_OUVERT=!DT_OUVERT; majDT(); });
+  $("btnDTfermer").addEventListener("click",function(){ DT_OUVERT=false; majDT(); });
+  window.addEventListener("resize",majDT);
+  $("copie").addEventListener("input",function(e){ lireChamps(); if(e.target.hasAttribute("data-ref")) recalculer(); sauverBientot(); });
+  $("copie").addEventListener("change",function(){ lireChamps(); sauverBientot(); });
+  $("btnRecopie").addEventListener("click",function(){
+    lireChamps();
+    var deja=["C7","C9","C10"].some(function(r){ return String(ETAT.cells[r]||"").trim(); });
+    if(deja && !window.confirm("La colonne C contient déjà quelque chose. La remplacer par la recopie de la colonne B ?")) return;
+    recopierColonne(ETAT.cells); ecrireChamps(); sauverBientot();
+  });
+  setInterval(function(){ if(!$("layout").classList.contains("cache")) enregistrerBrouillon(); },20000);
+  window.addEventListener("beforeunload",function(){ if(!$("layout").classList.contains("cache")) enregistrerBrouillon(); });
+  if(lireIdentite()) ouvrirCopie();
+});
+</script>
+</body>
+</html>
