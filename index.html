@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9287,13 +9287,18 @@ function ficheNiveau(sub) {
 
 /* Ligne de score affichée en tête de copie. */
 var FICHE_STATUTS = { pending:"en attente de correction", validated:"corrigé et validé", rejected:"à retravailler" };
+/* Sur la copie, la note s'écrit « Note : x/barème », sans dire comment elle a
+   été obtenue : « Proposition automatique », « Note auto (indicative) »,
+   « Note ajustée » parlent de l'outillage, pas du travail de l'élève — et
+   juraient avec « Statut : corrigé et validé ». Le tableau de bord et le modal
+   du professeur gardent, eux, la distinction proposée / validée. */
 function ficheScoreTexte(sub) {
   var st = " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   if (sub.cap === "dc") {
-    if (sub.adjustedScore !== undefined) return "Note ajustée : " + sub.adjustedScore + "/30" + st;
+    if (sub.adjustedScore !== undefined) return "Note : " + fmtPts(sub.adjustedScore) + "/30" + st;
     var d = scoreDCBySection(sub.fields || {});
     var a = Math.min(30, (d.q1||0)+(d.q2a||0)+(d.q2b||0)+(d.q2c||0)+(d.q3||0)+(d.p2q1||0)+(d.p2q2||0)+(d.p2q3||0));
-    return "Note auto : " + a + "/30 (indicative)" + st;
+    return "Note : " + fmtPts(a) + "/30" + st;
   }
   if (sub.cap === "p11-ex1" || sub.cap === "p11-ex2") {
     var b = Number(sub.bareme) || 20;
@@ -9301,9 +9306,15 @@ function ficheScoreTexte(sub) {
     var brut = sub.cap === "p11-ex1"
       ? p11x1TotalBrut(scoreP11Ex1BySection(sub.fields || {}))
       : p11x2TotalBrut(scoreP11Ex2BySection(sub.fields || {}));
-    return "Note auto : " + p11x1Fmt(p11x1Convert(brut, b)) + "/" + b + " (indicative)" + st;
+    return "Note : " + p11x1Fmt(p11x1Convert(brut, b)) + "/" + b + st;
   }
-  if (EVALUATIONS[sub.cap]) return texteNoteEval(sub) + st;
+  if (EVALUATIONS[sub.cap]) {
+    var dv = EVALUATIONS[sub.cap];
+    var validee = sub.adjustedScore !== undefined && sub.adjustedScore !== "";
+    /* Notée à la main et pas encore notée : rien à afficher d'autre. */
+    if (!validee && dv.manuel) return "À noter (sur " + dv.total + ")" + st;
+    return "Note : " + fmtPts(noteEvaluation(sub)) + "/" + dv.total + st;
+  }
   if (sub.cap === "rem1") return "Score : " + sub.score + "/40" + st;
   if (sub.cap === "p12")  { var n0 = countP12Fields(sub.fields||{}); return n0.done + "/" + n0.total + " champs" + st; }
   if (sub.cap === "p12-ex1") { var n1 = countP12Ex1Fields(sub.fields||{}); return n1.done + "/" + n1.total + " champs" + st; }
