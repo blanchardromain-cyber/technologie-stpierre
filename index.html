@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-24j</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-25a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9265,7 +9265,7 @@ function fromModal(st) {
     updSub(modalId, st);
     if (st === "validated") {
       var sv = getSubs().filter(function (x) { return x.id == modalId; })[0];
-      if (sv && sv.cap === "p11-ex1") reporterP11Ex1(sv);
+      if (sv && P11_REPORT[sv.cap]) reporterP11(sv);
     }
   }
   closeModal();
@@ -9512,6 +9512,12 @@ function ficheEvalProfHTML(sub) {
     if (sub.appreciation) z += _ficheApprHTML(sub.appreciation);
     return z;
   }
+  /* P11 validée par « Valider » sans note enregistrée : on imprime la correction
+     automatique et son appréciation, comme le tableau de bord et le classeur de notes. */
+  if (P11_REPORT[sub.cap] && sub.status === "validated" && (sub.adjustedScore === undefined || sub.adjustedScore === "")) {
+    var nv = noteReportP11(sub);
+    return ficheEvalProfHTML({ cap: "", adjustedScore: nv.note, bareme: nv.bareme, appreciation: nv.appreciation });
+  }
   if (sub.adjustedScore === undefined || sub.adjustedScore === "") return "";
   var bar = sub.bareme || sub.qcmTot || 20;
   var pct = sub.adjustedScore / bar * 100;
@@ -9632,9 +9638,13 @@ function printCopiesFiltrees() {
     var s = r.liste[j];
     var bar = s.bareme || s.qcmTot || 20;
     var note = "—";
-    if (s.adjustedScore !== undefined && s.adjustedScore !== "") {
-      note = p11x1Fmt(s.adjustedScore) + " / " + bar;
-      somme += (s.adjustedScore / bar) * 20; nbNotes++;
+    /* Copie validée par « Valider » sans note enregistrée : note automatique, celle du tableau de bord. */
+    var nr = (s.adjustedScore !== undefined && s.adjustedScore !== "") ? s.adjustedScore
+           : (s.status === "validated" ? noteAutoDe(s) : "");
+    if (nr !== "" && nr !== undefined) {
+      bar = Number(baremeDe(s)) || bar;
+      note = p11x1Fmt(nr) + " / " + bar;
+      somme += (nr / bar) * 20; nbNotes++;
     } else if (s.status !== "validated") { note = "non corrigée"; }
     rec += '<tr style="background:' + (j % 2 === 0 ? "#f9f9f9" : "#fff") + ';border-bottom:1px solid #eee">'
          + '<td style="padding:6px 10px;color:#999">' + (j + 1) + '</td>'
@@ -14151,6 +14161,7 @@ function buildP11Ex2TeacherPanel(sub) {
   h += '</div><div id="p11x2-appr-avert"></div></div>';
 
   h += '<div style="text-align:right;margin-top:12px">';
+  h += '<button onclick="reporterToutP11(\'p11-ex2\')" title="Envoie au classeur de notes les copies validées de l’Exercice n°2 pas encore reportées (ou modifiées depuis)" style="padding:10px 16px;margin-right:8px;background:#fff;color:#5C6BC0;border:1.5px solid #5C6BC0;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700">📤 Reporter toutes les copies validées</button>';
   h += '<button onclick="saveP11Ex2Adj(' + sub.id + ')" style="padding:10px 22px;background:#5C6BC0;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
   h += '</div>';
   return h;
@@ -14237,6 +14248,7 @@ function saveP11Ex2Adj(sid) {
   subs[idx].score         = note;
   subs[idx].qcmTot        = bareme;
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  reporterP11(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
   if (ta) ta.value = apprTxt2;
@@ -15010,7 +15022,7 @@ function buildP11Ex1TeacherPanel(sub) {
   h += '</div><div id="p11x1-appr-avert"></div></div>';
 
   h += '<div style="text-align:right;margin-top:12px">';
-  h += '<button onclick="reporterToutP11Ex1()" title="Renvoie au classeur de notes toutes les copies de l’Exercice n°1 déjà validées" style="padding:10px 16px;margin-right:8px;background:#fff;color:#0288D1;border:1.5px solid #0288D1;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700">📤 Reporter toutes les copies validées</button>';
+  h += '<button onclick="reporterToutP11(\'p11-ex1\')" title="Envoie au classeur de notes les copies validées de l’Exercice n°1 pas encore reportées (ou modifiées depuis)" style="padding:10px 16px;margin-right:8px;background:#fff;color:#0288D1;border:1.5px solid #0288D1;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700">📤 Reporter toutes les copies validées</button>';
   h += '<button onclick="saveP11Ex1Adj(' + sub.id + ')" style="padding:10px 22px;background:#0288D1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700">💾 Enregistrer la note</button>';
   h += '</div>';
   return h;
@@ -15074,54 +15086,83 @@ function p11x1AutoApprIfUntouched() {
     _p11x1LastAutoAppr = n;
   }
 }
-/* P11 4e — Exercice n°1 : la note validée part aussi au classeur « Evaluation P11 — Exercice n°1 »
-   (Apps Script Ex1-Report.gs, dépôt techno-p11-eau), sur la ligne de l'élève dans l'onglet de sa classe.
-   Le script refuse d'écrire sur une ligne saisie à la main et le note dans son Journal.
+/* P11 4e — Exercices n°1 et n°2 : la note validée part aussi au classeur de notes de l'exercice
+   (Apps Script Ex1-Report.gs / Ex2-Report.gs, dépôt techno-p11-eau), sur la ligne de l'élève
+   dans l'onglet de sa classe. Le script refuse d'écrire sur une ligne saisie à la main.
    URL vide = report désactivé. Règle 4 : jamais depuis une page servie en local. */
-var P11_EX1_REPORT_URL = "https://script.google.com/macros/s/AKfycbzFN9T1Hpm9aH0qibzHw3WdhyaYfShzvXVNagK4fHhhdqsTMoH_7A2okaRoKSuaTW1i/exec";
-var P11_EX1_REPORT_SECRET = "P11-EX1-2026";
+var P11_REPORT = {
+  "p11-ex1": { nom: "Exercice n°1", secret: "P11-EX1-2026",
+    url: "https://script.google.com/macros/s/AKfycbzFN9T1Hpm9aH0qibzHw3WdhyaYfShzvXVNagK4fHhhdqsTMoH_7A2okaRoKSuaTW1i/exec",
+    pts: function (f) { return scoreP11Ex1BySection(f); }, brut: function (p) { return p11x1TotalBrut(p); },
+    appr: function (n, b, p) { return autoAppreciationP11Ex1(n, b, p); } },
+  "p11-ex2": { nom: "Exercice n°2", secret: "P11-EX2-2026",
+    url: "",
+    pts: function (f) { return scoreP11Ex2BySection(f); }, brut: function (p) { return p11x2TotalBrut(p); },
+    appr: function (n, b, p) { return autoAppreciationP11Ex2(n, b, p); } }
+};
+/* Note, points et appréciation d'une copie validée. Validée par le bouton « Valider » du bas
+   du modal : aucune note enregistrée, on prend la correction automatique (celle du tableau de bord). */
+function noteReportP11(sub) {
+  var c = P11_REPORT[sub.cap], bar = Number(sub.bareme) || 20;
+  var pts = sub.adjustedPts || c.pts(sub.fields || {});
+  var note = (sub.adjustedScore !== undefined && sub.adjustedScore !== "") ? sub.adjustedScore : p11x1Convert(c.brut(pts), bar);
+  return { pts: pts, note: note, bareme: bar, appreciation: sub.appreciation || c.appr(note, bar, pts) };
+}
+/* Copies déjà reportées : { id de copie : empreinte de ce qui a été envoyé }. Le bouton
+   « Reporter toutes les copies validées » n'envoie que les copies absentes ou modifiées depuis. */
+function _p11Reportes() { try { return JSON.parse(localStorage.getItem("p11_reportes")) || {}; } catch (e) { return {}; } }
+function _p11Empreinte(sub) { var n = noteReportP11(sub); return JSON.stringify([sub.ecls, sub.ename, n.pts, n.note, n.bareme, n.appreciation]); }
 /* Un envoi = une promesse { ok, statut | erreur }. Google répond parfois par une page d'erreur
    (script occupé) : jusqu'à 3 essais espacés avant d'abandonner. */
-function envoyerP11Ex1(sub) {
-  if (!P11_EX1_REPORT_URL) return Promise.resolve({ ok: false, erreur: "URL absente" });
+function envoyerP11(sub) {
+  var c = P11_REPORT[sub.cap];
+  if (!c || !c.url) return Promise.resolve({ ok: false, erreur: "URL absente" });
   var hn = (location.hostname || "").toLowerCase();
   if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
-    try { console.warn("[p11-ex1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
+    try { console.warn("[" + sub.cap + "] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return Promise.resolve({ ok: false, erreur: "page locale" });
   }
-  /* Copie validée par le bouton « Valider » du bas du modal : aucune note enregistrée,
-     on reporte la correction automatique, comme l'affiche le tableau de bord. */
-  var bar = Number(sub.bareme) || 20;
-  var pts = sub.adjustedPts || scoreP11Ex1BySection(sub.fields || {});
-  var note = sub.adjustedScore !== undefined ? sub.adjustedScore : p11x1Convert(p11x1TotalBrut(pts), bar);
-  var corps = JSON.stringify({ secret: P11_EX1_REPORT_SECRET, classe: sub.ecls || "", eleve: sub.ename || "",
-                               pts: pts, note: p11x1Fmt(note), bareme: bar,
-                               appreciation: sub.appreciation || autoAppreciationP11Ex1(note, bar, pts) });
-  function essai(n) {
-    return fetch(P11_EX1_REPORT_URL, { method: "POST", body: corps })
+  var n = noteReportP11(sub), empreinte = _p11Empreinte(sub);
+  var corps = JSON.stringify({ secret: c.secret, classe: sub.ecls || "", eleve: sub.ename || "",
+                               pts: n.pts, note: p11x1Fmt(n.note), bareme: n.bareme, appreciation: n.appreciation });
+  function essai(k) {
+    return fetch(c.url, { method: "POST", body: corps })
       .then(function (r) { return r.json(); })
       .catch(function (e) {
-        if (n >= 3) return { ok: false, erreur: "réseau" };
-        return new Promise(function (ok) { setTimeout(ok, 3000 * n); }).then(function () { return essai(n + 1); });
+        if (k >= 3) return { ok: false, erreur: "réseau" };
+        return new Promise(function (ok) { setTimeout(ok, 3000 * k); }).then(function () { return essai(k + 1); });
       });
   }
-  return essai(1);
+  return essai(1).then(function (o) {
+    if (o && o.ok && o.statut !== "manuel") {
+      var m = _p11Reportes(); m[sub.id] = empreinte;
+      try { localStorage.setItem("p11_reportes", JSON.stringify(m)); } catch (e) {}
+    }
+    return o;
+  });
 }
-function reporterP11Ex1(sub) {
-  if (!P11_EX1_REPORT_URL) return;
-  envoyerP11Ex1(sub).then(function (o) {
+function reporterP11(sub) {
+  if (!P11_REPORT[sub.cap] || !P11_REPORT[sub.cap].url) return;
+  envoyerP11(sub).then(function (o) {
     if (o && o.erreur === "page locale") return;
     if (o && o.ok && o.statut === "manuel") toast("⚠️ Classeur de notes : ligne saisie à la main, report refusé (voir le Journal)");
     else if (o && o.ok) toast("📊 Note reportée au classeur de notes" + (o.statut === "ajoute" ? " (élève ajouté : nom à vérifier)" : ""));
     else toast("⚠️ Classeur de notes : report impossible (" + (o && o.erreur || "?") + "). Revalider plus tard.");
   });
 }
-/* Import des copies validées : une copie après l'autre (on attend la réponse du classeur),
-   puis un bilan qui nomme les élèves non reportés. */
-function reporterToutP11Ex1() {
-  var l = getSubs().filter(function (s) { return s.cap === "p11-ex1" && s.status === "validated"; });
-  if (!l.length) { toast("Aucune copie validée de l'Exercice n°1"); return; }
-  if (!confirm(l.length + " copie(s) validée(s) à reporter au classeur de notes, une par une (quelques minutes). Laisser la page ouverte. Continuer ?")) return;
+/* Import des copies validées pas encore reportées (ou modifiées depuis) : une copie après l'autre
+   (on attend la réponse du classeur), puis un bilan qui nomme les élèves non reportés. */
+function reporterToutP11(cap) {
+  var c = P11_REPORT[cap];
+  if (!c.url) { toast("Report de l'" + c.nom + " pas encore branché (URL du script absente)"); return; }
+  var toutes = getSubs().filter(function (s) { return s.cap === cap && s.status === "validated"; });
+  if (!toutes.length) { toast("Aucune copie validée de l'" + c.nom); return; }
+  var m = _p11Reportes();
+  var l = toutes.filter(function (s) { return m[s.id] !== _p11Empreinte(s); });
+  if (!l.length) {
+    if (!confirm("Les " + toutes.length + " copie(s) validée(s) de l'" + c.nom + " sont déjà reportées, sans changement depuis.\n\nTout renvoyer quand même ?")) return;
+    l = toutes;
+  } else if (!confirm(l.length + " copie(s) à reporter au classeur de notes (" + (toutes.length - l.length) + " déjà reportée(s), ignorée(s)), une par une. Laisser la page ouverte. Continuer ?")) return;
   var bilan = { note: [], ajoute: [], manuel: [], echec: [] }, i = 0;
   function suivant() {
     if (i >= l.length) {
@@ -15134,7 +15175,7 @@ function reporterToutP11Ex1() {
     }
     var s = l[i++], nom = (s.ecls || "?") + " — " + (s.ename || "?");
     toast("📤 Report " + i + "/" + l.length + " : " + (s.ename || ""));
-    envoyerP11Ex1(s).then(function (o) {
+    envoyerP11(s).then(function (o) {
       if (o && o.ok && bilan[o.statut]) bilan[o.statut].push(nom);
       else bilan.echec.push(nom + " (" + (o && o.erreur || "?") + ")");
       suivant();
@@ -15163,7 +15204,7 @@ function saveP11Ex1Adj(sid) {
   subs[idx].score         = note;
   subs[idx].qcmTot        = bareme;
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
-  reporterP11Ex1(subs[idx]);
+  reporterP11(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
   if (ta) ta.value = apprTxt;
