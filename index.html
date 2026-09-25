@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-25b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-25c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4921,6 +4921,25 @@ body.est-prof .prof-only{display:block}
         avant la séance : chaque copie rendue sera alors verrouillée dès son envoi.
       </p>
       <iframe id="eval2-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation2_eleve.html" title="P1 — Évaluation n°2 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — ENTRAÎNEMENT TABLEUR (sans code, rien n'est envoyé) -->
+    <div id="pg-p11-entr-tab" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Entraînement tableur : la facture du club photo (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Pour préparer la partie C de l'évaluation : lire une feuille de calcul, écrire ses formules, les recopier.
+        Ce n'est <strong>pas noté</strong> : vérifie autant de fois que tu veux.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Aucune soumission : la progression reste sur le poste de l'élève. Version papier et corrigé :
+        P11/P11_evaluation_1/07_entrainement. Page seule : techno-p11-eau/entrainement-tableur.html.
+      </p>
+      <iframe id="p11-entr-tab-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/entrainement_tableur.html" title="P11 — Entraînement tableur (4e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -5895,6 +5914,7 @@ var SEQUENCES_DEF = [
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"EAU34", open:true},
   {id:"eau34-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Activités 3 et 4", desc:"Corrigé détaillé des activités 3 et 4. Code d'accès professeur.", couleur:"var(--vt)", code:"COREAU34", open:true},
   {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"SYNEAU26", open:true},
+  {id:"p11-entr-tab", ordre:116, niveau:"4ème", titre:"P11 — Entraînement tableur — La facture du club photo", desc:"Avant l'évaluation : lire une feuille de calcul, passer de la phrase à la formule, trouver l'erreur, recopier. Non noté, vérification immédiate. Aides dys intégrées.", couleur:"#0288D1", code:"", open:true},
   {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"EVALEAU1", open:true},
   {id:"p12", ordre:120, niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"ALI26", open:true},
   {id:"p12-cor-a1", ordre:121, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"CORALI26", open:true},
@@ -6317,6 +6337,10 @@ function goPage(pid) {
     var ev2Ifr = document.getElementById("eval2-5e-frame");
     if (ev2Ifr) ev2Ifr.src = ev2Ifr.getAttribute("data-src");
   }
+  if (pid === "pg-p11-entr-tab") {
+    var p11etIfr = document.getElementById("p11-entr-tab-frame");
+    if (p11etIfr && !p11etIfr.src) p11etIfr.src = p11etIfr.getAttribute("data-src");
+  }
   if (pid === "pg-p11-eval1") {
     try {
       if (user) localStorage.setItem("p11eval1_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
@@ -6694,6 +6718,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
+        } else if (s.id === "p11-entr-tab") {
+          badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
         } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "p11-eval1") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
@@ -6741,6 +6767,7 @@ function renderDash() {
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "p11-eval1") clickAction = "onclick=\"goPage('pg-p11-eval1')\"";
+      else if (s.id === "p11-entr-tab") clickAction = "onclick=\"goPage('pg-p11-entr-tab')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
