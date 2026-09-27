@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-25c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-27a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4302,6 +4302,7 @@ body.est-prof .prof-only{display:block}
           <button onclick="exportCSVAll()" title="Sélectionne une capsule pour exporter les détails de cette capsule uniquement. Sans filtre, exporte tout. Les filtres classe/statut/recherche sont aussi appliqués." style="padding:7px 13px;background:var(--bl);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F4CA; Export CSV</button>
           <button class="btn-verrou" onclick="verrouillerSelection(true)" title="Verrouille la consultation des copies correspondant aux filtres ci-dessus (une capsule doit être choisie). L'élève garde sa note et l'appréciation, mais ne peut plus rouvrir, modifier ni exporter son travail." style="padding:7px 13px;background:#5F6B7A;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F512; Verrouiller la sélection</button>
           <button class="btn-verrou" onclick="verrouillerSelection(false)" title="Rend la consultation aux élèves pour les copies correspondant aux filtres ci-dessus." style="padding:7px 13px;background:#fff;color:#5F6B7A;border:1px solid #5F6B7A;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif">&#x1F513; Déverrouiller la sélection</button>
+          <button class="btn-verrou" onclick="prevenirSelectionED()" title="Envoie un message EcoleDirecte aux élèves dont la copie (capsule filtrée) est consultable : « Tu peux maintenant consulter ton travail de technologie sur le site techno ». Aperçu et confirmation avant envoi ; un élève n'est jamais prévenu deux fois pour une capsule." style="padding:7px 13px;background:#fff;color:#0288D1;border:1px solid #0288D1;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">&#x1F4E8; Pr&eacute;venir (EcoleDirecte)</button>
           <span class="btn-verrou" id="nb-verrou" style="font-size:12px;color:var(--td);align-self:center"></span>
         </div>
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:auto">
@@ -4352,6 +4353,15 @@ body.est-prof .prof-only{display:block}
           pour une port&eacute;e filtr&eacute;e (classe, statut).
         </p>
         <div id="verrous-list"></div>
+        <div class="btn-verrou" style="margin-top:22px;padding:14px 16px;border:1px solid var(--gb);border-radius:10px;max-width:780px">
+          <div style="font-weight:700;color:var(--bl);margin-bottom:6px">&#x1F4E8; Pr&eacute;venir les &eacute;l&egrave;ves par EcoleDirecte</div>
+          <p style="font-size:13px;color:var(--td);line-height:1.6;margin:0 0 10px">Message envoy&eacute; &agrave; chaque &eacute;l&egrave;ve dont la copie redevient consultable&nbsp;: &laquo;&nbsp;Bonjour. Tu peux maintenant consulter ton travail de technologie sur le site techno. M.Blanchard&nbsp;&raquo; (lien vers le site). Toujours un aper&ccedil;u et une confirmation avant l'envoi&nbsp;; un &eacute;l&egrave;ve n'est jamais pr&eacute;venu deux fois pour une m&ecirc;me capsule.</p>
+          <label style="font-size:13px">Mode&nbsp;: <select id="ed-notif-mode" class="fsel"><option value="off">D&eacute;sactiv&eacute;</option><option value="demande">Sur demande (bouton &laquo;&nbsp;Pr&eacute;venir&nbsp;&raquo; de l'onglet Suivi)</option><option value="auto">Automatique (propos&eacute; apr&egrave;s chaque d&eacute;verrouillage)</option></select></label>
+          <label style="font-size:13px;margin-left:12px">Cl&eacute; d'application&nbsp;: <input id="ed-notif-cle" type="password" class="si" style="width:200px" placeholder="laisser vide pour garder" autocomplete="off"></label>
+          <button onclick="edNotifReglages()" style="padding:6px 12px;margin-left:8px;border-radius:8px;border:1px solid var(--bl);background:var(--bl);color:#fff;cursor:pointer">Enregistrer</button>
+          <button onclick="edTesterAMoi()" style="padding:6px 12px;margin-left:4px;border-radius:8px;border:1px solid var(--bl);background:#fff;color:var(--bl);cursor:pointer">Test &agrave; moi-m&ecirc;me</button>
+          <div id="ed-notif-etat" style="font-size:12px;color:var(--td);margin-top:6px"></div>
+        </div>
       </div>
 
       <!-- CONFIG -->
@@ -10703,6 +10713,7 @@ function chargerCapsArmees(apres) {
 }
 
 function renderVerrous() {
+  try { edNotifAfficher(); } catch (e) {}
   var hote = document.getElementById("verrous-list");
   if (!hote || isCollegue) return;
   var subs = subsVisibles(), parCap = {};
@@ -10930,6 +10941,7 @@ function verifierVerrous(cibles, verrouiller, horsLigne) {
     });
     /* Le tableau suit le serveur : une copie non confirmée reprend son état réel. */
     if (Object.keys(reel).length) majVerrousLocaux(ko, reel, "");
+    if (!verrouiller && ok) apresDeverrouillage(cibles.filter(function (c) { return ko.indexOf(c) < 0; }));
     var bilan = "Bilan : " + ok + " copie" + (ok > 1 ? "s " : " ") + mot + (ok > 1 ? "s" : "") + ", " + ko.length + " échec" + (ko.length > 1 ? "s" : "") + ".";
     if (!ko.length) { afficherProgVerrou(bilan, true); toast(bilan); return; }
     var noms = ko.slice(0, 15).map(function (c) { return "– " + (c.ename || c.eid) + " (" + (c.ecls || "?") + ")"; }).join("\n");
@@ -10939,6 +10951,117 @@ function verifierVerrous(cibles, verrouiller, horsLigne) {
     afficherProgVerrou(bilan, true);
     alert(m);
   });
+}
+
+// ── Prévenir les élèves par EcoleDirecte quand leur copie redevient consultable ──
+/* Le Worker EcoleDirecte (dépôt ecoledirecte-mcp, route POST /api/message) envoie un message
+   par élève, texte fixe côté Worker, et ne prévient jamais deux fois un élève pour une capsule.
+   Modes (réglage de ce navigateur, onglet Verrous) : « off », « demande » (bouton de l'onglet
+   Suivi), « auto » (proposé après chaque déverrouillage, toujours avec confirmation).
+   La clé d'application reste dans ce navigateur : jamais dans index.html, qui est public. */
+var ED_WORKER_URL = "https://ecoledirecte-mcp.blanchard-romain.workers.dev";
+function edNotifMode() { try { return localStorage.getItem("ed_notif_mode") || "off"; } catch (e) { return "off"; } }
+function edNotifCle() { try { return localStorage.getItem("ed_notif_cle") || ""; } catch (e) { return ""; } }
+function edNotifReglages() {
+  var m = document.getElementById("ed-notif-mode"), k = document.getElementById("ed-notif-cle");
+  try {
+    if (m) localStorage.setItem("ed_notif_mode", m.value);
+    if (k && k.value.trim()) { localStorage.setItem("ed_notif_cle", k.value.trim()); k.value = ""; }
+  } catch (e) {}
+  edNotifAfficher();
+  toast("Réglage EcoleDirecte enregistré");
+}
+function edNotifAfficher() {
+  var m = document.getElementById("ed-notif-mode"), e = document.getElementById("ed-notif-etat");
+  if (m) m.value = edNotifMode();
+  if (e) e.textContent = edNotifCle() ? "Clé enregistrée dans ce navigateur." : "Aucune clé enregistrée : l'envoi est impossible.";
+}
+function edPoster(corps) {
+  return fetch(ED_WORKER_URL + "/api/message", {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + edNotifCle(), "Content-Type": "application/json" },
+    body: JSON.stringify(corps)
+  }).then(function (r) { return r.json(); })
+    .catch(function () { return { erreur: "réseau (Worker injoignable)" }; });
+}
+function edTesterAMoi() {
+  if (!edNotifCle()) { alert("Enregistrez d'abord la clé d'application."); return; }
+  if (!confirm("S'envoyer le message de test à soi-même dans EcoleDirecte ?")) return;
+  edPoster({ aMoiMeme: true, dryRun: false }).then(function (r) {
+    alert(r && r.envoye ? "Message de test envoyé à " + r.destinataire + ". Vérifiez votre messagerie EcoleDirecte."
+                        : "Échec du test : " + ((r && r.erreur) || "?"));
+  });
+}
+/* Mode automatique : appelé après un déverrouillage confirmé par le serveur. */
+function apresDeverrouillage(copies) {
+  if (isCollegue || edNotifMode() !== "auto" || !copies.length) return;
+  setTimeout(function () { proposerMessageED(copies); }, 300);
+}
+/* Mode sur demande : copies du filtre de l'onglet Suivi, consultables (non verrouillées). */
+function prevenirSelectionED() {
+  if (isCollegue) return;
+  if (edNotifMode() === "off") { alert("L'envoi EcoleDirecte est désactivé (onglet Verrous, réglage « Prévenir les élèves »)."); return; }
+  var r = subsFiltrees();
+  if (!r.cap) { alert("Choisissez d'abord une capsule dans le filtre."); return; }
+  var l = r.liste.filter(function (s) { return s.locked !== true; });
+  if (!l.length) { alert("Aucune copie consultable (non verrouillée) dans la sélection."); return; }
+  proposerMessageED(l);
+}
+/* Aperçu (classe par classe, 40 élèves au plus par envoi), confirmation, puis envoi. */
+function proposerMessageED(copies) {
+  if (!edNotifCle()) { alert("Prévenir les élèves : aucune clé d'application enregistrée (onglet Verrous)."); return; }
+  var lots = {}, horsClasse = [];
+  copies.forEach(function (s) {
+    var cls = String(s.ecls || "").replace(/\s+/g, "").toUpperCase();
+    if (!/^[3-6][A-Z]$/.test(cls)) { horsClasse.push(s.ename || s.eid); return; }
+    var k = cls + "|" + s.cap;
+    (lots[k] = lots[k] || { classe: cls, cap: s.cap, eleves: [] }).eleves.push(s.ename || "");
+  });
+  var paquets = [];
+  Object.keys(lots).forEach(function (k) {
+    var o = lots[k];
+    for (var i = 0; i < o.eleves.length; i += 40) paquets.push({ classe: o.classe, cap: o.cap, eleves: o.eleves.slice(i, i + 40) });
+  });
+  if (!paquets.length) { alert("Aucune classe reconnue pour ces copies : rien à envoyer."); return; }
+  toast("📨 Préparation du message EcoleDirecte…");
+  var apercus = [];
+  (function lire(n) {
+    if (n < paquets.length) {
+      edPoster(paquets[n]).then(function (r) { apercus.push(r); lire(n + 1); });
+      return;
+    }
+    var aEnvoyer = 0, txt = "Prévenir les élèves par EcoleDirecte ?\n", html = "";
+    apercus.forEach(function (r, i) {
+      var p = paquets[i];
+      if (!r || r.erreur) { txt += "\n" + p.classe + " : impossible (" + ((r && r.erreur) || "?") + ")"; return; }
+      html = html || r.html;
+      aEnvoyer += r.destinataires.length;
+      txt += "\n" + p.classe + " (" + (FICHE_TITRES[p.cap] || p.cap) + ") : " + r.destinataires.length + " élève(s)";
+      (r.ignores || []).forEach(function (g) { txt += "\n   non prévenu : " + g.eleve + " (" + g.raison + ")"; });
+    });
+    if (horsClasse.length) txt += "\n\nClasse non reconnue : " + horsClasse.join(", ");
+    if (!aEnvoyer) { alert(txt + "\n\nAucun élève à prévenir."); return; }
+    var texte = html.replace(/<\/p>/g, "\n").replace(/<[^>]+>/g, "").trim();
+    if (!confirm(txt + "\n\nObjet : Technologie : ton travail est consultable\n\n" + texte + "\n\nEnvoyer " + aEnvoyer + " message(s) ?")) return;
+    var bilan = { ok: 0, echecs: [] };
+    (function envoyer(m) {
+      if (m >= paquets.length) {
+        var b = "EcoleDirecte : " + bilan.ok + " élève(s) prévenu(s).";
+        if (bilan.echecs.length) b += "\n\nÉchecs :\n" + bilan.echecs.join("\n");
+        alert(b);
+        return;
+      }
+      if (!apercus[m] || apercus[m].erreur || !apercus[m].destinataires.length) { envoyer(m + 1); return; }
+      var p = paquets[m];
+      toast("📨 Envoi " + p.classe + "…");
+      edPoster({ classe: p.classe, cap: p.cap, eleves: p.eleves, dryRun: false }).then(function (r) {
+        if (r && r.envoyes) bilan.ok += r.envoyes.length;
+        if (r && r.erreur) bilan.echecs.push(p.classe + " : " + r.erreur);
+        (r && r.echecs || []).forEach(function (e) { bilan.echecs.push(e.eleve + " : " + e.erreur); });
+        envoyer(m + 1);
+      });
+    })(0);
+  })(0);
 }
 
 // ================================================================
