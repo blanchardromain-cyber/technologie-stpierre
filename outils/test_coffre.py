@@ -155,5 +155,67 @@ class TestAjouter(unittest.TestCase):
             coffre.ajouter(self.base, "autre-phrase-de-test", {"id": "zoe.test", "p": "Zoé", "n": "TEST", "c": "4C"})
 
 
+class TestRenouveler(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.base, _ = coffre.initialiser(FIXTURE, MDP_PROF)
+        cls.texte, cls.comptes = coffre.renouveler(cls.base, MDP_PROF, "2026-10-04")
+
+    def test_nouveaux_mots_de_passe_et_ancienne_empreinte_gardee(self):
+        contenu = coffre.dechiffrer(lire_coffre(self.texte), MDP_PROF)
+        for ident, ancien in (("lea.test", "lea1234"), ("tom.test", "tom5678")):
+            nouveau = contenu["eleves"][ident]
+            self.assertNotEqual(nouveau, ancien)
+            self.assertRegex(nouveau, r"^[a-z]{4}-[a-z]{4}-\d{2}$")
+            self.assertEqual(champ(self.texte, ident, "h"), coffre.empreinte_mdp(ident, nouveau))
+            self.assertEqual(champ(self.texte, ident, "h0"), coffre.empreinte_mdp(ident, ancien))
+
+    def test_date_de_transition_dans_cfg(self):
+        self.assertIn('ANCIENS_JUSQUAU: "2026-10-04",', self.texte)
+        self.assertIsNotNone(lire_coffre(self.texte))
+
+    def test_comptes_pour_les_planches(self):
+        par_id = {c["id"]: c for c in self.comptes}
+        self.assertEqual(set(par_id), {"lea.test", "tom.test"})
+        self.assertEqual((par_id["lea.test"]["p"], par_id["lea.test"]["c"], par_id["tom.test"]["role"]), ("Léa", "4B", "test"))
+        contenu = coffre.dechiffrer(lire_coffre(self.texte), MDP_PROF)
+        self.assertEqual(par_id["lea.test"]["mdp"], contenu["eleves"]["lea.test"])
+
+    def test_collegues_et_codes_intacts(self):
+        self.assertEqual(champ(self.texte, "ana.test", "h"), champ(self.base, "ana.test", "h"))
+        self.assertEqual(champ(self.texte, "s1", "code"), champ(self.base, "s1", "code"))
+
+    def test_crlf(self):
+        self.assertNotIn("\n", self.texte.replace("\r\n", ""))
+
+    def test_deux_transitions_refusees(self):
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.renouveler(self.texte, MDP_PROF, "2026-10-04")
+
+    def test_date_invalide(self):
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.renouveler(self.base, MDP_PROF, "4 octobre")
+
+    def test_nettoyer(self):
+        propre = coffre.nettoyer(self.texte)
+        self.assertNotIn('h0:"', propre)
+        self.assertNotIn("ANCIENS_JUSQUAU", propre)
+        self.assertEqual(champ(propre, "lea.test", "h"), champ(self.texte, "lea.test", "h"))
+        self.assertNotIn("\n", propre.replace("\r\n", ""))
+
+    def test_planches_docx(self):
+        import tempfile
+        from docx import Document
+        chemin = os.path.join(tempfile.mkdtemp(), "planches.docx")
+        coffre.planches(self.comptes, chemin)
+        doc = Document(chemin)
+        texte = "\n".join(c.text for t in doc.tables for r in t.rows for c in r.cells)
+        for c in self.comptes:
+            self.assertIn(c["id"], texte)
+            self.assertIn(c["mdp"], texte)
+        self.assertIn("Classe 4B", "\n".join(p.text for p in doc.paragraphs))
+        self.assertIn("Autres comptes", "\n".join(p.text for p in doc.paragraphs))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)
