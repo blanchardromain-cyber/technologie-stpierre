@@ -177,6 +177,13 @@ html.accueil-b .scard:hover .b-glare { opacity: 1; }
 html.accueil-b .b-entree > * { animation: b-monte .8s var(--b-spring) both; animation-delay: calc(var(--i, 0) * 70ms); }
 @keyframes b-monte { from { opacity: 0; transform: translateY(18px); } }
 
+/* Écrans moyens (portables, 1366 zoomé) : accroche et carte plus étroites, pour laisser
+   entre elles un couloir où passe l'avenue de la ville (cite-circuit.js s'y aligne). */
+@media (min-width: 821px) and (max-width: 1400px) {
+  html.accueil-b .b-hero { flex: 0 1 42vw; }
+  html.accueil-b .b-display { font-size: clamp(2.4rem, 4.6vw, 4.2rem); }
+  html.accueil-b #login .lcard { flex: 0 1 360px; }
+}
 @media (max-width: 820px) {
   html.accueil-b #login { padding-top: 20px; }
   html.accueil-b .b-hero { flex-basis: 100%; }
