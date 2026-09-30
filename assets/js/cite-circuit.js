@@ -301,7 +301,26 @@ function adapter(dt) {
 const horloge = new THREE.Clock();
 let tourne = false, offset = 0;
 function reveiller() { if (!tourne && !document.hidden && LABO.vue !== "page" && !LABO.reduit()) { tourne = true; horloge.getDelta(); requestAnimationFrame(tick); } }
+/* L'avenue se place dans l'espace libre de l'écran de connexion : entre l'accroche et la
+   carte, ou à droite des deux si elles sont l'une sous l'autre. setViewOffset décale le
+   point de fuite sans bouger la caméra (étiquettes et clics restent justes). */
+let decalage = 0;
+function espaceLibre() {
+  const W = innerWidth;
+  if (LABO.vue !== "login" || W < 821) return 0;
+  const h = document.querySelector(".b-hero"), c = document.querySelector("#login .lcard");
+  if (!h || !c) return 0;
+  const rh = h.getBoundingClientRect(), rc = c.getBoundingClientRect();
+  const x = rc.left > rh.right ? (rh.right + rc.left) / 2 : (Math.max(rh.right, rc.right) + W) / 2;
+  return x - W / 2;
+}
+function decaler(dt) {
+  decalage += (espaceLibre() - decalage) * (1 - Math.pow(1 - 0.06, dt * 60));
+  if (Math.abs(decalage) > 0.5) camera.setViewOffset(innerWidth, innerHeight, -decalage, 0, innerWidth, innerHeight);
+  else if (camera.view && camera.view.enabled) camera.clearViewOffset();
+}
 function placer(dt) {
+  decaler(dt || 1);
   ["y", "z", "ly", "lz", "v"].forEach((k) => amortir(k, dt, 0.035));
   amortir("mx", dt, 0.06); amortir("my", dt, 0.06);
   camera.position.set(etat.mx * 1.6, etat.y + etat.my * 0.6, etat.z);
