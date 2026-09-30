@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Relooking de l'accueil — piste B « Cité-circuit »
+   Tout est préfixé par html.accueil-b : sans cette classe (?classique), le site
+   garde exactement son aspect. Vues : vue-login (connexion), vue-dash (tableau
+   de bord élève ou collègue), vue-page (capsules, pages professeur : aspect clair
+   d'origine, la 3D s'arrête).
+   ========================================================================== */
+html.accueil-b {
+  --b-bg: #030814;
+  --b-tx: #EDF4FF;
+  --b-tx2: #A9BCD5;
+  --b-tx3: #71859F;
+  --b-cyan: #00C6FF;
+  --b-violet: #7B61FF;
+  --b-glass: rgba(10, 22, 42, .56);
+  --b-card: rgba(12, 26, 48, .72);
+  --b-stroke: rgba(255, 255, 255, .10);
+  --b-stroke-hi: rgba(255, 255, 255, .20);
+  --b-spring: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ---------- Fond, scène, décor de secours ---------- */
+html.accueil-b.vue-login, html.accueil-b.vue-login body,
+html.accueil-b.vue-dash, html.accueil-b.vue-dash body { background: var(--b-bg); }
+#b-scene { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+html.accueil-b.scene-prete.vue-login #b-scene, html.accueil-b.scene-prete.vue-dash #b-scene { opacity: 1; }
+html.accueil-b.sans-3d #b-scene { display: none; }
+html.accueil-b.sans-3d.vue-login body::before, html.accueil-b.sans-3d.vue-dash body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    linear-gradient(transparent 0 97%, rgba(0, 198, 255, .12) 97%) 0 0 / 100% 48px,
+    linear-gradient(90deg, transparent 0 97%, rgba(0, 198, 255, .12) 97%) 0 0 / 48px 100%,
+    radial-gradient(900px 400px at 50% 110%, rgba(0, 160, 255, .25), transparent 70%);
+}
+html.accueil-b #login, html.accueil-b #app { position: relative; z-index: 1; }
+html.accueil-b .etiquettes { position: fixed; inset: 0; z-index: 0; pointer-events: none; transition: opacity .6s ease; }
+html.accueil-b .etq {
+  position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 6px 10px 6px 7px; border-radius: 999px; font: 600 12px/1 "DM Sans", sans-serif; color: #EAF4FF;
+  background: rgba(6, 16, 32, .55); border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--c) 35%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; will-change: transform, opacity;
+}
+html.accueil-b .etq b { color: var(--c); }
+html.accueil-b .b-fps { position: fixed; right: 12px; bottom: 12px; z-index: 90; font: 500 11px/1 "DM Mono", monospace; color: var(--b-tx3); background: var(--b-glass); padding: 7px 10px; border-radius: 10px; border: 1px solid var(--b-stroke); }
+
+/* ============================ CONNEXION ============================ */
+html.accueil-b #login {
+  background: transparent; flex-wrap: wrap; align-content: center; justify-content: space-between;
+  gap: 24px clamp(20px, 4vw, 56px); padding: 28px clamp(16px, 4vw, 56px); overflow-x: clip;
+}
+html.accueil-b #login::before { display: none; }
+html.accueil-b .b-hero { flex: 1 1 460px; max-width: 700px; color: var(--b-tx); }
+html.accueil-b .b-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; font: 500 11.5px/1 "DM Mono", monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--b-cyan); padding: 7px 12px; border-radius: 999px;
+  background: rgba(0, 198, 255, .10); border: 1px solid rgba(0, 198, 255, .26);
+}
+html.accueil-b .b-eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--b-cyan); box-shadow: 0 0 10px var(--b-cyan); animation: pulse-dot 2.2s ease-in-out infinite; }
+html.accueil-b .b-display {
+  margin: 20px 0 16px; font-weight: 700; font-size: clamp(2.5rem, 5.4vw, 5.2rem); line-height: .98;
+  letter-spacing: -.045em; color: #fff; text-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+}
+html.accueil-b .b-display .l { display: block; overflow: hidden; padding-bottom: .06em; }
+html.accueil-b .b-display .l > span { display: inline-block; transform: translateY(105%); animation: b-rise .9s var(--b-spring) forwards; animation-delay: calc(var(--i) * 90ms + 150ms); }
+@keyframes b-rise { to { transform: none; } }
+html.accueil-b .b-rot .w { display: inline-block; background: linear-gradient(100deg, var(--b-cyan), var(--b-violet) 55%, #FF6FD8); -webkit-background-clip: text; background-clip: text; color: transparent; transition: transform .6s var(--b-spring), opacity .45s ease, filter .45s ease; }
+html.accueil-b .b-rot .w.out { transform: translateY(-40%); opacity: 0; filter: blur(6px); }
+html.accueil-b .b-rot .w.in { transform: translateY(40%); opacity: 0; filter: blur(6px); transition: none; }
+html.accueil-b .b-lede { color: #C6D5EA; font-size: clamp(15px, 1.25vw, 17.5px); line-height: 1.6; max-width: 46ch; }
+html.accueil-b .b-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+html.accueil-b .b-stat { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; border-radius: 14px; background: var(--b-glass); border: 1px solid var(--b-stroke); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+html.accueil-b .b-stat b { font-size: 22px; letter-spacing: -.02em; color: #fff; font-variant-numeric: tabular-nums; }
+html.accueil-b .b-stat span { color: var(--b-tx2); font-size: 13px; }
+
+/* Carte de connexion (existante) : même contenu, en verre */
+html.accueil-b #login .lcard {
+  flex: 0 1 410px; background: rgba(10, 22, 42, .62); border: 1px solid var(--b-stroke);
+  -webkit-backdrop-filter: blur(22px) saturate(170%); backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .5), inset 0 1px 0 var(--b-stroke-hi); border-radius: 28px; color: var(--b-tx);
+}
+html.accueil-b #login .lcard::after { display: none; }
+html.accueil-b #login .lcard .llogo { height: 46px !important; margin-bottom: 14px !important; background: #fff; border-radius: 10px; padding: 3px 6px; }
+html.accueil-b #login .lcard h1 { font-size: 19px; background: linear-gradient(90deg, #fff, var(--b-cyan)); -webkit-background-clip: text; background-clip: text; }
+html.accueil-b #login .lcard .sub { color: var(--b-tx2); }
+html.accueil-b #login .lcard > div[style*="flex-wrap"] { display: none !important; }    /* pastille, reprise dans l'accroche */
+html.accueil-b #login .ltabs { background: rgba(255, 255, 255, .06); border: 1px solid var(--b-stroke); }
+html.accueil-b #login .ltab { color: var(--b-tx2); }
+html.accueil-b #login .ltab.on { background: rgba(255, 255, 255, .14); color: #fff; }
+html.accueil-b #login .fg label, html.accueil-b #login label { color: var(--b-tx2) !important; }
+html.accueil-b #login .fg input { background: rgba(255, 255, 255, .06); border-color: var(--b-stroke); color: #fff; }
+html.accueil-b #login .fg input::placeholder { color: var(--b-tx3); }
+html.accueil-b #login .fg input:focus { background: rgba(255, 255, 255, .10); border-color: rgba(0, 198, 255, .7); box-shadow: 0 0 0 4px rgba(0, 198, 255, .16); }
+html.accueil-b #login .btnp { background: linear-gradient(100deg, #0A84D0, var(--b-violet)); box-shadow: 0 12px 30px rgba(123, 97, 255, .35), inset 0 1px 0 rgba(255, 255, 255, .35); }
+html.accueil-b #login .btnp:active { transform: scale(.97); }
+html.accueil-b #login .err { background: rgba(248, 113, 113, .14); border-color: rgba(248, 113, 113, .5); color: #FCA5A5; }
+
+html.accueil-b .b-fact {
+  flex: 1 1 100%; max-width: 760px; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px;
+  font-size: 13.5px; color: var(--b-tx2); background: var(--b-glass); border: 1px solid var(--b-stroke);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+html.accueil-b .b-fact .k { flex: none; font: 500 10.5px/1 "DM Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--b-cyan); }
+html.accueil-b .b-fact .t { transition: opacity .5s ease, transform .6s var(--b-spring); }
+html.accueil-b .b-fact .t.swap { opacity: 0; transform: translateY(6px); }
+html.accueil-b .b-fact .s { flex: none; font: 500 10.5px/1 "DM Mono", monospace; color: var(--b-tx3); }
+
+/* ============================ EN-TÊTE ============================ */
+html.accueil-b.vue-dash .hdr { background: rgba(3, 8, 20, .55); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); border-bottom: 1px solid var(--b-stroke); box-shadow: none; }
+@media (max-width: 560px) {                /* sur téléphone, l'en-tête tient dans l'écran */
+  html.accueil-b .hdr { padding: 0 12px; }
+  html.accueil-b .htit { display: none; }
+  html.accueil-b .huser { padding: 5px 9px; }
+  html.accueil-b .btnout { padding: 6px 10px; }
+}
+
+/* ============================ TABLEAU DE BORD ============================ */
+html.accueil-b.vue-dash #app, html.accueil-b.vue-dash .main { background: transparent; }
+html.accueil-b.vue-dash #pg-dash { color: var(--b-tx); }
+html.accueil-b .b-bento { display: grid; grid-template-columns: 1.25fr 1fr; gap: 14px; margin-bottom: 30px; }
+html.accueil-b .b-bento .wbanner {
+  grid-row: span 2; margin: 0; min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;
+  background: rgba(10, 22, 42, .55); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--b-stroke); border-radius: 26px; padding: 28px;
+}
+html.accueil-b .b-bento .wbanner::before { opacity: .6; }
+html.accueil-b .b-bento .wbanner h2 { font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -.035em; line-height: 1.04; margin: 6px 0 4px; }
+html.accueil-b .b-date { color: var(--b-tx2); font-size: 14px; }
+html.accueil-b .b-bento .wbanner p { color: var(--b-tx2); opacity: 1; font-size: 14.5px; line-height: 1.55; margin-top: 16px; max-width: 38ch; }
+html.accueil-b .b-tile { position: relative; overflow: hidden; border-radius: 22px; padding: 20px; background: var(--b-glass); border: 1px solid var(--b-stroke); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); color: var(--b-tx); }
+html.accueil-b .b-tile .k { font: 500 10.5px/1 "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--b-tx3); }
+html.accueil-b .b-mission { cursor: pointer; transition: transform .12s ease-out, border-color .3s; }
+html.accueil-b .b-mission:hover { border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+html.accueil-b .b-mission:active { transform: scale(.985); }
+html.accueil-b .b-mission::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--c), transparent); }
+html.accueil-b .b-mission .row { display: flex; gap: 14px; align-items: center; margin-top: 12px; }
+html.accueil-b .b-mission .ico { flex: none; width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; font-size: 24px; background: color-mix(in srgb, var(--c) 18%, transparent); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); }
+html.accueil-b .b-mission h3 { font-size: 16.5px; line-height: 1.25; letter-spacing: -.01em; }
+html.accueil-b .b-mission p { color: var(--b-tx2); font-size: 13px; line-height: 1.5; margin-top: 8px; }
+html.accueil-b .b-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 14px; border-radius: 11px; font-weight: 700; font-size: 13.5px; color: #fff; background: linear-gradient(100deg, #0A84D0, var(--b-violet)); }
+html.accueil-b .b-cta .arr { transition: transform .45s var(--b-spring); }
+html.accueil-b .b-mission:hover .b-cta .arr { transform: translateX(4px); }
+html.accueil-b .b-prog .big { font-size: 28px; font-weight: 700; letter-spacing: -.03em; margin-top: 10px; }
+html.accueil-b .b-prog .big small { font-size: 14px; color: var(--b-tx2); font-weight: 600; letter-spacing: 0; }
+html.accueil-b .b-prog .bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: rgba(255, 255, 255, .06); margin: 14px 0 12px; }
+html.accueil-b .b-prog .bar i { display: block; height: 100%; width: 0; transition: width 1.2s var(--b-spring); }
+html.accueil-b .b-prog .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--b-tx2); }
+html.accueil-b .b-prog .legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; background: var(--c); }
+
+html.accueil-b.vue-dash .stit { color: var(--b-tx); background-image: linear-gradient(90deg, var(--b-cyan), rgba(0, 198, 255, 0)); }
+html.accueil-b.vue-dash .niveau-label .b-me { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(0, 198, 255, .18); border: 1px solid rgba(0, 198, 255, .5); color: #BFF0FF; font-size: 10.5px; }
+html.accueil-b.vue-dash .dossier { background: var(--b-card); border: 1px solid var(--b-stroke); border-radius: 20px; box-shadow: none; }
+html.accueil-b.vue-dash .dossier-bt { border-left-width: 4px; }
+html.accueil-b.vue-dash .dossier-bt:hover { background: rgba(255, 255, 255, .04); }
+html.accueil-b.vue-dash .dossier-bt .tt { color: var(--b-tx); }
+html.accueil-b.vue-dash .dossier-bt .chev { color: var(--b-tx3); transition: transform .5s var(--b-spring); }
+html.accueil-b.vue-dash .dossier-bt .dnb:not([style]) { background: rgba(255, 255, 255, .08); color: var(--b-tx2); }
+html.accueil-b .b-ring { flex: none; width: 38px; height: 38px; }
+html.accueil-b .b-ring circle { fill: none; stroke-width: 4; }
+html.accueil-b .b-ring .fond { stroke: rgba(255, 255, 255, .08); }
+html.accueil-b .b-ring .val { stroke: var(--c); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1.2s var(--b-spring); }
+html.accueil-b .b-ring text { font: 700 10.5px "DM Sans", sans-serif; fill: var(--b-tx); }
+html.accueil-b.vue-dash .scard { background: rgba(8, 18, 34, .82); border: 1px solid var(--b-stroke); box-shadow: none; transform-style: preserve-3d; }
+html.accueil-b.vue-dash .scard:not(.locked):hover { border-color: rgba(0, 198, 255, .35); box-shadow: 0 18px 40px rgba(0, 110, 200, .22); }
+html.accueil-b.vue-dash .scbody h3 { color: var(--b-tx); }
+html.accueil-b.vue-dash .scbody p { color: var(--b-tx2); }
+html.accueil-b.vue-dash .scmeta span[style*="color:var(--td)"] { color: var(--b-tx3) !important; }
+html.accueil-b.vue-dash .scard.b-cor { background: transparent; border-style: dashed; }
+html.accueil-b.vue-dash .scard.b-cor .schdr { opacity: .35; }
+html.accueil-b.vue-dash .scard.b-cor h3 { color: var(--b-tx2); font-size: 13.5px; }
+html.accueil-b.vue-dash .scard.locked { opacity: .5; }
+html.accueil-b .scard .b-glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .12), transparent 45%); }
+html.accueil-b .scard { position: relative; }
+html.accueil-b .scard:hover .b-glare { opacity: 1; }
+
+/* Apparition du tableau de bord après la connexion */
+html.accueil-b .b-entree > * { animation: b-monte .8s var(--b-spring) both; animation-delay: calc(var(--i, 0) * 70ms); }
+@keyframes b-monte { from { opacity: 0; transform: translateY(18px); } }
+
+@media (max-width: 820px) {
+  html.accueil-b #login { padding-top: 20px; }
+  html.accueil-b .b-hero { flex-basis: 100%; }
+  html.accueil-b #login .lcard { flex-basis: 100%; }
+  html.accueil-b .b-bento { grid-template-columns: 1fr; }
+  html.accueil-b .b-bento .wbanner { grid-row: auto; min-height: 200px; }
+  html.accueil-b .b-fact .s { display: none; }
+}
+
+/* Moins de mouvement : aucune animation, aucune boucle */
+@media (prefers-reduced-motion: reduce) {
+  html.accueil-b *, html.accueil-b *::before, html.accueil-b *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+  html.accueil-b .b-display .l > span { transform: none; }
+}
+html.accueil-b.rm *, html.accueil-b.rm *::before, html.accueil-b.rm *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+html.accueil-b.rm .b-display .l > span { transform: none; }
+@media (prefers-reduced-transparency: reduce) {
+  html.accueil-b #login .lcard, html.accueil-b .b-tile, html.accueil-b .b-bento .wbanner, html.accueil-b .b-stat, html.accueil-b .b-fact { -webkit-backdrop-filter: none; backdrop-filter: none; background: #0B1A2E; }
+}
