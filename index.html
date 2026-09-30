@@ -572,6 +572,11 @@ body.est-prof .prof-only{display:block}
 .sgrid .scard:nth-child(5){animation-delay:.20s}
 .sgrid .scard:nth-child(6){animation-delay:.24s}
 </style>
+<!-- Relooking de l'accueil (piste B) : couche posée par-dessus, sans rien changer au
+     fonctionnement. ?classique dans l'adresse = aspect d'origine. -->
+<link rel="stylesheet" href="assets/css/accueil-b.css">
+<script>if (!/[?&]classique\b/.test(location.search)) document.documentElement.classList.add("accueil-b", "vue-login");</script>
+<style>html:not(.accueil-b) .b-only{display:none!important}</style>
 <!-- jsPDF (export PDF côté client) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -590,9 +595,24 @@ body.est-prof .prof-only{display:block}
 <script src="https://unpkg.com/@ruffle-rs/ruffle@0.1.0-nightly.2025.5.5/ruffle.js"></script>
 </head>
 <body>
+<canvas id="b-scene" class="b-only" aria-hidden="true"></canvas>
 
 <!-- LOGIN -->
 <div id="login">
+  <div class="b-hero b-only">
+    <span class="b-eyebrow"><i></i>Plateforme numérique</span>
+    <h2 class="b-display" aria-label="Imaginer. Concevoir. Programmer.">
+      <span class="l"><span style="--i:0">Imaginer.</span></span>
+      <span class="l"><span style="--i:1">Concevoir.</span></span>
+      <span class="l"><span style="--i:2" class="b-rot"><span class="w">Programmer.</span></span></span>
+    </h2>
+    <p class="b-lede">Capsules, défis et projets de technologie, de la 5<sup>e</sup> à la 3<sup>e</sup>. Connecte-toi pour reprendre ta mission là où tu l’as laissée.</p>
+    <div class="b-stats">
+      <div class="b-stat"><b data-b-compte="activites">·</b><span>activités en ligne</span></div>
+      <div class="b-stat"><b data-b-compte="sequences">·</b><span>séquences</span></div>
+      <div class="b-stat"><b data-b-compte="niveaux">·</b><span>niveaux</span></div>
+    </div>
+  </div>
   <div class="lcard">
     <img class="llogo" src="assets/logo-couleur.png" style="height:64px;width:auto;display:block;margin:0 auto 20px" alt="Logo College Saint-Pierre">
     <h1>TECHNOLOGIE &mdash; R.Blanchard</h1>
@@ -635,6 +655,7 @@ body.est-prof .prof-only{display:block}
     </div>
     <div class="err" id="errmsg"></div>
   </div>
+  <div class="b-fact b-only" aria-live="polite"><span class="k">Le saviez-vous ?</span><span class="t"></span><span class="s"></span></div>
 </div>
 
 <!-- APP -->
@@ -4261,7 +4282,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-30b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-30c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -15807,5 +15828,13 @@ restoreA2Draft = function() {
 <script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
   selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire, .p11x2-lire" };</script>
 <script src="assets/js/lecture-immersive.js" defer></script>
+<!-- Relooking de l'accueil (piste B) : three.js n'est téléchargé que si la machine sait l'afficher -->
+<script type="importmap">
+{ "imports": {
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.min.js",
+    "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script src="assets/js/accueil-b.js"></script>
 </body>
 </html>
