@@ -23,17 +23,25 @@ administrateur du site, et sans qu'on lui communique les codes des capsules.
 
 ## Créer un compte
 
-Dans `index.html`, cherche `var ENSEIGNANTS = [` et ajoute une ligne :
+Aucun mot de passe ne s'écrit à la main dans `index.html` (règle 8 de CLAUDE.md).
+Dans le dossier du site, lance :
 
-```js
-{ id:"claire.moreau", p:"Claire", n:"MOREAU", pwd:"un-mot-de-passe", classes:["5B","5C"] },
+```bash
+python outils/coffre.py ajouter --id claire.moreau --prenom Claire --nom MOREAU --enseignant --classes 5B,5C
 ```
 
-| Champ | À quoi ça sert |
+(Sur ton poste, remplace `python` par le chemin de Python 3.12 :
+`C:\Users\blanchard.romain\AppData\Local\Programs\Python\Python312\python.exe`.)
+
+Le script demande ton mot de passe professeur (il ouvre le coffre), ajoute la ligne
+dans `var ENSEIGNANTS = [` et affiche **une fois** le mot de passe généré, à
+transmettre au collègue. Tu le retrouves ensuite dans l'onglet **Configuration**.
+
+| Champ écrit | À quoi ça sert |
 |---|---|
 | `id` | l'identifiant de connexion, en `prenom.nom` sans accent |
 | `p` / `n` | prénom et nom affichés |
-| `pwd` | le mot de passe à lui transmettre |
+| `h` | l'empreinte du mot de passe, jamais le mot de passe lui-même |
 | `classes` | son périmètre, écrit comme dans les copies : `"5B"`, `"4A"`… |
 
 Le collègue se connecte par l'onglet **Élève** de la page d'accueil, avec cet
@@ -48,19 +56,17 @@ Pour retirer un accès, supprime sa ligne.
 |---|---|---|
 | Régis LUCAS | `regis.lucas` | 5B · 5C · 5D · 5E · 5F |
 
-Les mots de passe ne sont pas repris ici : ils sont dans `index.html`, à côté de
-chaque compte.
+Les mots de passe ne sont écrits nulle part en clair : tu les retrouves dans l'onglet
+**Configuration**, une fois connecté.
 
 ## Une limite à connaître
 
 Le site est un **fichier statique** : `index.html` est téléchargé en entier par le
-navigateur, et son code source contient en clair les codes des capsules, les mots de
-passe des élèves et celui du professeur.
+navigateur. Depuis le 30 septembre 2026, il ne contient plus aucun mot de passe ni
+code d'accès en clair, seulement des empreintes et un coffre chiffré.
 
-Ces restrictions **organisent le travail** ; elles ne constituent pas une barrière
-technique. Un collègue qui ouvrirait le code source de la page verrait ces
-informations, exactement comme le pourrait un élève aujourd'hui.
-
-Pour une vraie barrière, il faudrait servir codes, mots de passe et corrigés depuis
-le script Google après vérification du rôle, au lieu de les écrire dans la page.
-C'est un chantier séparé.
+Mais la vérification se fait dans le navigateur. Une personne à l'aise avec la
+console peut encore la contourner, et la clé du script Google reste publique. Ces
+restrictions **organisent le travail** ; elles ne sont pas encore une barrière
+technique. La vraie barrière, où le script Google vérifie qui écrit et qui lit, est
+l'étape 3 du chantier sécurité.
