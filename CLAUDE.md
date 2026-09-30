@@ -158,3 +158,42 @@ points : l'élève lisait « 16/50 » (règle 5).
   fusionnant deux pages dans une config, l'exercice 1 avait perdu tous ses boutons sans
   la moindre erreur. Toute nouvelle page à aménagements dys s'ajoute à cette liste, puis
   se teste **page par page**, pas seulement la dernière ajoutée.
+
+## 8. Aucun secret en clair dans le dépôt
+
+Le dépôt est public : tout ce que contient `index.html` se lit par « Afficher le
+code source » et reste pour toujours dans l'historique git. Jusqu'au 30 septembre
+2026, les mots de passe des élèves, celui du professeur et les codes des corrigés y
+étaient en clair. **Aucun mot de passe ni code ne s'écrit dans un fichier du dépôt,
+même dans un commentaire ou un exemple.**
+
+- **Comptes** : chaque entrée de `ELEVES` et `ENSEIGNANTS` porte `h`, l'empreinte
+  PBKDF2-SHA256 (100 000 itérations, sel `stp-techno:` + identifiant), jamais `pwd`.
+  `doLogin` compare l'empreinte de la saisie.
+- **Codes d'accès** : un `code:"#…"` de `SEQUENCES_DEF` (et `DC_CODES_ANCIENS`) est
+  une empreinte ; `codeCorrect()` compare. Un code sans `#` vient du modal « Codes
+  d'accès » du professeur, rangé sur son seul navigateur.
+- **Professeur** : pas de mot de passe dans `CFG`. `CFG.COFFRE` (AES-GCM, clé dérivée
+  de son mot de passe, 600 000 itérations) contient les mots de passe et codes en
+  clair ; il s'ouvre à la connexion professeur et se referme à la déconnexion.
+  `mdpClair()` et `codeAffiche()` y lisent pour l'impression des identifiants et les
+  panneaux « code à communiquer ».
+- **Se souvenir de moi** garde l'empreinte (`rem_h`) ou la clé du coffre
+  (`rem_pcle`), jamais un mot de passe.
+- **Ajouter un compte** : `python outils/coffre.py ajouter …` (voir
+  ACCES-ENSEIGNANTS.md). Le script génère le mot de passe, écrit l'empreinte, met à
+  jour le coffre, et refuse d'écrire si une ancre manque ; `outils/test_coffre.py`
+  le teste. Le mot de passe professeur se tape dans une fenêtre masquée, jamais en
+  argument. Sur le poste du professeur, lancer le script avec Python 3.12
+  (`…\AppData\Local\Programs\Python\Python312\python.exe`) : le `python` du PATH
+  est celui de WAPT, embarqué, sans tkinter ; sa saisie masquée ne reçoit pas la frappe.
+- `verifierSecrets()` signale dans la console, en session professeur, tout `pwd`,
+  `h` manquant, code sans `#` ou `PMDP` revenu. Une règle écrite s'oublie ; ce
+  contrôle, non.
+
+Limites connues. Les mots de passe élèves actuels (3 lettres du prénom + 4
+chiffres) n'ont que 10 000 possibilités chacun : leur empreinte publiée se casse en
+quelques heures de calcul, et les anciens restent lisibles dans l'historique. Ils
+seront renouvelés (étape 2), puis la vérification passera côté serveur (étape 3).
+Ouvert en `file://`, le site ne connecte plus personne : `crypto.subtle` exige
+https ou localhost.
