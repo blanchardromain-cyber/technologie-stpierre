@@ -198,9 +198,15 @@ même dans un commentaire ou un exemple.**
   `h` manquant, code sans `#` ou `PMDP` revenu. Une règle écrite s'oublie ; ce
   contrôle, non.
 
-Limites connues. Les mots de passe élèves actuels (3 lettres du prénom + 4
-chiffres) n'ont que 10 000 possibilités chacun : leur empreinte publiée se casse en
-quelques heures de calcul, et les anciens restent lisibles dans l'historique. Ils
-seront renouvelés (étape 2), puis la vérification passera côté serveur (étape 3).
+- **Renouveler les mots de passe élèves** : `coffre.py renouveler --jusqu-au AAAA-MM-JJ`
+  génère des mots de passe « bako-rimu-47 », écrit les planches Word à découper (une
+  série par classe) et garde l'ancienne empreinte en `h0`, acceptée jusqu'au soir de
+  `CFG.ANCIENS_JUSQUAU` (`empreinteAcceptee()`), puis refusée d'elle-même. Après la date,
+  `coffre.py nettoyer` retire `h0` ; `verifierSecrets()` le rappelle.
+
+Limites connues. Les mots de passe de la première version (3 lettres du prénom + 4
+chiffres, 10 000 possibilités) restent lisibles dans l'historique git : ils ont été
+renouvelés le 30 septembre 2026 (valables jusqu'au 7 octobre). La vérification côté
+serveur (étape 3) reste à faire : la clé du backend est publique.
 Ouvert en `file://`, le site ne connecte plus personne : `crypto.subtle` exige
 https ou localhost.
