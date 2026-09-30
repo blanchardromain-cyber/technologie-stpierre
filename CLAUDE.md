@@ -145,6 +145,13 @@ points : l'élève lisait « 16/50 » (règle 5).
   professeur, s'incrémente à chaque mise en ligne : il permet de repérer une page
   encore servie depuis le cache du navigateur.
 - Les statuts s'affichent en français (`FICHE_STATUTS`), jamais `validated`.
+- **Relooking de l'accueil (piste B « Cité-circuit »)** : une couche posée par-dessus,
+  `assets/css/accueil-b.css` (tout préfixé par `html.accueil-b`), `assets/js/accueil-b.js`
+  et la ville 3D `assets/js/cite-circuit.js`. Le script *enveloppe* `goPage`, `launch`,
+  `renderDash` et `doLogout` (l'original d'abord) sans les modifier ; rien ne s'insère comme
+  enfant direct de `.main`. `?classique` rend l'aspect d'origine, `?sans3d` le décor fixe,
+  `?rm` l'image fixe, `?fps` la fluidité mesurée. Une nouvelle page apparaît automatiquement
+  en aspect clair d'origine (vue `page`), la 3D s'y arrête.
 - Aménagements dys : `assets/js/confort-lecture.js` et
   `assets/js/lecture-immersive.js`, portée limitée à la page concernée. Les
   sélecteurs de lecture doivent couvrir les `div` de consigne, et les boutons
