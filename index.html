@@ -4261,7 +4261,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-30a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-09-30b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -8824,16 +8824,22 @@ function evalApprAuto(cap, silencieux) {
    Règle 4 : jamais depuis une page servie en local. */
 var P11_EVAL1_REPORT_URL = "https://script.google.com/macros/s/AKfycbxJiben3o6Gl908s9jLvtXCI-Sz0wcKckOmh7mdpnvgEw0nFySfH0LS_KkOBfl5Q8lTUg/exec";
 var P11_EVAL1_REPORT_SECRET = "P11-EVAL1-2026";
+/* Points (remis sur 40) et note d'une copie validée. Validée par le bouton ✅ du tableau,
+   sans note enregistrée : on prend la correction automatique, comme le tableau de bord. */
+function noteReportEval1(sub) {
+  var a = sub.adjustedPts || EVALUATIONS["p11-eval1"].corriger(sub.fields || {}).points, pts = {};
+  ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "C1", "C2", "C3"].forEach(function (q) { pts[q] = (Number(a[q]) || 0) * 2; });
+  return { pts: pts, note: noteEvaluation(sub) };
+}
 function reporterP11Eval1(sub) {
   var hn = (location.hostname || "").toLowerCase();
   if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
     try { console.warn("[p11-eval1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return;
   }
-  var pts = {}, a = sub.adjustedPts || {};
-  ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "C1", "C2", "C3"].forEach(function (q) { pts[q] = (Number(a[q]) || 0) * 2; });
+  var n = noteReportEval1(sub);
   var corps = JSON.stringify({ secret: P11_EVAL1_REPORT_SECRET, source: "capsule", classe: sub.ecls || "", eleve: sub.ename || "",
-                               pts: pts, note: fmtPts(sub.adjustedScore), detail: "validée depuis le tableau de bord du site" });
+                               pts: n.pts, note: fmtPts(n.note), detail: "validée depuis le tableau de bord du site" });
   fetch(P11_EVAL1_REPORT_URL, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
     if (o && o.ok && o.statut === "papier") toast("⚠️ Classeur de notes : ligne de l'épreuve papier, report refusé (voir le Journal)");
     else if (o && o.ok) toast("📊 Note reportée au classeur de notes" + (o.statut === "ajoute" ? " (élève ajouté : nom à vérifier)" : ""));
@@ -9406,11 +9412,7 @@ function openModal(sid) {
 function closeModal() { document.getElementById("modal").classList.add("h"); modalId = null; }
 function fromModal(st) {
   if (modalId !== null) {
-    updSub(modalId, st);
-    if (st === "validated") {
-      var sv = getSubs().filter(function (x) { return x.id == modalId; })[0];
-      if (sv && P11_REPORT[sv.cap]) reporterP11(sv);
-    }
+    updSub(modalId, st);          /* updSub reporte la note des capsules notées */
   }
   closeModal();
 }
@@ -9810,6 +9812,13 @@ function printCopiesFiltrees() {
 
   _ficheOuvrir("Impression — " + r.liste.length + " copies", corps);
 }
+/* Capsules notées qui ont un classeur de notes : la validation y reporte la note,
+   quel que soit le bouton (✅ du tableau, « Valider » de la copie). Les autres
+   évaluations n'ont pas de classeur de notes : rien à envoyer. */
+function reporterNoteSiEvaluee(sub) {
+  if (P11_REPORT[sub.cap]) reporterP11(sub);
+  else if (sub.cap === "p11-eval1") reporterP11Eval1(sub);
+}
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
   for (var i = 0; i < subs.length; i++) { if (subs[i].id == sid) { idx = i; break; } }
@@ -9818,6 +9827,7 @@ function updSub(sid, st) {
   localStorage.setItem("subs", JSON.stringify(subs));
   // 2c — Propage le nouveau statut au cloud pour que l'élève le voie au prochain login
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  if (st === "validated") reporterNoteSiEvaluee(subs[idx]);
   renderStats(); renderSubs();
   toast(st === "validated" ? "Soumission validée" : "Soumission marquée à revoir");
 }
