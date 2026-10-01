@@ -1,10 +1,10 @@
 # P11 — L'eau, ressource essentielle (4ème) — notes professeur
 
 Séquence P11, cycle 4. Activité élève : `eau_eleve.html`
-(intégrée au site dans la capsule **P11 — L'eau, ressource essentielle**, code d'accès **EAU26**).
+(intégrée au site dans la capsule **P11 — L'eau, ressource essentielle**, code d'accès : voir le panneau professeur).
 
 > Ce corrigé est aussi consultable et imprimable depuis le site, dans la capsule
-> **P11 — Corrigé L'eau, ressource essentielle** (code **COREAU26**). Les deux versions ont
+> **P11 — Corrigé L'eau, ressource essentielle** (code : voir le panneau professeur). Les deux versions ont
 > le même contenu : en modifier une demande de reporter la modification dans l'autre.
 
 **Compétence CT 2.5** — Identifier un besoin et énoncer un problème technique ; identifier les
