@@ -7478,8 +7478,8 @@ var EAU56_FAST = [
 ];
 var EAU56_CHAINES = [
   ["a6-c-acquerir",  "ACQUÉRIR (chaîne d'information)", "Capteur infrarouge",   "Chaine acquerir"],
-  ["a6-c-traiter",   "TRAITER (chaîne d'information)",  "Carte électronique",   "Chaine traiter"],
-  ["a6-c-alimenter", "ALIMENTER (chaîne d'énergie)",    "Turbine + générateur", "Chaine alimenter"],
+  ["a6-c-traiter",   "TRAITER (chaîne d'information)",  "Carte électronique (microcontrôleur)", "Chaine traiter"],
+  ["a6-c-alimenter", "ALIMENTER (chaîne d'énergie)",    "Turbine + générateur (entraînés par l'eau)", "Chaine alimenter"],
   ["a6-c-convertir", "CONVERTIR (chaîne d'énergie)",    "Électrovanne",         "Chaine convertir"]
 ];
 var EAU56_PARTIES = [ ["q1","Types FP/FC",6], ["q2","Niveaux du CDCF",4], ["fast","FAST",4], ["chaines","Chaînes",4] ];
@@ -10228,7 +10228,10 @@ function _buildCapsuleCSV(cap, filtered) {
       rows: filtered.map(function (x) {
         var f = x.fields || {}, s = eau56Suivi(f);
         return [x.ename, x.ecls, dateOf(x), x.status, (x.score || 0) + "/" + (x.qcmTot || 0)]
-          .concat(EAU56_PARTIES.map(function (p) { return eau56Score(s, p[0], p[2]); }))
+          .concat(EAU56_PARTIES.map(function (p) {
+            var sc = s.scores[p[0]];
+            return (sc !== undefined && sc !== null && sc !== "") ? Number(sc) : eau56Score(s, p[0], p[2]);
+          }))
           .concat(e56Cols.map(function (c) { var v = f[c[0]] || ""; return EAU56_SOL_LB[v] || v; }));
       })
     };
