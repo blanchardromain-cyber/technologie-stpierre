@@ -4282,7 +4282,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-01a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-01b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -7443,9 +7443,11 @@ function buildEau34ModalHTML(sub) {
   }
 
   /* Scores des exercices auto-corrigés */
-  var qq = sub.qq || {}, okQQ = 0, nQQ = 0;
+  /* Relue depuis le classeur, une copie n'a que fields : les réponses y sont sous _qq / _quiz
+     (sub.qq / sub.quiz : copies envoyées avant le 2026-10-01, restées sur ce poste). */
+  var qq = (sub.fields || {})._qq || sub.qq || {}, okQQ = 0, nQQ = 0;
   for (var q in qq) { if (!qq.hasOwnProperty(q) || !qq[q]) continue; nQQ++; if (EAU34_QQ[q] && qq[q] === EAU34_QQ[q][1]) okQQ++; }
-  var qz = sub.quiz || {}, okQZ = 0, nQZ = 0;
+  var qz = (sub.fields || {})._quiz || sub.quiz || {}, okQZ = 0, nQZ = 0;
   for (var z in qz) { if (!qz.hasOwnProperty(z) || qz[z] === undefined) continue; nQZ++; if (EAU34_QUIZ[z] && qz[z] === EAU34_QUIZ[z][1]) okQZ++; }
   var okBac = 0;
   for (var k = 0; k < EAU34_BAC.length; k++) if (eau34Contient(f[EAU34_BAC[k][0]], EAU34_BAC[k][2])) okBac++;
@@ -7682,9 +7684,10 @@ function buildEauModalHTML(sub) {
   var cycLb  = {}; for (var b = 0; b < EAU_CYCLE.length; b++) cycLb[EAU_CYCLE[b][0]] = EAU_CYCLE[b][1];
 
   /* Scores des exercices auto-corrigés */
-  var vf = sub.vf || {}, okVF = 0, nVF = 0;
+  /* Relue depuis le classeur, une copie n'a que fields : réponses sous _vf / _assoc. */
+  var vf = (sub.fields || {})._vf || sub.vf || {}, okVF = 0, nVF = 0;
   for (var v1 in vf) { if (!vf.hasOwnProperty(v1) || !vf[v1]) continue; nVF++; if (vf[v1] === EAU_VF[v1]) okVF++; }
-  var as = sub.assoc || {}, okAS = 0, nAS = 0;
+  var as = (sub.fields || {})._assoc || sub.assoc || {}, okAS = 0, nAS = 0;
   for (var a1 in as) { if (!as.hasOwnProperty(a1) || !as[a1]) continue; nAS++; if (as[a1] === EAU_ASSOC[a1][1]) okAS++; }
   var potL = String(f["ordre-pot"] || "").split(","), okPot = 0, okSol = 0;
   for (var p = 0; p < EAU_POT.length; p++) {
@@ -7866,7 +7869,8 @@ function buildBatimentModalHTML(sub) {
   /* Quiz auto-corrigés */
   var okQcm = 0, nQcm = 0;
   for (var q in BATIMENT_QCM) { if (!BATIMENT_QCM.hasOwnProperty(q)) continue; nQcm++; if (f[q] === BATIMENT_QCM[q]) okQcm++; }
-  var chips = sub.chips || {}, okChips = 0, nChips = 0;
+  /* Relue depuis le classeur, une copie n'a que fields : classement sous _chips. */
+  var chips = (sub.fields || {})._chips || sub.chips || {}, okChips = 0, nChips = 0;
   var CHIPS_COR = ["nat","tec","nat","tec","nat","tec","nat","tec","nat","tec"];
   for (var c in chips) {
     if (!chips.hasOwnProperty(c) || !chips[c]) continue;
@@ -10082,9 +10086,9 @@ function _buildCapsuleCSV(cap, filtered) {
                 .concat(e34Ids.map(function(it){ return it[1]; })),
       rows: filtered.map(function(x){
         var f = x.fields || {};
-        var qq = x.qq || {}, okQQ = 0;
+        var qq = f._qq || x.qq || {}, okQQ = 0;
         for (var q in qq) if (qq.hasOwnProperty(q) && EAU34_QQ[q] && qq[q] === EAU34_QQ[q][1]) okQQ++;
-        var qz = x.quiz || {}, okQZ = 0;
+        var qz = f._quiz || x.quiz || {}, okQZ = 0;
         for (var z in qz) if (qz.hasOwnProperty(z) && EAU34_QUIZ[z] && qz[z] === EAU34_QUIZ[z][1]) okQZ++;
         var okBac = 0;
         for (var k = 0; k < EAU34_BAC.length; k++) if (eau34Contient(f[EAU34_BAC[k][0]], EAU34_BAC[k][2])) okBac++;
@@ -10113,9 +10117,9 @@ function _buildCapsuleCSV(cap, filtered) {
       rows: filtered.map(function(x){
         var f = x.fields || {};
         var ss = eauTableur(f);
-        var vf = x.vf || {}, okVF = 0;
+        var vf = f._vf || x.vf || {}, okVF = 0;
         for (var v in vf) if (vf.hasOwnProperty(v) && vf[v] === EAU_VF[v]) okVF++;
-        var as = x.assoc || {}, okAS = 0;
+        var as = f._assoc || x.assoc || {}, okAS = 0;
         for (var a in as) if (as.hasOwnProperty(a) && EAU_ASSOC[a] && as[a] === EAU_ASSOC[a][1]) okAS++;
         var potL = String(f["ordre-pot"] || "").split(","), okPot = 0, okSol = 0;
         for (var p = 0; p < EAU_POT.length; p++) {
