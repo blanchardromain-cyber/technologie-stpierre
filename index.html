@@ -4774,6 +4774,119 @@ body.est-prof .prof-only{display:block}
         loading="lazy"></iframe>
     </div>
 
+    <!-- P11 4e — CORRIGÉ ACTIVITÉS 5 ET 6 (réservé au professeur : code dans le coffre, voir le panneau professeur) -->
+    <div id="pg-eau56-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé Activités 5 et 6</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé &mdash; Activités 5 et 6</h3>
+        <p class="prof-only" style="font-size:14px;color:var(--td);line-height:1.7;margin:8px 0 14px">
+          Compétences <strong>CT 2.1</strong> &mdash; s'approprier un cahier des charges, et <strong>CT 4.1</strong> &mdash;
+          associer des solutions techniques à des fonctions. Objet étudié : le <strong>robinet automatique à détection</strong>.
+          Repères de correction conformes aux corrigés distribués (S5 et S6).
+        </p>
+        <button onclick="printEau56Corrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+
+        <div id="eau56-cor-body" style="margin-top:20px">
+
+          <div style="background:var(--bp);border-left:4px solid var(--bl);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:18px">
+            <div style="font-weight:700;color:var(--bl);font-size:14px;margin-bottom:4px">Problématiques</div>
+            <div style="font-size:13.5px;color:var(--td)">
+              <strong>A5 :</strong> comment formaliser les fonctions et les exigences du robinet automatique&nbsp;?<br>
+              <strong>A6 :</strong> quelles solutions techniques réalisent les fonctions du robinet automatique&nbsp;?
+            </div>
+          </div>
+
+          <div class="prof-only">
+          <h4 class="bat-cor-h">Organisation</h4>
+          <table class="bat-cor-t">
+            <tr><td class="k">Modalité</td><td>Individuelle (identité pré-remplie depuis le compte élève).</td></tr>
+            <tr><td class="k">Support</td><td>Navigateur, ordinateur ou tablette. Rien à installer.</td></tr>
+            <tr><td class="k">Durée indicative</td><td>Une séance : environ 42 min de travail, 49 min avec les aménagements. Si le temps manque, laisser de côté le tri «&nbsp;critère ou niveau&nbsp;?&nbsp;», puis le mini-quiz de lecture du FAST.</td></tr>
+            <tr><td class="k">Vérification</td><td>Chaque question se vérifie en deux essais : au 1<sup>er</sup>, une aide sur chaque ligne fausse ; au 2<sup>e</sup>, le corrigé. Le score se fige au 2<sup>e</sup> essai (ou dès un 1<sup>er</sup> essai sans faute) et n'est visible que dans le modal professeur.</td></tr>
+            <tr><td class="k">Sauvegarde</td><td>Brouillon automatique ; &laquo;&nbsp;Envoyer au professeur&nbsp;&raquo; dépose le travail dans le tableau de bord.</td></tr>
+            <tr><td class="k">Code élève</td><td>Voir le panneau professeur (onglet &laquo;&nbsp;Codes d'accès&nbsp;&raquo;).</td></tr>
+          </table>
+          </div>
+
+          <h4 class="bat-cor-h">Activité 5 — 1. La pieuvre</h4>
+          <table class="bat-cor-t">
+            <tr><th style="width:70px">Type</th><th>Fonction</th></tr>
+            <tr><td class="ok">FP</td><td>Permettre à l'utilisateur de se laver les mains avec de l'eau</td></tr>
+            <tr><td class="ok">FC</td><td>Détecter la présence des mains</td></tr>
+            <tr><td class="ok">FC</td><td>Résister à l'environnement humide</td></tr>
+            <tr><td class="ok">FC</td><td>Être alimenté en énergie</td></tr>
+            <tr><td class="ok">FC</td><td>Se fixer sur le lavabo</td></tr>
+            <tr><td class="ok">FC</td><td>Respecter le budget</td></tr>
+          </table>
+          <p class="bat-cor-p"><em>FP = relie deux EME (l'utilisateur et l'eau). Les FC relient le robinet à un seul EME (énergie, humidité, lavabo, budget…).</em></p>
+
+          <h4 class="bat-cor-h">Activité 5 — 2. Le cahier des charges fonctionnel (CDCF)</h4>
+          <table class="bat-cor-t">
+            <tr><th style="width:60px">Rep.</th><th>Fonction</th><th>Critère</th><th>Niveau</th></tr>
+            <tr><td class="k">FP1</td><td>Distribuer de l'eau pour se laver les mains</td><td>Débit</td><td class="ok">≈ 2 L/min</td></tr>
+            <tr><td class="k">FC1</td><td>Détecter la présence des mains</td><td>Distance</td><td class="ok">0 à ≈ 15 cm</td></tr>
+            <tr><td class="k">FC2</td><td>Résister à l'environnement humide</td><td>Indice IP</td><td class="ok">IP65</td></tr>
+            <tr><td class="k">FC3</td><td>Limiter la consommation d'eau</td><td>Volume / temps</td><td class="ok">Écoulement coupé dès le retrait des mains</td></tr>
+          </table>
+          <p class="bat-cor-p">Les niveaux se lisent dans le document fictif de la fiche : «&nbsp;Fiche technique — Robinet à détection, modèle D-15&nbsp;».</p>
+
+          <h4 class="bat-cor-h">Ce que je dois retenir — activité 5</h4>
+          <ul class="bat-cor-l">
+            <li><strong>Pieuvre :</strong> liens entre l'objet et son environnement. <strong>FP</strong> = fonction principale (relie 2 EME) ; <strong>FC</strong> = fonction contrainte (objet ↔ 1 EME).</li>
+            <li><strong>Cahier des charges fonctionnel :</strong> fonctions + <strong>critères</strong> + <strong>niveaux</strong> (valeurs à atteindre) ; document de référence que le concepteur doit respecter.</li>
+          </ul>
+
+          <h4 class="bat-cor-h">Activité 6 — 2. Le FAST du robinet automatique</h4>
+          <table class="bat-cor-t">
+            <tr><th>Fonction d'usage</th><th>Fonction technique</th><th>Solution technique</th></tr>
+            <tr><td class="k" rowspan="4">Distribuer de l'eau sans contact pour économiser l'eau</td><td>Détecter la présence des mains</td><td class="ok">Capteur infrarouge</td></tr>
+            <tr><td>Traiter l'information et commander</td><td class="ok">Carte électronique (microcontrôleur)</td></tr>
+            <tr><td>Ouvrir / fermer l'arrivée d'eau</td><td class="ok">Électrovanne</td></tr>
+            <tr><td>Produire l'énergie électrique (sans pile)</td><td class="ok">Turbine + générateur (entraînés par l'eau)</td></tr>
+          </table>
+          <p class="bat-cor-p"><em>Lecture : «&nbsp;Comment détecter la présence&nbsp;? → grâce au capteur infrarouge.&nbsp;» / «&nbsp;Pourquoi une électrovanne&nbsp;? → pour ouvrir et fermer l'arrivée d'eau.&nbsp;»</em></p>
+
+          <h4 class="bat-cor-h">Activité 6 — Les chaînes d'information et d'énergie</h4>
+          <table class="bat-cor-t">
+            <tr><th>Chaîne</th><th>Fonction</th><th>Solution technique</th></tr>
+            <tr><td class="k" rowspan="3">Chaîne d'information</td><td>ACQUÉRIR</td><td class="ok">Capteur infrarouge</td></tr>
+            <tr><td>TRAITER</td><td class="ok">Carte électronique (microcontrôleur)</td></tr>
+            <tr><td>COMMUNIQUER</td><td><em>pas de solution étudiée dans ce FAST</em></td></tr>
+            <tr><td class="k" rowspan="4">Chaîne d'énergie</td><td>ALIMENTER</td><td class="ok">Turbine + générateur (entraînés par l'eau)</td></tr>
+            <tr><td>DISTRIBUER</td><td><em>pas de solution étudiée dans ce FAST</em></td></tr>
+            <tr><td>CONVERTIR</td><td class="ok">Électrovanne</td></tr>
+            <tr><td>TRANSMETTRE</td><td><em>pas de solution étudiée dans ce FAST</em></td></tr>
+          </table>
+
+          <h4 class="bat-cor-h">Ce que je dois retenir — activité 6</h4>
+          <ul class="bat-cor-l">
+            <li><strong>Diagramme FAST :</strong> relie la <strong>fonction d'usage</strong> → <strong>fonctions techniques</strong> → <strong>solutions techniques</strong>. Une fonction commence par un verbe à l'infinitif.</li>
+          </ul>
+
+          <div class="prof-only">
+          <h4 class="bat-cor-h">Aménagements pour les élèves à besoins particuliers</h4>
+          <ul class="bat-cor-l">
+            <li>&laquo;&nbsp;&#x1F441;&#xFE0F; Confort de lecture&nbsp;&raquo; (police, taille, interligne, couleur de page, règle de lecture) et &laquo;&nbsp;&#x1F50A; Lecture immersive&nbsp;&raquo; : réglages communs à toutes les capsules.</li>
+            <li>Consignes découpées en étapes courtes ; une aide sur chaque ligne fausse au 1<sup>er</sup> essai, sans pénalité.</li>
+            <li>Aucun glisser-déposer : tout se fait par boutons et listes, à la souris, au doigt ou au clavier (Tab, Entrée).</li>
+            <li>Réponses courtes : pas de dictée vocale dans cette fiche.</li>
+          </ul>
+
+          <h4 class="bat-cor-h">Notes techniques</h4>
+          <ul class="bat-cor-l">
+            <li>Fichier autonome <code>Niveau 4/P11 Eau ressource essentielle/eau56_eleve.html</code>, servi en iframe ; identité déposée par le site dans <code>eau56_prefill</code>.</li>
+            <li>Envoi : même backend que les autres capsules (<code>cap: "eau56"</code>), avec file d'attente hors ligne. Essais, scores figés et verdicts voyagent dans <code>fields._suivi</code> : le backend n'enregistre que <code>fields</code>.</li>
+            <li>Correction : faite par la fiche (bloc <code>LOGIQUE-EAU56</code>), testée par <code>outils/test_eau56.html</code>, à ouvrir depuis un serveur local.</li>
+          </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <div id="pg-eau34-cor" class="h">
       <div class="phdr">
         <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
@@ -6029,6 +6142,7 @@ var SEQUENCES_DEF = [
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"#q1hfdxcAx9nksmjM+vFun8O1UXWsYiP/TOXkF6m4vII=", open:true},
   {id:"eau34-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Activités 3 et 4", desc:"Corrigé détaillé des activités 3 et 4. Code d'accès professeur.", couleur:"var(--vt)", code:"#9yiKGcK/Q7JWGgRVcj9+M1++K9bu2AaxvTs2I9gvESc=", open:true},
   {id:"eau56", ordre:114, niveau:"4ème", titre:"P11 — Activités 5 et 6 — Pieuvre, cahier des charges et FAST", desc:"Le robinet automatique : pieuvre et type des fonctions, cahier des charges complété à partir d'une fiche technique, diagramme FAST, chaînes d'information et d'énergie. Vérification en deux essais, aides dys intégrées.", couleur:"#0288D1", code:"#a-poser", open:true},
+  {id:"eau56-cor", ordre:115, niveau:"4ème", titre:"P11 — Corrigé Activités 5 et 6", desc:"Corrigé détaillé des activités 5 et 6. Code d'accès professeur.", couleur:"var(--vt)", code:"#a-poser", open:true},
   {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"#OcS3j3v3aYWmIvECda9NwiaoZYMk3IgvhWQwqK264V4=", open:true},
   {id:"p11-entr-tab", ordre:116, niveau:"4ème", titre:"P11 — Entraînement tableur — La facture du club photo", desc:"Avant l'évaluation : lire une feuille de calcul, passer de la phrase à la formule, trouver l'erreur, recopier. Non noté, vérification immédiate. Aides dys intégrées.", couleur:"#0288D1", code:"", open:true},
   {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#sdsFTOAdPjNmd1yUlzBiMttqCiL2pA3BcTLlEyhPKzM=", open:true},
@@ -6899,7 +7013,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "batiment5e-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -6953,6 +7067,7 @@ function renderDash() {
       else if (s.id === "eau34")     clickAction = "onclick=\"goPage('pg-eau34')\"";
       else if (s.id === "eau34-cor") clickAction = "onclick=\"goPage('pg-eau34-cor')\"";
       else if (s.id === "eau56")     clickAction = "onclick=\"goPage('pg-eau56')\"";
+      else if (s.id === "eau56-cor") clickAction = "onclick=\"goPage('pg-eau56-cor')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
@@ -7023,6 +7138,7 @@ function tryUnlock() {
     else if (pendingSeq === "eau34") goPage("pg-eau34");
     else if (pendingSeq === "eau34-cor") goPage("pg-eau34-cor");
     else if (pendingSeq === "eau56") goPage("pg-eau56");
+    else if (pendingSeq === "eau56-cor") goPage("pg-eau56-cor");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
@@ -9395,6 +9511,7 @@ function updateNotifSettings() {
 }
 /* Corrigé P1 5e — impression : on reprend le corps de la page tel qu'il s'affiche */
 function printEau34Corrige() { imprimerCorrigeP11("eau34-cor-body", "Corrigé P11 4e — Activités 3 et 4"); }
+function printEau56Corrige() { imprimerCorrigeP11("eau56-cor-body", "Corrigé P11 4e — Activités 5 et 6"); }
 function printEauCorrige()   { imprimerCorrigeP11("eau-cor-body",   "Corrigé P11 4e — L'eau, ressource essentielle"); }
 /* Mise en page commune aux corrigés imprimables de la séquence P11. */
 function imprimerCorrigeP11(idCorps, titre) {
