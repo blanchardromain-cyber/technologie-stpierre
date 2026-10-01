@@ -155,6 +155,58 @@ class TestAjouter(unittest.TestCase):
             coffre.ajouter(self.base, "autre-phrase-de-test", {"id": "zoe.test", "p": "Zoé", "n": "TEST", "c": "4C"})
 
 
+class TestCode(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.base, _ = coffre.initialiser(FIXTURE, MDP_PROF)
+        cls.texte, cls.code = coffre.poser_code(cls.base, MDP_PROF, "s2")
+
+    def test_code_genere(self):
+        self.assertRegex(self.code, r"^[A-Z]{6}\d{2}$")
+        self.assertNotEqual(coffre.nouveau_code(), coffre.nouveau_code())
+
+    def test_empreinte_dans_sequences_def(self):
+        self.assertEqual(champ(self.texte, "s2", "code"), coffre.empreinte_code("s2", self.code))
+
+    def test_code_dans_le_coffre_et_jamais_en_clair(self):
+        contenu = coffre.dechiffrer(lire_coffre(self.texte), MDP_PROF)
+        self.assertEqual(contenu["codes"]["s2"], self.code)
+        self.assertNotIn(self.code, self.texte.upper())
+
+    def test_autres_sequences_intactes(self):
+        self.assertEqual(champ(self.texte, "s1", "code"), champ(self.base, "s1", "code"))
+        contenu = coffre.dechiffrer(lire_coffre(self.texte), MDP_PROF)
+        self.assertEqual(contenu["codes"]["s1"], "abc26")
+
+    def test_code_choisi_mis_en_majuscules(self):
+        texte, code = coffre.poser_code(self.base, MDP_PROF, "s2", "zorba77")
+        self.assertEqual(code, "ZORBA77")
+        self.assertEqual(champ(texte, "s2", "code"), coffre.empreinte_code("s2", "ZORBA77"))
+
+    def test_code_devinable_refuse(self):
+        # « SEQUENCES » est un mot du site ; « DCCORRIGE » reprend le nom de la séquence.
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.poser_code(self.base, MDP_PROF, "s2", "sequences")
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.poser_code(self.base, MDP_PROF, "dc-corrige", "dccorrige")
+
+    def test_code_invalide_refuse(self):
+        for mauvais in ("AB12", "ÉCOLE12", "AB-1234"):
+            with self.assertRaises(coffre.ErreurCoffre):
+                coffre.poser_code(self.base, MDP_PROF, "s2", mauvais)
+
+    def test_sequence_inconnue_refusee(self):
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.poser_code(self.base, MDP_PROF, "s9")
+
+    def test_mauvais_mot_de_passe_prof(self):
+        with self.assertRaises(coffre.ErreurCoffre):
+            coffre.poser_code(self.base, "pas-le-bon-mot-de-passe", "s2")
+
+    def test_crlf(self):
+        self.assertEqual(self.texte.count("\r\n"), self.base.count("\r\n"))
+
+
 class TestRenouveler(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
