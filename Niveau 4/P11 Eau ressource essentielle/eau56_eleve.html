@@ -2,10 +2,608 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>P11 — Activités 5 et 6 — 4ème</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Activités 5 et 6 — Pieuvre, cahier des charges et FAST — 4ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --ea:#0288D1;      /* bleu eau — couleur de la séquence P11 */
+    --eal:#D8F0FB;
+    --bl:#1F4E79;
+    --bc:#2E75B6;
+    --bp:#DEEAF1;
+    --vt:#1E6B3B;
+    --vp:#E2EFDA;
+    --or:#C55A11;
+    --orp:#FCE4D6;
+    --vi:#7B2C8B;
+    --vip:#EFE0F3;
+    --rg:#C0392B;
+    --rgp:#FADBD8;
+    --gr:#F4F6F8;
+    --gb:#E2E8F0;
+    --tx:#1A202C;
+    --td:#4A5568;
+    --r:12px;
+    --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--bl),#0D2B50);color:#fff;padding:16px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#8FD8F5}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#8FD8F5}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:180px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ea),#41B6E6);transition:width .35s}
+  .pcount{font-family:"DM Mono",monospace;font-size:12px;color:var(--td);font-weight:500;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1180px;margin:0 auto;padding:22px 22px 140px}
+  .situ{background:linear-gradient(135deg,var(--ea),#41B6E6);color:#fff;border-radius:var(--r);padding:20px 24px;margin-bottom:22px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .situ::after{content:"\1F6B0";position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.22}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.9}
+  .situ h2{font-size:19px;font-weight:700;margin:4px 0 6px;max-width:82%}
+  .situ p{font-size:13.5px;opacity:.95;max-width:82%}
+
+  .acte{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bl);color:#fff;border-radius:var(--r);padding:12px 18px;margin:26px 0 14px;box-shadow:var(--sh)}
+  .acte .n{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex:0 0 auto}
+  .acte h2{font-size:16px;font-weight:700}
+  .acte .pb{font-size:12px;color:#BBD3E8;margin-top:2px}
+  .acte:first-of-type{margin-top:0}
+
+  .reprise{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00}
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bp);border-left:6px solid var(--bl);cursor:pointer;user-select:none}
+  .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  .lesson{background:var(--gr);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:16px;font-size:14px;color:var(--td)}
+  .lesson strong{color:var(--bl)}
+  .lesson ul{margin:6px 0 0 20px}
+  .lesson li{margin-bottom:3px}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;color:var(--tx);margin:16px 0 8px}
+  .qlabel .qn{color:var(--ea);font-weight:700;font-family:"DM Mono",monospace;margin-right:5px}
+  .hint{font-size:12.5px;color:var(--td);font-style:italic;margin:-4px 0 8px}
+
+  /* ═══ CHAMPS + DICTÉE ═══ */
+  .fwrap{position:relative;margin-bottom:12px}
+  textarea.rep, input.rep{width:100%;font-family:inherit;font-size:14.5px;color:var(--tx);background:#FBFDFF;border:2px solid var(--gb);border-radius:9px;padding:10px 12px;outline:none;resize:vertical;transition:border-color .15s,background .15s}
+  textarea.rep{min-height:62px;line-height:1.65}
+  textarea.rep:focus, input.rep:focus{border-color:var(--ea);background:#fff}
+  textarea.rep.filled, input.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
+  .micbtn{display:inline-flex;align-items:center;gap:5px;margin-top:5px;background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;font-family:inherit;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .micbtn:hover{border-color:var(--ea);color:var(--ea)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg);animation:pulse 1.1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+
+  /* ═══ TABLEAUX ═══ */
+  table.grid{width:100%;border-collapse:collapse;margin-bottom:8px}
+  table.grid th{background:var(--bl);color:#fff;font-size:12.5px;font-weight:600;text-align:left;padding:9px 11px;border:1px solid var(--bl)}
+  table.grid td{border:1px solid var(--gb);padding:8px 10px;vertical-align:top}
+  table.grid td.lead{background:var(--gr);font-weight:600;font-size:13.5px;color:var(--bl);width:150px}
+  table.grid td.num{background:var(--gr);font-weight:700;color:var(--ea);text-align:center;width:60px;font-family:"DM Mono",monospace}
+  .tscroll{overflow-x:auto}
+
+  /* ═══ QQOQCP — RELIER ═══ */
+  ul.relier{list-style:none;margin:0 0 10px}
+  ul.relier li{display:flex;align-items:center;gap:11px;flex-wrap:wrap;background:#fff;border:2px solid var(--gb);border-radius:10px;padding:9px 12px;margin-bottom:7px}
+  ul.relier li .cle{flex:0 0 auto;min-width:96px;font-size:14px;font-weight:700;color:var(--bl)}
+  ul.relier li .qst{flex:1;min-width:180px;font-size:13.5px;color:var(--td)}
+  ul.relier li select{font-family:inherit;font-size:13px;padding:7px 9px;border:2px solid var(--gb);border-radius:8px;background:#FBFDFF;color:var(--tx);min-width:270px;outline:none}
+  ul.relier li select:focus{border-color:var(--ea)}
+  ul.relier li.ok{border-color:var(--vt);background:var(--vp)}
+  ul.relier li.ko{border-color:var(--rg);background:var(--rgp)}
+
+  /* ═══ BÊTE À CORNES ═══ */
+  .bac{background:var(--gr);border:1px solid var(--gb);border-radius:12px;padding:16px;margin-bottom:14px}
+  .bac-haut{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bac-case{background:#fff;border:2px solid var(--ea);border-radius:10px;padding:11px 13px}
+  .bac-case label{display:block;font-size:12px;font-weight:700;color:var(--ea);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .bac-case input{width:100%;font-family:inherit;font-size:14px;color:var(--tx);background:#FBFDFF;border:2px solid var(--gb);border-radius:8px;padding:8px 10px;outline:none}
+  .bac-case input:focus{border-color:var(--ea);background:#fff}
+  .bac-case.ok{border-color:var(--vt)}
+  .bac-case.ok input{background:#FBFFFA;border-color:#A8CFA4}
+  .bac-case.ko{border-color:var(--rg)}
+  .bac-liens{display:block;width:100%;height:34px}
+  .bac-obj{background:var(--bl);color:#fff;border-radius:10px;padding:13px 16px;text-align:center;font-weight:700;font-size:15px;letter-spacing:.4px}
+  .bac-obj small{display:block;font-weight:400;font-size:11.5px;color:#BBD3E8;letter-spacing:0;margin-bottom:3px;text-transform:uppercase}
+  .bac-bas{max-width:520px;margin:0 auto}
+  .phrase{background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:13px 16px;font-size:14.5px;line-height:1.9;color:var(--bl)}
+  .phrase .t{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ea);margin-bottom:6px}
+  .phrase b{background:#fff;border-bottom:2px solid var(--ea);border-radius:3px;padding:2px 7px;font-family:"DM Mono",monospace;font-size:13.5px}
+  .phrase b.vide{color:#9BB3C4;border-bottom-style:dashed;font-style:italic}
+
+  /* ═══ QCM / QUIZ ═══ */
+  .qbloc{border:1px solid var(--gb);border-radius:11px;padding:13px 15px;margin-bottom:11px;background:#fff}
+  .qbloc .qtit{font-size:14.5px;font-weight:600;margin-bottom:9px}
+  .qbloc .qtit .qn{font-family:"DM Mono",monospace;color:var(--vi);font-weight:700;margin-right:6px}
+  .qbloc .prop{display:flex;align-items:center;gap:10px;background:var(--gr);border:2px solid var(--gb);border-radius:9px;padding:9px 12px;margin-bottom:6px;cursor:pointer;transition:.12s}
+  .qbloc .prop:hover{border-color:var(--bc)}
+  .qbloc .prop .mk{width:23px;height:23px;border-radius:50%;border:2px solid var(--gb);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--td);background:#fff}
+  .qbloc .prop.sel{border-color:var(--bl);background:var(--bp)}
+  .qbloc .prop.sel .mk{background:var(--bl);border-color:var(--bl);color:#fff}
+  .qbloc .prop.ok{border-color:var(--vt);background:var(--vp)}
+  .qbloc .prop.ko{border-color:var(--rg);background:var(--rgp)}
+  .qbloc .prop .txt{font-size:13.5px}
+  .qbloc .exp{font-size:12.5px;color:var(--vt);font-weight:600;margin-top:6px;display:none}
+  .qbloc .exp.show{display:block}
+  .qbloc .exp.ko{color:var(--rg)}
+
+  /* ═══ SÉLECTEURS SIMPLES ═══ */
+  .selrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+  .selrow label{font-size:14px;font-weight:600;color:var(--tx)}
+  .selrow select{font-family:inherit;font-size:14px;padding:8px 11px;border:2px solid var(--gb);border-radius:9px;background:#FBFDFF;color:var(--tx);outline:none;min-width:120px}
+  .selrow select:focus{border-color:var(--ea)}
+  .selrow select.ok{border-color:var(--vt);background:#FBFFFA}
+  .selrow select.ko{border-color:var(--rg);background:#FFF7F6}
+  .ipbox{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--eal);border:1px solid #9BD6EF;border-radius:10px;padding:12px 15px;margin-bottom:12px}
+  .ipbox .lb{font-weight:700;color:var(--bl);font-size:16px;font-family:"DM Mono",monospace}
+  .ipbox select{min-width:74px;font-family:"DM Mono",monospace;font-weight:700;font-size:16px;text-align:center}
+
+  /* ═══ BOUTONS + RÉSULTATS ═══ */
+  .btnck{background:var(--bl);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btnck:hover{background:var(--bc)}
+  .btnrow{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .result{margin-top:10px;font-size:13.5px;font-weight:700;border-radius:9px;padding:9px 14px;display:none}
+  .result.show{display:block}
+  .result.good{background:var(--vp);color:var(--vt)}
+  .result.bad{background:var(--orp);color:var(--or)}
+
+  /* ═══ RESSOURCES ═══ */
+  .reslinks{background:#EEF6FF;border:1px solid #A9CBEA;border-radius:10px;padding:11px 14px;margin:0 0 16px}
+  .reslinks .rl-lb{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--bl);margin-bottom:7px}
+  .reslinks p{font-size:13px;color:var(--td);margin:6px 0 0}
+  .linkbtn{display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:3px 6px 3px 0}
+  .linkbtn:hover{background:var(--bc);color:#fff}
+  details.res{background:#F5FBFE;border:1px solid #A9CBEA;border-radius:10px;margin-bottom:14px;overflow:hidden}
+  details.res>summary{cursor:pointer;padding:11px 15px;font-weight:700;font-size:13.5px;color:var(--ea);list-style:none;display:flex;align-items:center;gap:8px}
+  details.res>summary::-webkit-details-marker{display:none}
+  details.res>summary::after{content:"\25BE";margin-left:auto;transition:transform .2s}
+  details.res[open]>summary::after{transform:rotate(180deg)}
+  details.res .rbody{padding:0 15px 14px;font-size:13.5px;color:var(--td)}
+  details.res .rbody ul{margin:6px 0 6px 20px}
+  details.res .rbody li{margin-bottom:3px}
+
+  figure.illus{margin:0 0 16px;border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center}
+  figure.illus img{display:block;max-width:100%;height:auto;margin:12px auto}
+  figure.illus figcaption{padding:8px 12px;font-size:12.5px;color:var(--td);border-top:1px solid var(--gb);background:var(--gr)}
+
+  .retenir{background:var(--vp);border:1px solid #A8CFA4;border-left:5px solid var(--vt);border-radius:0 10px 10px 0;padding:13px 16px;margin-top:16px;font-size:13.5px;color:#22543D}
+  .retenir b{color:var(--vt)}
+  .retenir .t{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--vt);margin-bottom:6px}
+  .retenir p{margin-bottom:5px}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--gb);box-shadow:0 -4px 20px rgba(0,0,0,.09);padding:11px 22px;z-index:60}
+  .sendbar-in{max-width:1180px;margin:0 auto;display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{border:none;border-radius:9px;padding:10px 17px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-send{background:var(--ea);color:#fff}
+  .btn-send:hover{background:#41B6E6}
+  .btn-send:disabled{opacity:.5;cursor:not-allowed}
+  .btn-sec{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-sec:hover{background:var(--bp);color:var(--bl)}
+  .draftst{font-size:12px;color:var(--td);margin-right:auto;font-family:"DM Mono",monospace}
+  .sendst{display:none;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:0 0 10px;font-weight:600}
+  .sendst.show{display:block}
+  .sendst.ok{background:var(--vp);color:var(--vt)}
+  .sendst.err{background:var(--rgp);color:var(--rg)}
+  .sendst.wait{background:var(--bp);color:var(--bl)}
+
+  @media (max-width:640px){
+    header h1{font-size:16px}
+    .fld input{width:118px}
+    main{padding:16px 13px 150px}
+    .situ h2,.situ p{max-width:100%}
+    .situ::after{display:none}
+    ul.relier li select{min-width:100%}
+    .bac-haut{grid-template-columns:1fr}
+    .bac-liens{display:none}
+  }
+  @media print{
+    header,.pbar-wrap,.sendbar,.micbtn,.btnck,.toolbtn{display:none!important}
+    body{background:#fff}
+    section.step{box-shadow:none;border:1px solid #999;break-inside:avoid}
+    section.step.closed .stbody{display:block}
+    .qbloc .exp{display:block!important}
+  }
+
+  /* ═══ AIDES ═══ */
+  .aide{background:#F5FBFE;border:1px solid #A9CBEA;border-radius:10px;padding:11px 15px;margin:0 0 16px;font-size:13.5px;color:var(--td)}
+  .aide .t{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ea);margin-bottom:6px}
+  .aide ol{margin:4px 0 0 20px}
+  h4.sous{font-size:15px;color:var(--bl);margin:18px 0 8px}
+  h4.sous .qn{color:var(--ea);font-family:"DM Mono",monospace;margin-right:6px}
+  ul.lecture{margin:0 0 12px 20px;font-size:14px}
+
+  /* ═══ PIEUVRE ═══ */
+  .pieuvre-wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start;margin-bottom:14px}
+  .pieuvre{background:var(--gr);border:1px solid var(--gb);border-radius:12px;padding:6px}
+  .pieuvre svg{display:block;width:100%;height:auto}
+  .pv-lien{fill:none;stroke-width:3;stroke-linejoin:round}
+  .pv-num{font:700 13px "DM Mono",monospace}
+  .pv-obj rect{fill:var(--bl)}
+  .pv-obj text{fill:#fff;font:700 15px "DM Sans",system-ui,sans-serif;letter-spacing:.5px}
+  .pv-eme{cursor:pointer}
+  .pv-eme rect{fill:#fff;stroke:var(--bc);stroke-width:2}
+  .pv-eme text{fill:var(--bl);font:600 15px "DM Sans",system-ui,sans-serif}
+  .pv-eme.on rect{fill:var(--eal);stroke:var(--ea);stroke-width:3.5}
+  .emehint{font-size:13.5px;color:var(--td);background:#fff;border:1px solid var(--gb);border-radius:9px;padding:9px 12px;margin-bottom:8px}
+  .emebar{display:flex;flex-wrap:wrap;gap:7px}
+  .emebtn,.relbtn{font-family:inherit;font-size:13px;font-weight:600;color:var(--bl);background:#fff;border:2px solid var(--bc);border-radius:18px;padding:5px 12px;cursor:pointer}
+  .emebtn[aria-pressed="true"],.relbtn[aria-pressed="true"]{background:var(--bl);border-color:var(--bl);color:#fff}
+  .emebtn:focus-visible,.relbtn:focus-visible,.seg button:focus-visible,button.prop:focus-visible,.toolbtn:focus-visible{outline:3px solid #F6AD55;outline-offset:2px}
+  .pastille{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font:700 12px "DM Mono",monospace;margin-right:7px;vertical-align:middle}
+  .liens-txt{display:block;font-size:12.5px;color:var(--td);margin-top:5px}
+  .seg{display:inline-flex;border:2px solid var(--gb);border-radius:9px;overflow:hidden;background:#fff}
+  .seg button{border:none;background:#fff;padding:6px 13px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--td);cursor:pointer}
+  .seg button+button{border-left:2px solid var(--gb)}
+  .seg button[aria-pressed="true"]{background:var(--bl);color:#fff}
+  table.grid tr.ok td{background:#F3FAF0}
+  table.grid tr.ko td{background:#FFF5F4}
+  .fb{display:block;font-size:12.5px;margin-top:4px;line-height:1.45}
+  .fb.ok{color:var(--vt)}
+  .fb.ko{color:var(--rg)}
+  ul.tri{list-style:none;margin:8px 0 10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:7px}
+  ul.tri li{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:2px solid var(--gb);border-radius:10px;padding:7px 10px}
+  ul.tri li.ok{border-color:var(--vt);background:var(--vp)}
+  ul.tri li.ko{border-color:var(--rg);background:var(--rgp)}
+  ul.tri .etq{font-weight:700;color:var(--bl)}
+
+  /* ═══ DOCUMENT FICTIF ═══ */
+  .docfictif{border:2px dashed var(--or);border-radius:12px;background:#FFFCF7;padding:12px 15px;margin:0 0 16px}
+  .df-t{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700;color:var(--or);margin-bottom:8px}
+  .df-badge{background:var(--orp);border-radius:12px;padding:2px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+  .df-note{font-size:12px;color:var(--td);font-style:italic;margin-top:4px}
+
+  /* ═══ FAST ═══ */
+  figure.fastschema{margin:0 0 10px;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:8px}
+  figure.fastschema svg{display:block;width:100%;max-width:620px;height:auto;margin:0 auto}
+  figure.fastschema figcaption{text-align:center;font-weight:700;color:var(--bl);font-size:13.5px;margin-top:4px}
+  #fast-schema .bx{fill:#fff;stroke:#1A202C;stroke-width:1.6}
+  #fast-schema .bx.ft{fill:#EEF1F5}
+  #fast-schema .bx.st{fill:#D5DAE1}
+  #fast-schema .lien{stroke:#1A202C;stroke-width:1.6;fill:none}
+  #fast-schema text{font:700 14px "DM Sans",system-ui,sans-serif;fill:#1A202C}
+  #fast-schema .fl{stroke:#C0392B;stroke-width:3;transition:opacity .2s,stroke-width .2s}
+  #fast-schema .fl-t{fill:#C0392B;font-size:15px}
+  #fast-schema.eclaire-comment .g-pourquoi,#fast-schema.eclaire-pourquoi .g-comment{opacity:.2}
+  #fast-schema.eclaire-comment .g-comment .fl,#fast-schema.eclaire-pourquoi .g-pourquoi .fl{stroke-width:5}
+  .toolbtn[aria-pressed="true"]{background:var(--bl);border-color:var(--bl);color:#fff}
+  .qbloc button.prop{width:100%;text-align:left;font-family:inherit;color:inherit}
+  .fast{display:grid;grid-template-columns:minmax(150px,1fr) minmax(180px,1.2fr) minmax(200px,1.3fr);gap:10px 18px;align-items:center;background:var(--gr);border:1px solid var(--gb);border-radius:12px;padding:14px;margin-bottom:10px}
+  .fast .fh{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--td)}
+  .fast .fu{grid-column:1;grid-row:2 / span 4;background:var(--bl);color:#fff;border-radius:10px;padding:14px;font-weight:700;text-align:center;line-height:1.4}
+  .fast .ft{grid-column:2;background:#fff;border:2px solid var(--bc);border-radius:10px;padding:9px 11px;font-weight:600;font-size:13.5px;color:var(--bl)}
+  .fast .st{grid-column:3}
+  .fast select,.chaine select{width:100%;font-family:inherit;font-size:13.5px;padding:8px 9px;border:2px solid var(--gb);border-radius:9px;background:#FBFDFF;color:var(--tx)}
+  .fast .st.ok select{border-color:var(--vt);background:#FBFFFA}
+  .fast .st.ko select{border-color:var(--rg);background:#FFF7F6}
+
+  /* ═══ CHAÎNES ═══ */
+  .chaine{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:6px 0 14px}
+  .chaine .ch-t{flex:0 0 100%;font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.8px}
+  .chaine.info .ch-t{color:var(--bl)}
+  .chaine.energie .ch-t{color:var(--or)}
+  .bloc{flex:1 1 150px;border:2px solid;border-radius:10px;padding:9px;background:#fff;display:flex;flex-direction:column;gap:6px}
+  .chaine.info .bloc{border-color:var(--bc)}
+  .chaine.energie .bloc{border-color:var(--or)}
+  .bloc .verbe{font-weight:800;letter-spacing:.6px;font-size:13px}
+  .chaine.info .verbe{color:var(--bl)}
+  .chaine.energie .verbe{color:var(--or)}
+  .bloc.vide{background:var(--gr);border-style:dashed;color:var(--td);font-size:12px;font-style:italic}
+  .bloc.ok{background:var(--vp)}
+  .bloc.ko{background:var(--rgp)}
+  .fleche{align-self:center;color:var(--td);font-weight:700}
+  .retenir .exemple{margin-top:8px;padding-top:8px;border-top:1px dashed #A8CFA4}
+
+  @media (max-width:760px){
+    .pieuvre-wrap{grid-template-columns:1fr}
+    .fast{grid-template-columns:1fr}
+    .fast .fh{display:none}
+    .fast .fu,.fast .ft,.fast .st{grid-column:1;grid-row:auto}
+    .fleche{display:none}
+  }
+</style>
 </head>
 <body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 4<sup>e</sup> · Séquence P11 · CT 2.1 · CT 4.1</div>
+      <h1>P11 — Activités 5 et 6 : pieuvre, cahier des charges et diagramme FAST</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">4</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 0 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" type="button" onclick="toggleAll()" id="btn-fold">&#x1F4D6; Tout ouvrir / fermer</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="reprise" id="reprise" hidden data-nolecture></div>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Le robinet automatique à détection</h2>
+    <p>Tu as exprimé le besoin auquel répond le robinet automatique et les contraintes qu'il doit respecter. Tu vas maintenant
+    <strong>formaliser ses fonctions et ses exigences</strong>, puis découvrir les <strong>solutions techniques</strong> qui les réalisent.</p>
+  </div>
+
+  <!-- ═══════════════ ACTIVITÉ 5 — PIEUVRE ET CAHIER DES CHARGES ═══════════════ -->
+  <div class="acte">
+    <div class="n">5</div>
+    <div>
+      <h2>Activité 5 — Pieuvre et cahier des charges</h2>
+      <div class="pb"><strong>Compétence CT 2.1</strong> — S'approprier un cahier des charges.</div>
+      <div class="pb">Problématique : <em>Comment formaliser les fonctions et les exigences du robinet automatique&nbsp;?</em></div>
+    </div>
+  </div>
+
+  <!-- ──────── A5 · 1. LA PIEUVRE ──────── -->
+  <section class="step" id="sec1">
+    <div class="sthdr" onclick="toggleSec('sec1')">
+      <div class="num">1</div><h3>La pieuvre</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">
+        La pieuvre relie l'objet aux <strong>Éléments du Milieu Extérieur (EME)</strong>.
+        La <strong>fonction principale (FP)</strong> relie deux EME ; une <strong>fonction contrainte (FC)</strong> relie l'objet à un EME.
+      </div>
+
+      <div class="aide">
+        <span class="t">&#x1F9ED; Pour t'aider — construis la pieuvre</span>
+        <ol>
+          <li>Clique sur <strong>Relier</strong> à côté d'une fonction.</li>
+          <li>Clique sur le ou les éléments du milieu extérieur qu'elle met en relation, sur la pieuvre ou dans la liste.</li>
+          <li>Choisis ensuite son type : <strong>FP</strong> si elle relie deux éléments, <strong>FC</strong> si elle n'en relie qu'un.</li>
+        </ol>
+      </div>
+
+      <div class="pieuvre-wrap">
+        <div class="pieuvre"><svg id="pv" viewBox="0 0 640 420" role="img" aria-label="Pieuvre du robinet automatique"></svg></div>
+        <div>
+          <div class="emehint" id="pv-actif" aria-live="polite">Choisis d'abord une fonction avec le bouton <strong>Relier</strong>.</div>
+          <div class="emebar" id="emebar"></div>
+        </div>
+      </div>
+
+      <span class="qlabel">Complète le type de chaque fonction (FP ou FC) :</span>
+      <div class="tscroll">
+        <table class="grid fx">
+          <thead><tr><th style="width:120px">Type</th><th>Fonction</th><th style="width:230px">Éléments reliés</th></tr></thead>
+          <tbody id="q1-body"></tbody>
+        </table>
+      </div>
+      <div class="btnrow"><button class="btnck" type="button" onclick="verifier('q1')">Vérifier</button></div>
+      <div class="result" id="q1-res" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ──────── A5 · 2. LE CAHIER DES CHARGES FONCTIONNEL ──────── -->
+  <section class="step" id="sec2">
+    <div class="sthdr" onclick="toggleSec('sec2')">
+      <div class="num">2</div><h3>Le cahier des charges fonctionnel (CDCF)</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <details class="res">
+        <summary>&#x1F4A1; Pour t'aider — critère ou niveau&nbsp;?</summary>
+        <div class="rbody">
+          <p>Le <strong>critère</strong> est ce que l'on mesure ; le <strong>niveau</strong> est la valeur à atteindre. Range chaque étiquette, puis vérifie.</p>
+          <ul class="tri" id="tri"></ul>
+          <div class="btnrow"><button class="btnck" type="button" onclick="verifierTri()">Vérifier mon tri</button></div>
+          <div class="result" id="tri-res" aria-live="polite"></div>
+        </div>
+      </details>
+
+      <div class="docfictif" id="doc-d15">
+        <div class="df-t"><span>&#x1F4C4; Fiche technique — Robinet à détection, modèle D-15</span><span class="df-badge">Document fictif</span></div>
+        <div class="tscroll">
+          <table class="grid">
+            <tr><th style="width:42%">Caractéristique</th><th>Valeur</th></tr>
+            <tr><td class="lead">Débit d'eau</td><td>2 L/min (économiseur intégré)</td></tr>
+            <tr><td class="lead">Pression d'utilisation</td><td>1 à 5 bar</td></tr>
+            <tr><td class="lead">Zone de détection</td><td>de 0 à 15 cm sous le bec</td></tr>
+            <tr><td class="lead">Indice de protection</td><td>IP65</td></tr>
+            <tr><td class="lead">Fonctionnement</td><td>l'écoulement s'arrête dès le retrait des mains</td></tr>
+            <tr><td class="lead">Alimentation</td><td>turbine + générateur entraînés par l'eau, sans pile</td></tr>
+            <tr><td class="lead">Matériau</td><td>laiton chromé</td></tr>
+            <tr><td class="lead">Garantie</td><td>5 ans</td></tr>
+          </table>
+        </div>
+        <p class="df-note">Ce document a été inventé pour l'activité : il ressemble à la fiche d'un fabricant.</p>
+      </div>
+
+      <span class="qlabel">Complète les critères et niveaux manquants.</span>
+      <div class="tscroll">
+        <table class="grid">
+          <thead><tr><th style="width:60px">Rep.</th><th>Fonction</th><th style="width:130px">Critère</th><th style="width:260px">Niveau</th></tr></thead>
+          <tbody id="q2-body"></tbody>
+        </table>
+      </div>
+      <div class="btnrow"><button class="btnck" type="button" onclick="verifier('q2')">Vérifier</button></div>
+      <div class="result" id="q2-res" aria-live="polite"></div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        <p><b>Pieuvre :</b> représente les liens entre l'objet et son environnement.</p>
+        <p><b>FP</b> = fonction principale (relie 2 EME) : formuler avec un VERBE à l'infinitif + compléments</p>
+        <p><b>FC</b> = fonction contrainte (objet ↔ 1 EME) : formuler avec un VERBE à l'infinitif + compléments</p>
+        <p><b>Cahier des charges fonctionnel :</b> liste les fonctions, leurs <b>critères</b> et leurs <b>niveaux</b> (valeurs à atteindre). C'est le document que le concepteur doit respecter.</p>
+        <p class="exemple">Exemple : « <b>Détecter</b> la présence des mains » — un verbe à l'infinitif, puis ses compléments.<br>
+        Contre-exemple : « Détecteur de mains » — il n'y a pas de verbe : ce n'est pas une fonction, c'est le nom d'un composant.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ ACTIVITÉ 6 — LE DIAGRAMME FAST ═══════════════ -->
+  <div class="acte">
+    <div class="n">6</div>
+    <div>
+      <h2>Activité 6 — Le diagramme FAST</h2>
+      <div class="pb"><strong>Compétence CT 4.1</strong> — Associer des solutions techniques à des fonctions.</div>
+      <div class="pb">Problématique : <em>Quelles solutions techniques réalisent les fonctions du robinet automatique&nbsp;?</em></div>
+    </div>
+  </div>
+
+  <!-- ──────── A6 · 1. DÉFINIR ET LIRE UN DIAGRAMME FAST ──────── -->
+  <section class="step" id="sec3">
+    <div class="sthdr" onclick="toggleSec('sec3')">
+      <div class="num">1</div><h3>Définir un diagramme FAST (<em>Function Analysis System Technique</em>)</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <div class="lesson">C'est un outil visuel qui représente les relations logiques entre les fonctions d'un système, d'un produit ou d'un service.</div>
+
+      <h4 class="sous"><span class="qn">1.</span>Lire un diagramme FAST</h4>
+      <ul class="lecture">
+        <li>De droite à gauche, il répond à la question <strong>« Pourquoi ? »</strong></li>
+        <li>De gauche à droite, il répond à la question <strong>« Comment ? »</strong></li>
+        <li>À la verticale, il indique les fonctions simultanées ou complémentaires (<strong>« Quand ? »</strong>)</li>
+      </ul>
+      <figure class="fastschema">
+        <svg id="fast-schema" viewBox="0 0 560 310" role="img" aria-label="Schéma d'un diagramme FAST : une fonction d'usage, reliée à trois fonctions techniques, chacune reliée à sa solution technique. Une flèche « Comment ? » va de gauche à droite ; une flèche « Pourquoi ? » va de droite à gauche.">
+          <defs><marker id="fl-pointe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/></marker></defs>
+          <g class="g-comment"><line class="fl" x1="190" y1="32" x2="540" y2="32" marker-end="url(#fl-pointe)"/><text class="fl-t" x="365" y="22" text-anchor="middle">Comment ?</text></g>
+          <path class="lien" d="M140,152 H163 M163,72 V232 M163,72 H190 M163,152 H190 M163,232 H190 M340,72 H385 M340,152 H385 M340,232 H385"/>
+          <rect class="bx" x="10" y="122" width="130" height="60" rx="3"/>
+          <text x="75" y="148" text-anchor="middle">Fonction</text><text x="75" y="166" text-anchor="middle">d'usage</text>
+          <rect class="bx ft" x="190" y="47" width="150" height="50" rx="3"/>
+          <text x="265" y="68" text-anchor="middle">Fonction</text><text x="265" y="86" text-anchor="middle">technique</text>
+          <rect class="bx ft" x="190" y="127" width="150" height="50" rx="3"/>
+          <text x="265" y="148" text-anchor="middle">Fonction</text><text x="265" y="166" text-anchor="middle">technique</text>
+          <rect class="bx ft" x="190" y="207" width="150" height="50" rx="3"/>
+          <text x="265" y="228" text-anchor="middle">Fonction</text><text x="265" y="246" text-anchor="middle">technique</text>
+          <rect class="bx st" x="385" y="47" width="165" height="50" rx="3"/>
+          <text x="467" y="68" text-anchor="middle">Solution</text><text x="467" y="86" text-anchor="middle">technique</text>
+          <rect class="bx st" x="385" y="127" width="165" height="50" rx="3"/>
+          <text x="467" y="148" text-anchor="middle">Solution</text><text x="467" y="166" text-anchor="middle">technique</text>
+          <rect class="bx st" x="385" y="207" width="165" height="50" rx="3"/>
+          <text x="467" y="228" text-anchor="middle">Solution</text><text x="467" y="246" text-anchor="middle">technique</text>
+          <g class="g-pourquoi"><line class="fl" x1="540" y1="278" x2="190" y2="278" marker-end="url(#fl-pointe)"/><text class="fl-t" x="365" y="302" text-anchor="middle">Pourquoi ?</text></g>
+        </svg>
+        <figcaption>Fonction d'usage → Fonctions techniques → Solutions techniques.</figcaption>
+      </figure>
+      <div class="btnrow">
+        <button class="toolbtn" type="button" id="voir-comment" aria-pressed="false" onclick="eclairerLecture('comment')">Lire avec « Comment ? » &#x2192;</button>
+        <button class="toolbtn" type="button" id="voir-pourquoi" aria-pressed="false" onclick="eclairerLecture('pourquoi')">&#x2190; Lire avec « Pourquoi ? »</button>
+      </div>
+
+      <div class="aide" style="margin-top:14px">
+        <span class="t">&#x1F9ED; Pour t'aider — vérifie que tu sais lire un FAST</span>
+        <div id="quizbox"></div>
+        <div class="btnrow"><button class="btnck" type="button" onclick="verifierQuiz()">Vérifier mes réponses</button></div>
+        <div class="result" id="quiz-res" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────── A6 · 2. COMPLÉTER LE FAST ──────── -->
+  <section class="step" id="sec4">
+    <div class="sthdr" onclick="toggleSec('sec4')">
+      <div class="num">2</div><h3>Compléter le FAST du robinet automatique</h3><div class="chev">&#x25BE;</div>
+    </div>
+    <div class="stbody">
+      <span class="qlabel">Associe chaque fonction technique à sa solution (capteur infrarouge ; carte électronique ; vanne (électrovanne) ; turbine + générateur).</span>
+      <div class="fast" id="fast"></div>
+      <div class="btnrow"><button class="btnck" type="button" onclick="verifier('fast')">Vérifier</button></div>
+      <div class="result" id="fast-res" aria-live="polite"></div>
+
+      <h4 class="sous">Les chaînes d'information et d'énergie</h4>
+      <div class="lesson">Les quatre solutions du FAST sont aussi des maillons des <strong>chaînes d'information et d'énergie</strong> du robinet.
+        Place chacune dans le bon bloc. Les blocs grisés n'ont pas de solution étudiée dans ce FAST.</div>
+      <div class="chaine info">
+        <div class="ch-t">Chaîne d'information</div>
+        <div class="bloc" id="bl-a6-c-acquerir"><span class="verbe">ACQUÉRIR</span><select id="a6-c-acquerir" aria-label="Solution pour ACQUÉRIR"></select><span class="fb" id="fb-a6-c-acquerir"></span></div>
+        <span class="fleche" aria-hidden="true">&#x2192;</span>
+        <div class="bloc" id="bl-a6-c-traiter"><span class="verbe">TRAITER</span><select id="a6-c-traiter" aria-label="Solution pour TRAITER"></select><span class="fb" id="fb-a6-c-traiter"></span></div>
+        <span class="fleche" aria-hidden="true">&#x2192;</span>
+        <div class="bloc vide"><span class="verbe">COMMUNIQUER</span>pas de solution étudiée dans ce FAST</div>
+      </div>
+      <div class="chaine energie">
+        <div class="ch-t">Chaîne d'énergie</div>
+        <div class="bloc" id="bl-a6-c-alimenter"><span class="verbe">ALIMENTER</span><select id="a6-c-alimenter" aria-label="Solution pour ALIMENTER"></select><span class="fb" id="fb-a6-c-alimenter"></span></div>
+        <span class="fleche" aria-hidden="true">&#x2192;</span>
+        <div class="bloc vide"><span class="verbe">DISTRIBUER</span>pas de solution étudiée dans ce FAST</div>
+        <span class="fleche" aria-hidden="true">&#x2192;</span>
+        <div class="bloc" id="bl-a6-c-convertir"><span class="verbe">CONVERTIR</span><select id="a6-c-convertir" aria-label="Solution pour CONVERTIR"></select><span class="fb" id="fb-a6-c-convertir"></span></div>
+        <span class="fleche" aria-hidden="true">&#x2192;</span>
+        <div class="bloc vide"><span class="verbe">TRANSMETTRE</span>pas de solution étudiée dans ce FAST</div>
+      </div>
+      <div class="btnrow"><button class="btnck" type="button" onclick="verifier('chaines')">Vérifier</button></div>
+      <div class="result" id="chaines-res" aria-live="polite"></div>
+
+      <div class="retenir">
+        <span class="t">&#x2605; Ce que je dois retenir</span>
+        <p><b>Diagramme FAST :</b> il relie la <b>fonction d'usage</b> aux <b>fonctions techniques</b> puis aux <b>solutions techniques</b> (les composants réels). Une fonction commence par un verbe à l'infinitif.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sendst" id="send-status"></div>
+
+</main>
+
+<div class="sendbar">
+  <div class="sendbar-in">
+    <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" type="button" onclick="reprendreDernierEnvoi()" title="Recharge la fiche depuis le dernier travail envoyé au professeur">&#x21A9;&#xFE0F; Reprendre mon envoi</button>
+    <button class="btn btn-sec" type="button" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+    <button class="btn btn-sec" type="button" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; Copie de secours</button>
+    <button class="btn btn-send" type="button" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer au professeur</button>
+  </div>
+</div>
+
 <script>
+/* ════════════════════════════════════════════════════════════════
+   P11 — ACTIVITÉS 5 ET 6 (4e) — Collège Saint Pierre, Les Essarts
+   A5 : pieuvre (type FP / FC) et cahier des charges fonctionnel.
+   A6 : diagramme FAST, puis chaînes d'information et d'énergie.
+   Vérification en deux essais (règle de la ressource S5). Le score n'est
+   montré qu'au professeur : il voyage dans fields._suivi, car le backend
+   n'enregistre que « fields ». Backend partagé avec index.html.
+   ════════════════════════════════════════════════════════════════ */
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "eau56";
+var CAP_LABEL   = "P11 4e — Activités 5 et 6 (pieuvre, CDCF, FAST)";
+var PREFILL_KEY = "eau56_prefill";
+var QUEUE_KEY   = "eau56_offline_queue";
+var DRAFT_PFX   = "eau56_draft_";
+
 /* LOGIQUE-EAU56-DEBUT — données et corrections pures, sans accès à la page.
    Testées par outils/test_eau56.html. Les valeurs attendues sont celles des
    corrigés distribués (S5 et S6) ; le document fictif de la fiche les reprend. */
@@ -71,7 +669,7 @@ var EAU56 = (function(){
 
   /* Comparaison souple : sans accent, sans majuscule, sans ponctuation. */
   function norm(s){
-    return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
       .replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
   }
   /* Nombres écrits dans une réponse, virgule décimale comprise : « 1,5 cm » → [1.5]. */
@@ -120,6 +718,846 @@ var EAU56 = (function(){
            compter:compter, enregistrerEssai:enregistrerEssai };
 })();
 /* LOGIQUE-EAU56-FIN */
+
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ── État de la fiche (hors champs de saisie) ── */
+var types   = {};   // f1…f6 → "FP" | "FC"
+var liens   = {};   // f1…f6 → ["util", "eau"]
+var quizRep = {};   // a6-quiz1…3 → "pourquoi" | "comment" | "quand"
+var triRep  = {};   // tri critère / niveau : entraînement, non enregistré
+var suivi   = { essais:{}, scores:{}, premiers:{} };
+var actif   = null; // fonction en cours de liaison sur la pieuvre
+
+var TEXT_IDS = EAU56.NIVEAUX.map(function(n){ return n.id; });
+var SEL_IDS  = EAU56.FAST.map(function(d){ return d.id; }).concat(EAU56.CHAINES.map(function(d){ return d.id; }));
+var COULEURS = ["#0288D1", "#C55A11", "#2E8B4A", "#7B2C8B", "#B7791F", "#C0392B"];
+var QUESTIONS = {
+  q1:      { res:"q1-res",      total:6, nom:"Types FP/FC" },
+  q2:      { res:"q2-res",      total:4, nom:"Niveaux du CDCF" },
+  fast:    { res:"fast-res",    total:4, nom:"FAST" },
+  chaines: { res:"chaines-res", total:4, nom:"Chaînes" }
+};
+
+/* ════════════ OUTILS ════════════ */
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? String(e.value||"").trim() : ""; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function slug(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function afficher(id, ok, html){
+  var b = $(id);
+  if (!b) return;
+  b.className = "result show " + (ok ? "good" : "bad");
+  b.innerHTML = html;
+}
+function nomEme(id){
+  for (var i=0;i<EAU56.EME.length;i++) if (EAU56.EME[i].id === id) return EAU56.EME[i].nom;
+  return id;
+}
+function nomEmeMin(id){ var n = nomEme(id); return n.charAt(0).toLowerCase() + n.slice(1); }
+function nomSolution(v){
+  for (var i=0;i<EAU56.SOLUTIONS.length;i++) if (EAU56.SOLUTIONS[i].v === v) return EAU56.SOLUTIONS[i].t;
+  return v;
+}
+
+/* ════════════ PLIAGE DES SECTIONS ════════════ */
+function toggleSec(id){ var s=$(id); if(s) s.classList.toggle("closed"); }
+function toggleAll(){
+  var secs = document.querySelectorAll("section.step");
+  var anyOpen = false;
+  for (var i=0;i<secs.length;i++) if (!secs[i].classList.contains("closed")) anyOpen = true;
+  for (var j=0;j<secs.length;j++) secs[j].classList.toggle("closed", anyOpen);
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function markFilled(el){
+  if (!el || !el.classList) return;
+  el.classList.toggle("filled", String(el.value||"").trim().length > 0);
+}
+function champsCourants(){
+  var f = {}, i;
+  for (i=0;i<TEXT_IDS.length;i++) f[TEXT_IDS[i]] = val(TEXT_IDS[i]);
+  for (i=0;i<SEL_IDS.length;i++)  f[SEL_IDS[i]]  = val(SEL_IDS[i]);
+  return f;
+}
+function countFilled(){
+  var n = 0, f = champsCourants(), k;
+  for (k in f)       if (f.hasOwnProperty(k) && f[k]) n++;
+  for (k in types)   if (types.hasOwnProperty(k)) n++;
+  for (k in liens)   if (liens.hasOwnProperty(k)) n++;
+  for (k in quizRep) if (quizRep.hasOwnProperty(k)) n++;
+  return n;
+}
+function totalFields(){ return TEXT_IDS.length + SEL_IDS.length + 2 * EAU56.FONCTIONS.length + EAU56.QUIZ.length; }
+function updateProgress(){
+  var done = countFilled(), tot = totalFields();
+  $("pbar-fill").style.width = Math.round(done/tot*100) + "%";
+  $("pcount").textContent = done + " / " + tot + " réponses";
+}
+
+/* ════════════ A5 · 1 — LA PIEUVRE ════════════
+   Les éléments sont placés sur une ellipse autour de l'objet. Le SVG se
+   redimensionne d'un bloc (viewBox) : rien ne se chevauche sur téléphone.
+   Le clavier passe par la liste de boutons (#emebar), qui fait la même chose. */
+var PV = { cx:320, cy:210, rx:245, ry:165, w:132, h:34 };
+function posEme(id){
+  for (var i=0;i<EAU56.EME.length;i++){
+    var e = EAU56.EME[i];
+    if (e.id !== id) continue;
+    var a = e.angle * Math.PI / 180;
+    return { x: Math.round(PV.cx + PV.rx * Math.sin(a)), y: Math.round(PV.cy - PV.ry * Math.cos(a)) };
+  }
+  return null;
+}
+function descriptionPieuvre(){
+  var parts = [];
+  for (var i=0;i<EAU56.FONCTIONS.length;i++){
+    var l = liens[EAU56.FONCTIONS[i].id] || [];
+    if (l.length === 2) parts.push("trait " + (i+1) + " : relie " + nomEmeMin(l[0]) + " et " + nomEmeMin(l[1]) + " à travers le robinet");
+    else if (l.length === 1) parts.push("trait " + (i+1) + " : relie le robinet à " + nomEmeMin(l[0]));
+  }
+  return "Pieuvre du robinet automatique. " + (parts.length ? parts.join(" ; ") + "." : "Aucun trait pour l'instant.");
+}
+function dessinerPieuvre(){
+  var svg = $("pv"); if (!svg) return;
+  var h = "", i;
+  for (i=0;i<EAU56.FONCTIONS.length;i++){
+    var f = EAU56.FONCTIONS[i], l = liens[f.id] || [], c = COULEURS[i];
+    if (!l.length) continue;
+    var p0 = posEme(l[0]), p1 = l.length === 2 ? posEme(l[1]) : null;
+    var d = p1 ? "M" + p0.x + "," + p0.y + " L" + PV.cx + "," + PV.cy + " L" + p1.x + "," + p1.y
+               : "M" + PV.cx + "," + PV.cy + " L" + p0.x + "," + p0.y;
+    var mx = Math.round((p0.x + PV.cx) / 2), my = Math.round((p0.y + PV.cy) / 2);
+    h += '<path class="pv-lien" d="' + d + '" stroke="' + c + '"' + (actif === f.id ? ' stroke-width="5"' : '') + '/>' +
+         '<circle cx="' + mx + '" cy="' + my + '" r="11" fill="' + c + '"/>' +
+         '<text class="pv-num" x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle" fill="#fff">' + (i+1) + '</text>';
+  }
+  h += '<g class="pv-obj"><rect x="' + (PV.cx-88) + '" y="' + (PV.cy-30) + '" width="176" height="60" rx="12"/>' +
+       '<text x="' + PV.cx + '" y="' + (PV.cy-4) + '" text-anchor="middle">ROBINET</text>' +
+       '<text x="' + PV.cx + '" y="' + (PV.cy+16) + '" text-anchor="middle">AUTOMATIQUE</text></g>';
+  for (i=0;i<EAU56.EME.length;i++){
+    var e = EAU56.EME[i], p = posEme(e.id), on = !!actif && (liens[actif] || []).indexOf(e.id) >= 0;
+    h += '<g class="pv-eme' + (on ? ' on' : '') + '" onclick="basculerEme(\'' + e.id + '\')">' +
+         '<rect x="' + (p.x - PV.w/2) + '" y="' + (p.y - PV.h/2) + '" width="' + PV.w + '" height="' + PV.h + '" rx="17"/>' +
+         '<text x="' + p.x + '" y="' + (p.y + 5) + '" text-anchor="middle">' + esc(e.nom) + '</text></g>';
+  }
+  svg.innerHTML = h;
+  svg.setAttribute("aria-label", descriptionPieuvre());
+}
+function construireEmebar(){
+  var h = "";
+  for (var i=0;i<EAU56.EME.length;i++){
+    var e = EAU56.EME[i];
+    h += '<button type="button" class="emebtn" id="eme-' + e.id + '" aria-pressed="false" onclick="basculerEme(\'' + e.id + '\')">' + esc(e.nom) + '</button>';
+  }
+  $("emebar").innerHTML = h;
+}
+function majEmebar(){
+  var l = actif ? (liens[actif] || []) : [], k = -1, i;
+  for (i=0;i<EAU56.EME.length;i++){
+    var b = $("eme-" + EAU56.EME[i].id);
+    if (b) b.setAttribute("aria-pressed", l.indexOf(EAU56.EME[i].id) >= 0 ? "true" : "false");
+  }
+  for (i=0;i<EAU56.FONCTIONS.length;i++) if (EAU56.FONCTIONS[i].id === actif) k = i;
+  $("pv-actif").innerHTML = k < 0
+    ? "Choisis d'abord une fonction avec le bouton <strong>Relier</strong>."
+    : "Fonction <strong>" + (k+1) + "</strong> : « " + esc(EAU56.FONCTIONS[k].texte) + " ». Clique sur le ou les éléments qu'elle relie.";
+}
+function choisirFonction(id){
+  actif = (actif === id) ? null : id;
+  majTout();
+}
+function basculerEme(emeId){
+  if (!actif){ $("pv-actif").innerHTML = "✋ Choisis d'abord une fonction avec le bouton <strong>Relier</strong>."; return; }
+  var l = (liens[actif] || []).slice(), k = l.indexOf(emeId);
+  if (k >= 0) l.splice(k, 1);
+  else if (l.length >= 2){ $("pv-actif").innerHTML = "Une fonction relie <strong>deux éléments au plus</strong>. Clique sur un élément déjà choisi pour le retirer."; return; }
+  else l.push(emeId);
+  if (l.length) liens[actif] = l; else delete liens[actif];
+  effacerMarques("q1");
+  majTout(); saveDraft();
+}
+
+/* ════════════ A5 · 1 — TABLEAU DES TYPES ════════════ */
+function construireQ1(){
+  var h = "";
+  for (var i=0;i<EAU56.FONCTIONS.length;i++){
+    var f = EAU56.FONCTIONS[i];
+    h += '<tr id="q1-r' + i + '">' +
+      '<td><div class="seg" role="group" aria-label="Type de la fonction ' + (i+1) + '">' +
+        '<button type="button" id="t-' + f.id + '-FP" aria-pressed="false" onclick="choisirType(\'' + f.id + '\',\'FP\')">FP</button>' +
+        '<button type="button" id="t-' + f.id + '-FC" aria-pressed="false" onclick="choisirType(\'' + f.id + '\',\'FC\')">FC</button>' +
+      '</div></td>' +
+      '<td><span class="pastille" style="background:' + COULEURS[i] + '" aria-hidden="true">' + (i+1) + '</span>' + esc(f.texte) +
+        '<span class="fb" id="fb-q1-' + i + '"></span></td>' +
+      '<td><button type="button" class="relbtn" id="rel-' + f.id + '" aria-pressed="false" onclick="choisirFonction(\'' + f.id + '\')">Relier</button>' +
+        '<span class="liens-txt" id="lt-' + f.id + '">—</span></td>' +
+    '</tr>';
+  }
+  $("q1-body").innerHTML = h;
+}
+function choisirType(fid, t){
+  if (types[fid] === t) delete types[fid]; else types[fid] = t;
+  effacerMarques("q1"); majTout(); saveDraft();
+}
+function majQ1(){
+  for (var i=0;i<EAU56.FONCTIONS.length;i++){
+    var f = EAU56.FONCTIONS[i];
+    var bFP = $("t-" + f.id + "-FP"), bFC = $("t-" + f.id + "-FC");
+    if (bFP) bFP.setAttribute("aria-pressed", types[f.id] === "FP" ? "true" : "false");
+    if (bFC) bFC.setAttribute("aria-pressed", types[f.id] === "FC" ? "true" : "false");
+    var r = $("rel-" + f.id); if (r) r.setAttribute("aria-pressed", actif === f.id ? "true" : "false");
+    var l = liens[f.id] || [], lt = $("lt-" + f.id);
+    if (lt) lt.textContent = l.length ? l.map(nomEme).join(" + ") : "—";
+  }
+}
+function majTout(){ dessinerPieuvre(); majEmebar(); majQ1(); updateProgress(); }
+
+/* ════════════ A5 · 2 — TRI ET NIVEAUX ════════════ */
+function construireTri(){
+  var h = "";
+  for (var i=0;i<EAU56.TRI.length;i++){
+    h += '<li id="tri-' + i + '"><span class="etq">' + esc(EAU56.TRI[i][0]) + '</span>' +
+      '<div class="seg" role="group" aria-label="' + esc(EAU56.TRI[i][0]) + ' : critère ou niveau ?">' +
+      '<button type="button" id="tri-' + i + '-critere" aria-pressed="false" onclick="choisirTri(' + i + ',\'critere\')">Critère</button>' +
+      '<button type="button" id="tri-' + i + '-niveau" aria-pressed="false" onclick="choisirTri(' + i + ',\'niveau\')">Niveau</button></div></li>';
+  }
+  $("tri").innerHTML = h;
+}
+function choisirTri(i, v){
+  triRep[i] = v;
+  $("tri-" + i + "-critere").setAttribute("aria-pressed", v === "critere" ? "true" : "false");
+  $("tri-" + i + "-niveau").setAttribute("aria-pressed", v === "niveau" ? "true" : "false");
+  $("tri-" + i).classList.remove("ok","ko");
+}
+function verifierTri(){
+  var ok = 0, rep = 0;
+  for (var i=0;i<EAU56.TRI.length;i++){
+    var li = $("tri-" + i); li.classList.remove("ok","ko");
+    if (!triRep[i]) continue;
+    rep++;
+    var bon = triRep[i] === EAU56.TRI[i][1]; if (bon) ok++;
+    li.classList.add(bon ? "ok" : "ko");
+  }
+  if (!rep){ afficher("tri-res", false, "Range d'abord au moins une étiquette."); return; }
+  afficher("tri-res", ok === EAU56.TRI.length, ok === EAU56.TRI.length
+    ? "🎉 Bien rangé : le critère se mesure, le niveau est la valeur à atteindre."
+    : ok + " / 6 bien rangée(s). Une valeur à atteindre, c'est un niveau.");
+}
+function construireQ2(){
+  var h = "";
+  for (var i=0;i<EAU56.NIVEAUX.length;i++){
+    var n = EAU56.NIVEAUX[i];
+    h += '<tr id="q2-r' + i + '"><td class="num">' + n.rep + '</td><td>' + esc(n.fonction) + '</td><td class="lead">' + esc(n.critere) + '</td>' +
+      '<td><input class="rep" type="text" id="' + n.id + '" autocomplete="off" aria-label="Niveau pour le critère ' + esc(n.critere) + '" placeholder="à lire dans le document">' +
+      '<span class="fb" id="fb-q2-' + i + '"></span></td></tr>';
+  }
+  $("q2-body").innerHTML = h;
+}
+
+/* ════════════ A6 · 1 — LIRE UN FAST ════════════ */
+function eclairerLecture(sens){
+  var svg = $("fast-schema"), deja = svg.classList.contains("eclaire-" + sens);
+  svg.classList.remove("eclaire-comment", "eclaire-pourquoi");
+  if (!deja) svg.classList.add("eclaire-" + sens);
+  $("voir-comment").setAttribute("aria-pressed", svg.classList.contains("eclaire-comment") ? "true" : "false");
+  $("voir-pourquoi").setAttribute("aria-pressed", svg.classList.contains("eclaire-pourquoi") ? "true" : "false");
+}
+function construireQuiz(){
+  var h = "";
+  for (var i=0;i<EAU56.QUIZ.length;i++){
+    h += '<div class="qbloc"><div class="qtit">' + esc(EAU56.QUIZ[i].q) + '</div>';
+    for (var j=0;j<EAU56.QUIZ_OPTS.length;j++){
+      var o = EAU56.QUIZ_OPTS[j];
+      h += '<button type="button" class="prop" id="qp-' + i + '-' + o[0] + '" aria-pressed="false" onclick="choisirQuiz(' + i + ',\'' + o[0] + '\')">' +
+           '<span class="mk">' + String.fromCharCode(65 + j) + '</span><span class="txt">' + esc(o[1]) + '</span></button>';
+    }
+    h += '<div class="exp" id="qx-' + i + '"></div></div>';
+  }
+  $("quizbox").innerHTML = h;
+}
+function majQuiz(){
+  for (var i=0;i<EAU56.QUIZ.length;i++)
+    for (var j=0;j<EAU56.QUIZ_OPTS.length;j++){
+      var v = EAU56.QUIZ_OPTS[j][0], b = $("qp-" + i + "-" + v);
+      if (!b) continue;
+      var sel = quizRep[EAU56.QUIZ[i].id] === v;
+      b.classList.remove("ok", "ko");
+      b.classList.toggle("sel", sel);
+      b.setAttribute("aria-pressed", sel ? "true" : "false");
+    }
+}
+function choisirQuiz(i, v){
+  quizRep[EAU56.QUIZ[i].id] = v;
+  majQuiz();
+  var x = $("qx-" + i); if (x) x.className = "exp";
+  updateProgress(); saveDraft();
+}
+function verifierQuiz(){
+  var ok = 0, rep = 0;
+  majQuiz();
+  for (var i=0;i<EAU56.QUIZ.length;i++){
+    var q = EAU56.QUIZ[i], r = quizRep[q.id], x = $("qx-" + i);
+    if (!r) continue;
+    rep++;
+    var bon = r === q.att; if (bon) ok++;
+    var b = $("qp-" + i + "-" + r); if (b) b.classList.add(bon ? "ok" : "ko");
+    if (x){ x.className = "exp show" + (bon ? "" : " ko"); x.textContent = bon ? "✅ Juste." : "❌ Relis les trois règles de lecture, au-dessus du schéma."; }
+  }
+  if (!rep){ afficher("quiz-res", false, "Réponds d'abord à au moins une question."); return; }
+  afficher("quiz-res", ok === EAU56.QUIZ.length, ok === EAU56.QUIZ.length
+    ? "🎉 3 / 3 — tu sais lire un diagramme FAST."
+    : ok + " / 3 juste(s). Relis les règles de lecture, puis corrige.");
+}
+
+/* ════════════ A6 · 2 — FAST ET CHAÎNES ════════════ */
+function optionsSolutions(){
+  var h = '<option value="">— choisir —</option>';
+  for (var i=0;i<EAU56.SOLUTIONS.length;i++) h += '<option value="' + EAU56.SOLUTIONS[i].v + '">' + esc(EAU56.SOLUTIONS[i].t) + '</option>';
+  return h;
+}
+function construireFast(){
+  var h = '<div class="fh">Fonction d\'usage</div><div class="fh">Fonction technique</div><div class="fh">Solution technique</div>' +
+          '<div class="fu">Distribuer de l\'eau sans contact pour économiser l\'eau</div>';
+  for (var i=0;i<EAU56.FAST.length;i++){
+    var d = EAU56.FAST[i];
+    h += '<div class="ft">' + esc(d.ft) + '</div>' +
+         '<div class="st" id="st-' + i + '"><select id="' + d.id + '" aria-label="Solution technique pour : ' + esc(d.ft) + '">' + optionsSolutions() + '</select>' +
+         '<span class="fb" id="fb-fast-' + i + '"></span></div>';
+  }
+  $("fast").innerHTML = h;
+  for (var k=0;k<EAU56.CHAINES.length;k++){ var s = $(EAU56.CHAINES[k].id); if (s) s.innerHTML = optionsSolutions(); }
+}
+
+/* ════════════ VÉRIFICATION EN DEUX ESSAIS ════════════ */
+function verdictsDe(q){
+  var f = champsCourants();
+  if (q === "q1")   return EAU56.verdictsQ1(types, liens);
+  if (q === "q2")   return EAU56.verdictsNiveaux(f);
+  if (q === "fast") return EAU56.verdictsListe(EAU56.FAST, f);
+  return EAU56.verdictsListe(EAU56.CHAINES, f);
+}
+function repondu(q){
+  var f = champsCourants(), k, i;
+  if (q === "q1"){
+    for (k in types) if (types.hasOwnProperty(k)) return true;
+    for (k in liens) if (liens.hasOwnProperty(k)) return true;
+    return false;
+  }
+  var ids = q === "q2" ? TEXT_IDS : (q === "fast" ? EAU56.FAST : EAU56.CHAINES).map(function(d){ return d.id; });
+  for (i=0;i<ids.length;i++) if (f[ids[i]]) return true;
+  return false;
+}
+function ligne(q, i){
+  if (q === "chaines") return { el: $("bl-" + EAU56.CHAINES[i].id), fb: $("fb-" + EAU56.CHAINES[i].id) };
+  var pre = { q1:"q1-r", q2:"q2-r", fast:"st-" }[q];
+  return { el: $(pre + i), fb: $("fb-" + q + "-" + i) };
+}
+function marquerLigne(q, i, juste, texte){
+  var l = ligne(q, i);
+  if (l.el){ l.el.classList.remove("ok", "ko"); if (juste !== null) l.el.classList.add(juste ? "ok" : "ko"); }
+  if (l.fb){ l.fb.className = "fb" + (juste === null ? "" : (juste ? " ok" : " ko")); l.fb.textContent = texte || ""; }
+}
+function effacerMarques(q){
+  for (var i=0;i<QUESTIONS[q].total;i++) marquerLigne(q, i, null, "");
+  var r = $(QUESTIONS[q].res); if (r) r.className = "result";
+}
+function messageLigne(q, i, juste, montrer){
+  if (q === "q1"){
+    var f = EAU56.FONCTIONS[i];
+    var detail = f.type === "FP"
+      ? "FP — elle relie " + nomEmeMin(f.via[0]) + " et " + nomEmeMin(f.via[1]) + " à travers le robinet."
+      : "FC — elle relie le robinet à un seul élément : " + nomEmeMin(f.via[0]) + ".";
+    if (juste) return "✓ " + detail;
+    if (montrer) return "Corrigé : " + detail;
+    return EAU56.liensCle(liens[f.id]) === EAU56.liensCle(f.via)
+      ? "Compte les éléments reliés : deux → FP, un seul → FC."
+      : "Quels éléments du milieu extérieur cette fonction met-elle en relation ? Relis-la mot à mot.";
+  }
+  if (q === "q2"){ var n = EAU56.NIVEAUX[i]; return juste ? "✓ Juste." : (montrer ? "Corrigé : " + n.corrige : n.aide); }
+  var d = (q === "fast" ? EAU56.FAST : EAU56.CHAINES)[i];
+  if (juste) return "✓ Juste.";
+  return montrer ? "Corrigé : " + (q === "fast" ? d.corrige : nomSolution(d.att)) : d.aide;
+}
+function verifier(q){
+  if (!repondu(q)){ afficher(QUESTIONS[q].res, false, "Réponds d'abord à au moins une ligne."); return; }
+  var v = verdictsDe(q);
+  var r = EAU56.enregistrerEssai(suivi, q, v);
+  for (var i=0;i<v.length;i++) marquerLigne(q, i, v[i], messageLigne(q, i, v[i], r.montrer));
+  var msg;
+  if (r.juste === r.total) msg = "🎉 Tout est juste.";
+  else if (!r.montrer) msg = (r.total - r.juste) + " ligne(s) à revoir. Corrige-les avec les aides, puis vérifie une seconde fois : le corrigé s'affichera.";
+  else msg = "Le corrigé s'affiche sous chaque ligne fausse. Corrige-les pour retenir la bonne réponse.";
+  if (q === "q1" && r.montrer) msg += "<br><em>FP = relie deux EME (l'utilisateur et l'eau). Les FC relient le robinet à un seul EME (énergie, humidité, lavabo, budget…).</em>";
+  afficher(QUESTIONS[q].res, r.juste === r.total, msg);
+  saveDraft();
+}
+
+/* ════════════ BROUILLON LOCAL ════════════ */
+function draftKey(){ return DRAFT_PFX + (USER.id || slug(val("inp-prenom")+"-"+val("inp-nom")) || "anon"); }
+function collect(){
+  var f = champsCourants(), i;
+  for (i=0;i<EAU56.FONCTIONS.length;i++){
+    var fn = EAU56.FONCTIONS[i];
+    f["a5-t" + (i+1)] = types[fn.id] || "";
+    f["a5-l" + (i+1)] = EAU56.liensCle(liens[fn.id]);
+  }
+  for (i=0;i<EAU56.QUIZ.length;i++) f[EAU56.QUIZ[i].id] = quizRep[EAU56.QUIZ[i].id] || "";
+  f._suivi = {
+    essais: suivi.essais, scores: suivi.scores, premiers: suivi.premiers,
+    verdicts: { q1: verdictsDe("q1"), q2: verdictsDe("q2"), fast: verdictsDe("fast"), chaines: verdictsDe("chaines") }
+  };
+  return { p: val("inp-prenom"), n: val("inp-nom"), c: val("inp-classe"), fields: f, ts: Date.now() };
+}
+var _draftT = null;
+function saveDraft(){
+  if (_draftT) clearTimeout(_draftT);
+  _draftT = setTimeout(function(){
+    try {
+      localStorage.setItem(draftKey(), JSON.stringify(collect()));
+      var d = new Date();
+      function p(x){ return x<10?"0"+x:""+x; }
+      $("draft-st").textContent = "Brouillon enregistré à " + p(d.getHours()) + ":" + p(d.getMinutes());
+    } catch(e){}
+  }, 500);
+}
+function formVierge(){
+  var f = champsCourants(), k;
+  for (k in f)       if (f.hasOwnProperty(k) && f[k]) return false;
+  for (k in types)   if (types.hasOwnProperty(k)) return false;
+  for (k in liens)   if (liens.hasOwnProperty(k)) return false;
+  for (k in quizRep) if (quizRep.hasOwnProperty(k)) return false;
+  return true;
+}
+function restaurerSelonIdentite(){
+  if (USER.id || !formVierge()) return;
+  if (!val("inp-prenom") || !val("inp-nom")) return;
+  restoreDraft();
+  updateProgress();
+}
+/* Recharge une copie (brouillon ou envoi). Tout ce qui vient du stockage est filtré :
+   un élément inconnu de la pieuvre est ignoré, un type autre que FP/FC aussi. */
+function appliquerDonnees(f){
+  f = f || {};
+  var i, el, tous = TEXT_IDS.concat(SEL_IDS);
+  for (i=0;i<tous.length;i++){ el = $(tous[i]); if (el){ el.value = f[tous[i]] || ""; markFilled(el); } }
+  types = {}; liens = {}; quizRep = {};
+  for (i=0;i<EAU56.FONCTIONS.length;i++){
+    var id = EAU56.FONCTIONS[i].id, t = f["a5-t" + (i+1)];
+    var l = String(f["a5-l" + (i+1)] || "").split("+").filter(function(x){ return x && EAU56.liensCle([x]) === x; });
+    if (t === "FP" || t === "FC") types[id] = t;
+    if (l.length) liens[id] = l.slice(0, 2);
+  }
+  for (i=0;i<EAU56.QUIZ.length;i++){
+    var q = f[EAU56.QUIZ[i].id];
+    if (q === "pourquoi" || q === "comment" || q === "quand") quizRep[EAU56.QUIZ[i].id] = q;
+  }
+  var s = f._suivi || {};
+  suivi = { essais: s.essais || {}, scores: s.scores || {}, premiers: s.premiers || {} };
+  actif = null;
+  for (var k in QUESTIONS) if (QUESTIONS.hasOwnProperty(k)) effacerMarques(k);
+  majQuiz(); majTout();
+}
+function restoreDraft(){
+  var raw = null;
+  try { raw = localStorage.getItem(draftKey()); } catch(e){}
+  if (!raw) return;
+  var d = null; try { d = JSON.parse(raw); } catch(e){ return; }
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  appliquerDonnees(d.fields);
+}
+
+/* ════════════ REPRENDRE LE DERNIER ENVOI ════════════ */
+function eidCourant(){
+  if (USER.id) return USER.id;
+  var ename = (val("inp-prenom") + " " + val("inp-nom")).trim();
+  if (!ename) return "";
+  var classe = val("inp-classe") ? ("4" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  return CAP_ID + "." + (slug(classe) || "4x") + "." + (slug(ename) || "eleve");
+}
+function envoiLocal(eid){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i=subs.length-1; i>=0; i--)
+      if (subs[i] && subs[i].eid === eid && subs[i].cap === CAP_ID) return subs[i];
+  } catch(e){}
+  return null;
+}
+function envoiCloud(eid, onDone){
+  if (!hasUrl() || !eid){ onDone(null); return; }
+  lireEnvois(eid, function(liste){
+    if (!liste || !liste.length){ onDone(null); return; }
+    var miens = liste.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    onDone(miens[0] || null);
+  });
+}
+function plusRecent(a, b){
+  if (!a) return b; if (!b) return a;
+  return (new Date(b.dateISO||0) > new Date(a.dateISO||0)) ? b : a;
+}
+function dateLisible(sub){
+  var d = new Date(sub && sub.dateISO ? sub.dateISO : Date.now());
+  function p(n){ return n<10 ? "0"+n : ""+n; }
+  return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
+}
+function appliquerEnvoi(sub){
+  if (!sub) return;
+  if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
+    var bouts = String(sub.ename).split(" ");
+    $("inp-prenom").value = bouts.shift() || "";
+    $("inp-nom").value = bouts.join(" ");
+  }
+  if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^4/, "").toUpperCase();
+  appliquerDonnees(sub.fields);
+  var ban = $("reprise"); if (ban) ban.hidden = true;
+  updateProgress(); saveDraft();
+  flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
+}
+function reprendreDernierEnvoi(){
+  var eid = eidCourant();
+  if (!eid){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> : c'est ce qui permet de retrouver ton travail.", "err");
+    $("inp-prenom").focus(); return;
+  }
+  if (!formVierge() && !confirm("Récupérer le dernier travail envoyé remplacera ce qui est actuellement dans la fiche. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var local = envoiLocal(eid);
+  envoiCloud(eid, function(distant){
+    var sub = plusRecent(local, distant);
+    if (envoiVerrouille(local) || envoiVerrouille(distant) || copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+    if (!sub){
+      flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err");
+      return;
+    }
+    appliquerEnvoi(sub);
+  });
+}
+function proposerReprise(){
+  if (!formVierge()) return;
+  var eid = eidCourant();
+  if (!eid) return;
+  function montrer(sub){
+    if (!sub || !formVierge()) return;
+    var ban = $("reprise");
+    if (!ban) return;
+    ban.innerHTML = '<div><strong>&#x21A9;&#xFE0F; Un travail envoyé le ' + dateLisible(sub) + ' a été retrouvé.</strong>' +
+      '<div style="font-size:12.5px;margin-top:2px">Ta fiche est vide sur cet appareil : tu peux la recharger pour continuer.</div></div>' +
+      '<button class="btn btn-send" type="button" style="white-space:nowrap" onclick="reprendreDernierEnvoi()">Récupérer mon travail</button>';
+    ban.hidden = false;
+  }
+  var local = envoiLocal(eid);
+  if (copieLocaleVerrouillee() || envoiVerrouille(local)) return;
+  if (local) montrer(local);
+  envoiCloud(eid, function(distant){
+    if (envoiVerrouille(distant)){ var ban = $("reprise"); if (ban) ban.hidden = true; return; }
+    montrer(plusRecent(local, distant));
+  });
+}
+
+/* ════════════ MESSAGES ════════════ */
+function flash(html, kind){
+  var box = $("send-status");
+  box.className = "sendst show " + (kind || "wait");
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+/* ════════════ COPIE DE SECOURS ════════════ */
+function saveBackup(){
+  var data = collect();
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "eau56_" + (slug(data.p+"-"+data.n) || "eleve") + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  flash("&#x2B07;&#xFE0F; Copie de secours téléchargée sur cet ordinateur.", "ok");
+}
+
+/* ════════════ RÉSUMÉ LISIBLE (vue professeur) ════════════
+   Il commence par « — » : une cellule qui commence par « = » deviendrait une
+   formule dans le classeur (règle 3). */
+function buildOpenSummary(state){
+  var f = state.fields, s = f._suivi, lignes = [], b, i;
+  b = [];
+  for (i=0;i<EAU56.FONCTIONS.length;i++){
+    var l = f["a5-l" + (i+1)];
+    b.push("• " + EAU56.FONCTIONS[i].texte + " : " + (f["a5-t" + (i+1)] || "—") +
+           " — relie : " + (l ? String(l).split("+").map(nomEmeMin).join(" et ") : "—"));
+  }
+  lignes.push("— A5 · 1. La pieuvre —\n" + b.join("\n"));
+  b = [];
+  for (i=0;i<EAU56.NIVEAUX.length;i++){ var n = EAU56.NIVEAUX[i]; b.push("• " + n.rep + " " + n.critere + " : " + (f[n.id] || "—")); }
+  lignes.push("— A5 · 2. Le CDCF —\n" + b.join("\n"));
+  b = [];
+  for (i=0;i<EAU56.FAST.length;i++){ var d = EAU56.FAST[i]; b.push("• " + d.ft + " : " + (f[d.id] ? nomSolution(f[d.id]) : "—")); }
+  lignes.push("— A6 · 2. Le FAST —\n" + b.join("\n"));
+  b = [];
+  for (i=0;i<EAU56.CHAINES.length;i++){ var c = EAU56.CHAINES[i]; b.push("• " + c.verbe + " : " + (f[c.id] ? nomSolution(f[c.id]) : "—")); }
+  lignes.push("— A6 · Chaînes d'information et d'énergie —\n" + b.join("\n"));
+  b = [];
+  for (var q in QUESTIONS){
+    if (!QUESTIONS.hasOwnProperty(q)) continue;
+    var sc = s.scores[q], pr = s.premiers[q], tot = QUESTIONS[q].total;
+    b.push("• " + QUESTIONS[q].nom + " : " +
+           (sc !== undefined && sc !== null ? sc + "/" + tot + " (score figé)" : (pr !== undefined ? "1er essai " + pr + "/" + tot : "non vérifié")) +
+           " — réponses actuelles " + EAU56.compter(s.verdicts[q]) + "/" + tot);
+  }
+  lignes.push("— Vérifications —\n" + b.join("\n"));
+  return lignes.join("\n\n");
+}
+
+/* ════════════ VERROU DE CONSULTATION ════════════
+   Le professeur peut verrouiller une copie rendue (champ « locked », venu du
+   serveur). Elle ne se recharge plus dans la fiche et ne se renvoie plus ; la
+   saisie en cours et le brouillon ne sont jamais touchés. */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++)
+      if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+/* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
+function urlLecture(){
+  try {
+    var hn = (location.hostname || "").toLowerCase();
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      if (/^https:\/\/script\.google\.com\//.test(u)) return u;
+    }
+  } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+/* Copies d'un élève : action « own » (une copie verrouillée revient sans son contenu),
+   repli sur « list » tant que le serveur n'est pas à jour, sauf si sansRepli. */
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){
+      lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); });
+      return;
+    }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if (document.getElementById("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou";
+  v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+/* Au chargement, pour l'élève identifié par son compte uniquement. */
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    for (var i = 0; i < liste.length; i++)
+      if (liste[i] && liste[i].eid === USER.id && liste[i].cap === CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function unqueueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function storeLocalSub(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production.
+   Le backend fait un upsert sur (eid + cap) : une soumission de test faite en local
+   sous le nom d'un élève réel écraserait sa vraie copie, sans aucun signal (no-cors).
+   Seul un déploiement de TEST, branché sur une copie du classeur et désigné par
+   localStorage.apps_script_url_test, débloque l'écriture. "" = envoi refusé. */
+function urlEcriture(){
+  var hn = (location.hostname || "").toLowerCase();
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  try {
+    var u = localStorage.getItem("apps_script_url_test") || "";
+    if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
+  } catch(e){}
+  return "";
+}
+function refuserEcritureLocale(){
+  try {
+    console.warn("[capsule] Page servie en local (" + (location.hostname || "fichier") +
+      ") : l'envoi vers le classeur de production a été bloqué. Le travail reste en file locale.");
+  } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  var cible = urlEcriture();
+  if (!cible){ refuserEcritureLocale(); if (onDone) onDone(false); return; }
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(cible, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !hasUrl() || !urlEcriture()) return;
+    q.forEach(function(sub){ postSub(sub); });
+  } catch(e){}
+}
+
+function makeSub(){
+  var state = collect();
+  var classe = state.c ? ("4" + state.c.toUpperCase()) : (USER.c || "");
+  var ename  = (state.p + " " + state.n).trim();
+  var eid    = USER.id || (CAP_ID + "." + (slug(classe)||"4x") + "." + (slug(ename)||"eleve"));
+  return {
+    id: Date.now(),
+    eid: eid,
+    ename: ename || "Élève",
+    ecls: classe,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    score: countFilled(),
+    qcmTot: totalFields(),
+    open: buildOpenSummary(state),
+    fields: state.fields,
+    date: new Date().toLocaleDateString("fr-FR"),
+    dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function sendToProf(){
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){
+    flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err");
+    $(p ? "inp-nom" : "inp-prenom").focus(); return;
+  }
+  if (!c){
+    flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 4A) en haut de la fiche.", "err");
+    $("inp-classe").focus(); return;
+  }
+  var done = countFilled();
+  if (done < 8 && !confirm("Tu n'as rempli que " + done + " réponse(s). Envoyer quand même au professeur ?")) return;
+
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  saveDraft();
+  var sub = makeSub();
+  storeLocalSub(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  postSub(sub, function(ok){
+    btn.disabled = false;
+    if (ok){
+      flash("✅ <strong>Travail envoyé au professeur</strong> le " + new Date().toLocaleString("fr-FR") +
+            ".<br>Tu peux continuer à compléter : un nouvel envoi remplacera le précédent.", "ok");
+    } else {
+      flash("⚠️ L'envoi n'a pas abouti (réseau ?). Pas de panique : ton travail est <strong>conservé sur cet ordinateur</strong> " +
+            "et repartira automatiquement. Préviens ton professeur.", "err");
+    }
+  });
+}
+
+/* ════════════ INITIALISATION ════════════ */
+function readPrefill(){
+  try {
+    var raw = localStorage.getItem(PREFILL_KEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d) return;
+    USER = { id: d.id || "", p: d.p || "", n: d.n || "", c: d.c || "" };
+    if (USER.p) $("inp-prenom").value = USER.p;
+    if (USER.n) $("inp-nom").value = USER.n;
+    if (USER.c) $("inp-classe").value = String(USER.c).replace(/^4/, "").toUpperCase();
+  } catch(e){}
+}
+function wireFields(){
+  var i, els = document.querySelectorAll("input.rep");
+  for (i=0;i<els.length;i++){
+    els[i].addEventListener("input", function(){ markFilled(this); effacerMarques("q2"); updateProgress(); saveDraft(); });
+    markFilled(els[i]);
+  }
+  for (i=0;i<SEL_IDS.length;i++){
+    var s = $(SEL_IDS[i]);
+    if (s) s.addEventListener("change", function(){
+      effacerMarques(this.id.indexOf("a6-s") === 0 ? "fast" : "chaines"); updateProgress(); saveDraft();
+    });
+  }
+  var idf = ["inp-prenom","inp-nom","inp-classe"];
+  for (var j=0;j<idf.length;j++){
+    var e = $(idf[j]);
+    if (e){
+      e.addEventListener("input", function(){ saveDraft(); });
+      e.addEventListener("change", restaurerSelonIdentite);
+      e.addEventListener("blur", restaurerSelonIdentite);
+    }
+  }
+}
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+function initActivite(){
+  calerBarreOutils();
+  construireEmebar(); construireQ1(); construireTri(); construireQ2(); construireQuiz(); construireFast();
+  readPrefill();
+  controlerVerrou();
+  restoreDraft();
+  wireFields();
+  majQuiz(); majTout();
+  flushQueue();
+  proposerReprise();
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
+else initActivite();
+window.addEventListener("resize", calerBarreOutils);
 </script>
+
+<!-- Aménagements dys et confort de lecture : police, taille, interligne, espacement,
+     couleur de page, règle et masque de lecture. Module partagé entre les capsules. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/" };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+
+<!-- Lecture immersive : lit la fiche à voix haute en surlignant le texte. -->
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"section.step.closed", classeFermeture:"closed" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
 </body>
 </html>
