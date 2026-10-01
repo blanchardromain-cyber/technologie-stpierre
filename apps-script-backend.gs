@@ -275,6 +275,9 @@ function _toutesLesSubs() {
       try { obj.adjustedPts = JSON.parse(obj.adjustedPts_json); } catch (er) {}
     }
     delete obj.adjustedPts_json;
+    // NOTE — correction vide = cle ABSENTE, comme avant ces colonnes : la page teste
+    // « adjustedScore !== undefined » ; un "" la faisait planter (p11x1Fmt("")).
+    NOTE_PROF.forEach(function (k) { if (obj[k] === '') delete obj[k]; });
     subs.push(obj);
   }
   return subs;
