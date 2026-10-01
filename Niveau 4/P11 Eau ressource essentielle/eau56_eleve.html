@@ -69,6 +69,7 @@
   .acte:first-of-type{margin-top:0}
 
   .reprise{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00}
+  .reprise[hidden]{display:none}
   section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
   .sthdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--bp);border-left:6px solid var(--bl);cursor:pointer;user-select:none}
   .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
@@ -672,18 +673,17 @@ var EAU56 = (function(){
     return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
       .replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
   }
-  /* Nombres écrits dans une réponse, virgule décimale comprise : « 1,5 cm » → [1.5]. */
-  function nombres(s){
-    var m = String(s||"").replace(/(\d),(\d)/g,"$1.$2").match(/\d+(?:\.\d+)?/g) || [];
-    return m.map(Number);
-  }
-  function aNombre(s, n){ return nombres(s).some(function(x){ return Math.abs(x - n) < 1e-9; }); }
-  /* Un niveau est juste si la valeur ET l'unité du document y sont. */
+  /* Un niveau est juste si la valeur ET l'unité du document y sont, collées l'une à l'autre :
+     « 12 L/min pendant 2 min » ne doit pas passer pour « 2 L/min ». */
   var TESTS_NIVEAUX = {
-    "a5-n1": function(v){ return aNombre(v, 2) && /(^|[^a-z])l(itres?)?( par)? ?min/.test(norm(v)); },
-    "a5-n2": function(v){ return aNombre(v, 15) && /(^|[^a-z])(cm|centimetres?)( |$)/.test(norm(v)); },
+    "a5-n1": function(v){ return /(^|[^0-9])2 ?l(itres?)?( par)? ?min/.test(norm(v)); },
+    "a5-n2": function(v){ return /(^|[^0-9])15 ?(cm|centimetres?)( |$)/.test(norm(v)); },
     "a5-n3": function(v){ return /(^|[^a-z0-9])ip ?65( |$)/.test(norm(v)); },
-    "a5-n4": function(v){ var t = norm(v); return /coup|arret|stop|ferm/.test(t) && /retir|retrait|enlev|eloign/.test(t); }
+    "a5-n4": function(v){
+      var t = norm(v);
+      return /(^| )(coup|arret|stop|ferm|cess)/.test(t) && /(retir|retrait|enlev|eloign|sort|part)/.test(t) &&
+             /main/.test(t) && !/ pas( |$)| jamais( |$)| plus de /.test(t);
+    }
   };
   /* Éléments reliés, dans l'ordre de la pieuvre : l'ordre des clics ne compte pas. */
   function liensCle(liste){
@@ -713,7 +713,7 @@ var EAU56 = (function(){
     return { essai: suivi.essais[q], montrer: montrer, juste: juste, total: total };
   }
   return { EME:EME, FONCTIONS:FONCTIONS, NIVEAUX:NIVEAUX, SOLUTIONS:SOLUTIONS, FAST:FAST, CHAINES:CHAINES,
-           QUIZ:QUIZ, QUIZ_OPTS:QUIZ_OPTS, TRI:TRI, norm:norm, nombres:nombres, liensCle:liensCle,
+           QUIZ:QUIZ, QUIZ_OPTS:QUIZ_OPTS, TRI:TRI, norm:norm, liensCle:liensCle,
            verdictsQ1:verdictsQ1, verdictsNiveaux:verdictsNiveaux, verdictsListe:verdictsListe,
            compter:compter, enregistrerEssai:enregistrerEssai };
 })();
@@ -812,12 +812,15 @@ function posEme(id){
   }
   return null;
 }
+/* « relie le robinet à » + article : la lecture vocale dirait « à les mains » sans ces formes contractées. */
+var A_EME = { util:"à l'utilisateur", eau:"à l'eau", mains:"aux mains", energie:"à l'énergie",
+              lavabo:"au lavabo", humide:"au milieu humide", budget:"au budget" };
 function descriptionPieuvre(){
   var parts = [];
   for (var i=0;i<EAU56.FONCTIONS.length;i++){
     var l = liens[EAU56.FONCTIONS[i].id] || [];
     if (l.length === 2) parts.push("trait " + (i+1) + " : relie " + nomEmeMin(l[0]) + " et " + nomEmeMin(l[1]) + " à travers le robinet");
-    else if (l.length === 1) parts.push("trait " + (i+1) + " : relie le robinet à " + nomEmeMin(l[0]));
+    else if (l.length === 1) parts.push("trait " + (i+1) + " : relie le robinet " + (A_EME[l[0]] || "à " + nomEmeMin(l[0])));
   }
   return "Pieuvre du robinet automatique. " + (parts.length ? parts.join(" ; ") + "." : "Aucun trait pour l'instant.");
 }
@@ -831,7 +834,7 @@ function dessinerPieuvre(){
     var d = p1 ? "M" + p0.x + "," + p0.y + " L" + PV.cx + "," + PV.cy + " L" + p1.x + "," + p1.y
                : "M" + PV.cx + "," + PV.cy + " L" + p0.x + "," + p0.y;
     var mx = Math.round((p0.x + PV.cx) / 2), my = Math.round((p0.y + PV.cy) / 2);
-    h += '<path class="pv-lien" d="' + d + '" stroke="' + c + '"' + (actif === f.id ? ' stroke-width="5"' : '') + '/>' +
+    h += '<path class="pv-lien" d="' + d + '" stroke="' + c + '"' + (actif === f.id ? ' style="stroke-width:5"' : '') + '/>' +
          '<circle cx="' + mx + '" cy="' + my + '" r="11" fill="' + c + '"/>' +
          '<text class="pv-num" x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle" fill="#fff">' + (i+1) + '</text>';
   }
@@ -893,7 +896,7 @@ function construireQ1(){
       '</div></td>' +
       '<td><span class="pastille" style="background:' + COULEURS[i] + '" aria-hidden="true">' + (i+1) + '</span>' + esc(f.texte) +
         '<span class="fb" id="fb-q1-' + i + '"></span></td>' +
-      '<td><button type="button" class="relbtn" id="rel-' + f.id + '" aria-pressed="false" onclick="choisirFonction(\'' + f.id + '\')">Relier</button>' +
+      '<td><button type="button" class="relbtn" id="rel-' + f.id + '" aria-label="Relier la fonction ' + (i+1) + '" aria-pressed="false" onclick="choisirFonction(\'' + f.id + '\')">Relier</button>' +
         '<span class="liens-txt" id="lt-' + f.id + '">—</span></td>' +
     '</tr>';
   }
@@ -1040,16 +1043,20 @@ function verdictsDe(q){
   if (q === "fast") return EAU56.verdictsListe(EAU56.FAST, f);
   return EAU56.verdictsListe(EAU56.CHAINES, f);
 }
-function repondu(q){
-  var f = champsCourants(), k, i;
+/* Nombre de lignes de la question pas encore remplies : un essai ne se compte que si c'est 0.
+   Q1 : un type ET au moins un élément relié ; Q2 : un champ non vide ; FAST et chaînes : une solution choisie. */
+function lignesIncompletes(q){
+  var f = champsCourants(), n = 0, i;
   if (q === "q1"){
-    for (k in types) if (types.hasOwnProperty(k)) return true;
-    for (k in liens) if (liens.hasOwnProperty(k)) return true;
-    return false;
+    for (i=0;i<EAU56.FONCTIONS.length;i++){
+      var id = EAU56.FONCTIONS[i].id;
+      if (!(types[id] && (liens[id] || []).length)) n++;
+    }
+    return n;
   }
   var ids = q === "q2" ? TEXT_IDS : (q === "fast" ? EAU56.FAST : EAU56.CHAINES).map(function(d){ return d.id; });
-  for (i=0;i<ids.length;i++) if (f[ids[i]]) return true;
-  return false;
+  for (i=0;i<ids.length;i++) if (!f[ids[i]]) n++;
+  return n;
 }
 function ligne(q, i){
   if (q === "chaines") return { el: $("bl-" + EAU56.CHAINES[i].id), fb: $("fb-" + EAU56.CHAINES[i].id) };
@@ -1083,7 +1090,8 @@ function messageLigne(q, i, juste, montrer){
   return montrer ? "Corrigé : " + (q === "fast" ? d.corrige : nomSolution(d.att)) : d.aide;
 }
 function verifier(q){
-  if (!repondu(q)){ afficher(QUESTIONS[q].res, false, "Réponds d'abord à au moins une ligne."); return; }
+  var manque = lignesIncompletes(q);
+  if (manque){ afficher(QUESTIONS[q].res, false, "Complète toutes les lignes avant de vérifier : il en manque " + manque + "."); return; }
   var v = verdictsDe(q);
   var r = EAU56.enregistrerEssai(suivi, q, v);
   for (var i=0;i<v.length;i++) marquerLigne(q, i, v[i], messageLigne(q, i, v[i], r.montrer));
@@ -1207,6 +1215,22 @@ function dateLisible(sub){
   function p(n){ return n<10 ? "0"+n : ""+n; }
   return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
 }
+/* Reprendre un envoi ne doit pas dégeler les scores : essais = maximum par question ;
+   score figé et 1er essai du poste conservés s'ils existent, sinon ceux de l'envoi. */
+function fusionnerSuivi(courant, envoi){
+  var r = { essais:{}, scores:{}, premiers:{} }, q;
+  function ajouter(src){
+    for (q in (src.essais || {})) if (src.essais.hasOwnProperty(q)) r.essais[q] = Math.max(r.essais[q] || 0, src.essais[q] || 0);
+  }
+  ajouter(envoi); ajouter(courant);
+  ["scores", "premiers"].forEach(function(cle){
+    [envoi, courant].forEach(function(src){
+      var m = src[cle] || {};
+      for (q in m) if (m.hasOwnProperty(q) && m[q] !== undefined && m[q] !== null) r[cle][q] = m[q];
+    });
+  });
+  return r;
+}
 function appliquerEnvoi(sub){
   if (!sub) return;
   if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
@@ -1215,7 +1239,9 @@ function appliquerEnvoi(sub){
     $("inp-nom").value = bouts.join(" ");
   }
   if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^4/, "").toUpperCase();
+  var avant = suivi;
   appliquerDonnees(sub.fields);
+  suivi = fusionnerSuivi(avant, suivi);
   var ban = $("reprise"); if (ban) ban.hidden = true;
   updateProgress(); saveDraft();
   flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
