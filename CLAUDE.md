@@ -138,6 +138,16 @@ Enfin, la note enregistrée doit écrire `bareme` sur la soumission. Sans lui,
 l'affichage élève retombe sur `qcmTot`, qui compte des champs remplis et non des
 points : l'élève lisait « 16/50 » (règle 5).
 
+**Le classeur ne garde que les colonnes de `COLUMNS`** (`apps-script-backend.gs`), et
+de la copie de l'élève, seul `fields` (sérialisé dans `fields_json`). Toute réponse
+d'une capsule s'envoie donc **dans `fields`** ; une structure (associations, quiz) y
+va sous une clé préfixée (`fields._qq`, `fields._quiz`…). Jusqu'au 1er octobre 2026,
+eau34, eau 4e et bâtiment 5e envoyaient `qq`, `quiz`, `vf`, `assoc` et `chips` à
+côté de `fields` : rien n'en arrivait au classeur, et la copie relue sur un autre
+poste affichait « 0/6 ». Le rendu lit `fields._qq || sub.qq`, pour les copies
+anciennes restées sur le poste. Avant de livrer une capsule, tester l'aller-retour :
+envoyer, vider le stockage local, relire depuis le classeur, afficher.
+
 ## 7. Divers
 
 - Les notes s'affichent avec la **virgule décimale française** (`p11x1Fmt`).
@@ -145,6 +155,19 @@ points : l'élève lisait « 16/50 » (règle 5).
   professeur, s'incrémente à chaque mise en ligne : il permet de repérer une page
   encore servie depuis le cache du navigateur.
 - Les statuts s'affichent en français (`FICHE_STATUTS`), jamais `validated`.
+- **`index.html` et les pages de capsules sont en CRLF** : jamais de `sed -i`, qui les
+  réécrit entièrement en LF (c'est arrivé deux fois, une fois jusqu'en ligne). Modifier
+  avec l'outil Edit ou un script Python lisant et écrivant en binaire, puis vérifier
+  qu'aucune ligne n'a perdu son `\r` avant de committer.
+- Valeurs numériques lues par l'élève : police courante avec
+  `font-variant-numeric: tabular-nums`, jamais une police à chasse fixe (gêne la
+  lecture des élèves dys).
+- **Une capsule en iframe se teste dans le site**, pas seule : ouverte seule, elle n'a
+  pas d'identité d'élève et son accueil diffère. Vérifier aussi les textes de l'accueil
+  de la capsule en vue élève **et** en vue professeur.
+- **La copie de travail de référence est `ClaudeConfig/Site Techno`.** Avant tout audit
+  ou toute conception : `git fetch`, puis comparer avec la version publiée ; d'autres
+  copies du site traînent sur le disque, parfois avec des centaines de commits de retard.
 - **Relooking de l'accueil (piste B « Cité-circuit »)** : une couche posée par-dessus,
   `assets/css/accueil-b.css` (tout préfixé par `html.accueil-b`), `assets/js/accueil-b.js`
   et la ville 3D `assets/js/cite-circuit.js`. Le script *enveloppe* `goPage`, `launch`,
