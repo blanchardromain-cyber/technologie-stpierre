@@ -189,13 +189,13 @@ ok(c.status === "rejected", "le statut change");
 ok(c.appreciation && c.adjustedScore === 14.5 && egal(c.adjustedPts, PTS) && c.bareme === 20, "la note déjà posée est préservée");
 ok(B.post({ sub: copieEleve("eval2-5e", { _parProf: true, appreciation: "", status: "validated" }) }).ok, "le professeur envoie une appréciation vide");
 c = une(B.get({ action: "list" }), "eval2-5e");
-ok(c.appreciation === "" && c.adjustedScore === 14.5, "un vide EXPLICITE efface ; une clé absente préserve");
+ok(c.appreciation === undefined && c.adjustedScore === 14.5, "un vide EXPLICITE efface ; une clé absente préserve");
 
 console.log("5. Renvoi de l'élève (copie non verrouillée) = nouveau travail");
 ok(B.post({ sub: copieEleve("eval2-5e", { fields: { q1: "nouvelle réponse" } }) }).ok, "renvoi accepté");
 c = une(B.get({ action: "list" }), "eval2-5e");
 ok(c.status === "pending" && c.fields.q1 === "nouvelle réponse", "nouveau travail, statut en attente");
-ok(c.adjustedScore === "" && c.appreciation === "" && c.bareme === "" && c.adjustedPts === undefined, "l'ancienne note est effacée");
+ok(c.adjustedScore === undefined && c.appreciation === undefined && c.bareme === undefined && c.adjustedPts === undefined, "l'ancienne note est effacée");
 ok(!eleveFusionne({ subs: [c] }, []).corrigee("eval2-5e"), "l'élève ne voit plus d'ancienne note");
 
 console.log("6. Copie P11 : bareme et scoreBrut envoyés par l'élève");
@@ -206,10 +206,36 @@ ok(c.bareme === 20 && c.scoreBrut === 17, "bareme et scoreBrut gardés");
 console.log("7. Ligne antérieure au patch (p11-ex1, 20 cellules)");
 c = une(B.get({ action: "own", eid: "test.eleve" }), "p11-ex1");
 ok(c.status === "validated" && c.fields && c.fields.a === "1", "toujours lisible");
-ok(c.adjustedPts === undefined && c.adjustedScore === "", "colonnes neuves vides, sans erreur");
+ok(c.adjustedPts === undefined && c.adjustedScore === undefined, "colonnes neuves vides, sans erreur");
 B.grille[2][B.COLUMNS.indexOf("adjustedPts_json")] = "{pas du json";
 c = une(B.get({ action: "own", eid: "test.eleve" }), "p11-ex1");
 ok(c.status === "validated" && c.adjustedPts === undefined, "adjustedPts_json illisible : ignoré, la lecture continue");
+
+console.log("7b. Contrat inchangé pour la page (incident du 2026-10-01 : tableau professeur vide)");
+/* Après le premier déploiement, les copies NON notées revenaient avec adjustedScore: "" ;
+   la page (« !== undefined ») les croyait notées et p11x1Fmt("") plantait renderSubs. */
+var CLES_AVANT = ENTETES_PROD.filter(function (k) { return k !== "fields_json"; }).concat(["fields"]);
+var E = fauxGoogle([ENTETES_PROD]);
+E.post({ sub: copieEleve("p11-ex1", { fields: { q1: "x" } }) });
+E.post({ sub: copieEleve("p11-ex2") });
+E.post({ sub: noteProf(copieEleve("eval2-5e")) });
+var parCap = {};
+E.get({ action: "list" }).subs.forEach(function (s) { parCap[s.cap] = s; });
+var enTrop = Object.keys(parCap["p11-ex2"]).filter(function (k) { return CLES_AVANT.indexOf(k) < 0; });
+ok(enTrop.length === 0, "copie non notée : aucune clé de plus qu'avant le patch" + (enTrop.length ? " (en trop : " + enTrop.join(", ") + ")" : ""));
+var vm2 = vm.createContext({});
+vm.runInContext(extraireFonction("p11x1Fmt"), vm2);
+var plante = [];
+Object.keys(parCap).forEach(function (cap) {
+  var s = parCap[cap];
+  ["adjustedScore", "bareme", "scoreBrut", "appreciation", "adjustedPts"].forEach(function (k) {
+    if (s[k] === "") plante.push(cap + "." + k + " vide");
+  });
+  if (s.adjustedScore !== undefined) {   // la branche de renderSubs
+    try { vm2.n = s.adjustedScore; vm.runInContext("p11x1Fmt(n)", vm2); } catch (e) { plante.push(cap + " : " + e.message); }
+  }
+});
+ok(plante.length === 0, "vrai p11x1Fmt d'index.html sur chaque copie servie : pas de plantage" + (plante.length ? " — " + plante.join(" ; ") : ""));
 
 console.log("8. Notification mail : seulement pour une copie nouvelle");
 var C2 = fauxGoogle([ENTETES_PROD]);
@@ -253,12 +279,12 @@ function lancerRattrapage(envoyer) {
 }
 lancerRattrapage(false).then(function (msg) {
   ok(msg === "1 copie(s) à renvoyer", "premier passage : « " + msg + " », rien d'envoyé");
-  ok(une(D.get({ action: "list" }), "X").adjustedScore === "", "… X toujours sans note au classeur");
+  ok(une(D.get({ action: "list" }), "X").adjustedScore === undefined, "… X toujours sans note au classeur");
   return lancerRattrapage(true);
 }).then(function (msg) {
   var l = D.get({ action: "list" });
   ok(une(l, "X").adjustedScore === 14.5 && egal(une(l, "X").adjustedPts, PTS), "X rattrapée : note et points au classeur");
-  ok(une(l, "Y").fields.q1 === "plus récent" && une(l, "Y").adjustedScore === "", "Y renvoyée par l'élève depuis : PAS écrasée par l'ancienne version");
+  ok(une(l, "Y").fields.q1 === "plus récent" && une(l, "Y").adjustedScore === undefined, "Y renvoyée par l'élève depuis : PAS écrasée par l'ancienne version");
   ok(une(l, "Z").adjustedScore === 14.5, "Z déjà notée : inchangée");
   fin();
 }).catch(function (e) { ok(false, "rattrapage : " + e); fin(); });
