@@ -238,16 +238,28 @@ plante sur le contrôle 7b (38/45). La version actuelle passe les 45.
 - Le faux classeur garde les valeurs telles quelles. Le vrai interprète certaines
   chaînes : `date` revient déjà converti en date, ce qui ne gêne rien. Une appréciation
   réduite à une fraction comme « 3/4 » pourrait devenir une date ; une phrase, non.
-- **Côté page professeur** (hors de ce patch, à corriger dans `cloudSync.pull`) : à la
-  synchronisation, une copie que ce poste a déjà tranchée (« validée » ou « à revoir »)
-  garde sa version locale, note comprise. Deux conséquences :
-  - un poste qui a reçu le statut sans la note continue d'afficher la copie sans note,
-    même après le patch. Un clic sur ✅ depuis ce poste n'efface pas la note du classeur,
-    puisque la clé est absente de son envoi ;
-  - mais un poste qui a reçu la copie **après** le patch, avec une note encore vide, puis
-    l'a tranchée, garde ce vide. Si la note est posée ailleurs entre-temps, un nouveau clic
-    depuis ce poste renvoie le vide **explicitement** et l'efface.
-  En attendant, notez une copie donnée depuis un seul poste.
+- **Côté page professeur — corrigé le 1er octobre 2026 (build 2026-10-01c).** Jusque-là,
+  une copie déjà tranchée sur un poste y gardait sa version locale entière : une note posée
+  sur un autre poste n'apparaissait jamais, et un clic ✅ depuis un poste resté avec une
+  note vide l'effaçait au classeur. Désormais, à la synchronisation (`cloudSync.pull`) :
+  1. si l'élève a renvoyé son travail depuis (`dateISO` plus récente au classeur), la copie
+     du classeur remplace tout — le travail refait après « à revoir » réapparaît ;
+  2. une copie locale plus récente, encore en file d'attente, ou envoyée depuis ce poste il
+     y a moins de 2 minutes, garde sa version ;
+  3. sinon, le classeur fait foi pour le statut et les cinq champs de correction, **sauf
+     valeur absente** : une note connue de ce seul poste (posée avant le patch) reste.
+
+  Et ✅ / ❌ (`updSub`) n'envoient plus que le statut : le classeur garde la note en place.
+  `outils/test_fusion_prof.js` le vérifie avec deux postes simulés (16 contrôles ; le code
+  d'avant en échoue 6). Ce qui reste possible :
+  - deux postes qui **enregistrent une note** sur la même copie à quelques minutes d'écart,
+    le second sans s'être resynchronisé : le dernier enregistrement l'emporte ;
+  - effacer une appréciation sur un poste n'efface pas celle des autres postes, qui
+    gardent leur valeur locale (règle 3) ;
+  - une note enregistrée hors ligne sur l'ancienne copie repart à la reconnexion, même si
+    l'élève a renvoyé son travail entre-temps (inchangé) ;
+  - la règle 1 suppose que le classeur rend `dateISO` tel quel (seul `date` est connu pour
+    revenir converti, voir plus haut) ; à vérifier sur une copie du compte de test.
 - Le secret de synchronisation étant public, rien n'empêche techniquement d'écrire une
   fausse note avec un envoi forgé. C'est la limite déjà connue (vérification serveur,
   étape 3 de la sécurité).
