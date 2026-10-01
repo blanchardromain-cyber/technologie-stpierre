@@ -4282,7 +4282,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-01b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-01c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9875,7 +9875,15 @@ function updSub(sid, st) {
   subs[idx].status = st;
   localStorage.setItem("subs", JSON.stringify(subs));
   // 2c — Propage le nouveau statut au cloud pour que l'élève le voie au prochain login
-  try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch(e) {}
+  /* Le statut seul : sans les champs de correction, le classeur garde la note en place.
+     Envoyée depuis un poste resté sans note, elle effaçait celle posée sur un autre. */
+  try {
+    if (window.cloudSync && cloudSync.send) {
+      var envoi = JSON.parse(JSON.stringify(subs[idx]));
+      cloudSync.champsNote.forEach(function (k) { delete envoi[k]; });
+      cloudSync.send(envoi);
+    }
+  } catch(e) {}
   if (st === "validated") reporterNoteSiEvaluee(subs[idx]);
   renderStats(); renderSubs();
   toast(st === "validated" ? "Soumission validée" : "Soumission marquée à revoir");
@@ -10441,6 +10449,14 @@ var cloudSync = (function () {
   }
   function oublierBascule(k) { delete _bascules[k]; }
 
+  /* Correction posée par le professeur, sur n'importe lequel de ses postes (NOTE_PROF du
+     backend). Avec le statut, c'est ce que la synchronisation reprend du classeur. */
+  var CHAMPS_NOTE = ["appreciation", "bareme", "adjustedScore", "adjustedPts", "scoreBrut"];
+  var CHAMPS_PROF = ["status"].concat(CHAMPS_NOTE);
+  /* Envois partis de ce poste : une relecture du classeur lancée avant leur écriture ne
+     doit pas les défaire (même fenêtre de 2 minutes que le verrou). */
+  var _envois = {};
+
   function queue(sub) {
     try {
       var q = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]");
@@ -10480,6 +10496,7 @@ var cloudSync = (function () {
        dans la file d'attente (envoi différé) ; absente de COLUMNS, elle n'est jamais
        écrite dans le classeur. */
     if (estSessionProf()) sub._parProf = true;
+    _envois[(sub.eid || "") + "::" + (sub.cap || "")] = Date.now();
     queue(sub);
     if (ecritureBloquee) { refuseEcritureLocale("l'envoi d'une soumission"); if (onDone) onDone(false); return; }
     if (!hasUrl()) { if (onDone) onDone(false); return; }
@@ -10533,8 +10550,13 @@ var cloudSync = (function () {
         // Index des clés présentes dans le cloud (pour détecter les évictions plus bas)
         var cloudKeys = {};
         data.subs.forEach(function (s) { cloudKeys[keyOf(s)] = true; });
-        // merge serveur — on garde la version locale si elle est plus récente
-        // (le prof a pu valider/rejeter avant que la sync ait lieu)
+        // Copies modifiées sur ce poste et pas encore confirmées au classeur
+        var enFile = {};
+        try { JSON.parse(localStorage.getItem(OFFLINE_KEY) || "[]").forEach(function (x) { enFile[keyOf(x)] = true; }); } catch (e) {}
+        function modifieeIci(k) { return enFile[k] || (_envois[k] && Date.now() - _envois[k] < 120000); }
+        /* Fusion. Jusqu'au 1er octobre 2026, une copie déjà tranchée sur ce poste gardait
+           sa version locale entière : une note posée sur un autre poste n'apparaissait
+           jamais ici, ni le travail refait par l'élève après « à revoir ». */
         data.subs.forEach(function (s) {
           var k = keyOf(s);
           /* Verrou : piloté par le serveur seul. Recopié même quand la version locale
@@ -10546,9 +10568,17 @@ var cloudSync = (function () {
           if (s.locked !== undefined) existing.locked = s.locked;
           var sLocalDt = new Date(existing.dateISO || 0).getTime();
           var sRemoteDt = new Date(s.dateISO || 0).getTime();
-          // Statut local non-"pending" prime (le prof a déjà tranché)
-          if (existing.status && existing.status !== "pending") return;
-          if (sRemoteDt >= sLocalDt) byKey[k] = s;
+          // 1. L'élève a renvoyé son travail depuis : la copie du classeur remplace tout.
+          if (sRemoteDt > sLocalDt) { byKey[k] = s; return; }
+          // 2. Copie locale plus récente, ou modifiée sur ce poste sans confirmation : elle prime.
+          if (sLocalDt > sRemoteDt || modifieeIci(k)) return;
+          /* 3. Même copie : le classeur fait foi pour le statut et la correction. Une valeur
+             absente n'efface pas une note locale : celles posées avant le patch du backend
+             du 1er octobre 2026 n'existent que sur le poste qui les a saisies. */
+          CHAMPS_PROF.forEach(function (c) {
+            var v = s[c];
+            if (v !== undefined && v !== null && v !== "") existing[c] = v;
+          });
         });
         // ── Éviction des soumissions locales qui n'existent plus dans le cloud ──
         // Cas typique : prof a supprimé une capsule (côté cloud) → on doit aussi la retirer
@@ -10690,6 +10720,7 @@ var cloudSync = (function () {
   function url()    { return APPS_SCRIPT_URL; }
   function secret() { return SYNC_SECRET; }
   return { send: send, pull: pull, flush: flush, hasUrl: hasUrl, "delete": del, fetchOwn: fetchOwn, url: url, secret: secret,
+           champsNote: CHAMPS_NOTE,
            lock: lock, listRaw: listRaw, oublierBascule: oublierBascule,
            capsArmees: capsArmees, setCapsArmees: setCapsArmees };
 })();
