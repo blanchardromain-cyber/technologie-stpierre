@@ -1544,7 +1544,7 @@ function appliquerEnvoi(sub){
   }
   if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^5/, "").toUpperCase();
   planItems = []; nextItemId = 1;
-  appliquerDonnees(sub.fields, sub.chips);
+  appliquerDonnees(sub.fields, (sub.fields || {})._chips || sub.chips);
   var ban = $("reprise"); if (ban) ban.hidden = true;
   renderPlan(); updateProgress(); saveDraft();
   flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
@@ -1783,7 +1783,9 @@ function makeSub(){
     score: countFilled(),
     qcmTot: totalFields(),
     open: buildOpenSummary(state),
-    fields: state.fields,
+    /* Le classeur ne garde que fields (colonne fields_json) : les réponses du classement naturel / technique y voyagent,
+       sinon une copie relue depuis le classeur (autre poste, reprise) les perdait. */
+    fields: Object.assign({}, state.fields, { _chips: state.chips }),
     chips: state.chips,
     date: new Date().toLocaleDateString("fr-FR"),
     dateISO: new Date().toISOString(),
