@@ -4301,6 +4301,7 @@ body.est-prof .prof-only{display:block}
             <option value="p12-cor-a2">P12 &mdash; Corrig&eacute; Activit&eacute; 2</option>
             <option value="eau4e">P11 4e &mdash; Activit&eacute;s 1 et 2</option>
             <option value="eau34">P11 4e &mdash; Activit&eacute;s 3 et 4</option>
+            <option value="eau56">P11 4e &mdash; Activit&eacute;s 5 et 6</option>
             <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
@@ -4750,6 +4751,25 @@ body.est-prof .prof-only{display:block}
         compl&egrave;te et correcte, avec ses sch&eacute;mas, identique pour tous les &eacute;l&egrave;ves.
       </p>
       <iframe id="eau4e-syn-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/synthese_eleve.html" title="Synthèse intermédiaire : concevoir un objet technique (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — ACTIVITÉS 5 ET 6 (iframe : Niveau 4/P11 Eau ressource essentielle/eau56_eleve.html) -->
+    <div id="pg-eau56" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Activités 5 et 6 : pieuvre, cahier des charges et FAST (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité <strong>individuelle</strong> regroupant les <strong>activités 5 et 6</strong> de la séquence, autour du
+        <strong>robinet automatique à détection</strong> : pieuvre et type des fonctions, cahier des charges fonctionnel
+        complété à partir d'une fiche technique, diagramme FAST, puis chaînes d'information et d'énergie.
+        Chaque question se vérifie en deux essais : une aide d'abord, le corrigé ensuite.
+        <strong>&#x1F441;&#xFE0F; Confort de lecture</strong> règle la police, la taille et la couleur de la page,
+        et <strong>&#x1F50A; Lecture immersive</strong> lit la fiche à voix haute.
+      </p>
+      <iframe id="eau56-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/eau56_eleve.html" title="P11 — Activités 5 et 6 (4e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -6008,6 +6028,7 @@ var SEQUENCES_DEF = [
   {id:"eau4e-cor", ordre:111, niveau:"4ème", titre:"P11 — Corrigé Activités 1 et 2", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"#APvtuUrfHGwYpZYAtFrZPiUMRyd0U7Z4KsAsROlM1ZQ=", open:true},
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"#q1hfdxcAx9nksmjM+vFun8O1UXWsYiP/TOXkF6m4vII=", open:true},
   {id:"eau34-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Activités 3 et 4", desc:"Corrigé détaillé des activités 3 et 4. Code d'accès professeur.", couleur:"var(--vt)", code:"#9yiKGcK/Q7JWGgRVcj9+M1++K9bu2AaxvTs2I9gvESc=", open:true},
+  {id:"eau56", ordre:114, niveau:"4ème", titre:"P11 — Activités 5 et 6 — Pieuvre, cahier des charges et FAST", desc:"Le robinet automatique : pieuvre et type des fonctions, cahier des charges complété à partir d'une fiche technique, diagramme FAST, chaînes d'information et d'énergie. Vérification en deux essais, aides dys intégrées.", couleur:"#0288D1", code:"#a-poser", open:true},
   {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"#OcS3j3v3aYWmIvECda9NwiaoZYMk3IgvhWQwqK264V4=", open:true},
   {id:"p11-entr-tab", ordre:116, niveau:"4ème", titre:"P11 — Entraînement tableur — La facture du club photo", desc:"Avant l'évaluation : lire une feuille de calcul, passer de la phrase à la formule, trouver l'erreur, recopier. Non noté, vérification immédiate. Aides dys intégrées.", couleur:"#0288D1", code:"", open:true},
   {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#sdsFTOAdPjNmd1yUlzBiMttqCiL2pA3BcTLlEyhPKzM=", open:true},
@@ -6476,6 +6497,13 @@ function goPage(pid) {
     var e34Ifr = document.getElementById("eau34-frame");
     if (e34Ifr) e34Ifr.src = e34Ifr.getAttribute("data-src");
   }
+  if (pid === "pg-eau56") {
+    try {
+      if (user) localStorage.setItem("eau56_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var e56Ifr = document.getElementById("eau56-frame");
+    if (e56Ifr) e56Ifr.src = e56Ifr.getAttribute("data-src");
+  }
   if (pid === "pg-batiment5e") {
     // Pré-remplit l'identité de l'élève connecté (même origine → localStorage).
     try {
@@ -6879,6 +6907,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
+        } else if (s.id === "eau56") {
+          badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
         } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "p11-eval1") {
@@ -6922,6 +6952,7 @@ function renderDash() {
       else if (s.id === "eau4e-syn") clickAction = "onclick=\"goPage('pg-eau4e-syn')\"";
       else if (s.id === "eau34")     clickAction = "onclick=\"goPage('pg-eau34')\"";
       else if (s.id === "eau34-cor") clickAction = "onclick=\"goPage('pg-eau34-cor')\"";
+      else if (s.id === "eau56")     clickAction = "onclick=\"goPage('pg-eau56')\"";
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
@@ -6991,6 +7022,7 @@ function tryUnlock() {
     else if (pendingSeq === "eau4e-syn") goPage("pg-eau4e-syn");
     else if (pendingSeq === "eau34") goPage("pg-eau34");
     else if (pendingSeq === "eau34-cor") goPage("pg-eau34-cor");
+    else if (pendingSeq === "eau56") goPage("pg-eau56");
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
@@ -7414,6 +7446,93 @@ function eau34Contient(texte, mots){
   if (!t) return false;
   for (var i=0;i<mots.length;i++) if (t.indexOf(mots[i]) >= 0) return true;
   return false;
+}
+
+/* ════ P11 4e — ACTIVITÉS 5 ET 6 (cap eau56) ════
+   La fiche élève corrige elle-même et envoie dans fields._suivi les verdicts des
+   réponses actuelles, le résultat du 1er essai et le score figé au 2e essai (ou dès
+   un 1er essai sans faute). Le backend ne garde que fields : rien n'est ailleurs.
+   Ici, on ne fait qu'afficher. */
+var EAU56_EME_LB = { util:"l'utilisateur", eau:"l'eau", mains:"les mains", energie:"l'énergie",
+  lavabo:"le lavabo", humide:"le milieu humide", budget:"le budget" };
+var EAU56_FONCTIONS = [
+  ["Permettre à l'utilisateur de se laver les mains avec de l'eau", "FP — relie l'utilisateur et l'eau"],
+  ["Détecter la présence des mains",    "FC — relie le robinet aux mains"],
+  ["Résister à l'environnement humide", "FC — relie le robinet au milieu humide"],
+  ["Être alimenté en énergie",          "FC — relie le robinet à l'énergie"],
+  ["Se fixer sur le lavabo",            "FC — relie le robinet au lavabo"],
+  ["Respecter le budget",               "FC — relie le robinet au budget"]
+];
+var EAU56_NIVEAUX = [
+  ["a5-n1", "FP1 — Débit",          "≈ 2 L/min",                                 "Niveau debit"],
+  ["a5-n2", "FC1 — Distance",       "0 à ≈ 15 cm",                               "Niveau distance"],
+  ["a5-n3", "FC2 — Indice IP",      "IP65",                                      "Niveau IP"],
+  ["a5-n4", "FC3 — Volume / temps", "Écoulement coupé dès le retrait des mains", "Niveau volume temps"]
+];
+var EAU56_SOL_LB = { capteur:"Capteur infrarouge", carte:"Carte électronique", vanne:"Vanne (électrovanne)", turbine:"Turbine + générateur" };
+var EAU56_FAST = [
+  ["a6-s1", "Détecter la présence des mains",            "Capteur infrarouge",                         "FAST detecter"],
+  ["a6-s2", "Traiter l'information et commander",        "Carte électronique (microcontrôleur)",       "FAST traiter"],
+  ["a6-s3", "Ouvrir / fermer l'arrivée d'eau",           "Électrovanne",                               "FAST ouvrir fermer"],
+  ["a6-s4", "Produire l'énergie électrique (sans pile)", "Turbine + générateur (entraînés par l'eau)", "FAST produire energie"]
+];
+var EAU56_CHAINES = [
+  ["a6-c-acquerir",  "ACQUÉRIR (chaîne d'information)", "Capteur infrarouge",   "Chaine acquerir"],
+  ["a6-c-traiter",   "TRAITER (chaîne d'information)",  "Carte électronique",   "Chaine traiter"],
+  ["a6-c-alimenter", "ALIMENTER (chaîne d'énergie)",    "Turbine + générateur", "Chaine alimenter"],
+  ["a6-c-convertir", "CONVERTIR (chaîne d'énergie)",    "Électrovanne",         "Chaine convertir"]
+];
+var EAU56_PARTIES = [ ["q1","Types FP/FC",6], ["q2","Niveaux du CDCF",4], ["fast","FAST",4], ["chaines","Chaînes",4] ];
+var EAU56_QUIZ_LB = { pourquoi:"« Pourquoi ? »", comment:"« Comment ? »", quand:"« Quand ? »" };
+
+function eau56Suivi(f) {
+  var s = (f && f._suivi) || {};
+  return { essais: s.essais || {}, scores: s.scores || {}, premiers: s.premiers || {}, verdicts: s.verdicts || {} };
+}
+/* « 3/4 » quand le score est figé ; sinon l'état de la question. */
+function eau56Score(suivi, cle, max) {
+  var sc = suivi.scores[cle];
+  if (sc !== undefined && sc !== null && sc !== "") return sc + "/" + max;
+  var pr = suivi.premiers[cle];
+  return (pr !== undefined && pr !== null && pr !== "") ? "1er essai " + pr + "/" + max : "non vérifié";
+}
+function buildEau56ModalHTML(sub) {
+  var f = sub && sub.fields ? sub.fields : null;
+  function esc(x){ return String(x == null ? "" : x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  if (!f) return "<em>Aucune réponse enregistrée.</em>";
+  var s = eau56Suivi(f), i;
+  function flag(cle, k){ var v = s.verdicts[cle]; return (v && v[k] !== undefined) ? (v[k] ? ' ✅' : ' ❌') : ''; }
+  function row(label, rep, attendu, fl) {
+    return '<div style="margin-bottom:9px"><div style="font-size:11px;font-weight:700;color:var(--bl);margin-bottom:2px">' + esc(label) + fl + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:8px 10px;font-size:13px;white-space:pre-wrap;color:var(--tx)">' +
+      (rep && String(rep).trim() ? esc(rep) : '<span style="color:var(--td);font-style:italic">Non renseigné</span>') + '</div>' +
+      '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:5px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + esc(attendu) + '</div></div>';
+  }
+  function chip(txt){ return '<span style="background:#D8F0FB;color:#0277BD;border-radius:14px;padding:3px 11px;font-size:12px;font-weight:700">' + esc(txt) + '</span>'; }
+  function titre(t){ return '<div style="font-weight:700;color:#0277BD;font-size:12px;margin:12px 0 4px">' + esc(t) + '</div>'; }
+
+  var html = '<div style="background:#D8F0FB;border:1px solid #9BD6EF;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px">' +
+    '<strong>&#x1F419; ' + esc(sub.ename || '') + '</strong> — Classe ' + esc(sub.ecls || '') + '</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">';
+  for (i = 0; i < EAU56_PARTIES.length; i++) html += chip(EAU56_PARTIES[i][1] + " : " + eau56Score(s, EAU56_PARTIES[i][0], EAU56_PARTIES[i][2]));
+  html += '</div><div style="font-size:11.5px;color:var(--td);margin-bottom:10px">Score figé au 2<sup>e</sup> essai (ou dès un 1<sup>er</sup> essai sans faute). Les ✅ / ❌ portent sur les réponses envoyées.</div>';
+
+  html += titre("A5 — 1. LA PIEUVRE : TYPE DES FONCTIONS");
+  for (i = 0; i < EAU56_FONCTIONS.length; i++) {
+    var t = f["a5-t" + (i+1)] || "", l = f["a5-l" + (i+1)];
+    var noms = l ? String(l).split("+").map(function(x){ return EAU56_EME_LB[x] || x; }).join(" et ") : "";
+    html += row(EAU56_FONCTIONS[i][0], [t, noms ? "relie " + noms : ""].filter(Boolean).join(" — "), EAU56_FONCTIONS[i][1], flag("q1", i));
+  }
+  html += titre("A5 — 2. LE CAHIER DES CHARGES FONCTIONNEL");
+  for (i = 0; i < EAU56_NIVEAUX.length; i++) html += row(EAU56_NIVEAUX[i][1], f[EAU56_NIVEAUX[i][0]], EAU56_NIVEAUX[i][2], flag("q2", i));
+  html += titre("A6 — 2. LE FAST DU ROBINET AUTOMATIQUE");
+  for (i = 0; i < EAU56_FAST.length; i++) html += row(EAU56_FAST[i][1], EAU56_SOL_LB[f[EAU56_FAST[i][0]]] || "", EAU56_FAST[i][2], flag("fast", i));
+  html += titre("A6 — CHAÎNES D'INFORMATION ET D'ÉNERGIE");
+  for (i = 0; i < EAU56_CHAINES.length; i++) html += row(EAU56_CHAINES[i][1], EAU56_SOL_LB[f[EAU56_CHAINES[i][0]]] || "", EAU56_CHAINES[i][2], flag("chaines", i));
+  var qz = ["a6-quiz1", "a6-quiz2", "a6-quiz3"].map(function(k){ return f[k] ? (EAU56_QUIZ_LB[f[k]] || f[k]) : "—"; });
+  html += titre("A6 — 1. LIRE UN FAST (ENTRAÎNEMENT, NON COMPTÉ)");
+  html += '<div style="font-size:12.5px;color:var(--td)">Droite → gauche : ' + esc(qz[0]) + ' · Gauche → droite : ' + esc(qz[1]) + ' · Verticale : ' + esc(qz[2]) + '</div>';
+  return html;
 }
 
 function buildEau34ModalHTML(sub) {
@@ -9011,6 +9130,9 @@ function renderSubs() {
       } else if (s.cap === "eau34") {
         var e3Done = (s.score !== undefined ? s.score : 0), e3Tot = (s.qcmTot || 26);
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F6B0; ' + e3Done + '/' + e3Tot + ' réponses</span>';
+      } else if (s.cap === "eau56") {
+        var e5Done = (s.score !== undefined ? s.score : 0), e5Tot = (s.qcmTot || 27);
+        sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F419; ' + e5Done + '/' + e5Tot + ' réponses</span>';
       } else if (EVALUATIONS[s.cap]) {
         /* Une évaluation affiche une note, pas un nombre de champs remplis. */
         var defEv = EVALUATIONS[s.cap], totEv = defEv.total;
@@ -9425,6 +9547,10 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P11 4e — Activités 3 et 4";
     document.getElementById("mrep").innerHTML = buildEau34ModalHTML(sub);
     document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  } else if (sub.cap === "eau56") {
+    if (mh3) mh3.textContent = "P11 4e — Activités 5 et 6";
+    document.getElementById("mrep").innerHTML = buildEau56ModalHTML(sub);
+    document.getElementById("mscore").textContent = "Activités 5 et 6 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||27) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     /* Copie de l'élève, puis le panneau de points : tout se corrige sur un écran. */
@@ -9488,6 +9614,7 @@ function printModalSub() {
   else if (sub.cap === "p12-ex2" && sub.fields) answersHTML = buildP12Ex2ModalHTML(sub.fields);
   else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
   else if (sub.cap === "eau34") answersHTML = buildEau34ModalHTML(sub);
+  else if (sub.cap === "eau56") answersHTML = buildEau56ModalHTML(sub);
   else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
@@ -9579,7 +9706,7 @@ var FICHE_TITRES = {
   "p12-act2":"P12 — Activité 2", "p12-act3":"P12 — Activité 3", "p12-cor-a1":"P12 — Corrigé A1",
   "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
-  "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4",
+  "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "p11-eval1":"P11 4e — Évaluation n°1"
 };
@@ -9627,7 +9754,7 @@ function ficheScoreTexte(sub) {
     var q3 = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
     return n2.done + "/" + n2.total + " champs" + (q3 ? " (Q3 ✓)" : "") + st;
   }
-  var totaux = { eau4e:49, eau34:26, reseau5e:24, filius5e:21, maison5e:16 };
+  var totaux = { eau4e:49, eau34:26, eau56:27, reseau5e:24, filius5e:21, maison5e:16 };
   if (totaux[sub.cap]) return (sub.score !== undefined ? sub.score : 0) + "/" + (sub.qcmTot || totaux[sub.cap]) + " réponses" + st;
   if (sub.adjustedScore !== undefined) return "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + (sub.bareme || sub.qcmTot || 20) + st;
   return "Score QCM : " + sub.score + "/" + sub.qcmTot + st;
@@ -9644,6 +9771,7 @@ function ficheReponsesHTML(sub) {
   if (sub.cap === "p12-ex2" && f)    return buildP12Ex2ModalHTML(f);
   if (sub.cap === "eau4e")           return buildEauModalHTML(sub);
   if (sub.cap === "eau34")           return buildEau34ModalHTML(sub);
+  if (sub.cap === "eau56")           return buildEau56ModalHTML(sub);
   if (sub.cap === "batiment5e")      return buildBatimentModalHTML(sub);
   if (sub.cap === "reseau5e")        return buildReseauModalHTML(sub);
   if (sub.cap === "filius5e")        return buildFiliusModalHTML(sub);
@@ -10082,6 +10210,26 @@ function _buildCapsuleCSV(cap, filtered) {
         var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
         var exCols = exKeys.map(function(k){ return f[k] || "—"; });
         return base.concat(exCols).concat([f.bilan || ""]);
+      })
+    };
+  }
+  if (cap === "eau56") {
+    var e56Cols = [];
+    for (var c1 = 0; c1 < EAU56_FONCTIONS.length; c1++) {
+      e56Cols.push(["a5-t" + (c1 + 1), "Type f" + (c1 + 1)]);
+      e56Cols.push(["a5-l" + (c1 + 1), "Elements relies f" + (c1 + 1)]);
+    }
+    [EAU56_NIVEAUX, EAU56_FAST, EAU56_CHAINES].forEach(function (tab) {
+      tab.forEach(function (n) { e56Cols.push([n[0], n[3]]); });
+    });
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Reponses","Types /6","Niveaux /4","FAST /4","Chaines /4"]
+                .concat(e56Cols.map(function (c) { return c[1]; })),
+      rows: filtered.map(function (x) {
+        var f = x.fields || {}, s = eau56Suivi(f);
+        return [x.ename, x.ecls, dateOf(x), x.status, (x.score || 0) + "/" + (x.qcmTot || 0)]
+          .concat(EAU56_PARTIES.map(function (p) { return eau56Score(s, p[0], p[2]); }))
+          .concat(e56Cols.map(function (c) { var v = f[c[0]] || ""; return EAU56_SOL_LB[v] || v; }));
       })
     };
   }
