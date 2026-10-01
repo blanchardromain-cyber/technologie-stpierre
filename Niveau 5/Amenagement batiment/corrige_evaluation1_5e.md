@@ -1,7 +1,7 @@
 # P1 — Évaluation n°1 (5ème) — corrigé et barème
 
 Séquence 1, cycle 4. Sujet élève : `evaluation1_eleve.html`
-(capsule **P1 — Évaluation n°1**, code d'accès **EVAL1BAT**).
+(capsule **P1 — Évaluation n°1**, code d'accès : voir le panneau professeur).
 
 **Notée sur 10 points**, quatre exercices, travail individuel.
 
