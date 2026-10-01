@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>P11 — Activités 5 et 6 — 4ème</title>
+</head>
+<body>
+<script>
+/* LOGIQUE-EAU56-DEBUT — données et corrections pures, sans accès à la page.
+   Testées par outils/test_eau56.html. Les valeurs attendues sont celles des
+   corrigés distribués (S5 et S6) ; le document fictif de la fiche les reprend. */
+var EAU56 = (function(){
+  var EME = [
+    { id:"util",    nom:"L'utilisateur",    angle:0   },
+    { id:"eau",     nom:"L'eau",            angle:51  },
+    { id:"mains",   nom:"Les mains",        angle:103 },
+    { id:"energie", nom:"L'énergie",        angle:154 },
+    { id:"lavabo",  nom:"Le lavabo",        angle:206 },
+    { id:"humide",  nom:"Le milieu humide", angle:257 },
+    { id:"budget",  nom:"Le budget",        angle:309 }
+  ];
+  /* Les six fonctions de la fiche, dans son ordre. Une FP relie DEUX éléments
+     à travers l'objet ; une FC relie l'objet à UN seul élément. */
+  var FONCTIONS = [
+    { id:"f1", texte:"Permettre à l'utilisateur de se laver les mains avec de l'eau", type:"FP", via:["util","eau"] },
+    { id:"f2", texte:"Détecter la présence des mains",    type:"FC", via:["mains"] },
+    { id:"f3", texte:"Résister à l'environnement humide", type:"FC", via:["humide"] },
+    { id:"f4", texte:"Être alimenté en énergie",          type:"FC", via:["energie"] },
+    { id:"f5", texte:"Se fixer sur le lavabo",            type:"FC", via:["lavabo"] },
+    { id:"f6", texte:"Respecter le budget",               type:"FC", via:["budget"] }
+  ];
+  var NIVEAUX = [
+    { id:"a5-n1", rep:"FP1", fonction:"Distribuer de l'eau pour se laver les mains", critere:"Débit",
+      corrige:"≈ 2 L/min", aide:"Cherche la ligne « Débit d'eau » du document : écris la valeur ET son unité." },
+    { id:"a5-n2", rep:"FC1", fonction:"Détecter la présence des mains", critere:"Distance",
+      corrige:"0 à ≈ 15 cm", aide:"Cherche jusqu'à quelle distance le robinet détecte les mains : valeur ET unité." },
+    { id:"a5-n3", rep:"FC2", fonction:"Résister à l'environnement humide", critere:"Indice IP",
+      corrige:"IP65", aide:"Un indice de protection s'écrit IP suivi de deux chiffres : cherche-le dans le document." },
+    { id:"a5-n4", rep:"FC3", fonction:"Limiter la consommation d'eau", critere:"Volume / temps",
+      corrige:"Écoulement coupé dès le retrait des mains", aide:"Lis la ligne « Fonctionnement » : à quel moment l'eau s'arrête-t-elle ?" }
+  ];
+  var SOLUTIONS = [
+    { v:"capteur", t:"capteur infrarouge" },
+    { v:"carte",   t:"carte électronique" },
+    { v:"vanne",   t:"vanne (électrovanne)" },
+    { v:"turbine", t:"turbine + générateur" }
+  ];
+  var FAST = [
+    { id:"a6-s1", ft:"Détecter la présence des mains",            att:"capteur", corrige:"Capteur infrarouge",
+      aide:"Quel composant « voit » les mains ?" },
+    { id:"a6-s2", ft:"Traiter l'information et commander",        att:"carte",   corrige:"Carte électronique (microcontrôleur)",
+      aide:"Quel composant exécute le programme qui décide ?" },
+    { id:"a6-s3", ft:"Ouvrir / fermer l'arrivée d'eau",           att:"vanne",   corrige:"Électrovanne",
+      aide:"Quel composant laisse passer ou bloque l'eau ?" },
+    { id:"a6-s4", ft:"Produire l'énergie électrique (sans pile)", att:"turbine", corrige:"Turbine + générateur (entraînés par l'eau)",
+      aide:"Sans pile : quel composant tourne grâce à l'eau qui coule ?" }
+  ];
+  var CHAINES = [
+    { id:"a6-c-acquerir",  verbe:"ACQUÉRIR",  att:"capteur", aide:"Acquérir, c'est prendre une information : quel composant détecte ?" },
+    { id:"a6-c-traiter",   verbe:"TRAITER",   att:"carte",   aide:"Traiter, c'est décider à partir de l'information reçue." },
+    { id:"a6-c-alimenter", verbe:"ALIMENTER", att:"turbine", aide:"Alimenter, c'est fournir l'énergie électrique au système." },
+    { id:"a6-c-convertir", verbe:"CONVERTIR", att:"vanne",   aide:"Convertir, c'est transformer l'énergie électrique en mouvement : quel composant ouvre l'arrivée d'eau ?" }
+  ];
+  var QUIZ = [
+    { id:"a6-quiz1", q:"Lu de droite à gauche, le diagramme FAST répond à la question…", att:"pourquoi" },
+    { id:"a6-quiz2", q:"Lu de gauche à droite, il répond à la question…", att:"comment" },
+    { id:"a6-quiz3", q:"À la verticale, il indique les fonctions simultanées ou complémentaires : il répond à la question…", att:"quand" }
+  ];
+  var QUIZ_OPTS = [ ["pourquoi","« Pourquoi ? »"], ["comment","« Comment ? »"], ["quand","« Quand ? »"] ];
+  var TRI = [ ["Débit","critere"], ["2 L/min","niveau"], ["Distance","critere"], ["15 cm","niveau"], ["Indice IP","critere"], ["IP65","niveau"] ];
+
+  /* Comparaison souple : sans accent, sans majuscule, sans ponctuation. */
+  function norm(s){
+    return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+      .replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+  }
+  /* Nombres écrits dans une réponse, virgule décimale comprise : « 1,5 cm » → [1.5]. */
+  function nombres(s){
+    var m = String(s||"").replace(/(\d),(\d)/g,"$1.$2").match(/\d+(?:\.\d+)?/g) || [];
+    return m.map(Number);
+  }
+  function aNombre(s, n){ return nombres(s).some(function(x){ return Math.abs(x - n) < 1e-9; }); }
+  /* Un niveau est juste si la valeur ET l'unité du document y sont. */
+  var TESTS_NIVEAUX = {
+    "a5-n1": function(v){ return aNombre(v, 2) && /(^|[^a-z])l(itres?)?( par)? ?min/.test(norm(v)); },
+    "a5-n2": function(v){ return aNombre(v, 15) && /(^|[^a-z])(cm|centimetres?)( |$)/.test(norm(v)); },
+    "a5-n3": function(v){ return /(^|[^a-z0-9])ip ?65( |$)/.test(norm(v)); },
+    "a5-n4": function(v){ var t = norm(v); return /coup|arret|stop|ferm/.test(t) && /retir|retrait|enlev|eloign/.test(t); }
+  };
+  /* Éléments reliés, dans l'ordre de la pieuvre : l'ordre des clics ne compte pas. */
+  function liensCle(liste){
+    liste = liste || [];
+    return EME.filter(function(e){ return liste.indexOf(e.id) >= 0; }).map(function(e){ return e.id; }).join("+");
+  }
+  /* Une ligne de la Q1 n'est juste que si le type ET les éléments reliés le sont :
+     sans cela, « FC partout » rapporterait 5/6 sans rien savoir. */
+  function verdictsQ1(types, liens){
+    types = types || {}; liens = liens || {};
+    return FONCTIONS.map(function(f){ return types[f.id] === f.type && liensCle(liens[f.id]) === liensCle(f.via); });
+  }
+  function verdictsNiveaux(f){ f = f || {}; return NIVEAUX.map(function(n){ return TESTS_NIVEAUX[n.id](f[n.id] || ""); }); }
+  function verdictsListe(defs, f){ f = f || {}; return defs.map(function(d){ return f[d.id] === d.att; }); }
+  function compter(v){ return (v || []).filter(Boolean).length; }
+  /* Règle de la ressource S5 : au 1er essai une aide, au 2e le corrigé. Le score se
+     fige au 2e essai, ou dès un 1er essai sans faute ; ensuite, plus rien ne le change
+     (sinon il suffirait de recopier le corrigé et de revérifier). */
+  function enregistrerEssai(suivi, q, verdicts){
+    suivi.essais = suivi.essais || {}; suivi.scores = suivi.scores || {}; suivi.premiers = suivi.premiers || {};
+    var juste = compter(verdicts), total = verdicts.length;
+    suivi.essais[q] = (suivi.essais[q] || 0) + 1;
+    if (suivi.essais[q] === 1) suivi.premiers[q] = juste;
+    var montrer = suivi.essais[q] >= 2;
+    var fige = suivi.scores[q] !== undefined && suivi.scores[q] !== null;
+    if (!fige && (montrer || juste === total)) suivi.scores[q] = juste;
+    return { essai: suivi.essais[q], montrer: montrer, juste: juste, total: total };
+  }
+  return { EME:EME, FONCTIONS:FONCTIONS, NIVEAUX:NIVEAUX, SOLUTIONS:SOLUTIONS, FAST:FAST, CHAINES:CHAINES,
+           QUIZ:QUIZ, QUIZ_OPTS:QUIZ_OPTS, TRI:TRI, norm:norm, nombres:nombres, liensCle:liensCle,
+           verdictsQ1:verdictsQ1, verdictsNiveaux:verdictsNiveaux, verdictsListe:verdictsListe,
+           compter:compter, enregistrerEssai:enregistrerEssai };
+})();
+/* LOGIQUE-EAU56-FIN */
+</script>
+</body>
+</html>
