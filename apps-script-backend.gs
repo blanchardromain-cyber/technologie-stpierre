@@ -29,8 +29,15 @@ var COLUMNS = [
   'scoreDT', 'scorePR', 'scorePG',
   'open', 'fields_json', 'status', 'id',
   // VERROU — ajoutees EN FIN de liste. Doivent rester consecutives.
-  'locked', 'lockedAt', 'lockedBy'
+  'locked', 'lockedAt', 'lockedBy',
+  // NOTE — correction du professeur, ajoutee EN FIN (apres le verrou, sans le scinder).
+  // adjustedPts est un objet : stocke en JSON dans adjustedPts_json, comme fields_json.
+  'appreciation', 'bareme', 'adjustedScore', 'adjustedPts_json', 'scoreBrut'
 ];
+
+// NOTE — Cles de correction du payload. Un envoi du professeur qui n'en porte pas une
+// garde la valeur en place (poste pas encore a jour) ; un renvoi d'eleve les remplace.
+var NOTE_PROF = ['appreciation', 'bareme', 'adjustedScore', 'adjustedPts', 'scoreBrut'];
 
 // VERROU — Champs renvoyes a l'eleve pour une copie verrouillee (action "own").
 var META_ELEVE = [
@@ -154,13 +161,21 @@ function doPost(e) {
       }
       // VERROU — jamais repris du payload : _upsert recopie la valeur deja en place.
       if (col === 'locked' || col === 'lockedAt' || col === 'lockedBy') return '';
+      // NOTE — l'objet des points ajustes voyage en JSON, comme fields.
+      if (col === 'adjustedPts_json') {
+        return sub.adjustedPts ? JSON.stringify(sub.adjustedPts) : '';
+      }
       var v = sub[col];
       return (v === undefined || v === null) ? '' : v;
     });
+    // NOTE — colonnes de correction absentes d'un envoi du professeur : _upsert les recopie.
+    var garder = sub._parProf !== true ? [] : NOTE_PROF.filter(function (k) {
+      return !(k in sub);
+    }).map(function (k) { return k === 'adjustedPts' ? 'adjustedPts_json' : k; });
     // Upsert : si même eid+cap existe déjà, on remplace la ligne
     // VERROU — sub._parProf : envoi fait depuis une session professeur (absent de
     // COLUMNS, donc jamais ecrit). Sans lui, une copie verrouillee n'est pas remplacee.
-    var wasNew = _upsert(sheet, sub.eid, sub.cap, row, sub._parProf === true);
+    var wasNew = _upsert(sheet, sub.eid, sub.cap, row, sub._parProf === true, garder);
     if (wasNew === 'locked') return _json({ ok: false, error: 'locked' });
     /* Notification mail au prof pour les nouvelles soumissions élèves uniquement
        (on n'envoie pas de mail lors d'un simple changement de statut prof) */
@@ -255,6 +270,11 @@ function _toutesLesSubs() {
       try { obj.fields = JSON.parse(obj.fields_json); } catch (er) { obj.fields = {}; }
     }
     delete obj.fields_json;
+    // NOTE — Re-hydrate adjustedPts (illisible : ignore, la copie reste lisible)
+    if (obj.adjustedPts_json) {
+      try { obj.adjustedPts = JSON.parse(obj.adjustedPts_json); } catch (er) {}
+    }
+    delete obj.adjustedPts_json;
     subs.push(obj);
   }
   return subs;
@@ -290,10 +310,24 @@ function _assurerEntetes(sheet) {
   if (change) sheet.getRange(1, 1, 1, n).setValues([h]);
 }
 
+// NOTE — A lancer depuis l'editeur (Executer › diagnosticColonnes), resultat dans le
+// journal d'execution : en-tetes reels de la ligne 1 compares a COLUMNS. Ecrit les
+// en-tetes manquants (comme tout appel), ne modifie aucune donnee.
+function diagnosticColonnes() {
+  var sheet = _getSheet();
+  var h = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  var ecarts = [];
+  COLUMNS.forEach(function (c, j) { if (h[j] !== c) ecarts.push('col ' + (j + 1) + ' : attendu ' + c + ', lu ' + h[j]); });
+  for (var j = COLUMNS.length; j < h.length; j++) ecarts.push('col ' + (j + 1) + ' en trop : ' + h[j]);
+  console.log('Ligne 1 : ' + h.join(' | '));
+  console.log(ecarts.length ? 'ECARTS :\n' + ecarts.join('\n') : 'OK : ' + COLUMNS.length + ' colonnes conformes a COLUMNS');
+  return ecarts;
+}
+
 /* Renvoie true si nouvelle ligne (creation), false si remplacement (update),
    'locked' si la copie est verrouillee et que l'envoi ne vient pas du professeur.
    VERROU — sous LockService, pour qu'un verrouillage simultane ne soit pas ecrase. */
-function _upsert(sheet, eid, cap, row, parProf) {
+function _upsert(sheet, eid, cap, row, parProf, garder) {
   var verrou = LockService.getScriptLock();
   verrou.waitLock(20000);
   try {
@@ -310,7 +344,8 @@ function _upsert(sheet, eid, cap, row, parProf) {
       if (data[i][eidCol] === eid && data[i][capCol] === cap) {
         var verrouillee = data[i][iL] === true || String(data[i][iL]).toUpperCase() === 'TRUE';
         if (verrouillee && !parProf) return 'locked';
-        ['locked', 'lockedAt', 'lockedBy'].forEach(function (c) {
+        // NOTE — + les colonnes de correction que l'envoi du professeur ne porte pas.
+        ['locked', 'lockedAt', 'lockedBy'].concat(garder || []).forEach(function (c) {
           var k = COLUMNS.indexOf(c); row[k] = data[i][k];
         });
         sheet.getRange(i + 2, 1, 1, COLUMNS.length).setValues([row]);
