@@ -1,14 +1,14 @@
 # P1 — Aménager un bâtiment (5ème) — notes professeur
 
 Séquence 1, cycle 4. Activité élève : `batiment_eleve.html`
-(intégrée au site dans la capsule **P1 — Aménagement d'un bâtiment**, code d'accès **BAT26**).
+(intégrée au site dans la capsule **P1 — Aménagement d'un bâtiment**, code d'accès : voir le panneau professeur).
 
 > Ce corrigé est aussi consultable et imprimable depuis le site, dans la capsule
-> **P1 — Corrigé Aménagement d'un bâtiment** (code **CORBAT26**). Les deux versions ont le
+> **P1 — Corrigé Aménagement d'un bâtiment** (code : voir le panneau professeur). Les deux versions ont le
 > même contenu : en modifier une demande de reporter la modification dans l'autre.
 
 > La **synthèse** de la séquence est une capsule séparée : `synthese_eleve.html`,
-> **P1 — Synthèse Aménager un bâtiment**, code **SYNBAT26**. À ouvrir aux élèves une fois
+> **P1 — Synthèse Aménager un bâtiment**, code : voir le panneau professeur. À ouvrir aux élèves une fois
 > l'activité terminée. Chaque notion s'y gagne par un court défi, mais la feuille imprimée
 > (deux pages A4) contient toujours la synthèse complète et identique pour tous.
 
