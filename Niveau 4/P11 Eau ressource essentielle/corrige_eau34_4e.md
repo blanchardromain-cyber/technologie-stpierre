@@ -1,10 +1,10 @@
 # P11 — Activités 3 et 4 (4ème) — notes professeur
 
 Séquence P11, cycle 4. Activité élève : `eau34_eleve.html`
-(intégrée au site dans la capsule **P11 — Activités 3 et 4**, code d'accès **EAU34**).
+(intégrée au site dans la capsule **P11 — Activités 3 et 4**, code d'accès : voir le panneau professeur).
 
 > Ce corrigé est aussi consultable et imprimable depuis le site, dans la capsule
-> **P11 — Corrigé Activités 3 et 4** (code **COREAU34**). Les deux versions ont le même
+> **P11 — Corrigé Activités 3 et 4** (code : voir le panneau professeur). Les deux versions ont le même
 > contenu : en modifier une demande de reporter la modification dans l'autre.
 
 **Compétence CT 2.5** — Identifier un besoin et énoncer un problème technique ; identifier les
