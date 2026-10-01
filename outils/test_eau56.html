@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Tests eau56 — en cours</title>
+<style>
+  body{font:14px/1.5 system-ui,sans-serif;margin:20px;color:#1A202C}
+  pre{background:#F4F6F8;padding:12px;border-radius:8px;white-space:pre-wrap}
+  .ok{color:#1E6B3B}.ko{color:#C0392B;font-weight:700}
+  iframe{width:100%;height:520px;border:1px solid #CBD5E0;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>Tests de la capsule P11 — Activités 5 et 6</h1>
+<p>À ouvrir depuis un serveur local (<code>python -m http.server</code>). La fiche refuse d'écrire en production depuis une page locale ;
+le <code>localStorage</code> de ce poste est sauvegardé avant les tests puis restauré.</p>
+<pre id="res">Tests en cours…</pre>
+<div id="hote"></div>
+<script>
+var lignes = [], echecs = 0, total = 0;
+function ok(cond, nom){ total++; if (!cond) echecs++; lignes.push((cond ? "✓ " : "✗ ") + nom); }
+function egal(a, b, nom){ ok(JSON.stringify(a) === JSON.stringify(b), nom + " — attendu " + JSON.stringify(b) + ", obtenu " + JSON.stringify(a)); }
+
+/* Sauvegarde du localStorage : les tests écrivent un brouillon, on remet tout en place. */
+var sauvegarde = {};
+for (var k = 0; k < localStorage.length; k++){ var cle = localStorage.key(k); sauvegarde[cle] = localStorage.getItem(cle); }
+Object.keys(sauvegarde).forEach(function(c){ if (/^eau56_/.test(c)) localStorage.removeItem(c); });
+function restaurer(){
+  localStorage.clear();
+  Object.keys(sauvegarde).forEach(function(c){ localStorage.setItem(c, sauvegarde[c]); });
+}
+function fin(){
+  document.getElementById("res").innerHTML = lignes.map(function(l){
+    return '<span class="' + (l.charAt(0) === "✓" ? "ok" : "ko") + '">' + l.replace(/&/g,"&amp;").replace(/</g,"&lt;") + '</span>';
+  }).join("\n");
+  document.title = echecs ? "TESTS ÉCHEC " + echecs + "/" + total : "TESTS OK " + total;
+}
+
+var cadre = document.createElement("iframe");
+cadre.src = "../Niveau%204/P11%20Eau%20ressource%20essentielle/eau56_eleve.html";
+cadre.addEventListener("load", function(){
+  var w = cadre.contentWindow;
+  try { testsUnitaires(w.EAU56); } catch (e) { ok(false, "tests unitaires : exception " + e.message); }
+  try { if (typeof w.collect === "function") testsInterface(w); else lignes.push("(interface absente : tests d'interface non lancés)"); }
+  catch (e) { ok(false, "tests d'interface : exception " + e.message); }
+  setTimeout(function(){ restaurer(); fin(); }, 900);   // laisse passer le brouillon différé (500 ms)
+});
+document.getElementById("hote").appendChild(cadre);
+
+function testsUnitaires(E){
+  ok(!!E, "EAU56 est exposé par la fiche");
+  var faux = { "a5-n1":"5 L/min", "a5-n2":"30 cm", "a5-n3":"IP44", "a5-n4":"6 s",
+               "a6-s1":"turbine", "a6-s2":"vanne", "a6-s3":"capteur", "a6-s4":"carte",
+               "a6-c-acquerir":"vanne", "a6-c-traiter":"turbine", "a6-c-alimenter":"capteur", "a6-c-convertir":"carte" };
+  var typesFaux = { f1:"FC", f2:"FP", f3:"FP", f4:"FP", f5:"FP", f6:"FP" };
+  var liensFaux = { f1:["mains"], f2:["util","eau"], f3:["budget"], f4:["lavabo"], f5:["energie"], f6:["humide"] };
+  egal(E.compter(E.verdictsQ1(typesFaux, liensFaux)), 0, "copie toute fausse : types 0/6");
+  egal(E.compter(E.verdictsNiveaux(faux)), 0, "copie toute fausse : niveaux 0/4");
+  egal(E.compter(E.verdictsListe(E.FAST, faux)), 0, "copie toute fausse : FAST 0/4");
+  egal(E.compter(E.verdictsListe(E.CHAINES, faux)), 0, "copie toute fausse : chaînes 0/4");
+
+  egal(E.compter(E.verdictsQ1({ f1:"FC", f2:"FC", f3:"FC", f4:"FC", f5:"FC", f6:"FC" }, {})), 0,
+       "« FC partout » sans pieuvre : 0/6 (le type seul ne suffit pas)");
+  egal(E.compter(E.verdictsListe(E.FAST, { "a6-s1":"capteur", "a6-s2":"capteur", "a6-s3":"capteur", "a6-s4":"capteur" })), 1,
+       "« capteur partout » au FAST : 1/4 seulement");
+
+  var justes = { f1:"FP", f2:"FC", f3:"FC", f4:"FC", f5:"FC", f6:"FC" };
+  var liensJustes = { f1:["eau","util"], f2:["mains"], f3:["humide"], f4:["energie"], f5:["lavabo"], f6:["budget"] };
+  egal(E.compter(E.verdictsQ1(justes, liensJustes)), 6, "copie juste : types 6/6 (ordre des éléments indifférent)");
+  var bons = { "a5-n1":"≈ 2 L/min", "a5-n2":"0 à 15 cm", "a5-n3":"IP65", "a5-n4":"Écoulement coupé dès le retrait des mains",
+               "a6-s1":"capteur", "a6-s2":"carte", "a6-s3":"vanne", "a6-s4":"turbine",
+               "a6-c-acquerir":"capteur", "a6-c-traiter":"carte", "a6-c-alimenter":"turbine", "a6-c-convertir":"vanne" };
+  egal(E.compter(E.verdictsNiveaux(bons)), 4, "copie juste : niveaux 4/4");
+  egal(E.compter(E.verdictsListe(E.FAST, bons)), 4, "copie juste : FAST 4/4");
+  egal(E.compter(E.verdictsListe(E.CHAINES, bons)), 4, "copie juste : chaînes 4/4");
+
+  [["a5-n1","2 L/min",true], ["a5-n1","2 litres par minute",true], ["a5-n1","2l/min",true],
+   ["a5-n1","20 L/min",false], ["a5-n1","2",false], ["a5-n1","2 L/h",false],
+   ["a5-n2","15 cm",true], ["a5-n2","jusqu'à 15cm",true], ["a5-n2","15",false], ["a5-n2","1,5 cm",false], ["a5-n2","15 mm",false],
+   ["a5-n3","IP 65",true], ["a5-n3","ip65",true], ["a5-n3","IP56",false], ["a5-n3","IP650",false],
+   ["a5-n4","l'eau s'arrête quand on retire les mains",true], ["a5-n4","elle s'arrête",false], ["a5-n4","6 s",false]
+  ].forEach(function(c){
+    var f = {}; f[c[0]] = c[1];
+    egal(E.verdictsNiveaux(f)[+c[0].slice(-1) - 1], c[2], "niveau " + c[0] + " « " + c[1] + " »");
+  });
+
+  var s = { essais:{}, scores:{}, premiers:{} };
+  var r1 = E.enregistrerEssai(s, "fast", [false,false,true,false]);
+  ok(!r1.montrer && s.scores.fast === undefined && s.premiers.fast === 1, "1er essai : aide sans corrigé, score non figé, 1er essai noté 1");
+  var r2 = E.enregistrerEssai(s, "fast", [false,true,true,false]);
+  ok(r2.montrer && s.scores.fast === 2, "2e essai : corrigé montré, score figé à 2");
+  E.enregistrerEssai(s, "fast", [true,true,true,true]);
+  egal(s.scores.fast, 2, "lire le corrigé, recopier, revérifier : le score reste figé à 2");
+  var s2 = { essais:{}, scores:{}, premiers:{} };
+  E.enregistrerEssai(s2, "q2", [true,true,true,true]);
+  egal(s2.scores.q2, 4, "tout juste dès le 1er essai : score figé à 4");
+  egal(E.liensCle(["eau","util"]), "util+eau", "liensCle : ordre de la pieuvre");
+  egal(E.liensCle(["inconnu"]), "", "liensCle : identifiant inconnu ignoré");
+}
+</script>
+</body>
+</html>
