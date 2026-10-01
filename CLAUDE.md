@@ -197,6 +197,14 @@ même dans un commentaire ou un exemple.**
 - `verifierSecrets()` signale dans la console, en session professeur, tout `pwd`,
   `h` manquant, code sans `#` ou `PMDP` revenu. Une règle écrite s'oublie ; ce
   contrôle, non.
+- **Un secret fuit par sa valeur, pas seulement par son champ.** Après la conversion
+  du 30 septembre, quinze codes valides restaient écrits en clair dans des commentaires
+  HTML, les tableaux « Organisation » des corrigés, les corrigés `.md` et `suivi-paul/`. Une mention
+  de code s'écrit « voir le panneau professeur », jamais la valeur. `verifierSecrets()`
+  cherche aussi chaque code ouvert par le coffre dans le source de la page (toute
+  casse, sans l'afficher) ; les pages en iframe et les `.md` n'y passent pas, ils se
+  contrôlent par recherche de la valeur. Un code ne doit pas non plus être un mot du
+  site : un code égal au nom de sa séquence se devine.
 
 - **Renouveler les mots de passe élèves** : `coffre.py renouveler --jusqu-au AAAA-MM-JJ`
   génère des mots de passe « bako-rimu-47 », écrit les planches Word à découper (une
