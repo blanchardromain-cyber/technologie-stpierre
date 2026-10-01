@@ -258,8 +258,10 @@ plante sur le contrôle 7b (38/45). La version actuelle passe les 45.
     gardent leur valeur locale (règle 3) ;
   - une note enregistrée hors ligne sur l'ancienne copie repart à la reconnexion, même si
     l'élève a renvoyé son travail entre-temps (inchangé) ;
-  - la règle 1 suppose que le classeur rend `dateISO` tel quel (seul `date` est connu pour
-    revenir converti, voir plus haut) ; à vérifier sur une copie du compte de test.
+  - la règle 1 compare les `dateISO` à la milliseconde : le classeur les rend telles
+    quelles (vérifié le 1er octobre 2026 en lecture `own` sur le compte de test : chaîne
+    ISO intacte, alors que `date` revient converti). Si le classeur se mettait à les
+    convertir, cette comparaison serait à revoir.
 - Le secret de synchronisation étant public, rien n'empêche techniquement d'écrire une
   fausse note avec un envoi forgé. C'est la limite déjà connue (vérification serveur,
   étape 3 de la sécurité).
