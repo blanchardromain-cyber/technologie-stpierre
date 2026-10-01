@@ -78,7 +78,14 @@ function testsUnitaires(E){
    ["a5-n1","20 L/min",false], ["a5-n1","2",false], ["a5-n1","2 L/h",false],
    ["a5-n2","15 cm",true], ["a5-n2","jusqu'à 15cm",true], ["a5-n2","15",false], ["a5-n2","1,5 cm",false], ["a5-n2","15 mm",false],
    ["a5-n3","IP 65",true], ["a5-n3","ip65",true], ["a5-n3","IP56",false], ["a5-n3","IP650",false],
-   ["a5-n4","l'eau s'arrête quand on retire les mains",true], ["a5-n4","elle s'arrête",false], ["a5-n4","6 s",false]
+   ["a5-n4","l'eau s'arrête quand on retire les mains",true], ["a5-n4","elle s'arrête",false], ["a5-n4","6 s",false],
+   ["a5-n1","12 L/min pendant 2 min",false], ["a5-n1","≈ 2 L/min",true],
+   ["a5-n2","30 cm, 15",false], ["a5-n2","0 à 15 cm",true],
+   ["a5-n4","beaucoup d'eau quand on retire les mains",false],
+   ["a5-n4","l'eau ne s'arrête pas quand on retire les mains",false],
+   ["a5-n4","l'eau cesse de couler dès qu'on sort les mains",true],
+   ["a5-n4","Écoulement coupé dès le retrait des mains",true],
+   ["a5-n4","elle s'arrête quand on retire",false]
   ].forEach(function(c){
     var f = {}; f[c[0]] = c[1];
     egal(E.verdictsNiveaux(f)[+c[0].slice(-1) - 1], c[2], "niveau " + c[0] + " « " + c[1] + " »");
@@ -102,6 +109,7 @@ function testsInterface(w){
   var d = w.document;
   ok(w.formVierge(), "fiche vierge au chargement (ni identité, ni brouillon)");
   egal(w.totalFields(), 27, "27 réponses au total");
+  ok(w.getComputedStyle(d.getElementById("reprise")).display === "none", "bandeau de reprise vide : masqué (l'attribut hidden l'emporte sur le CSS)");
   ok(d.querySelectorAll("#emebar button").length === 7, "7 boutons d'éléments du milieu extérieur");
 
   w.choisirFonction("f1"); w.basculerEme("util"); w.basculerEme("eau");
@@ -113,8 +121,39 @@ function testsInterface(w){
   w.choisirType("f1", "FP");
   egal(w.types.f1, "FP", "type FP choisi");
 
+  ok(d.getElementById("rel-f1").getAttribute("aria-label") === "Relier la fonction 1" &&
+     d.getElementById("rel-f6").getAttribute("aria-label") === "Relier la fonction 6", "boutons « Relier » : nom accessible avec le numéro de la fonction");
+
+  /* « Vérifier » ne compte un essai que si TOUTES les lignes sont remplies. */
   w.verifier("q1");
-  ok(d.getElementById("q1-res").className.indexOf("show") >= 0, "un message s'affiche après la vérification");
+  ok(d.getElementById("q1-res").className.indexOf("show") >= 0, "un message s'affiche après un clic sur Vérifier");
+  ok(d.getElementById("q1-res").textContent.indexOf("Complète toutes les lignes avant de vérifier : il en manque 5.") === 0,
+     "q1 incomplète (seule f1 remplie) : « il en manque 5 »");
+  egal(w.suivi.essais.q1, undefined, "q1 incomplète : aucun essai consommé");
+  ok(!d.getElementById("q1-r0").classList.contains("ok") && !d.getElementById("q1-r0").classList.contains("ko"), "q1 incomplète : aucune marque");
+  w.choisirType("f2", "FP");   // un type sans élément relié ne remplit pas la ligne
+  w.verifier("q1");
+  ok(d.getElementById("q1-res").textContent.indexOf("il en manque 5.") > 0 && w.suivi.essais.q1 === undefined,
+     "q1 : un type sans élément relié laisse la ligne incomplète");
+  w.verifier("q2");
+  ok(d.getElementById("q2-res").textContent.indexOf("il en manque 4.") > 0 && w.suivi.essais.q2 === undefined,
+     "q2 vide : « il en manque 4 », aucun essai");
+
+  [["f2","mains"], ["f3","eau"], ["f4","eau"], ["f5","lavabo"], ["f6","eau"]].forEach(function(a){
+    w.choisirFonction(a[0]); w.basculerEme(a[1]);
+    if (w.types[a[0]] !== "FP") w.choisirType(a[0], "FP");
+  });
+  egal(Object.keys(w.types).length + "/" + Object.keys(w.liens).length, "6/6", "les 6 lignes de la q1 sont remplies (f1 juste, les 5 autres fausses)");
+  var desc = d.getElementById("pv").getAttribute("aria-label");
+  ok(desc.indexOf("relie le robinet aux mains") >= 0 && desc.indexOf("relie le robinet au lavabo") >= 0 &&
+     desc.indexOf("relie le robinet à l'eau") >= 0 && !/à (le|les) /.test(desc), "pieuvre : formes contractées dans la description vocale (« aux mains », « au lavabo »)");
+  var traits = d.querySelectorAll("#pv path.pv-lien");
+  ok(w.getComputedStyle(traits[traits.length - 1]).strokeWidth === "5px" && w.getComputedStyle(traits[0]).strokeWidth === "3px",
+     "trait actif plus épais que les autres (feuille de style)");
+
+  w.verifier("q1");
+  ok(d.getElementById("q1-res").className.indexOf("show") >= 0 && d.getElementById("q1-res").textContent.indexOf("Complète") < 0, "q1 complète : la vérification se fait");
+  egal(w.suivi.essais.q1, 1, "q1 complète : un essai compté");
   ok(d.getElementById("fb-q1-1").textContent.indexOf("Corrigé") < 0, "1er essai : pas de corrigé");
   w.verifier("q1");
   ok(d.getElementById("fb-q1-1").textContent.indexOf("Corrigé") === 0, "2e essai : le corrigé s'affiche");
@@ -135,6 +174,17 @@ function testsInterface(w){
   egal(w.liens.f1, ["util","eau"], "aller-retour : éléments reliés restaurés");
   egal(d.getElementById("a6-s1").value, "capteur", "aller-retour : solution du FAST restaurée");
   egal(w.suivi.scores.q1, 1, "aller-retour : score figé conservé");
+
+  /* « Reprendre mon envoi » ne doit pas dégeler les scores : le suivi de l'envoi est fusionné avec le courant. */
+  w.appliquerEnvoi({ dateISO:"2026-09-01T10:00:00.000Z", ename:"", fields:{ _suivi:{ essais:{}, scores:{}, premiers:{} } } });
+  egal(w.suivi.scores.q1, 1, "reprise d'un envoi sans suivi : le score figé n'est pas effacé");
+  ok(w.suivi.essais.q1 >= 2, "reprise d'un envoi sans suivi : le nombre d'essais n'est pas remis à zéro");
+  w.appliquerEnvoi({ dateISO:"2026-09-02T10:00:00.000Z", ename:"",
+                     fields:{ _suivi:{ essais:{ q1:1, q2:3 }, scores:{ q1:5, q2:2 }, premiers:{ q1:4, q2:1 } } } });
+  egal(w.suivi.scores.q1, 1, "reprise : score figé courant conservé face à celui de l'envoi");
+  egal(w.suivi.scores.q2, 2, "reprise : score de l'envoi repris quand rien n'est figé ici");
+  egal([w.suivi.essais.q1, w.suivi.essais.q2], [2, 3], "reprise : essais = maximum par question");
+  egal([w.suivi.premiers.q1, w.suivi.premiers.q2], [1, 1], "reprise : 1er essai courant conservé, sinon celui de l'envoi");
   w.appliquerDonnees({ "a5-l2":"mains+pirate" });
   egal(w.liens.f2, ["mains"], "un élément inconnu venu du stockage est ignoré");
 
