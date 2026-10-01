@@ -17,6 +17,9 @@ sont dans un coffre chiffré par le mot de passe professeur.
       Google Drive si présent). Les anciens restent acceptés jusqu'à la date donnée.
   python outils/coffre.py nettoyer
       Après cette date : retire les anciennes empreintes.
+  python outils/coffre.py code --id eau56
+      Génère le code d'accès d'une séquence : empreinte dans index.html, code dans le
+      coffre (panneau « Codes d'accès »). Refuse un code qui se devine.
 
 Le mot de passe professeur est demandé au clavier, jamais affiché ni stocké.
 Le script s'arrête sans rien écrire si une ancre attendue manque.
@@ -215,6 +218,58 @@ def ajouter(texte, mdp_prof, compte):
     return texte, mdp
 
 
+def nouveau_code():
+    """Code d'accès aléatoire, facile à dicter : « BAKORI47 »."""
+    return (_syllabe() + _syllabe() + _syllabe()).upper() + "%02d" % secrets.randbelow(100)
+
+
+def _apparait(code, texte):
+    """Le code est-il écrit quelque part dans le texte, en mot entier, toute casse ?"""
+    return re.search(r"(?<![A-Za-z0-9])" + re.escape(code) + r"(?![A-Za-z0-9])", texte, re.I) is not None
+
+
+def poser_code(texte, mdp_prof, seq_id, code=None):
+    """Pose le code d'accès d'une séquence : empreinte dans SEQUENCES_DEF, code dans le
+    coffre (panneau « Codes d'accès »). Sans `code`, en génère un. -> (texte, code).
+    Refuse un code qui se devine : déjà écrit dans le site, ou égal au nom de la séquence."""
+    m = re.search(r"COFFRE: (\{[^\r\n]*\})", texte)
+    if not m:
+        raise ErreurCoffre("Pas de coffre : lancer d'abord « initialiser ».")
+    contenu = dechiffrer(json.loads(m.group(1)), mdp_prof)
+    if code is None:
+        code = nouveau_code()
+        while _apparait(code, texte):
+            code = nouveau_code()
+    code = code.strip().upper()
+    if not re.fullmatch(r"[A-Z0-9]{6,16}", code):
+        raise ErreurCoffre("Code invalide : 6 à 16 lettres sans accent ou chiffres.")
+    if _apparait(code, texte) or code == re.sub(r"[^A-Z0-9]", "", seq_id.upper()):
+        raise ErreurCoffre("Ce code se devine : il est déjà écrit dans le site, ou reprend le nom de la séquence.")
+    trouve = []
+
+    def poser(bloc):
+        def convertir(mo):
+            obj = mo.group(0)
+            if not re.search(r'id:"' + re.escape(seq_id) + r'"', obj):
+                return obj
+            c = re.search(r'code:"[^"]*"', obj)
+            if not c:
+                raise ErreurCoffre("Séquence sans champ code : " + seq_id)
+            trouve.append(seq_id)
+            return obj[:c.start()] + 'code:"' + empreinte_code(seq_id, code) + '"' + obj[c.end():]
+        return OBJET.sub(convertir, bloc)
+
+    texte = _transformer(texte, "var SEQUENCES_DEF = [", poser)
+    if len(trouve) != 1:
+        raise ErreurCoffre("Séquence introuvable dans SEQUENCES_DEF : " + seq_id)
+    contenu["codes"][seq_id] = code
+    m = re.search(r"COFFRE: (\{[^\r\n]*\})", texte)
+    texte = texte[:m.start(1)] + _coffre_json(chiffrer(contenu, mdp_prof)) + texte[m.end(1):]
+    if _apparait(code, texte):
+        raise ErreurCoffre("Contrôle final en échec : le code apparaît en clair.")
+    return texte, code
+
+
 def _champ(obj, nom):
     m = re.search(nom + r':"([^"]*)"', obj)
     return m.group(1) if m else ""
@@ -370,7 +425,7 @@ def main(argv=None):
         sys.stdout.reconfigure(errors="replace")
     p = argparse.ArgumentParser(description="Coffre des mots de passe du site Technologie.")
     sous = p.add_subparsers(dest="commande", required=True)
-    for nom in ("initialiser", "ajouter", "renouveler", "nettoyer"):
+    for nom in ("initialiser", "ajouter", "renouveler", "nettoyer", "code"):
         s = sous.add_parser(nom)
         s.add_argument("--fichier", default=INDEX)
         s.add_argument("--sortie", help="par défaut, réécrit --fichier")
@@ -387,6 +442,8 @@ def main(argv=None):
             s.add_argument("--classe", default="")
             s.add_argument("--enseignant", action="store_true")
             s.add_argument("--classes", default="", help="collègue : classes suivies, séparées par des virgules")
+        if nom == "code":
+            s.add_argument("--id", required=True, help="identifiant de la séquence dans SEQUENCES_DEF")
     a = p.parse_args(argv)
     sortie = a.sortie or a.fichier
     if a.mdp_env and os.path.abspath(sortie) == os.path.abspath(INDEX):
@@ -409,6 +466,11 @@ def main(argv=None):
         elif a.commande == "nettoyer":
             texte = nettoyer(texte)
             message = "Anciennes empreintes retirées."
+        elif a.commande == "code":
+            texte, code = poser_code(texte, _mot_de_passe_prof(a, False), a.id)
+            message = ("Code d'accès de « %s » : %s — à communiquer aux élèves. Il reste visible dans le "
+                       "panneau « Codes d'accès » du professeur ; seule son empreinte est écrite dans index.html."
+                       % (a.id, code))
         else:
             compte = {"id": a.id, "p": a.prenom, "n": a.nom, "c": a.classe, "enseignant": a.enseignant,
                       "classes": [c.strip() for c in a.classes.split(",") if c.strip()]}
