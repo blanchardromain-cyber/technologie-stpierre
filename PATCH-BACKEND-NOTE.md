@@ -139,7 +139,17 @@ Chercher `delete obj.fields_json;` et coller **juste en dessous** :
       try { obj.adjustedPts = JSON.parse(obj.adjustedPts_json); } catch (er) {}
     }
     delete obj.adjustedPts_json;
+    // NOTE — correction vide = cle ABSENTE, comme avant ces colonnes : la page teste
+    // « adjustedScore !== undefined » ; un "" la faisait planter (p11x1Fmt("")).
+    NOTE_PROF.forEach(function (k) { if (obj[k] === '') delete obj[k]; });
 ```
+
+> **Incident du 1er octobre 2026** — la première version déployée de ce patch n'avait
+> pas la dernière ligne. Une copie non notée revenait alors avec `adjustedScore: ""`. La
+> page professeur, qui teste « `!== undefined` », la croyait notée : `p11x1Fmt("")`
+> plantait et le tableau des soumissions restait vide, avec des compteurs justes. Une
+> correction vide doit rester **absente** de la copie, comme avant l'ajout des colonnes.
+> Le contrôle 7b du test le vérifie avec le vrai `p11x1Fmt` d'`index.html`.
 
 ### 6. `diagnosticColonnes` — contrôle des en-têtes depuis l'éditeur
 
@@ -218,9 +228,10 @@ dans ce document. Aucun accès réseau.
 Il vérifie aussi `diagnosticColonnes()`, et que le secret du `.gs` est égal à
 `SYNC_SECRET` d'`index.html`, sans afficher sa valeur.
 
-Sur le backend d'avant le patch, 21 contrôles sur 43 passent : les échecs sont les
+Sur le backend d'avant le patch, 27 contrôles sur 45 passent : les échecs sont les
 symptômes décrits plus haut (rattrapage compris, faute de colonne où écrire) et
-l'absence du diagnostic. Après le patch, les 43 passent.
+l'absence du diagnostic. La première version déployée, sans la ligne de l'incident,
+plante sur le contrôle 7b (38/45). La version actuelle passe les 45.
 
 ## Limites connues
 
