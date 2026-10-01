@@ -1121,7 +1121,8 @@ function appliquerEnvoi(sub){
     $("inp-nom").value = bouts.join(" ");
   }
   if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^4/, "").toUpperCase();
-  appliquerDonnees(sub.fields, sub.qq, sub.quiz);
+  var fe = sub.fields || {};
+  appliquerDonnees(sub.fields, fe._qq || sub.qq, fe._quiz || sub.quiz);
   var ban = $("reprise"); if (ban) ban.hidden = true;
   updateProgress(); saveDraft();
   flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
@@ -1378,7 +1379,9 @@ function makeSub(){
     score: countFilled(),
     qcmTot: totalFields(),
     open: buildOpenSummary(state),
-    fields: state.fields,
+    /* Le classeur ne garde que fields (colonne fields_json) : les réponses QQOQCP et du quiz IP y voyagent,
+       sinon une copie relue depuis le classeur (autre poste, reprise) les perdait. */
+    fields: Object.assign({}, state.fields, { _qq: state.qq, _quiz: state.quiz }),
     qq: state.qq,
     quiz: state.quiz,
     date: new Date().toLocaleDateString("fr-FR"),
