@@ -97,6 +97,55 @@ function testsUnitaires(E){
   egal(E.liensCle(["eau","util"]), "util+eau", "liensCle : ordre de la pieuvre");
   egal(E.liensCle(["inconnu"]), "", "liensCle : identifiant inconnu ignoré");
 }
+
+function testsInterface(w){
+  var d = w.document;
+  ok(w.formVierge(), "fiche vierge au chargement (ni identité, ni brouillon)");
+  egal(w.totalFields(), 27, "27 réponses au total");
+  ok(d.querySelectorAll("#emebar button").length === 7, "7 boutons d'éléments du milieu extérieur");
+
+  w.choisirFonction("f1"); w.basculerEme("util"); w.basculerEme("eau");
+  egal(w.liens.f1, ["util","eau"], "f1 reliée à l'utilisateur et à l'eau");
+  w.basculerEme("mains");
+  egal(w.liens.f1.length, 2, "un 3e élément est refusé");
+  egal(d.querySelectorAll("#pv path.pv-lien").length, 1, "un trait dessiné sur la pieuvre");
+  ok(/relie l'utilisateur et l'eau/.test(d.getElementById("pv").getAttribute("aria-label")), "la pieuvre se décrit pour la lecture vocale");
+  w.choisirType("f1", "FP");
+  egal(w.types.f1, "FP", "type FP choisi");
+
+  w.verifier("q1");
+  ok(d.getElementById("q1-res").className.indexOf("show") >= 0, "un message s'affiche après la vérification");
+  ok(d.getElementById("fb-q1-1").textContent.indexOf("Corrigé") < 0, "1er essai : pas de corrigé");
+  w.verifier("q1");
+  ok(d.getElementById("fb-q1-1").textContent.indexOf("Corrigé") === 0, "2e essai : le corrigé s'affiche");
+  egal(w.suivi.scores.q1, 1, "types : score figé à 1/6 au 2e essai");
+
+  d.getElementById("a5-n3").value = "IP65";
+  d.getElementById("a6-s1").value = "capteur";
+  var c = w.collect();
+  egal(c.fields["a5-t1"], "FP", "collect : type de f1");
+  egal(c.fields["a5-l1"], "util+eau", "collect : éléments reliés de f1");
+  egal(c.fields["a5-n3"], "IP65", "collect : niveau IP");
+  egal(c.fields._suivi.scores.q1, 1, "collect : score figé transmis");
+  egal(c.fields._suivi.verdicts.q2, [false,false,true,false], "collect : verdicts actuels des niveaux");
+
+  w.appliquerDonnees({});
+  ok(w.formVierge(), "fiche vidée par appliquerDonnees({})");
+  w.appliquerDonnees(c.fields);
+  egal(w.liens.f1, ["util","eau"], "aller-retour : éléments reliés restaurés");
+  egal(d.getElementById("a6-s1").value, "capteur", "aller-retour : solution du FAST restaurée");
+  egal(w.suivi.scores.q1, 1, "aller-retour : score figé conservé");
+  w.appliquerDonnees({ "a5-l2":"mains+pirate" });
+  egal(w.liens.f2, ["mains"], "un élément inconnu venu du stockage est ignoré");
+
+  var resume = w.buildOpenSummary(c);
+  ok(resume.charAt(0) !== "=" && resume.indexOf("A5 · 1. La pieuvre") >= 0, "résumé professeur lisible, sans « = » en tête (règle 3)");
+  var sub = w.makeSub();
+  ok(sub.cap === "eau56" && sub.qcmTot === 27 && sub.fields && sub.fields._suivi, "makeSub : cap, total et suivi dans fields");
+  ok(sub.qq === undefined && sub.quiz === undefined, "makeSub : rien hors de fields (le backend ne garde que fields)");
+  egal(w.urlEcriture(), "", "page locale : écriture en production refusée (règle 4)");
+  w.appliquerDonnees({});
+}
 </script>
 </body>
 </html>
