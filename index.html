@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-02a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-02b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6492,6 +6492,21 @@ function launch() {
   }
 }
 
+/* Une copie validée, refusée ou verrouillée n'a pu recevoir cette marque que du
+   classeur. Si le classeur ne l'a plus (copie supprimée par le professeur), le poste
+   de l'élève la gardait pour toujours : carte « validée », consultation fermée, aucun
+   renvoi possible. Une copie en attente reste, elle peut être encore en route.
+   Appelée seulement quand le classeur a répondu avec au moins une copie de l'élève :
+   une réponse vide (échec, classeur vidé) ne doit rien effacer. */
+function copiesOrphelines(local, own, eid) {
+  var auClasseur = {};
+  own.forEach(function (c) { auClasseur[c.cap] = true; });
+  return local.filter(function (s) {
+    if (s.eid !== eid || auClasseur[s.cap]) return false;
+    return s.status === "validated" || s.status === "rejected" || s.locked === true;
+  });
+}
+
 /* 2c — Au login élève, on pull le cloud, on compare avec le dernier statut connu,
    et on toast pour chaque capsule dont le statut a changé vers validated/rejected. */
 function checkStudentStatusChanges() {
@@ -6505,9 +6520,18 @@ function checkStudentStatusChanges() {
   cloudSync.fetchOwn(user.id, function(ownSubs) {
     if (!ownSubs || !ownSubs.length) return;
 
-    // ── (1) Merge cloud → localStorage.subs (le prof peut avoir validé/refusé/noté depuis) ──
+    // ── (0) Copies validées ou verrouillées que le classeur n'a plus ──
     var local = getSubs();
-    var changed = false;
+    var orphelines = copiesOrphelines(local, ownSubs, user.id);
+    var changed = orphelines.length > 0;
+    if (changed) {
+      local = local.filter(function (s) { return orphelines.indexOf(s) < 0; });
+      orphelines.forEach(function (s) {
+        toastQ("« " + (s.caplbl || s.cap) + " » n'est plus chez ton professeur : tu peux l'envoyer à nouveau.", 5000);
+      });
+    }
+
+    // ── (1) Merge cloud → localStorage.subs (le prof peut avoir validé/refusé/noté depuis) ──
     for (var c = 0; c < ownSubs.length; c++) {
       var cs = ownSubs[c];
       var idx = -1;
