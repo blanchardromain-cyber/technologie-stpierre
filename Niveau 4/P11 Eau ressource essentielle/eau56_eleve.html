@@ -221,6 +221,15 @@
     .bac-haut{grid-template-columns:1fr}
     .bac-liens{display:none}
   }
+  /* Petit écran (téléphone, ou téléphone tourné) : l'en-tête, la barre d'outils et la
+     barre d'envoi collaient à l'écran et en couvraient toute la hauteur — il ne restait
+     rien pour lire la fiche. Elles défilent désormais avec la page ; la barre d'envoi
+     se place en fin de fiche. */
+  @media (max-width:640px), (max-height:520px){
+    header, .pbar-wrap{position:static}
+    .sendbar{position:static;box-shadow:none}
+    main{padding-bottom:16px}
+  }
   @media print{
     header,.pbar-wrap,.sendbar,.micbtn,.btnck,.toolbtn{display:none!important}
     body{background:#fff}
@@ -439,7 +448,7 @@
             <tr><td class="lead">Pression d'utilisation</td><td>1 à 5 bar</td></tr>
             <tr><td class="lead">Zone de détection</td><td>de 0 à 15 cm sous le bec</td></tr>
             <tr><td class="lead">Indice de protection</td><td>IP65</td></tr>
-            <tr><td class="lead">Fonctionnement</td><td>l'écoulement s'arrête dès le retrait des mains</td></tr>
+            <tr><td class="lead">Arrêt de l'écoulement</td><td>immédiat (0 s) après le retrait des mains</td></tr>
             <tr><td class="lead">Alimentation</td><td>turbine + générateur entraînés par l'eau, sans pile</td></tr>
             <tr><td class="lead">Matériau</td><td>laiton chromé</td></tr>
             <tr><td class="lead">Garantie</td><td>5 ans</td></tr>
@@ -543,8 +552,9 @@
       <div class="result" id="fast-res" aria-live="polite"></div>
 
       <h4 class="sous">Les chaînes d'information et d'énergie</h4>
-      <div class="lesson">Les quatre solutions du FAST sont aussi des maillons des <strong>chaînes d'information et d'énergie</strong> du robinet.
-        Place chacune dans le bon bloc. Les blocs grisés n'ont pas de solution étudiée dans ce FAST.</div>
+      <div class="lesson">Les solutions du FAST sont aussi des maillons des <strong>chaînes d'information et d'énergie</strong> du robinet.
+        Dans ce robinet sans pile, l'énergie arrive avec l'eau : un maillon de plus entre en jeu, la <strong>tuyauterie</strong>.
+        Place chaque solution dans le bon bloc. Les blocs grisés n'ont pas de solution étudiée dans ce FAST.</div>
       <div class="chaine info">
         <div class="ch-t">Chaîne d'information</div>
         <div class="bloc" id="bl-a6-c-acquerir"><span class="verbe">ACQUÉRIR</span><select id="a6-c-acquerir" aria-label="Solution pour ACQUÉRIR"></select><span class="fb" id="fb-a6-c-acquerir"></span></div>
@@ -557,7 +567,7 @@
         <div class="ch-t">Chaîne d'énergie</div>
         <div class="bloc" id="bl-a6-c-alimenter"><span class="verbe">ALIMENTER</span><select id="a6-c-alimenter" aria-label="Solution pour ALIMENTER"></select><span class="fb" id="fb-a6-c-alimenter"></span></div>
         <span class="fleche" aria-hidden="true">&#x2192;</span>
-        <div class="bloc vide"><span class="verbe">DISTRIBUER</span>pas de solution étudiée dans ce FAST</div>
+        <div class="bloc" id="bl-a6-c-distribuer"><span class="verbe">DISTRIBUER</span><select id="a6-c-distribuer" aria-label="Solution pour DISTRIBUER"></select><span class="fb" id="fb-a6-c-distribuer"></span></div>
         <span class="fleche" aria-hidden="true">&#x2192;</span>
         <div class="bloc" id="bl-a6-c-convertir"><span class="verbe">CONVERTIR</span><select id="a6-c-convertir" aria-label="Solution pour CONVERTIR"></select><span class="fb" id="fb-a6-c-convertir"></span></div>
         <span class="fleche" aria-hidden="true">&#x2192;</span>
@@ -635,8 +645,8 @@ var EAU56 = (function(){
       corrige:"0 à ≈ 15 cm", aide:"Cherche jusqu'à quelle distance le robinet détecte les mains : valeur ET unité." },
     { id:"a5-n3", rep:"FC2", fonction:"Résister à l'environnement humide", critere:"Indice IP",
       corrige:"IP65", aide:"Un indice de protection s'écrit IP suivi de deux chiffres : cherche-le dans le document." },
-    { id:"a5-n4", rep:"FC3", fonction:"Limiter la consommation d'eau", critere:"Volume / temps",
-      corrige:"Écoulement coupé dès le retrait des mains", aide:"Lis la ligne « Fonctionnement » : à quel moment l'eau s'arrête-t-elle ?" }
+    { id:"a5-n4", rep:"FC3", fonction:"Limiter la consommation d'eau", critere:"Temps d'arrêt après le retrait des mains",
+      corrige:"Immédiat (0 s)", aide:"Lis la ligne « Arrêt de l'écoulement » du document : combien de temps l'eau coule-t-elle encore une fois les mains retirées ?" }
   ];
   var SOLUTIONS = [
     { v:"capteur", t:"capteur infrarouge" },
@@ -644,6 +654,8 @@ var EAU56 = (function(){
     { v:"vanne",   t:"vanne (électrovanne)" },
     { v:"turbine", t:"turbine + générateur" }
   ];
+  /* Les chaînes ajoutent un maillon absent du FAST : l'énergie arrive avec l'eau, par la tuyauterie. */
+  var SOLUTIONS_CHAINES = SOLUTIONS.concat([ { v:"tuyauterie", t:"tuyauterie" } ]);
   var FAST = [
     { id:"a6-s1", ft:"Détecter la présence des mains",            att:"capteur", corrige:"Capteur infrarouge",
       aide:"Quel composant « voit » les mains ?" },
@@ -657,8 +669,9 @@ var EAU56 = (function(){
   var CHAINES = [
     { id:"a6-c-acquerir",  verbe:"ACQUÉRIR",  att:"capteur", aide:"Acquérir, c'est prendre une information : quel composant détecte ?" },
     { id:"a6-c-traiter",   verbe:"TRAITER",   att:"carte",   aide:"Traiter, c'est décider à partir de l'information reçue." },
-    { id:"a6-c-alimenter", verbe:"ALIMENTER", att:"turbine", aide:"Alimenter, c'est fournir l'énergie électrique au système." },
-    { id:"a6-c-convertir", verbe:"CONVERTIR", att:"vanne",   aide:"Convertir, c'est transformer l'énergie électrique en mouvement : quel composant ouvre l'arrivée d'eau ?" }
+    { id:"a6-c-alimenter",  verbe:"ALIMENTER",  att:"tuyauterie", aide:"Alimenter, c'est amener l'énergie dans le système : ici, elle arrive avec l'eau sous pression. Par où l'eau arrive-t-elle ?" },
+    { id:"a6-c-distribuer", verbe:"DISTRIBUER", att:"vanne",      aide:"Distribuer, c'est laisser passer ou bloquer l'énergie vers la suite : quel composant ouvre ou ferme l'arrivée d'eau ?" },
+    { id:"a6-c-convertir",  verbe:"CONVERTIR",  att:"turbine",    aide:"Convertir, c'est transformer une énergie en une autre : quel composant transforme l'énergie de l'eau qui coule en énergie électrique ?" }
   ];
   var QUIZ = [
     { id:"a6-quiz1", q:"Lu de droite à gauche, le diagramme FAST répond à la question…", att:"pourquoi" },
@@ -679,12 +692,23 @@ var EAU56 = (function(){
     "a5-n1": function(v){ return /(^|[^0-9])2 ?l(itres?)?( par)? ?min/.test(norm(v)); },
     "a5-n2": function(v){ return /(^|[^0-9])15 ?(cm|centimetres?)( |$)/.test(norm(v)); },
     "a5-n3": function(v){ return /(^|[^a-z0-9])ip ?65( |$)/.test(norm(v)); },
+    /* FC3 : le temps d'arrêt après le retrait des mains est nul (« immédiat », « 0 s »). */
     "a5-n4": function(v){
       var t = norm(v);
-      return /(^| )(coup|arret|stop|ferm|cess)/.test(t) && /(retir|retrait|enlev|eloign|sort|part)/.test(t) &&
-             /main/.test(t) && !/ pas( |$)| jamais( |$)| plus de /.test(t);
+      return (/(immediat|instantan|tout de suite|aussitot|sans delai)/.test(t) || /(^|[^0-9])0 ?(s|sec|secondes?)( |$)/.test(t)) &&
+             !/(^| )pas( |$)| jamais( |$)/.test(t);
     }
   };
+  /* Mélange reproductible : une même graine donne toujours le même ordre. */
+  function melanger(tab, graine){
+    var a = tab.slice(), g = Math.abs(graine) % 233280;
+    for (var i = a.length - 1; i > 0; i--){
+      g = (g * 9301 + 49297) % 233280;
+      var j = Math.floor(g / 233280 * (i + 1));
+      var x = a[i]; a[i] = a[j]; a[j] = x;
+    }
+    return a;
+  }
   /* Éléments reliés, dans l'ordre de la pieuvre : l'ordre des clics ne compte pas. */
   function liensCle(liste){
     liste = liste || [];
@@ -712,9 +736,9 @@ var EAU56 = (function(){
     if (!fige && (montrer || juste === total)) suivi.scores[q] = juste;
     return { essai: suivi.essais[q], montrer: montrer, juste: juste, total: total };
   }
-  return { EME:EME, FONCTIONS:FONCTIONS, NIVEAUX:NIVEAUX, SOLUTIONS:SOLUTIONS, FAST:FAST, CHAINES:CHAINES,
-           QUIZ:QUIZ, QUIZ_OPTS:QUIZ_OPTS, TRI:TRI, norm:norm, liensCle:liensCle,
-           verdictsQ1:verdictsQ1, verdictsNiveaux:verdictsNiveaux, verdictsListe:verdictsListe,
+  return { EME:EME, FONCTIONS:FONCTIONS, NIVEAUX:NIVEAUX, SOLUTIONS:SOLUTIONS, SOLUTIONS_CHAINES:SOLUTIONS_CHAINES,
+           FAST:FAST, CHAINES:CHAINES, QUIZ:QUIZ, QUIZ_OPTS:QUIZ_OPTS, TRI:TRI, norm:norm, liensCle:liensCle,
+           melanger:melanger, verdictsQ1:verdictsQ1, verdictsNiveaux:verdictsNiveaux, verdictsListe:verdictsListe,
            compter:compter, enregistrerEssai:enregistrerEssai };
 })();
 /* LOGIQUE-EAU56-FIN */
@@ -736,7 +760,7 @@ var QUESTIONS = {
   q1:      { res:"q1-res",      total:6, nom:"Types FP/FC" },
   q2:      { res:"q2-res",      total:4, nom:"Niveaux du CDCF" },
   fast:    { res:"fast-res",    total:4, nom:"FAST" },
-  chaines: { res:"chaines-res", total:4, nom:"Chaînes" }
+  chaines: { res:"chaines-res", total:5, nom:"Chaînes" }
 };
 
 /* ════════════ OUTILS ════════════ */
@@ -759,7 +783,7 @@ function nomEme(id){
 }
 function nomEmeMin(id){ var n = nomEme(id); return n.charAt(0).toLowerCase() + n.slice(1); }
 function nomSolution(v){
-  for (var i=0;i<EAU56.SOLUTIONS.length;i++) if (EAU56.SOLUTIONS[i].v === v) return EAU56.SOLUTIONS[i].t;
+  for (var i=0;i<EAU56.SOLUTIONS_CHAINES.length;i++) if (EAU56.SOLUTIONS_CHAINES[i].v === v) return EAU56.SOLUTIONS_CHAINES[i].t;
   return v;
 }
 
@@ -1017,22 +1041,36 @@ function verifierQuiz(){
 }
 
 /* ════════════ A6 · 2 — FAST ET CHAÎNES ════════════ */
-function optionsSolutions(){
+/* Les propositions sont présentées dans un ordre tiré au sort : la graine dépend de
+   l'élève connecté (même ordre pour lui à chaque ouverture, pas le même que son voisin),
+   ou du hasard s'il n'est pas identifié. Les réponses sont enregistrées par valeur :
+   l'ordre affiché n'y change rien. */
+function grainePropositions(){
+  var s = String(USER.id || ""), g = 0;
+  if (!s) return Math.floor(Math.random() * 233280);
+  for (var i=0;i<s.length;i++) g = (g * 31 + s.charCodeAt(i)) % 233280;
+  return g;
+}
+function optionsSolutions(liste, graine){
   var h = '<option value="">— choisir —</option>';
-  for (var i=0;i<EAU56.SOLUTIONS.length;i++) h += '<option value="' + EAU56.SOLUTIONS[i].v + '">' + esc(EAU56.SOLUTIONS[i].t) + '</option>';
+  var l = EAU56.melanger(liste, graine);
+  for (var i=0;i<l.length;i++) h += '<option value="' + l[i].v + '">' + esc(l[i].t) + '</option>';
   return h;
 }
+/* Appelée après readPrefill() : la graine dépend de l'élève connecté. */
 function construireFast(){
+  var graine = grainePropositions();
+  var optFast = optionsSolutions(EAU56.SOLUTIONS, graine), optChaines = optionsSolutions(EAU56.SOLUTIONS_CHAINES, graine + 1);
   var h = '<div class="fh">Fonction d\'usage</div><div class="fh">Fonction technique</div><div class="fh">Solution technique</div>' +
           '<div class="fu">Distribuer de l\'eau sans contact pour économiser l\'eau</div>';
   for (var i=0;i<EAU56.FAST.length;i++){
     var d = EAU56.FAST[i];
     h += '<div class="ft">' + esc(d.ft) + '</div>' +
-         '<div class="st" id="st-' + i + '"><select id="' + d.id + '" aria-label="Solution technique pour : ' + esc(d.ft) + '">' + optionsSolutions() + '</select>' +
+         '<div class="st" id="st-' + i + '"><select id="' + d.id + '" aria-label="Solution technique pour : ' + esc(d.ft) + '">' + optFast + '</select>' +
          '<span class="fb" id="fb-fast-' + i + '"></span></div>';
   }
   $("fast").innerHTML = h;
-  for (var k=0;k<EAU56.CHAINES.length;k++){ var s = $(EAU56.CHAINES[k].id); if (s) s.innerHTML = optionsSolutions(); }
+  for (var k=0;k<EAU56.CHAINES.length;k++){ var s = $(EAU56.CHAINES[k].id); if (s) s.innerHTML = optChaines; }
 }
 
 /* ════════════ VÉRIFICATION EN DEUX ESSAIS ════════════ */
@@ -1563,8 +1601,9 @@ function calerBarreOutils(){
 }
 function initActivite(){
   calerBarreOutils();
-  construireEmebar(); construireQ1(); construireTri(); construireQ2(); construireQuiz(); construireFast();
+  construireEmebar(); construireQ1(); construireTri(); construireQ2(); construireQuiz();
   readPrefill();
+  construireFast();
   controlerVerrou();
   restoreDraft();
   wireFields();
