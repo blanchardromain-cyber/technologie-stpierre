@@ -55,6 +55,7 @@ Pour retirer un accès, supprime sa ligne.
 | Collègue | Identifiant | Classes |
 |---|---|---|
 | Régis LUCAS | `regis.lucas` | 5B · 5C · 5D · 5E · 5F |
+| Mélanie BÉNÉTEAU (stagiaire, tutorat) | `melanie.beneteau` | aucune (consultation des capsules) |
 
 Les mots de passe ne sont écrits nulle part en clair : tu les retrouves dans l'onglet
 **Configuration**, une fois connecté.
