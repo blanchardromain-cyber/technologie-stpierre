@@ -6590,6 +6590,10 @@ function checkStudentStatusChanges() {
 }
 function doLogout() {
   user = null; isProf = false; isCollegue = false; ans = {}; curQ = 0; stopProfAutoRefresh(); COFFRE = null;
+  /* Une demande de clé refusée (Annuler) par le compte précédent ne doit pas
+     empêcher la suivante : sans cela, Régis connecté après le professeur n'était
+     jamais invité à saisir sa clé. */
+  _cleProfDemandee = false;
   document.body.classList.remove("mode-collegue");
   majClasseProf();
   /* Rien de la session précédente ne doit rester à l'écran pour la suivante. */
