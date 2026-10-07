@@ -217,6 +217,13 @@ function doGet(e) {
     }
     // VERROU — Liste complete reservee au professeur des que PROF_KEY existe.
     var cleProf = PropertiesService.getScriptProperties().getProperty('PROF_KEY');
+    // COLLEGUES — la cle d'un collegue n'ouvre que les copies de ses classes.
+    var collegue = (cleProf && p.key && p.key !== cleProf) ? _collegueParCle(p.key) : null;
+    if (collegue) {
+      return _json({ ok: true, subs: _toutesLesSubs().filter(function (o) {
+        return collegue.classes.indexOf(String(o.ecls).replace(/\s/g, '').toUpperCase()) >= 0;
+      }) });
+    }
     if (cleProf && p.key !== cleProf) {
       return _json({ ok: false, error: p.key ? 'bad_prof_key' : 'prof_key_required' });
     }
@@ -373,6 +380,28 @@ function _capsArmees() {
 function _cleProfOk(fournie) {
   var cle = PropertiesService.getScriptProperties().getProperty('PROF_KEY');
   return !cle || fournie === cle;
+}
+// COLLEGUES — Une propriete de script par collegue : COLLEGUE_<identifiant> =
+// {"cle":"…","classes":["5B","5C"]}. Les classes sont tenues ici : la page ne peut pas
+// en demander d'autres. Entree illisible, sans classes ou a cle de moins de 12
+// caracteres : ignoree et signalee au journal, jamais acceptee.
+function _collegueParCle(fournie) {
+  var props = PropertiesService.getScriptProperties().getProperties();
+  for (var nom in props) {
+    if (nom.indexOf('COLLEGUE_') !== 0) continue;
+    var e = null;
+    try { e = JSON.parse(props[nom]); } catch (er) {}
+    if (!e || typeof e.cle !== 'string' || e.cle.length < 12 || !Array.isArray(e.classes) || !e.classes.length) {
+      console.log('Entree ignoree (illisible, cle courte ou sans classes) : ' + nom);
+      continue;
+    }
+    if (e.cle === String(fournie)) {
+      return { id: nom.slice('COLLEGUE_'.length), classes: e.classes.map(function (c) {
+        return String(c).replace(/\s/g, '').toUpperCase();
+      }) };
+    }
+  }
+  return null;
 }
 // Pose le verrou sur une ligne EN COURS DE CRÉATION si sa capsule est armée.
 function _naissanceVerrouillee(row, cap) {
