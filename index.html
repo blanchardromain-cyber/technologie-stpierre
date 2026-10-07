@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-07a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-07b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4867,7 +4867,7 @@ body.est-prof .prof-only{display:block}
             <tr><td class="k" rowspan="4">Chaîne d'énergie</td><td>ALIMENTER</td><td class="ok">Tuyauterie (l'énergie arrive avec l'eau sous pression)</td></tr>
             <tr><td>DISTRIBUER</td><td class="ok">Vanne (électrovanne)</td></tr>
             <tr><td>CONVERTIR</td><td class="ok">Turbine + générateur (entraînés par l'eau)</td></tr>
-            <tr><td>TRANSMETTRE</td><td><em>pas de solution étudiée dans ce FAST</em></td></tr>
+            <tr><td>TRANSMETTRE</td><td class="ok">Fils électriques (l'électricité produite rejoint la micro-batterie)</td></tr>
           </table>
           </div>
 
@@ -7630,7 +7630,7 @@ var EAU56_NIVEAUX = [
   ["a5-n3", "FC2 — Indice IP",      "IP65",                                      "Niveau IP"],
   ["a5-n4", "FC3 — Temps d'arrêt après le retrait des mains", "Immédiat (0 s)", "Niveau temps arret"]
 ];
-var EAU56_SOL_LB = { capteur:"Capteur infrarouge", carte:"Carte électronique", vanne:"Vanne (électrovanne)", turbine:"Turbine + générateur", tuyauterie:"Tuyauterie" };
+var EAU56_SOL_LB = { capteur:"Capteur infrarouge", carte:"Carte électronique", vanne:"Vanne (électrovanne)", turbine:"Turbine + générateur", tuyauterie:"Tuyauterie", fils:"Fils électriques" };
 var EAU56_FAST = [
   ["a6-s1", "Détecter la présence des mains",            "Capteur infrarouge",                         "FAST detecter"],
   ["a6-s2", "Traiter l'information et commander",        "Carte électronique (microcontrôleur)",       "FAST traiter"],
@@ -7642,9 +7642,17 @@ var EAU56_CHAINES = [
   ["a6-c-traiter",   "TRAITER (chaîne d'information)",  "Carte électronique (microcontrôleur)", "Chaine traiter"],
   ["a6-c-alimenter",  "ALIMENTER (chaîne d'énergie)",   "Tuyauterie",                                 "Chaine alimenter"],
   ["a6-c-distribuer", "DISTRIBUER (chaîne d'énergie)",  "Vanne (électrovanne)",                       "Chaine distribuer"],
-  ["a6-c-convertir",  "CONVERTIR (chaîne d'énergie)",   "Turbine + générateur (entraînés par l'eau)", "Chaine convertir"]
+  ["a6-c-convertir",  "CONVERTIR (chaîne d'énergie)",   "Turbine + générateur (entraînés par l'eau)", "Chaine convertir"],
+  ["a6-c-transmettre", "TRANSMETTRE (chaîne d'énergie)", "Fils électriques (vers la micro-batterie)", "Chaine transmettre"]
 ];
-var EAU56_PARTIES = [ ["q1","Types FP/FC",6], ["q2","Niveaux du CDCF",4], ["fast","FAST",4], ["chaines","Chaînes",5] ];
+/* Chaînes : 6 points depuis le 7 octobre 2026 (TRANSMETTRE ajouté). Une copie plus ancienne garde son maximum
+   d'origine, déduit du nombre de verdicts qu'elle a envoyés : un 5/5 ne devient pas 5/6. */
+var EAU56_PARTIES = [ ["q1","Types FP/FC",6], ["q2","Niveaux du CDCF",4], ["fast","FAST",4], ["chaines","Chaînes",6] ];
+function eau56Max(suivi, cle, defaut) {
+  var v = suivi.verdicts[cle];
+  var n = v ? Object.keys(v).length : 0;
+  return n || defaut;
+}
 var EAU56_QUIZ_LB = { pourquoi:"« Pourquoi ? »", comment:"« Comment ? »", quand:"« Quand ? »" };
 
 function eau56Suivi(f) {
@@ -7678,7 +7686,7 @@ function buildEau56ModalHTML(sub) {
   var html = '<div style="background:#D8F0FB;border:1px solid #9BD6EF;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px">' +
     '<strong>&#x1F419; ' + esc(sub.ename || '') + '</strong> — Classe ' + esc(sub.ecls || '') + '</div>';
   html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">';
-  for (i = 0; i < EAU56_PARTIES.length; i++) html += chip(EAU56_PARTIES[i][1] + " : " + eau56Score(s, EAU56_PARTIES[i][0], EAU56_PARTIES[i][2]));
+  for (i = 0; i < EAU56_PARTIES.length; i++) html += chip(EAU56_PARTIES[i][1] + " : " + eau56Score(s, EAU56_PARTIES[i][0], eau56Max(s, EAU56_PARTIES[i][0], EAU56_PARTIES[i][2])));
   html += '</div><div style="font-size:11.5px;color:var(--td);margin-bottom:10px">Score figé au 2<sup>e</sup> essai (ou dès un 1<sup>er</sup> essai sans faute). Les ✅ / ❌ portent sur les réponses envoyées.</div>';
 
   html += titre("A5 — 1. LA PIEUVRE : TYPE DES FONCTIONS");
@@ -7692,7 +7700,10 @@ function buildEau56ModalHTML(sub) {
   html += titre("A6 — 2. LE FAST DU ROBINET AUTOMATIQUE");
   for (i = 0; i < EAU56_FAST.length; i++) html += row(EAU56_FAST[i][1], lib(EAU56_SOL_LB, f[EAU56_FAST[i][0]], ""), EAU56_FAST[i][2], flag("fast", i));
   html += titre("A6 — CHAÎNES D'INFORMATION ET D'ÉNERGIE");
-  for (i = 0; i < EAU56_CHAINES.length; i++) html += row(EAU56_CHAINES[i][1], lib(EAU56_SOL_LB, f[EAU56_CHAINES[i][0]], ""), EAU56_CHAINES[i][2], flag("chaines", i));
+  for (i = 0; i < EAU56_CHAINES.length; i++) {
+    if (i >= eau56Max(s, "chaines", EAU56_CHAINES.length)) break;   // copie antérieure à l'ajout de TRANSMETTRE
+    html += row(EAU56_CHAINES[i][1], lib(EAU56_SOL_LB, f[EAU56_CHAINES[i][0]], ""), EAU56_CHAINES[i][2], flag("chaines", i));
+  }
   var qz = ["a6-quiz1", "a6-quiz2", "a6-quiz3"].map(function(k){ return f[k] ? lib(EAU56_QUIZ_LB, f[k], f[k]) : "—"; });
   html += titre("A6 — 1. LIRE UN FAST (ENTRAÎNEMENT, NON COMPTÉ)");
   html += '<div style="font-size:12.5px;color:var(--td)">Droite → gauche : ' + esc(qz[0]) + ' · Gauche → droite : ' + esc(qz[1]) + ' · Verticale : ' + esc(qz[2]) + '</div>';
@@ -9919,7 +9930,7 @@ function ficheScoreTexte(sub) {
     var q3 = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
     return n2.done + "/" + n2.total + " champs" + (q3 ? " (Q3 ✓)" : "") + st;
   }
-  var totaux = { eau4e:49, eau34:26, eau56:28, reseau5e:24, filius5e:21, maison5e:16 };
+  var totaux = { eau4e:49, eau34:26, eau56:29, reseau5e:24, filius5e:21, maison5e:16 };
   if (totaux[sub.cap]) return (sub.score !== undefined ? sub.score : 0) + "/" + (sub.qcmTot || totaux[sub.cap]) + " réponses" + st;
   if (sub.adjustedScore !== undefined) return "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + (sub.bareme || sub.qcmTot || 20) + st;
   return "Score QCM : " + sub.score + "/" + sub.qcmTot + st;
@@ -10388,15 +10399,16 @@ function _buildCapsuleCSV(cap, filtered) {
       tab.forEach(function (n) { e56Cols.push([n[0], n[3], tab !== EAU56_NIVEAUX]); });   // 3e valeur : colonne à libellé (FAST, chaînes)
     });
     return {
-      headers: ["Eleve","Classe","Date","Statut","Reponses","Types /6","Niveaux /4","FAST /4","Chaines /5"]
+      headers: ["Eleve","Classe","Date","Statut","Reponses","Types /6","Niveaux /4","FAST /4","Chaines","Chaines sur"]
                 .concat(e56Cols.map(function (c) { return c[1]; })),
       rows: filtered.map(function (x) {
         var f = x.fields || {}, s = eau56Suivi(f);
         return [x.ename, x.ecls, dateOf(x), x.status, (x.score || 0) + "/" + (x.qcmTot || 0)]
           .concat(EAU56_PARTIES.map(function (p) {
             var sc = s.scores[p[0]];
-            return (sc !== undefined && sc !== null && sc !== "") ? Number(sc) : eau56Score(s, p[0], p[2]);
+            return (sc !== undefined && sc !== null && sc !== "") ? Number(sc) : eau56Score(s, p[0], eau56Max(s, p[0], p[2]));
           }))
+          .concat([eau56Max(s, "chaines", 6)])
           .concat(e56Cols.map(function (c) { var v = f[c[0]] || ""; return (c[2] && Object.prototype.hasOwnProperty.call(EAU56_SOL_LB, v)) ? EAU56_SOL_LB[v] : v; }));
       })
     };
