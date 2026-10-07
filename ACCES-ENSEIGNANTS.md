@@ -60,6 +60,22 @@ Pour retirer un accès, supprime sa ligne.
 Les mots de passe ne sont écrits nulle part en clair : tu les retrouves dans l'onglet
 **Configuration**, une fois connecté.
 
+## Donner sa clé à un collègue
+
+Depuis le 7 octobre 2026, la liste des copies est fermée par le script Google. Chaque
+collègue qui a des classes reçoit **sa propre clé**, qui n'ouvre que ses classes :
+
+1. Choisis une clé d'au moins 12 caractères (une phrase de passe suffit). Ne l'écris
+   ni dans le dépôt, ni dans un message : remets-la de vive voix ou sur papier.
+2. Apps Script › Paramètres du projet › Propriétés du script › **Ajouter** :
+   - propriété : `COLLEGUE_` suivi de son identifiant (ex. `COLLEGUE_regis.lucas`) ;
+   - valeur : `{"cle":"LA-CLÉ","classes":["5B","5C","5D","5E","5F"]}`.
+3. À sa prochaine connexion, le site lui demande la clé, une fois par navigateur.
+
+Ce sont les classes de la propriété qui comptent, pas celles d'`index.html` : garde
+les deux identiques. Pour retirer l'accès, supprime la propriété. Un collègue sans
+classe (consultation seule) n'a pas besoin de clé.
+
 ## Une limite à connaître
 
 Le site est un **fichier statique** : `index.html` est téléchargé en entier par le
@@ -69,5 +85,6 @@ code d'accès en clair, seulement des empreintes et un coffre chiffré.
 Mais la vérification se fait dans le navigateur. Une personne à l'aise avec la
 console peut encore la contourner, et la clé du script Google reste publique. Ces
 restrictions **organisent le travail** ; elles ne sont pas encore une barrière
-technique. La vraie barrière, où le script Google vérifie qui écrit et qui lit, est
+technique. Depuis le 7 octobre 2026, le script Google vérifie **qui lit** la liste
+des copies (clé du professeur, clé de chaque collègue) ; vérifier **qui écrit** reste
 l'étape 3 du chantier sécurité.
