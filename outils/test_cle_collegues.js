@@ -106,6 +106,61 @@ function lister(B, cle) {
   return B.get(p);
 }
 
+// ------------------------------------------- vrai code d'index.html, un navigateur
+function extraireFonction(nom) {
+  var i = SOURCE_HTML.indexOf("function " + nom + "(");
+  if (i < 0) throw new Error("index.html : fonction " + nom + " introuvable");
+  var j = SOURCE_HTML.indexOf("{", i), prof = 0;
+  for (var k = j; k < SOURCE_HTML.length; k++) {
+    if (SOURCE_HTML[k] === "{") prof++;
+    else if (SOURCE_HTML[k] === "}" && --prof === 0) return SOURCE_HTML.slice(i, k + 1);
+  }
+  throw new Error("index.html : fin de " + nom + " introuvable");
+}
+function extraireCloudSync() {
+  var i = SOURCE_HTML.indexOf("var cloudSync = (function () {");
+  var j = SOURCE_HTML.indexOf("\n})();", i);
+  if (i < 0 || j < 0) throw new Error("index.html : bloc cloudSync introuvable");
+  return SOURCE_HTML.slice(i, j + 6);
+}
+var CODE_PAGE = [extraireCloudSync()].concat(["getSubs", "estSessionProf", "classesDuCollegue", "copieVisible",
+  "subsVisibles", "nomCleServeur", "signalerCleProf"].map(extraireFonction)).join("\n");
+var COMPTES = {
+  prof:    { isProf: true,  isCollegue: false, user: { id: "prof" } },
+  regis:   { isProf: false, isCollegue: true,  user: { id: "regis.lucas", classes: ["5B", "5C", "5D", "5E", "5F"] } },
+  melanie: { isProf: false, isCollegue: true,  user: { id: "melanie.beneteau", classes: [] } }
+};
+
+function navigateur(B) {
+  var stock = {}, demandes = [];
+  var ctx = {
+    JSON: JSON, Date: Date, URL: URL, console: { warn: function () {}, log: function () {} },
+    location: { hostname: "site-techno.github.io" },
+    localStorage: {
+      getItem: function (k) { return stock.hasOwnProperty(k) ? stock[k] : null; },
+      setItem: function (k, v) { stock[k] = String(v); },
+      removeItem: function (k) { delete stock[k]; }
+    },
+    APPS_SCRIPT_URL: URL_FAUSSE, SYNC_SECRET: B.SECRET, fetch: B.fetch,
+    isProf: false, isCollegue: false, user: null, _cleProfDemandee: false,
+    prompt: function (t) { demandes.push(t); return R.reponse; },
+    setTimeout: function () {}, refreshProf: function () {},
+    toast: function () {}, renderStats: function () {}, renderSubs: function () {}, reporterNoteSiEvaluee: function () {}
+  };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  vm.runInContext(CODE_PAGE, ctx, { filename: "index.html (extraits)" });
+  var R = {
+    ctx: ctx, stock: stock, demandes: demandes, reponse: null,
+    session: function (qui) { var c = COMPTES[qui]; ctx.isProf = c.isProf; ctx.isCollegue = c.isCollegue; ctx.user = c.user; ctx._cleProfDemandee = false; },
+    sync: function () { return new Promise(function (fin) { ctx.cloudSync.pull(function (r) { fin(r); }); }); },
+    eids: function () { return ctx.getSubs().map(function (s) { return s.eid; }).sort().join(","); },
+    visibles: function () { return ctx.subsVisibles().map(function (s) { return s.eid; }).sort().join(","); },
+    texteDemande: function () { return demandes[demandes.length - 1] || ""; }
+  };
+  return R;
+}
+
 (async function () {
   var B, r;
 
@@ -134,7 +189,44 @@ function lister(B, cle) {
   B = classeur({ "COLLEGUE_regis.lucas": REGIS });
   ok(eids(lister(B)).split(",").length === 5, "liste ouverte sans clé, comme aujourd'hui");
 
-  /* __SCENARIOS_PAGE__ (Task 2) */
+  console.log("4. Page — un navigateur partagé : professeur, puis Régis, puis professeur");
+  B = classeur({ PROF_KEY: CLE_PROF, "COLLEGUE_regis.lucas": REGIS });
+  var nav = navigateur(B);
+  nav.session("prof");
+  nav.stock.prof_api_key = CLE_PROF;
+  ok(await nav.sync() === true && nav.eids() === "a.cinqc,b.cinqf,c.cinqa,d.quatrea,e.espace", "professeur : toutes les copies");
+  nav.session("regis");
+  ok(await nav.sync() === false && nav.demandes.length === 1, "Régis sans clé : refus, la demande de clé s'ouvre");
+  ok(nav.texteDemande().indexOf("R. Blanchard") >= 0, "… avec le texte destiné au collègue");
+  nav.reponse = CLE_REGIS; nav.demandes.length = 0; nav.ctx._cleProfDemandee = false;
+  nav.ctx.signalerCleProf("prof_key_required");
+  ok(nav.stock["cle_collegue_regis.lucas"] === CLE_REGIS && nav.stock.prof_api_key === CLE_PROF, "la clé de Régis est rangée à part, celle du professeur intacte");
+  ok(await nav.sync() === true, "Régis avec sa clé : synchronisé");
+  ok(nav.eids() === "a.cinqc,b.cinqf,c.cinqa,d.quatrea,e.espace", "la liste filtrée n'évince pas les copies hors de ses classes");
+  /* « 5c » avec espaces passe le filtre du serveur mais pas copieVisible (comparaison
+     sans nettoyage, inchangée) : la page le masque, rien de plus. */
+  ok(nav.visibles() === "a.cinqc,b.cinqf", "Régis ne voit que ses classes");
+  nav.session("prof");
+  ok(await nav.sync() === true && nav.eids().split(",").length === 5, "professeur ensuite : toujours tout, avec sa clé");
+
+  console.log("5. Page — collègue sans classes (consultation seule)");
+  B = classeur({ PROF_KEY: CLE_PROF, "COLLEGUE_regis.lucas": REGIS });
+  nav = navigateur(B); nav.session("melanie");
+  await nav.sync();
+  ok(nav.demandes.length === 0, "aucune demande de clé");
+
+  console.log("6. Page — capsules armées : pas de demande de clé pour un collègue");
+  B = classeur({ PROF_KEY: CLE_PROF, "COLLEGUE_regis.lucas": REGIS });
+  nav = navigateur(B); nav.session("regis"); nav.stock["cle_collegue_regis.lucas"] = CLE_REGIS;
+  await new Promise(function (fin) { nav.ctx.cloudSync.capsArmees(function () { fin(); }); });
+  ok(nav.demandes.length === 0, "refus de verrous_config sans demande de clé");
+
+  console.log("7. Page — éviction toujours active pour le professeur");
+  B = classeur({ PROF_KEY: CLE_PROF });
+  nav = navigateur(B); nav.session("prof"); nav.stock.prof_api_key = CLE_PROF;
+  nav.stock.subs = JSON.stringify([copie("z.supprimee", "4B", "p11-ex1", { dateISO: "2026-09-01T08:00:00.000Z" })]);
+  await nav.sync();
+  ok(nav.eids().indexOf("z.supprimee") < 0, "une copie supprimée du classeur disparaît du poste du professeur");
 
   console.log("9. Règle 4");
   ok(HORS_CONTRAT.length === 0, "aucune requête hors du faux déploiement");
