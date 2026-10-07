@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-06a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-07a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6292,6 +6292,11 @@ function subsVisibles() {
   var all = getSubs();
   if (!isCollegue) return all;
   return all.filter(copieVisible);
+}
+/* Clé du serveur rangée PAR COMPTE : sur un poste partagé, la clé d'un collègue ne
+   réduit jamais la vue du professeur, et inversement. */
+function nomCleServeur() {
+  return (isCollegue && user) ? "cle_collegue_" + user.id : "prof_api_key";
 }
 
 // ================================================================
@@ -10741,9 +10746,10 @@ var cloudSync = (function () {
   if (URL_TEST) { try { console.warn("[cloudSync] Déploiement de TEST : " + URL_TEST); } catch (e) {} }
 
   /* Clé professeur : ferme la liste complète des copies côté serveur. Saisie une fois
-     par poste, gardée dans ce navigateur, jamais écrite dans la page. */
+     par poste, gardée dans ce navigateur, jamais écrite dans la page. Un collègue a la
+     sienne, qui n'ouvre que ses classes (nomCleServeur). */
   function paramCleProf() {
-    try { var k = localStorage.getItem("prof_api_key") || ""; return k ? "&key=" + encodeURIComponent(k) : ""; } catch (e) { return ""; }
+    try { var k = localStorage.getItem(nomCleServeur()) || ""; return k ? "&key=" + encodeURIComponent(k) : ""; } catch (e) { return ""; }
   }
 
   /* Verrou de consultation : bascules envoyées depuis ce poste et pas encore relues.
@@ -10895,6 +10901,9 @@ var cloudSync = (function () {
         Object.keys(byKey).forEach(function (k) {
           if (cloudKeys[k]) return; // présent dans cloud → on garde
           var entry = byKey[k];
+          /* La liste d'un collègue ne contient que ses classes : une copie hors de son
+             périmètre y manque sans avoir été supprimée. */
+          if (!copieVisible(entry)) return;
           var ageMs = now - new Date(entry.dateISO || 0).getTime();
           if (ageMs > 60000) delete byKey[k]; // >1 min et absent cloud → supprimé upstream
         });
@@ -10992,7 +11001,9 @@ var cloudSync = (function () {
     fetch(base() + "?action=verrous_config&secret=" + encodeURIComponent(SYNC_SECRET) + paramCleProf() + "&t=" + Date.now())
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d && (d.error === "prof_key_required" || d.error === "bad_prof_key")) {
+        /* L'armement reste au professeur : la clé d'un collègue y est refusée sans
+           qu'on la lui redemande. */
+        if (d && !isCollegue && (d.error === "prof_key_required" || d.error === "bad_prof_key")) {
           try { signalerCleProf(d.error); } catch (e) {}
         }
         onDone(d && d.ok && Array.isArray(d.caps) ? d.caps : null);
@@ -11108,15 +11119,22 @@ window.addEventListener("load", function () {
 var _verrouEnCours = false, _cleProfDemandee = false;
 
 function signalerCleProf(err) {
-  if (!isProf || _cleProfDemandee) return;
+  /* Un collègue sans classe (consultation seule) n'a aucune copie à lire. */
+  if (!(isProf || (isCollegue && classesDuCollegue().length)) || _cleProfDemandee) return;
   _cleProfDemandee = true;
-  var k = prompt((err === "bad_prof_key"
-      ? "La clé professeur enregistrée sur ce poste n'est pas la bonne.\n\n"
-      : "Le serveur demande la clé professeur pour afficher les soumissions.\n\n")
-    + "Saisissez-la (Apps Script › Paramètres du projet › Propriétés du script › PROF_KEY). "
-    + "Elle reste sur ce poste et n'est jamais écrite dans la page.");
+  var k = prompt(isCollegue
+    ? (err === "bad_prof_key"
+        ? "La clé enregistrée sur ce poste n'est pas la bonne.\n\n"
+        : "Le serveur demande votre clé pour afficher les copies de vos classes.\n\n")
+      + "Saisissez la clé que R. Blanchard vous a remise. "
+      + "Elle reste sur ce poste et n'est jamais écrite dans la page."
+    : (err === "bad_prof_key"
+        ? "La clé professeur enregistrée sur ce poste n'est pas la bonne.\n\n"
+        : "Le serveur demande la clé professeur pour afficher les soumissions.\n\n")
+      + "Saisissez-la (Apps Script › Paramètres du projet › Propriétés du script › PROF_KEY). "
+      + "Elle reste sur ce poste et n'est jamais écrite dans la page.");
   if (k === null || !String(k).trim()) return;
-  try { localStorage.setItem("prof_api_key", String(k).trim()); } catch (e) {}
+  try { localStorage.setItem(nomCleServeur(), String(k).trim()); } catch (e) {}
   _cleProfDemandee = false;
   setTimeout(function () { try { refreshProf(); } catch (e) {} }, 50);
 }
