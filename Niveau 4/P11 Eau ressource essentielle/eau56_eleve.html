@@ -553,8 +553,9 @@
 
       <h4 class="sous">Les chaînes d'information et d'énergie</h4>
       <div class="lesson">Les solutions du FAST sont aussi des maillons des <strong>chaînes d'information et d'énergie</strong> du robinet.
-        Dans ce robinet sans pile, l'énergie arrive avec l'eau : un maillon de plus entre en jeu, la <strong>tuyauterie</strong>.
-        Place chaque solution dans le bon bloc. Les blocs grisés n'ont pas de solution étudiée dans ce FAST.</div>
+        Dans ce robinet sans pile, l'énergie arrive avec l'eau : deux maillons de plus entrent en jeu, la <strong>tuyauterie</strong>
+        qui amène l'eau et les <strong>fils électriques</strong> qui emmènent l'électricité produite jusqu'à la micro-batterie.
+        Place chaque solution dans le bon bloc. Le bloc grisé n'a pas de solution étudiée dans ce FAST.</div>
       <div class="chaine info">
         <div class="ch-t">Chaîne d'information</div>
         <div class="bloc" id="bl-a6-c-acquerir"><span class="verbe">ACQUÉRIR</span><select id="a6-c-acquerir" aria-label="Solution pour ACQUÉRIR"></select><span class="fb" id="fb-a6-c-acquerir"></span></div>
@@ -571,7 +572,7 @@
         <span class="fleche" aria-hidden="true">&#x2192;</span>
         <div class="bloc" id="bl-a6-c-convertir"><span class="verbe">CONVERTIR</span><select id="a6-c-convertir" aria-label="Solution pour CONVERTIR"></select><span class="fb" id="fb-a6-c-convertir"></span></div>
         <span class="fleche" aria-hidden="true">&#x2192;</span>
-        <div class="bloc vide"><span class="verbe">TRANSMETTRE</span>pas de solution étudiée dans ce FAST</div>
+        <div class="bloc" id="bl-a6-c-transmettre"><span class="verbe">TRANSMETTRE</span><select id="a6-c-transmettre" aria-label="Solution pour TRANSMETTRE"></select><span class="fb" id="fb-a6-c-transmettre"></span></div>
       </div>
       <div class="btnrow"><button class="btnck" type="button" onclick="verifier('chaines')">Vérifier</button></div>
       <div class="result" id="chaines-res" aria-live="polite"></div>
@@ -654,8 +655,9 @@ var EAU56 = (function(){
     { v:"vanne",   t:"vanne (électrovanne)" },
     { v:"turbine", t:"turbine + générateur" }
   ];
-  /* Les chaînes ajoutent un maillon absent du FAST : l'énergie arrive avec l'eau, par la tuyauterie. */
-  var SOLUTIONS_CHAINES = SOLUTIONS.concat([ { v:"tuyauterie", t:"tuyauterie" } ]);
+  /* Les chaînes ajoutent deux maillons absents du FAST : la tuyauterie (l'énergie arrive avec l'eau)
+     et les fils électriques (l'électricité produite part vers la micro-batterie). */
+  var SOLUTIONS_CHAINES = SOLUTIONS.concat([ { v:"tuyauterie", t:"tuyauterie" }, { v:"fils", t:"fils électriques" } ]);
   var FAST = [
     { id:"a6-s1", ft:"Détecter la présence des mains",            att:"capteur", corrige:"Capteur infrarouge",
       aide:"Quel composant « voit » les mains ?" },
@@ -671,7 +673,8 @@ var EAU56 = (function(){
     { id:"a6-c-traiter",   verbe:"TRAITER",   att:"carte",   aide:"Traiter, c'est décider à partir de l'information reçue." },
     { id:"a6-c-alimenter",  verbe:"ALIMENTER",  att:"tuyauterie", aide:"Alimenter, c'est amener l'énergie dans le système : ici, elle arrive avec l'eau sous pression. Par où l'eau arrive-t-elle ?" },
     { id:"a6-c-distribuer", verbe:"DISTRIBUER", att:"vanne",      aide:"Distribuer, c'est laisser passer ou bloquer l'énergie vers la suite : quel composant ouvre ou ferme l'arrivée d'eau ?" },
-    { id:"a6-c-convertir",  verbe:"CONVERTIR",  att:"turbine",    aide:"Convertir, c'est transformer une énergie en une autre : quel composant transforme l'énergie de l'eau qui coule en énergie électrique ?" }
+    { id:"a6-c-convertir",  verbe:"CONVERTIR",  att:"turbine",    aide:"Convertir, c'est transformer une énergie en une autre : quel composant transforme l'énergie de l'eau qui coule en énergie électrique ?" },
+    { id:"a6-c-transmettre", verbe:"TRANSMETTRE", att:"fils",     aide:"Transmettre, c'est acheminer l'énergie convertie jusqu'à l'élément qui la reçoit : par où passe l'électricité produite par le générateur pour rejoindre la micro-batterie ?" }
   ];
   var QUIZ = [
     { id:"a6-quiz1", q:"Lu de droite à gauche, le diagramme FAST répond à la question…", att:"pourquoi" },
@@ -760,7 +763,7 @@ var QUESTIONS = {
   q1:      { res:"q1-res",      total:6, nom:"Types FP/FC" },
   q2:      { res:"q2-res",      total:4, nom:"Niveaux du CDCF" },
   fast:    { res:"fast-res",    total:4, nom:"FAST" },
-  chaines: { res:"chaines-res", total:5, nom:"Chaînes" }
+  chaines: { res:"chaines-res", total:6, nom:"Chaînes" }
 };
 
 /* ════════════ OUTILS ════════════ */
