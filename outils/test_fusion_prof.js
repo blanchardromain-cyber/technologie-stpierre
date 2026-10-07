@@ -119,7 +119,8 @@ function extraireCloudSync() {
   if (i < 0 || j < 0) throw new Error("index.html : bloc cloudSync introuvable");
   return SOURCE_HTML.slice(i, j + 6);
 }
-var CODE_POSTE = [extraireCloudSync()].concat(["getSubs", "estSessionProf", "updSub"].map(extraireFonction)).join("\n");
+var CODE_POSTE = [extraireCloudSync()].concat(["getSubs", "estSessionProf", "updSub", "classesDuCollegue",
+  "copieVisible", "nomCleServeur"].map(extraireFonction)).join("\n");
 
 function poste(B) {
   var stock = {};
