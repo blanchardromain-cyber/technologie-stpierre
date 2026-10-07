@@ -52,13 +52,13 @@ function testsUnitaires(E){
   var faux = { "a5-n1":"5 L/min", "a5-n2":"30 cm", "a5-n3":"IP44", "a5-n4":"6 s",
                "a6-s1":"turbine", "a6-s2":"vanne", "a6-s3":"capteur", "a6-s4":"carte",
                "a6-c-acquerir":"vanne", "a6-c-traiter":"turbine", "a6-c-alimenter":"capteur", "a6-c-distribuer":"carte",
-               "a6-c-convertir":"tuyauterie" };
+               "a6-c-convertir":"tuyauterie", "a6-c-transmettre":"vanne" };
   var typesFaux = { f1:"FC", f2:"FP", f3:"FP", f4:"FP", f5:"FP", f6:"FP" };
   var liensFaux = { f1:["mains"], f2:["util","eau"], f3:["budget"], f4:["lavabo"], f5:["energie"], f6:["humide"] };
   egal(E.compter(E.verdictsQ1(typesFaux, liensFaux)), 0, "copie toute fausse : types 0/6");
   egal(E.compter(E.verdictsNiveaux(faux)), 0, "copie toute fausse : niveaux 0/4");
   egal(E.compter(E.verdictsListe(E.FAST, faux)), 0, "copie toute fausse : FAST 0/4");
-  egal(E.compter(E.verdictsListe(E.CHAINES, faux)), 0, "copie toute fausse : chaînes 0/5");
+  egal(E.compter(E.verdictsListe(E.CHAINES, faux)), 0, "copie toute fausse : chaînes 0/6");
 
   egal(E.compter(E.verdictsQ1({ f1:"FC", f2:"FC", f3:"FC", f4:"FC", f5:"FC", f6:"FC" }, {})), 0,
        "« FC partout » sans pieuvre : 0/6 (le type seul ne suffit pas)");
@@ -71,13 +71,13 @@ function testsUnitaires(E){
   var bons = { "a5-n1":"≈ 2 L/min", "a5-n2":"0 à 15 cm", "a5-n3":"IP65", "a5-n4":"Immédiat (0 s)",
                "a6-s1":"capteur", "a6-s2":"carte", "a6-s3":"vanne", "a6-s4":"turbine",
                "a6-c-acquerir":"capteur", "a6-c-traiter":"carte", "a6-c-alimenter":"tuyauterie", "a6-c-distribuer":"vanne",
-               "a6-c-convertir":"turbine" };
+               "a6-c-convertir":"turbine", "a6-c-transmettre":"fils" };
   egal(E.compter(E.verdictsNiveaux(bons)), 4, "copie juste : niveaux 4/4");
   egal(E.compter(E.verdictsListe(E.FAST, bons)), 4, "copie juste : FAST 4/4");
-  egal(E.compter(E.verdictsListe(E.CHAINES, bons)), 5, "copie juste : chaînes 5/5 (alimenter = tuyauterie, distribuer = vanne, convertir = turbine)");
+  egal(E.compter(E.verdictsListe(E.CHAINES, bons)), 6, "copie juste : chaînes 6/6 (alimenter = tuyauterie, distribuer = vanne, convertir = turbine, transmettre = fils électriques)");
   egal(E.NIVEAUX[3].critere, "Temps d'arrêt après le retrait des mains", "FC3 : critère « temps d'arrêt », distinct du débit de FP1");
   egal(E.SOLUTIONS.map(function(s){ return s.v; }).join(","), "capteur,carte,vanne,turbine", "FAST : les 4 solutions de la fiche");
-  egal(E.SOLUTIONS_CHAINES.map(function(s){ return s.v; }).join(","), "capteur,carte,vanne,turbine,tuyauterie", "chaînes : les 4 solutions + la tuyauterie");
+  egal(E.SOLUTIONS_CHAINES.map(function(s){ return s.v; }).join(","), "capteur,carte,vanne,turbine,tuyauterie,fils", "chaînes : les 4 solutions + la tuyauterie et les fils électriques");
   var m1 = E.melanger([1,2,3,4,5], 7), m2 = E.melanger([1,2,3,4,5], 7);
   ok(m1.slice().sort().join() === "1,2,3,4,5" && m1.join() === m2.join(), "melanger : permutation, identique pour une même graine");
   ok([3, 11, 29, 101].some(function(g){ return E.melanger([1,2,3,4,5], g).join() !== "1,2,3,4,5"; }), "melanger : change l'ordre");
@@ -114,16 +114,16 @@ function testsUnitaires(E){
 function testsInterface(w){
   var d = w.document;
   ok(w.formVierge(), "fiche vierge au chargement (ni identité, ni brouillon)");
-  egal(w.totalFields(), 28, "28 réponses au total");
+  egal(w.totalFields(), 29, "29 réponses au total");
   egal(d.getElementById("q2-r3").textContent.indexOf("Temps d'arrêt après le retrait des mains") >= 0, true, "tableau CDCF : critère FC3 « Temps d'arrêt après le retrait des mains »");
   ok(d.getElementById("doc-d15").textContent.indexOf("Arrêt de l'écoulement") >= 0 && d.getElementById("doc-d15").textContent.indexOf("immédiat (0 s)") >= 0,
      "document fictif : ligne « Arrêt de l'écoulement : immédiat (0 s) »");
   var optsFast = Array.prototype.map.call(d.getElementById("a6-s1").options, function(o){ return o.value; });
   ok(optsFast[0] === "" && optsFast.slice(1).sort().join() === "capteur,carte,turbine,vanne", "FAST : 4 solutions proposées (sans la tuyauterie)");
   var optsCh = Array.prototype.map.call(d.getElementById("a6-c-distribuer").options, function(o){ return o.value; });
-  ok(optsCh[0] === "" && optsCh.slice(1).sort().join() === "capteur,carte,turbine,tuyauterie,vanne", "chaînes : 5 solutions proposées, bloc DISTRIBUER actif");
-  egal(Array.prototype.map.call(d.querySelectorAll(".bloc.vide .verbe"), function(e){ return e.textContent; }).join(","), "COMMUNIQUER,TRANSMETTRE",
-       "chaînes : seuls COMMUNIQUER et TRANSMETTRE sont grisés");
+  ok(optsCh[0] === "" && optsCh.slice(1).sort().join() === "capteur,carte,fils,turbine,tuyauterie,vanne", "chaînes : 6 solutions proposées, bloc DISTRIBUER actif");
+  egal(Array.prototype.map.call(d.querySelectorAll(".bloc.vide .verbe"), function(e){ return e.textContent; }).join(","), "COMMUNIQUER",
+       "chaînes : seul COMMUNIQUER est grisé ; TRANSMETTRE attend les fils électriques");
   ok(w.getComputedStyle(d.getElementById("reprise")).display === "none", "bandeau de reprise vide : masqué (l'attribut hidden l'emporte sur le CSS)");
   ok(d.querySelectorAll("#emebar button").length === 7, "7 boutons d'éléments du milieu extérieur");
 
@@ -206,7 +206,7 @@ function testsInterface(w){
   var resume = w.buildOpenSummary(c);
   ok(resume.charAt(0) !== "=" && resume.indexOf("A5 · 1. La pieuvre") >= 0, "résumé professeur lisible, sans « = » en tête (règle 3)");
   var sub = w.makeSub();
-  ok(sub.cap === "eau56" && sub.qcmTot === 28 && sub.fields && sub.fields._suivi, "makeSub : cap, total et suivi dans fields");
+  ok(sub.cap === "eau56" && sub.qcmTot === 29 && sub.fields && sub.fields._suivi, "makeSub : cap, total et suivi dans fields");
   ok(sub.qq === undefined && sub.quiz === undefined, "makeSub : rien hors de fields (le backend ne garde que fields)");
   egal(w.urlEcriture(), "", "page locale : écriture en production refusée (règle 4)");
   w.appliquerDonnees({});
