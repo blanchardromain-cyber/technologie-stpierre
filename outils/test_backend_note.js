@@ -109,7 +109,7 @@ function eleveFusionne(reponseOwn, localAvant) {
   };
   ctx.window = ctx;
   vm.createContext(ctx);
-  vm.runInContext(["getSubs", "estCorrigee", "checkStudentStatusChanges"].map(extraireFonction).join("\n"), ctx);
+  vm.runInContext(["getSubs", "estCorrigee", "copiesOrphelines", "checkStudentStatusChanges"].map(extraireFonction).join("\n"), ctx);
   ctx.checkStudentStatusChanges();
   var subs = ctx.getSubs();
   return { subs: subs, corrigee: function (cap) {
