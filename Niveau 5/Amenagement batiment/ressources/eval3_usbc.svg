@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 150" role="img">
+<defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7F4EC"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+<linearGradient id="e" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B4A5C"/><stop offset="1" stop-color="#1F2A36"/></linearGradient></defs>
+<rect width="220" height="150" rx="14" fill="url(#f)"/>
+<rect x="22" y="22" width="52" height="98" rx="9" fill="url(#e)"/><rect x="27" y="30" width="42" height="78" rx="4" fill="#7FB8E0"/>
+<circle cx="48" cy="114" r="2.4" fill="#5B6B7C"/>
+<rect x="96" y="40" width="44" height="34" rx="7" fill="#F4F6F8" stroke="#9AA5B1" stroke-width="1.5"/>
+<rect x="104" y="50" width="28" height="10" rx="5" fill="#2B3440"/><rect x="110" y="53" width="16" height="4" rx="2" fill="#9AA5B1"/>
+<text x="118" y="70" font-family="system-ui,sans-serif" font-size="7.5" font-weight="700" fill="#4A5568" text-anchor="middle">USB-C</text>
+<path d="M48 120 C48 140, 118 140, 118 74" fill="none" stroke="#2B3440" stroke-width="3" stroke-linecap="round"/>
+<g transform="translate(176 76)"><circle r="28" fill="#1E8E3E"/>
+<path d="M-12 8c0-16 10-22 24-22 0 14-6 24-22 24z" fill="#FFFFFF"/><path d="M-12 12c6-9 12-14 18-17" stroke="#1E8E3E" stroke-width="2" fill="none"/></g>
+<text x="176" y="124" font-family="system-ui,sans-serif" font-size="8.5" fill="#1E6B3B" text-anchor="middle">un seul chargeur</text>
+</svg>
