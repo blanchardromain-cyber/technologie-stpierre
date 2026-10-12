@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-07b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-12a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4308,6 +4308,7 @@ body.est-prof .prof-only{display:block}
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
+            <option value="eval3-5e">P1 5e &mdash; &Eacute;valuation n&deg;3</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -5096,6 +5097,25 @@ body.est-prof .prof-only{display:block}
         avant la séance : chaque copie rendue sera alors verrouillée dès son envoi.
       </p>
       <iframe id="eval2-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation2_eleve.html" title="P1 — Évaluation n°2 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- BÂTIMENT 5e — ÉVALUATION n°3 -->
+    <div id="pg-eval3-5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P1 &mdash; Évaluation n°3 (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle notée sur 10</strong>, deux exercices : les normes, puis les représentations du réel (croquis et modélisation).
+        Lis bien chaque consigne, puis envoie ta copie au professeur : une fois envoyée, elle peut être verrouillée.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La copie part au tableau de bord <strong>pré-corrigée</strong>. Pense à <strong>armer la capsule</strong> (onglet Verrous)
+        avant la séance : chaque copie rendue sera alors verrouillée dès son envoi.
+      </p>
+      <iframe id="eval3-5e-frame" data-src="Niveau%205/Amenagement%20batiment/evaluation3_eleve.html" title="P1 — Évaluation n°3 (5e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -6144,6 +6164,7 @@ var SEQUENCES_DEF = [
   {id:"batiment5e-syn", ordre:12, niveau:"5ème", titre:"P1 — Synthèse Aménager un bâtiment", desc:"La synthèse à conquérir : un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète.", couleur:"#2E75B6", code:"#Wcp/Fvv71SvTB2b2azwI0HhyeFJZTbg1zszrvVdpKS0=", open:true},
   {id:"eval1-5e", ordre:13, niveau:"5ème", titre:"P1 — Évaluation n°1", desc:"Objet naturel / technique, besoin, fonction d'usage et fonction d'estime. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#F1jAGsBWqbASzl7K9/GPlpa2zX6iZ0RO6IZDsFnJNrs=", open:true},
   {id:"eval2-5e", ordre:14, niveau:"5ème", titre:"P1 — Évaluation n°2", desc:"Contraintes d'un cahier des charges, choix d'un mobilier, choix d'un isolant. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#7J65MSvOExtNQbRExycz6fED/aVTRMsKA6F/NlHAfK4=", open:true},
+  {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#W8ZmvXPgK2dSyaReGzvgss8xKHMvuWWEEkN2YziR9Xk=", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
@@ -6685,6 +6706,13 @@ function goPage(pid) {
     var ev2Ifr = document.getElementById("eval2-5e-frame");
     if (ev2Ifr) ev2Ifr.src = ev2Ifr.getAttribute("data-src");
   }
+  if (pid === "pg-eval3-5e") {
+    try {
+      if (user) localStorage.setItem("batiment5e_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var ev3Ifr = document.getElementById("eval3-5e-frame");
+    if (ev3Ifr) ev3Ifr.src = ev3Ifr.getAttribute("data-src");
+  }
   if (pid === "pg-p11-entr-tab") {
     var p11etIfr = document.getElementById("p11-entr-tab-frame");
     if (p11etIfr && !p11etIfr.src) p11etIfr.src = p11etIfr.getAttribute("data-src");
@@ -7070,7 +7098,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "p11-eval1") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "p11-eval1") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7118,6 +7146,7 @@ function renderDash() {
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
+      else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
       else if (s.id === "p11-eval1") clickAction = "onclick=\"goPage('pg-p11-eval1')\"";
       else if (s.id === "p11-entr-tab") clickAction = "onclick=\"goPage('pg-p11-entr-tab')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
@@ -7189,6 +7218,7 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
+    else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
     else if (pendingSeq === "p11-eval1") goPage("pg-p11-eval1");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
@@ -8844,6 +8874,148 @@ var EVALUATIONS = {
     }
   },
 
+  /* P1 5e — Évaluation n°3 : normes et contraintes, croquis et modélisation.
+     Tableaux à cocher (1.3, exercice 2) : correction certaine. Réponses rédigées
+     (1.1, 1.2, 1.4) : repérage de mots-clés, indicatif — le professeur ajuste. */
+  "eval3-5e": {
+    titre: "P1 5e — Évaluation n°3",
+    total: 10,
+    sections: [
+      { cle: "norme", label: "① Normes et contraintes", max: 6 },
+      { cle: "repr",  label: "② Représenter le réel",   max: 4, compact: true }
+    ],
+
+    corriger: function (f) {
+      f = f || {};
+      var pts = { norme: 0, repr: 0 };
+      var detail = [];
+      function etat(v, p, max) { return v ? (p >= max ? "ok" : p > 0 ? "partiel" : "ko") : "vide"; }
+      function arrondi(v) { return Math.round(v * 100) / 100; }
+
+      /* ── 1.1 Définition : « règle à respecter » (0,5) + « fixée par un organisme, commune à tous » (0,5) ── */
+      var d = f["e1-def"] || "", p11 = 0, n11 = [];
+      var mA = evalMot(d, ["regle", "reference", "respect", "oblig", "impos", "exig", "standard", "critere",
+                           "specification", "caracteristique", "la loi", "une loi", "les lois", "des lois"]);
+      if (mA) { p11 += 0.5 * mA; if (mA < 1) n11.push("orthographe fautive : demi-point"); }
+      else n11.push("l'idée d'une règle à respecter n'est pas repérée");
+      var mB = evalMot(d, ["officiel", "organisme", "afnor", "norme iso", "europe", "l'etat", "gouvernement",
+                           "reconnu", "commun", "tout le monde", "tous les", "plusieurs pays", "fabricant", "fabriquant", "label"]);
+      if (mB) { p11 += 0.5 * mB; if (mB < 1) n11.push("orthographe fautive : demi-point"); }
+      else n11.push("ni qui la fixe (organisme officiel), ni qu'elle est commune à tous");
+      p11 = arrondi(p11);
+      pts.norme += p11;
+      detail.push({ sec: "norme", label: "1.1 Qu'est-ce qu'une norme ?", rep: d,
+                    attendu: "Un ensemble de règles, fixé par un organisme officiel (AFNOR, ISO, Union européenne), que les produits doivent respecter : dimensions, sécurité, qualité…",
+                    etat: etat(d, p11, 1), pts: p11, max: 1, remarque: (d && p11 < 1) ? n11.join(" · ") : "" });
+
+      /* ── 1.2 Deux utilités différentes : 0,5 chacune ── */
+      var UTILITES = [
+        { nom: "la sécurité", mots: ["secur", "proteg", "protection", "danger", "accident", "sante", "risque", "incendie", "blessure"] },
+        { nom: "la compatibilité", mots: ["compatib", "interchang", "universel", "fonctionner ensemble", "meme chargeur",
+                                          "meme prise", "standard", "s'adapt", "brancher", "n'importe quel"] },
+        { nom: "la qualité", mots: ["qualite", "fiab", "bien fabriqu", "performan", "resistan"] },
+        { nom: "l'environnement", mots: ["environnement", "dechet", "recycl", "pollu", "planete", "ecolog", "durable"] },
+        { nom: "faciliter l'usage", mots: ["facilit", "simplifi", "pratique", "plus simple", "plus facile"] },
+        { nom: "les échanges entre pays", mots: ["vendre", "commerc", "echange", "export", "import", "entre pays", "autres pays", "d'autres pays"] },
+        { nom: "l'accessibilité", mots: ["handicap", "pmr", "accessib", "fauteuil"] },
+        { nom: "des mesures communes", mots: ["dimension", "mesure", "taille", "format", "meme langage"] }
+      ];
+      var prises = {};
+      for (var u = 1; u <= 2; u++) {
+        var rep = f["e1-u" + u] || "", pu = 0, rq = "", trouve = null, m = 0, dejaVue = false;
+        for (var i = 0; i < UTILITES.length; i++) {
+          var s = evalMot(rep, UTILITES[i].mots);
+          if (!s) continue;
+          if (prises[UTILITES[i].nom]) { dejaVue = true; continue; }
+          if (s > m) { m = s; trouve = UTILITES[i]; }
+        }
+        if (trouve) {
+          prises[trouve.nom] = 1;
+          pu = 0.5 * m;
+          rq = "utilité reconnue : " + trouve.nom + (m < 1 ? " (mal orthographié : demi-point)" : "");
+        } else if (rep) {
+          rq = dejaVue ? "même utilité que la ligne précédente : deux utilités différentes sont attendues"
+                       : "utilité non reconnue par la machine : à vérifier";
+        }
+        pu = arrondi(pu);
+        pts.norme += pu;
+        detail.push({ sec: "norme", label: "1.2 Utilité n°" + u, rep: rep,
+                      attendu: "Garantir la sécurité, rendre les produits compatibles entre eux, assurer la qualité, protéger l'environnement, faciliter les échanges…",
+                      etat: etat(rep, pu, 0.5), pts: pu, max: 0.5, remarque: (rep && pu < 0.5) ? rq : "" });
+      }
+
+      /* ── 1.3 ERP : contrainte ou norme, 0,5 par ligne ── */
+      var ERP = [
+        ["e1-erp1", "Le nombre d'issues de secours", "norme"],
+        ["e1-erp2", "Le choix de l'esthétique des matériaux", "contrainte"],
+        ["e1-erp3", "Le nombre de salles", "contrainte"],
+        ["e1-erp4", "Le choix de matériaux résistants au feu", "norme"]
+      ];
+      var NOMS = { contrainte: "Contrainte", norme: "Norme", croquis: "Croquis", modelisation: "Modélisation" };
+      for (var e = 0; e < ERP.length; e++) {
+        var v = f[ERP[e][0]] || "", pe = v === ERP[e][2] ? 0.5 : 0;
+        pts.norme += pe;
+        detail.push({ sec: "norme", label: "1.3 " + ERP[e][1], rep: v ? (NOMS[v] || v) : "",
+                      attendu: NOMS[ERP[e][2]], sur: true,
+                      etat: v ? (pe ? "ok" : "ko") : "vide", pts: pe, max: 0.5 });
+      }
+
+      /* ── 1.4 Objectif environnemental : réduire les déchets (1) + réutiliser l'ancien chargeur (1) ── */
+      var env = f["e1-env"] || "", p14 = 0, n14 = [];
+      var mD = evalMot(env, ["deche", "poubelle", "gaspill", "pollu", "recycl", "ordure"]);
+      if (mD) { p14 += mD; if (mD < 1) n14.push("orthographe fautive : demi-point"); }
+      else n14.push("la réduction des déchets n'est pas repérée");
+      var mR = evalMot(env, ["reutilis", "reemploi", "conserv", "ancien chargeur", "sans chargeur",
+                             "meme chargeur", "un seul chargeur", "plusieurs appareils", "universel",
+                             "moins de chargeur", "fabriquer moins", "produire moins", "moins fabriqu"]);
+      if (mR) { p14 += mR; if (mR < 1) n14.push("orthographe fautive : demi-point"); }
+      else n14.push("la réutilisation de l'ancien chargeur (appareils vendus sans chargeur) n'est pas repérée");
+      if (env && !mD && !mR && evalMot(env, ["environnement", "planete", "nature", "ecolog"]))
+        n14.push("réponse trop générale : dire COMMENT la norme protège l'environnement");
+      p14 = arrondi(p14);
+      pts.norme += p14;
+      detail.push({ sec: "norme", label: "1.4 Objectif de la norme USB-C sur l'environnement", rep: env,
+                    attendu: "Réduire les déchets électroniques : les appareils neufs sont vendus sans chargeur et chacun réutilise son ancien chargeur, le même pour plusieurs appareils.",
+                    etat: etat(env, p14, 2), pts: p14, max: 2, remarque: (env && p14 < 2) ? n14.join(" · ") : "" });
+
+      /* ── 2 Croquis ou modélisation : 0,5 par ligne ── */
+      var REPR = [
+        ["e2-r1", "Représentation A (studio en 3D)", "modelisation"],
+        ["e2-r2", "Représentation B (studio dessiné au crayon)", "croquis"],
+        ["e2-r3", "Simuler ou tester le fonctionnement", "modelisation"],
+        ["e2-r4", "Réalisée à main levée", "croquis"],
+        ["e2-r5", "Montre précisément l'objet technique", "modelisation"],
+        ["e2-r6", "Sur ordinateur, à taille réelle, en 3D", "modelisation"],
+        ["e2-r7", "Imprimer des plans pour fabriquer les pièces", "modelisation"],
+        ["e2-r8", "Donne l'allure générale de l'objet", "croquis"]
+      ];
+      for (var r = 0; r < REPR.length; r++) {
+        var c = f[REPR[r][0]] || "", pr = c === REPR[r][2] ? 0.5 : 0;
+        pts.repr += pr;
+        detail.push({ sec: "repr", label: "2." + (r + 1) + " " + REPR[r][1], rep: c ? (NOMS[c] || c) : "",
+                      attendu: NOMS[REPR[r][2]], sur: true,
+                      etat: c ? (pr ? "ok" : "ko") : "vide", pts: pr, max: 0.5 });
+      }
+
+      pts.norme = arrondi(pts.norme);
+      pts.repr = arrondi(pts.repr);
+      return { points: pts, detail: detail };
+    },
+
+    appreciation: function (pts, note) {
+      var mention = note >= 9 ? "Excellent travail" : note >= 7.5 ? "Très bon travail"
+                  : note >= 6 ? "Bon travail" : note >= 4 ? "Travail à consolider"
+                  : "Des progrès sont nécessaires";
+      var faibles = [];
+      if ((pts.norme || 0) < 4) faibles.push("la notion de norme et la différence entre contrainte et norme");
+      if ((pts.repr || 0) < 3)  faibles.push("la différence entre croquis et modélisation");
+      var txt = mention + " — " + fmtPts(note) + "/10. ";
+      txt += faibles.length ? ("À revoir : " + faibles.join(", ") + ".")
+                            : "Les notions de la séquence sont maîtrisées.";
+      return txt;
+    }
+  },
+
   /* P11 4e — Évaluation n°1. La capsule corrige elle-même (même moteur que la page du
      tableur, mots-clés à tolérance orthographique pour les réponses rédigées) et transmet
      le détail dans fields.corr : [question, item, points bruts, max brut, réponse, attendu].
@@ -9884,12 +10056,14 @@ var FICHE_TITRES = {
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
-  "eval2-5e":"P1 5e — Évaluation n°2", "p11-eval1":"P11 4e — Évaluation n°1"
+  "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
+  "p11-eval1":"P11 4e — Évaluation n°1"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
-       || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e"
+       || sub.cap === "eval3-5e") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
