@@ -79,8 +79,7 @@
     ["Le nez du Shinkansen imite le bec du martin-pêcheur : le train fait beaucoup moins de bruit en sortant des tunnels.", "P13 · Biomimétisme"],
     ["En 1947, un papillon de nuit coincé dans un relais du calculateur Harvard Mark II est entré dans l'histoire comme le premier « bug » documenté.", "Numérique"],
     ["Le premier SMS, envoyé en décembre 1992, disait simplement « Merry Christmas ».", "Numérique"],
-    ["Une imprimante 3D dépose la matière couche par couche, souvent en couches de 0,2 mm.", "Fabrication"]
-  // --- Ajout octobre 2026 : coller avant le "];" final du tableau FAITS (penser à la virgule après la dernière entrée existante) ---
+    ["Une imprimante 3D dépose la matière couche par couche, souvent en couches de 0,2 mm.", "Fabrication"],
     ["Le Web a été inventé en 1989 par Tim Berners-Lee au CERN, près de Genève.", "P2 · Réseau"],
     ["Le tout premier message envoyé sur ARPANET, en 1969, devait être « LOGIN » : le système a planté après « LO ».", "P2 · Réseau"],
     ["Une adresse IPv4 permet environ 4,3 milliards de combinaisons : plus assez pour tous les appareils, d'où l'arrivée d'IPv6.", "P2 · Réseau"],
@@ -110,7 +109,8 @@
     ["Le premier disque dur, l'IBM 350 de 1956, pesait près d'une tonne et stockait environ 5 millions de caractères.", "Numérique"],
     ["Le QR code a été inventé en 1994 au Japon pour suivre les pièces détachées dans les usines automobiles.", "Numérique"],
     ["Le mot « robot » vient du tchèque robota, le travail forcé : il est apparu en 1920 dans une pièce de théâtre de Karel Čapek.", "Numérique"],
-    ["Le plastique PLA, le plus utilisé en impression 3D au collège, est fabriqué à partir d'amidon de maïs ou de canne à sucre.", "Fabrication"]];
+    ["Le plastique PLA, le plus utilisé en impression 3D au collège, est fabriqué à partir d'amidon de maïs ou de canne à sucre.", "Fabrication"]
+  ];
   var iFait = Math.floor(Math.random() * FAITS.length);
   function montrerFait() { var t = $(".b-fact .t"), s = $(".b-fact .s"); if (t) t.textContent = FAITS[iFait][0]; if (s) s.textContent = FAITS[iFait][1]; }
   montrerFait();
