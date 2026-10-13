@@ -80,7 +80,37 @@
     ["En 1947, un papillon de nuit coincé dans un relais du calculateur Harvard Mark II est entré dans l'histoire comme le premier « bug » documenté.", "Numérique"],
     ["Le premier SMS, envoyé en décembre 1992, disait simplement « Merry Christmas ».", "Numérique"],
     ["Une imprimante 3D dépose la matière couche par couche, souvent en couches de 0,2 mm.", "Fabrication"]
-  ];
+  // --- Ajout octobre 2026 : coller avant le "];" final du tableau FAITS (penser à la virgule après la dernière entrée existante) ---
+    ["Le Web a été inventé en 1989 par Tim Berners-Lee au CERN, près de Genève.", "P2 · Réseau"],
+    ["Le tout premier message envoyé sur ARPANET, en 1969, devait être « LOGIN » : le système a planté après « LO ».", "P2 · Réseau"],
+    ["Une adresse IPv4 permet environ 4,3 milliards de combinaisons : plus assez pour tous les appareils, d'où l'arrivée d'IPv6.", "P2 · Réseau"],
+    ["Le Wi-Fi utilise des ondes radio de 2,4 GHz, la même fréquence que les fours à micro-ondes.", "P2 · Réseau"],
+    ["Dans une fibre optique, l'information voyage sous forme de lumière qui rebondit sur la paroi intérieure du câble.", "P2 · Réseau"],
+    ["Bluetooth doit son nom à Harald « à la dent bleue », un roi viking du Xe siècle qui avait unifié le Danemark.", "P2 · Réseau"],
+    ["Moins de 1 % de l'eau présente sur Terre est de l'eau douce facilement utilisable par l'être humain.", "P11 · L'eau"],
+    ["Un Français utilise en moyenne environ 150 litres d'eau potable par jour à la maison.", "P11 · L'eau"],
+    ["Une douche de 5 minutes consomme environ 60 litres d'eau, un bain environ 150 litres.", "P11 · L'eau"],
+    ["Il faut environ 15 000 litres d'eau pour produire 1 kg de bœuf, en comptant l'eau bue par l'animal et celle utilisée pour cultiver sa nourriture.", "P11 · L'eau"],
+    ["L'aqueduc du pont du Gard amenait l'eau à Nîmes sur 50 km avec une pente de seulement quelques dizaines de centimètres par kilomètre.", "P11 · L'eau"],
+    ["Nicolas Appert a inventé la conserve vers 1795 sans savoir pourquoi elle marchait : Pasteur l'expliquera plus de 60 ans plus tard.", "P12 · Alimentation"],
+    ["Le four à micro-ondes est né par hasard en 1945 : l'ingénieur Percy Spencer a vu une barre chocolatée fondre dans sa poche près d'un radar.", "P12 · Alimentation"],
+    ["Les repas des astronautes sont souvent lyophilisés : l'eau de l'aliment congelé passe directement de la glace à la vapeur.", "P12 · Alimentation"],
+    ["La pasteurisation détruit la plupart des microbes en chauffant un aliment sous 100 °C, sans vraiment le cuire.", "P12 · Alimentation"],
+    ["Les feuilles de lotus restent propres car leur surface bosselée fait rouler les gouttes, qui emportent la saleté : on s'en inspire pour des vitres autonettoyantes.", "P13 · Biomimétisme"],
+    ["L'Eastgate Centre, à Harare au Zimbabwe, se ventile presque sans climatisation en imitant les cheminées des termitières.", "P13 · Biomimétisme"],
+    ["Certaines pales d'éoliennes ont un bord bosselé inspiré des nageoires de la baleine à bosse, pour mieux capter le vent.", "P13 · Biomimétisme"],
+    ["Les winglets, ces bouts d'ailes relevés sur les avions, s'inspirent des plumes écartées au bout des ailes des grands oiseaux planeurs.", "P13 · Biomimétisme"],
+    ["La tour Eiffel peut grandir d'une quinzaine de centimètres en été : le métal se dilate avec la chaleur.", "P1 · Bâtiment"],
+    ["Le béton armé a été breveté en 1867 par Joseph Monier, un jardinier qui voulait des bacs à fleurs plus solides.", "P1 · Bâtiment"],
+    ["Une maison passive consomme jusqu'à 10 fois moins d'énergie de chauffage qu'une maison ancienne, grâce à son isolation et à sa ventilation double flux.", "P1 · Bâtiment"],
+    ["Une ampoule à incandescence transforme plus de 90 % de son énergie en chaleur, pas en lumière.", "Énergie"],
+    ["Pour le même éclairage, une ampoule LED consomme environ 5 à 8 fois moins d'électricité qu'une ampoule à incandescence.", "Énergie"],
+    ["En 1843, Ada Lovelace a écrit ce qui est considéré comme le premier programme informatique, pour une machine qui n'a jamais été construite.", "Numérique"],
+    ["Un octet contient 8 bits : il peut donc prendre 256 valeurs différentes, de 0 à 255.", "Numérique"],
+    ["Le premier disque dur, l'IBM 350 de 1956, pesait près d'une tonne et stockait environ 5 millions de caractères.", "Numérique"],
+    ["Le QR code a été inventé en 1994 au Japon pour suivre les pièces détachées dans les usines automobiles.", "Numérique"],
+    ["Le mot « robot » vient du tchèque robota, le travail forcé : il est apparu en 1920 dans une pièce de théâtre de Karel Čapek.", "Numérique"],
+    ["Le plastique PLA, le plus utilisé en impression 3D au collège, est fabriqué à partir d'amidon de maïs ou de canne à sucre.", "Fabrication"]];
   var iFait = Math.floor(Math.random() * FAITS.length);
   function montrerFait() { var t = $(".b-fact .t"), s = $(".b-fact .s"); if (t) t.textContent = FAITS[iFait][0]; if (s) s.textContent = FAITS[iFait][1]; }
   montrerFait();
