@@ -42,6 +42,10 @@ hors du dépôt (`.gitignore`), puis `python outils/chiffrer_corrige.py` publie 
 La tuile porte `prof:true` (jamais affichée à un élève) et la capsule élève ne
 contient alors **aucune** réponse attendue, ni autocorrection des questions de la
 fiche. Après toute modification du corrigé : relancer le script.
+Une telle capsule peut être notée : sa grille `EVALUATIONS` ne contient que les
+points et lit les réponses dans le corrigé déchiffré, avec `get manuel()` vrai tant
+qu'il ne l'est pas (« à noter /20 », jamais « 0/20 »). Le compte administrateur le
+déchiffre seul à la connexion (`roCorPrecharger`, code lu dans le coffre).
 
 ## 2. La correction automatique tolère les fautes d'orthographe
 
