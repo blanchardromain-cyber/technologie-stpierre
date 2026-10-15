@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-12a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-15a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4309,6 +4309,7 @@ body.est-prof .prof-only{display:block}
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
             <option value="eval3-5e">P1 5e &mdash; &Eacute;valuation n&deg;3</option>
+            <option value="reseau5e-org">P2 5e &mdash; Organiser un r&eacute;seau num&eacute;rique</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -5286,6 +5287,41 @@ body.est-prof .prof-only{display:block}
       </div>
     </div>
 
+    <!-- RÉSEAU 5e — P2 ORGANISER UN RÉSEAU NUMÉRIQUE (iframe : Niveau 5/Organiser un réseau numérique/reseau_org_eleve.html) -->
+    <div id="pg-reseau5e-org" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Organiser un réseau numérique (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Activité <strong>individuelle</strong> (l'affiche de la partie 8 se fait en groupe). Réponds aux questions, utilise le simulateur et l'animation,
+        puis clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong>. Ton brouillon est enregistré automatiquement sur ce poste.
+      </p>
+      <iframe id="reseau5e-org-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/reseau_org_eleve.html" title="Organiser un réseau numérique (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- RÉSEAU 5e — CORRIGÉ CHIFFRÉ (réservé aux enseignants ; contenu déchiffré en session, voir roCorOuvrir) -->
+    <div id="pg-reseau5e-org-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Corrigé Organiser un réseau numérique</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé et notes d'organisation &mdash; 5<sup>e</sup></h3>
+        <p id="ro-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+        <div id="ro-cor-saisie" hidden style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <label for="ro-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+          <input id="ro-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+            onkeydown="if(event.key==='Enter')roCorValiderSaisie()">
+          <button onclick="roCorValiderSaisie()" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+        </div>
+        <button id="ro-cor-print" hidden onclick="printReseauOrgCorrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+        <div id="ro-cor-body" style="margin-top:20px"></div>
+      </div>
+    </div>
+
     <!-- RÉSEAU 5e — CAPSULE P2 (activité embarquée depuis le dépôt reseau-5e) -->
     <div id="pg-reseau5e" class="h">
       <div class="phdr">
@@ -6165,6 +6201,8 @@ var SEQUENCES_DEF = [
   {id:"eval1-5e", ordre:13, niveau:"5ème", titre:"P1 — Évaluation n°1", desc:"Objet naturel / technique, besoin, fonction d'usage et fonction d'estime. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#F1jAGsBWqbASzl7K9/GPlpa2zX6iZ0RO6IZDsFnJNrs=", open:true},
   {id:"eval2-5e", ordre:14, niveau:"5ème", titre:"P1 — Évaluation n°2", desc:"Contraintes d'un cahier des charges, choix d'un mobilier, choix d'un isolant. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#7J65MSvOExtNQbRExycz6fED/aVTRMsKA6F/NlHAfK4=", open:true},
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
+  {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes au collège, modem et routeur, pare-feu et antivirus, cyberdangers. Simulateur de réseau, trajet d'un paquet et aides dys intégrées.", couleur:"#0369A1", code:"", open:true},
+  {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Réservé aux enseignants : corrigé chiffré, réponses attendues et annotation des copies.", couleur:"var(--vt)", code:"", open:true, prof:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
@@ -6732,6 +6770,15 @@ function goPage(pid) {
     var sIfr = document.getElementById("batiment5e-syn-frame");
     if (sIfr) sIfr.src = sIfr.getAttribute("data-src");
   }
+  if (pid === "pg-reseau5e-org") {
+    // Identité de l'élève connecté pour la fiche embarquée (même origine → localStorage).
+    try {
+      if (user) localStorage.setItem("reseau5e-org_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var roIfr = document.getElementById("reseau5e-org-frame");
+    if (roIfr) roIfr.src = roIfr.getAttribute("data-src");
+  }
+  if (pid === "pg-reseau5e-org-cor") roCorOuvrir();
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
     // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
@@ -7006,6 +7053,8 @@ function renderDash() {
   var niveaux = {};
   for (var i = 0; i < SEQUENCES_DEF.length; i++) {
     var s = SEQUENCES_DEF[i];
+    /* prof:true — tuile réservée aux enseignants (corrigé chiffré), jamais montrée à un élève. */
+    if (s.prof && !(isProf || isCollegue)) continue;
     if (!niveaux[s.niveau]) niveaux[s.niveau] = [];
     niveaux[s.niveau].push(s);
   }
@@ -7086,7 +7135,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -7102,6 +7151,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
+        } else if (s.id === "reseau5e-org") {
+          badgeHtml = '<span class="badge" style="background:#E0F2FE;color:#0369A1;font-weight:700">&#x1F310; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "batiment5e") {
           badgeHtml = '<span class="badge" style="background:#FCE4D6;color:#C55A11;font-weight:700">&#x1F3D7;&#xFE0F; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "dc" || s.id === "dc-corrige") {
@@ -7144,6 +7195,8 @@ function renderDash() {
       else if (s.id === "batiment5e") clickAction = "onclick=\"goPage('pg-batiment5e')\"";
       else if (s.id === "batiment5e-cor") clickAction = "onclick=\"goPage('pg-batiment5e-cor')\"";
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
+      else if (s.id === "reseau5e-org")     clickAction = "onclick=\"goPage('pg-reseau5e-org')\"";
+      else if (s.id === "reseau5e-org-cor") clickAction = "onclick=\"goPage('pg-reseau5e-org-cor')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
@@ -7216,6 +7269,8 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e") goPage("pg-batiment5e");
     else if (pendingSeq === "batiment5e-cor") goPage("pg-batiment5e-cor");
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
+    else if (pendingSeq === "reseau5e-org") goPage("pg-reseau5e-org");
+    else if (pendingSeq === "reseau5e-org-cor") goPage("pg-reseau5e-org-cor");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
@@ -8173,6 +8228,170 @@ function batimentPlanSVG(raw) {
   return svg;
 }
 /* P1 5e — rendu des réponses de l'élève pour le tableau de bord professeur */
+/* ════════════════════════════════════════════════════════════════
+   P2 5e — ORGANISER UN RÉSEAU NUMÉRIQUE (cap "reseau5e-org")
+   Fiche élève : Niveau 5/Organiser un réseau numérique/reseau_org_eleve.html
+   Les libellés ci-dessous servent à lire la copie ; AUCUNE réponse attendue
+   n'est écrite dans ce fichier public. Le corrigé et la clé de correction sont
+   dans corrige_reseau_org.chiffre.json (AES-GCM), déchiffrés ici en session
+   professeur avec le code du corrigé (coffre du professeur, ou saisi par un
+   collègue). Voir outils/chiffrer_corrige.py.
+   ════════════════════════════════════════════════════════════════ */
+var RO_CHIFFRE_URL = "Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/corrige_reseau_org.chiffre.json";
+var RO_COR_ID = "reseau5e-org-cor";
+var RO_COR = null;          /* { html, cles } une fois déchiffré, en mémoire seulement */
+var RO_LIB = {
+  topo: { anneau:"anneau", maille:"maillé", etoile:"étoile" },
+  a1: ["Une liaison coupée bloque TOUT le réseau", "Tous reliés à un équipement central", "Ultra-sécurisé : autre chemin si une ligne tombe",
+       "Le plus utilisé au collège et à la maison", "Très complexe et coûteux (beaucoup de câbles)", "Un ordinateur en panne : le reste continue"],
+  a2g: { "switch":"Commutateur (Switch)", wifi:"Borne Wi-Fi" },
+  a2d: ["Grande liberté de déplacement", "Liaison filaire par câble RJ45", "Connexion très rapide, stable et sécurisée",
+        "Liaison sans fil radio", "Débit variable et sensible aux obstacles", "Nécessité d'installer des câbles"],
+  a5g: { modem:"Le Modem", routeur:"Le Routeur" },
+  a5d: ["Oriente les paquets entre le réseau local et Internet", "Produit l'électricité des ordinateurs",
+        "Stocke tous les sites web du monde", "Convertit le signal de la ligne en données numériques"],
+  a6g: { passerelle:"La Passerelle", parefeu:"Le Pare-feu", antivirus:"L'Antivirus" },
+  a6d: ["Sauvegarde les données sur un serveur distant", "Détecte, neutralise et supprime les fichiers malveillants",
+        "Affiche des publicités ciblées", "Barrière physique, point de passage unique", "Analyse le trafic et bloque les intrusions"],
+  a4: { A:["Tout le réseau est en panne", "Seul cet ordinateur ne fonctionne plus", "Les tablettes s'arrêtent aussi"],
+        B:["Tous les ordinateurs fixes perdent le réseau", "Seul l'ordinateur du professeur s'arrête", "Aucun impact"],
+        C:["Le câble réseau de la tablette s'est débranché", "Portée des ondes Wi-Fi limitée, obstacles", "Le serveur s'est éteint"],
+        D:["Les ordinateurs s'éteignent, électricité coupée", "Navigation possible, mais plus de session ni d'espace personnel", "Plus rien ne s'allume"] },
+  eq: { modem:"Le Modem", routeur:"Le Routeur", passerelle:"La Passerelle", parefeu:"Le Pare-feu", antivirus:"L'Antivirus" }
+};
+/* Questions vérifiables : 26 (6 + 6 + 2 + 3 + 4 + 2 + 3). */
+var RO_NB_VERIF = 26;
+
+function roEsc(x){ return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function _roOctets(t){ return new TextEncoder().encode(t); }
+function _roDeb64(b){ var s = atob(b), o = new Uint8Array(s.length); for (var i=0;i<s.length;i++) o[i] = s.charCodeAt(i); return o; }
+
+/* Code du corrigé : coffre du professeur (compte administrateur), sinon code
+   saisi une fois par un collègue et gardé sur son navigateur. */
+function roCodeConnu(){
+  if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[RO_COR_ID]) return COFFRE.codes[RO_COR_ID];
+  try { return localStorage.getItem("ro_cor_code") || ""; } catch(e){ return ""; }
+}
+function roDechiffrer(code){
+  if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
+  return fetch(RO_CHIFFRE_URL + "?t=" + Date.now()).then(function(r){ if (!r.ok) throw new Error("absent"); return r.json(); }).then(function(c){
+    return crypto.subtle.importKey("raw", _roOctets(String(code).trim().toUpperCase()), "PBKDF2", false, ["deriveKey"]).then(function(k){
+      return crypto.subtle.deriveKey({ name:"PBKDF2", hash:"SHA-256", salt:_roDeb64(c.sel), iterations:c.it }, k, { name:"AES-GCM", length:256 }, false, ["decrypt"]);
+    }).then(function(cle){
+      return crypto.subtle.decrypt({ name:"AES-GCM", iv:_roDeb64(c.iv) }, cle, _roDeb64(c.data));
+    }).then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
+  });
+}
+/* Ouvre le corrigé (page professeur). Rien ne s'affiche hors session enseignant. */
+function roCorOuvrir(codeSaisi){
+  var corps = document.getElementById("ro-cor-body"), etat = document.getElementById("ro-cor-etat");
+  if (!corps) return;
+  if (!(isProf || isCollegue)){ corps.innerHTML = ""; if (etat) etat.textContent = "Corrigé réservé aux enseignants."; return; }
+  if (RO_COR){ roCorAfficher(); return; }
+  var code = codeSaisi || roCodeConnu();
+  var saisie = document.getElementById("ro-cor-saisie");
+  if (!code){ if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisissez le code du corrigé (communiqué par le professeur responsable)."; return; }
+  if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
+  roDechiffrer(code).then(function(p){
+    RO_COR = p;
+    if (codeSaisi){ try { localStorage.setItem("ro_cor_code", String(codeSaisi).trim().toUpperCase()); } catch(e){} }
+    if (saisie) saisie.hidden = true;
+    roCorAfficher();
+  }).catch(function(e){
+    if (saisie) saisie.hidden = false;
+    if (codeSaisi === undefined){ try { localStorage.removeItem("ro_cor_code"); } catch(x){} }
+    if (etat) etat.textContent = (e && e.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
+      (e && e.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
+  });
+}
+function roCorAfficher(){
+  var corps = document.getElementById("ro-cor-body"), etat = document.getElementById("ro-cor-etat");
+  corps.innerHTML = RO_COR.html;
+  var c = (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes) ? COFFRE.codes[RO_COR_ID] : "";
+  if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code à communiquer à un collègue : <strong>' + roEsc(c) + '</strong></span>' : "");
+  var b = document.getElementById("ro-cor-print"); if (b) b.hidden = false;
+}
+function roCorValiderSaisie(){
+  var i = document.getElementById("ro-cor-code"); if (!i || !i.value.trim()) return;
+  roCorOuvrir(i.value);
+}
+function printReseauOrgCorrige(){ if (RO_COR) imprimerCorrigeP11("ro-cor-body", "Corrigé P2 5e — Organiser un réseau numérique"); }
+
+/* ── Copie de l'élève, annotée si le corrigé est déchiffré ── */
+function roVerdict(cle, v){
+  if (!RO_COR || !RO_COR.cles) return null;
+  var k = RO_COR.cles[cle]; if (!k) return null;
+  return k.indexOf(String(v || "")) >= 0;
+}
+function buildReseauOrgModalHTML(sub){
+  var f = (sub && sub.fields) || {};
+  var annot = !!(RO_COR && RO_COR.cles), justes = 0, html = "";
+  /* ok : true / false pour une question vérifiable, null pour une réponse rédigée
+     (jamais de ✅ ni de ❌ : le professeur juge, l'attendu sert de repère). */
+  function marque(ok, vide){ return (!annot || ok === null) ? "" : (vide ? ' <span style="color:#C0392B">— sans réponse</span>' : (ok ? ' <span title="juste">✅</span>' : ' <span title="faux">❌</span>')); }
+  function ligne(lb, rep, ok, attendu){
+    var vide = !rep;
+    if (annot && ok === true) justes++;
+    return '<div style="margin-bottom:7px"><div style="font-size:11px;font-weight:700;color:var(--bl)">' + roEsc(lb) + marque(ok, vide) + '</div>' +
+      '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap">' + (vide ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>' : roEsc(rep)) + '</div>' +
+      (annot && attendu && ok !== true ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:4px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + roEsc(attendu) + '</div>' : '') + '</div>';
+  }
+  function titre(t){ return '<div style="font-weight:700;color:#0369A1;font-size:12px;margin:14px 0 5px">' + t.toUpperCase() + '</div>'; }
+  function relier(id, libG, libD){
+    var h = "", i, cle;
+    if (id === "a2"){
+      for (i=1;i<=libD.length;i++){
+        cle = id + "-r" + i;
+        var v = f[cle] || "", k = annot ? RO_COR.cles[cle] : null;
+        h += ligne(libD[i-1] + " →", v ? libG[v] : "", annot && k.indexOf(v) >= 0, k ? libG[k[0]] : "");
+      }
+      return h;
+    }
+    var sol = annot ? RO_COR.cles[id] : null;
+    for (var g in libG) if (libG.hasOwnProperty(g)){
+      var choisi = ""; for (i=1;i<=libD.length;i++) if (f[id + "-r" + i] === g) choisi = String(i);
+      h += ligne(libG[g] + " →", choisi ? libD[parseInt(choisi,10)-1] : "", annot && sol[g] === choisi, sol ? libD[parseInt(sol[g],10)-1] : "");
+    }
+    return h;
+  }
+  var A = RO_COR && RO_COR.cles ? RO_COR.cles.attendus || {} : {};
+  html += titre("1. Topologies");
+  for (var i=1;i<=6;i++){
+    var v = f["a1-r"+i] || "", lib = v.split(",").filter(Boolean).map(function(x){ return RO_LIB.topo[x] || x; }).join(" + ");
+    var k1 = annot ? RO_COR.cles["a1-r"+i] : null;
+    html += ligne(RO_LIB.a1[i-1], lib, annot && k1.indexOf(v) >= 0, k1 ? RO_LIB.topo[k1[0]] : "");
+  }
+  html += titre("2. Matériels et supports") + relier("a2", RO_LIB.a2g, RO_LIB.a2d);
+  html += titre("3. Le serveur") + ligne("Rôle à la connexion", f["a3-q1"], null, A["a3-q1"]) + ligne("Espace personnel", f["a3-q2"], null, A["a3-q2"]);
+  html += titre("4. Pannes au collège");
+  ["A","B","C","D"].forEach(function(p){
+    var v4 = f["a4-"+p] || "", k4 = annot ? RO_COR.cles["a4-"+p] : null;
+    html += ligne("Panne " + p, v4 ? RO_LIB.a4[p][parseInt(v4,10)-1] : "", annot && k4.indexOf(v4) >= 0, k4 ? RO_LIB.a4[p][parseInt(k4[0],10)-1] : "");
+  });
+  html += titre("5. Accéder à Internet") + relier("a5", RO_LIB.a5g, RO_LIB.a5d);
+  html += titre("6. Protections") + relier("a6", RO_LIB.a6g, RO_LIB.a6d);
+  html += titre("7. Maintenance et sécurité");
+  ["A","B"].forEach(function(p){
+    var k7 = annot ? RO_COR.cles["a7-"+p] : null;
+    html += ligne("Panne " + p + " — équipement défaillant", RO_LIB.eq[f["a7-"+p]] || "", annot && k7.indexOf(f["a7-"+p] || "") >= 0, k7 ? RO_LIB.eq[k7[0]] : "");
+    html += ligne("Panne " + p + " — pourquoi", f["a7-"+p+"-pq"], null, A["a7-"+p+"-pq"]);
+  });
+  ["S1","S2","S3"].forEach(function(s){
+    var ks = annot ? RO_COR.cles["a7-"+s] : null;
+    html += ligne(s.replace("S","Situation ") + " — protection", RO_LIB.eq[f["a7-"+s]] || "", annot && ks.indexOf(f["a7-"+s] || "") >= 0, ks ? RO_LIB.eq[ks[0]] : "");
+  });
+  var crit = 0; for (var c=1;c<=5;c++) if (f["a8-c"+c] === "oui") crit++;
+  html += titre("8. Cyberdangers") + ligne("Danger choisi par le groupe", f["a8-choix"], null, "") + ligne("Critères de l'affiche cochés", crit + " / 5", null, "");
+  html += titre("9. Réseau numérique") + ligne("Élément de la maison", f["a9"], null, A["a9"]);
+  /* Les réponses rédigées ne comptent pas comme justes : ligne() reçoit ok = null. */
+  var tete = '<div style="background:#E0F2FE;border:1px solid #7DD3FC;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:8px">' +
+    '<strong>&#x1F310; ' + roEsc(sub.ename || "") + '</strong> — Classe ' + roEsc(sub.ecls || "") + ' — ' + (sub.score || 0) + '/' + (sub.qcmTot || 32) + ' réponses</div>';
+  tete += annot
+    ? '<div style="font-size:12.5px;margin-bottom:8px"><span style="background:var(--vp);color:var(--vt);border-radius:14px;padding:3px 11px;font-weight:700">Réponses justes (indicatif, non noté) : ' + justes + ' / ' + RO_NB_VERIF + '</span></div>'
+    : '<div style="font-size:12.5px;color:var(--td);margin-bottom:8px">Copie non annotée : ouvrez une fois le <em>Corrigé Organiser un réseau numérique</em> (tableau de bord) pour afficher les ✅ / ❌ et les réponses attendues.</div>';
+  return tete + html;
+}
+
 function buildBatimentModalHTML(sub) {
   var f = sub && sub.fields ? sub.fields : null;
   function esc(x){ return String(x==null?"":x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
@@ -9480,6 +9699,9 @@ function renderSubs() {
       } else if (s.cap === "eau56") {
         var e5Done = Number(s.score !== undefined ? s.score : 0) || 0, e5Tot = Number(s.qcmTot || 28) || 0;
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F419; ' + e5Done + '/' + e5Tot + ' réponses</span>';
+      } else if (s.cap === "reseau5e-org") {
+        var roDone = Number(s.score !== undefined ? s.score : 0) || 0, roTot = Number(s.qcmTot || 32) || 0;
+        sc = '<span style="background:#E0F2FE;color:#0369A1;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F310; ' + roDone + '/' + roTot + ' réponses</span>';
       } else if (EVALUATIONS[s.cap]) {
         /* Une évaluation affiche une note, pas un nombre de champs remplis. */
         var defEv = EVALUATIONS[s.cap], totEv = defEv.total;
@@ -9899,6 +10121,10 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P11 4e — Activités 5 et 6";
     document.getElementById("mrep").innerHTML = buildEau56ModalHTML(sub);
     document.getElementById("mscore").textContent = "Activités 5 et 6 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||28) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  } else if (sub.cap === "reseau5e-org") {
+    if (mh3) mh3.textContent = "P2 5e — Organiser un réseau numérique";
+    document.getElementById("mrep").innerHTML = buildReseauOrgModalHTML(sub);
+    document.getElementById("mscore").textContent = "Organiser un réseau numérique — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||32) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     /* Copie de l'élève, puis le panneau de points : tout se corrige sur un écran. */
@@ -9964,6 +10190,7 @@ function printModalSub() {
   else if (sub.cap === "eau34") answersHTML = buildEau34ModalHTML(sub);
   else if (sub.cap === "eau56") answersHTML = buildEau56ModalHTML(sub);
   else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
+  else if (sub.cap === "reseau5e-org") answersHTML = buildReseauOrgModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
   else if (sub.cap === "filius5e") answersHTML = buildFiliusModalHTML(sub);
   else if (sub.cap === "maison5e") answersHTML = buildMaisonModalHTML(sub);
@@ -10055,6 +10282,7 @@ var FICHE_TITRES = {
   "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
+  "reseau5e-org":"P2 5e — Organiser un réseau numérique",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1"
@@ -10063,7 +10291,7 @@ function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsu
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
        || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e"
-       || sub.cap === "eval3-5e") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
@@ -10123,6 +10351,7 @@ function ficheReponsesHTML(sub) {
   if (sub.cap === "eau34")           return buildEau34ModalHTML(sub);
   if (sub.cap === "eau56")           return buildEau56ModalHTML(sub);
   if (sub.cap === "batiment5e")      return buildBatimentModalHTML(sub);
+  if (sub.cap === "reseau5e-org")    return buildReseauOrgModalHTML(sub);
   if (sub.cap === "reseau5e")        return buildReseauModalHTML(sub);
   if (sub.cap === "filius5e")        return buildFiliusModalHTML(sub);
   if (sub.cap === "maison5e")        return buildMaisonModalHTML(sub);
@@ -10642,6 +10871,18 @@ function _buildCapsuleCSV(cap, filtered) {
                 okVF, okPot, okSol, okCyc, okAS, ss.nb + "/" + ss.sur,
                 isNaN(ss.total) ? "" : ss.total.toFixed(2).replace(".", ",")]
           .concat(eauIds.map(function(it){ return f[it[0]] || ""; }));
+      })
+    };
+  }
+  if (cap === "reseau5e-org") {
+    var roIds = ["a1-r1","a1-r2","a1-r3","a1-r4","a1-r5","a1-r6","a2-r1","a2-r2","a2-r3","a2-r4","a2-r5","a2-r6","a3-q1","a3-q2",
+                 "a4-A","a4-B","a4-C","a4-D","a5-r1","a5-r2","a5-r3","a5-r4","a6-r1","a6-r2","a6-r3","a6-r4","a6-r5",
+                 "a7-A","a7-A-pq","a7-B","a7-B-pq","a7-S1","a7-S2","a7-S3","a8-choix","a8-c1","a8-c2","a8-c3","a8-c4","a8-c5","a9"];
+    return {
+      headers: ["Eleve","Classe","Date","Statut","Reponses"].concat(roIds),
+      rows: filtered.map(function(x){
+        var f = x.fields || {};
+        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0)].concat(roIds.map(function(k){ return f[k] || ""; }));
       })
     };
   }
