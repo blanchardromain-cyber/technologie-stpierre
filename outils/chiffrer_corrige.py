@@ -9,8 +9,10 @@ hors du dépôt (.gitignore) ; seul un fichier chiffré est publié :
   {"v":1, "it":600000, "sel":…, "iv":…, "data":…}   AES-GCM, clé = PBKDF2-SHA256(code)
 
 Le code du corrigé est rangé dans le coffre du professeur (codes[<id>]) : la page
-professeur l'y lit et déchiffre sans rien demander. Un collègue saisit ce code une
-fois (le professeur le lui communique, voir le panneau « Codes d'accès »).
+professeur l'y lit et déchiffre sans rien demander. Si le corrigé a une tuile dans
+SEQUENCES_DEF, son code d'accès devient l'empreinte de ce même code : le panneau
+« Codes d'accès » l'affiche, et l'élève à qui le professeur le donne déverrouille la
+tuile et déchiffre le corrigé d'une seule saisie. Un collègue saisit ce code une fois.
 
   python outils/chiffrer_corrige.py --id reseau5e-org-cor \\
       --source "Niveau 5/Organiser un réseau numérique/corrige_reseau_org.source.html" \\
@@ -63,6 +65,32 @@ def poser_code_corrige(texte, mdp_prof, ident):
     return texte, code, True
 
 
+def poser_empreinte(texte, ident, code):
+    """Si le corrigé a une tuile dans SEQUENCES_DEF, son code d'accès devient l'empreinte
+    du même code : l'élève déverrouille la tuile ET déchiffre le corrigé avec le code que
+    le professeur lui donne, et le panneau « Codes d'accès » l'affiche (lu dans le coffre).
+    -> (texte, modifié)."""
+    voulu = coffre.empreinte_code(ident, code)
+    trouve = []
+
+    def poser(bloc):
+        def convertir(mo):
+            obj = mo.group(0)
+            if not re.search(r'id:"' + re.escape(ident) + r'"', obj):
+                return obj
+            c = re.search(r'code:"[^"]*"', obj)
+            if not c:
+                raise coffre.ErreurCoffre("Tuile sans champ code : " + ident)
+            trouve.append(obj[c.start():c.end()] != 'code:"' + voulu + '"')
+            return obj[:c.start()] + 'code:"' + voulu + '"' + obj[c.end():]
+        return coffre.OBJET.sub(convertir, bloc)
+
+    nouveau = coffre._transformer(texte, "var SEQUENCES_DEF = [", poser)
+    if len(trouve) > 1:
+        raise coffre.ErreurCoffre("Plusieurs tuiles portent l'identifiant " + ident)
+    return nouveau, bool(trouve and trouve[0])
+
+
 def main(argv=None):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")
@@ -88,11 +116,14 @@ def main(argv=None):
 
     try:
         if a.code_test:
-            code, nouveau, texte = a.code_test, False, None
+            code, nouveau, texte, tuile = a.code_test, False, None, False
         else:
             with open(a.fichier, encoding="utf-8", newline="") as f:
                 texte = f.read()
             texte, code, nouveau = poser_code_corrige(texte, coffre._mot_de_passe_prof(a, False), a.id)
+            texte, tuile = poser_empreinte(texte, a.id, code)
+            if coffre._apparait(code, texte):
+                raise coffre.ErreurCoffre("Contrôle final en échec : le code apparaît en clair.")
         chiffre = chiffrer_paquet(paquet, code)
     except coffre.ErreurCoffre as e:
         print("Erreur : " + str(e) + " Rien n'a été écrit.", file=sys.stderr)
@@ -109,13 +140,16 @@ def main(argv=None):
             return 1
     with open(a.sortie, "w", encoding="utf-8", newline="\n") as f:
         f.write(publie + "\n")
-    if nouveau:
+    if not a.code_test and (nouveau or tuile):
         with open(a.fichier, "w", encoding="utf-8", newline="") as f:
             f.write(texte)
-        print("Nouveau code du corrigé « %s » : %s — rangé dans le coffre (panneau « Codes d'accès »)." % (a.id, code))
         print("Fichier écrit : " + a.fichier)
+    if nouveau:
+        print("Nouveau code du corrigé « %s » : %s — rangé dans le coffre (panneau « Codes d'accès »)." % (a.id, code))
     elif not a.code_test:
         print("Code du corrigé inchangé (lu dans le coffre).")
+    if tuile:
+        print("Tuile « %s » : verrouillée par ce même code (empreinte écrite dans index.html)." % a.id)
     print("Corrigé chiffré : " + a.sortie)
     return 0
 
