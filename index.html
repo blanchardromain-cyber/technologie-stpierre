@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-15a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-15b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5297,6 +5297,7 @@ body.est-prof .prof-only{display:block}
         Activité <strong>individuelle</strong> (l'affiche de la partie 8 se fait en groupe). Réponds aux questions, utilise le simulateur et l'animation,
         puis clique <strong>&laquo;&nbsp;Envoyer au professeur&nbsp;&raquo;</strong>. Ton brouillon est enregistré automatiquement sur ce poste.
       </p>
+      <div id="reseau5e-org-correction"></div>
       <iframe id="reseau5e-org-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/reseau_org_eleve.html" title="Organiser un réseau numérique (5e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
@@ -6201,7 +6202,7 @@ var SEQUENCES_DEF = [
   {id:"eval1-5e", ordre:13, niveau:"5ème", titre:"P1 — Évaluation n°1", desc:"Objet naturel / technique, besoin, fonction d'usage et fonction d'estime. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#F1jAGsBWqbASzl7K9/GPlpa2zX6iZ0RO6IZDsFnJNrs=", open:true},
   {id:"eval2-5e", ordre:14, niveau:"5ème", titre:"P1 — Évaluation n°2", desc:"Contraintes d'un cahier des charges, choix d'un mobilier, choix d'un isolant. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#7J65MSvOExtNQbRExycz6fED/aVTRMsKA6F/NlHAfK4=", open:true},
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
-  {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes au collège, modem et routeur, pare-feu et antivirus, cyberdangers. Simulateur de réseau, trajet d'un paquet et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
+  {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
   {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Réservé aux enseignants : corrigé chiffré, réponses attendues et annotation des copies.", couleur:"var(--vt)", code:"", open:true, prof:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
@@ -6538,6 +6539,7 @@ function majClasseProf() {
   try { document.body.classList.toggle("est-prof", !!isProf || !!isCollegue); } catch (e) {}
   try { verifierCorriges(); } catch (e) {}
   try { verifierSecrets(); } catch (e) {}
+  try { roCorPrecharger(); } catch (e) {}
 }
 
 function launch() {
@@ -6777,6 +6779,9 @@ function goPage(pid) {
     } catch (e) {}
     var roIfr = document.getElementById("reseau5e-org-frame");
     if (roIfr) roIfr.src = roIfr.getAttribute("data-src");
+    /* Note et appréciation du professeur, au-dessus de la fiche (règle 5). */
+    renderCorrectionEleve("reseau5e-org", "reseau5e-org-correction");
+    rafraichirCorrection("reseau5e-org", "reseau5e-org-correction");
   }
   if (pid === "pg-reseau5e-org-cor") roCorOuvrir();
   if (pid === "pg-reseau5e") {
@@ -8311,6 +8316,16 @@ function roCorAfficher(){
   if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code à communiquer à un collègue : <strong>' + roEsc(c) + '</strong></span>' : "");
   var b = document.getElementById("ro-cor-print"); if (b) b.hidden = false;
 }
+/* Session enseignant : le corrigé se déchiffre tout seul quand le code est connu
+   (coffre ouvert, ou code déjà saisi sur ce navigateur), pour que les notes
+   proposées apparaissent dans le tableau des soumissions sans autre geste. */
+function roCorPrecharger(){
+  if (RO_COR || !(isProf || isCollegue) || !roCodeConnu()) return;
+  roDechiffrer(roCodeConnu()).then(function(p){
+    RO_COR = p;
+    try { if (typeof renderProf === "function" && document.getElementById("pg-prof") && !document.getElementById("pg-prof").classList.contains("h")) renderProf(); } catch(e){}
+  }).catch(function(){});
+}
 function roCorValiderSaisie(){
   var i = document.getElementById("ro-cor-code"); if (!i || !i.value.trim()) return;
   roCorOuvrir(i.value);
@@ -8323,7 +8338,9 @@ function roVerdict(cle, v){
   var k = RO_COR.cles[cle]; if (!k) return null;
   return k.indexOf(String(v || "")) >= 0;
 }
-function buildReseauOrgModalHTML(sub){
+/* sansAttendu : copie imprimée remise à l'élève — les ✅ / ❌ restent, les réponses
+   attendues ne sortent jamais de la page professeur. */
+function buildReseauOrgModalHTML(sub, sansAttendu){
   var f = (sub && sub.fields) || {};
   var annot = !!(RO_COR && RO_COR.cles), justes = 0, html = "";
   /* ok : true / false pour une question vérifiable, null pour une réponse rédigée
@@ -8334,7 +8351,7 @@ function buildReseauOrgModalHTML(sub){
     if (annot && ok === true) justes++;
     return '<div style="margin-bottom:7px"><div style="font-size:11px;font-weight:700;color:var(--bl)">' + roEsc(lb) + marque(ok, vide) + '</div>' +
       '<div style="background:var(--gr);border-radius:6px;padding:7px 10px;font-size:13px;white-space:pre-wrap">' + (vide ? '<span style="color:var(--td);font-style:italic">Non renseigné</span>' : roEsc(rep)) + '</div>' +
-      (annot && attendu && ok !== true ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:4px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + roEsc(attendu) + '</div>' : '') + '</div>';
+      (annot && !sansAttendu && attendu && ok !== true ? '<div style="background:#E8F5E9;border-left:3px solid #2E8B4A;border-radius:0 5px 5px 0;padding:4px 9px;font-size:12px;color:#1E6B3B;margin-top:3px"><strong>✓ Attendu :</strong> ' + roEsc(attendu) + '</div>' : '') + '</div>';
   }
   function titre(t){ return '<div style="font-weight:700;color:#0369A1;font-size:12px;margin:14px 0 5px">' + t.toUpperCase() + '</div>'; }
   function relier(id, libG, libD){
@@ -8387,8 +8404,8 @@ function buildReseauOrgModalHTML(sub){
   var tete = '<div style="background:#E0F2FE;border:1px solid #7DD3FC;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:8px">' +
     '<strong>&#x1F310; ' + roEsc(sub.ename || "") + '</strong> — Classe ' + roEsc(sub.ecls || "") + ' — ' + (sub.score || 0) + '/' + (sub.qcmTot || 32) + ' réponses</div>';
   tete += annot
-    ? '<div style="font-size:12.5px;margin-bottom:8px"><span style="background:var(--vp);color:var(--vt);border-radius:14px;padding:3px 11px;font-weight:700">Réponses justes (indicatif, non noté) : ' + justes + ' / ' + RO_NB_VERIF + '</span></div>'
-    : '<div style="font-size:12.5px;color:var(--td);margin-bottom:8px">Copie non annotée : ouvrez une fois le <em>Corrigé Organiser un réseau numérique</em> (tableau de bord) pour afficher les ✅ / ❌ et les réponses attendues.</div>';
+    ? '<div style="font-size:12.5px;margin-bottom:8px"><span style="background:var(--vp);color:var(--vt);border-radius:14px;padding:3px 11px;font-weight:700">Questions à choix justes : ' + justes + ' / ' + RO_NB_VERIF + '</span></div>'
+    : '<div style="font-size:12.5px;color:var(--td);margin-bottom:8px">Copie non corrigée : ouvrez une fois le <em>Corrigé Organiser un réseau numérique</em> (tableau de bord, code du corrigé) pour obtenir la note proposée, les ✅ / ❌ et le panneau de points.</div>';
   return tete + html;
 }
 
@@ -8751,6 +8768,123 @@ function evalInfinitif(t) {
 }
 
 var EVALUATIONS = {
+
+  /* P2 5e — Organiser un réseau numérique. Barème sur 20 (l'affiche de la partie 8,
+     faite en groupe, n'est pas comptée). Les POINTS sont publics ; les RÉPONSES et les
+     mots-clés sont dans le corrigé chiffré (RO_COR), déchiffré en session enseignant.
+     Tant qu'il ne l'est pas, la grille se comporte comme une évaluation notée à la
+     main (« à noter /20 ») : jamais de 0/20 trompeur. Score du hasard mesuré : ≈ 4,5/20. */
+  "reseau5e-org": {
+    titre: "P2 5e — Organiser un réseau numérique",
+    total: 20,
+    get manuel() { return !(RO_COR && RO_COR.cles); },
+    sections: [
+      { cle: "topo",     label: "① Topologies de réseaux",          max: 3,   compact: true },
+      { cle: "mat",      label: "② Matériels et supports",          max: 3,   compact: true },
+      { cle: "serv",     label: "③ Le rôle du serveur",             max: 3 },
+      { cle: "pannes",   label: "④ Diagnostic : pannes au collège", max: 2,   compact: true },
+      { cle: "internet", label: "⑤ Accéder à Internet",             max: 2,   compact: true },
+      { cle: "prot",     label: "⑥ Se protéger",                    max: 1.5, compact: true },
+      { cle: "maint",    label: "⑦ Maintenance et sécurité",        max: 4.5 },
+      { cle: "num",      label: "⑨ Du réseau informatique au réseau numérique", max: 1 }
+    ],
+
+    corriger: function (f) {
+      f = f || {};
+      var pts = { topo: 0, mat: 0, serv: 0, pannes: 0, internet: 0, prot: 0, maint: 0, num: 0 }, detail = [];
+      var K = RO_COR && RO_COR.cles;
+      if (!K) return { points: pts, detail: detail };
+      var A = K.attendus || {}, M = K.motscles || {};
+      function choix(sec, label, rep, ok, attendu, max) {
+        var etat = !rep ? "vide" : ok ? "ok" : "ko", p = ok ? max : 0;
+        pts[sec] += p;
+        detail.push({ sec: sec, label: label, rep: rep || "", attendu: attendu, etat: etat, pts: p, max: max, remarque: "" });
+      }
+      /* Réponse rédigée : deux idées, chacune la moitié des points ; evalMot tolère
+         l'orthographe (moitié de l'idée pour un mot mal écrit mais reconnaissable). */
+      function redige(sec, label, cle, max) {
+        var rep = String(f[cle] || "").trim(), idees = M[cle] || [], p = 0, manque = [];
+        for (var i = 0; i < idees.length; i++) {
+          var v = rep ? evalMot(rep, idees[i]) : 0;
+          p += v * max / idees.length;
+          if (v < 1) manque.push("idée " + (i + 1) + (v ? " reconnue mais mal orthographiée" : " absente"));
+        }
+        p = Math.round(p * 4) / 4;
+        pts[sec] += p;
+        detail.push({ sec: sec, label: label, rep: rep, attendu: A[cle] || "", pts: p, max: max,
+                      etat: !rep ? "vide" : p >= max ? "ok" : p > 0 ? "partiel" : "ko",
+                      remarque: rep && manque.length ? "Proposition indicative : " + manque.join(" ; ") + "." : "" });
+      }
+      var i, v, k;
+      for (i = 1; i <= 6; i++) {
+        v = f["a1-r" + i] || ""; k = K["a1-r" + i] || [];
+        choix("topo", RO_LIB.a1[i - 1], v.split(",").filter(Boolean).map(function (x) { return RO_LIB.topo[x] || x; }).join(" + "),
+              k.indexOf(v) >= 0, RO_LIB.topo[k[0]] || "", 0.5);
+      }
+      for (i = 1; i <= 6; i++) {
+        v = f["a2-r" + i] || ""; k = K["a2-r" + i] || [];
+        choix("mat", RO_LIB.a2d[i - 1], RO_LIB.a2g[v] || "", k.indexOf(v) >= 0, RO_LIB.a2g[k[0]] || "", 0.5);
+      }
+      redige("serv", "3.1 Rôle du serveur à la connexion", "a3-q1", 1.5);
+      redige("serv", "3.2 Rôle du serveur pour l'espace personnel", "a3-q2", 1.5);
+      ["A", "B", "C", "D"].forEach(function (p) {
+        var r = f["a4-" + p] || "", kk = K["a4-" + p] || [];
+        choix("pannes", "Panne " + p, r ? RO_LIB.a4[p][parseInt(r, 10) - 1] : "", kk.indexOf(r) >= 0,
+              RO_LIB.a4[p][parseInt(kk[0], 10) - 1] || "", 0.5);
+      });
+      /* Relier, un trait par élément de gauche : juste si l'élément est relié à SA proposition. */
+      function relier(sec, id, libG, libD, max) {
+        var sol = K[id] || {};
+        for (var g in libG) if (libG.hasOwnProperty(g)) {
+          var c = ""; for (var j = 1; j <= libD.length; j++) if (f[id + "-r" + j] === g) c = String(j);
+          choix(sec, libG[g], c ? libD[parseInt(c, 10) - 1] : "", !!c && sol[g] === c, libD[parseInt(sol[g], 10) - 1] || "", max);
+        }
+      }
+      relier("internet", "a5", RO_LIB.a5g, RO_LIB.a5d, 1);
+      relier("prot", "a6", RO_LIB.a6g, RO_LIB.a6d, 0.5);
+      ["A", "B"].forEach(function (p) {
+        var r = f["a7-" + p] || "", kk = K["a7-" + p] || [];
+        choix("maint", "7.1 Panne " + p + " — équipement défaillant", RO_LIB.eq[r] || "", kk.indexOf(r) >= 0, RO_LIB.eq[kk[0]] || "", 0.5);
+        redige("maint", "7.1 Panne " + p + " — justification", "a7-" + p + "-pq", 1);
+      });
+      ["S1", "S2", "S3"].forEach(function (s) {
+        var r = f["a7-" + s] || "", kk = K["a7-" + s] || [];
+        choix("maint", "7.2 " + s.replace("S", "Situation ") + " — protection", RO_LIB.eq[r] || "", kk.indexOf(r) >= 0, RO_LIB.eq[kk[0]] || "", 0.5);
+      });
+      redige("num", "9. Élément de la maison qui regroupe tout", "a9", 1);
+      for (k in pts) if (pts.hasOwnProperty(k)) pts[k] = Math.round(pts[k] * 100) / 100;
+      return { points: pts, detail: detail };
+    },
+
+    /* Mention, puis points forts (≥ 80 % de la partie), puis ce qu'il faut revoir
+       (< 50 %), chaque fois avec l'endroit de la fiche où le retravailler. */
+    appreciation: function (pts, note) {
+      var mention = note >= 18 ? "Excellent travail" : note >= 15 ? "Très bon travail"
+                  : note >= 12 ? "Bon travail" : note >= 8 ? "Travail à consolider"
+                  : "Des progrès sont nécessaires";
+      var S = [
+        ["topo", 3, "les topologies de réseaux", "les trois topologies (partie 1 : refais les essais du simulateur)"],
+        ["mat", 3, "le switch et le Wi-Fi", "les avantages et inconvénients du switch et du Wi-Fi (partie 2)"],
+        ["serv", 3, "le rôle du serveur", "le rôle du serveur : identification et stockage des fichiers (partie 3)"],
+        ["pannes", 2, "le diagnostic des pannes", "les conséquences d'une panne dans un réseau en étoile (partie 4)"],
+        ["internet", 2, "le modem et le routeur", "le rôle du modem et du routeur (partie 5 : refais l'animation du trajet)"],
+        ["prot", 1.5, "les protections du réseau", "la passerelle, le pare-feu et l'antivirus (partie 6)"],
+        ["maint", 4.5, "la maintenance du réseau", "le diagnostic d'une panne et le choix d'une protection (partie 7)"],
+        ["num", 1, "la box Internet", "ce que regroupe la box Internet (partie 9)"]
+      ];
+      var forts = [], faibles = [];
+      S.forEach(function (s) {
+        var r = (pts[s[0]] || 0) / s[1];
+        if (r >= 0.8) forts.push(s[2]); else if (r < 0.5) faibles.push(s[3]);
+      });
+      var txt = mention + " — " + fmtPts(note) + "/20.";
+      if (forts.length === S.length) txt += " Toutes les parties sont réussies.";
+      else if (forts.length) txt += " Points forts : " + forts.slice(0, 3).join(", ") + ".";
+      txt += faibles.length ? " À revoir : " + faibles.slice(0, 3).join(" ; ") + "."
+                            : " Les notions de la séquence sont maîtrisées.";
+      return txt;
+    }
+  },
 
   "eval1-5e": {
     titre: "P1 5e — Évaluation n°1",
@@ -9699,9 +9833,6 @@ function renderSubs() {
       } else if (s.cap === "eau56") {
         var e5Done = Number(s.score !== undefined ? s.score : 0) || 0, e5Tot = Number(s.qcmTot || 28) || 0;
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F419; ' + e5Done + '/' + e5Tot + ' réponses</span>';
-      } else if (s.cap === "reseau5e-org") {
-        var roDone = Number(s.score !== undefined ? s.score : 0) || 0, roTot = Number(s.qcmTot || 32) || 0;
-        sc = '<span style="background:#E0F2FE;color:#0369A1;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F310; ' + roDone + '/' + roTot + ' réponses</span>';
       } else if (EVALUATIONS[s.cap]) {
         /* Une évaluation affiche une note, pas un nombre de champs remplis. */
         var defEv = EVALUATIONS[s.cap], totEv = defEv.total;
@@ -10123,8 +10254,14 @@ function openModal(sid) {
     document.getElementById("mscore").textContent = "Activités 5 et 6 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||28) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "reseau5e-org") {
     if (mh3) mh3.textContent = "P2 5e — Organiser un réseau numérique";
-    document.getElementById("mrep").innerHTML = buildReseauOrgModalHTML(sub);
-    document.getElementById("mscore").textContent = "Organiser un réseau numérique — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||32) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+    /* Corrigé déchiffré : copie annotée + panneau de points, comme les évaluations.
+       Sinon (collègue qui n'a pas encore saisi le code) : copie brute, sans note. */
+    document.getElementById("mrep").innerHTML = EVALUATIONS["reseau5e-org"].manuel
+      ? buildReseauOrgModalHTML(sub)
+      : buildEvalModalHTML(sub) + buildEvalTeacherPanel(sub);
+    document.getElementById("mscore").textContent = texteNoteEval(sub)
+      + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||32) + " réponses"
+      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "batiment5e") {
     if (mh3) mh3.textContent = "P1 5e — Aménager un bâtiment";
     /* Copie de l'élève, puis le panneau de points : tout se corrige sur un écran. */
@@ -10351,7 +10488,8 @@ function ficheReponsesHTML(sub) {
   if (sub.cap === "eau34")           return buildEau34ModalHTML(sub);
   if (sub.cap === "eau56")           return buildEau56ModalHTML(sub);
   if (sub.cap === "batiment5e")      return buildBatimentModalHTML(sub);
-  if (sub.cap === "reseau5e-org")    return buildReseauOrgModalHTML(sub);
+  /* Copie imprimée (remise à l'élève) : ✅ / ❌ mais jamais la réponse attendue. */
+  if (sub.cap === "reseau5e-org")    return buildReseauOrgModalHTML(sub, true);
   if (sub.cap === "reseau5e")        return buildReseauModalHTML(sub);
   if (sub.cap === "filius5e")        return buildFiliusModalHTML(sub);
   if (sub.cap === "maison5e")        return buildMaisonModalHTML(sub);
