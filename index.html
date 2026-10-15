@@ -6203,7 +6203,7 @@ var SEQUENCES_DEF = [
   {id:"eval2-5e", ordre:14, niveau:"5ème", titre:"P1 — Évaluation n°2", desc:"Contraintes d'un cahier des charges, choix d'un mobilier, choix d'un isolant. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#7J65MSvOExtNQbRExycz6fED/aVTRMsKA6F/NlHAfK4=", open:true},
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
   {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
-  {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Réservé aux enseignants : corrigé chiffré, réponses attendues et annotation des copies.", couleur:"var(--vt)", code:"", open:true, prof:true},
+  {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Corrigé détaillé et barème. Code d'accès professeur.", couleur:"var(--vt)", code:"#bbTUX3H4kCYeOAy7z7rskVpdg4DmB4aSKbzg31D3RR8=", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
@@ -7058,8 +7058,6 @@ function renderDash() {
   var niveaux = {};
   for (var i = 0; i < SEQUENCES_DEF.length; i++) {
     var s = SEQUENCES_DEF[i];
-    /* prof:true — tuile réservée aux enseignants (corrigé chiffré), jamais montrée à un élève. */
-    if (s.prof && !(isProf || isCollegue)) continue;
     if (!niveaux[s.niveau]) niveaux[s.niveau] = [];
     niveaux[s.niveau].push(s);
   }
@@ -7247,6 +7245,9 @@ function tryUnlock() {
     var unlocked = getUnlocked();
     unlocked[pendingSeq] = true;
     setUnlocked(unlocked);
+    /* Corrigé chiffré : le code de la tuile est aussi la clé du corrigé, gardé pour la
+       session afin que l'élève n'ait pas à le saisir une seconde fois. */
+    if (pendingSeq === RO_COR_ID) roRetenirCode(entered);
     toast("Séquence déverrouillée !");
     if (pendingSeq === "dc")   goPage("pg-dc");
     else if (pendingSeq === "p12")  goPage("pg-p12");
@@ -8273,9 +8274,17 @@ function _roDeb64(b){ var s = atob(b), o = new Uint8Array(s.length); for (var i=
 
 /* Code du corrigé : coffre du professeur (compte administrateur), sinon code
    saisi une fois par un collègue et gardé sur son navigateur. */
+/* Un élève garde le code pour la session seulement (sessionStorage) : sur un poste
+   partagé, la classe suivante ne trouve pas le corrigé déjà ouvert. */
 function roCodeConnu(){
   if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[RO_COR_ID]) return COFFRE.codes[RO_COR_ID];
-  try { return localStorage.getItem("ro_cor_code") || ""; } catch(e){ return ""; }
+  try { return (isProf || isCollegue) ? (localStorage.getItem("ro_cor_code") || "") : (sessionStorage.getItem("ro_cor_code") || ""); } catch(e){ return ""; }
+}
+function roRetenirCode(code){
+  try { ((isProf || isCollegue) ? localStorage : sessionStorage).setItem("ro_cor_code", String(code).trim().toUpperCase()); } catch(e){}
+}
+function roOublierCode(){
+  try { localStorage.removeItem("ro_cor_code"); sessionStorage.removeItem("ro_cor_code"); } catch(e){}
 }
 function roDechiffrer(code){
   if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
@@ -8287,24 +8296,27 @@ function roDechiffrer(code){
     }).then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
   });
 }
-/* Ouvre le corrigé (page professeur). Rien ne s'affiche hors session enseignant. */
+/* Ouvre le corrigé : enseignant (code lu dans le coffre ou déjà saisi) ou élève à qui
+   le professeur a donné le code de la tuile — le même code déchiffre le corrigé. */
 function roCorOuvrir(codeSaisi){
   var corps = document.getElementById("ro-cor-body"), etat = document.getElementById("ro-cor-etat");
   if (!corps) return;
-  if (!(isProf || isCollegue)){ corps.innerHTML = ""; if (etat) etat.textContent = "Corrigé réservé aux enseignants."; return; }
-  if (RO_COR){ roCorAfficher(); return; }
   var code = codeSaisi || roCodeConnu();
+  /* Un corrigé déchiffré par une session précédente (professeur déconnecté sans
+     rechargement) ne s'affiche pas à un élève qui n'a pas lui-même le code. */
+  if (!(isProf || isCollegue) && !code) RO_COR = null;
+  if (RO_COR){ roCorAfficher(); return; }
   var saisie = document.getElementById("ro-cor-saisie");
-  if (!code){ if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisissez le code du corrigé (communiqué par le professeur responsable)."; return; }
+  if (!code){ corps.innerHTML = ""; if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisis le code du corrigé donné par ton professeur."; return; }
   if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
   roDechiffrer(code).then(function(p){
     RO_COR = p;
-    if (codeSaisi){ try { localStorage.setItem("ro_cor_code", String(codeSaisi).trim().toUpperCase()); } catch(e){} }
+    if (codeSaisi) roRetenirCode(codeSaisi);
     if (saisie) saisie.hidden = true;
     roCorAfficher();
   }).catch(function(e){
     if (saisie) saisie.hidden = false;
-    if (codeSaisi === undefined){ try { localStorage.removeItem("ro_cor_code"); } catch(x){} }
+    if (codeSaisi === undefined) roOublierCode();
     if (etat) etat.textContent = (e && e.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
       (e && e.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
   });
@@ -8313,7 +8325,7 @@ function roCorAfficher(){
   var corps = document.getElementById("ro-cor-body"), etat = document.getElementById("ro-cor-etat");
   corps.innerHTML = RO_COR.html;
   var c = (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes) ? COFFRE.codes[RO_COR_ID] : "";
-  if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code à communiquer à un collègue : <strong>' + roEsc(c) + '</strong></span>' : "");
+  if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code du corrigé (aux élèves après l\'activité, ou à un collègue) : <strong>' + roEsc(c) + '</strong></span>' : "");
   var b = document.getElementById("ro-cor-print"); if (b) b.hidden = false;
 }
 /* Session enseignant : le corrigé se déchiffre tout seul quand le code est connu
