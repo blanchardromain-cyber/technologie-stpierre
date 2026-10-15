@@ -63,6 +63,9 @@
         "box-shadow:0 0 0 4px #FFF6C2;transition:background .15s}" +
       ".li-bloc *{color:inherit!important}" +
       ".li-mot-actif{background:#FFC93C!important;border-radius:3px;box-shadow:0 0 0 2px #FFC93C}" +
+      ".li-consigne{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-left:6px;" +
+        "width:28px;height:28px;border-radius:50%;border:1px solid #CBD5E0;background:#fff;font-size:14px;line-height:1;cursor:pointer;padding:0}" +
+      ".li-consigne:hover{background:#DEEAF1;border-color:#2E75B6}" +
       "body.li-en-cours .li-cliquable{cursor:pointer}" +
       "body.li-en-cours .li-cliquable:hover{outline:2px dashed #E8B84B;outline-offset:3px}" +
       "@media print{.li-barre{display:none!important}.li-bloc,.li-mot-actif{background:none!important;box-shadow:none!important}}";
@@ -255,11 +258,18 @@
     return v || cfg.vitesse || "1";
   }
 
-  function demarrer(depuis) {
+  /* seul : un élément de la page (une consigne) — on ne lit que lui, sans
+     déplier les autres sections, puis la lecture s'arrête. */
+  function demarrer(depuis, seul) {
     if (!synth) { alert("La lecture à voix haute n'est pas disponible dans ce navigateur."); return; }
     stop(true);
-    deplierSections();
+    if (!seul) deplierSections();
     construireBlocs();
+    if (seul) {
+      blocs = blocs.filter(function (b) { return b === seul || seul.contains(b); });
+      if (!blocs.length && texteDe(seul).length > 1) blocs = [seul];
+      depuis = null;
+    }
     if (!blocs.length) return;
     enLecture = true; enPause = false; boundaryVu = false;
     document.body.classList.add("li-en-cours");
@@ -363,11 +373,31 @@
     }
   }
 
+  /* Bouton 🔊 sur chaque consigne marquée data-consigne : l'élève écoute une
+     consigne précise sans relancer toute la page. Sans ce balisage, rien ne change. */
+  function boutonsConsignes() {
+    var c = document.querySelectorAll("[data-consigne]");
+    for (var i = 0; i < c.length; i++) {
+      if (c[i].querySelector(":scope > .li-consigne")) continue;
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "li-consigne";
+      b.setAttribute("data-nolecture", "");
+      b.setAttribute("aria-label", "Écouter cette consigne");
+      b.title = "Écouter cette consigne";
+      b.innerHTML = "&#x1F50A;";
+      (function (el) {
+        b.addEventListener("click", function (ev) { ev.preventDefault(); ev.stopPropagation(); demarrer(null, el); });
+      })(c[i]);
+      c[i].appendChild(b);
+    }
+  }
+
   /* ── Départ ─────────────────────────────────────────────────────────── */
   function init() {
     if (!synth) return;                       /* navigateur sans synthèse vocale */
     injecterStyles();
     construireBarre();
+    boutonsConsignes();
     choisirVoix();
     if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = choisirVoix;
 
@@ -389,7 +419,7 @@
   else init();
 
   window.LectureImmersive = {
-    demarrer: demarrer, pause: pause, stop: stop, placer: placer,
+    demarrer: demarrer, pause: pause, stop: stop, placer: placer, consignes: boutonsConsignes,
     actif: function () { return enLecture; },
     motParMot: function () { return boundaryVu; }
   };
