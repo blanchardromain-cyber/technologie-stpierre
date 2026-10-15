@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 — Organiser un réseau numérique — 5ème</title>
+<!-- Polices chargées sans bloquer l'affichage : si le réseau du collège filtre Google Fonts,
+     l'activité reste utilisable immédiatement avec les polices du système. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --sq:#0369A1;      /* bleu réseau — couleur de la séquence */
+    --sql:#E0F2FE;
+    --tq:#0891B2;      /* turquoise : liaisons, paquets */
+    --bl:#1F4E79;      /* bleu institution */
+    --bc:#2E75B6;
+    --bp:#DEEAF1;
+    --vt:#1E6B3B;      /* vert : en service */
+    --vp:#E2EFDA;
+    --rg:#C0392B;      /* rouge : panne */
+    --rgp:#FADBD8;
+    --or:#B45309;
+    --orp:#FEF3C7;
+    --gr:#F4F6F8;
+    --gb:#E2E8F0;
+    --tx:#1A202C;
+    --td:#4A5568;
+    --r:12px;
+    --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+  img{max-width:100%}
+  button{font-family:inherit}
+  :focus-visible{outline:3px solid #F59E0B;outline-offset:2px}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--bl),#0C2D48);color:#fff;padding:16px 22px;position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+  .hbadge{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7DD3FC}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BBD3E8;font-weight:600}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:150px;outline:none}
+  .fld input:focus{border-color:#7DD3FC}
+  .fld input[readonly]{background:rgba(255,255,255,.72);color:#2D3748;cursor:default}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:150px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sq),var(--tq));transition:width .35s}
+  .pcount{font-size:12px;color:var(--td);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1180px;margin:0 auto;padding:22px 22px 150px}
+  .situ{background:linear-gradient(135deg,var(--sq),var(--tq));color:#fff;border-radius:var(--r);padding:20px 24px;margin-bottom:22px;box-shadow:var(--sh);display:flex;gap:18px;align-items:center}
+  .situ .lb{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+  .situ h2{font-size:20px;font-weight:700;margin:4px 0 6px}
+  .situ p{font-size:13.5px;opacity:.95}
+  .situ svg{flex:0 0 auto;width:120px;height:auto}
+  .reprise{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:18px;font-size:14px;color:#6B4E00}
+  .reprise[hidden]{display:none}
+
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:20px;overflow:hidden}
+  .sthdr{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--sql);border-left:6px solid var(--sq);cursor:pointer;user-select:none;width:100%;border-top:0;border-right:0;border-bottom:0;text-align:left;font:inherit;color:inherit}
+  .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--sq);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .sthdr h3{font-size:16px;font-weight:700;color:var(--bl);flex:1}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+  .etape + .etape{margin-top:18px}
+
+  .lesson{background:var(--gr);border-left:4px solid var(--bc);border-radius:0 8px 8px 0;padding:12px 15px;margin-bottom:16px;font-size:14px;color:var(--td)}
+  .lesson strong{color:var(--bl)}
+  .notion{background:#ECFDF5;border:2px solid #6EE7B7;border-radius:10px;padding:12px 15px;margin:14px 0;font-size:14px;color:#065F46}
+  .notion .nlb{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:#047857;margin-bottom:4px}
+  .qlabel{display:block;font-size:14.5px;font-weight:600;color:var(--tx);margin:16px 0 8px}
+  .qlabel .qn{color:var(--sq);font-weight:700;margin-right:5px}
+  .hint{font-size:12.5px;color:var(--td);font-style:italic;margin:-4px 0 8px}
+
+  /* ═══ CHAMPS + DICTÉE ═══ */
+  .fwrap{position:relative;margin-bottom:12px}
+  textarea.rep{width:100%;font-family:inherit;font-size:14.5px;color:var(--tx);background:#FFFDF9;border:2px solid var(--gb);border-radius:9px;padding:10px 12px;outline:none;resize:vertical;min-height:62px;line-height:1.65;transition:border-color .15s,background .15s}
+  textarea.rep:focus{border-color:var(--sq);background:#fff}
+  textarea.rep.filled{border-color:#A8CFA4;background:#FBFFFA}
+  .micbtn{display:inline-flex;align-items:center;gap:5px;margin-top:5px;background:#fff;border:2px solid var(--gb);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .micbtn:hover{border-color:var(--sq);color:var(--sq)}
+  .micbtn.rec{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+
+  /* ═══ RESSOURCES ═══ */
+  .reslinks{background:#EEF6FF;border:1px solid #A9CBEA;border-radius:10px;padding:11px 14px;margin:0 0 16px}
+  .reslinks .rl-lb{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--bl);margin-bottom:7px}
+  .reslinks p{font-size:13px;color:var(--td);margin:6px 0 0}
+  .linkbtn{display:inline-flex;align-items:center;gap:6px;background:var(--bp);color:var(--bl);border:1px solid var(--bc);border-radius:8px;padding:6px 13px;font-size:13px;font-weight:600;text-decoration:none;margin:3px 6px 3px 0}
+  .linkbtn:hover{background:var(--bc);color:#fff}
+  .figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+  figure.illus{border:1px solid var(--gb);border-radius:10px;overflow:hidden;background:#fff;text-align:center;margin:0 0 14px}
+  .figs figure.illus{margin:0}
+  figure.illus img{display:block;max-width:calc(100% - 12px);height:auto;margin:10px auto}
+  .figs figure.illus img{max-height:190px;width:auto}
+  figure.illus figcaption{padding:7px 10px;font-size:13px;font-weight:600;color:var(--bl);border-top:1px solid var(--gb);background:var(--gr)}
+
+  /* ═══ OUTIL : boîte commune ═══ */
+  .outil{border:2px solid var(--tq);border-radius:12px;background:#F0FBFF;padding:14px 16px;margin:6px 0 16px}
+  .outil-t{display:flex;align-items:center;gap:8px;font-weight:700;color:#0E5A75;font-size:14.5px;margin-bottom:4px}
+  .outil-t .tag{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--tq);color:#fff;border-radius:10px;padding:2px 8px}
+  .outil-c{font-size:13px;color:var(--td);margin-bottom:10px}
+  .seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .segb{border:2px solid var(--gb);background:#fff;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--td);cursor:pointer}
+  .segb:hover{border-color:var(--tq)}
+  .segb[aria-pressed=true]{background:var(--sq);border-color:var(--sq);color:#fff}
+  .ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .ctrl label{font-size:13px;font-weight:600;color:var(--td)}
+  .ctrl select{font-family:inherit;font-size:13px;padding:5px 8px;border:2px solid var(--gb);border-radius:8px;background:#fff}
+  .btnt{background:var(--sq);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:13px;font-weight:700;cursor:pointer}
+  .btnt:hover{background:var(--tq)}
+  .btnt.sec{background:#fff;color:var(--sq);border:2px solid var(--sq)}
+  .etat{margin-top:10px;border-radius:9px;padding:9px 12px;font-size:13.5px;font-weight:600;background:#fff;border:1px solid var(--gb);color:var(--tx);min-height:42px}
+  .etat.ok{background:var(--vp);border-color:#9AE6B4;color:var(--vt)}
+  .etat.ko{background:var(--rgp);border-color:#F5B7B1;color:var(--rg)}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .stats span{background:#fff;border:1px solid var(--gb);border-radius:14px;padding:3px 10px;color:var(--td)}
+  .stats b{color:var(--bl)}
+
+  /* Simulateur de topologies */
+  .topo-svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;background:#fff;border:1px solid var(--gb);border-radius:10px;touch-action:manipulation}
+  .topo-svg text,.trajet-svg text{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+  .topo-svg text{font-family:inherit;font-size:11px;font-weight:700;fill:#1F2937}
+  .lien .vis{stroke:var(--tq);stroke-width:3;stroke-linecap:round}
+  .lien.coupe .vis{stroke:var(--rg);stroke-dasharray:6 6;stroke-width:2.5}
+  .lien.chemin .vis{stroke:#16A34A;stroke-width:5}
+  .lien .hit{stroke:transparent;stroke-width:16;cursor:pointer}
+  .lien:focus{outline:none}
+  .lien:focus .vis,.lien:hover .vis{stroke-width:6}
+  .noeud{cursor:pointer}
+  .noeud:focus{outline:none}
+  .noeud:focus .cadre,.noeud:hover .cadre{stroke:#F59E0B;stroke-width:3}
+  .noeud .ecran{fill:#1E3A5F}
+  .noeud.panne .ecran{fill:#9CA3AF}
+  .noeud .croix{display:none;stroke:var(--rg);stroke-width:4;stroke-linecap:round}
+  .noeud.panne .croix{display:inline}
+  .noeud.chemin .cadre{stroke:#16A34A;stroke-width:3}
+  .paquet{fill:#F59E0B;stroke:#92400E;stroke-width:1.5}
+
+  /* Outil « relier » */
+  .relier{position:relative;display:grid;grid-template-columns:minmax(0,38fr) minmax(0,14fr) minmax(0,48fr);row-gap:9px;margin:8px 0 6px}
+  .relier svg.rl-traits{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .relier svg.rl-traits line{stroke:var(--sq);stroke-width:3;stroke-linecap:round}
+  .rl-col{display:flex;flex-direction:column;gap:9px;justify-content:space-around}
+  .rl-g{grid-column:1}
+  .rl-d{grid-column:3}
+  .rl-item{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--gb);border-radius:10px;padding:8px 10px;font-size:13.5px;cursor:pointer;text-align:left;width:100%;color:var(--tx);min-height:46px}
+  .rl-item:hover{border-color:var(--tq)}
+  .rl-item.sel{border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,.3);background:#FFFBEB}
+  .rl-item.lie{border-color:var(--sq);background:#F0F9FF}
+  .rl-g .rl-item{justify-content:space-between;font-weight:700;color:var(--bl)}
+  .rl-g .rl-item small{display:block;font-weight:500;color:var(--td);font-size:12px}
+  .rl-g .rl-item img{max-height:40px;width:auto;margin-right:auto}
+  .rl-pt{flex:0 0 auto;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--sq)}
+  .rl-item.lie .rl-pt{background:var(--sq)}
+  .rl-aide{font-size:12.5px;color:var(--td)}
+  .rl-aide button{background:none;border:none;color:var(--sq);font-weight:700;text-decoration:underline;cursor:pointer;font-size:12.5px}
+
+  /* Choix (QCM, cases) */
+  .cases{display:grid;gap:8px;margin:8px 0}
+  .case-l{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;background:var(--gr);border:1px solid var(--gb);border-radius:9px;padding:9px 12px}
+  .case-l .txt{font-size:14px}
+  .case-l .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .optb{border:2px solid var(--gb);background:#fff;border-radius:8px;padding:6px 11px;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;min-height:36px}
+  .optb:hover{border-color:var(--sq)}
+  .optb[aria-pressed=true],.optb[aria-checked=true]{background:var(--sq);border-color:var(--sq);color:#fff}
+  .optb[aria-pressed=true]::before{content:"✓ "}
+  .qcm{display:grid;gap:7px;margin:8px 0 14px}
+  .qcm .optb{text-align:left;font-weight:500;font-size:14px;padding:9px 12px;color:var(--tx);display:flex;gap:9px;align-items:flex-start}
+  .qcm .optb .rond{flex:0 0 auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--sq);margin-top:2px;background:#fff}
+  .qcm .optb[aria-checked=true] .rond{background:#fff;box-shadow:inset 0 0 0 4px var(--sq)}
+  .qcm.court{display:flex;flex-wrap:wrap;gap:8px}
+  .qcm.court .optb{min-width:150px}
+  .panne{border:1px solid var(--gb);border-radius:10px;padding:12px 14px;margin-bottom:12px;background:#fff}
+  .panne h4{font-size:14.5px;color:var(--bl);margin-bottom:2px}
+  .grille7{display:grid;gap:12px}
+  .dangers{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px;margin:8px 0 14px}
+  .checklist{display:grid;gap:7px;margin:8px 0}
+  .checklist label{display:flex;gap:10px;align-items:flex-start;background:var(--gr);border-radius:9px;padding:9px 12px;font-size:14px;cursor:pointer}
+  .checklist input{width:20px;height:20px;accent-color:var(--vt);flex:0 0 auto;margin-top:2px}
+
+  /* Trajet du paquet */
+  .trajet-svg{display:block;width:100%;max-width:760px;height:auto;margin:0 auto;background:#fff;border:1px solid var(--gb);border-radius:10px}
+  .trajet-svg text{font-family:inherit;font-size:12px;font-weight:700;fill:#1F2937}
+  .trajet-svg .zone{fill:#F0F9FF;stroke:#7DD3FC;stroke-dasharray:6 5}
+  .trajet-svg .eq rect,.trajet-svg .eq circle,.trajet-svg .eq path.forme{fill:#fff;stroke:#334155;stroke-width:2}
+  .trajet-svg .eq.actif rect,.trajet-svg .eq.actif circle,.trajet-svg .eq.actif path.forme{stroke:#F59E0B;stroke-width:4;fill:#FFFBEB}
+  .trajet-svg .cable{stroke:#94A3B8;stroke-width:3}
+  #pq{transition:transform .7s ease-in-out}
+  .legende-pas{font-size:12px;color:var(--td);margin-top:4px;font-variant-numeric:tabular-nums}
+
+  /* ═══ BARRE D'ENVOI ═══ */
+  .sendbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--gb);box-shadow:0 -4px 20px rgba(0,0,0,.09);padding:10px 22px;z-index:60}
+  .sendbar-in{max-width:1180px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+  .btn{border:none;border-radius:9px;padding:10px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .btn-send{background:var(--sq);color:#fff}
+  .btn-send:hover{background:var(--tq)}
+  .btn-send:disabled{opacity:.5;cursor:not-allowed}
+  .btn-sec{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-sec:hover{background:var(--bp);color:var(--bl)}
+  .draftst{font-size:12px;color:var(--td);margin-right:auto}
+  .sendst{display:none;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:0 0 10px;font-weight:600}
+  .sendst.show{display:block}
+  .sendst.ok{background:var(--vp);color:var(--vt)}
+  .sendst.err{background:var(--rgp);color:var(--rg)}
+  .sendst.wait{background:var(--bp);color:var(--bl)}
+
+  @media (max-width:640px){
+    header{padding:12px 14px}
+    header h1{font-size:16px}
+    .fld input{width:112px}
+    .pbar-wrap{padding:8px 14px}
+    main{padding:16px 12px 110px}
+    .stbody{padding:14px 13px 18px}
+    .sthdr{padding:12px 13px}
+    .situ{padding:16px;flex-direction:column;align-items:flex-start}
+    .situ svg{width:90px}
+    .case-l{grid-template-columns:1fr}
+    .relier{grid-template-columns:minmax(0,40fr) minmax(0,10fr) minmax(0,50fr)}
+    .rl-item{font-size:12.5px;padding:7px 8px;gap:6px}
+    .rl-g .rl-item img{display:none}
+    /* Sur téléphone, l'en-tête défile avec la page : en-tête, barre d'outils et barre
+       d'envoi collés prenaient la moitié de l'écran. */
+    header{position:static}
+    .pbar-wrap{top:0}
+    .sendbar{padding:7px 8px}
+    .sendbar-in{justify-content:center;gap:6px}
+    .btn{padding:9px 10px;font-size:12.5px}
+    .btn .lg,.draftst{display:none}
+    .figs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+    figure.illus figcaption{font-size:11.5px;padding:5px}
+  }
+  /* Grande taille + police dys + espacement maximal sur téléphone : les mots longs
+     (« automatiquement ») doivent pouvoir se couper plutôt que sortir du cadre. */
+  .rl-item>span,.optb>span,.optb,.sthdr h3,.txt{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+  .sthdr h3{flex:1 1 0}
+  @media (prefers-reduced-motion:reduce){ #pq{transition:none} html{scroll-behavior:auto} }
+  @media print{
+    header,.pbar-wrap,.sendbar,.micbtn,.ctrl,.toolbtn,.seg{display:none!important}
+    body{background:#fff}
+    section.step{box-shadow:none;border:1px solid #999;break-inside:avoid}
+    section.step.closed .stbody{display:block}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 2</div>
+      <h1>P2 — Organiser un réseau numérique</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 0 réponse</span>
+    <div class="pbar"><span id="pbar-fill"></span></div>
+    <button class="toolbtn" type="button" onclick="toggleAll()">&#x1F4D6; Tout ouvrir / fermer</button>
+  </div>
+</div>
+
+<main>
+  <div class="reprise" id="reprise" hidden data-nolecture></div>
+
+  <div class="situ">
+    <svg viewBox="0 0 120 90" aria-hidden="true" data-secondaire>
+      <g stroke="#fff" stroke-width="3" opacity=".9"><line x1="60" y1="45" x2="18" y2="16"/><line x1="60" y1="45" x2="102" y2="16"/><line x1="60" y1="45" x2="18" y2="74"/><line x1="60" y1="45" x2="102" y2="74"/></g>
+      <rect x="46" y="36" width="28" height="18" rx="4" fill="#fff"/><g fill="#7DD3FC"><circle cx="52" cy="45" r="2"/><circle cx="60" cy="45" r="2"/><circle cx="68" cy="45" r="2"/></g>
+      <g fill="#fff"><rect x="4" y="6" width="26" height="18" rx="3"/><rect x="90" y="6" width="26" height="18" rx="3"/><rect x="4" y="64" width="26" height="18" rx="3"/><rect x="90" y="64" width="26" height="18" rx="3"/></g>
+    </svg>
+    <div>
+      <div class="lb">Situation problème</div>
+      <h2>Comment créer un réseau de données&nbsp;?</h2>
+      <p>Topologies, matériels, serveur, accès à Internet et protections&nbsp;: tu vas découvrir comment est organisé le réseau du collège, puis diagnostiquer des pannes comme un technicien.</p>
+    </div>
+  </div>
+
+  <!-- ═════════ 1. TOPOLOGIES ═════════ -->
+  <section class="step" id="sec1">
+    <button type="button" class="sthdr" onclick="toggleSec('sec1')" aria-controls="sec1-b"><span class="num">1</span><h3>Différentes topologies de réseaux</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec1-b" data-etapes>
+      <div class="etape">
+        <div class="reslinks">
+          <span class="rl-lb">Ressource</span>
+          <a class="linkbtn" href="https://techno-flash.com/animations/reseau_college/reseau_college.html" target="_blank" rel="noopener">&#x1F310; Animation en ligne : le réseau du collège</a>
+          <p>L'animation s'ouvre dans un nouvel onglet. Reviens ensuite sur cette fiche : tes réponses sont gardées.</p>
+        </div>
+        <p class="qlabel" data-consigne><span class="qn">1.</span>À l'aide de l'animation vidéo ou de la ressource en ligne, observez les trois topologies de réseaux représentées ci-dessous&nbsp;:</p>
+        <div class="figs">
+          <figure class="illus"><img src="img/anneau.png" alt="Ordinateurs reliés les uns aux autres par un seul câble qui forme un cercle" width="292" height="297" loading="lazy"><figcaption>Réseau en anneau</figcaption></figure>
+          <figure class="illus"><img src="img/maille.png" alt="Huit ordinateurs reliés chacun à tous les autres par de nombreux câbles" width="286" height="282" loading="lazy"><figcaption>Réseau maillé</figcaption></figure>
+          <figure class="illus"><img src="img/etoile.png" alt="Huit ordinateurs reliés chacun à un point central" width="286" height="289" loading="lazy"><figcaption>Réseau en étoile</figcaption></figure>
+        </div>
+      </div>
+
+      <div class="etape">
+        <div class="outil" id="topo">
+          <div class="outil-t"><span class="tag">Simulateur</span> Coupe un câble, éteins un ordinateur… et observe</div>
+          <p class="outil-c" data-consigne>Choisis une topologie. Clique (ou touche) un <strong>câble</strong> pour le couper ou le réparer, un <strong>ordinateur</strong> ou le <strong>switch</strong> pour le mettre en panne. Puis envoie un message d'un ordinateur à un autre.</p>
+          <div class="seg" role="group" aria-label="Topologie simulée">
+            <button type="button" class="segb" data-topo="anneau" aria-pressed="true">Anneau</button>
+            <button type="button" class="segb" data-topo="maille" aria-pressed="false">Maillé</button>
+            <button type="button" class="segb" data-topo="etoile" aria-pressed="false">Étoile</button>
+          </div>
+          <svg class="topo-svg" id="topo-svg" viewBox="0 0 400 300" role="group" aria-label="Schéma du réseau simulé"></svg>
+          <div class="stats" id="topo-stats" aria-live="polite"></div>
+          <div class="ctrl">
+            <label for="topo-de">De</label><select id="topo-de"></select>
+            <label for="topo-a">vers</label><select id="topo-a"></select>
+            <button type="button" class="btnt" id="topo-env">&#x2709;&#xFE0F; Envoyer un message</button>
+            <button type="button" class="btnt sec" id="topo-rep">&#x1F527; Tout réparer</button>
+          </div>
+          <p class="etat" id="topo-etat" role="status" aria-live="polite">Choisis deux ordinateurs, puis envoie un message.</p>
+        </div>
+      </div>
+
+      <div class="etape">
+        <p class="qlabel" data-consigne><span class="qn">2.</span>Cochez la bonne topologie correspondant à chaque caractéristique.</p>
+        <div class="cases" id="a1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 2. MATÉRIELS ═════════ -->
+  <section class="step closed" id="sec2">
+    <button type="button" class="sthdr" onclick="toggleSec('sec2')" aria-controls="sec2-b"><span class="num">2</span><h3>Matériels et supports de transmission</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec2-b" data-etapes>
+      <div class="etape">
+        <div class="reslinks" data-secondaire>
+          <span class="rl-lb">Ressource</span>
+          <a class="linkbtn" href="https://techno-flash.com/animations/reseau_college/reseau_college.html" target="_blank" rel="noopener">&#x1F310; Animation en ligne : le réseau du collège</a>
+        </div>
+        <p class="qlabel" data-consigne>Associez chaque matériel de connexion à son type de liaison, son avantage et son inconvénient principal.</p>
+        <p class="rl-aide" data-nolecture>Pour relier : clique un matériel, puis une proposition (ou l'inverse). Clique de nouveau un trait relié pour l'effacer. Au clavier : <kbd>Tab</kbd> puis <kbd>Entrée</kbd>.</p>
+      </div>
+      <div class="etape">
+        <div class="relier" id="a2"></div>
+        <p class="rl-aide" id="a2-etat" aria-live="polite" data-nolecture></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 3. SERVEUR ═════════ -->
+  <section class="step closed" id="sec3">
+    <button type="button" class="sthdr" onclick="toggleSec('sec3')" aria-controls="sec3-b"><span class="num">3</span><h3>Optimiser et centraliser le réseau : le rôle du serveur</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec3-b" data-etapes>
+      <div class="etape">
+        <div class="lesson" data-consigne>Pour améliorer le fonctionnement d'un réseau informatique (comme celui du collège), on utilise un ordinateur spécialisé appelé <strong>Serveur</strong>.</div>
+        <figure class="illus"><img src="img/serveur.png" alt="Un poste élève et une tablette Wi-Fi reliés à un serveur central" width="460" height="157" loading="lazy"><figcaption>Le serveur central du collège</figcaption></figure>
+        <div class="reslinks" data-secondaire>
+          <span class="rl-lb">Ressource</span>
+          <a class="linkbtn" href="https://techno-flash.com/animations/reseau_college/reseau_college.html" target="_blank" rel="noopener">&#x1F310; Animation en ligne : le réseau du collège</a>
+        </div>
+      </div>
+      <div class="etape">
+        <label class="qlabel" for="a3-q1" data-consigne><span class="qn">1.</span>Au collège, lorsque vous vous connectez sur n'importe quel ordinateur avec votre identifiant et votre mot de passe, vous sollicitez le serveur. Quel est son rôle à ce moment-là&nbsp;?</label>
+        <div class="fwrap"><textarea class="rep" id="a3-q1"></textarea></div>
+      </div>
+      <div class="etape">
+        <label class="qlabel" for="a3-q2" data-consigne><span class="qn">2.</span>Sur le réseau du collège, vous retrouvez vos fichiers enregistrés dans votre espace personnel quel que soit l'ordinateur utilisé. À quoi sert le serveur dans ce cas-là&nbsp;?</label>
+        <div class="fwrap"><textarea class="rep" id="a3-q2"></textarea></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 4. MISSION DIAGNOSTIC ═════════ -->
+  <section class="step closed" id="sec4">
+    <button type="button" class="sthdr" onclick="toggleSec('sec4')" aria-controls="sec4-b"><span class="num">4</span><h3>Mission Diagnostic Réseau : Panne au Collège&nbsp;!</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec4-b" data-etapes>
+      <div class="etape">
+        <div class="lesson" data-consigne><strong>Mise en situation :</strong> M. Martin, professeur de Technologie, prépare une séance dans la salle informatique du collège (24 ordinateurs fixes en réseau en étoile avec commutateur) et avec la classe mobile (15 tablettes en Wi-Fi).</div>
+        <figure class="illus" data-secondaire>
+          <svg viewBox="0 0 520 170" role="img" aria-label="Schéma : 24 ordinateurs reliés à un commutateur, 15 tablettes connectées en Wi-Fi à une borne, un serveur relié au commutateur" style="display:block;width:100%;max-width:560px;margin:8px auto">
+            <g id="salle-pc"></g>
+            <rect x="214" y="72" width="70" height="26" rx="5" fill="#1E3A5F"/><text x="249" y="89" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Switch</text>
+            <rect x="226" y="130" width="46" height="30" rx="4" fill="#334155"/><text x="249" y="149" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">Serveur</text>
+            <line x1="249" y1="98" x2="249" y2="130" stroke="#0891B2" stroke-width="3"/>
+            <line x1="284" y1="85" x2="352" y2="85" stroke="#0891B2" stroke-width="3"/>
+            <rect x="352" y="72" width="44" height="26" rx="5" fill="#fff" stroke="#334155" stroke-width="2"/><text x="374" y="89" text-anchor="middle" font-size="10" font-weight="700" fill="#1F2937">Wi-Fi</text>
+            <g fill="none" stroke="#0891B2" stroke-width="2"><path d="M402 76 q8 9 0 18"/><path d="M410 70 q14 15 0 30"/></g>
+            <g id="salle-tab"></g>
+            <text x="110" y="165" text-anchor="middle" font-size="11" fill="#4A5568">24 ordinateurs fixes (câbles)</text>
+            <text x="460" y="165" text-anchor="middle" font-size="11" fill="#4A5568">15 tablettes</text>
+          </svg>
+        </figure>
+        <p class="qlabel" data-consigne>Cochez la bonne réponse pour résoudre chaque incident&nbsp;:</p>
+      </div>
+      <div class="etape" id="a4"></div>
+    </div>
+  </section>
+
+  <!-- ═════════ 5. ACCÉDER À INTERNET ═════════ -->
+  <section class="step closed" id="sec5">
+    <button type="button" class="sthdr" onclick="toggleSec('sec5')" aria-controls="sec5-b"><span class="num">5</span><h3>Accéder à Internet</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec5-b" data-etapes>
+      <div class="etape">
+        <div class="lesson" data-consigne>Internet est le «&nbsp;réseau des réseaux&nbsp;». Pour que le réseau du collège ou de la maison puisse s'y connecter, on utilise du matériel spécifique.</div>
+        <div class="reslinks" data-secondaire>
+          <span class="rl-lb">Ressource</span>
+          <a class="linkbtn" href="https://techno-flash.com/animations/reseau_college/reseau_college.html" target="_blank" rel="noopener">&#x1F310; Animation en ligne : le réseau du collège</a>
+        </div>
+      </div>
+      <div class="etape">
+        <div class="outil" id="trajet">
+          <div class="outil-t"><span class="tag">Animation</span> Le trajet d'un paquet de données</div>
+          <p class="outil-c" data-consigne>Choisis un envoi, puis avance étape par étape. Compare le chemin d'un fichier envoyé au poste voisin et celui d'une page web.</p>
+          <div class="seg" role="group" aria-label="Envoi à suivre">
+            <button type="button" class="segb" data-trajet="local" aria-pressed="true">&#x1F4C4; Fichier pour le poste voisin</button>
+            <button type="button" class="segb" data-trajet="web" aria-pressed="false">&#x1F310; Page d'un site web</button>
+          </div>
+          <svg class="trajet-svg" id="trajet-svg" viewBox="0 0 760 230" role="img" aria-labelledby="trajet-etat"></svg>
+          <div class="ctrl">
+            <button type="button" class="btnt sec" id="trajet-prec">&#x25C0; Étape précédente</button>
+            <button type="button" class="btnt" id="trajet-suiv">Étape suivante &#x25B6;</button>
+            <button type="button" class="btnt sec" id="trajet-auto">&#x23EF;&#xFE0F; Lecture automatique</button>
+          </div>
+          <p class="etat" id="trajet-etat" role="status" aria-live="polite"></p>
+          <p class="legende-pas" id="trajet-pas" data-nolecture></p>
+        </div>
+      </div>
+      <div class="etape">
+        <p class="qlabel" data-consigne>Relie chaque matériel à son rôle correspondant en traçant un trait droit.</p>
+        <div class="relier" id="a5"></div>
+        <p class="rl-aide" id="a5-etat" aria-live="polite" data-nolecture></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 6. SE PROTÉGER ═════════ -->
+  <section class="step closed" id="sec6">
+    <button type="button" class="sthdr" onclick="toggleSec('sec6')" aria-controls="sec6-b"><span class="num">6</span><h3>Se protéger des menaces extérieures</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec6-b" data-etapes>
+      <div class="etape">
+        <div class="lesson" data-consigne>Pour naviguer en sécurité, le réseau doit être protégé par une <strong>barrière physique</strong> (matérielle) et des <strong>barrières logicielles</strong>.</div>
+        <div class="reslinks">
+          <span class="rl-lb">Ressources</span>
+          <a class="linkbtn" href="https://techno-flash.com/animations/reseau_college/reseau_college.html" target="_blank" rel="noopener">&#x1F310; Animation : la protection matérielle du réseau</a>
+          <p>Pour le <strong>pare-feu</strong> et l'<strong>antivirus</strong> (protections logicielles), recherche leur rôle sur Internet.</p>
+        </div>
+      </div>
+      <div class="etape">
+        <p class="qlabel" data-consigne>Relie chaque protection à sa définition.</p>
+        <div class="relier" id="a6"></div>
+        <p class="rl-aide" id="a6-etat" aria-live="polite" data-nolecture></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 7. MISSION MAINTENANCE ═════════ -->
+  <section class="step closed" id="sec7">
+    <button type="button" class="sthdr" onclick="toggleSec('sec7')" aria-controls="sec7-b"><span class="num">7</span><h3>Mission Réseau : Maintenance et Sécurité au Collège</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec7-b" data-etapes>
+      <div class="etape">
+        <p class="qlabel" data-consigne><span class="qn">1.</span>En tant que technicien réseau du collège, analyse les deux pannes ci-dessous et coche quel équipement est défaillant parmi le Modem (le traducteur) ou le Routeur (l'aiguilleur). Justifie ensuite brièvement.</p>
+        <div class="grille7" id="a7-pannes"></div>
+      </div>
+      <div class="etape">
+        <p class="qlabel" data-consigne><span class="qn">2.</span>Le collège utilise 3 protections contre les cybermenaces&nbsp;: la Passerelle (physique), le Pare-feu (logicielle réseau) et l'Antivirus (logicielle machine). Associe la bonne protection à chaque scénario.</p>
+        <div class="grille7" id="a7-scen"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 8. CYBERDANGERS ═════════ -->
+  <section class="step closed" id="sec8">
+    <button type="button" class="sthdr" onclick="toggleSec('sec8')" aria-controls="sec8-b"><span class="num">8</span><h3>Les cyberdangers</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec8-b" data-etapes>
+      <div class="etape">
+        <figure class="illus" data-secondaire><img src="img/cyberdanger.png" alt="Silhouette encapuchonnée devant un ordinateur portable, sur fond de code informatique" width="388" height="228" loading="lazy"><figcaption>Les cyberdangers</figcaption></figure>
+        <p class="qlabel" data-consigne>Par groupes, choisissez un cyberdanger parmi ceux proposés et réalisez une affiche pour sensibiliser les autres élèves&nbsp;:</p>
+        <div class="dangers qcm" id="a8-choix" role="radiogroup" aria-label="Cyberdanger choisi par mon groupe"></div>
+      </div>
+      <div class="etape">
+        <p class="qlabel" data-consigne>Votre affiche devra&nbsp;:</p>
+        <p class="hint">Coche chaque point quand votre affiche le contient.</p>
+        <div class="checklist" id="a8-criteres"></div>
+        <div class="notion"><div class="nlb">&#x1F3AF; Objectif</div>Permettre à un élève qui découvre votre affiche de comprendre rapidement le danger et de savoir comment s'en protéger.</div>
+        <div class="reslinks">
+          <span class="rl-lb">Ressource complémentaire</span>
+          <a class="linkbtn" href="https://messervices.cyber.gouv.fr/ressources/cyber-enjeux" target="_blank" rel="noopener">&#x1F6E1;&#xFE0F; CyberEnJeux (ANSSI)</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 9. RÉSEAU NUMÉRIQUE ═════════ -->
+  <section class="step closed" id="sec9">
+    <button type="button" class="sthdr" onclick="toggleSec('sec9')" aria-controls="sec9-b"><span class="num">9</span><h3>Du réseau informatique au réseau numérique</h3><span class="chev" aria-hidden="true">▼</span></button>
+    <div class="stbody" id="sec9-b" data-etapes>
+      <div class="etape">
+        <div class="lesson" data-consigne>Le réseau informatique de votre domicile n'est pas si différent du réseau informatique du collège.</div>
+        <figure class="illus"><img src="img/reseau-college.png" alt="Schéma du réseau du collège : serveur et ordinateur reliés à un switch, lui-même relié à la passerelle, au modem routeur et à une borne Wi-Fi" width="286" height="268" loading="lazy"><figcaption>Le réseau informatique du collège</figcaption></figure>
+      </div>
+      <div class="etape">
+        <label class="qlabel" for="a9" data-consigne>Chez vous, quel est l'élément qui regroupe à la fois&nbsp;: un modem, un routeur, une passerelle, un commutateur et une borne WiFi&nbsp;?</label>
+        <div class="fwrap"><textarea class="rep" id="a9" style="min-height:50px"></textarea></div>
+      </div>
+      <div class="etape">
+        <div class="notion" data-consigne>
+          <div class="nlb">&#x1F4A1; À retenir</div>
+          <p>Un <strong>réseau informatique</strong> permet de connecter différents équipements informatiques&nbsp;: ordinateurs, imprimantes, scanners, vidéoprojecteurs, etc.</p>
+          <p style="margin-top:6px">Aujourd'hui, on parle plus largement de <strong>réseau numérique</strong>, car il permet également de connecter d'autres types d'équipements, comme les objets connectés ou les appareils domotiques.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sendst" id="send-status"></div>
+</main>
+
+<div class="sendbar">
+  <div class="sendbar-in">
+    <span class="draftst" id="draft-st">Sauvegarde automatique</span>
+    <button class="btn btn-sec" type="button" onclick="reprendreDernierEnvoi()" title="Recharge la fiche depuis le dernier travail envoyé au professeur">&#x21A9;&#xFE0F; Reprendre<span class="lg"> mon envoi</span></button>
+    <button class="btn btn-sec" type="button" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer</button>
+    <button class="btn btn-sec" type="button" onclick="saveBackup()" title="Télécharge une copie de secours sur cet ordinateur">&#x2B07;&#xFE0F; <span class="lg">Copie de </span>secours</button>
+    <button class="btn btn-send" type="button" id="btn-send" onclick="sendToProf()">&#x1F4E4; Envoyer<span class="lg"> au professeur</span></button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   P2 — ORGANISER UN RÉSEAU NUMÉRIQUE (5e) — Collège Saint Pierre, Les Essarts
+   Fiche élève de la séquence 2 : topologies, matériels, serveur, pannes,
+   accès à Internet, protections, cyberdangers, réseau numérique.
+   Deux outils d'exploration (simulateur de topologies, trajet d'un paquet)
+   et un outil « relier » pour les associations.
+
+   AUCUNE réponse attendue n'est écrite dans ce fichier : la page est publique.
+   La correction (réponses et annotation des copies) est chiffrée et ne
+   s'ouvre que depuis la page professeur du site.
+   Backend partagé avec index.html (Apps Script) ; mêmes règles d'envoi que
+   la capsule « Aménager un bâtiment » (file locale, verrou, refus en local).
+   ════════════════════════════════════════════════════════════════ */
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "reseau5e-org";
+var CAP_LABEL   = "P2 5e — Organiser un réseau numérique";
+var PREFILL_KEY = "reseau5e-org_prefill";
+var QUEUE_KEY   = "reseau5e-org_offline_queue";
+var DRAFT_PFX   = "reseau5e-org_draft_";
+
+/* Identité de l'élève (transmise par le site via localStorage, même origine) */
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ════════════ CONTENU DE LA FICHE (textes de la fiche activité) ════════════ */
+var TOPOS = [["anneau","Réseau en anneau"],["maille","Réseau maillé"],["etoile","Réseau en étoile"]];
+var A1 = [
+  "Si une seule liaison est coupée, TOUT le réseau est complètement bloqué.",
+  "Les ordinateurs sont tous reliés à un équipement central.",
+  "Réseau ultra-sécurisé : si une ligne tombe, l'information emprunte un autre chemin.",
+  "C'est le réseau le plus utilisé au collège et à la maison (facile à gérer).",
+  "Réseau très complexe et très coûteux car il nécessite un très grand nombre de câbles.",
+  "Si un ordinateur individuel tombe en panne, le reste du réseau continue de fonctionner."
+];
+/* Outils « relier » : gauche = matériels, droite = propositions (ordre de la fiche).
+   maxG = nombre de traits possibles depuis un même élément de gauche. */
+var RELIER = {
+  a2: { maxG: 3, gauche: [
+          { k:"switch", t:"Commutateur (Switch)", img:"img/switch.png", alt:"Commutateur à 8 prises réseau" },
+          { k:"wifi",   t:"Borne Wi-Fi",          img:"img/borne-wifi.png", alt:"Borne Wi-Fi à trois antennes" }],
+        droite: [
+          "Grande liberté de déplacement",
+          "Liaison filaire par câble RJ45",
+          "Connexion très rapide, stable et sécurisée",
+          "Liaison sans fil radio",
+          "Débit variable et sensible aux obstacles",
+          "Nécessité d'installer des câbles"] },
+  a5: { maxG: 1, gauche: [
+          { k:"modem",   t:"Le Modem",   s:"(Le traducteur du réseau)" },
+          { k:"routeur", t:"Le Routeur", s:"(L'aiguilleur du réseau)" }],
+        droite: [
+          "Il oriente les paquets de données entre le réseau local et Internet.",
+          "Il produit l'électricité nécessaire au fonctionnement des ordinateurs du collège.",
+          "Il stocke tous les sites web du monde pour pouvoir les afficher plus vite.",
+          "Il convertit le signal de la ligne en données numériques utilisables par le réseau."] },
+  a6: { maxG: 1, gauche: [
+          { k:"passerelle", t:"La Passerelle", s:"(Protection physique)" },
+          { k:"parefeu",    t:"Le Pare-feu",   s:"(Protection logicielle)" },
+          { k:"antivirus",  t:"L'Antivirus",   s:"(Protection logicielle)" }],
+        droite: [
+          "Sauvegarde automatiquement les données sur un serveur distant en cas de panne.",
+          "Détecte, neutralise et supprime les fichiers malveillants installés sur les machines.",
+          "Affiche des publicités ciblées en fonction de l'historique de navigation.",
+          "Sert de barrière physique et de point de passage unique entre le réseau interne et l'extérieur.",
+          "Analyse le trafic et bloque les intrusions ou logiciels suspects selon des règles précises."] }
+};
+var A4 = [
+  { k:"A", t:"Panne A : Un ordinateur fixe de la rangée A ne s'allume plus et son câble réseau est débranché.", o:[
+    "Tout le réseau du collège est totalement en panne.",
+    "Seul cet ordinateur ne fonctionne plus, les 23 autres marchent normalement.",
+    "Les tablettes Wi-Fi s'arrêtent également de fonctionner."]},
+  { k:"B", t:"Panne B : Le commutateur (Switch) principal de la salle informatique est accidentellement débranché du secteur.", o:[
+    "Tous les ordinateurs fixes de la salle perdent instantanément l'accès au réseau.",
+    "Seul l'ordinateur du professeur s'arrête de fonctionner.",
+    "Aucun impact, le signal continue de passer directement entre les ordinateurs."]},
+  { k:"C", t:"Panne C : Les élèves utilisant les tablettes dans la cour s'éloignent très loin du bâtiment. Les tablettes rament puis se déconnectent. Pourquoi ?", o:[
+    "Le câble réseau de la tablette s'est débranché.",
+    "La portée des ondes de la borne Wi-Fi est limitée et traversée par des obstacles.",
+    "Le serveur du collège s'est éteint automatiquement."]},
+  { k:"D", t:"Panne D : Le serveur central du collège subit une panne technique en plein milieu de la séance.", o:[
+    "Les ordinateurs fixes s'éteignent immédiatement et l'électricité est coupée dans la salle.",
+    "Les élèves peuvent continuer à naviguer sur l'ordinateur, mais ils ne peuvent plus ouvrir leur session ni accéder à leur espace personnel.",
+    "Plus aucun ordinateur ni tablette ne peut s'allumer, car le serveur alimente les batteries à distance."]}
+];
+var A7_EQ = [["routeur","Le Routeur"],["modem","Le Modem"]];
+var A7_PANNES = [
+  { k:"A", t:"Panne A : Les ordinateurs de la salle de technologie communiquent très bien entre eux (réseau local) pour s'échanger des fichiers. En revanche, il est totalement impossible d'envoyer ou de recevoir des données depuis l'extérieur sur la ligne téléphonique de l'opérateur." },
+  { k:"B", t:"Panne B : Les ordinateurs du collège accèdent bien à la ligne extérieure. Cependant, les pages web demandées par la vie scolaire arrivent au hasard en salle de technologie ou au CDI car les adresses IP ne sont plus lues et les paquets de données se perdent." }
+];
+var A7_PROT = [["passerelle","La Passerelle"],["parefeu","Le Pare-feu"],["antivirus","L'Antivirus"]];
+var A7_SCEN = [
+  { k:"S1", t:"Situation 1 : Un pirate informatique situé à l'autre bout du monde tente d'entrer à distance dans le réseau du collège pour modifier les notes sur Ecole Directe en exploitant un port de connexion ouvert." },
+  { k:"S2", t:"Situation 2 : Un élève insère une clé USB personnelle en salle informatique. Sans le savoir, la clé contient un logiciel espion qui commence à infecter et bloquer le disque dur de l'ordinateur." },
+  { k:"S3", t:"Situation 3 : Un inconnu s'introduit dans l'établissement et tente de brancher son ordinateur directement sur le commutateur de la baie technique, contournant le point d'entrée officiel de sécurité du réseau." }
+];
+var A8_DANGERS = ["Cyberharcèlement","Hameçonnage (phishing)","Arnaques en ligne","Vol de données","Usurpation d'identité","Malwares","Désinformation","Atteinte à la vie privée"];
+var A8_CRITERES = [
+  "présenter ce qu'est le cyberdanger choisi ;",
+  "donner un ou deux exemples concrets ;",
+  "expliquer les risques pour les utilisateurs ;",
+  "présenter les bons réflexes à adopter pour s'en protéger ;",
+  "être claire, lisible et attractive (titre, illustrations, couleurs, mots-clés…)."
+];
+
+/* ── Réponses de l'élève : un seul objet, toutes les valeurs en texte ──
+   Le classeur ne garde que `fields` (règle 6) : tout y voyage. */
+var R = {};
+var TEXT_IDS = ["a3-q1","a3-q2","a7-A-pq","a7-B-pq","a9"];
+
+/* ════════════ OUTILS ════════════ */
+function $(id){ return document.getElementById(id); }
+function val(id){ var e=$(id); return e ? String(e.value||"").trim() : ""; }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function slug(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function svgEl(tag, attrs){
+  var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (var k in attrs) if (attrs.hasOwnProperty(k)) e.setAttribute(k, attrs[k]);
+  return e;
+}
+/* Active un élément SVG ou HTML au clic ET au clavier (Entrée / Espace). */
+function activable(el, fn){
+  el.addEventListener("click", fn);
+  el.addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fn(e); }
+  });
+}
+function reduitMouvement(){ try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch(e){ return false; } }
+
+/* ════════════ PLIAGE DES SECTIONS ════════════ */
+function toggleSec(id){
+  var s=$(id); if(!s) return;
+  s.classList.toggle("closed");
+  var b = s.querySelector(".sthdr"); if (b) b.setAttribute("aria-expanded", s.classList.contains("closed") ? "false" : "true");
+  redessinerRelier();
+}
+function toggleAll(){
+  var secs = document.querySelectorAll("section.step"), anyOpen = false, i;
+  for (i=0;i<secs.length;i++) if (!secs[i].classList.contains("closed")) anyOpen = true;
+  for (i=0;i<secs.length;i++){ secs[i].classList.toggle("closed", anyOpen); var b = secs[i].querySelector(".sthdr"); if (b) b.setAttribute("aria-expanded", anyOpen ? "false" : "true"); }
+  redessinerRelier();
+}
+
+/* ════════════ DICTÉE VOCALE (Web Speech API) ════════════ */
+var _micActive = null;
+function addMicButtons(){
+  var fields = document.querySelectorAll("textarea.rep");
+  for (var i=0;i<fields.length;i++){
+    var f = fields[i], b = document.createElement("button");
+    b.type = "button"; b.className = "micbtn"; b.id = "mic-" + f.id;
+    b.setAttribute("data-nolecture", "");
+    b.innerHTML = "&#x1F3A4; Dicter";
+    b.onclick = (function(tid, bid){ return function(){ toggleDictation(tid, bid); }; })(f.id, b.id);
+    f.parentNode.appendChild(b);
+  }
+}
+function toggleDictation(targetId, btnId){
+  try { if (window.LectureImmersive && LectureImmersive.actif()) LectureImmersive.stop(); } catch(e){}
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    flash("La dictée n'est pas disponible dans ce navigateur. Sur iPad, utilise le <strong>micro du clavier</strong> ; sur ordinateur, ouvre la page avec Chrome ou Edge.", "err");
+    return;
+  }
+  if (_micActive && _micActive.btnId === btnId){ try{ _micActive.recog.stop(); }catch(e){} return; }
+  if (_micActive){ try{ _micActive.recog.stop(); }catch(e){} }
+  var recog = new SR();
+  recog.lang = "fr-FR"; recog.continuous = true; recog.interimResults = true;
+  var btn = $(btnId), ta = $(targetId);
+  if (btn){ btn.classList.add("rec"); btn.innerHTML = "&#x23F9; Arrêter"; }
+  if (ta) ta.focus();
+  var base = ta ? ta.value : "", interim = "";
+  recog.onresult = function(e){
+    interim = "";
+    for (var i=e.resultIndex;i<e.results.length;i++){
+      if (e.results[i].isFinal) base += (base && !/\s$/.test(base) ? " " : "") + e.results[i][0].transcript;
+      else interim = e.results[i][0].transcript;
+    }
+    if (ta){ ta.value = base + (interim ? " " + interim : ""); markFilled(ta); }
+  };
+  function stopMic(){
+    if (ta && interim){ ta.value = base; markFilled(ta); }
+    _micActive = null;
+    if (btn){ btn.classList.remove("rec"); btn.innerHTML = "&#x1F3A4; Dicter"; }
+    changement();
+  }
+  recog.onerror = function(e){
+    stopMic();
+    if (e.error === "not-allowed") flash("Micro refusé : autorise le microphone dans la barre d'adresse du navigateur.", "err");
+    else if (e.error !== "aborted") flash("Problème de micro : " + e.error, "err");
+  };
+  recog.onend = stopMic;
+  try { recog.start(); _micActive = { recog:recog, btnId:btnId }; } catch(e){ stopMic(); }
+}
+
+/* ════════════ PROGRESSION ════════════ */
+function markFilled(el){ if (el && el.classList) el.classList.toggle("filled", String(el.value||"").trim().length > 0); }
+/* Une « réponse » = une case de la fiche à remplir. Les outils d'exploration
+   et la liste de contrôle de l'affiche ne comptent pas. */
+function etatReponses(){
+  var n = 0, tot = 0, i, k;
+  for (i=1;i<=6;i++){ tot++; if (R["a1-r"+i]) n++; }
+  ["a2","a5","a6"].forEach(function(id){
+    var cfg = RELIER[id];
+    if (cfg.maxG > 1){ for (i=1;i<=cfg.droite.length;i++){ tot++; if (R[id+"-r"+i]) n++; } }
+    else cfg.gauche.forEach(function(g){ tot++; for (var j=1;j<=cfg.droite.length;j++) if (R[id+"-r"+j] === g.k){ n++; break; } });
+  });
+  A4.forEach(function(p){ tot++; if (R["a4-"+p.k]) n++; });
+  A7_PANNES.forEach(function(p){ tot++; if (R["a7-"+p.k]) n++; });
+  A7_SCEN.forEach(function(s){ tot++; if (R["a7-"+s.k]) n++; });
+  tot++; if (R["a8-choix"]) n++;
+  for (k=0;k<TEXT_IDS.length;k++){ tot++; if (val(TEXT_IDS[k])) n++; }
+  return { n:n, tot:tot };
+}
+function updateProgress(){
+  var e = etatReponses();
+  $("pbar-fill").style.width = Math.round(e.n/e.tot*100) + "%";
+  $("pcount").textContent = e.n + " / " + e.tot + " réponses";
+}
+function changement(){ updateProgress(); saveDraft(); }
+
+/* ════════════ 1 — TABLEAU DES TOPOLOGIES (cases à cocher) ════════════
+   Comme sur la fiche papier, chaque ligne a trois cases : l'élève coche
+   ce qu'il pense juste. La valeur gardée liste les cases cochées. */
+function construireA1(){
+  var h = "";
+  for (var i=0;i<A1.length;i++){
+    h += '<div class="case-l" role="group" aria-label="Caractéristique ' + (i+1) + '"><div class="txt" data-consigne>' + esc(A1[i]) + '</div><div class="opts">';
+    for (var t=0;t<TOPOS.length;t++)
+      h += '<button type="button" class="optb" data-a1="' + (i+1) + '" data-v="' + TOPOS[t][0] + '" aria-pressed="false">' + TOPOS[t][1].replace("Réseau ","") + '</button>';
+    h += '</div></div>';
+  }
+  $("a1").innerHTML = h;
+  $("a1").addEventListener("click", function(e){
+    var b = e.target.closest(".optb"); if (!b) return;
+    var cle = "a1-r" + b.getAttribute("data-a1"), v = b.getAttribute("data-v");
+    var liste = (R[cle] || "").split(",").filter(Boolean), k = liste.indexOf(v);
+    if (k >= 0) liste.splice(k,1); else liste.push(v);
+    R[cle] = TOPOS.map(function(x){ return x[0]; }).filter(function(x){ return liste.indexOf(x) >= 0; }).join(",");
+    afficherA1(); changement();
+  });
+}
+function afficherA1(){
+  var bs = document.querySelectorAll("#a1 .optb");
+  for (var i=0;i<bs.length;i++){
+    var liste = (R["a1-r"+bs[i].getAttribute("data-a1")] || "").split(",");
+    bs[i].setAttribute("aria-pressed", liste.indexOf(bs[i].getAttribute("data-v")) >= 0 ? "true" : "false");
+  }
+}
+
+/* ════════════ CHOIX UNIQUE (QCM) ════════════
+   Boutons role="radio" : une seule réponse par question, et un second clic
+   sur la réponse choisie la retire (on peut toujours revenir à « aucune »). */
+function groupeChoix(cle, options, ariaLabel){
+  var h = '<div class="qcm" role="radiogroup" aria-label="' + esc(ariaLabel) + '">';
+  for (var i=0;i<options.length;i++)
+    h += '<button type="button" class="optb" role="radio" aria-checked="false" data-cle="' + cle + '" data-v="' + esc(options[i][0]) + '"><span class="rond" aria-hidden="true"></span><span>' + esc(options[i][1]) + '</span></button>';
+  return h + '</div>';
+}
+function brancherChoix(racine){
+  racine.addEventListener("click", function(e){
+    var b = e.target.closest(".optb[role=radio]"); if (!b) return;
+    var cle = b.getAttribute("data-cle"), v = b.getAttribute("data-v");
+    R[cle] = (R[cle] === v) ? "" : v;
+    afficherChoix(); changement();
+  });
+}
+function afficherChoix(){
+  var bs = document.querySelectorAll(".optb[role=radio]");
+  for (var i=0;i<bs.length;i++) bs[i].setAttribute("aria-checked", R[bs[i].getAttribute("data-cle")] === bs[i].getAttribute("data-v") ? "true" : "false");
+  var cs = document.querySelectorAll("#a8-criteres input");
+  for (var j=0;j<cs.length;j++) cs[j].checked = R[cs[j].id] === "oui";
+}
+function construireChoix(){
+  /* 4 — pannes A à D : valeurs 1, 2, 3 = ordre des propositions de la fiche */
+  var h = "";
+  A4.forEach(function(p){
+    h += '<div class="panne"><h4 data-consigne>' + esc(p.t) + '</h4>' +
+         groupeChoix("a4-"+p.k, p.o.map(function(t,i){ return [String(i+1), t]; }), p.t.split(" :")[0]) + '</div>';
+  });
+  $("a4").innerHTML = h;
+  /* 7.1 — modem ou routeur + justification */
+  h = "";
+  A7_PANNES.forEach(function(p){
+    h += '<div class="panne"><h4 data-consigne>' + esc(p.t) + '</h4><p class="hint" style="margin:6px 0 2px">Diagnostic technique : l\'équipement défaillant est…</p>' +
+         groupeChoix("a7-"+p.k, A7_EQ, "Équipement défaillant, " + p.t.split(" :")[0]).replace('class="qcm"', 'class="qcm court"') +
+         '<label class="qlabel" for="a7-' + p.k + '-pq" style="margin-top:4px">Pourquoi&nbsp;?</label>' +
+         '<div class="fwrap"><textarea class="rep" id="a7-' + p.k + '-pq"></textarea></div></div>';
+  });
+  $("a7-pannes").innerHTML = h;
+  /* 7.2 — protection à activer */
+  h = "";
+  A7_SCEN.forEach(function(s){
+    h += '<div class="panne"><h4 data-consigne>' + esc(s.t) + '</h4><p class="hint" style="margin:6px 0 2px">Protection à activer :</p>' +
+         groupeChoix("a7-"+s.k, A7_PROT, "Protection à activer, " + s.t.split(" :")[0]).replace('class="qcm"', 'class="qcm court"') + '</div>';
+  });
+  $("a7-scen").innerHTML = h;
+  /* 8 — cyberdanger choisi + liste de contrôle de l'affiche */
+  var g = groupeChoix("a8-choix", A8_DANGERS.map(function(d){ return [d, d]; }), "Cyberdanger choisi");
+  $("a8-choix").outerHTML = g.replace('class="qcm"', 'class="qcm dangers" id="a8-choix"');
+  h = "";
+  A8_CRITERES.forEach(function(c, i){
+    h += '<label><input type="checkbox" id="a8-c' + (i+1) + '"><span>' + esc(c) + '</span></label>';
+  });
+  $("a8-criteres").innerHTML = h;
+  $("a8-criteres").addEventListener("change", function(e){
+    if (e.target && e.target.id){ R[e.target.id] = e.target.checked ? "oui" : ""; saveDraft(); }
+  });
+  ["sec4-b","sec7-b","sec8-b"].forEach(function(id){ brancherChoix($(id)); });
+}
+
+/* ════════════ OUTIL « RELIER » (sections 2, 5 et 6) ════════════
+   Un trait = (élément de gauche, proposition de droite). On garde, pour chaque
+   proposition de droite, la clé de l'élément de gauche relié (ou "").
+   Les traits sont tracés à partir des positions de mise en page (offsetLeft /
+   offsetTop), pas de getBoundingClientRect : sous le zoom du confort de lecture,
+   les deux ne sont pas dans la même échelle selon les navigateurs. */
+var relSel = {};   /* sélection en cours par outil : { cote:"g"|"d", k:… } */
+function construireRelier(id){
+  var cfg = RELIER[id], box = $(id), h = '<svg class="rl-traits" aria-hidden="true"></svg><div class="rl-col rl-g">';
+  cfg.gauche.forEach(function(g){
+    h += '<button type="button" class="rl-item" data-rl="' + id + '" data-cote="g" data-k="' + g.k + '">' +
+         (g.img ? '<img src="' + g.img + '" alt="' + esc(g.alt) + '" loading="lazy">' : '') +
+         '<span>' + esc(g.t) + (g.s ? '<small>' + esc(g.s) + '</small>' : '') + '</span><span class="rl-pt" aria-hidden="true"></span></button>';
+  });
+  h += '</div><div class="rl-col rl-d">';
+  cfg.droite.forEach(function(t, i){
+    h += '<button type="button" class="rl-item" data-rl="' + id + '" data-cote="d" data-k="' + (i+1) + '"><span class="rl-pt" aria-hidden="true"></span><span>' + esc(t) + '</span></button>';
+  });
+  box.innerHTML = h + '</div>';
+  box.addEventListener("click", function(e){
+    var b = e.target.closest(".rl-item"); if (!b) return;
+    cliquerRelier(id, b.getAttribute("data-cote"), b.getAttribute("data-k"));
+  });
+  box.addEventListener("keydown", function(e){ if (e.key === "Escape"){ relSel[id] = null; afficherRelier(id); } });
+}
+function cliquerRelier(id, cote, k){
+  var cfg = RELIER[id], s = relSel[id];
+  if (!s || s.cote === cote){
+    /* Clic sur une proposition déjà reliée, sans sélection : on efface son trait. */
+    if (!s && cote === "d" && R[id+"-r"+k]){ R[id+"-r"+k] = ""; annoncer(id, "Trait effacé."); afficherRelier(id); changement(); return; }
+    relSel[id] = (s && s.cote === cote && s.k === k) ? null : { cote:cote, k:k };
+    annoncer(id, relSel[id] ? "Sélectionné : " + libelleRelier(id, cote, k) + ". Choisis maintenant l'autre extrémité du trait." : "");
+    afficherRelier(id); return;
+  }
+  var g = cote === "g" ? k : s.k, d = cote === "d" ? k : s.k, cle = id + "-r" + d;
+  relSel[id] = null;
+  if (R[cle] === g){ R[cle] = ""; annoncer(id, "Trait effacé."); }
+  else {
+    if (cfg.maxG === 1){
+      /* Un seul trait par élément de gauche : le nouveau remplace l'ancien. */
+      for (var i=1;i<=cfg.droite.length;i++) if (R[id+"-r"+i] === g) R[id+"-r"+i] = "";
+    } else {
+      var nb = 0; for (var j=1;j<=cfg.droite.length;j++) if (R[id+"-r"+j] === g && j != d) nb++;
+      if (nb >= cfg.maxG){ annoncer(id, "« " + libelleRelier(id,"g",g) + " » a déjà " + cfg.maxG + " traits. Efface-en un (clique la proposition reliée) pour en tracer un autre."); afficherRelier(id); return; }
+    }
+    R[cle] = g;
+    annoncer(id, "Relié : " + libelleRelier(id,"g",g) + " — " + libelleRelier(id,"d",d) + ".");
+  }
+  afficherRelier(id); changement();
+}
+function libelleRelier(id, cote, k){
+  var cfg = RELIER[id];
+  if (cote === "g"){ for (var i=0;i<cfg.gauche.length;i++) if (cfg.gauche[i].k === k) return cfg.gauche[i].t; return k; }
+  return cfg.droite[parseInt(k,10)-1] || k;
+}
+function annoncer(id, txt){ var e = $(id+"-etat"); if (e) e.textContent = txt; }
+function afficherRelier(id){
+  var box = $(id), cfg = RELIER[id], s = relSel[id];
+  var items = box.querySelectorAll(".rl-item");
+  for (var i=0;i<items.length;i++){
+    var it = items[i], cote = it.getAttribute("data-cote"), k = it.getAttribute("data-k"), lie = false, avec = [];
+    if (cote === "d"){ lie = !!R[id+"-r"+k]; if (lie) avec.push(libelleRelier(id,"g",R[id+"-r"+k])); }
+    else for (var j=1;j<=cfg.droite.length;j++) if (R[id+"-r"+j] === k){ lie = true; avec.push(libelleRelier(id,"d",String(j))); }
+    it.classList.toggle("lie", lie);
+    it.classList.toggle("sel", !!s && s.cote === cote && s.k === k);
+    it.setAttribute("aria-pressed", (!!s && s.cote === cote && s.k === k) ? "true" : "false");
+    it.setAttribute("aria-label", libelleRelier(id, cote, k) + (lie ? " — relié à : " + avec.join(" ; ") : " — non relié"));
+  }
+  dessinerTraits(id);
+}
+function positionDans(el, conteneur){
+  var x = 0, y = 0;
+  while (el && el !== conteneur){ x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+  return { x:x, y:y };
+}
+function dessinerTraits(id){
+  var box = $(id), svg = box.querySelector("svg.rl-traits"), cfg = RELIER[id];
+  if (!svg || !box.offsetParent) return;          /* section repliée : rien à tracer */
+  svg.setAttribute("viewBox", "0 0 " + box.offsetWidth + " " + box.offsetHeight);
+  var h = "";
+  for (var j=1;j<=cfg.droite.length;j++){
+    var g = R[id+"-r"+j]; if (!g) continue;
+    var pg = box.querySelector('.rl-item[data-cote="g"][data-k="' + g + '"] .rl-pt');
+    var pd = box.querySelector('.rl-item[data-cote="d"][data-k="' + j + '"] .rl-pt');
+    if (!pg || !pd) continue;
+    var a = positionDans(pg, box), b = positionDans(pd, box);
+    h += '<line x1="' + (a.x + pg.offsetWidth/2) + '" y1="' + (a.y + pg.offsetHeight/2) + '" x2="' + (b.x + pd.offsetWidth/2) + '" y2="' + (b.y + pd.offsetHeight/2) + '"/>';
+  }
+  svg.innerHTML = h;
+}
+function redessinerRelier(){ ["a2","a5","a6"].forEach(dessinerTraits); }
+
+/* ════════════ SIMULATEUR DE TOPOLOGIES (section 1) ════════════
+   Règles simulées, celles de la fiche :
+   – anneau : le message fait le tour dans un seul sens ; le moindre câble coupé
+     ou ordinateur éteint interrompt l'anneau, plus rien ne circule ;
+   – maillé : chaque ordinateur est relié à tous les autres ; le message prend
+     le plus court chemin encore en service ;
+   – étoile : tout passe par le switch central.
+   Rien n'est noté : l'outil sert à observer avant de répondre. */
+var NB_PC = 6, TOPO = { type:"anneau", coupes:{}, pannes:{} };
+var POS = (function(){
+  var p = [];
+  for (var i=0;i<NB_PC;i++){ var a = -Math.PI/2 + i*2*Math.PI/NB_PC; p.push({ x: 200 + 128*Math.cos(a), y: 150 + 112*Math.sin(a) }); }
+  p.hub = { x:200, y:150 };
+  return p;
+})();
+function liensTopo(){
+  var l = [], i, j;
+  if (TOPO.type === "anneau") for (i=0;i<NB_PC;i++) l.push([i, (i+1)%NB_PC]);
+  else if (TOPO.type === "maille") for (i=0;i<NB_PC;i++) for (j=i+1;j<NB_PC;j++) l.push([i, j]);
+  else for (i=0;i<NB_PC;i++) l.push([i, "hub"]);
+  return l;
+}
+function cleLien(a, b){ return a + "-" + b; }
+function enService(n){ return !TOPO.pannes[n]; }
+function lienOk(a, b){ return !TOPO.coupes[cleLien(a,b)] && !TOPO.coupes[cleLien(b,a)] && enService(a) && enService(b); }
+function chemin(de, a){
+  if (de === a || !enService(de) || !enService(a)) return null;
+  var i;
+  if (TOPO.type === "anneau"){
+    for (i=0;i<NB_PC;i++) if (!lienOk(i, (i+1)%NB_PC)) return null;   /* anneau interrompu */
+    var c = [de], k = de;
+    while (k !== a){ k = (k+1)%NB_PC; c.push(k); }
+    return c;
+  }
+  if (TOPO.type === "etoile") return (lienOk(de,"hub") && lienOk(a,"hub")) ? [de,"hub",a] : null;
+  /* maillé : parcours en largeur */
+  var prec = {}, file = [de], vu = {}; vu[de] = true;
+  while (file.length){
+    var n = file.shift();
+    if (n === a){ var r = [a]; while (r[0] !== de) r.unshift(prec[r[0]]); return r; }
+    for (i=0;i<NB_PC;i++) if (!vu[i] && i !== n && lienOk(n, i)){ vu[i] = true; prec[i] = n; file.push(i); }
+  }
+  return null;
+}
+function nomNoeud(n){ return n === "hub" ? "le switch" : "PC " + (n+1); }
+function dessinerTopo(surbrillance){
+  var svg = $("topo-svg"); svg.innerHTML = "";
+  var surb = {}, k;
+  if (surbrillance) for (k=0;k<surbrillance.length-1;k++){ surb[cleLien(surbrillance[k], surbrillance[k+1])] = 1; surb[cleLien(surbrillance[k+1], surbrillance[k])] = 1; }
+  liensTopo().forEach(function(l){
+    var A = l[0] === "hub" ? POS.hub : POS[l[0]], B = l[1] === "hub" ? POS.hub : POS[l[1]];
+    var cle = cleLien(l[0], l[1]), coupe = !!TOPO.coupes[cle];
+    var g = svgEl("g", { "class":"lien" + (coupe ? " coupe" : "") + (surb[cle] ? " chemin" : ""), tabindex:"0", role:"button",
+      "aria-label":"Câble entre " + nomNoeud(l[0]) + " et " + nomNoeud(l[1]) + (coupe ? " : coupé. Entrée pour le réparer." : " : en service. Entrée pour le couper.") });
+    g.appendChild(svgEl("line", { "class":"vis", x1:A.x, y1:A.y, x2:B.x, y2:B.y }));
+    g.appendChild(svgEl("line", { "class":"hit", x1:A.x, y1:A.y, x2:B.x, y2:B.y }));
+    activable(g, function(){ if (coupe) delete TOPO.coupes[cle]; else TOPO.coupes[cle] = 1; majTopo("Câble entre " + nomNoeud(l[0]) + " et " + nomNoeud(l[1]) + (coupe ? " réparé." : " coupé.")); });
+    svg.appendChild(g);
+  });
+  var noeuds = [];
+  for (k=0;k<NB_PC;k++) noeuds.push(k);
+  if (TOPO.type === "etoile") noeuds.push("hub");
+  noeuds.forEach(function(n){
+    var P = n === "hub" ? POS.hub : POS[n], panne = !!TOPO.pannes[n];
+    var g = svgEl("g", { "class":"noeud" + (panne ? " panne" : "") + (surbrillance && surbrillance.indexOf(n) >= 0 ? " chemin" : ""), tabindex:"0", role:"button",
+      transform:"translate(" + P.x + "," + P.y + ")",
+      "aria-label": (n === "hub" ? "Switch" : "PC " + (n+1)) + (panne ? " : en panne. Entrée pour le remettre en marche." : " : en marche. Entrée pour le mettre en panne.") });
+    if (n === "hub"){
+      g.appendChild(svgEl("rect", { "class":"cadre", x:-30, y:-13, width:60, height:26, rx:5, fill: panne ? "#9CA3AF" : "#1E3A5F", stroke:"#0F172A", "stroke-width":1.5 }));
+      for (var p=0;p<4;p++) g.appendChild(svgEl("rect", { x:-21+p*11, y:-4, width:7, height:7, fill:"#7DD3FC" }));
+    } else {
+      g.appendChild(svgEl("rect", { "class":"cadre", x:-22, y:-17, width:44, height:30, rx:4, fill:"#fff", stroke:"#334155", "stroke-width":2 }));
+      g.appendChild(svgEl("rect", { "class":"ecran", x:-17, y:-12, width:34, height:20, rx:2 }));
+      g.appendChild(svgEl("rect", { x:-6, y:13, width:12, height:5, fill:"#334155" }));
+      var t = svgEl("text", { x:0, y:31, "text-anchor":"middle" }); t.textContent = "PC " + (n+1); g.appendChild(t);
+    }
+    g.appendChild(svgEl("path", { "class":"croix", d:"M-12,-10 L12,10 M12,-10 L-12,10" }));
+    activable(g, function(){ if (panne) delete TOPO.pannes[n]; else TOPO.pannes[n] = 1; majTopo((n === "hub" ? "Switch" : "PC " + (n+1)) + (panne ? " remis en marche." : " en panne.")); });
+    svg.appendChild(g);
+  });
+}
+function majTopo(message, surbrillance){
+  /* Le focus clavier est conservé d'un dessin à l'autre (même aria-label de départ). */
+  var actif = document.activeElement, lb = actif && actif.getAttribute ? (actif.getAttribute("aria-label") || "").split(" :")[0] : "";
+  dessinerTopo(surbrillance);
+  if (lb){ var cands = $("topo-svg").querySelectorAll("[tabindex]"); for (var i=0;i<cands.length;i++) if ((cands[i].getAttribute("aria-label")||"").split(" :")[0] === lb){ cands[i].focus(); break; } }
+  var paires = 0, ok = 0;
+  for (var a=0;a<NB_PC;a++) for (var b=a+1;b<NB_PC;b++){ paires++; if (chemin(a,b)) ok++; }
+  $("topo-stats").innerHTML = '<span>Câbles : <b>' + liensTopo().length + '</b></span><span>Câbles coupés : <b>' + Object.keys(TOPO.coupes).length +
+    '</b></span><span>Paires d\'ordinateurs qui peuvent encore communiquer : <b>' + ok + ' / ' + paires + '</b></span>';
+  if (message){ var e = $("topo-etat"); e.className = "etat"; e.textContent = message; }
+}
+var _anim = null;
+function envoyerMessage(){
+  var de = parseInt($("topo-de").value,10), a = parseInt($("topo-a").value,10), e = $("topo-etat");
+  if (de === a){ e.className = "etat ko"; e.textContent = "Choisis deux ordinateurs différents."; return; }
+  var c = chemin(de, a);
+  if (!c){
+    majTopo(null);
+    e.className = "etat ko";
+    if (!enService(de) || !enService(a)) e.textContent = "✖ Message impossible : " + (!enService(de) ? "PC " + (de+1) : "PC " + (a+1)) + " est en panne.";
+    else if (TOPO.type === "anneau") e.textContent = "✖ Message bloqué : l'anneau est interrompu, plus aucun message ne peut faire le tour.";
+    else if (TOPO.type === "etoile") e.textContent = TOPO.pannes.hub ? "✖ Message bloqué : le switch central est en panne, plus aucun message ne passe."
+                                                                    : "✖ Message bloqué : le câble qui relie l'un des deux ordinateurs au switch est coupé.";
+    else e.textContent = "✖ Message bloqué : il ne reste aucun chemin en service entre ces deux ordinateurs.";
+    return;
+  }
+  majTopo(null, c);
+  e.className = "etat ok";
+  e.textContent = "✔ Message reçu par PC " + (a+1) + ". Chemin suivi : " + c.map(nomNoeud).join(" → ") + ".";
+  animerPaquet(c);
+}
+/* Petite animation du paquet le long du chemin, au temps écoulé ;
+   rien ne bouge si l'élève a demandé moins d'animations. */
+function animerPaquet(c){
+  if (_anim) cancelAnimationFrame(_anim);
+  var svg = $("topo-svg"), pts = c.map(function(n){ return n === "hub" ? POS.hub : POS[n]; });
+  if (reduitMouvement() || pts.length < 2) return;
+  var dot = svgEl("circle", { "class":"paquet", r:7, cx:pts[0].x, cy:pts[0].y }); svg.appendChild(dot);
+  var duree = 650 * (pts.length - 1), t0 = null;
+  function pas(t){
+    if (t0 === null) t0 = t;
+    var u = Math.min(1, Math.max(0, (t - t0) / duree)) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(u)), f = u - i;
+    dot.setAttribute("cx", pts[i].x + (pts[i+1].x - pts[i].x) * f);
+    dot.setAttribute("cy", pts[i].y + (pts[i+1].y - pts[i].y) * f);
+    if (u < pts.length - 1) _anim = requestAnimationFrame(pas); else setTimeout(function(){ if (dot.parentNode) dot.parentNode.removeChild(dot); }, 500);
+  }
+  _anim = requestAnimationFrame(pas);
+}
+function construireTopo(){
+  var opts = ""; for (var i=0;i<NB_PC;i++) opts += '<option value="' + i + '">PC ' + (i+1) + '</option>';
+  $("topo-de").innerHTML = opts; $("topo-a").innerHTML = opts; $("topo-a").value = "3";
+  var bs = document.querySelectorAll("#topo .segb");
+  for (var j=0;j<bs.length;j++) bs[j].addEventListener("click", function(){
+    TOPO = { type:this.getAttribute("data-topo"), coupes:{}, pannes:{} };
+    for (var k=0;k<bs.length;k++) bs[k].setAttribute("aria-pressed", bs[k] === this ? "true" : "false");
+    majTopo("Topologie : " + this.textContent + ". Tout est en service.");
+  });
+  $("topo-env").addEventListener("click", envoyerMessage);
+  $("topo-rep").addEventListener("click", function(){ TOPO.coupes = {}; TOPO.pannes = {}; majTopo("Tout est réparé."); });
+  majTopo(null);
+}
+
+/* ════════════ TRAJET D'UN PAQUET (section 5) ════════════
+   Pas à pas par défaut (lisible à son rythme, au clavier et pour les élèves
+   dys) ; la lecture automatique avance d'une étape toutes les 3,5 s. */
+var EQ = {
+  pc:      { x:60,  y:120, t:"Poste élève" },
+  voisin:  { x:205, y:178, t:"Poste voisin" },
+  switch:  { x:205, y:80,  t:"Switch" },
+  routeur: { x:345, y:80,  t:"Routeur" },
+  modem:   { x:470, y:80,  t:"Modem" },
+  web:     { x:690, y:120, t:"Serveur du site web" }
+};
+var TRAJETS = {
+  local: [
+    ["pc",     "Le poste élève prépare un paquet de données pour le poste voisin."],
+    ["switch", "Le switch reçoit le paquet et le transmet directement au poste voisin, dans le réseau local."],
+    ["voisin", "Arrivé ! Le paquet n'est jamais sorti du réseau local : ni le routeur ni le modem n'ont servi."]
+  ],
+  web: [
+    ["pc",      "Le poste élève demande une page web : le paquet doit aller vers un serveur situé hors du collège."],
+    ["switch",  "Le switch transmet le paquet vers la sortie du réseau local."],
+    ["routeur", "Le routeur lit l'adresse de destination : elle n'appartient pas au réseau du collège. Il dirige le paquet vers Internet."],
+    ["modem",   "Le modem transforme les données numériques en signal qui voyage sur la ligne de l'opérateur (fibre, câble…). Au retour, il fait l'inverse."],
+    ["web",     "Le paquet traverse Internet jusqu'au serveur du site web. La page revient ensuite par le même chemin, dans l'autre sens."]
+  ]
+};
+var TRJ = { cas:"local", i:0, auto:null };
+function dessinerTrajet(){
+  var s = $("trajet-svg"), h = "";
+  h += '<rect class="zone" x="12" y="18" width="520" height="205" rx="14"/><text x="24" y="38" font-size="12" fill="#0369A1">Réseau local du collège</text>';
+  h += '<path d="M600 70 q20-40 60-22 q30-30 62 0 q36 4 26 40 q20 34-24 44 q-20 26-58 10 q-46 10-60-26 q-30-18-6-46z" fill="#F1F5F9" stroke="#94A3B8" stroke-width="2"/><text x="660" y="62" text-anchor="middle" font-size="12" fill="#475569">Internet</text>';
+  h += '<line class="cable" x1="60" y1="120" x2="205" y2="80"/><line class="cable" x1="205" y1="80" x2="205" y2="178"/><line class="cable" x1="205" y1="80" x2="345" y2="80"/><line class="cable" x1="345" y1="80" x2="470" y2="80"/>';
+  h += '<path d="M470 80 C520 80 520 120 560 120 S610 110 690 120" fill="none" stroke="#0891B2" stroke-width="3" stroke-dasharray="7 5"/><text x="560" y="145" text-anchor="middle" font-size="11" fill="#0E7490">ligne de l\'opérateur</text>';
+  for (var k in EQ) if (EQ.hasOwnProperty(k)){
+    var e = EQ[k];
+    h += '<g class="eq" id="eq-' + k + '" transform="translate(' + e.x + ',' + e.y + ')">';
+    if (k === "switch" || k === "routeur" || k === "modem") h += '<rect x="-34" y="-16" width="68" height="32" rx="6"/>';
+    else if (k === "web") h += '<rect x="-24" y="-30" width="48" height="60" rx="5"/><line x1="-14" y1="-14" x2="14" y2="-14" stroke="#334155" stroke-width="2"/><line x1="-14" y1="0" x2="14" y2="0" stroke="#334155" stroke-width="2"/>';
+    else h += '<rect x="-24" y="-18" width="48" height="32" rx="4"/><rect x="-18" y="-12" width="36" height="20" rx="2" fill="#1E3A5F" stroke="none"/>';
+    /* Le nom des boîtiers réseau s'écrit dans le boîtier ; celui des postes, dessous. */
+    var dedans = (k === "switch" || k === "routeur" || k === "modem");
+    h += '<text y="' + (dedans ? 4 : (k === "web" ? 46 : 32)) + '" text-anchor="middle">' + e.t + '</text></g>';
+  }
+  h += '<g id="pq" style="transform:translate(60px,120px)"><circle r="9" class="paquet" cx="0" cy="-26"/><text x="0" y="-22" text-anchor="middle" font-size="9" fill="#78350F">✉</text></g>';
+  s.innerHTML = h;
+}
+function majTrajet(){
+  var etapes = TRAJETS[TRJ.cas], e = etapes[TRJ.i], q = EQ[e[0]];
+  var eqs = document.querySelectorAll("#trajet-svg .eq");
+  for (var i=0;i<eqs.length;i++) eqs[i].classList.toggle("actif", eqs[i].id === "eq-" + e[0]);
+  $("pq").style.transform = "translate(" + q.x + "px," + q.y + "px)";
+  $("trajet-etat").textContent = e[1];
+  $("trajet-pas").textContent = "Étape " + (TRJ.i + 1) + " sur " + etapes.length;
+  $("trajet-prec").disabled = TRJ.i === 0;
+  $("trajet-suiv").disabled = TRJ.i === etapes.length - 1;
+}
+function arreterAuto(){ if (TRJ.auto){ clearInterval(TRJ.auto); TRJ.auto = null; $("trajet-auto").innerHTML = "&#x23EF;&#xFE0F; Lecture automatique"; } }
+function construireTrajet(){
+  dessinerTrajet();
+  var bs = document.querySelectorAll("#trajet .segb");
+  for (var j=0;j<bs.length;j++) bs[j].addEventListener("click", function(){
+    arreterAuto();
+    TRJ.cas = this.getAttribute("data-trajet"); TRJ.i = 0;
+    for (var k=0;k<bs.length;k++) bs[k].setAttribute("aria-pressed", bs[k] === this ? "true" : "false");
+    majTrajet();
+  });
+  $("trajet-suiv").addEventListener("click", function(){ arreterAuto(); if (TRJ.i < TRAJETS[TRJ.cas].length - 1){ TRJ.i++; majTrajet(); } });
+  $("trajet-prec").addEventListener("click", function(){ arreterAuto(); if (TRJ.i > 0){ TRJ.i--; majTrajet(); } });
+  $("trajet-auto").addEventListener("click", function(){
+    if (TRJ.auto){ arreterAuto(); return; }
+    if (TRJ.i === TRAJETS[TRJ.cas].length - 1) TRJ.i = 0;
+    majTrajet();
+    this.innerHTML = "&#x23F8;&#xFE0F; Pause";
+    TRJ.auto = setInterval(function(){
+      if (TRJ.i < TRAJETS[TRJ.cas].length - 1){ TRJ.i++; majTrajet(); } else arreterAuto();
+    }, 3500);
+  });
+  majTrajet();
+}
+/* Schéma décoratif de la salle (section 4). */
+function dessinerSalle(){
+  var g = $("salle-pc"), h = "", i;
+  for (i=0;i<24;i++){ var x = 14 + (i%8)*24, y = 14 + Math.floor(i/8)*24; h += '<rect x="' + x + '" y="' + y + '" width="18" height="13" rx="2" fill="#1E3A5F"/><line x1="' + (x+9) + '" y1="' + (y+13) + '" x2="214" y2="85" stroke="#0891B2" stroke-width=".7" opacity=".55"/>'; }
+  g.innerHTML = h; h = "";
+  for (i=0;i<15;i++){ var tx = 424 + (i%5)*18, ty = 18 + Math.floor(i/5)*44; h += '<rect x="' + tx + '" y="' + ty + '" width="12" height="17" rx="2" fill="#fff" stroke="#334155" stroke-width="1.5"/>'; }
+  $("salle-tab").innerHTML = h;
+}
+
+/* ════════════ BROUILLON LOCAL ════════════ */
+function draftKey(){ return DRAFT_PFX + (USER.id || slug(val("inp-prenom")+"-"+val("inp-nom")) || "anon"); }
+function collect(){
+  var fields = {}, k;
+  for (k in R) if (R.hasOwnProperty(k) && R[k]) fields[k] = R[k];
+  for (var i=0;i<TEXT_IDS.length;i++) fields[TEXT_IDS[i]] = val(TEXT_IDS[i]);
+  return { p: val("inp-prenom"), n: val("inp-nom"), c: val("inp-classe"), fields: fields, ts: Date.now() };
+}
+var _draftT = null;
+function saveDraft(){
+  if (_draftT) clearTimeout(_draftT);
+  _draftT = setTimeout(function(){
+    try {
+      /* Garde-fou : une fiche vide ne remplace jamais un brouillon enregistré. */
+      if (formVierge() && localStorage.getItem(draftKey())) return;
+      localStorage.setItem(draftKey(), JSON.stringify(collect()));
+      var d = new Date(); function p(x){ return x<10?"0"+x:""+x; }
+      $("draft-st").textContent = "Brouillon enregistré à " + p(d.getHours()) + ":" + p(d.getMinutes());
+    } catch(e){}
+  }, 500);
+}
+function formVierge(){
+  for (var k in R) if (R.hasOwnProperty(k) && R[k]) return false;
+  for (var i=0;i<TEXT_IDS.length;i++) if (val(TEXT_IDS[i])) return false;
+  return true;
+}
+function restaurerSelonIdentite(){
+  if (USER.id || !formVierge()) return;
+  if (!val("inp-prenom") || !val("inp-nom")) return;
+  restoreDraft(); toutAfficher();
+}
+/* Remplit la fiche à partir d'un jeu de réponses (brouillon local ou travail envoyé). */
+function appliquerDonnees(f){
+  f = f || {}; R = {};
+  for (var k in f) if (f.hasOwnProperty(k) && k.charAt(0) !== "_" && TEXT_IDS.indexOf(k) < 0 && /^a\d/.test(k)) R[k] = String(f[k] || "");
+  for (var i=0;i<TEXT_IDS.length;i++){ var el = $(TEXT_IDS[i]); if (el){ el.value = f[TEXT_IDS[i]] || ""; markFilled(el); } }
+}
+function toutAfficher(){ afficherA1(); afficherChoix(); ["a2","a5","a6"].forEach(afficherRelier); updateProgress(); }
+function restoreDraft(){
+  var d = null;
+  try { d = JSON.parse(localStorage.getItem(draftKey()) || "null"); } catch(e){}
+  if (!d) return;
+  if (d.p && !val("inp-prenom")) $("inp-prenom").value = d.p;
+  if (d.n && !val("inp-nom"))    $("inp-nom").value    = d.n;
+  if (d.c && !val("inp-classe")) $("inp-classe").value = d.c;
+  appliquerDonnees(d.fields);
+}
+
+/* ════════════ REPRENDRE LE DERNIER ENVOI ════════════ */
+function eidCourant(){
+  if (USER.id) return USER.id;
+  var ename = (val("inp-prenom") + " " + val("inp-nom")).trim();
+  if (!ename) return "";
+  var classe = val("inp-classe") ? ("5" + val("inp-classe").toUpperCase()) : (USER.c || "");
+  return CAP_ID + "." + (slug(classe) || "5x") + "." + (slug(ename) || "eleve");
+}
+function envoiLocal(eid){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i=subs.length-1; i>=0; i--) if (subs[i] && subs[i].eid === eid && subs[i].cap === CAP_ID) return subs[i];
+  } catch(e){}
+  return null;
+}
+function envoiCloud(eid, onDone){
+  if (!hasUrl() || !eid){ onDone(null); return; }
+  lireEnvois(eid, function(liste){
+    if (!liste || !liste.length){ onDone(null); return; }
+    var miens = liste.filter(function(x){ return x && x.eid === eid && x.cap === CAP_ID; });
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    onDone(miens[0] || null);
+  });
+}
+function plusRecent(a, b){ if (!a) return b; if (!b) return a; return (new Date(b.dateISO||0) > new Date(a.dateISO||0)) ? b : a; }
+function dateLisible(sub){
+  var d = new Date(sub && sub.dateISO ? sub.dateISO : Date.now()); function p(n){ return n<10 ? "0"+n : ""+n; }
+  return p(d.getDate()) + "/" + p(d.getMonth()+1) + "/" + d.getFullYear() + " à " + p(d.getHours()) + "h" + p(d.getMinutes());
+}
+function appliquerEnvoi(sub){
+  if (!sub) return;
+  if (sub.ename && !val("inp-prenom") && !val("inp-nom")){
+    var bouts = String(sub.ename).split(" "); $("inp-prenom").value = bouts.shift() || ""; $("inp-nom").value = bouts.join(" ");
+  }
+  if (sub.ecls && !val("inp-classe")) $("inp-classe").value = String(sub.ecls).replace(/^5/, "").toUpperCase();
+  appliquerDonnees(sub.fields);
+  var ban = $("reprise"); if (ban) ban.hidden = true;
+  toutAfficher(); saveDraft();
+  flash("&#x21A9;&#xFE0F; Travail récupéré (envoi du " + dateLisible(sub) + "). Tu peux continuer, puis le renvoyer.", "ok");
+}
+function reprendreDernierEnvoi(){
+  var eid = eidCourant();
+  if (!eid){ flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> : c'est ce qui permet de retrouver ton travail.", "err"); $("inp-prenom").focus(); return; }
+  if (!formVierge() && !confirm("Récupérer le dernier travail envoyé remplacera ce qui est actuellement dans la fiche. Continuer ?")) return;
+  flash("⟳ Recherche de ton dernier envoi…", "wait");
+  var local = envoiLocal(eid);
+  envoiCloud(eid, function(distant){
+    if (envoiVerrouille(local) || envoiVerrouille(distant) || copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+    var sub = plusRecent(local, distant);
+    if (!sub){ flash("Aucun envoi retrouvé pour ce nom. Vérifie l'orthographe de ton prénom et de ton nom, ou préviens ton professeur.", "err"); return; }
+    appliquerEnvoi(sub);
+  });
+}
+function proposerReprise(){
+  if (!formVierge()) return;
+  var eid = eidCourant(); if (!eid) return;
+  function afficher(sub){
+    if (!sub || !formVierge()) return;
+    var ban = $("reprise"); if (!ban) return;
+    ban.innerHTML = '<div><strong>&#x21A9;&#xFE0F; Un travail envoyé le ' + dateLisible(sub) + ' a été retrouvé.</strong>' +
+      '<div style="font-size:12.5px;margin-top:2px">Ta fiche est vide sur cet appareil : tu peux la recharger pour continuer.</div></div>' +
+      '<button class="btn btn-send" type="button" style="white-space:nowrap" onclick="reprendreDernierEnvoi()">Récupérer mon travail</button>';
+    ban.hidden = false;
+  }
+  var local = envoiLocal(eid);
+  if (copieLocaleVerrouillee() || envoiVerrouille(local)) return;
+  if (local) afficher(local);
+  envoiCloud(eid, function(distant){
+    if (envoiVerrouille(distant)){ var ban = $("reprise"); if (ban) ban.hidden = true; return; }
+    afficher(plusRecent(local, distant));
+  });
+}
+
+/* ════════════ MESSAGES ════════════ */
+function flash(html, kind){
+  var box = $("send-status");
+  box.className = "sendst show " + (kind || "wait");
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior: reduitMouvement() ? "auto" : "smooth", block:"center" });
+}
+
+/* ════════════ COPIE DE SECOURS ════════════ */
+function saveBackup(){
+  var data = collect();
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "reseau5e-org_" + (slug(data.p+"-"+data.n) || "eleve") + ".json";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  flash("&#x2B07;&#xFE0F; Copie de secours téléchargée sur cet ordinateur.", "ok");
+}
+
+/* ════════════ RÉSUMÉ LISIBLE (vue professeur, colonne « open ») ════════════
+   Réponses de l'élève en clair, sans aucune indication de correction. */
+function buildOpenSummary(state){
+  var f = state.fields, L = [], i;
+  function lib(liste, v){ for (var k=0;k<liste.length;k++) if (liste[k][0] === v) return liste[k][1]; return v || "—"; }
+  var b = []; for (i=1;i<=6;i++) b.push("• " + A1[i-1] + " → " + ((f["a1-r"+i] || "").split(",").filter(Boolean).map(function(v){ return lib(TOPOS, v); }).join(" + ") || "—"));
+  L.push("--- 1. Topologies ---\n" + b.join("\n"));
+  ["a2","a5","a6"].forEach(function(id, n){
+    var cfg = RELIER[id], t = ["--- 2. Matériels ---","--- 5. Accéder à Internet ---","--- 6. Protections ---"][n], bb = [];
+    cfg.droite.forEach(function(d, j){ bb.push("• " + d + " → " + (f[id+"-r"+(j+1)] ? libelleRelier(id, "g", f[id+"-r"+(j+1)]) : "—")); });
+    L.push(t + "\n" + bb.join("\n"));
+  });
+  L.splice(2, 0, "--- 3. Serveur ---\n• Rôle à la connexion : " + (f["a3-q1"] || "—") + "\n• Espace personnel : " + (f["a3-q2"] || "—"));
+  L.splice(3, 0, "--- 4. Pannes ---\n" + A4.map(function(p){ var v = parseInt(f["a4-"+p.k],10); return "• Panne " + p.k + " → " + (v ? p.o[v-1] : "—"); }).join("\n"));
+  L.push("--- 7. Maintenance et sécurité ---\n" + A7_PANNES.map(function(p){ return "• Panne " + p.k + " → " + lib(A7_EQ, f["a7-"+p.k]) + " ; pourquoi : " + (f["a7-"+p.k+"-pq"] || "—"); }).join("\n") +
+         "\n" + A7_SCEN.map(function(s){ return "• " + s.k.replace("S","Situation ") + " → " + lib(A7_PROT, f["a7-"+s.k]); }).join("\n"));
+  var crit = 0; for (i=1;i<=5;i++) if (f["a8-c"+i] === "oui") crit++;
+  L.push("--- 8. Cyberdangers ---\n• Danger choisi : " + (f["a8-choix"] || "—") + "\n• Critères de l'affiche cochés : " + crit + "/5");
+  L.push("--- 9. Réseau numérique ---\n• Élément de la maison : " + (f["a9"] || "—"));
+  return L.join("\n\n");
+}
+
+/* ════════════ VERROU DE CONSULTATION ════════════
+   Le professeur peut verrouiller une copie rendue (champ « locked »). Elle ne
+   se recharge plus et ne se renvoie plus ; la saisie en cours n'est pas touchée. */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++) if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+function estLocal(){ var hn = (location.hostname || "").toLowerCase(); return hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""; }
+/* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
+function urlLecture(){
+  try { if (estLocal()){ var u = localStorage.getItem("apps_script_url_test") || ""; if (/^https:\/\/script\.google\.com\//.test(u)) return u; } } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){ lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); }); return; }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if ($("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou"; v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ voileVerrou(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    for (var i = 0; i < liste.length; i++) if (liste[i] && liste[i].eid === USER.id && liste[i].cap === CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }, true);
+}
+
+/* ════════════ ENVOI AU PROFESSEUR ════════════ */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); q = q.filter(function(x){ return x.eid !== sub.eid; }); q.push(sub); localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e){}
+}
+function unqueueSub(sub){
+  try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); q = q.filter(function(x){ return x.eid !== sub.eid; }); localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e){}
+}
+/* Le site lit localStorage.subs : la carte de l'élève passe tout de suite en « En attente de correction ». */
+function storeLocalSub(sub){
+  try { var subs = JSON.parse(localStorage.getItem("subs") || "[]"); subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); }); subs.push(sub); localStorage.setItem("subs", JSON.stringify(subs)); } catch(e){}
+}
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production
+   (upsert eid + cap, envoi no-cors sans retour). "" = envoi refusé. */
+function urlEcriture(){
+  if (!estLocal()) return APPS_SCRIPT_URL;
+  try { var u = localStorage.getItem("apps_script_url_test") || ""; if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u; } catch(e){}
+  return "";
+}
+function refuserEcritureLocale(){
+  try { console.warn("[capsule] Page servie en local (" + (location.hostname || "fichier") + ") : l'envoi vers le classeur de production a été bloqué. Le travail reste en file locale."); } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  var cible = urlEcriture();
+  if (!cible){ refuserEcritureLocale(); if (onDone) onDone(false); return; }
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(cible, { method:"POST", mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify({ secret: SYNC_SECRET, sub: sub }) })
+      .then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); if (!q.length || !hasUrl() || !urlEcriture()) return; q.forEach(function(sub){ postSub(sub); }); } catch(e){}
+}
+function makeSub(){
+  var state = collect(), e = etatReponses();
+  var classe = state.c ? ("5" + state.c.toUpperCase()) : (USER.c || "");
+  var ename  = (state.p + " " + state.n).trim();
+  return {
+    id: Date.now(),
+    eid: USER.id || (CAP_ID + "." + (slug(classe)||"5x") + "." + (slug(ename)||"eleve")),
+    ename: ename || "Élève", ecls: classe,
+    cap: CAP_ID, caplbl: CAP_LABEL,
+    score: e.n, qcmTot: e.tot,
+    open: buildOpenSummary(state),
+    fields: state.fields,
+    date: new Date().toLocaleDateString("fr-FR"), dateISO: new Date().toISOString(),
+    status: "pending"
+  };
+}
+function sendToProf(){
+  if (copieLocaleVerrouillee()){ flash(MSG_VERROU, "err"); return; }
+  var p = val("inp-prenom"), n = val("inp-nom"), c = val("inp-classe");
+  if (!p || !n){ flash("✋ Écris d'abord ton <strong>prénom et ton nom</strong> en haut de la fiche.", "err"); $(p ? "inp-nom" : "inp-prenom").focus(); return; }
+  if (!c){ flash("✋ Indique la <strong>lettre de ta classe</strong> (exemple : A pour 5A) en haut de la fiche.", "err"); $("inp-classe").focus(); return; }
+  var e = etatReponses();
+  if (e.n < 10 && !confirm("Tu n'as rempli que " + e.n + " réponse(s) sur " + e.tot + ". Envoyer quand même au professeur ?")) return;
+  var btn = $("btn-send");
+  btn.disabled = true;
+  flash("⟳ Envoi en cours…", "wait");
+  saveDraft();
+  var sub = makeSub();
+  storeLocalSub(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(err){}
+  postSub(sub, function(ok){
+    btn.disabled = false;
+    if (ok) flash("✅ <strong>Travail envoyé au professeur</strong> le " + new Date().toLocaleString("fr-FR") + ".<br>Tu peux continuer à compléter : un nouvel envoi remplacera le précédent.", "ok");
+    else flash("⚠️ L'envoi n'a pas abouti (réseau ?). Pas de panique : ton travail est <strong>conservé sur cet ordinateur</strong> et repartira automatiquement. Préviens ton professeur.", "err");
+  });
+}
+
+/* ════════════ INITIALISATION ════════════ */
+function lirePrefill(){ try { return JSON.parse(localStorage.getItem(PREFILL_KEY) || "null"); } catch(e){ return null; } }
+function readPrefill(){
+  var d = lirePrefill(); if (!d) return;
+  USER = { id: d.id || "", p: d.p || "", n: d.n || "", c: d.c || "" };
+  if (USER.p) $("inp-prenom").value = USER.p;
+  if (USER.n) $("inp-nom").value = USER.n;
+  if (USER.c) $("inp-classe").value = String(USER.c).replace(/^5/, "").toUpperCase();
+  verrouillerIdentite();
+}
+/* L'identité vient du compte de l'élève : on la fige (même clé de brouillon du début à la fin). */
+function verrouillerIdentite(){
+  if (!USER.p || !USER.n) return;
+  ["inp-prenom","inp-nom","inp-classe"].forEach(function(id){ var e = $(id); if (!e) return; e.readOnly = true; e.tabIndex = -1; e.title = "Identité de ton compte — elle ne se modifie pas ici."; });
+  var z = document.querySelector(".ident");
+  if (z && !$("ident-compte")){
+    var n = document.createElement("div");
+    n.id = "ident-compte"; n.setAttribute("data-nolecture","");
+    n.textContent = "\u{1F512} identité de ton compte";
+    n.style.cssText = "flex-basis:100%;font-size:10.5px;color:#BBD3E8;letter-spacing:.3px";
+    z.appendChild(n);
+  }
+}
+function wireFields(){
+  var els = document.querySelectorAll("textarea.rep");
+  for (var i=0;i<els.length;i++){ els[i].addEventListener("input", function(){ markFilled(this); changement(); }); markFilled(els[i]); }
+  ["inp-prenom","inp-nom","inp-classe"].forEach(function(id){
+    var e = $(id); if (!e) return;
+    e.addEventListener("input", function(){ restaurerSelonIdentite(); saveDraft(); });
+    e.addEventListener("blur", restaurerSelonIdentite);
+  });
+}
+function calerBarreOutils(){ var h = document.querySelector("header"); if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px"); }
+function initActivite(){
+  calerBarreOutils();
+  construireA1();
+  construireChoix();
+  ["a2","a5","a6"].forEach(construireRelier);
+  construireTopo();
+  construireTrajet();
+  dessinerSalle();
+  readPrefill();
+  controlerVerrou();
+  restoreDraft();
+  wireFields();
+  addMicButtons();
+  toutAfficher();
+  flushQueue();
+  proposerReprise();
+  var secs = document.querySelectorAll("section.step");
+  /* #tout : toutes les sections ouvertes (impression, vérification, projection). */
+  if (location.hash === "#tout") for (var t=0;t<secs.length;t++) secs[t].classList.remove("closed");
+  for (var i=0;i<secs.length;i++){ var b = secs[i].querySelector(".sthdr"); if (b) b.setAttribute("aria-expanded", secs[i].classList.contains("closed") ? "false" : "true"); }
+  /* Les consignes construites en JavaScript (pannes, scénarios, tableau) reçoivent
+     aussi leur bouton 🔊 : le module de lecture s'est lancé avant elles. */
+  try { if (window.LectureImmersive && LectureImmersive.consignes) LectureImmersive.consignes(); } catch(e){}
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initActivite);
+else initActivite();
+window.addEventListener("resize", function(){ calerBarreOutils(); clearTimeout(window._rz); window._rz = setTimeout(redessinerRelier, 150); });
+window.addEventListener("load", redessinerRelier);                 /* images chargées : les hauteurs ont bougé */
+try { document.fonts.ready.then(redessinerRelier); } catch(e){}
+/* Police, taille, espacement ou consignes fractionnées : la mise en page change, on retrace. */
+document.addEventListener("confort-lecture", function(){ clearTimeout(window._cz); window._cz = setTimeout(function(){ calerBarreOutils(); redessinerRelier(); }, 80); });
+</script>
+
+<!-- Aménagements dys et confort de lecture (module partagé). Les réglages sont
+     rangés par élève : sur un poste partagé, chacun retrouve les siens. -->
+<script>
+window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/",
+  eleve: (function(){ try { var d = JSON.parse(localStorage.getItem("reseau5e-org_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
+</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"section.step.closed", classeFermeture:"closed",
+  selecteurs:"h1, h2, h3, h4, .qlabel, .lesson, .hint, .notion p, .notion .nlb, p, li, figcaption, .txt, .optb span, .rl-item span, .checklist span" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+</body>
+</html>
