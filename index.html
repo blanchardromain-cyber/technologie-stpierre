@@ -5312,11 +5312,16 @@ body.est-prof .prof-only{display:block}
       <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
         <h3 style="color:var(--vt)">&#x1F4DA; Corrigé et notes d'organisation &mdash; 5<sup>e</sup></h3>
         <p id="ro-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
-        <div id="ro-cor-saisie" hidden style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
-          <label for="ro-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
-          <input id="ro-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
-            onkeydown="if(event.key==='Enter')roCorValiderSaisie()">
-          <button onclick="roCorValiderSaisie()" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+        <!-- Saisie du code, seulement quand il n'est pas connu (élève revenu un autre jour,
+             collègue). Le display:flex est porté par l'enfant : sur l'élément lui-même, il
+             l'emportait sur l'attribut hidden et la zone restait affichée. -->
+        <div id="ro-cor-saisie" hidden style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <label for="ro-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+            <input id="ro-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+              onkeydown="if(event.key==='Enter')roCorValiderSaisie()">
+            <button onclick="roCorValiderSaisie()" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+          </div>
         </div>
         <button id="ro-cor-print" hidden onclick="printReseauOrgCorrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
         <div id="ro-cor-body" style="margin-top:20px"></div>
