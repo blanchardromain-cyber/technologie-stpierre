@@ -6,3 +6,7 @@ Codes de connexion.txt
 # Fichiers temporaires
 *.tmp
 ~$*
+
+# Corrigés en clair (seule leur version chiffrée *.chiffre.json est publiée)
+*.source.html
+*.cles.json
