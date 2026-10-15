@@ -39,9 +39,12 @@ d'accès ou non. Quand un corrigé ne doit jamais atteindre les élèves, il est
 **chiffré** : source en clair `*.source.html` + clé de correction `*.cles.json`,
 hors du dépôt (`.gitignore`), puis `python outils/chiffrer_corrige.py` publie un
 `*.chiffre.json` (AES-GCM, clé dérivée du code du corrigé, rangé dans le coffre).
-La tuile porte `prof:true` (jamais affichée à un élève) et la capsule élève ne
-contient alors **aucune** réponse attendue, ni autocorrection des questions de la
-fiche. Après toute modification du corrigé : relancer le script.
+Le script écrit aussi l'empreinte de ce code sur la tuile du corrigé : le panneau
+« Codes d'accès » l'affiche, et l'élève à qui le professeur le donne déverrouille la
+tuile et déchiffre le corrigé d'une seule saisie (code gardé en `sessionStorage`).
+Avant, le corrigé est illisible, même dans le source. La capsule élève ne contient
+**aucune** réponse attendue, ni autocorrection des questions de la fiche. Après
+toute modification du corrigé : relancer le script.
 Une telle capsule peut être notée : sa grille `EVALUATIONS` ne contient que les
 points et lit les réponses dans le corrigé déchiffré, avec `get manuel()` vrai tant
 qu'il ne l'est pas (« à noter /20 », jamais « 0/20 »). Le compte administrateur le
