@@ -33,6 +33,16 @@ retire les blocs réservés du clone quand l'utilisateur n'est pas professeur.
 professeur, les corrigés où un bloc réservé aurait été laissé visible. Une règle
 écrite finit par s'oublier ; ce contrôle, non.
 
+**Corrigé réservé aux enseignants (depuis P2 5e « Organiser un réseau numérique »).**
+Un corrigé écrit dans `index.html` se lit par « Afficher le code source », code
+d'accès ou non. Quand un corrigé ne doit jamais atteindre les élèves, il est
+**chiffré** : source en clair `*.source.html` + clé de correction `*.cles.json`,
+hors du dépôt (`.gitignore`), puis `python outils/chiffrer_corrige.py` publie un
+`*.chiffre.json` (AES-GCM, clé dérivée du code du corrigé, rangé dans le coffre).
+La tuile porte `prof:true` (jamais affichée à un élève) et la capsule élève ne
+contient alors **aucune** réponse attendue, ni autocorrection des questions de la
+fiche. Après toute modification du corrigé : relancer le script.
+
 ## 2. La correction automatique tolère les fautes d'orthographe
 
 `evalMot(reponse, motsAttendus)` renvoie **1** (mot attendu bien écrit), **0,5**
@@ -179,7 +189,12 @@ envoyer, vider le stockage local, relire depuis le classeur, afficher.
   `assets/js/lecture-immersive.js`, portée limitée à la page concernée. Les
   sélecteurs de lecture doivent couvrir les `div` de consigne, et les boutons
   micro porter `data-nolecture` pour que la synthèse vocale ne prononce pas
-  l'emoji.
+  l'emoji. Options activées **par le balisage seulement** (les autres capsules ne
+  changent pas) : `data-consigne` → bouton 🔊 qui lit cette consigne seule ;
+  `[data-etapes] > .etape` → « Consignes une par une » ; `data-secondaire` →
+  « Page allégée ». `CONFORT_LECTURE.eleve` (identifiant du compte) range les
+  réglages par élève sur un poste partagé. Polices : Luciole, OpenDyslexic, B612,
+  Verdana (`pp4g/fonts/`, licences à côté).
 - **Une capsule qui réunit plusieurs pages** (P11 exercices 1 et 2 partagent une même
   config dys) : `hote` et `racine` peuvent lister plusieurs sélecteurs, et les deux modules
   ne retiennent que l'élément **affiché**. Le bouton suit la page grâce à `placer()`, appelé
