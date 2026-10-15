@@ -28,19 +28,28 @@
   var HOTE   = cfg.hote   || ".pbar-in";
   var RACINE = cfg.racine || "main";
   var FONTS  = cfg.fonts  || "../../pp4g/fonts/";
-  var CLE    = "confort_lecture";
+  var CLE_POSTE = "confort_lecture";
+  /* Réglages par élève quand la capsule connaît son identifiant (cfg.eleve) :
+     sur un poste partagé, chacun retrouve les siens. Sans identifiant, la clé
+     du poste reste utilisée, comme avant. */
+  var CLE    = cfg.eleve ? CLE_POSTE + ":" + cfg.eleve : CLE_POSTE;
 
   /* Valeurs par défaut = page telle qu'elle est écrite par le professeur. */
   var DEFAUT = {
-    police: "systeme",   /* systeme | b612 | large */
+    police: "systeme",   /* systeme | b612 | luciole | opendys | large */
     taille: 0,           /* 0 → 4 */
     interligne: 0,       /* 0 → 2 */
     espacement: 0,       /* 0 → 2 */
     fond: "blanc",       /* blanc | creme | bleu | gris | vert */
     colonne: false,      /* limite la longueur des lignes */
     regle: false,        /* règle de lecture qui suit le curseur */
-    masque: false        /* masque le reste de la page */
+    masque: false,       /* masque le reste de la page */
+    fraction: false,     /* consignes fractionnées : une étape à la fois ([data-etapes] > .etape) */
+    epure: false         /* densité réduite : masque les blocs [data-secondaire] */
   };
+  /* Les deux dernières options n'apparaissent que sur une page qui a le balisage
+     correspondant : les autres capsules gardent exactement leur panneau. */
+  function aBalisage(sel) { try { return !!document.querySelector(sel); } catch (e) { return false; } }
   var TAILLES     = [1, 1.1, 1.2, 1.35, 1.5];
   var INTERLIGNES = ["", "1.9", "2.3"];
   var ESPACEMENTS = ["", ".055em/.16em", ".11em/.3em"];
@@ -59,7 +68,7 @@
   /* ── Mémoire ────────────────────────────────────────────────────────── */
   function lire() {
     var o = {};
-    try { o = JSON.parse(localStorage.getItem(CLE)) || {}; } catch (e) {}
+    try { o = JSON.parse(localStorage.getItem(CLE) || localStorage.getItem(CLE_POSTE)) || {}; } catch (e) {}
     var r = {};
     for (var k in DEFAUT) if (DEFAUT.hasOwnProperty(k)) {
       r[k] = (o[k] === undefined) ? DEFAUT[k] : o[k];
@@ -82,6 +91,12 @@
          confondre les lettres proches. Chargée seulement si elle est choisie. */
       "@font-face{font-family:'B612CL';src:url('" + FONTS + "B612-Regular.ttf') format('truetype');font-weight:400;font-display:swap}" +
       "@font-face{font-family:'B612CL';src:url('" + FONTS + "B612-Bold.ttf') format('truetype');font-weight:700;font-display:swap}" +
+      /* Luciole (CTRDV, CC BY 4.0) et OpenDyslexic (OFL) : polices pensées pour
+         les lecteurs dyslexiques ou malvoyants, chargées seulement si choisies. */
+      "@font-face{font-family:'LucioleCL';src:url('" + FONTS + "Luciole-Regular.woff2') format('woff2');font-weight:400;font-display:swap}" +
+      "@font-face{font-family:'LucioleCL';src:url('" + FONTS + "Luciole-Bold.woff2') format('woff2');font-weight:700;font-display:swap}" +
+      "@font-face{font-family:'OpenDysCL';src:url('" + FONTS + "OpenDyslexic-Regular.woff2') format('woff2');font-weight:400;font-display:swap}" +
+      "@font-face{font-family:'OpenDysCL';src:url('" + FONTS + "OpenDyslexic-Bold.woff2') format('woff2');font-weight:700;font-display:swap}" +
 
       ".cl-btn{background:#F4F6F8;border:1px solid #E2E8F0;border-radius:8px;padding:6px 12px;" +
         "font-family:inherit;font-size:12px;font-weight:600;color:#4A5568;cursor:pointer;transition:.15s}" +
@@ -116,6 +131,18 @@
       /* ─ Réglages appliqués à la page ─ */
       "html.cl-police-b612 body,html.cl-police-b612 body *{font-family:'B612CL','DM Sans',system-ui,sans-serif!important}" +
       "html.cl-police-large body,html.cl-police-large body *{font-family:Verdana,Tahoma,'DM Sans',system-ui,sans-serif!important}" +
+      "html.cl-police-luciole body,html.cl-police-luciole body *{font-family:'LucioleCL','DM Sans',system-ui,sans-serif!important}" +
+      "html.cl-police-opendys body,html.cl-police-opendys body *{font-family:'OpenDysCL','DM Sans',system-ui,sans-serif!important}" +
+      /* ─ Consignes fractionnées et densité réduite ─ */
+      "html.cl-fraction [data-etapes] .etape.cl-cachee{display:none!important}" +
+      ".cl-etapes-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px;padding:10px 12px;" +
+        "background:#FFF9E6;border:2px dashed #E8B84B;border-radius:10px;font-size:13px;font-weight:600;color:#6B4E00}" +
+      ".cl-etapes-nav button{border:2px solid #B7791F;background:#fff;color:#6B4E00;border-radius:8px;padding:6px 12px;" +
+        "font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}" +
+      ".cl-etapes-nav button.cl-suite{background:#B7791F;color:#fff}" +
+      "html.cl-epure [data-secondaire]{display:none!important}" +
+      "html.cl-epure section.step,html.cl-epure .card{box-shadow:none!important}" +
+      "html.cl-epure .stbody>*+*,html.cl-epure .etape>*+*{margin-top:18px}" +
       "html.cl-espacement body{letter-spacing:var(--cl-lettre)!important;word-spacing:var(--cl-mot)!important}" +
       "html.cl-interligne body,html.cl-interligne body p,html.cl-interligne body li,html.cl-interligne body td," +
         "html.cl-interligne body label,html.cl-interligne body .qlabel{line-height:var(--cl-interligne)!important}" +
@@ -147,9 +174,13 @@
     if (nouveau) { for (var k in nouveau) if (nouveau.hasOwnProperty(k)) etat[k] = nouveau[k]; }
     var h = document.documentElement, s = h.style, cl = h.classList;
 
-    cl.remove("cl-police-b612", "cl-police-large");
-    if (etat.police === "b612")  cl.add("cl-police-b612");
-    if (etat.police === "large") cl.add("cl-police-large");
+    cl.remove("cl-police-b612", "cl-police-large", "cl-police-luciole", "cl-police-opendys");
+    if (etat.police === "b612")    cl.add("cl-police-b612");
+    if (etat.police === "large")   cl.add("cl-police-large");
+    if (etat.police === "luciole") cl.add("cl-police-luciole");
+    if (etat.police === "opendys") cl.add("cl-police-opendys");
+    cl.toggle("cl-epure", !!etat.epure);
+    fractionner(!!etat.fraction);
 
     /* La taille agit par zoom sur la zone de contenu : l'en-tête, la barre
        d'outils et la barre d'envoi gardent leur place et restent atteignables. */
@@ -191,6 +222,60 @@
       }));
     } catch (e) {}
   }
+
+  /* ── Consignes fractionnées ─────────────────────────────────────────────
+     Chaque bloc [data-etapes] montre ses .etape une par une : l'élève avance à
+     son rythme (« Étape suivante ») et peut tout afficher à tout moment. Les
+     réponses restent dans la page : on masque, on ne retire rien. */
+  function fractionner(actif) {
+    document.documentElement.classList.toggle("cl-fraction", actif);
+    var blocs = document.querySelectorAll("[data-etapes]");
+    for (var i = 0; i < blocs.length; i++) {
+      var b = blocs[i], et = [], k;
+      for (k = 0; k < b.children.length; k++) if (b.children[k].classList.contains("etape")) et.push(b.children[k]);
+      var nav = b.querySelector(":scope > .cl-etapes-nav");
+      if (!actif || et.length < 2) {
+        if (nav) nav.parentNode.removeChild(nav);
+        for (k = 0; k < et.length; k++) et[k].classList.remove("cl-cachee");
+        continue;
+      }
+      var n = parseInt(b.getAttribute("data-etape-vue") || "0", 10);
+      if (isNaN(n) || n < 0 || n >= et.length) n = 0;
+      for (k = 0; k < et.length; k++) et[k].classList.toggle("cl-cachee", k > n);
+      if (!nav) {
+        nav = document.createElement("div");
+        nav.className = "cl-etapes-nav";
+        nav.setAttribute("data-nolecture", "");
+        nav.innerHTML = '<span class="cl-etapes-txt"></span>' +
+          '<button type="button" class="cl-suite">Étape suivante &#x25BC;</button>' +
+          '<button type="button" class="cl-tout">Tout afficher</button>';
+        b.appendChild(nav);
+        (function (bloc) {
+          nav.querySelector(".cl-suite").addEventListener("click", function () {
+            var v = parseInt(bloc.getAttribute("data-etape-vue") || "0", 10) + 1;
+            bloc.setAttribute("data-etape-vue", String(v));
+            fractionner(true); signalerMiseEnPage();
+            var vis = bloc.querySelectorAll(":scope > .etape:not(.cl-cachee)");
+            if (vis.length) { var dern = vis[vis.length - 1]; dern.setAttribute("tabindex", "-1"); try { dern.focus({ preventScroll: false }); } catch (e) { dern.focus(); } }
+          });
+          nav.querySelector(".cl-tout").addEventListener("click", function () {
+            bloc.setAttribute("data-etape-vue", "999");
+            fractionner(true); signalerMiseEnPage();
+          });
+        })(b);
+      }
+      var fin = n >= et.length - 1;
+      if (b.getAttribute("data-etape-vue") === "999") fin = true;
+      if (fin) for (k = 0; k < et.length; k++) et[k].classList.remove("cl-cachee");
+      nav.querySelector(".cl-etapes-txt").textContent = fin ? "Toutes les étapes sont affichées." : "Étape " + (n + 1) + " sur " + et.length;
+      nav.querySelector(".cl-suite").hidden = fin;
+      nav.querySelector(".cl-tout").hidden = fin;
+    }
+  }
+  function signalerMiseEnPage() {
+    try { document.dispatchEvent(new CustomEvent("confort-lecture", { detail: { reglages: etatCopie(), echelle: TAILLES[etat.taille] || 1 } })); } catch (e) {}
+  }
+  function etatCopie() { var c = {}; for (var k in etat) if (etat.hasOwnProperty(k)) c[k] = etat[k]; return c; }
 
   /* ── Règle / masque : suivent le curseur ou le doigt ─────────────────── */
   var suivi = false, yCourant = null;
@@ -249,12 +334,13 @@
     panneau.innerHTML =
       '<div class="cl-tete"><h2>&#x1F441;&#xFE0F; Confort de lecture</h2>' +
       '<button type="button" class="cl-x" aria-label="Fermer">&times;</button></div>' +
-      '<p class="cl-intro">Règle la page comme tu la lis le mieux. Tes choix sont gardés sur cet appareil et ' +
-      'te suivent dans les autres activités.</p>' +
+      '<p class="cl-intro">Règle la page comme tu la lis le mieux. Tes choix sont gardés sur cet appareil' +
+      (cfg.eleve ? ', pour ton compte,' : '') + ' et te suivent dans les autres activités.</p>' +
       '<div class="cl-apercu" id="cl-apercu">L’eau potable est une ressource limitée : il faut éviter de la gaspiller.</div>' +
 
       groupe("Police",
-        opt("police", "systeme", "Standard") + opt("police", "b612", "B612 (dys)") + opt("police", "large", "Verdana")) +
+        opt("police", "systeme", "Standard") + opt("police", "luciole", "Luciole") +
+        opt("police", "opendys", "OpenDyslexic") + opt("police", "b612", "B612") + opt("police", "large", "Verdana")) +
 
       groupe("Taille du texte",
         opt("taille", "0", "A") + opt("taille", "1", "A+") + opt("taille", "2", "A++") +
@@ -277,6 +363,10 @@
         opt("colonne", "toggle", "&#x1F4D0; Lignes courtes") +
         opt("regle",   "toggle", "&#x1F4CF; Règle de lecture") +
         opt("masque",  "toggle", "&#x1F311; Masque de lecture")) +
+
+      ((aBalisage("[data-etapes]") || aBalisage("[data-secondaire]")) ? groupe("Organisation de la page",
+        (aBalisage("[data-etapes]")    ? opt("fraction", "toggle", "&#x1FA9C; Consignes une par une") : "") +
+        (aBalisage("[data-secondaire]") ? opt("epure",   "toggle", "&#x1F9F9; Page allégée") : "")) : "") +
 
       '<div class="cl-pied">' +
       '<button type="button" class="cl-btn" id="cl-reset">&#x21BA; Tout remettre à zéro</button>' +
@@ -392,7 +482,7 @@
     placer: placerBouton,
     ouvrir: ouvrir,
     fermer: fermer,
-    reglages: function () { var c = {}; for (var k in etat) if (etat.hasOwnProperty(k)) c[k] = etat[k]; return c; },
+    reglages: etatCopie,
     /* Facteur d'agrandissement appliqué à la zone de contenu (1 = taille normale).
        À utiliser pour convertir un déplacement de souris en pixels de la page. */
     echelle: function () { return TAILLES[etat.taille] || 1; },
