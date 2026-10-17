@@ -338,7 +338,7 @@
     <div id="copie">
       <!-- PARTIE A -->
       <section class="card" id="partA">
-        <h2>Partie A — Le besoin <span class="comp">CT 2.5 · 12 points</span></h2>
+        <h2>Partie A — Le besoin <span class="comp">Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs · 12 points</span></h2>
 
         <h3><span class="num">Q1</span>Le QQOQCP<span class="pts">(4 pts)</span></h3>
         <p class="consigne">Lis le DT1. Complète le QQOQCP du robot explorateur. Deux lignes sont déjà remplies pour t'aider.</p>
@@ -378,7 +378,7 @@
 
       <!-- PARTIE B -->
       <section class="card" id="partB">
-        <h2>Partie B — Le cahier des charges <span class="comp">CT 2.1 · 16 points</span></h2>
+        <h2>Partie B — Le cahier des charges <span class="comp">Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs · 16 points</span></h2>
 
         <h3><span class="num">Q4</span>La pieuvre : FP ou FC ?<span class="pts">(4 pts)</span></h3>
         <div class="rappel">Rappel : sur la pieuvre, une fonction principale (FP) relie deux éléments du milieu extérieur (EME)
@@ -406,7 +406,7 @@
 
       <!-- PARTIE C -->
       <section class="card" id="partC">
-        <h2>Partie C — Le coût d'une fuite <span class="comp">CT 5.1 · 12 points</span></h2>
+        <h2>Partie C — Le coût d'une fuite <span class="comp">Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données) · 12 points</span></h2>
         <svg class='illus' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 330' width='900' height='330' role='img' aria-label='Fuite sur la canalisation enterrée entre le compteur et la maison'><title>Fuite sur la canalisation enterrée entre le compteur et la maison</title>
 <rect x='0' y='0' width='900' height='330' fill='#EAF4FB'/>
 <rect x='0' y='150' width='900' height='180' fill='#C9A66B'/>
@@ -964,9 +964,9 @@ function corriger(){
   return {detail:d, parQ:tot, brut:Math.round(brut*100)/100};
 }
 /* ═══ barème (points bruts sur 40 ; le site note sur 20 = brut ÷ 2) ═══ */
-var BAREME_Q=[["Q1","CT 2.5",4,"QQOQCP"],["Q2","CT 2.5",4,"Bête à cornes et besoin"],["Q3","CT 2.5",4,"Indice de protection IP"],
-  ["Q4","CT 2.1",4,"Pieuvre : FP ou FC"],["Q5","CT 2.1",8,"Cahier des charges fonctionnel"],["Q6","CT 2.1",4,"Conformité du prototype"],
-  ["C1","CT 5.1",2,"Tableur : les données"],["C2","CT 5.1",6,"Tableur : les formules"],["C3","CT 5.1",4,"Tableur : le coût de la fuite"]];
+var BAREME_Q=[["Q1","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",4,"QQOQCP"],["Q2","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",4,"Bête à cornes et besoin"],["Q3","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",4,"Indice de protection IP"],
+  ["Q4","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",4,"Pieuvre : FP ou FC"],["Q5","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",8,"Cahier des charges fonctionnel"],["Q6","Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs",4,"Conformité du prototype"],
+  ["C1","Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)",2,"Tableur : les données"],["C2","Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)",6,"Tableur : les formules"],["C3","Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)",4,"Tableur : le coût de la fuite"]];
 
 /* ═══ champs, brouillon ═══ */
 function champs(){ return document.querySelectorAll("#copie input[id], #copie select[id], #copie textarea[id], #copie input[type=radio]"); }

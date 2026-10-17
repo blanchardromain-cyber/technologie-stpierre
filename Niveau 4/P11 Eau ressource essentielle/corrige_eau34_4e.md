@@ -7,8 +7,7 @@ Séquence P11, cycle 4. Activité élève : `eau34_eleve.html`
 > **P11 — Corrigé Activités 3 et 4** (code : voir le panneau professeur). Les deux versions ont le même
 > contenu : en modifier une demande de reporter la modification dans l'autre.
 
-**Compétence CT 2.5** — Identifier un besoin et énoncer un problème technique ; identifier les
-conditions et contraintes (normes et règlements).
+**Compétence** — Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs — Faire la liste des interacteurs extérieurs d’un OST ; Repérer et expliquer les contraintes, exigences prises en compte pour répondre aux attentes des utilisateurs (normes, indice IP).
 
 **Objet étudié :** le **robinet automatique à détection**, solution technique identifiée à la fin
 de l'activité 2.

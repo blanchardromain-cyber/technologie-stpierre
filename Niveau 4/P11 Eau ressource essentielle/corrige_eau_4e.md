@@ -7,8 +7,7 @@ Séquence P11, cycle 4. Activité élève : `eau_eleve.html`
 > **P11 — Corrigé L'eau, ressource essentielle** (code : voir le panneau professeur). Les deux versions ont
 > le même contenu : en modifier une demande de reporter la modification dans l'autre.
 
-**Compétence CT 2.5** — Identifier un besoin et énoncer un problème technique ; identifier les
-conditions et contraintes (normes et règlements).
+**Compétence** — Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données) — Décrire et analyser la structuration d’une table de données qui permet une exploitation et une interprétation du comportement d’un OST (facture d’eau) ; Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs — repérer les choix de conception (économie d’eau).
 
 **Situation problème :** comment préserver l'eau, une ressource essentielle ?
 
