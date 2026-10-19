@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19c</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6593,6 +6593,19 @@ function majClasseProf() {
   try { p2eCorPrecharger(); } catch (e) {}
 }
 
+/* Lien direct vers une carte (?carte=p11-eval2), par exemple depuis le site d'une séquence :
+   après la connexion de l'élève, la carte s'ouvre comme sur un clic (le code reste demandé
+   si elle est verrouillée ; une carte fermée ne s'ouvre pas). Utilisé une seule fois. */
+var CARTE_DEMANDEE = (function () { var m = /[?&]carte=([a-z0-9-]{1,40})/i.exec(location.search || ""); return m ? m[1].toLowerCase() : ""; })();
+function ouvrirCarteDemandee() {
+  if (!CARTE_DEMANDEE) return;
+  var id = CARTE_DEMANDEE; CARTE_DEMANDEE = "";
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+  var motif = new RegExp("'(pg-)?" + id.replace(/-/g, "\\-") + "'");
+  var cartes = document.querySelectorAll("#sequences-par-niveau [onclick]");
+  for (var i = 0; i < cartes.length; i++) if (motif.test(cartes[i].getAttribute("onclick") || "")) { cartes[i].click(); return; }
+  toast("Cette activité n'est pas encore ouverte.");
+}
 function launch() {
   majClasseProf();
   document.getElementById("login").style.display = "none";
@@ -6607,6 +6620,7 @@ function launch() {
     renderDash();
     updMyStatus();
     checkStudentStatusChanges(); // 2c — détecte les validations / refus depuis le dernier login
+    ouvrirCarteDemandee();
   }
 }
 
