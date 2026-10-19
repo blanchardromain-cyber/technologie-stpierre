@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19d</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19e</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5174,7 +5174,7 @@ body.est-prof .prof-only{display:block}
       </p>
       <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         La copie arrive au tableau de bord <strong>pré-corrigée</strong> dès que le corrigé chiffré est déchiffré (seule la justification I1e est à confirmer),
-        et part corrigée au classeur « P11 — Évaluation n°2 — Notes ». Pense à <strong>armer la capsule</strong> (onglet Verrous) avant la séance.
+        et part corrigée au classeur « P11 — Évaluation n°2 — Notes ». La capsule est <strong>armée automatiquement</strong> à l'ouverture du tableau de bord : chaque copie naît verrouillée ; déverrouille-la après correction (onglet Suivi).
       </p>
       <div id="p11-eval2-correction"></div>
       <iframe id="p11-eval2-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation2_eleve.html" title="P11 — Évaluation n°2 (4e), partie sur ordinateur"
@@ -5216,7 +5216,7 @@ body.est-prof .prof-only{display:block}
       </p>
       <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
         Sur 40, converti sur 20 dans le classeur. Cases de rappel et partie poste <strong>proposées</strong> dès que le corrigé chiffré est déchiffré ;
-        les <strong>rédactions</strong> (P2e-g, P3c-d, P4c-d) et I1e sont à noter dans le modal. Carte fermée par défaut : ouvrir et armer seulement pour un rattrapage.
+        les <strong>rédactions</strong> (P2e-g, P3c-d, P4c-d) et I1e sont à noter dans le modal. Carte fermée par défaut : l'ouvrir seulement pour un rattrapage ; la capsule est armée automatiquement, chaque copie naît verrouillée.
       </p>
       <div id="p11-eval2-ratt-correction"></div>
       <iframe id="p11-eval2-ratt-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation2_rattrapage.html" title="P11 — Évaluation n°2 (4e), rattrapage"
@@ -6634,7 +6634,7 @@ function launch() {
   document.getElementById("app").style.display = "flex";
   document.getElementById("uname").textContent = user.p + " " + user.n;
   document.getElementById("ucls").textContent = user.c ? user.c : "";
-  if (isProf) { goPage("pg-prof"); renderProf(); startProfAutoRefresh(); refreshProf(); }
+  if (isProf) { goPage("pg-prof"); renderProf(); startProfAutoRefresh(); refreshProf(); armerParDefaut(); }
   else if (isCollegue) { entrerModeCollegue(); }
   else {
     goPage("pg-dash");
@@ -12369,6 +12369,45 @@ function basculerVerrou(sid) {
   appliquerVerrous([sub], verrouiller);
 }
 
+/* ── Armement par défaut ─────────────────────────────────────────────────────
+   Capsules d'évaluation dont les copies doivent naître verrouillées sans que le
+   professeur pense à les armer (demande du 19/10 : déverrouiller après correction,
+   pour éviter les échanges de réponses). À l'ouverture du tableau de bord professeur,
+   chacune est armée si elle ne l'est pas, sauf si le professeur l'a désarmée
+   lui-même sur ce poste (mémorisé, voir basculerArmement). Ajouter ici une capsule
+   suffit à l'armer par défaut. */
+var CAPS_ARMEES_PAR_DEFAUT = ["p11-eval2", "p11-eval2-ratt"];
+function capsDesarmeesExpres() {
+  try { return JSON.parse(localStorage.getItem("caps_desarmees_expres") || "{}") || {}; } catch (e) { return {}; }
+}
+function noterDesarmementExpres(cap, desarmee) {
+  var d = capsDesarmeesExpres();
+  if (desarmee) d[cap] = Date.now(); else delete d[cap];
+  try { localStorage.setItem("caps_desarmees_expres", JSON.stringify(d)); } catch (e) {}
+}
+function armerParDefaut() {
+  if (!isProf || isCollegue || !window.cloudSync || !cloudSync.capsArmees) return;
+  var cle = ""; try { cle = localStorage.getItem("prof_api_key") || ""; } catch (e) {}
+  if (!cle) return;                 /* sans clé professeur, le serveur refuserait */
+  cloudSync.capsArmees(function (caps) {
+    if (!caps) return;
+    var expres = capsDesarmeesExpres();
+    var manque = CAPS_ARMEES_PAR_DEFAUT.filter(function (c) { return caps.indexOf(c) < 0 && !expres[c]; });
+    if (!manque.length) { _capsArmees = caps; return; }
+    cloudSync.setCapsArmees(caps.concat(manque), function () {
+      setTimeout(function () {
+        cloudSync.capsArmees(function (lu) {
+          if (!lu) return;
+          _capsArmees = lu;
+          try { renderVerrous(); } catch (e) {}
+          var faites = manque.filter(function (c) { return lu.indexOf(c) >= 0; });
+          if (faites.length) toast("🔒 Armée(s) par défaut : " + faites.map(function (c) { return FICHE_TITRES[c] || c; }).join(", "));
+        });
+      }, 1200);
+    });
+  });
+}
+
 /* ── Armement d'une capsule ──────────────────────────────────────────────────
    Une capsule armée fait naître verrouillée toute copie qui arrive ensuite : le
    verrou est posé par le SERVEUR à la création de la ligne, rien n'est demandé au
@@ -12470,6 +12509,8 @@ function basculerArmement(cap) {
     ? "Désarmer « " + titre + " » ?\n\nLes copies rendues À PARTIR DE MAINTENANT resteront consultables par les élèves.\n\nLes copies déjà verrouillées le restent : déverrouillez-les depuis l'onglet Suivi si besoin."
     : "Armer « " + titre + " » ?\n\nToute copie rendue À PARTIR DE MAINTENANT sera verrouillée dès son arrivée : l'élève ne pourra plus la rouvrir, la modifier ni l'exporter. Sa note et l'appréciation resteront visibles.\n\nLes copies DÉJÀ rendues ne sont pas touchées.";
   if (!confirm(msg)) return;
+  /* Un désarmement voulu d'une capsule armée par défaut est retenu : elle ne sera pas réarmée seule. */
+  if (CAPS_ARMEES_PAR_DEFAUT.indexOf(cap) >= 0) noterDesarmementExpres(cap, armee);
   _armementEnCours = true;
   var voulu = _capsArmees.filter(function (c) { return c !== cap; });
   if (!armee) voulu.push(cap);
