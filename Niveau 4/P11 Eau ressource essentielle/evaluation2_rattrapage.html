@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Évaluation n°2 · Rattrapage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1F3864;--blue:#2E75B6;--light:#DEEAF6;--lighter:#EAF1FA;--ok:#1E8E5A;--ko:#C0392B;--grey:#5b6472;
+        --creme:#FFF8E7;--vert:#EEF7F1;--form:#FFFDF5;--gris:#E7E9EE;--line:#cbd6e4}
+  *{box-sizing:border-box}
+  html{scroll-padding-top:70px}
+  body{font-family:'Inter',Arial,sans-serif;margin:0;background:#f4f7fb;color:#1f2430;line-height:1.6;font-size:16px;font-variant-numeric:tabular-nums}
+  .pbar{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid #e4ebf3;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .pbar-in{max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pbar-in .ttl{font-weight:800;color:var(--navy);font-size:14px;margin-right:auto}
+  .pbar-in .prog{font-size:13px;color:var(--grey)}
+  .pbar-in .qui{font-size:13px;font-weight:700;color:var(--navy);background:var(--lighter);border-radius:8px;padding:3px 9px}
+  .qui-depart{font-size:15px;margin:0 0 12px;padding:8px 12px;border-radius:9px;background:var(--lighter);color:var(--navy)}
+  .chrono{font-weight:800;color:var(--navy);background:var(--lighter);border-radius:8px;padding:3px 10px;font-size:15px}
+  .chrono.bientot{background:#FDECC8;color:#7A4B00}
+  .chrono.fini{background:#fbeae8;color:#8e2018}
+  .tbtn{background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:9px;padding:6px 12px;font:600 14px 'Inter',Arial,sans-serif;cursor:pointer}
+  .tbtn:hover{background:var(--lighter)}
+  main{max-width:1180px;margin:0 auto;padding:18px 16px 60px}
+  header.band{background:var(--navy);color:#fff;border-radius:14px;padding:18px 22px}
+  header.band .k{font-size:12px;letter-spacing:.04em;color:#bcd2ee;font-weight:600}
+  header.band h1{margin:6px 0 0;font-size:23px;font-weight:800;line-height:1.3}
+  header.band p{margin:6px 0 0;color:#dce8f8;font-size:15px}
+  .card{background:#fff;border:1px solid #e4ebf3;border-radius:14px;padding:20px 22px;margin-top:18px;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .narrow{max-width:760px;margin-left:auto;margin-right:auto}
+  h2{color:var(--navy);font-size:20px;margin:0 0 4px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:3px solid var(--blue);padding-bottom:6px}
+  h2 .pts{color:var(--blue);font-size:15px;font-weight:700}
+  .comp{font-size:13px;color:var(--grey);margin:4px 0 10px}
+  h3{color:var(--navy);font-size:17px;margin:20px 0 8px}
+  h3 .num{color:var(--blue);margin-right:6px}
+  h3 .pts{color:var(--grey);font-size:13px;font-weight:600;margin-left:6px}
+  .consigne{margin:0 0 10px}
+  label.lbl{display:block;font-weight:600;color:var(--navy);font-size:15px;margin:12px 0 4px}
+  input[type=text],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:16px 'Inter',Arial,sans-serif;background:#fff;color:#1f2430;line-height:1.5}
+  textarea{min-height:70px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,117,182,.18)}
+  input:disabled,select:disabled,textarea:disabled{background:#f3f5f8;color:#1f2430;opacity:1}
+  .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:180px}
+  .rappel{background:var(--lighter);border-left:5px solid var(--blue);padding:10px 14px;border-radius:8px;font-size:15px;color:var(--navy);margin:8px 0 12px}
+  .creme{background:var(--creme);border-left-color:#E0B65C}
+  table.t{border-collapse:collapse;width:100%;font-size:15px}
+  table.t th{background:var(--blue);color:#fff;padding:8px;text-align:center;font-weight:700}
+  table.t td{border:1px solid var(--line);padding:6px 8px;vertical-align:middle}
+  table.t td.c{text-align:center}
+  table.t td select{min-width:170px}
+  .tscroll{overflow-x:auto}
+  .choix{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+  .choix label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;line-height:1.45}
+  .choix input{width:20px;height:20px;flex:none;margin-top:2px}
+  .choix.ligne{flex-direction:row;gap:22px}
+  /* fiche du robot */
+  .layout{display:grid;grid-template-columns:minmax(330px,38%) 1fr;gap:22px;align-items:start;margin-top:18px}
+  .layout.dt-ferme{grid-template-columns:1fr}
+  .layout.dt-ferme #dt{display:none}
+  .layout>*{min-width:0}
+  #dt{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;margin-top:0}
+  #dt h2{font-size:17px}
+  #dt h4{color:var(--blue);margin:14px 0 6px;font-size:15px}
+  ol.dt1{list-style:none;margin:0;padding:0}
+  ol.dt1 li{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed #e4ebf3;font-size:15px}
+  ol.dt1 li b{color:var(--blue);font-size:18px;flex:none;width:24px;text-align:center}
+  table.dt td,table.dt th{font-size:14px;padding:4px 6px}
+  table.dt td.c{text-align:center}
+  #copie .card:first-child{margin-top:0}
+  /* mini-tableur */
+  table.ss{border-collapse:collapse;width:100%;font-size:15px;min-width:600px}
+  table.ss th,table.ss td{border:1px solid #c4d0e0;padding:0}
+  table.ss thead th{background:var(--navy);color:#fff;text-align:center;padding:6px;font-weight:700}
+  table.ss .rh{background:var(--lighter);color:var(--navy);text-align:center;font-weight:700;width:34px}
+  table.ss td.lb{background:#f3f7fc;color:var(--navy);font-weight:600;padding:7px 10px}
+  table.ss td.cell{position:relative;min-width:170px}
+  table.ss td.cell input{border:none;border-radius:0;width:100%;padding:8px 92px 8px 10px;background:transparent;font-size:15px}
+  table.ss td.cell input:focus{box-shadow:inset 0 0 0 2px var(--blue)}
+  table.ss td.don{background:var(--vert)}
+  table.ss td.form{background:var(--form)}
+  table.ss td.fixe{background:var(--gris);color:var(--navy);font-weight:700;text-align:right;padding:7px 10px}
+  table.ss td.vide{background:#d9d9d9}
+  .chip{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--lighter);color:var(--navy);border-radius:6px;padding:1px 7px;font-size:13px;font-weight:700;pointer-events:none}
+  .legende{font-size:13.5px;color:var(--grey);margin-top:6px}
+  .legende span{display:inline-block;width:14px;height:14px;border:1px solid #c4d0e0;vertical-align:-2px;margin:0 4px 0 10px;border-radius:3px}
+  .phrase{line-height:2.4}
+  .phrase input{display:inline-block;width:110px;padding:6px 10px}
+  /* boutons, messages */
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:12px 18px;font:700 16px 'Inter',Arial,sans-serif;cursor:pointer;margin:14px 8px 0 0}
+  .btn:hover{background:#255f96}
+  .btn.sec{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+  .btn.ok{background:var(--ok)}
+  .btn:disabled{background:#9bb6d4;border-color:#9bb6d4;color:#fff;cursor:not-allowed}
+  .msg{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:15px}
+  .msg.ok{background:#e7f6ee;color:#13633d;border-left:5px solid var(--ok)}
+  .msg.ko{background:#fbeae8;color:#8e2018;border-left:5px solid var(--ko)}
+  .msg.info{background:var(--lighter);color:var(--navy);border-left:5px solid var(--blue)}
+  .cache{display:none!important}
+  .footer{color:var(--grey);font-size:11px;text-align:center;margin-top:26px}
+  .privacy{font-size:12px;color:var(--grey);margin-top:12px;border-top:1px dashed #d6deea;padding-top:10px}
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr}
+    #dt{position:fixed;top:56px;left:8px;right:8px;bottom:8px;max-height:none;z-index:50;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+    .layout:not(.dt-ouvert) #dt{display:none}
+  }
+  @media (max-width:600px){
+    .pbar-in{padding:6px 10px;gap:6px}
+    .pbar-in .ttl{display:none}
+    main{padding:12px 10px 50px}
+    .card{padding:16px 14px}
+    header.band h1{font-size:20px}
+    .choix.ligne{flex-direction:column;gap:8px}
+  }
+  @media print{
+    .pbar,.btn,.tbtn,#ident,#depart,.cl-regle,.cl-masque{display:none!important}
+    body{background:#fff;font-size:12px}
+    .layout{display:block}
+    #dt{display:none!important}
+    .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pbar-in">
+  <span class="ttl">P11 · Évaluation n°2 · rattrapage</span>
+  <span class="qui cache" id="qui"></span>
+  <span class="chrono cache" id="chrono" aria-live="polite"></span>
+  <span class="prog" id="prog"></span>
+  <button type="button" class="tbtn cache" id="btnDT" data-nolecture>📚 Cahier des charges et matériaux</button>
+</div></div>
+
+<main>
+  <header class="band">
+    <div class="k">TECHNOLOGIE · Cycle 4 · 4ᵉ &nbsp;|&nbsp; P11 — L'eau, ressource essentielle</div>
+    <h1>Évaluation n°2 — Rattrapage sur ordinateur</h1>
+    <p>Toute l'évaluation : le robinet automatique, le robot explorateur RS-1 et le matériau de sa coque</p>
+  </header>
+
+  <!-- identité : remplie par le compte du site ; saisie seulement hors du site -->
+  <section class="card narrow cache" id="ident">
+    <h2>Qui es-tu ?</h2>
+    <div class="row">
+      <div><label class="lbl" for="nom">Nom</label><input type="text" id="nom" autocomplete="off"></div>
+      <div><label class="lbl" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off"></div>
+      <div style="max-width:170px"><label class="lbl" for="classe">Classe</label>
+        <select id="classe"><option value="" selected disabled>Choisir…</option>
+        <option>4A</option><option>4B</option><option>4C</option><option>4D</option><option>4E</option><option>4F</option><option>4G</option></select></div>
+    </div>
+    <button type="button" class="btn" id="btnIdent">Continuer</button>
+    <div class="msg ko cache" id="identMsg"></div>
+  </section>
+
+  <!-- avant de commencer -->
+  <section class="card narrow cache" id="depart">
+    <h2>Avant de commencer</h2>
+    <p class="qui-depart" id="quiDepart"></p>
+    <div data-etapes>
+      <div class="etape">
+        <p class="consigne" data-consigne><b>Le lien avec la Matériauthèque.</b> Tu vas refaire, seul et sans aide, la démarche de la Matériauthèque (activité 8) :
+          ce que subit la pièce, puis les critères, les éliminations, le choix du matériau et le procédé.
+          Cette fois, la pièce est la <b>coque du robot RS-1</b>, fabriquée à 300 exemplaires.</p>
+      </div>
+      <div class="etape">
+        <p class="consigne" data-consigne>Tu as <b>40 minutes</b> pour toute l'évaluation : P1 à P4 (le robinet et le robot), puis I1 à I3 (la coque du robot). Le chronomètre démarre quand tu cliques sur « Commencer ».
+          À la fin du temps, ta copie est envoyée toute seule.</p>
+      </div>
+      <div class="etape">
+        <p class="consigne" data-consigne>Le cahier des charges et le <b>tableau des matériaux de la Matériauthèque</b> s'ouvrent avec le bouton
+          <b>📚 Cahier des charges et matériaux</b>, en haut de la page, ou avec les boutons placés dans la question I1.</p>
+      </div>
+      <div class="etape">
+        <p class="consigne" data-consigne>Le bouton <b>Confort de lecture</b> règle l'affichage (police, taille, fond) et le bouton 🔊 lit une consigne à voix haute.
+          Ces réglages restent sur cet ordinateur et ne changent pas ta note.</p>
+      </div>
+    </div>
+    <button type="button" class="btn ok" id="btnStart">▶ Commencer</button>
+  </section>
+
+  <div class="layout cache" id="layout">
+    <aside class="card" id="dt" aria-label="Fiche du robot">
+      <h2>Fiche du robot RS-1 <button type="button" class="tbtn" id="btnDTfermer" data-nolecture>✕ Fermer</button></h2>
+      <h4>Le cahier des charges (extrait)</h4>
+      <ol class="dt1" id="dt1"></ol>
+      <h4>Les composants du robot</h4>
+      <ol class="dt1"><li><b>①</b><span><b>Capteur à ultrasons</b> : mesure la distance devant le robot</span></li><li><b>②</b><span><b>Réducteurs à engrenages</b> : font passer la rotation des moteurs jusqu’aux roues, en la ralentissant</span></li><li><b>③</b><span><b>Caméra sans fil (1080 pixels)</b> : filme l’intérieur de la canalisation</span></li><li><b>④</b><span><b>4 moteurs électriques</b> : font tourner les roues</span></li><li><b>⑤</b><span><b>Batterie 12 V</b> : fournit l’énergie électrique aux moteurs et aux cartes</span></li><li><b>⑥</b><span><b>Module radio</b> : reçoit les ordres de la télécommande et envoie la vidéo</span></li><li><b>⑦</b><span><b>Carte de commande des moteurs</b> : laisse passer plus ou moins d’énergie vers les moteurs, selon les ordres reçus</span></li><li><b>⑧</b><span><b>4 roues motrices</b> : font avancer le robot dans la canalisation</span></li><li><b>⑨</b><span><b>2 phares à LED</b> : éclairent la canalisation</span></li></ol>
+      <h4>Les matériaux possibles pour la coque</h4>
+      <div class="tscroll"><table class="t dt" id="dtmat"></table></div>
+      <p class="legende" style="margin-left:0">Valeurs de la Matériauthèque. Résistances notées de 1 (mauvaise) à 5 (excellente).</p>
+    </aside>
+
+    <div id="copie">
+<section class="card" id="sP0"><h2>Partie 1 — Le robinet et le robot (P1 à P4)</h2><p class="consigne" data-consigne>Réponds de mémoire : aucune liste de mots n'est donnée pour P1 et P2. Pour P3 et P4, ouvre la fiche du robot avec le bouton <b>📚</b>.</p></section>
+<section class="card" id="sP1"><h2>P1 — Le diagramme FAST du robinet <span class="pts">4 points</span></h2>
+<p class="comp">Compétence : Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)</p>
+
+<p class="consigne" data-consigne>Voici le diagramme FAST du robinet automatique. Pour chaque fonction technique, écris la solution technique qui la réalise.</p>
+<p class="rappel">Fonction d'usage : <b>Distribuer de l'eau sans contact pour économiser l'eau</b></p>
+<div class="tscroll"><table class="t"><thead><tr><th>Fonction technique</th><th>Solution technique</th></tr></thead><tbody>
+<tr><td>Détecter la présence des mains</td><td><input type="text" id="p1_a" autocomplete="off" spellcheck="false" aria-label="Détecter la présence des mains"></td></tr>
+<tr><td>Traiter l’information et commander</td><td><input type="text" id="p1_b" autocomplete="off" spellcheck="false" aria-label="Traiter l’information et commander"></td></tr>
+<tr><td>Ouvrir / fermer l’arrivée d’eau</td><td><input type="text" id="p1_c" autocomplete="off" spellcheck="false" aria-label="Ouvrir / fermer l’arrivée d’eau"></td></tr>
+<tr><td>Produire l’énergie électrique (sans pile)</td><td><input type="text" id="p1_d" autocomplete="off" spellcheck="false" aria-label="Produire l’énergie électrique (sans pile)"></td></tr>
+</tbody></table></div></section>
+<section class="card" id="sP2"><h2>P2 — Les deux chaînes du robinet <span class="pts">8 points</span></h2>
+<p class="comp">Compétence : Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)</p>
+
+<div data-etapes><div class="etape">
+<p class="consigne" data-consigne><b>Chaîne d'information.</b> Écris le composant du robinet qui réalise chaque bloc.</p>
+<div class="tscroll"><table class="t"><thead><tr><th>Bloc</th><th>Composant du robinet</th></tr></thead><tbody>
+<tr><td><b>ACQUÉRIR</b></td><td><input type="text" id="p2_i1" autocomplete="off" spellcheck="false" aria-label="composant du bloc ACQUÉRIR"></td></tr>
+<tr><td><b>TRAITER</b></td><td><input type="text" id="p2_i2" autocomplete="off" spellcheck="false" aria-label="composant du bloc TRAITER"></td></tr>
+<tr><td><b>COMMUNIQUER</b></td><td><input type="text" id="p2_i3" autocomplete="off" spellcheck="false" aria-label="composant du bloc COMMUNIQUER"></td></tr>
+</tbody></table></div></div><div class="etape">
+<p class="consigne" data-consigne><b>Chaîne d'énergie.</b> Pour chaque bloc, écris le composant, puis choisis la forme d'énergie qui en sort.</p>
+<div class="tscroll"><table class="t"><thead><tr><th>Bloc</th><th>Composant du robinet</th><th>Énergie qui sort du bloc</th></tr></thead><tbody>
+<tr><td><b>ALIMENTER</b></td><td><input type="text" id="p2_e1" autocomplete="off" spellcheck="false" aria-label="composant du bloc ALIMENTER"></td><td><select id="p2_f1" aria-label="énergie qui sort du bloc ALIMENTER"><option value="">Choisir…</option><option value="hydraulique">hydraulique</option><option value="mecanique">mécanique</option><option value="electrique">électrique</option></select></td></tr>
+<tr><td><b>DISTRIBUER</b></td><td><input type="text" id="p2_e2" autocomplete="off" spellcheck="false" aria-label="composant du bloc DISTRIBUER"></td><td><select id="p2_f2" aria-label="énergie qui sort du bloc DISTRIBUER"><option value="">Choisir…</option><option value="hydraulique">hydraulique</option><option value="mecanique">mécanique</option><option value="electrique">électrique</option></select></td></tr>
+<tr><td><b>CONVERTIR</b></td><td><input type="text" id="p2_e3" autocomplete="off" spellcheck="false" aria-label="composant du bloc CONVERTIR"></td><td><select id="p2_f3" aria-label="énergie qui sort du bloc CONVERTIR"><option value="">Choisir…</option><option value="hydraulique">hydraulique</option><option value="mecanique">mécanique</option><option value="electrique">électrique</option></select></td></tr>
+<tr><td><b>TRANSMETTRE</b></td><td><input type="text" id="p2_e4" autocomplete="off" spellcheck="false" aria-label="composant du bloc TRANSMETTRE"></td><td><select id="p2_f4" aria-label="énergie qui sort du bloc TRANSMETTRE"><option value="">Choisir…</option><option value="hydraulique">hydraulique</option><option value="mecanique">mécanique</option><option value="electrique">électrique</option></select></td></tr>
+</tbody></table></div>
+<p class="legende" style="margin-left:0">L'énergie qui sort de « TRANSMETTRE » va vers l'élément qui la stocke.</p></div><div class="etape">
+<h3>Rédaction<span class="pts">(3 pts, corrigée par le professeur)</span></h3>
+<p class="consigne" data-consigne>Le robinet n'a ni pile ni prise. Explique d'où vient l'électricité qui fait fonctionner son capteur et sa carte, et où elle est gardée.</p>
+<textarea id="p2_r" aria-label="rédaction P2" style="min-height:110px"></textarea></div></div></section>
+<section class="card" id="sP3"><h2>P3 — Le robot RS-1 : sa chaîne d’énergie <span class="pts">4 points</span></h2>
+<p class="comp">Compétence : Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)</p>
+
+<p class="consigne" data-consigne>Les quatre composants ci-dessous (fiche du robot, bouton 📚) forment sa chaîne d'énergie. Pour chacun, choisis le verbe du bloc qu'il réalise.</p>
+<div class="tscroll"><table class="t"><thead><tr><th>N°</th><th>Composant du robot</th><th>Verbe du bloc</th></tr></thead><tbody>
+<tr><td class="c">②</td><td>Réducteurs à engrenages</td><td><select id="p3_v1" aria-label="verbe du composant Réducteurs à engrenages"><option value="">Choisir…</option><option value="acquérir">acquérir</option><option value="alimenter">alimenter</option><option value="communiquer">communiquer</option><option value="convertir">convertir</option><option value="distribuer">distribuer</option><option value="traiter">traiter</option><option value="transmettre">transmettre</option></select></td></tr>
+<tr><td class="c">⑦</td><td>Carte de commande des moteurs</td><td><select id="p3_v2" aria-label="verbe du composant Carte de commande des moteurs"><option value="">Choisir…</option><option value="acquérir">acquérir</option><option value="alimenter">alimenter</option><option value="communiquer">communiquer</option><option value="convertir">convertir</option><option value="distribuer">distribuer</option><option value="traiter">traiter</option><option value="transmettre">transmettre</option></select></td></tr>
+<tr><td class="c">④</td><td>4 moteurs électriques</td><td><select id="p3_v3" aria-label="verbe du composant 4 moteurs électriques"><option value="">Choisir…</option><option value="acquérir">acquérir</option><option value="alimenter">alimenter</option><option value="communiquer">communiquer</option><option value="convertir">convertir</option><option value="distribuer">distribuer</option><option value="traiter">traiter</option><option value="transmettre">transmettre</option></select></td></tr>
+<tr><td class="c">⑤</td><td>Batterie 12 V</td><td><select id="p3_v4" aria-label="verbe du composant Batterie 12 V"><option value="">Choisir…</option><option value="acquérir">acquérir</option><option value="alimenter">alimenter</option><option value="communiquer">communiquer</option><option value="convertir">convertir</option><option value="distribuer">distribuer</option><option value="traiter">traiter</option><option value="transmettre">transmettre</option></select></td></tr>
+</tbody></table></div>
+<h3>Rédaction<span class="pts">(2 pts, corrigée par le professeur)</span></h3>
+<p class="consigne" data-consigne>Le bloc « ALIMENTER » du robot n'est pas le même composant que celui du robinet. Explique pourquoi.</p>
+<textarea id="p3_r" aria-label="rédaction P3"></textarea></section>
+<section class="card" id="sP4"><h2>P4 — Des exigences aux critères de la coque <span class="pts">4 points</span></h2>
+<p class="comp">Compétence : Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs</p>
+
+<p class="consigne" data-consigne>Voici quatre lignes du cahier des charges du robot. Pour chaque ligne, choisis la lettre de ce qu'elle impose au matériau de la coque. Attention : trois propositions ne correspondent à aucune ligne.</p>
+<div class="rappel"><b>A</b> : conduire l’électricité<br><b>B</b> : ne pas absorber l’eau et ne pas se fendre sous un impact<br><b>C</b> : être un matériau courant, mis en forme par un procédé peu coûteux<br><b>D</b> : avoir une faible masse volumique<br><b>E</b> : garder sa forme et sa solidité entre le froid et la chaleur<br><b>F</b> : flotter sur l’eau<br><b>G</b> : fondre facilement, pour être recyclée</div>
+<div class="tscroll"><table class="t"><thead><tr><th>Ligne</th><th>Ce que demande le cahier des charges</th><th>Lettre</th></tr></thead><tbody>
+<tr><td class="c">④</td><td>Il doit fonctionner au moins 30 minutes sans être rechargé.</td><td style="width:130px"><select id="p4_l1" aria-label="lettre de la ligne ④"><option value="">…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></td></tr>
+<tr><td class="c">⑤</td><td>Il doit résister à l’humidité, à de faibles écoulements d’eau et à de légers chocs.</td><td style="width:130px"><select id="p4_l2" aria-label="lettre de la ligne ⑤"><option value="">…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></td></tr>
+<tr><td class="c">⑦</td><td>Il doit supporter des températures de −10 °C à 80 °C.</td><td style="width:130px"><select id="p4_l3" aria-label="lettre de la ligne ⑦"><option value="">…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></td></tr>
+<tr><td class="c">⑨</td><td>Son prix ne doit pas dépasser 2 000 € TTC (sans la caméra).</td><td style="width:130px"><select id="p4_l4" aria-label="lettre de la ligne ⑨"><option value="">…</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option></select></td></tr>
+</tbody></table></div>
+<h3>Rédaction<span class="pts">(2 pts, corrigée par le professeur)</span></h3>
+<p class="consigne" data-consigne>La ligne ④ ne parle pas de la coque. Explique pourquoi elle impose quand même un critère au matériau de la coque.</p>
+<textarea id="p4_r" aria-label="rédaction P4"></textarea></section>
+<section class="card" id="sPI"><h2>Partie 2 — La coque du robot (I1 à I3)</h2><p class="consigne" data-consigne>Tu refais maintenant, seul, la démarche de la Matériauthèque pour la coque du robot RS-1.</p></section>
+
+      <!-- I1 -->
+      <section class="card" id="sI1">
+        <h2>I1 — Choisir le matériau de la coque <span class="pts">8 points</span></h2>
+        <p class="comp">Compétence : Caractériser et choisir un objet ou un système technique selon différents critères</p>
+        <div data-etapes>
+          <div class="etape">
+            <h3><span class="num">a.</span>Les critères de la coque<span class="pts">(2 pts)</span></h3>
+            <p class="consigne" data-consigne>Lis le cahier des charges. Pour chaque critère, choisis : indispensable, souhaitable ou inutile.</p>
+            <p><button type="button" class="tbtn" data-ouvre-dt data-nolecture>📚 Voir le cahier des charges</button></p>
+            <div class="tscroll"><table class="t" id="tI1a"><thead><tr><th>Critère</th><th>Pour la coque, ce critère est…</th></tr></thead><tbody></tbody></table></div>
+          </div>
+          <div class="etape">
+            <h3><span class="num">b.</span>Le matériau retenu<span class="pts">(2 pts)</span></h3>
+            <p class="consigne" data-consigne>Compare tes critères au tableau des matériaux. Choisis le matériau de la coque.</p>
+            <p><button type="button" class="tbtn" data-ouvre-dt data-nolecture>📚 Voir le tableau des matériaux</button></p>
+            <select id="i1b" aria-label="matériau retenu"></select>
+          </div>
+          <div class="etape">
+            <h3><span class="num">c.</span>Deux éliminations<span class="pts">(2 pts)</span></h3>
+            <p class="consigne" data-consigne>Pourquoi chacun de ces deux matériaux est-il éliminé ? Choisis la raison.</p>
+            <div id="zI1c"></div>
+          </div>
+          <div class="etape">
+            <h3><span class="num">d.</span>Le procédé<span class="pts">(1 pt)</span></h3>
+            <p class="consigne" data-consigne>Robot Scan fabrique 300 coques, en un seul morceau, creuses et fines. Quel procédé choisis-tu ?</p>
+            <select id="i1d" aria-label="procédé"></select>
+          </div>
+          <div class="etape">
+            <h3><span class="num">e.</span>Ta justification<span class="pts">(1 pt)</span></h3>
+            <p class="consigne" data-consigne>En une phrase, explique pourquoi le matériau que tu as choisi convient pour la coque.</p>
+            <textarea id="i1e" aria-label="justification"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- I2 -->
+      <section class="card" id="sI2">
+        <h2>I2 — Tableur : l'énergie grise de la coque <span class="pts">8 points</span></h2>
+        <p class="comp">Compétence : Décrire et caractériser l’organisation interne d’un objet ou d’un système technique et ses échanges avec son environnement (énergies, données)</p>
+        <div class="rappel creme" data-consigne><b>La situation.</b> La coque a toujours la même forme : elle contient 60 cm³ de matière.
+          Tu compares une coque en <b>PE-HD</b> (colonne B) et une coque en <b>aluminium</b> (colonne C).
+          L'énergie grise de la coque = sa masse × l'énergie grise du matériau.</div>
+        <div data-etapes>
+          <div class="etape">
+            <p class="consigne" data-consigne><b>① Les données (2 pts).</b> Écris en B3, C3, B5 et C5 les valeurs lues dans le tableau des matériaux de la fiche.
+              Un nombre décimal s'écrit avec une virgule : 0,95.</p>
+          </div>
+          <div class="etape">
+            <p class="consigne" data-consigne><b>② Les formules de la colonne B (3 pts).</b> Écris les formules de B4 (la masse) et de B6 (l'énergie grise de la coque).
+              Une formule commence par = et utilise les références des cellules (B2, B3…).</p>
+          </div>
+          <div class="etape">
+            <p class="consigne" data-consigne><b>③ La colonne C et la comparaison (3 pts).</b> Écris les formules de C4 et C6 (tu peux recopier la colonne B).
+              En C7, écris la formule qui calcule combien de fois l'aluminium demande plus d'énergie que le PE-HD. Puis complète la phrase.</p>
+          </div>
+        </div>
+        <div class="tscroll"><table class="ss" id="ss">
+          <thead><tr><th class="rh"></th><th>A</th><th>B — PE-HD</th><th>C — Aluminium</th></tr></thead><tbody></tbody></table></div>
+        <div class="legende"><span style="background:var(--vert)"></span>données à écrire<span style="background:var(--form)"></span>formules à écrire<span style="background:var(--gris)"></span>déjà rempli</div>
+        <button type="button" class="btn sec" id="btnRecopie" data-nolecture>⇥ Recopier B4 et B6 vers C4 et C6</button>
+        <p class="legende" style="margin-left:0">Comme la poignée de recopie d'un tableur : les références se décalent d'une colonne (B2 devient C2).</p>
+        <p class="phrase" data-consigne>L'aluminium demande environ
+          <input type="text" id="i2_phrase" inputmode="decimal" aria-label="nombre de fois"> fois plus d'énergie grise que le PE-HD.</p>
+      </section>
+
+      <!-- I3 -->
+      <section class="card" id="sI3">
+        <h2>I3 — Énergie grise et cycle de vie <span class="pts">4 points</span></h2>
+        <p class="comp">Compétence : Caractériser et choisir un objet ou un système technique selon différents critères</p>
+        <div data-etapes>
+          <div class="etape">
+            <h3><span class="num">a.</span>Définition<span class="pts">(1 pt)</span></h3>
+            <p class="consigne" data-consigne>L'énergie grise d'une pièce, c'est :</p>
+            <div class="choix" id="zI3a" role="radiogroup"></div>
+          </div>
+          <div class="etape">
+            <h3><span class="num">b.</span>Ce que compte l'énergie grise<span class="pts">(2 pts)</span></h3>
+            <p class="consigne" data-consigne>Coche toutes les étapes du cycle de vie comptées dans l'énergie grise de la coque.</p>
+            <div class="choix" id="zI3b"></div>
+          </div>
+          <div class="etape">
+            <h3><span class="num">c.</span>Vrai ou faux<span class="pts">(1 pt)</span></h3>
+            <p class="consigne" data-consigne id="txtI3c"></p>
+            <div class="choix ligne" role="radiogroup">
+              <label><input type="radio" name="i3c" value="vrai"> Vrai</label>
+              <label><input type="radio" name="i3c" value="faux"> Faux</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- fin -->
+      <section class="card" id="fin">
+        <h2>Fin de l'évaluation</h2>
+        <div id="bloc-correction"></div>
+        <p class="consigne" data-consigne>Relis tes réponses, puis clique sur « Valider ma copie ». Attends le message « Copie envoyée », puis laisse la place.</p>
+        <button type="button" class="btn ok" id="btnEnvoyer">📤 Valider ma copie</button>
+        <div class="msg info cache" id="msg"></div>
+        <p class="privacy">🔒 Ta copie part au tableau de bord de ton professeur. Le corrigé sera visible plus tard, quand ton professeur donnera son code.</p>
+      </section>
+    </div>
+  </div>
+
+  <div class="footer">Collège Saint-Pierre – Les Essarts · P11 · Évaluation n°2 (rattrapage) · <span id="build">build 2026-10-19a</span></div>
+</main>
+
+<!-- Aménagements dys et confort de lecture : modules partagés du site, réglages rangés par compte sur ce poste. -->
+<script>
+window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/",
+  eleve: (function(){ try { var d = JSON.parse(localStorage.getItem("p11eval2r_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
+</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h1, h2, h3, .consigne, .rappel, header.band p, ol.dt1 li, th, td.lb, .choix label, .phrase, .legende, .comp" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   P11 — ÉVALUATION N°2 · CORRECTION DE LA PARTIE SUR ORDINATEUR (module commun)
+   Recopié tel quel par les générateurs dans :
+     - index.html du site Technologie (tableau de bord du professeur) ;
+     - Eval2-Report.gs (script du classeur « P11 — Évaluation n°2 — Notes »).
+   AUCUNE réponse attendue n'est écrite ici : tout vient de la clé K, lue dans le
+   corrigé chiffré (site) ou dans l'onglet masqué « Clé » (classeur).
+   Source : P11/P11_evaluation_2/_sources/correction_eval2.js — tests : test_correction.js
+   ═══════════════════════════════════════════════════════════════════════════ */
+var P11E2 = (function () {
+  "use strict";
+
+  /* ── mini-tableur : analyse et calcul d'une formule (+ − × ÷, parenthèses, PRODUIT/SOMME) ── */
+  function analyser(src) {
+    var s = String(src).replace(/\s+/g, "").toUpperCase(), i = 0;
+    function voir() { return s.charAt(i); }
+    function expr() { var g = terme(); while (voir() === "+" || voir() === "-") { var op = s.charAt(i++); g = { op: op, a: g, b: terme() }; } return g; }
+    function terme() { var g = facteur(); while (voir() === "*" || voir() === "/") { var op = s.charAt(i++); g = { op: op, a: g, b: facteur() }; } return g; }
+    function facteur() { if (voir() === "-") { i++; return { op: "neg", a: facteur() }; } if (voir() === "+") { i++; return facteur(); } return primaire(); }
+    function primaire() {
+      var m;
+      if (voir() === "(") { i++; var e = expr(); if (voir() !== ")") throw "parenthese"; i++; return e; }
+      if ((m = /^(SOMME|SUM|PRODUIT|PRODUCT)\(/.exec(s.slice(i)))) {
+        i += m[0].length; var args = [];
+        if (voir() !== ")") for (;;) { args.push(expr()); if (voir() === ";" || voir() === ",") { i++; continue; } break; }
+        if (voir() !== ")") throw "parenthese"; i++;
+        return { op: /^(SOMME|SUM)$/.test(m[1]) ? "somme" : "produit", args: args };
+      }
+      if ((m = /^\$?([A-Z])\$?(\d+)/.exec(s.slice(i)))) { i += m[0].length; return { op: "ref", ref: m[1] + m[2] }; }
+      if ((m = /^\d+(?:[.,]\d+)?/.exec(s.slice(i)))) { i += m[0].length; return { op: "num", v: parseFloat(m[0].replace(",", ".")) }; }
+      throw "symbole";
+    }
+    var arbre = expr(); if (i < s.length) throw "symbole"; return arbre;
+  }
+  function evaluer(n, val) {
+    switch (n.op) {
+      case "num": return n.v; case "ref": return val(n.ref); case "neg": return -evaluer(n.a, val);
+      case "+": return evaluer(n.a, val) + evaluer(n.b, val); case "-": return evaluer(n.a, val) - evaluer(n.b, val);
+      case "*": return evaluer(n.a, val) * evaluer(n.b, val); case "/": return evaluer(n.a, val) / evaluer(n.b, val);
+      case "somme": return n.args.reduce(function (t, a) { return t + evaluer(a, val); }, 0);
+      case "produit": return n.args.reduce(function (t, a) { return t * evaluer(a, val); }, 1);
+    }
+    return NaN;
+  }
+  function refsDe(n, out) {
+    out = out || []; if (!n) return out;
+    if (n.op === "ref") out.push(n.ref);
+    ["a", "b"].forEach(function (k) { if (n[k]) refsDe(n[k], out); });
+    if (n.args) n.args.forEach(function (a) { refsDe(a, out); });
+    return out;
+  }
+  function nombresDe(n, out) {
+    out = out || []; if (!n) return out; if (n.op === "num") out.push(n.v);
+    ["a", "b"].forEach(function (k) { if (n[k]) nombresDe(n[k], out); });
+    if (n.args) n.args.forEach(function (a) { nombresDe(a, out); });
+    return out;
+  }
+  /* Feuille : valeur d'une cellule à partir de son contenu (texte), renvois circulaires refusés. */
+  function feuille(contenus) {
+    var cache = {}, pile = [];
+    function val(ref) {
+      if (Object.prototype.hasOwnProperty.call(cache, ref)) return cache[ref];
+      var c = String(contenus[ref] == null ? "" : contenus[ref]).trim();
+      if (c === "") { cache[ref] = 0; return 0; }
+      if (c.charAt(0) !== "=") { cache[ref] = /^-?\d+(?:[.,]\d+)?$/.test(c) ? parseFloat(c.replace(",", ".")) : NaN; return cache[ref]; }
+      if (pile.indexOf(ref) >= 0) return NaN;
+      pile.push(ref); var r = NaN; try { r = evaluer(analyser(c.slice(1)), val); } catch (e) { r = NaN; } pile.pop();
+      if (!isFinite(r)) r = NaN; cache[ref] = r; return r;
+    }
+    return val;
+  }
+  /* Recopie vers la droite (poignée) : les références relatives se décalent d'une colonne. */
+  function decaler(f) {
+    return String(f).replace(/(\$?)([A-Z])(\$?)(\d+)/gi, function (m, d1, col, d2, lig) {
+      return d1 ? m : String.fromCharCode(col.toUpperCase().charCodeAt(0) + 1) + d2 + lig;
+    });
+  }
+  function proche(a, b) { return isFinite(a) && isFinite(b) && Math.abs(a - b) <= Math.max(0.011, Math.abs(b) * 1e-3); }
+
+  /* ── texte : mots-clés (mot entier = trouvé ; clé finissant par « * » = radical) ── */
+  function norm(v) {
+    return String(v || "").toLowerCase().normalize("NFD").split("")
+      /* accents combinants (codes 768 à 879) retirés par code : aucun caractère
+         invisible ni échappement dans le source, copier-coller sûr vers Apps Script */
+      .filter(function (c) { var k = c.charCodeAt(0); return k < 768 || k > 879; }).join("")
+      .replace(/[’']/g, " ").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function lev(a, b) {
+    var p = [], c = [], i, j; for (j = 0; j <= b.length; j++) p[j] = j;
+    for (i = 1; i <= a.length; i++) { c[0] = i; for (j = 1; j <= b.length; j++) c[j] = Math.min(c[j - 1] + 1, p[j] + 1, p[j - 1] + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1)); p = c.slice(); }
+    return p[b.length];
+  }
+  /* Un argument est cité si un de ses mots apparaît ; une faute d'une lettre est tolérée
+     sur les mots de 5 lettres et plus (la justification est une PROPOSITION, relue). */
+  function cite(texte, mots) {
+    var t = norm(texte); if (!t) return false; var ws = t.split(" ");
+    return mots.some(function (cle) {
+      var rad = /\*$/.test(cle), c = norm(cle.replace(/\*$/, ""));
+      return ws.some(function (w) {
+        if (rad ? w.indexOf(c) === 0 : (w === c || w === c + "s" || w === c + "x")) return true;
+        return c.length >= 5 && lev(rad ? w.slice(0, c.length) : w, c) <= 1;
+      });
+    });
+  }
+
+  /* ── correction ──
+     f : champs de la copie (fields) ; K : clé de correction.
+     Renvoie { points:{I1a…I3c}, detail:[{sec,label,rep,attendu,etat,pts,max,remarque}] }. */
+  var ITEMS = ["I1a", "I1b", "I1c", "I1d", "I1e", "I2a", "I2b", "I2c", "I3a", "I3b", "I3c"];
+  function corriger(f, K) {
+    f = f || {}; var pts = {}, detail = [];
+    ITEMS.forEach(function (k) { pts[k] = 0; });
+    if (!K) return { points: pts, detail: detail };
+    function ligne(sec, label, rep, attendu, p, max, remarque) {
+      p = Math.round(Math.min(p, max) * 100) / 100; pts[sec] += p;
+      var vide = rep === "" || rep == null;
+      detail.push({ sec: sec, label: label, rep: vide ? "" : String(rep), attendu: attendu, pts: p, max: max,
+                    etat: vide ? "vide" : p >= max ? "ok" : p > 0 ? "partiel" : "ko", remarque: remarque || "" });
+    }
+    var L = K.libelles || {};
+
+    /* I1a — classer les critères : poids lu dans la clé (critères indispensables / autres). */
+    Object.keys(K.i1a || {}).forEach(function (c) {
+      var att = K.i1a[c], rep = f["i1a_" + c] || "", poids = (K.i1a_poids || {})[att] || 0;
+      ligne("I1a", (L.i1a && L.i1a[c]) || c, rep, att, rep === att ? poids : 0, poids);
+    });
+    var mat = f.i1b || "";
+    ligne("I1b", "Matériau retenu", (L.materiaux && L.materiaux[mat]) || mat, (L.materiaux && L.materiaux[K.i1b]) || K.i1b, mat === K.i1b ? 2 : 0, 2);
+    Object.keys(K.i1c || {}).forEach(function (m) {
+      var rep = f["i1c_" + m] || "";
+      ligne("I1c", "Élimination : " + ((L.materiaux && L.materiaux[m]) || m), rep, K.i1c[m], rep === K.i1c[m] ? 1 : 0, 1);
+    });
+    ligne("I1d", "Procédé pour la série", f.i1d || "", K.i1d, (f.i1d || "") === K.i1d ? 1 : 0, 1);
+    var nArg = (K.i1e || []).filter(function (mots) { return cite(f.i1e, mots); }).length;
+    ligne("I1e", "Justification du choix", f.i1e || "", K.i1e_attendu || "", nArg >= 2 ? 1 : nArg === 1 ? 0.5 : 0, 1,
+          f.i1e ? "Proposition par mots-clés (" + nArg + " argument" + (nArg > 1 ? "s" : "") + " reconnu" + (nArg > 1 ? "s" : "") + ") : à confirmer." : "");
+
+    /* I2 — tableur. Feuille idéale = données de la clé + formules de la clé. */
+    var T = K.i2 || {}, idealC = {};
+    Object.keys(T.donnees || {}).forEach(function (r) { idealC[r] = String(T.donnees[r]); });
+    Object.keys(T.formules || {}).forEach(function (r) { idealC[r] = T.formules[r]; });
+    var ideal = feuille(idealC), cellsEleve = {};
+    Object.keys(f).forEach(function (k) { if (k.indexOf("t_") === 0) cellsEleve[k.slice(2)] = f[k]; });
+    Object.keys(T.donnees || {}).forEach(function (r) { if (!(r in cellsEleve) && (T.fixes || []).indexOf(r) >= 0) cellsEleve[r] = String(T.donnees[r]); });
+    var eleve = feuille(cellsEleve);
+    function noter(ref, max) {
+      var c = String(cellsEleve[ref] || "").trim();
+      if (!c) return { p: 0, why: "vide" };
+      if (c.charAt(0) !== "=") return { p: 0, why: "pas de signe =" };
+      var a; try { a = analyser(c.slice(1)); } catch (e) { return { p: 0, why: "formule illisible" }; }
+      if (a.op === "num") return { p: 0, why: "résultat tapé à la main" };
+      var v = evaluer(a, ideal), juste = proche(v, ideal(ref));
+      if (!juste) return { p: 0, why: "résultat faux" };
+      if (!refsDe(a).length || nombresDe(a).length) return { p: max / 2, why: "nombres recopiés au lieu des références" };
+      return { p: max, why: "juste" };
+    }
+    (T.saisies || []).forEach(function (r) {
+      var c = String(cellsEleve[r] || "").trim(), bonFormat = /^\d+(,\d+)?$/.test(c);
+      var ok = bonFormat && proche(parseFloat(c.replace(",", ".")), Number(T.donnees[r]));
+      ligne("I2a", "Donnée " + r, c, String(T.donnees[r]).replace(".", ","), ok ? 0.5 : 0, 0.5,
+            /^\d+\.\d+$/.test(c) ? "Point au lieu de la virgule : le tableur ne lit pas un nombre." : "");
+    });
+    (T.formulesB || []).forEach(function (r) {
+      var x = noter(r, 1.5);
+      ligne("I2b", "Formule " + r, cellsEleve[r] || "", T.formules[r], x.p, 1.5, x.why === "juste" ? "" : x.why);
+    });
+    var colC = T.formulesC || [], justes = 0;
+    colC.forEach(function (r) {
+      var x = noter(r, 1), b = String(cellsEleve["B" + r.slice(1)] || "").trim(), c = String(cellsEleve[r] || "").trim().toUpperCase().replace(/\s+/g, "");
+      if (x.p === 1 || (b.charAt(0) === "=" && c === decaler(b).toUpperCase().replace(/\s+/g, ""))) justes++;
+    });
+    ligne("I2c", colC.join(" et ") + " (" + justes + "/" + colC.length + " justes)", colC.map(function (r) { return cellsEleve[r] || "…"; }).join(" ; "),
+          colC.map(function (r) { return T.formules[r]; }).join(" ; "), justes === colC.length ? 1 : 0, 1);
+    if (T.rapport) {
+      var xr = noter(T.rapport, 1.5);
+      ligne("I2c", "Formule " + T.rapport, cellsEleve[T.rapport] || "", T.formules[T.rapport], xr.p, 1.5, xr.why === "juste" ? "" : xr.why);
+      var saisi = parseFloat(String(f.i2_phrase || "").replace(",", ".").replace(/[^\d.\-]/g, "")), vE = eleve(T.rapport), vI = ideal(T.rapport);
+      var okPh = isFinite(saisi) && ((isFinite(vE) && Math.abs(saisi - vE) <= (T.tolPhrase || 0.6)) || Math.abs(saisi - vI) <= (T.tolPhrase || 0.6));
+      ligne("I2c", "Phrase : combien de fois plus", f.i2_phrase || "", "environ " + Math.round(vI), okPh ? 0.5 : 0, 0.5);
+    }
+
+    /* I3 */
+    var defs = L.i3a || [];
+    ligne("I3a", "Définition de l’énergie grise", f.i3a === undefined || f.i3a === "" ? "" : (defs[+f.i3a] || f.i3a), defs[K.i3a] || String(K.i3a), String(f.i3a) === String(K.i3a) ? 1 : 0, 1);
+    var etapes = Object.keys(K.i3b || {}), bien = 0, rep3 = [];
+    etapes.forEach(function (e) { var coche = f["i3b_" + e] === "1"; if (coche) rep3.push((L.i3b && L.i3b[e]) || e); if (coche === !!K.i3b[e]) bien++; });
+    ligne("I3b", "Étapes comptées dans l’énergie grise (" + bien + "/" + etapes.length + " bien traitées)", rep3.join(", ") || (f.i3b_vu ? "aucune case cochée" : ""),
+          etapes.filter(function (e) { return K.i3b[e]; }).map(function (e) { return (L.i3b && L.i3b[e]) || e; }).join(", "),
+          /* Aucune case cochée = 0 : sinon la case piège laissée vide donnait un point gratuit. */
+          etapes.length && rep3.length ? 2 * bien / etapes.length : 0, 2);
+    ligne("I3c", "Recyclable ou recyclé (vrai / faux)", f.i3c || "", K.i3c, (f.i3c || "") === K.i3c ? 1 : 0, 1);
+
+    ITEMS.forEach(function (k) { pts[k] = Math.round(pts[k] * 100) / 100; });
+    return { points: pts, detail: detail };
+  }
+
+  return { corriger: corriger, ITEMS: ITEMS, analyser: analyser, evaluer: evaluer, feuille: feuille, decaler: decaler, cite: cite };
+})();
+if (typeof module !== "undefined" && module.exports) module.exports = P11E2;
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   P11 — ÉVALUATION N°2 · partie sur ordinateur (capsule élève)
+   Fichier GÉNÉRÉ par P11/P11_evaluation_2/_sources/build_capsule.py.
+   Cette page ne contient AUCUNE réponse attendue et ne corrige rien : la copie
+   brute part (1) au tableau de bord du site, (2) au script du classeur de notes,
+   qui la corrige avec sa clé. Le corrigé est chiffré (tuile « Corrigé »).
+   ═══════════════════════════════════════════════════════════════════════════ */
+"use strict";
+var DONNEES = {"dt1": [["④", "Il doit fonctionner au moins 30 minutes sans être rechargé. Pour la sécurité, il est alimenté en très basse tension."], ["⑤", "Il doit résister à l’humidité, à de faibles écoulements d’eau et à de légers chocs."], ["⑦", "Il doit supporter des températures de −10 °C à 80 °C."], ["⑨", "Il doit être solide, fiable et démontable. Son prix ne doit pas dépasser 2 000 € TTC (sans la caméra)."]], "materiaux": [["acier", "Acier", 7.85, 300, 1, 4, 25], ["inox", "Inox", 7.9, 300, 5, 4, 60], ["alu", "Aluminium", 2.7, 200, 4, 3, 200], ["cuivre", "Cuivre", 8.96, 200, 4, 3, 60], ["laiton", "Laiton", 8.5, 200, 4, 3, 40], ["pla", "PLA", 1.24, 50, 2, 2, 50], ["abs", "ABS", 1.04, 70, 3, 4, 95], ["pehd", "PE-HD", 0.95, 90, 5, 4, 80], ["pp", "PP", 0.91, 100, 5, 3, 75], ["pmma", "PMMA", 1.19, 70, 4, 1, 100], ["pa6", "PA (nylon)", 1.13, 100, 2, 4, 120], ["pom", "POM", 1.39, 100, 4, 3, 90]], "statuts": ["indispensable", "souhaitable", "inutile"], "criteres": [["eau", "Résister à l’eau"], ["chocs", "Résister aux chocs"], ["t80", "Supporter 80 °C"], ["leger", "Être légère (2 g/cm³ au plus)"], ["cout", "Coûter peu"], ["t200", "Supporter plus de 200 °C"]], "eliminations": [["pla", "PLA"], ["alu", "Aluminium"]], "raisons": ["Il est trop lourd", "Il ne supporte pas 80 °C", "Il s’abîme dans l’eau", "Il se casse au moindre choc", "Il coûte trop cher"], "procedes": ["Moulage par injection", "Thermoformage", "Impression 3D", "Usinage", "Pliage de tôle"], "definitions": ["L’énergie que la coque consomme quand le robot roule", "Toute l’énergie nécessaire pour extraire la matière, fabriquer la pièce, la transporter et la traiter en fin de vie", "L’énergie électrique stockée dans la batterie du robot"], "etapes": [["extraction", "Extraire la matière première"], ["fabrication", "Fabriquer la pièce"], ["transport", "Transporter la pièce"], ["utilisation", "Utiliser le robot"], ["fin", "Traiter la pièce en fin de vie"]], "vf": "Un matériau recyclable fait toujours économiser de l’énergie."};
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var REPORT_URL = "https://script.google.com/macros/s/AKfycbxndRw9ncrM6Cv8QpD7MdHNoMMJo5pU7NK9tDinaTFovxct0c0KGdG8pXrUNzzj_YzU/exec";      /* script du classeur « P11 — Évaluation n°2 — Notes » */
+var REPORT_SECRET = "P11-EVAL2-2026";
+var CAP_ID = "p11-eval2-ratt", CAP_LABEL = "P11 4e — Évaluation n°2 (rattrapage)";
+var PREFILL_KEY = "p11eval2r_prefill", QUEUE_KEY = "p11_eval2r_offline_queue", DRAFT_PFX = "p11_eval2r_draft_";
+var DUREE_MS = 40 * 60 * 1000;
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function fr(x,dec){ if(x==null||isNaN(x)) return "?"; return Number(x).toLocaleString("fr-FR",{minimumFractionDigits:0,maximumFractionDigits:dec==null?2:dec}); }
+function flash(id,html,type){ var b=$(id); if(!b) return; b.className="msg "+(type||"info"); b.innerHTML=html; }
+function val(id){ var e=$(id); return e?String(e.value||"").trim():""; }
+function slug(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+var ETAT = { rep:{}, debut:0, envoye:false };
+var USER = { id:"", p:"", n:"", c:"" };
+
+/* ═══ construction ═══ */
+function options(liste, vide){ return '<option value="">'+(vide||"Choisir…")+'</option>'+liste.map(function(o){ return '<option value="'+esc(o[0])+'">'+esc(o[1])+'</option>'; }).join(""); }
+function construire(){
+  $("dt1").innerHTML = DONNEES.dt1.map(function(l){ return "<li><b>"+l[0]+"</b><span>"+esc(l[1])+"</span></li>"; }).join("");
+  $("dtmat").innerHTML = "<thead><tr><th>Matériau</th><th>Masse volumique (g/cm³)</th><th>Température max (°C)</th><th>Eau (/5)</th><th>Chocs (/5)</th><th>Énergie grise (kJ/g)</th></tr></thead><tbody>"+
+    DONNEES.materiaux.map(function(m){ return "<tr><td><b>"+esc(m[1])+"</b></td>"+m.slice(2).map(function(x){ return '<td class="c">'+fr(x,2)+"</td>"; }).join("")+"</tr>"; }).join("")+"</tbody>";
+  var statuts = DONNEES.statuts.map(function(s){ return [s, s]; });
+  $("tI1a").querySelector("tbody").innerHTML = DONNEES.criteres.map(function(c){
+    return "<tr><td>"+esc(c[1])+'</td><td style="width:240px"><select id="i1a_'+c[0]+'" aria-label="'+esc(c[1])+'">'+options(statuts)+"</select></td></tr>"; }).join("");
+  $("i1b").innerHTML = options(DONNEES.materiaux.map(function(m){ return [m[0], m[1]]; }), "Choisir un matériau…");
+  $("zI1c").innerHTML = DONNEES.eliminations.map(function(e){
+    return '<label class="lbl" for="i1c_'+e[0]+'">Le '+esc(e[1])+' est éliminé parce que…</label><select id="i1c_'+e[0]+'">'+options(DONNEES.raisons.map(function(r){ return [r, r]; }))+"</select>"; }).join("");
+  $("i1d").innerHTML = options(DONNEES.procedes.map(function(p){ return [p, p]; }), "Choisir un procédé…");
+  $("zI3a").innerHTML = DONNEES.definitions.map(function(d,i){ return '<label><input type="radio" name="i3a" value="'+i+'"> <span>'+esc(d)+"</span></label>"; }).join("");
+  $("zI3b").innerHTML = DONNEES.etapes.map(function(e){ return '<label><input type="checkbox" id="i3b_'+e[0]+'" value="1"> <span>'+esc(e[1])+"</span></label>"; }).join("");
+  $("txtI3c").textContent = "« "+DONNEES.vf+" »";
+  construireTableur();
+}
+
+/* ═══ mini-tableur (moteur commun P11E2 : calcul seulement, aucune correction ici) ═══ */
+var LIGNES = [
+  [1,"Libellé",null,null],
+  [2,"Volume de matière (cm³)","FIXE60","FIXE60"],
+  [3,"Masse volumique (g/cm³)","don","don"],
+  [4,"Masse de la coque (g)","form","form"],
+  [5,"Énergie grise du matériau (kJ/g)","don","don"],
+  [6,"Énergie grise de la coque (kJ)","form","form"],
+  [7,"L'aluminium demande … fois plus",null,"form"]
+];
+var UNITES = { B4:"g", C4:"g", B6:"kJ", C6:"kJ", C7:"fois" };
+function construireTableur(){
+  $("ss").querySelector("tbody").innerHTML = LIGNES.map(function(l){
+    var n=l[0];
+    if(n===1) return '<tr><td class="rh">1</td><td class="lb"><b>Libellé</b></td><td class="lb" style="text-align:center">PE-HD</td><td class="lb" style="text-align:center">Aluminium</td></tr>';
+    var t='<tr><td class="rh">'+n+'</td><td class="lb">'+esc(l[1])+"</td>";
+    [["B",l[2]],["C",l[3]]].forEach(function(p){ var ref=p[0]+n, k=p[1];
+      if(k===null) t+='<td class="vide"></td>';
+      else if(k==="FIXE60") t+='<td class="fixe">60</td>';
+      else t+='<td class="cell '+k+'"><input type="text" id="t_'+ref+'" data-ref="'+ref+'" autocomplete="off" spellcheck="false" aria-label="cellule '+ref+'"'+(k==="don"?' inputmode="decimal"':"")+'><span class="chip" id="chip-'+ref+'"></span></td>';
+    });
+    return t+"</tr>";
+  }).join("");
+}
+function cellules(){ var c={B2:"60",C2:"60"}; Object.keys(ETAT.rep).forEach(function(k){ if(k.indexOf("t_")===0) c[k.slice(2)]=ETAT.rep[k]; }); return c; }
+function recalculer(){
+  var v=P11E2.feuille(cellules());
+  document.querySelectorAll("#ss input[data-ref]").forEach(function(inp){
+    var ref=inp.getAttribute("data-ref"), chip=$("chip-"+ref), c=String(inp.value||"").trim();
+    if(!chip) return;
+    if(c.charAt(0)!=="="){ chip.textContent = (/^\d+\.\d+$/.test(c) ? "virgule ?" : ""); return; }
+    var x=v(ref); chip.textContent=isNaN(x)?"#ERREUR":fr(x,2)+(UNITES[ref]?" "+UNITES[ref]:"");
+  });
+}
+
+/* ═══ champs, brouillon ═══ */
+function champs(){ return document.querySelectorAll("#copie input, #copie select, #copie textarea"); }
+function lireChamps(){
+  champs().forEach(function(el){
+    if(el.type==="radio"){ if(el.checked) ETAT.rep[el.name]=el.value; return; }
+    if(el.type==="checkbox"){ ETAT.rep[el.id]=el.checked?"1":""; return; }
+    if(el.id) ETAT.rep[el.id]=el.value;
+  });
+  ETAT.rep.i3b_vu = "1";
+}
+function ecrireChamps(){
+  champs().forEach(function(el){
+    if(el.type==="radio"){ el.checked=ETAT.rep[el.name]===el.value; return; }
+    if(el.type==="checkbox"){ el.checked=ETAT.rep[el.id]==="1"; return; }
+    var v=ETAT.rep[el.id]; if(v!=null) el.value=v;
+  });
+  recalculer();
+}
+function compterRepondu(){
+  var tot=0, faits=0;
+  champs().forEach(function(el){ if(el.type==="radio"||el.type==="checkbox") return; tot++; if(String(el.value||"").trim()) faits++; });
+  tot+=2; if(ETAT.rep.i3a) faits++; if(ETAT.rep.i3c) faits++;
+  return {tot:tot,faits:faits};
+}
+function majProgression(){ var p=compterRepondu(); $("prog").textContent=p.faits+"/"+p.tot+" réponses"; }
+function cleBrouillon(){ return DRAFT_PFX+(USER.id || slug(val("prenom")+" "+val("nom")) || "anon"); }
+function enregistrerBrouillon(){
+  try{ localStorage.setItem(cleBrouillon(), JSON.stringify({rep:ETAT.rep, debut:ETAT.debut, envoye:ETAT.envoye, ts:Date.now()})); }
+  catch(e){ flash("msg","⚠️ Ton travail ne peut pas être enregistré sur cet appareil. Ne ferme pas la page.","ko"); }
+}
+var minuteur=null; function sauverBientot(){ clearTimeout(minuteur); minuteur=setTimeout(enregistrerBrouillon,400); majProgression(); }
+function restaurerBrouillon(){
+  try{ var d=JSON.parse(localStorage.getItem(cleBrouillon())||"null"); if(d){ ETAT.rep=d.rep||{}; ETAT.debut=d.debut||0; ETAT.envoye=!!d.envoye; } }catch(e){}
+}
+
+/* ═══ chronomètre : 18 minutes ; reprend après un rechargement ; envoi automatique à la fin ═══ */
+var tic=null;
+function majChrono(){
+  var reste=Math.max(0, ETAT.debut+DUREE_MS-Date.now()), m=Math.floor(reste/60000), s=Math.floor(reste%60000/1000), c=$("chrono");
+  c.classList.remove("cache"); c.textContent="⏱ "+m+" min "+(s<10?"0":"")+s;
+  c.classList.toggle("bientot", reste<=3*60000 && reste>0); c.classList.toggle("fini", reste===0);
+  if(reste===0){ clearInterval(tic); c.textContent="⏱ Temps écoulé"; if(!ETAT.envoye) envoyer(true); }
+}
+function lancerChrono(){ if(!ETAT.debut){ ETAT.debut=Date.now(); enregistrerBrouillon(); } majChrono(); clearInterval(tic); tic=setInterval(majChrono,1000); }
+
+/* ═══ identité, départ ═══ */
+function lireIdentite(){
+  try{ var d=JSON.parse(localStorage.getItem(PREFILL_KEY)||"null"); if(!d||!d.p||!d.n) return false;
+    USER={ id:d.id||"", p:d.p, n:d.n, c:d.c||"" };
+    $("prenom").value=USER.p; $("nom").value=USER.n; if(USER.c) $("classe").value=String(USER.c).toUpperCase();
+    /* Compte sans classe 4A-4G (professeur) : l'écran « Qui es-tu ? » demande la classe,
+       sinon la copie partait avec une classe vide et le classeur la refusait. 4T = compte de test. */
+    if(!/^4[A-GT]$/i.test(String(USER.c||""))){ USER.c=""; return false; }
+    return true; }catch(e){ return false; }
+}
+function afficherQui(){
+  var c=USER.c||val("classe"), nom=(val("prenom")+" "+val("nom")).trim(), txt=nom+(c?" · "+c:"");
+  $("qui").textContent="👤 "+txt; $("qui").classList.remove("cache");
+  $("quiDepart").innerHTML="Copie de <b>"+esc(nom)+"</b>"+(c?", classe <b>"+esc(c)+"</b>":"")+". Si ce n'est pas toi, préviens ton professeur.";
+}
+function apresIdentite(){
+  $("ident").classList.add("cache"); afficherQui();
+  restaurerBrouillon();
+  if(ETAT.debut){ ouvrirCopie(); return; }        /* déjà commencée : on reprend, chronomètre compris */
+  $("depart").classList.remove("cache");
+}
+function ouvrirCopie(){
+  $("depart").classList.add("cache"); $("layout").classList.remove("cache"); $("btnDT").classList.remove("cache");
+  DT_OUVERT = window.innerWidth>980; majDT();
+  ecrireChamps(); majProgression(); lancerChrono(); controlerVerrou(); afficherCorrectionProf(); viderLaFile();
+  if(ETAT.envoye) flash("msg","✅ Ta copie a déjà été envoyée. Tu peux la renvoyer si tu la corriges : c'est la première copie reçue qui compte pour le classeur de notes.","ok");
+}
+var DT_OUVERT=true;
+function majDT(){
+  var l=$("layout"), large=window.innerWidth>980;
+  l.classList.toggle("dt-ferme", large && !DT_OUVERT); l.classList.toggle("dt-ouvert", !large && DT_OUVERT);
+  $("btnDT").textContent = DT_OUVERT ? "📚 Masquer la fiche" : "📚 Cahier des charges et matériaux";
+}
+
+/* ═══ verrou (règle du site : une copie verrouillée ne se rouvre plus) — repris de l'éval 1 ═══ */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked===true || sub.locked==="TRUE" || sub.locked==="true"); }
+function copieLocaleVerrouillee(){
+  if(!USER.id) return false;
+  try{ var subs=JSON.parse(localStorage.getItem("subs")||"[]");
+    for(var i=0;i<subs.length;i++) if(subs[i] && subs[i].eid===USER.id && subs[i].cap===CAP_ID && envoiVerrouille(subs[i])) return true; }catch(e){}
+  return false;
+}
+function estLocal(){ var hn=(location.hostname||"").toLowerCase(); return hn==="localhost"||hn==="127.0.0.1"||hn==="::1"||hn===""; }
+function urlLecture(){
+  if(estLocal()){ try{ var u=localStorage.getItem("apps_script_url_test")||""; if(/^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){} }
+  return APPS_SCRIPT_URL;
+}
+function voileVerrou(){
+  if($("voile-verrou")) return;
+  var v=document.createElement("div"); v.id="voile-verrou"; v.setAttribute("role","alert");
+  v.style.cssText="position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent=MSG_VERROU; document.body.appendChild(v);
+}
+function controlerVerrou(){
+  if(!USER.id) return;
+  if(copieLocaleVerrouillee()){ voileVerrou(); return; }
+  var q="&secret="+encodeURIComponent(SYNC_SECRET)+"&t="+Date.now();
+  fetch(urlLecture()+"?action=own&eid="+encodeURIComponent(USER.id)+q).then(function(r){ return r.json(); }).then(function(d){
+    var liste=d&&d.ok&&d.subs?d.subs:[];
+    for(var i=0;i<liste.length;i++) if(liste[i] && liste[i].eid===USER.id && liste[i].cap===CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }).catch(function(){});
+}
+
+/* ═══ envoi : tableau de bord du site + classeur de notes ═══ */
+function urlPrete(u){ return !!u && u.indexOf("@@")<0 && /^https:\/\/script\.google\.com\//.test(u); }
+/* Règle 4 du site : une page servie en local n'écrit jamais dans un classeur de production. "" = refusé. */
+function urlEcriture(prod){
+  if(!estLocal()) return prod;
+  try{ var u=localStorage.getItem("apps_script_url_test")||""; if(prod===APPS_SCRIPT_URL && u && u!==prod && /^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){}
+  return "";
+}
+function mettreEnFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); q=q.filter(function(x){ return x.eid!==sub.eid; }); q.push(sub); localStorage.setItem(QUEUE_KEY,JSON.stringify(q)); }catch(e){} }
+function retirerDeLaFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); localStorage.setItem(QUEUE_KEY,JSON.stringify(q.filter(function(x){ return x.eid!==sub.eid; }))); }catch(e){} }
+function deposerEnLocal(sub){ try{ var s=JSON.parse(localStorage.getItem("subs")||"[]"); s=s.filter(function(x){ return !(x.eid===sub.eid && x.cap===sub.cap); }); s.push(sub); localStorage.setItem("subs",JSON.stringify(s)); }catch(e){} }
+function poster(sub, fini){
+  mettreEnFile(sub);
+  var cible=urlEcriture(APPS_SCRIPT_URL);
+  if(!cible){ try{ console.warn("[p11-eval2] page servie en local : envoi vers la production bloqué, copie gardée en file locale."); }catch(e){} if(fini) fini(false); return; }
+  fetch(cible,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({secret:SYNC_SECRET,sub:sub})})
+    .then(function(){ retirerDeLaFile(sub); if(fini) fini(true); }).catch(function(){ if(fini) fini(false); });
+}
+function viderLaFile(){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); if(!q.length||!urlEcriture(APPS_SCRIPT_URL)) return; q.forEach(function(s){ poster(s); }); }catch(e){} }
+/* Copie brute vers le classeur de notes : c'est le script qui corrige, avec sa clé. */
+function reporter(sub){
+  var cible=urlPrete(REPORT_URL)?urlEcriture(REPORT_URL):"";
+  if(!cible){ try{ console.warn("[p11-eval2] report au classeur non envoyé (page locale ou URL non installée)."); }catch(e){} return; }
+  fetch(cible,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({secret:REPORT_SECRET,source:"rattrapage",classe:sub.ecls,eleve:sub.ename,eid:sub.eid,fields:sub.fields})}).catch(function(){});
+}
+function resume(){
+  var R=ETAT.rep, m=(DONNEES.materiaux.filter(function(x){ return x[0]===R.i1b; })[0]||[])[1]||"—";
+  return "Matériau : "+m+" · procédé : "+(R.i1d||"—")+"\n---\nJustification : "+(R.i1e||"—");
+}
+function fabriquerEnvoi(){
+  var fields={}; Object.keys(ETAT.rep).forEach(function(k){ fields[k]=String(ETAT.rep[k]==null?"":ETAT.rep[k]); });
+  var ename=(val("prenom")+" "+val("nom")).trim(), classe=USER.c||val("classe"), p=compterRepondu();
+  return { id:Date.now(), eid:USER.id||(CAP_ID+"."+(slug(classe)||"4x")+"."+(slug(ename)||"eleve")), ename:ename||"Élève", ecls:classe,
+    cap:CAP_ID, caplbl:CAP_LABEL, score:p.faits, qcmTot:p.tot, open:resume(), fields:fields,
+    date:new Date().toLocaleDateString("fr-FR"), dateISO:new Date().toISOString(), status:"pending" };
+}
+function envoyer(auto){
+  if(copieLocaleVerrouillee()){ flash("msg",MSG_VERROU,"ko"); return; }
+  lireChamps(); var p=compterRepondu(), vides=p.tot-p.faits;
+  if(!auto && !window.confirm((vides?"Il te reste "+vides+" réponse(s) vide(s).\n\n":"")+"Valider ta copie et l'envoyer au professeur ?")) return;
+  var btn=$("btnEnvoyer"); btn.disabled=true; flash("msg",(auto?"⏱ Temps écoulé : ":"")+"⟳ Envoi en cours…","info");
+  ETAT.envoye=true; enregistrerBrouillon();
+  var sub=fabriquerEnvoi(); deposerEnLocal(sub); reporter(sub);
+  try{ if(window.parent && window.parent!==window && window.parent.renderDash) window.parent.renderDash(); }catch(e){}
+  poster(sub, function(ok){
+    btn.disabled=false;
+    if(ok) flash("msg","✅ <b>Copie envoyée</b> le "+new Date().toLocaleString("fr-FR")+". Tu peux laisser la place.","ok");
+    else flash("msg","⚠️ L'envoi n'a pas abouti (réseau ?). Ta copie est <b>gardée sur cet ordinateur</b> et repartira toute seule. Préviens ton professeur.","ko");
+  });
+}
+
+/* ═══ la note du professeur redescend (localStorage.subs, alimenté par le site) ═══ */
+function afficherCorrectionProf(){
+  var hote=$("bloc-correction"), s=null; if(!hote) return;
+  try{ JSON.parse(localStorage.getItem("subs")||"[]").forEach(function(x){ if(USER.id && x.eid===USER.id && x.cap===CAP_ID) s=x; }); }catch(e){}
+  if(!s || s.status!=="validated" || s.adjustedScore===undefined || s.adjustedScore===""){ hote.innerHTML=""; return; }
+  hote.innerHTML='<div class="rappel" style="border-left-color:#1E8E5A;background:#e7f6ee"><b>✅ Note du professeur (partie sur ordinateur)</b> : <span style="font-size:22px;font-weight:800">'+
+    fr(Number(s.adjustedScore))+' / '+(s.bareme||20)+'</span>'+(s.appreciation?'<div style="margin-top:8px"><b>💬</b> '+esc(s.appreciation)+'</div>':'')+'</div>';
+}
+
+/* ═══ démarrage ═══ */
+document.addEventListener("DOMContentLoaded",function(){
+  construire();
+  $("btnIdent").addEventListener("click",function(){
+    if(!val("nom")||!val("prenom")||!val("classe")){ flash("identMsg","Écris ton nom, ton prénom et choisis ta classe.","ko"); return; }
+    $("nom").value=val("nom").toUpperCase(); apresIdentite();
+  });
+  $("btnStart").addEventListener("click",ouvrirCopie);
+  $("btnEnvoyer").addEventListener("click",function(){ envoyer(false); });
+  $("btnDT").addEventListener("click",function(){ DT_OUVERT=!DT_OUVERT; majDT(); });
+  $("btnDTfermer").addEventListener("click",function(){ DT_OUVERT=false; majDT(); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ouvre-dt]"),function(b){ b.addEventListener("click",function(){
+    DT_OUVERT=true; majDT(); try{ $("dt").scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){} }); });
+  window.addEventListener("resize",majDT);
+  $("copie").addEventListener("input",function(){ lireChamps(); recalculer(); sauverBientot(); });
+  $("copie").addEventListener("change",function(){ lireChamps(); recalculer(); sauverBientot(); });
+  $("btnRecopie").addEventListener("click",function(){
+    lireChamps();
+    var deja=["C4","C6"].some(function(r){ return String(ETAT.rep["t_"+r]||"").trim(); });
+    if(deja && !window.confirm("C4 ou C6 contient déjà quelque chose. Le remplacer par la recopie de la colonne B ?")) return;
+    ["4","6"].forEach(function(l){ var b=String(ETAT.rep["t_B"+l]||"").trim(); ETAT.rep["t_C"+l]= b.charAt(0)==="=" ? P11E2.decaler(b) : b; });
+    ecrireChamps(); sauverBientot();
+  });
+  setInterval(function(){ if(!$("layout").classList.contains("cache")) enregistrerBrouillon(); },15000);
+  window.addEventListener("beforeunload",function(){ if(!$("layout").classList.contains("cache")) enregistrerBrouillon(); });
+  if(lireIdentite()) apresIdentite(); else $("ident").classList.remove("cache");
+});
+</script>
+</body>
+</html>
