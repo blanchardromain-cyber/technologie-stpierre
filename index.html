@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-19d</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4306,6 +4306,7 @@ body.est-prof .prof-only{display:block}
             <option value="eau56">P11 4e &mdash; Activit&eacute;s 5 et 6</option>
             <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="p11-eval2">P11 4e &mdash; &Eacute;valuation n&deg;2 (ordinateur)</option>
+            <option value="p11-eval2-ratt">P11 4e &mdash; &Eacute;valuation n&deg;2 (rattrapage)</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
@@ -5201,6 +5202,26 @@ body.est-prof .prof-only{display:block}
         <button id="p2e-cor-print" hidden onclick="printP11Eval2Corrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
         <div id="p2e-cor-body" style="margin-top:20px"></div>
       </div>
+    </div>
+
+    <!-- P11 4e — ÉVALUATION N°2, RATTRAPAGE (générée par P11/P11_evaluation_2/_sources) -->
+    <div id="pg-p11-eval2-ratt" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Évaluation n°2 : rattrapage sur ordinateur (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle</strong>, 40 minutes : toute l'évaluation n°2 (le robinet, le robot RS-1, la coque et son énergie grise).
+        La copie est envoyée quand tu cliques sur « Valider ma copie », ou toute seule à la fin du temps.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Sur 40, converti sur 20 dans le classeur. Cases de rappel et partie poste <strong>proposées</strong> dès que le corrigé chiffré est déchiffré ;
+        les <strong>rédactions</strong> (P2e-g, P3c-d, P4c-d) et I1e sont à noter dans le modal. Carte fermée par défaut : ouvrir et armer seulement pour un rattrapage.
+      </p>
+      <div id="p11-eval2-ratt-correction"></div>
+      <iframe id="p11-eval2-ratt-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation2_rattrapage.html" title="P11 — Évaluation n°2 (4e), rattrapage"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
     </div>
 
     <!-- BÂTIMENT 5e — SYNTHÈSE P1 -->
@@ -6266,6 +6287,7 @@ var SEQUENCES_DEF = [
   {id:"p11-entr-tab", ordre:116, niveau:"4ème", titre:"P11 — Entraînement tableur — La facture du club photo", desc:"Avant l'évaluation : lire une feuille de calcul, passer de la phrase à la formule, trouver l'erreur, recopier. Non noté, vérification immédiate. Aides dys intégrées.", couleur:"#0288D1", code:"", open:true},
   {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#sdsFTOAdPjNmd1yUlzBiMttqCiL2pA3BcTLlEyhPKzM=", open:true},
   {id:"p11-eval2", ordre:118, niveau:"4ème", titre:"P11 — Évaluation n°2 — Le matériau de la coque", desc:"Choisir le matériau de la coque du robot, son énergie grise au tableur, le cycle de vie. Partie sur ordinateur, 18 min, notée sur 20. Confort de lecture intégré.", couleur:"#5B34C7", code:"#8a+Gn1x039LzdajIWtoXSFwvJZNKqlTmLr6QTm0puA8=", open:true},
+  {id:"p11-eval2-ratt", ordre:118.5, niveau:"4ème", titre:"P11 — Évaluation n°2 — Rattrapage", desc:"Pour les absents : toute l'évaluation sur ordinateur (le robinet, le robot, la coque), 40 min, notée sur 40. Confort de lecture intégré.", couleur:"#5B34C7", code:"", open:false},
   {id:"p11-eval2-cor", ordre:119, niveau:"4ème", titre:"P11 — Corrigé de l'évaluation n°2", desc:"Corrigé détaillé de la partie sur ordinateur. Code donné par le professeur quand toutes les classes sont passées.", couleur:"var(--vt)", code:"#F2Wzqikl3a1vtbRcM6CRDXj1EjCrlH+KUr08uSLwbdo=", open:false},
   {id:"p12", ordre:120, niveau:"4ème", titre:"P12 — Technologie &amp; Alimentation — Activité 1", desc:"Comment la technologie facilite-t-elle notre alimentation ?", couleur:"var(--or)", code:"#gn7QMohK3MPGG4gnR0LHgbgpJ0Vk/WPDXcZ750EIfoA=", open:true},
   {id:"p12-cor-a1", ordre:121, niveau:"4ème", titre:"P12 &mdash; Corrig&eacute; Activit&eacute; 1", desc:"Corrig&eacute; d&eacute;taill&eacute; Activit&eacute; 1 &mdash; code fourni par le professeur.", couleur:"var(--vi)", code:"#UgnQEdD9LPBHZDW+8hveiQno16uEtSS0cKvzO84fhRU=", open:true},
@@ -6839,6 +6861,15 @@ function goPage(pid) {
     rafraichirCorrection("p11-eval2", "p11-eval2-correction");
   }
   if (pid === "pg-p11-eval2-cor") p2eCorOuvrir();
+  if (pid === "pg-p11-eval2-ratt") {
+    try {
+      if (user) localStorage.setItem("p11eval2r_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var p11e2rIfr = document.getElementById("p11-eval2-ratt-frame");
+    if (p11e2rIfr) p11e2rIfr.src = p11e2rIfr.getAttribute("data-src");
+    renderCorrectionEleve("p11-eval2-ratt", "p11-eval2-ratt-correction");
+    rafraichirCorrection("p11-eval2-ratt", "p11-eval2-ratt-correction");
+  }
   if (pid === "pg-batiment5e-syn") {
     // Même identité que l'activité : elle ne sert qu'à l'en-tête de la feuille imprimée.
     try {
@@ -7225,7 +7256,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "p11-eval1" || s.id === "p11-eval2") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7281,6 +7312,7 @@ function renderDash() {
       else if (s.id === "p11-eval1") clickAction = "onclick=\"goPage('pg-p11-eval1')\"";
       else if (s.id === "p11-eval2") clickAction = "onclick=\"goPage('pg-p11-eval2')\"";
       else if (s.id === "p11-eval2-cor") clickAction = "onclick=\"goPage('pg-p11-eval2-cor')\"";
+      else if (s.id === "p11-eval2-ratt") clickAction = "onclick=\"goPage('pg-p11-eval2-ratt')\"";
       else if (s.id === "p11-entr-tab") clickAction = "onclick=\"goPage('pg-p11-entr-tab')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
@@ -7361,6 +7393,7 @@ function tryUnlock() {
     else if (pendingSeq === "p11-eval1") goPage("pg-p11-eval1");
     else if (pendingSeq === "p11-eval2") goPage("pg-p11-eval2");
     else if (pendingSeq === "p11-eval2-cor") goPage("pg-p11-eval2-cor");
+    else if (pendingSeq === "p11-eval2-ratt") goPage("pg-p11-eval2-ratt");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -9540,6 +9573,65 @@ var EVALUATIONS = {
     }
   },
 
+  /* P11 4e — Évaluation n°2, RATTRAPAGE : toute l'évaluation sur ordinateur, sur 40
+     (converti sur 20 dans le classeur). Cases papier : rappel proposé automatiquement,
+     rédaction à noter (pas = point plein : la case du classeur est cochée ou non).
+     Réponses dans le corrigé chiffré (P2E_COR), comme pour la partie sur ordinateur. */
+  "p11-eval2-ratt": {
+    titre: "P11 4e — Évaluation n°2 (rattrapage)",
+    total: 40,
+    manuel: true,
+    sections: [
+      {"cle": "P1a", "label": "P1a — Détecter la présence des mains → capteur infrarouge", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P1b", "label": "P1b — Traiter l’information → carte électronique", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P1c", "label": "P1c — Ouvrir / fermer l’arrivée d’eau → électrovanne", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P1d", "label": "P1d — Produire l’énergie électrique → turbine + générateur", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P2a", "label": "P2a — Chaîne d’information : les 3 composants justes", "max": 1.5, "pas": 1.5, "compact": true},
+      {"cle": "P2b", "label": "P2b — Chaîne d’énergie : au moins 2 composants sur 4 justes", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P2c", "label": "P2c — Chaîne d’énergie : les 4 composants justes (s’ajoute à P2b)", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P2d", "label": "P2d — Flèches : hydraulique avant la turbine, électrique après", "max": 1.5, "pas": 1.5, "compact": true},
+      {"cle": "P2e", "label": "P2e — Cite l’eau sous pression qui fait tourner la turbine (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P2f", "label": "P2f — Cite le générateur qui produit l’électricité (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P2g", "label": "P2g — Cite le stockage dans la micro-batterie, qui alimente les composants (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P3a", "label": "P3a — Batterie = ALIMENTER et moteurs = CONVERTIR", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P3b", "label": "P3b — Carte de commande = DISTRIBUER et réducteurs = TRANSMETTRE", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P3c", "label": "P3c — Le robot se déplace : il emporte son énergie dans sa batterie (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P3d", "label": "P3d — Le robinet reçoit son énergie de l’eau du réseau, par la tuyauterie (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P4a", "label": "P4a — Lignes ④ et ⑤ : bonnes lettres", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P4b", "label": "P4b — Lignes ⑦ et ⑨ : bonnes lettres", "max": 1.0, "pas": 1.0, "compact": true},
+      {"cle": "P4c", "label": "P4c — Relie la masse à la consommation d’énergie de la batterie (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "P4d", "label": "P4d — S’appuie sur l’autonomie exigée (30 min, ligne ④) (rédaction)", "max": 1.0, "pas": 1.0},
+      {"cle": "I1a", "label": "I1a — Classer les 6 critères", "max": 2.0, "compact": true},
+      {"cle": "I1b", "label": "I1b — Matériau retenu", "max": 2.0, "compact": true},
+      {"cle": "I1c", "label": "I1c — Deux éliminations justifiées", "max": 2.0, "compact": true},
+      {"cle": "I1d", "label": "I1d — Procédé pour 300 coques", "max": 1.0, "compact": true},
+      {"cle": "I1e", "label": "I1e — Justification du choix (mots-clés, à confirmer)", "max": 1.0, "compact": false},
+      {"cle": "I2a", "label": "I2a — Tableur : les données", "max": 2.0, "compact": true},
+      {"cle": "I2b", "label": "I2b — Tableur : formules de la colonne B", "max": 3.0, "compact": true},
+      {"cle": "I2c", "label": "I2c — Tableur : colonne C et comparaison", "max": 3.0, "compact": true},
+      {"cle": "I3a", "label": "I3a — Définition de l’énergie grise", "max": 1.0, "compact": true},
+      {"cle": "I3b", "label": "I3b — Étapes du cycle de vie comptées", "max": 2.0, "compact": true},
+      {"cle": "I3c", "label": "I3c — Recyclable ou recyclé", "max": 1.0, "compact": true}
+    ],
+    corriger: function (f) {
+      var K = P2E_COR && P2E_COR.cles, a = P11E2P.corriger(f || {}, K && K.papier), b = P11E2.corriger(f || {}, K), pts = {}, k;
+      for (k in a.points) pts[k] = a.points[k];
+      for (k in b.points) pts[k] = b.points[k];
+      return { points: pts, detail: a.detail.concat(b.detail) };
+    },
+    appreciation: function (pts, note) {
+      var sur20 = Math.round(note) / 2, s = function (ks) { return ks.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); };
+      var mention = sur20 >= 18 ? "Excellent travail" : sur20 >= 15 ? "Très bon travail" : sur20 >= 12 ? "Bon travail"
+                  : sur20 >= 8 ? "Travail à consolider" : "Des progrès sont nécessaires", faibles = [];
+      if (s(["P1a", "P1b", "P1c", "P1d", "P2a", "P2b", "P2c", "P2d", "P3a", "P3b"]) < 4.8) faibles.push("les chaînes d'information et d'énergie");
+      if (s(["P4a", "P4b", "P4c", "P4d"]) < 1.6) faibles.push("le lien entre le cahier des charges et le matériau");
+      if (s(["I1a", "I1b", "I1c", "I1d", "I1e"]) < 3.2) faibles.push("le choix d'un matériau à partir des critères");
+      if (s(["I2a", "I2b", "I2c"]) < 3.2) faibles.push("les formules du tableur (références des cellules)");
+      return mention + " — " + fmtPts(note) + "/40, soit " + fmtPts(sur20) + "/20 (rattrapage). " +
+        (faibles.length ? "À revoir : " + faibles.join(", ") + "." : "Les notions de l'évaluation sont maîtrisées.");
+    }
+  },
+
   /* Aménager un bâtiment — évaluation NOTÉE À LA MAIN : toutes les réponses sont
      rédigées, aucune n'est vérifiable par comparaison. Le cadre sert ici à donner
      au professeur un seul écran (points par partie, appréciation, note), pas une
@@ -9731,9 +9823,9 @@ function buildEvalTeacherPanel(sub) {
       '<span class="adj-lbl">' + sec.label + '</span>' +
       '<span class="adj-auto">Auto: ' + fmtPts(av) + '/' + fmtPts(sec.max) + '</span>' +
       '<div class="adj-ctrl">' +
-      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',-0.5)">−</button>' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',-' + (sec.pas || 0.5) + ')">−</button>' +
       '<input class="adj-val" id="adj-' + sec.cle + '" type="text" value="' + cv + '" readonly>' +
-      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',0.5)">+</button>' +
+      '<button class="adj-btn" onclick="evalAdjStep(\'' + sec.cle + '\',' + sec.max + ',' + (sec.pas || 0.5) + ')">+</button>' +
       '</div></div>';
   }
   h += '<div class="adj-total-box" id="adj-total-box">' +
@@ -10049,6 +10141,93 @@ var P11E2 = (function () {
   return { corriger: corriger, ITEMS: ITEMS, analyser: analyser, evaluer: evaluer, feuille: feuille, decaler: decaler, cite: cite };
 })();
 if (typeof module !== "undefined" && module.exports) module.exports = P11E2;
+/* ═══════════════════════════════════════════════════════════════════════════
+   P11 — ÉVALUATION N°2 · CORRECTION DE LA PARTIE PAPIER PASSÉE SUR ORDINATEUR
+   (capsule de rattrapage p11-eval2-ratt). Module commun recopié par les générateurs
+   dans index.html et dans Eval2-Report.gs ; il s'appuie sur P11E2 (même fichier).
+   AUCUNE réponse attendue ici : tout vient de la clé KP (= K.papier).
+   Les cases de RAPPEL (13 points) sont proposées automatiquement ; les cases de
+   RÉDACTION (7 points) restent à 0 et sont notées par le professeur.
+   Source : P11/P11_evaluation_2/_sources/correction_papier.js — tests : test_papier.js
+   ═══════════════════════════════════════════════════════════════════════════ */
+var P11E2P = (function () {
+  "use strict";
+  var CASES = ["P1a", "P1b", "P1c", "P1d", "P2a", "P2b", "P2c", "P2d", "P2e", "P2f", "P2g",
+               "P3a", "P3b", "P3c", "P3d", "P4a", "P4b", "P4c", "P4d"];
+  var REDACTION = { P2e: "p2_r", P2f: "p2_r", P2g: "p2_r", P3c: "p3_r", P3d: "p3_r", P4c: "p4_r", P4d: "p4_r" };
+
+  /* Réponse reconnue : chaque groupe de mots a au moins un mot cité. */
+  function reconnu(texte, groupes) {
+    if (!String(texte || "").trim()) return false;
+    return (groupes || []).every(function (g) { return P11E2.cite(texte, g); });
+  }
+  /* Minuscules sans accents (codes 768 à 879 retirés : pas de caractère invisible dans le source). */
+  function bas(v) { return String(v || "").toLowerCase().normalize("NFD").split("")
+    .filter(function (c) { var k = c.charCodeAt(0); return k < 768 || k > 879; }).join("").trim(); }
+
+  function corriger(f, KP) {
+    f = f || {}; var pts = {}, detail = [];
+    CASES.forEach(function (k) { pts[k] = 0; });
+    if (!KP) return { points: pts, detail: detail };
+    var P = KP.poids || {}, L = KP.libelles || {};
+    function ligne(sec, rep, attendu, ok, remarque, etatForce) {
+      var max = P[sec] || 0, p = ok ? max : 0; pts[sec] = p;
+      var vide = !String(rep || "").trim();
+      detail.push({ sec: sec, label: sec + " — " + (L[sec] || ""), rep: vide ? "" : String(rep), attendu: attendu, pts: p, max: max,
+                    etat: etatForce || (vide ? "vide" : ok ? "ok" : "ko"), remarque: remarque || "" });
+    }
+    function bilan(liste) { return liste.map(function (x) { return x || "…"; }).join(" ; "); }
+
+    /* P1 — FAST : une case par fonction technique. */
+    ["a", "b", "c", "d"].forEach(function (l) {
+      var rep = f["p1_" + l] || "";
+      ligne("P1" + l, rep, (KP.p1_attendu || {})[l] || "", reconnu(rep, (KP.p1 || {})[l]));
+    });
+
+    /* P2 — chaînes du robinet. */
+    var info = [1, 2, 3].map(function (i) { return f["p2_i" + i] || ""; });
+    var infoOk = info.filter(function (r, i) { return reconnu(r, (KP.p2info || [])[i]); }).length;
+    ligne("P2a", bilan(info), (KP.p2info_attendu || []).join(" ; "), infoOk === 3, info.some(String) ? infoOk + "/3 composants reconnus" : "");
+    var ener = [1, 2, 3, 4].map(function (i) { return f["p2_e" + i] || ""; });
+    var enerOk = ener.filter(function (r, i) { return reconnu(r, (KP.p2ener || [])[i]); }).length;
+    ligne("P2b", bilan(ener), (KP.p2ener_attendu || []).join(" ; "), enerOk >= 2, ener.some(String) ? enerOk + "/4 composants reconnus" : "");
+    ligne("P2c", bilan(ener), (KP.p2ener_attendu || []).join(" ; "), enerOk === 4);
+    var formes = [1, 2, 3, 4].map(function (i) { return f["p2_f" + i] || ""; });
+    var formesOk = formes.filter(function (r, i) { return bas(r) === (KP.p2formes || [])[i]; }).length;
+    ligne("P2d", bilan(formes), (KP.p2formes || []).join(" ; "), formesOk === 4, formes.some(String) ? formesOk + "/4 énergies justes" : "");
+
+    /* P3 — robot : un verbe par ligne du sujet ; P3a et P3b regroupent deux lignes chacune. */
+    var verbes = [1, 2, 3, 4].map(function (i) { return f["p3_v" + i] || ""; });
+    function paire(idx) { return idx.every(function (i) { return bas(verbes[i]) === bas((KP.p3 || [])[i]); }); }
+    ligne("P3a", (KP.p3a || []).map(function (i) { return verbes[i] || "…"; }).join(" ; "),
+          (KP.p3a || []).map(function (i) { return (KP.p3 || [])[i]; }).join(" ; "), paire(KP.p3a || []));
+    ligne("P3b", (KP.p3b || []).map(function (i) { return verbes[i] || "…"; }).join(" ; "),
+          (KP.p3b || []).map(function (i) { return (KP.p3 || [])[i]; }).join(" ; "), paire(KP.p3b || []));
+
+    /* P4 — une lettre par ligne du cahier des charges. */
+    var lettres = [1, 2, 3, 4].map(function (i) { return String(f["p4_l" + i] || "").toUpperCase(); });
+    function paireL(idx) { return idx.every(function (i) { return lettres[i] === (KP.p4 || [])[i]; }); }
+    ligne("P4a", (KP.p4a || []).map(function (i) { return lettres[i] || "…"; }).join(" ; "),
+          (KP.p4a || []).map(function (i) { return (KP.p4 || [])[i]; }).join(" ; "), paireL(KP.p4a || []));
+    ligne("P4b", (KP.p4b || []).map(function (i) { return lettres[i] || "…"; }).join(" ; "),
+          (KP.p4b || []).map(function (i) { return (KP.p4 || [])[i]; }).join(" ; "), paireL(KP.p4b || []));
+
+    /* Rédactions : jamais notées automatiquement ; le texte n'est montré qu'une fois. */
+    var vu = {};
+    ["P2e", "P2f", "P2g", "P3c", "P3d", "P4c", "P4d"].forEach(function (k) {
+      var champ = REDACTION[k], texte = f[champ] || "", premier = !vu[champ]; vu[champ] = true;
+      ligne(k, premier ? texte : (texte ? "(même rédaction, ci-dessus)" : ""), L[k] || "", false,
+            texte ? "Rédaction : à noter par le professeur." : "", texte ? "partiel" : "vide");
+    });
+
+    /* Ordre de la grille pour l'affichage. */
+    detail.sort(function (a, b) { return CASES.indexOf(a.sec) - CASES.indexOf(b.sec); });
+    return { points: pts, detail: detail };
+  }
+
+  return { corriger: corriger, CASES: CASES, REDACTION: REDACTION, reconnu: reconnu };
+})();
+if (typeof module !== "undefined" && module.exports) module.exports = P11E2P;
 var P2E_CHIFFRE_URL = "Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation2_corrige.chiffre.json";
 var P2E_COR_ID = "p11-eval2-cor";
 var P2E_COR = null;          /* { html, cles } une fois déchiffré, en mémoire seulement */
@@ -10126,7 +10305,7 @@ function reporterP11Eval2(sub) {
     return;
   }
   if (P11_EVAL2_REPORT_URL.indexOf("@@") >= 0) { toast("⚠️ Classeur de l'évaluation n°2 : script de report pas encore installé"); return; }
-  var pts = sub.adjustedPts || EVALUATIONS["p11-eval2"].corriger(sub.fields || {}).points;
+  var pts = sub.adjustedPts || EVALUATIONS[sub.cap].corriger(sub.fields || {}).points;
   var corps = JSON.stringify({ secret: P11_EVAL2_REPORT_SECRET, source: "ajustement", classe: sub.ecls || "", eleve: sub.ename || "", pts: pts });
   fetch(P11_EVAL2_REPORT_URL, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
     if (o && o.ok) toast("📊 Points reportés au classeur de l'évaluation n°2");
@@ -10150,7 +10329,7 @@ function saveEvalAdj(sid) {
   subs[idx].status        = "validated";
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
   if (subs[idx].cap === "p11-eval1") reporterP11Eval1(subs[idx]);
-  if (subs[idx].cap === "p11-eval2") reporterP11Eval2(subs[idx]);
+  if (subs[idx].cap === "p11-eval2" || subs[idx].cap === "p11-eval2-ratt") reporterP11Eval2(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
   var ms = document.getElementById("mscore");
@@ -10844,7 +11023,8 @@ var FICHE_TITRES = {
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
-  "p11-eval2":"P11 4e — Évaluation n°2 (ordinateur)"
+  "p11-eval2":"P11 4e — Évaluation n°2 (ordinateur)",
+  "p11-eval2-ratt":"P11 4e — Évaluation n°2 (rattrapage)"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
@@ -11134,7 +11314,7 @@ function printCopiesFiltrees() {
 function reporterNoteSiEvaluee(sub) {
   if (P11_REPORT[sub.cap]) reporterP11(sub);
   else if (sub.cap === "p11-eval1") reporterP11Eval1(sub);
-  else if (sub.cap === "p11-eval2") reporterP11Eval2(sub);
+  else if (sub.cap === "p11-eval2" || sub.cap === "p11-eval2-ratt") reporterP11Eval2(sub);
 }
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
