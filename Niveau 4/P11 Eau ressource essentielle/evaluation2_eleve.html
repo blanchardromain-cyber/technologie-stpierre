@@ -17,6 +17,8 @@
   .pbar-in{max-width:1180px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .pbar-in .ttl{font-weight:800;color:var(--navy);font-size:14px;margin-right:auto}
   .pbar-in .prog{font-size:13px;color:var(--grey)}
+  .pbar-in .qui{font-size:13px;font-weight:700;color:var(--navy);background:var(--lighter);border-radius:8px;padding:3px 9px}
+  .qui-depart{font-size:15px;margin:0 0 12px;padding:8px 12px;border-radius:9px;background:var(--lighter);color:var(--navy)}
   .chrono{font-weight:800;color:var(--navy);background:var(--lighter);border-radius:8px;padding:3px 10px;font-size:15px}
   .chrono.bientot{background:#FDECC8;color:#7A4B00}
   .chrono.fini{background:#fbeae8;color:#8e2018}
@@ -124,9 +126,10 @@
 <body>
 <div class="pbar"><div class="pbar-in">
   <span class="ttl">P11 · Évaluation n°2 · ordinateur</span>
+  <span class="qui cache" id="qui"></span>
   <span class="chrono cache" id="chrono" aria-live="polite"></span>
   <span class="prog" id="prog"></span>
-  <button type="button" class="tbtn cache" id="btnDT" data-nolecture>📄 Fiche du robot</button>
+  <button type="button" class="tbtn cache" id="btnDT" data-nolecture>📚 Cahier des charges et matériaux</button>
 </div></div>
 
 <main>
@@ -153,6 +156,7 @@
   <!-- avant de commencer -->
   <section class="card narrow cache" id="depart">
     <h2>Avant de commencer</h2>
+    <p class="qui-depart" id="quiDepart"></p>
     <div data-etapes>
       <div class="etape">
         <p class="consigne" data-consigne><b>Le lien avec la Matériauthèque.</b> Tu vas refaire, seul et sans aide, la démarche de la Matériauthèque (activité 8) :
@@ -164,8 +168,8 @@
           À la fin du temps, ta copie est envoyée toute seule.</p>
       </div>
       <div class="etape">
-        <p class="consigne" data-consigne>La fiche du robot (cahier des charges et tableau des matériaux) s'ouvre avec le bouton
-          <b>📄 Fiche du robot</b>, en haut de la page.</p>
+        <p class="consigne" data-consigne>Le cahier des charges et le <b>tableau des matériaux de la Matériauthèque</b> s'ouvrent avec le bouton
+          <b>📚 Cahier des charges et matériaux</b>, en haut de la page, ou avec les boutons placés dans la question I1.</p>
       </div>
       <div class="etape">
         <p class="consigne" data-consigne>Le bouton <b>Confort de lecture</b> règle l'affichage (police, taille, fond) et le bouton 🔊 lit une consigne à voix haute.
@@ -194,11 +198,13 @@
           <div class="etape">
             <h3><span class="num">a.</span>Les critères de la coque<span class="pts">(2 pts)</span></h3>
             <p class="consigne" data-consigne>Lis le cahier des charges. Pour chaque critère, choisis : indispensable, souhaitable ou inutile.</p>
+            <p><button type="button" class="tbtn" data-ouvre-dt data-nolecture>📚 Voir le cahier des charges</button></p>
             <div class="tscroll"><table class="t" id="tI1a"><thead><tr><th>Critère</th><th>Pour la coque, ce critère est…</th></tr></thead><tbody></tbody></table></div>
           </div>
           <div class="etape">
             <h3><span class="num">b.</span>Le matériau retenu<span class="pts">(2 pts)</span></h3>
             <p class="consigne" data-consigne>Compare tes critères au tableau des matériaux. Choisis le matériau de la coque.</p>
+            <p><button type="button" class="tbtn" data-ouvre-dt data-nolecture>📚 Voir le tableau des matériaux</button></p>
             <select id="i1b" aria-label="matériau retenu"></select>
           </div>
           <div class="etape">
@@ -287,7 +293,7 @@
     </div>
   </div>
 
-  <div class="footer">Collège Saint-Pierre – Les Essarts · P11 · Évaluation n°2 · <span id="build">build 2026-10-19</span></div>
+  <div class="footer">Collège Saint-Pierre – Les Essarts · P11 · Évaluation n°2 · <span id="build">build 2026-10-19b</span></div>
 </main>
 
 <!-- Aménagements dys et confort de lecture : modules partagés du site, réglages rangés par compte sur ce poste. -->
@@ -633,10 +639,18 @@ function lireIdentite(){
   try{ var d=JSON.parse(localStorage.getItem(PREFILL_KEY)||"null"); if(!d||!d.p||!d.n) return false;
     USER={ id:d.id||"", p:d.p, n:d.n, c:d.c||"" };
     $("prenom").value=USER.p; $("nom").value=USER.n; if(USER.c) $("classe").value=String(USER.c).toUpperCase();
+    /* Compte sans classe 4A-4G (professeur) : l'écran « Qui es-tu ? » demande la classe,
+       sinon la copie partait avec une classe vide et le classeur la refusait. 4T = compte de test. */
+    if(!/^4[A-GT]$/i.test(String(USER.c||""))){ USER.c=""; return false; }
     return true; }catch(e){ return false; }
 }
+function afficherQui(){
+  var c=USER.c||val("classe"), nom=(val("prenom")+" "+val("nom")).trim(), txt=nom+(c?" · "+c:"");
+  $("qui").textContent="👤 "+txt; $("qui").classList.remove("cache");
+  $("quiDepart").innerHTML="Copie de <b>"+esc(nom)+"</b>"+(c?", classe <b>"+esc(c)+"</b>":"")+". Si ce n'est pas toi, préviens ton professeur.";
+}
 function apresIdentite(){
-  $("ident").classList.add("cache");
+  $("ident").classList.add("cache"); afficherQui();
   restaurerBrouillon();
   if(ETAT.debut){ ouvrirCopie(); return; }        /* déjà commencée : on reprend, chronomètre compris */
   $("depart").classList.remove("cache");
@@ -651,7 +665,7 @@ var DT_OUVERT=true;
 function majDT(){
   var l=$("layout"), large=window.innerWidth>980;
   l.classList.toggle("dt-ferme", large && !DT_OUVERT); l.classList.toggle("dt-ouvert", !large && DT_OUVERT);
-  $("btnDT").textContent = DT_OUVERT ? "📄 Masquer la fiche" : "📄 Fiche du robot";
+  $("btnDT").textContent = DT_OUVERT ? "📚 Masquer la fiche" : "📚 Cahier des charges et matériaux";
 }
 
 /* ═══ verrou (règle du site : une copie verrouillée ne se rouvre plus) — repris de l'éval 1 ═══ */
@@ -756,6 +770,8 @@ document.addEventListener("DOMContentLoaded",function(){
   $("btnEnvoyer").addEventListener("click",function(){ envoyer(false); });
   $("btnDT").addEventListener("click",function(){ DT_OUVERT=!DT_OUVERT; majDT(); });
   $("btnDTfermer").addEventListener("click",function(){ DT_OUVERT=false; majDT(); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ouvre-dt]"),function(b){ b.addEventListener("click",function(){
+    DT_OUVERT=true; majDT(); try{ $("dt").scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){} }); });
   window.addEventListener("resize",majDT);
   $("copie").addEventListener("input",function(){ lireChamps(); recalculer(); sauverBientot(); });
   $("copie").addEventListener("change",function(){ lireChamps(); recalculer(); sauverBientot(); });
