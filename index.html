@@ -4284,7 +4284,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-23a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-23b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4346,11 +4346,12 @@ body.est-prof .prof-only{display:block}
             <span id="ex1-stats-scope" style="margin-left:auto;background:#fff;color:#C2185B;font-size:12px;font-weight:700;padding:4px 12px;border-radius:14px;border:1px solid #C2185B"></span>
           </div>
           <div id="ex1-stats-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px"></div>
-          <div id="ex1-stats-fields-title" style="font-size:12px;font-weight:700;color:#880E4F;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">D&eacute;tail par champ</div>
-          <div id="ex1-stats-fields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px"></div>
-          <div style="font-size:11px;color:var(--td);margin-top:10px;font-style:italic">
-            &#x2139;&#xFE0F; Un champ est consid&eacute;r&eacute; comme &laquo;&nbsp;r&eacute;ussi&nbsp;&raquo; s'il est non vide dans la soumission de l'&eacute;l&egrave;ve. Le widget se met &agrave; jour automatiquement en fonction du filtre &laquo;&nbsp;Classe&nbsp;&raquo; ci-dessus.
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+            <div id="ex1-stats-fields-title" style="font-size:12px;font-weight:700;color:#880E4F;text-transform:uppercase;letter-spacing:.5px">D&eacute;tail par question</div>
+            <button id="ex1-stats-tri" onclick="statsTri=!statsTri;renderEx1Stats()" style="margin-left:auto;padding:4px 12px;background:#fff;color:#880E4F;border:1px solid #C2185B;border-radius:14px;cursor:pointer;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif">Les moins r&eacute;ussies d'abord</button>
           </div>
+          <div id="ex1-stats-fields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;align-items:start"></div>
+          <div id="ex1-stats-note" style="font-size:11px;color:var(--td);margin-top:10px;font-style:italic"></div>
         </div>
 
         <div style="margin-top:22px" class="stit">&#x1F465; Sans soumission</div>
@@ -13514,39 +13515,129 @@ var EX1_FIELD_LABELS = {
   "ex1-e-decFin":"E — Question finale"
 };
 
-/* Rend le widget statistiques Ex1 — calcul taux de réussite par champ + résumé.
+/* ── Statistiques par question (widget du tableau de bord Prof) ─────────
+   Pour chaque capsule corrigée automatiquement, chaque copie est découpée en
+   questions { cle, label, rep, pts, max, attendu } : on en tire la réussite
+   moyenne par question (points obtenus / points possibles) et la liste des
+   réponses données. Jusqu'au 23 octobre 2026, le widget comptait les champs
+   NON VIDES et l'appelait « taux de réussite » : 99 % à l'exercice FAST, sans
+   rapport avec les notes. Les exercices non notés gardent ce comptage, sous
+   son vrai nom de « remplissage ».
+   Les points viennent de la correction automatique : les ajustements du
+   professeur dans le modal portent sur des parties, pas sur des questions. */
+var statsTri = false;   /* false : ordre de la fiche ; true : moins réussies d'abord */
+
+function p11x1StatsItems(f) {
+  var it = [];
+  function add(id, pts, max, attendu) {
+    it.push({ cle: id, label: P11X1_FIELD_LABELS[id] || id, rep: String(f[id] || "").trim(), pts: pts, max: max, attendu: attendu });
+  }
+  function mots(kw) { return "mots-clés : " + kw.slice(0, 4).join(", ") + (kw.length > 4 ? "…" : ""); }
+  /* A1 à A3 : même règle que scoreP11Ex1BySection, un doublon ne rapporte rien */
+  function famille(ids, kw, attendu) {
+    var vus = [];
+    for (var j = 0; j < ids.length; j++) {
+      var n = _p11norm(f[ids[j]]), p = 0;
+      if (n && vus.indexOf(n) === -1) { p = _p11match(f[ids[j]], kw); if (p > 0) vus.push(n); }
+      add(ids[j], p, 1, attendu);
+    }
+  }
+  var K = P11X1_KW;
+  famille(["p11x1-cap1","p11x1-cap2","p11x1-cap3"], K.capteur, "un capteur (trois différents)");
+  famille(["p11x1-int1","p11x1-int2","p11x1-int3"], K.interface, "une interface (trois différentes)");
+  famille(["p11x1-act1","p11x1-act2","p11x1-act3"], K.actionneur, "un actionneur (trois différents)");
+  [["p11x1-ci1", K.ci1], ["p11x1-ci2", K.ci2], ["p11x1-ci3", K.ci3],
+   ["p11x1-ce1", K.ce1], ["p11x1-ce2", K.ce2], ["p11x1-ce3", K.ce3], ["p11x1-ce4", K.ce4],
+   ["p11x1-b-produit", K.produit], ["p11x1-b-qui", K.qui], ["p11x1-b-quoi", ["eau"]],
+   ["p11x1-c-fp1", K.fp1], ["p11x1-c-fp2", K.fp2], ["p11x1-c-fc1", K.fc1], ["p11x1-c-fc2", K.fc2], ["p11x1-c-fc3", K.fc3],
+   ["p11x1-d-fp1c", K.dFp1c], ["p11x1-d-fp2lib", K.dFp2], ["p11x1-d-fc3lib", K.dFc3]
+  ].forEach(function (q) { add(q[0], _p11match(f[q[0]], q[1]), 1, mots(q[1])); });
+  add("p11x1-b-but", _p11match(f["p11x1-b-but"], K.butDouche) + _p11match(f["p11x1-b-but"], K.butEco), 2,
+      "se doucher + économiser l'eau (1 pt chacun)");
+  var t = _p11norm(f["p11x1-d-fp1n"]);
+  add("p11x1-d-fp1n", /(^|\s)(8|9|10)(\s|$)/.test(t) ? _p11match(f["p11x1-d-fp1n"], K.dFp1n) : 0, 1, "8 à 10 L/min");
+  /* Remet les questions dans l'ordre de la fiche */
+  it.sort(function (a, b) { return P11X1_FIELDS.indexOf(a.cle) - P11X1_FIELDS.indexOf(b.cle); });
+  return it;
+}
+
+/* Exercice FAST : la fonction est jugée sur son rang (hiérarchisation), la
+   solution sur son association avec la fonction choisie sur la même ligne —
+   les deux critères du barème de scoreP11Ex2BySection. */
+function p11x2StatsItems(f) {
+  var it = [], i, id;
+  for (i = 0; i < P11X2_REGLES.length; i++) {
+    var R = P11X2_REGLES[i]; id = "p11x2-r" + (i + 1);
+    it.push({ cle: id, label: P11X2_FIELD_LABELS[id], rep: p11x2Libelle(R.opts, f[id]),
+              pts: f[id] === R.bonne ? 1 : 0, max: 1, attendu: p11x2Libelle(R.opts, R.bonne) });
+  }
+  for (var o = 0; o < P11X2_OBJETS.length; o++) {
+    var ob = P11X2_OBJETS[o], pre = "p11x2-" + ob.pref + "-", sol = {};
+    for (i = 0; i < ob.lignes.length; i++) sol[ob.lignes[i].ft] = ob.lignes[i].st;
+    it.push({ cle: pre + "usage", label: ob.nom + " — Fonction d'usage", rep: p11x2Libelle(ob.usageOpts, f[pre + "usage"]),
+              pts: f[pre + "usage"] === ob.usage ? 1 : 0, max: 1, attendu: p11x2Libelle(ob.usageOpts, ob.usage) });
+    for (i = 1; i <= ob.lignes.length; i++) {
+      var ft = f[pre + "ft" + i], st = f[pre + "st" + i];
+      it.push({ cle: pre + "ft" + i, label: ob.nom + " — Ligne " + i + " : fonction (rang)",
+                rep: p11x2Libelle(ob.ftOpts, ft), pts: ft === ob.lignes[i - 1].ft ? 1 : 0, max: 1,
+                attendu: p11x2Libelle(ob.ftOpts, ob.lignes[i - 1].ft) });
+      it.push({ cle: pre + "st" + i, label: ob.nom + " — Ligne " + i + " : solution (association)",
+                rep: p11x2Libelle(ob.stOpts, st), pts: st && sol[ft] === st ? 1 : 0, max: 1,
+                attendu: "la solution de la fonction choisie sur la ligne" });
+    }
+  }
+  return it;
+}
+
+/* Rend le widget statistiques — réussite par question + réponses données.
    - Tient compte du filtre Classe (fclass) actif dans la barre Prof
-   - Affichage conditionnel : visible uniquement quand fcap = "p12-ex1" */
+   - Visible pour les capsules corrigées automatiquement (P11 ex 1 et 2, grilles
+     EVALUATIONS) et, en « remplissage », pour les exercices P12 non notés */
 function renderEx1Stats() {
   var widget = document.getElementById("ex1-stats-widget");
   if (!widget) return;
   var capF = (document.getElementById("fcap") || {}).value || "";
-  /* Configuration par capsule supportée (Ex1, Ex2) */
+  /* items(f) découpe une copie en questions ; remplissage : aucune correction */
   var CFG_STATS = {
-    "p11-ex1": { fields: P11X1_FIELDS, labels: P11X1_FIELD_LABELS, label: "P11 Exercice n°1 — Capteurs & CDCF" },
-    "p11-ex2": { fields: P11X2_FIELDS, labels: P11X2_FIELD_LABELS, label: "P11 Exercice n°2 — Diagramme FAST" },
+    "p11-ex1": { items: p11x1StatsItems, label: "P11 Exercice n°1 — Capteurs & CDCF" },
+    "p11-ex2": { items: p11x2StatsItems, label: "P11 Exercice n°2 — Diagramme FAST" },
     "p12-ex1": { fields: EX1_FIELDS, labels: EX1_FIELD_LABELS, label: "Exercice n°1 — Distributeur" },
     "p12-ex2": { fields: EX2_FIELDS, labels: EX2_FIELD_LABELS, label: "Exercice n°2 — Bac à sable" }
   };
-  var cfg = CFG_STATS[capF];
+  var cfg = CFG_STATS[capF], def = EVALUATIONS[capF];
+  if (!cfg && def) {
+    cfg = { label: def.titre, manuel: !!def.manuel, items: function (f) {
+      return def.corriger(f).detail.map(function (d) {
+        return { cle: d.sec + "|" + d.label, label: d.label, rep: d.rep, pts: d.pts, max: d.max, attendu: d.attendu };
+      });
+    } };
+  }
+  if (cfg && cfg.fields) {
+    cfg.remplissage = true;
+    cfg.items = function (f) {
+      return cfg.fields.map(function (id) {
+        var v = f[id] == null ? "" : String(f[id]).trim();
+        return { cle: id, label: cfg.labels[id] || id, rep: v, pts: v ? 1 : 0, max: 1 };
+      });
+    };
+  }
   /* Masque le widget si capsule non supportée */
   if (!cfg) { widget.classList.add("h"); return; }
   widget.classList.remove("h");
 
-  /* Met à jour le titre du widget avec le nom de la capsule */
+  function esc(x) { return String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  var mot = cfg.remplissage ? "Taux de remplissage" : "Réussite";
   var titleEl = widget.querySelector(":scope > div:first-child > div:nth-child(2)");
-  if (titleEl) titleEl.textContent = "Statistiques " + cfg.label + " — Taux de réussite par champ";
-
-  var FIELDS = cfg.fields;
-  var LABELS = cfg.labels;
-
-  /* Met à jour le titre "Détail par champ (N)" */
-  var fldsTitle = document.getElementById("ex1-stats-fields-title");
-  if (fldsTitle) fldsTitle.textContent = "Détail par champ (" + FIELDS.length + ")";
+  if (titleEl) titleEl.textContent = "Statistiques " + cfg.label + " — " + (cfg.remplissage ? "taux de remplissage par champ" : "réussite par question");
+  var triBtn = document.getElementById("ex1-stats-tri");
+  if (triBtn) triBtn.textContent = statsTri ? "Ordre de la fiche" : (cfg.remplissage ? "Les moins remplis d'abord" : "Les moins réussies d'abord");
+  var noteEl = document.getElementById("ex1-stats-note");
+  if (noteEl) noteEl.innerHTML = cfg.remplissage
+    ? "&#x2139;&#xFE0F; Exercice non noté : on compte seulement les champs <strong>remplis</strong>, sans juger la réponse. Cliquez sur une carte pour lire les réponses. Le widget suit le filtre « Classe »."
+    : "&#x2139;&#xFE0F; Réussite = points obtenus ÷ points possibles, d'après la <strong>correction automatique</strong> (vos ajustements dans le modal portent sur les parties, pas sur les questions). Cliquez sur une carte pour voir les réponses données. Le widget suit le filtre « Classe ».";
 
   var classF = (document.getElementById("fclass") || {}).value || "";
-  var allSubs = getSubs();
-  var subs = allSubs.filter(function(s){
+  var subs = getSubs().filter(function(s){
     if (s.cap !== capF) return false;
     if (classF && s.ecls !== classF) return false;
     return true;
@@ -13559,30 +13650,38 @@ function renderEx1Stats() {
     scopeEl.textContent = (classF ? "Classe " + classF : "Toutes classes") + " — " + n + " soumission" + (n>1?"s":"");
   }
 
-  /* Si pas de soumissions, message simple */
   var summaryEl = document.getElementById("ex1-stats-summary");
   var fieldsEl = document.getElementById("ex1-stats-fields");
-  if (!n) {
-    if (summaryEl) summaryEl.innerHTML = '<div style="grid-column:1/-1;background:#fff;border-radius:8px;padding:14px;text-align:center;color:var(--td);font-style:italic">Aucune soumission ' + (classF ? "pour la classe " + classF : "pour cette capsule") + ' &mdash; les statistiques apparaitront ici d&egrave;s la premi&egrave;re soumission.</div>';
+  function vide(msg) {
+    if (summaryEl) summaryEl.innerHTML = '<div style="grid-column:1/-1;background:#fff;border-radius:8px;padding:14px;text-align:center;color:var(--td);font-style:italic">' + msg + '</div>';
     if (fieldsEl) fieldsEl.innerHTML = "";
-    return;
   }
+  if (cfg.manuel) { vide("Capsule notée à la main (ou corrigé non déchiffré) : pas de réussite par question."); return; }
+  if (!n) { vide("Aucune soumission " + (classF ? "pour la classe " + classF : "pour cette capsule") + " &mdash; les statistiques apparaîtront ici dès la première soumission."); return; }
 
-  /* Calcul taux de réussite par champ + agrégat global */
-  var perField = {};
-  var totalFilled = 0;
-  var totalPossible = n * FIELDS.length;
-  for (var i = 0; i < FIELDS.length; i++) {
-    var fid = FIELDS[i];
-    var c = 0;
-    for (var j = 0; j < n; j++) {
-      var f = subs[j].fields || {};
-      var v = f[fid];
-      if (v !== undefined && v !== null && String(v).trim() !== "") { c++; totalFilled++; }
+  /* Agrégation par question */
+  var Q = {}, ordre = [], totPts = 0, totMax = 0;
+  for (var j = 0; j < n; j++) {
+    var its = cfg.items(subs[j].fields || {});
+    for (var i = 0; i < its.length; i++) {
+      var it = its[i], q = Q[it.cle];
+      if (!q) { q = Q[it.cle] = { label: it.label, attendu: it.attendu, pts: 0, max: 0, ok: 0, part: 0, ko: 0, vide: 0, reps: {} }; ordre.push(it.cle); }
+      var rep = String(it.rep == null ? "" : it.rep).trim();
+      q.pts += it.pts; q.max += it.max; totPts += it.pts; totMax += it.max;
+      if (!rep) q.vide++;
+      else if (it.pts >= it.max) q.ok++;
+      else if (it.pts > 0) q.part++;
+      else q.ko++;
+      if (rep) {
+        var g = evalNorm(rep), r = q.reps[g];
+        if (!r) r = q.reps[g] = { txt: rep, n: 0, pts: 0, max: 0 };
+        r.n++; r.pts += it.pts; r.max += it.max;
+      }
     }
-    perField[fid] = c;
   }
-  var globalRate = Math.round(totalFilled / totalPossible * 100);
+  if (!totMax) { vide("Correction automatique indisponible pour cette capsule (corrigé non déchiffré ?)."); return; }
+  function pctQ(cle) { var q = Q[cle]; return q.max ? Math.round(q.pts / q.max * 100) : 0; }
+  var globalRate = Math.round(totPts / totMax * 100);
 
   /* Couleur en fonction du taux */
   function color(pct) {
@@ -13605,44 +13704,57 @@ function renderEx1Stats() {
   }
 
   /* Résumé global */
+  var aRevoir = 0;
+  for (var a = 0; a < ordre.length; a++) if (pctQ(ordre[a]) < 50) aRevoir++;
+  function tuile(val, lib, coul) {
+    return '<div style="background:#fff;border-radius:8px;padding:12px;text-align:center;border-left:4px solid ' + coul + '">' +
+      '<div style="font-size:24px;font-weight:700;color:' + coul + ';font-variant-numeric:tabular-nums">' + val + '</div>' +
+      '<div style="font-size:11px;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:.5px">' + lib + '</div></div>';
+  }
   if (summaryEl) {
-    summaryEl.innerHTML =
-      '<div style="background:#fff;border-radius:8px;padding:12px;text-align:center;border-left:4px solid ' + color(globalRate) + '">' +
-        '<div style="font-size:24px;font-weight:700;color:' + color(globalRate) + '">' + globalRate + '%</div>' +
-        '<div style="font-size:11px;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Taux de r&eacute;ussite global</div>' +
-      '</div>' +
-      '<div style="background:#fff;border-radius:8px;padding:12px;text-align:center;border-left:4px solid #2E7D32">' +
-        '<div style="font-size:24px;font-weight:700;color:#2E7D32">' + nVal + '</div>' +
-        '<div style="font-size:11px;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Valid&eacute;s</div>' +
-      '</div>' +
-      '<div style="background:#fff;border-radius:8px;padding:12px;text-align:center;border-left:4px solid #F57F17">' +
-        '<div style="font-size:24px;font-weight:700;color:#F57F17">' + nPen + '</div>' +
-        '<div style="font-size:11px;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:.5px">En attente</div>' +
-      '</div>' +
-      '<div style="background:#fff;border-radius:8px;padding:12px;text-align:center;border-left:4px solid #C62828">' +
-        '<div style="font-size:24px;font-weight:700;color:#C62828">' + nRej + '</div>' +
-        '<div style="font-size:11px;color:var(--td);font-weight:600;text-transform:uppercase;letter-spacing:.5px">&Agrave; revoir</div>' +
-      '</div>';
+    summaryEl.innerHTML = tuile(globalRate + "%", cfg.remplissage ? "Taux de remplissage global" : "Réussite moyenne", color(globalRate)) +
+      (cfg.remplissage ? "" : tuile(aRevoir, "Question" + (aRevoir > 1 ? "s" : "") + " sous 50 %", aRevoir ? "#C62828" : "#2E7D32")) +
+      tuile(nVal, "Validés", "#2E7D32") + tuile(nPen, "En attente", "#F57F17") + tuile(nRej, "À revoir", "#C62828");
   }
 
-  /* Détail par champ avec barre de progression */
+  /* Détail par question : barre de réussite, répartition, réponses données */
+  var fldsTitle = document.getElementById("ex1-stats-fields-title");
+  if (fldsTitle) fldsTitle.textContent = (cfg.remplissage ? "Détail par champ (" : "Détail par question (") + ordre.length + ")";
   if (fieldsEl) {
+    var liste = ordre.slice();
+    if (statsTri) liste.sort(function (x, y) { return pctQ(x) - pctQ(y) || ordre.indexOf(x) - ordre.indexOf(y); });
     var html = "";
-    for (var m = 0; m < FIELDS.length; m++) {
-      var fid2 = FIELDS[m];
-      var cnt = perField[fid2] || 0;
-      var pct = Math.round(cnt / n * 100);
-      var lbl = LABELS[fid2] || fid2;
-      html += '<div style="background:#fff;border-radius:6px;padding:8px 10px;border-left:3px solid ' + color(pct) + '">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' +
-          '<span style="font-size:11.5px;font-weight:600;color:#333">' + lbl + '</span>' +
-          '<span style="font-size:11px;font-weight:700;color:' + color(pct) + '">' + pct + '%</span>' +
+    for (var m = 0; m < liste.length; m++) {
+      var q2 = Q[liste[m]], pct = pctQ(liste[m]);
+      var rep2 = [];
+      for (var g2 in q2.reps) if (q2.reps.hasOwnProperty(g2)) rep2.push(q2.reps[g2]);
+      rep2.sort(function (x, y) { return y.n - x.n; });
+      var lignes = rep2.map(function (r) {
+        var s = cfg.remplissage ? "" : r.pts >= r.max ? "✅" : r.pts > 0 ? "🟠" : "❌";
+        return '<div style="display:flex;gap:6px;padding:2px 0;border-top:1px dashed #eee"><span>' + s + '</span>' +
+          '<span style="flex:1;word-break:break-word">' + esc(r.txt) + '</span>' +
+          '<span style="font-weight:700;font-variant-numeric:tabular-nums">' + r.n + '</span></div>';
+      }).join("");
+      var repart = cfg.remplissage
+        ? (n - q2.vide) + " / " + n + " élève" + (n > 1 ? "s" : "")
+        : q2.ok + " juste" + (q2.ok > 1 ? "s" : "") + (q2.part ? " · " + q2.part + " partielle" + (q2.part > 1 ? "s" : "") : "") +
+          " · " + q2.ko + " fausse" + (q2.ko > 1 ? "s" : "") + (q2.vide ? " · " + q2.vide + " vide" + (q2.vide > 1 ? "s" : "") : "");
+      html += '<details style="background:#fff;border-radius:6px;padding:8px 10px;border-left:3px solid ' + color(pct) + '">' +
+        '<summary style="cursor:pointer;list-style:none">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px">' +
+            '<span style="font-size:11.5px;font-weight:600;color:#333">' + esc(q2.label) + '</span>' +
+            '<span style="font-size:11px;font-weight:700;color:' + color(pct) + ';font-variant-numeric:tabular-nums">' + pct + '%</span>' +
+          '</div>' +
+          '<div style="height:5px;background:' + bg(pct) + ';border-radius:3px;overflow:hidden">' +
+            '<div style="width:' + pct + '%;height:100%;background:' + color(pct) + ';transition:width .3s ease"></div>' +
+          '</div>' +
+          '<div style="font-size:10px;color:var(--td);margin-top:2px">' + repart + ' &#x25BE;</div>' +
+        '</summary>' +
+        '<div style="font-size:11px;color:#333;margin-top:6px;max-height:220px;overflow:auto">' +
+          (q2.attendu ? '<div style="color:#1E6B3B;margin-bottom:4px"><strong>Attendu :</strong> ' + esc(q2.attendu) + '</div>' : '') +
+          (lignes || '<div style="font-style:italic;color:var(--td)">Aucune réponse.</div>') +
         '</div>' +
-        '<div style="height:5px;background:' + bg(pct) + ';border-radius:3px;overflow:hidden">' +
-          '<div style="width:' + pct + '%;height:100%;background:' + color(pct) + ';transition:width .3s ease"></div>' +
-        '</div>' +
-        '<div style="font-size:10px;color:var(--td);margin-top:2px">' + cnt + ' / ' + n + ' &eacute;l&egrave;ve' + (n>1?'s':'') + '</div>' +
-      '</div>';
+      '</details>';
     }
     fieldsEl.innerHTML = html;
   }
