@@ -581,6 +581,15 @@
         <span class="t">&#x2605; Ce que je dois retenir</span>
         <p><b>Diagramme FAST :</b> il relie la <b>fonction d'usage</b> aux <b>fonctions techniques</b> puis aux <b>solutions techniques</b> (les composants réels). Une fonction commence par un verbe à l'infinitif.</p>
       </div>
+
+      <!-- Lien vers l'outil autonome (dépôt techno-p11-eau). Il s'affiche une fois les scores du FAST et des
+           chaînes figés : l'outil montre le FAST complété, il ne doit pas servir à remplir les menus ci-dessus. -->
+      <div class="aide" id="lien-fast" style="margin-top:16px">
+        <span class="t">&#x1F9E9; Pour aller plus loin — dans quel ordre ranger les fonctions (« Quand ? »)</span>
+        <p id="lien-fast-attente" style="margin:6px 0 0">Vérifie d'abord ton FAST et tes chaînes : un entraînement s'ouvrira ici.</p>
+        <p id="lien-fast-ok" style="margin:6px 0 0" hidden>Une animation du robinet, puis tu ranges les fonctions dans l'ordre où elles interviennent. Non noté.<br>
+          <a class="btnck" style="display:inline-block;margin-top:8px;text-decoration:none" href="https://blanchardromain-cyber.github.io/techno-p11-eau/fast-robinet.html" target="_blank" rel="noopener">Ouvrir l'entraînement FAST (nouvel onglet) &#x2197;</a></p>
+      </div>
     </div>
   </section>
 
@@ -944,7 +953,7 @@ function majQ1(){
     if (lt) lt.textContent = l.length ? l.map(nomEme).join(" + ") : "—";
   }
 }
-function majTout(){ dessinerPieuvre(); majEmebar(); majQ1(); updateProgress(); }
+function majTout(){ dessinerPieuvre(); majEmebar(); majQ1(); updateProgress(); majLienFast(); }
 
 /* ════════════ A5 · 2 — TRI ET NIVEAUX ════════════ */
 function construireTri(){
@@ -1142,7 +1151,14 @@ function verifier(q){
   else msg = "Le corrigé s'affiche sous chaque ligne fausse. Corrige-les pour retenir la bonne réponse.";
   if (q === "q1" && r.montrer) msg += "<br><em>FP = relie deux EME (l'utilisateur et l'eau). Les FC relient le robinet à un seul EME (énergie, humidité, lavabo, budget…).</em>";
   afficher(QUESTIONS[q].res, r.juste === r.total, msg);
+  majLienFast();
   saveDraft();
+}
+function majLienFast(){
+  var s = suivi.scores || {}, ouvert = s.fast != null && s.chaines != null;
+  if (!$("lien-fast")) return;
+  $("lien-fast-attente").hidden = ouvert;
+  $("lien-fast-ok").hidden = !ouvert;
 }
 
 /* ════════════ BROUILLON LOCAL ════════════ */
