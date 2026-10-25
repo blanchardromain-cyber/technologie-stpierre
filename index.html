@@ -292,6 +292,7 @@ body.est-prof .prof-only{display:block}
   .ex1-algo-grid{grid-template-columns:1fr!important}
   .ex1-legende{order:-1}
   .ex2-docs-grid{grid-template-columns:1fr!important}
+  .ex2d-cdc,.ex2d-comp{grid-template-columns:1fr!important}
   .ex2-doc1-grid{grid-template-columns:1fr!important}
 }
 /* ── P11 Exercice n°2 — diagramme FAST ── */
@@ -2755,11 +2756,49 @@ body.est-prof .prof-only{display:block}
           </div>
         </div>
 
+        <style>
+          .ex2d-cdc,.ex2d-p,.ex2d-comp,.ex2d-can{text-align:left}
+          .ex2d-cdc{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px}
+          .ex2d-centre{grid-column:1/-1;background:#E1F5FE;border:2px solid #0277BD;border-radius:10px;padding:10px 14px;text-align:center;color:#01579B}
+          .ex2d-centre span,.ex2d-fct span,.ex2d-comp span{display:block;color:var(--td)}
+          .ex2d-fct{background:#fff;border:1px solid #B3E5FC;border-left:4px solid #0288D1;border-radius:8px;padding:8px 12px}
+          .ex2d-fct b,.ex2d-comp b{color:#01579B}
+          .ex2d-p{font-size:13px;margin:0 0 10px}
+          .ex2d-comp{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:13px;margin-bottom:12px}
+          .ex2d-comp>div{background:#F5FBFF;border:1px solid #B3E5FC;border-radius:8px;padding:8px 12px}
+          .ex2d-def{font-size:13px;background:#FFF8E1;border-left:4px solid #FBC02D;border-radius:6px;padding:8px 12px;margin-bottom:10px}
+          .ex2d-tab{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+          .ex2d-tab th{background:#0277BD;color:#fff;padding:6px 8px}
+          .ex2d-tab td{border:1px solid #B3E5FC;padding:6px 8px;text-align:center}
+          .ex2d-algo{font-size:13px;background:#fff;border:1px solid var(--gb);border-radius:8px;padding:10px 14px;line-height:1.7}
+          .ex2d-algo .i1{margin-left:16px}.ex2d-algo .i2{margin-left:32px}.ex2d-algo .i3{margin-left:48px}
+          .ex2d-algo b{color:#01579B}
+          .ex2d-blocs{font-size:12.5px;line-height:1.35}
+          .ex2d-blocs .bk{border-radius:6px;padding:6px 10px;margin:3px 0;color:#fff;font-weight:600}
+          .ex2d-blocs .ev{background:#C88330;border-radius:14px 14px 6px 6px}
+          .ex2d-blocs .ct{background:#CF8B17}
+          .ex2d-blocs .ac{background:#4C97FF}
+          .ex2d-blocs .in{margin:4px 0 4px 14px;padding-left:4px;border-left:3px solid rgba(255,255,255,.55)}
+          .ex2d-blocs .cd,.ex2d-blocs .cd2{display:inline-block;background:#59C059;border-radius:12px;padding:1px 8px;margin:1px 2px}
+          .ex2d-blocs .cd2{background:#3E9E3E}
+        </style>
+
         <!-- DOC : BÊTE À CORNES / CAHIER DES CHARGES -->
         <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
           <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F4CB; Doc 2 &mdash; Pr&eacute;sentation de l'objet technique &amp; cahier des charges</div>
           <div style="text-align:center">
-            <img loading="lazy" src="assets/p12-ex2/02-bete-cornes.png" alt="Bête à cornes du bac à sable de conservation" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            <!-- Doc 2 refait en HTML (l'image scannée donnait 0,1 m³ de sable, soit environ 150 kg, pour un bac fixé au mur de 20 kg au plus) -->
+            <div class="ex2d-cdc">
+              <div class="ex2d-centre"><strong>Bac &agrave; sable de conservation</strong><span>Conserver des l&eacute;gumes dans du sable humide</span></div>
+              <div class="ex2d-fct"><b>Stocker</b><span>10&nbsp;L de sable (&asymp;&nbsp;15&nbsp;kg)</span></div>
+              <div class="ex2d-fct"><b>Humidifier</b><span>Taux d'humidit&eacute; constant entre 40&nbsp;% et 50&nbsp;%</span></div>
+              <div class="ex2d-fct"><b>Disposer d'une r&eacute;serve d'eau</b><span>Volume 1&nbsp;L</span></div>
+              <div class="ex2d-fct"><b>Informer quand la r&eacute;serve d'eau est vide</b><span>Lumi&egrave;re rouge</span></div>
+              <div class="ex2d-fct"><b>&Ecirc;tre fix&eacute; au mur</b><span>Masse totale maximum 20&nbsp;kg</span></div>
+              <div class="ex2d-fct"><b>&Ecirc;tre connect&eacute;</b><span>Ne fonctionner que si des l&eacute;gumes sont dans le bac</span></div>
+              <div class="ex2d-fct"><b>&Ecirc;tre autonome</b><span>Piles rechargeables</span></div>
+              <div class="ex2d-fct"><b>S'int&eacute;grer &agrave; l'esth&eacute;tique de la cuisine</b><span>Mat&eacute;riaux bois et verre</span></div>
+            </div>
           </div>
         </div>
 
@@ -2767,22 +2806,74 @@ body.est-prof .prof-only{display:block}
         <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
           <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F50C; Doc 3 &mdash; Capteurs &amp; type d'informations transmises</div>
           <div style="text-align:center">
-            <img loading="lazy" src="assets/p12-ex2/03-composants.png" alt="Tableau des capteurs et types d'informations (numérique/analogique) avec table CAN" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            <!-- Doc 3 refait en HTML : la résistance RT n'est plus donnée, aucune question ne s'en sert -->
+            <p class="ex2d-p">Tous les capteurs sont reli&eacute;s au <strong>microcontr&ocirc;leur</strong>, qui d&eacute;livre en sortie un signal &eacute;lectrique num&eacute;rique.</p>
+            <div class="ex2d-comp">
+              <div><b>Capteur d'humidit&eacute;</b><span>La tension entre les &eacute;lectrodes varie en fonction de l'humidit&eacute;. Il d&eacute;livre une information <strong>analogique</strong>.</span></div>
+              <div><b>Capteur de niveau d'eau</b><span>&Eacute;quip&eacute; d'un flotteur, il d&eacute;livre une information <strong>logique</strong> (r&eacute;serve suffisante ou non).</span></div>
+              <div><b>Transistor</b><span>Il alimente le moteur de la pompe en &eacute;nergie &eacute;lectrique, suivant le signal d&eacute;livr&eacute; par le microcontr&ocirc;leur.</span></div>
+              <div><b>Pompe avec moteur</b><span>Le moteur &eacute;lectrique actionne une pompe qui puise l'eau du r&eacute;servoir.</span></div>
+            </div>
+            <div class="ex2d-can">
+              <div class="ex2d-def"><b>CAN</b> &mdash; Convertisseur Analogique Num&eacute;rique. Il donne une valeur num&eacute;rique proportionnelle &agrave; la tension analogique re&ccedil;ue en entr&eacute;e. Ici&nbsp;: tension de r&eacute;f&eacute;rence <strong>5&nbsp;V</strong>, <strong>1&nbsp;024 valeurs</strong> possibles (de 0 &agrave; 1&nbsp;023).</div>
+              <table class="ex2d-tab">
+                <thead><tr><th>Humidit&eacute; (%&nbsp;RH)</th><th>R&eacute;sistance du capteur (k&Omega;)</th><th>Tension (V)</th><th>Valeur CAN</th></tr></thead>
+                <tbody>
+                  <tr><td>30</td><td>3&nbsp;300</td><td>0,07</td><td>14</td></tr>
+                  <tr><td>40</td><td>840</td><td>0,26</td><td>54</td></tr>
+                  <tr><td>50</td><td>123</td><td>1,38</td><td>283</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--td);margin-top:8px;font-style:italic;text-align:center">&#x1F4A1; Le tableau au centre donne la correspondance <strong>humidit&eacute; &harr; valeur CAN</strong> (utile pour la Q3).</div>
+          <div style="font-size:11px;color:var(--td);margin-top:8px;font-style:italic;text-align:center">&#x1F4A1; Le tableau donne la correspondance <strong>humidit&eacute; &harr; valeur CAN</strong> (utile pour la Q3).</div>
         </div>
 
         <!-- DOC : ALGORITHME + PROGRAMME PAR BLOCS -->
         <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:22px">
           <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px">&#x1F4DC; Doc 4 &mdash; Algorithme d'arrosage &amp; programme par blocs</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="ex2-docs-grid">
-            <div style="text-align:center">
-              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px">Algorithme texte</div>
-              <img loading="lazy" src="assets/p12-ex2/04-algorithme.png" alt="Algorithme texte de l'arrosage" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px;text-align:center">Algorithme texte</div>
+              <!-- Le système surveille en permanence : la boucle « répéter indéfiniment » englobe tous les tests -->
+              <div class="ex2d-algo">
+                <div>R&Eacute;P&Eacute;TER IND&Eacute;FINIMENT</div>
+                <div class="i1"><b>SI</b> r&eacute;serve d'eau insuffisante <b>ALORS</b></div>
+                <div class="i2">allumer le voyant rouge</div>
+                <div class="i2">arr&ecirc;ter la pompe</div>
+                <div class="i1"><b>SINON</b></div>
+                <div class="i2">&eacute;teindre le voyant rouge</div>
+                <div class="i2"><b>SI</b> humidit&eacute; &lt; 40&nbsp;% <b>ET</b> l&eacute;gumes pr&eacute;sents <b>ALORS</b></div>
+                <div class="i3">mettre la pompe en marche</div>
+                <div class="i2"><b>SI</b> humidit&eacute; &gt; 50&nbsp;% <b>ALORS</b></div>
+                <div class="i3">arr&ecirc;ter la pompe</div>
+              </div>
             </div>
-            <div style="text-align:center">
-              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px">Programme par blocs</div>
-              <img loading="lazy" src="assets/p12-ex2/05-programme-blocs.png" alt="Programme par blocs" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--gb)">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:var(--td);margin-bottom:6px;text-align:center">Programme par blocs</div>
+              <div class="ex2d-blocs" role="img" aria-label="Programme par blocs : au démarrage, répéter indéfiniment ; si réserve d'eau suffisante, éteindre le voyant rouge, si valeur CAN d'humidité inférieure à 54 et légumes présents, pompe ON, si valeur CAN d'humidité supérieure à 283, pompe OFF ; sinon allumer le voyant rouge et pompe OFF.">
+                <div class="bk ev">quand le programme d&eacute;marre</div>
+                <div class="bk ct">r&eacute;p&eacute;ter ind&eacute;finiment
+                  <div class="in">
+                    <div class="bk ct">si <span class="cd">r&eacute;serve d'eau suffisante</span> alors
+                      <div class="in">
+                        <div class="bk ac">&eacute;teindre le voyant rouge</div>
+                        <div class="bk ct">si <span class="cd"><span class="cd2">humidit&eacute; (CAN) &lt; 54</span> et <span class="cd2">l&eacute;gumes pr&eacute;sents</span></span> alors
+                          <div class="in"><div class="bk ac">pompe &agrave; <b>ON</b></div></div>
+                        </div>
+                        <div class="bk ct">si <span class="cd">humidit&eacute; (CAN) &gt; 283</span> alors
+                          <div class="in"><div class="bk ac">pompe &agrave; <b>OFF</b></div></div>
+                        </div>
+                      </div>
+                      sinon
+                      <div class="in">
+                        <div class="bk ac">allumer le voyant rouge</div>
+                        <div class="bk ac">pompe &agrave; <b>OFF</b></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2979,7 +3070,7 @@ body.est-prof .prof-only{display:block}
             </div>
           </div>
           <div style="background:#E8F5E9;border-left:4px solid #1E6B3B;border-radius:8px;padding:10px 14px;margin-top:14px;font-size:13px;color:#1B5E20">
-            <strong>Note&nbsp;:</strong> l'arrosage s'arr&ecirc;te d&egrave;s que l'humidit&eacute; d&eacute;passe 50&nbsp;% (valeur CAN &gt; 283), pour ne pas noyer les l&eacute;gumes.
+            <strong>Note&nbsp;:</strong> l'arrosage s'arr&ecirc;te d&egrave;s que l'humidit&eacute; d&eacute;passe 50&nbsp;% (valeur CAN &gt; 283), pour ne pas noyer les l&eacute;gumes. Dans le programme par blocs, tous ces tests sont plac&eacute;s dans <strong>r&eacute;p&eacute;ter ind&eacute;finiment</strong>&nbsp;: le bac surveille l'humidit&eacute; en permanence. Une boucle &laquo;&nbsp;r&eacute;p&eacute;ter jusqu'&agrave; r&eacute;serve suffisante&nbsp;&raquo; ne conviendrait pas&nbsp;: d&egrave;s que la r&eacute;serve est pleine, la boucle s'arr&ecirc;te et la pompe ne d&eacute;marre jamais.
           </div>
         </div>
 
