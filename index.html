@@ -287,6 +287,10 @@ body.est-prof .prof-only{display:block}
 .ex1-losange{background:linear-gradient(135deg,#FCE4EC,#F8BBD0);border:2px solid #C2185B;border-radius:14px;padding:10px 14px;position:relative;box-shadow:0 4px 12px rgba(194,24,91,.18)}
 .ex1-rectangle{background:#fff;border:2px solid #5C6BC0;border-radius:8px;padding:10px 14px;box-shadow:0 3px 10px rgba(92,107,192,.18)}
 .ex1-losange .p12-ta,.ex1-rectangle .p12-ta{min-height:46px;font-size:13px;padding-bottom:32px}
+.p12-comp{background:#fff;border:1px solid var(--gb);border-left:5px solid #5C6BC0;border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:13px}
+.p12-comp-t{font-size:12px;font-weight:700;color:#3949AB;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.p12-comp ul{margin:0 0 6px;padding-left:20px;line-height:1.5}
+.p12-comp-cps{color:var(--td)}
 @media(max-width:700px){
   .ex1-bete-grid{grid-template-columns:1fr!important}
   .ex1-algo-grid{grid-template-columns:1fr!important}
@@ -583,19 +587,6 @@ body.est-prof .prof-only{display:block}
 <!-- jsPDF (export PDF côté client) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<!-- Ruffle (lecteur Flash SWF) — version épinglée pour stabilité -->
-<script>
-  // Config Ruffle AVANT chargement de la lib
-  window.RufflePlayer = window.RufflePlayer || {};
-  window.RufflePlayer.config = {
-    autoplay: "on",
-    unmuteOverlay: "hidden",
-    splashScreen: false,
-    publicPath: "https://unpkg.com/@ruffle-rs/ruffle@0.1.0-nightly.2025.5.5/",
-    polyfills: false   // évite le scan agressif des iframes
-  };
-</script>
-<script src="https://unpkg.com/@ruffle-rs/ruffle@0.1.0-nightly.2025.5.5/ruffle.js"></script>
 </head>
 <body>
 <canvas id="b-scene" class="b-only" aria-hidden="true"></canvas>
@@ -966,6 +957,16 @@ body.est-prof .prof-only{display:block}
           </div>
         </div>
 
+        <!-- COMPÉTENCES (BO n°9 du 29 février 2024) -->
+        <div class="p12-comp">
+          <div class="p12-comp-t">&#x1F3AF; Comp&eacute;tences travaill&eacute;es</div>
+          <ul>
+            <li>D&eacute;crire les liens entre usages et &eacute;volutions technologiques des objets et des syst&egrave;mes techniques (parties 1 et 3)</li>
+            <li>D&eacute;crire et caract&eacute;riser l&rsquo;organisation interne d&rsquo;un objet ou d&rsquo;un syst&egrave;me technique et ses &eacute;changes avec son environnement (&eacute;nergies, donn&eacute;es) (partie 2)</li>
+          </ul>
+          <div class="p12-comp-cps"><strong>CPS travaill&eacute;e&nbsp;:</strong> Coop&eacute;rer en bin&ocirc;me</div>
+        </div>
+
         <!-- ═══════════════════════════════════════════════════ -->
         <!-- PARTIE ① — LES OBJETS TECHNOLOGIQUES               -->
         <!-- ═══════════════════════════════════════════════════ -->
@@ -1153,21 +1154,18 @@ body.est-prof .prof-only{display:block}
           <div class="p12-phase" style="background:#F0FBF5;border:1px solid var(--vt);margin-bottom:0">
             <div style="font-size:13px;font-weight:700;color:var(--vt);margin-bottom:12px">&#x1F4DA; Phase 2b &mdash; Ressources (10-15 min) &bull; J&rsquo;investigue</div>
 
-            <!-- Animation SWF via Ruffle (lecteur WASM, aucune install élève) -->
-            <div style="margin-bottom:16px">
-              <div style="font-size:13px;font-weight:600;color:var(--td);margin-bottom:8px">&#x1F3AC; Animation interactive &mdash; Conservation des aliments</div>
-              <div id="swf-stage" style="display:flex;justify-content:center">
-                <div id="swf-host" style="width:800px;max-width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#000;box-shadow:var(--sh);position:relative">
-                  <div id="swf-status" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;text-align:center;padding:20px">
-                    &#x23F3; Chargement du lecteur Flash&hellip;
-                  </div>
-                </div>
+            <!-- Ressource : la carte « Le circuit du froid » (page P12) remplace l'animation Flash -->
+            <div style="margin-bottom:16px;background:#fff;border:1px solid var(--gb);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <div style="font-size:30px">&#x1F9CA;</div>
+              <div style="flex:1;min-width:200px">
+                <div style="font-size:14px;font-weight:700;color:var(--vt);margin-bottom:3px">Le circuit du froid</div>
+                <div style="font-size:13px;color:var(--td);line-height:1.5">Fais d&rsquo;abord l&rsquo;exp&eacute;rience de la goutte d&rsquo;alcool sur le dos de la main, puis suis le fluide frigorig&egrave;ne pas &agrave; pas dans le r&eacute;frig&eacute;rateur et associe chaque organe &agrave; sa fonction technique.</div>
               </div>
-              <div id="swf-fallback" class="h" style="margin-top:10px;background:#FEF9E7;border:1px solid #D4AC0D;border-radius:8px;padding:12px;font-size:13px;color:#7D6608">
-                &#x26A0;&#xFE0F; Le lecteur Flash n'a pas pu d&eacute;marrer. Tu peux malgr&eacute; tout continuer l'activit&eacute; ci-dessous &mdash; ton professeur reprendra ce point en classe.
-              </div>
+              <a href="https://blanchardromain-cyber.github.io/techno-p12-alimentation/circuit-du-froid.html" target="_blank" rel="noopener"
+                 style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--vt);color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">
+                &#x1F517; Ouvrir la carte
+              </a>
             </div>
-
 
             <!-- Principe + Tableau FT/ST -->
             <div>
@@ -1357,7 +1355,7 @@ body.est-prof .prof-only{display:block}
           <div class="card">
             <h3 style="color:var(--vt)">&#x2461; Partie 2 &mdash; Fonctionnement du r&eacute;frig&eacute;rateur</h3>
             <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:14px">
-              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (évaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur).
+              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (évaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur). Le r&eacute;frig&eacute;rateur ne fabrique pas de froid&nbsp;: il <strong>transporte la chaleur</strong> de l&rsquo;int&eacute;rieur vers l&rsquo;ext&eacute;rieur.
             </div>
             <div style="overflow-x:auto">
               <table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -1369,12 +1367,12 @@ body.est-prof .prof-only{display:block}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Condenser (liqu&eacute;fier) le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène gazeux</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Vaporiser le fluide et absorber la chaleur int&eacute;rieure</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Dissiper la chaleur vers l&rsquo;ext&eacute;rieur</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Absorber la chaleur &agrave; l&rsquo;int&eacute;rieur</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
                   <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT4</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">D&eacute;clencher le compresseur selon la temp&eacute;rature</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">4 &mdash; Thermostat</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide et r&eacute;guler le d&eacute;bit (soupape)</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
-                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter et c&eacute;der/absorber la chaleur dans le circuit</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter la chaleur</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2130,6 +2128,15 @@ body.est-prof .prof-only{display:block}
           </div>
         </div>
 
+        <!-- COMPÉTENCES (BO n°9 du 29 février 2024) -->
+        <div class="p12-comp">
+          <div class="p12-comp-t">&#x1F3AF; Comp&eacute;tences travaill&eacute;es</div>
+          <ul>
+            <li>D&eacute;crire les interactions entre un objet ou un syst&egrave;me technique, son environnement et les utilisateurs</li>
+          </ul>
+          <div class="p12-comp-cps"><strong>CPS travaill&eacute;e&nbsp;:</strong> Argumenter</div>
+        </div>
+
         <!-- NORMES À CONNAÎTRE -->
         <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
           <div style="font-size:12px;font-weight:700;color:var(--bl);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">&#x1F4CB; Normes &agrave; conna&icirc;tre</div>
@@ -2733,6 +2740,16 @@ body.est-prof .prof-only{display:block}
           </div>
         </div>
 
+        <!-- COMPÉTENCES (BO n°9 du 29 février 2024) -->
+        <div class="p12-comp">
+          <div class="p12-comp-t">&#x1F3AF; Comp&eacute;tences travaill&eacute;es</div>
+          <ul>
+            <li>D&eacute;crire et caract&eacute;riser l&rsquo;organisation interne d&rsquo;un objet ou d&rsquo;un syst&egrave;me technique et ses &eacute;changes avec son environnement (&eacute;nergies, donn&eacute;es) (questions 1 &agrave; 3)</li>
+            <li>Comprendre et modifier un programme associ&eacute; &agrave; une fonctionnalit&eacute; d&rsquo;un objet ou d&rsquo;un syst&egrave;me technique (programme par blocs)</li>
+          </ul>
+          <div class="p12-comp-cps"><strong>CPS travaill&eacute;e&nbsp;:</strong> Argumenter</div>
+        </div>
+
         <!-- DOC : APP SMARTPHONE + VIDÉO DE PRÉSENTATION -->
         <div style="background:#fff;border:1px solid var(--gb);border-radius:10px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:18px">
           <div style="font-size:12px;font-weight:700;color:#0277BD;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px">&#x1F4F1; Doc 1 &mdash; Application &laquo; mon garde-manger &raquo;</div>
@@ -3119,9 +3136,19 @@ body.est-prof .prof-only{display:block}
           &#x2753; <strong>Probl&eacute;matique&nbsp;:</strong> Comment les inventions et/ou d&eacute;couvertes participent-elles &agrave; l&rsquo;&eacute;volution des objets&nbsp;?
         </div>
 
-        <!-- SITUATION DÉCLENCHEUR -->
+        <!-- COMPÉTENCES (BO n°9 du 29 février 2024) -->
+        <div class="p12-comp">
+          <div class="p12-comp-t">&#x1F3AF; Comp&eacute;tences travaill&eacute;es</div>
+          <ul>
+            <li>D&eacute;crire les liens entre usages et &eacute;volutions technologiques des objets et des syst&egrave;mes techniques (partie 1)</li>
+            <li>D&eacute;crire et caract&eacute;riser l&rsquo;organisation interne d&rsquo;un objet ou d&rsquo;un syst&egrave;me technique et ses &eacute;changes avec son environnement (&eacute;nergies, donn&eacute;es) (partie 2)</li>
+          </ul>
+          <div class="p12-comp-cps"><strong>CPS travaill&eacute;e&nbsp;:</strong> Coop&eacute;rer en bin&ocirc;me</div>
+        </div>
+
+        <!-- SITUATION DÉCLENCHANTE -->
         <div style="background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);padding:20px;margin-bottom:20px">
-          <div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:10px">&#x1F4CC; Situation d&eacute;clencheur</div>
+          <div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:10px">&#x1F4CC; Situation d&eacute;clenchante</div>
           <p style="font-size:13px;color:var(--td);line-height:1.6;margin-bottom:14px">Pour conserver leurs aliments, nos arri&egrave;re-grands-parents utilisaient une glaci&egrave;re en bois garnie d&rsquo;un bloc de glace livr&eacute; chaque semaine&nbsp;! Aujourd&rsquo;hui, ton r&eacute;frig&eacute;rateur connect&eacute; commande lui-m&ecirc;me la liste de courses. Comment a-t-on pu passer de l&rsquo;un &agrave; l&rsquo;autre&nbsp;?</p>
         </div>
 
@@ -3275,19 +3302,32 @@ body.est-prof .prof-only{display:block}
                 <span style="font-size:12px;font-weight:700;color:var(--td);white-space:nowrap;padding-top:6px;min-width:160px">Syst&egrave;me automatis&eacute;&nbsp;:</span>
                 <input type="text" id="a2-voc3" class="p12-input" style="flex:1" placeholder="D&eacute;finition...">
               </div>
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--td);white-space:nowrap;padding-top:6px;min-width:160px">Famille d&rsquo;objets&nbsp;:</span>
+                <input type="text" id="a2-voc4" class="p12-input" style="flex:1" placeholder="D&eacute;finition...">
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--td);white-space:nowrap;padding-top:6px;min-width:160px">Lign&eacute;e d&rsquo;objets&nbsp;:</span>
+                <input type="text" id="a2-voc5" class="p12-input" style="flex:1" placeholder="D&eacute;finition...">
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--td);white-space:nowrap;padding-top:6px;min-width:160px">Principe technique&nbsp;:</span>
+                <input type="text" id="a2-voc6" class="p12-input" style="flex:1" placeholder="D&eacute;finition...">
+              </div>
+            </div>
+            <div style="background:#EDE9FE;border-radius:6px;padding:8px 12px;margin-top:10px;font-size:12px;color:#4c1d95">
+              &#x1F4A1; <strong>Banque de mots&nbsp;:</strong> m&ecirc;me fonction d&rsquo;usage &bull; m&ecirc;me principe technique &bull; &eacute;volue dans le temps &bull; l&rsquo;humain fournit l&rsquo;&eacute;nergie &bull; une machine fournit l&rsquo;&eacute;nergie &bull; l&rsquo;humain pilote &bull; se pilote seule gr&acirc;ce &agrave; un programme
+            </div>
+            <div style="margin-top:12px">
+              <label style="font-size:13px;font-weight:600;color:var(--td);display:block;margin-bottom:6px">&#x1F50E; La glaci&egrave;re, le r&eacute;frig&eacute;rateur et le r&eacute;frig&eacute;rateur connect&eacute; appartiennent-ils &agrave; la m&ecirc;me <strong>famille</strong>&nbsp;? &agrave; la m&ecirc;me <strong>lign&eacute;e</strong>&nbsp;? Justifie avec le principe technique de chacun.</label>
+              <textarea id="a2-lignee" rows="3" class="p12-input" style="width:100%;resize:vertical" placeholder="R&eacute;dige ta r&eacute;ponse ici..."></textarea>
             </div>
           </div>
 
           <!-- Phase 2b -->
           <div style="background:#F5F3FF;border-radius:8px;padding:14px 18px;border-left:4px solid #7c3aed">
             <div style="font-weight:700;color:#7c3aed;margin-bottom:8px">&#x1F9E0; Phase 2b &mdash; Approfondissement</div>
-            <p style="font-size:13px;color:var(--td);margin-bottom:10px">Identifie les 12 fonctions techniques du robot cuiseur intelligent (de FT1 &agrave; FT12). Utilise la ressource &laquo;&nbsp;Fonctions robots&nbsp;&raquo; et le site officiel Thermomix.</p>
-            <div style="text-align:center;margin-bottom:12px">
-              <a href="https://www.vorwerk.com/fr/fr/c/vorwerk/produits/thermomix/multifonction" target="_blank" rel="noopener"
-                 style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#7c3aed;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.2)">
-                &#x1F517; Voir les fonctions du Thermomix sur vorwerk.com
-              </a>
-            </div>
+            <p style="font-size:13px;color:var(--td);margin-bottom:10px">Identifie les 12 fonctions techniques du robot cuiseur intelligent (de FT1 &agrave; FT12). Utilise la ressource &laquo;&nbsp;Fonctions robots&nbsp;&raquo;.</p>
             <div style="margin-bottom:12px;text-align:center">
               <img loading="lazy" src="P12%20Technologie%20et%20Alimentation/Activit%C3%A9%202/Ressources%20images/Fonctions%20techniques.png" style="max-width:100%;max-height:180px;object-fit:contain;border-radius:6px;border:1px solid var(--gb)" alt="Fonctions techniques">
             </div>
@@ -3358,40 +3398,40 @@ body.est-prof .prof-only{display:block}
                   <svg width="54" height="32" viewBox="0 0 54 32" style="flex-shrink:0"><rect x="2" y="2" width="50" height="28" rx="3" fill="#fff" stroke="#374151" stroke-width="2"/></svg>
                   <select id="a2-symb1" class="p12-input" style="flex:1;font-size:12px">
                     <option value="">— Choisir —</option>
-                    <option value="A">Traitement (action, instruction)</option>
-                    <option value="B">Condition (Si ... Alors)</option>
-                    <option value="C">D&eacute;but ou Fin</option>
-                    <option value="D">Entr&eacute;e ou Sortie de donn&eacute;es</option>
+                    <option value="A">Traitement (une action)</option>
+                    <option value="B">Test (une condition, r&eacute;ponse oui ou non)</option>
+                    <option value="C">D&eacute;but / fin</option>
+                    <option value="D">Entr&eacute;e / sortie (lire ou afficher une information)</option>
                   </select>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border-radius:8px;padding:10px;border:1px solid #bbf7d0">
                   <svg width="54" height="44" viewBox="0 0 54 44" style="flex-shrink:0"><polygon points="27,2 52,22 27,42 2,22" fill="#fff" stroke="#374151" stroke-width="2"/></svg>
                   <select id="a2-symb2" class="p12-input" style="flex:1;font-size:12px">
                     <option value="">— Choisir —</option>
-                    <option value="A">Traitement (action, instruction)</option>
-                    <option value="B">Condition (Si ... Alors)</option>
-                    <option value="C">D&eacute;but ou Fin</option>
-                    <option value="D">Entr&eacute;e ou Sortie de donn&eacute;es</option>
+                    <option value="A">Traitement (une action)</option>
+                    <option value="B">Test (une condition, r&eacute;ponse oui ou non)</option>
+                    <option value="C">D&eacute;but / fin</option>
+                    <option value="D">Entr&eacute;e / sortie (lire ou afficher une information)</option>
                   </select>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border-radius:8px;padding:10px;border:1px solid #bbf7d0">
                   <svg width="54" height="32" viewBox="0 0 54 32" style="flex-shrink:0"><ellipse cx="27" cy="16" rx="25" ry="14" fill="#fff" stroke="#374151" stroke-width="2"/></svg>
                   <select id="a2-symb3" class="p12-input" style="flex:1;font-size:12px">
                     <option value="">— Choisir —</option>
-                    <option value="A">Traitement (action, instruction)</option>
-                    <option value="B">Condition (Si ... Alors)</option>
-                    <option value="C">D&eacute;but ou Fin</option>
-                    <option value="D">Entr&eacute;e ou Sortie de donn&eacute;es</option>
+                    <option value="A">Traitement (une action)</option>
+                    <option value="B">Test (une condition, r&eacute;ponse oui ou non)</option>
+                    <option value="C">D&eacute;but / fin</option>
+                    <option value="D">Entr&eacute;e / sortie (lire ou afficher une information)</option>
                   </select>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border-radius:8px;padding:10px;border:1px solid #bbf7d0">
                   <svg width="54" height="32" viewBox="0 0 54 32" style="flex-shrink:0"><polygon points="12,2 52,2 42,30 2,30" fill="#fff" stroke="#374151" stroke-width="2"/></svg>
                   <select id="a2-symb4" class="p12-input" style="flex:1;font-size:12px">
                     <option value="">— Choisir —</option>
-                    <option value="A">Traitement (action, instruction)</option>
-                    <option value="B">Condition (Si ... Alors)</option>
-                    <option value="C">D&eacute;but ou Fin</option>
-                    <option value="D">Entr&eacute;e ou Sortie de donn&eacute;es</option>
+                    <option value="A">Traitement (une action)</option>
+                    <option value="B">Test (une condition, r&eacute;ponse oui ou non)</option>
+                    <option value="C">D&eacute;but / fin</option>
+                    <option value="D">Entr&eacute;e / sortie (lire ou afficher une information)</option>
                   </select>
                 </div>
               </div>
@@ -3400,39 +3440,17 @@ body.est-prof .prof-only{display:block}
             </div>
           </div>
 
-          <!-- Phase 3a — Exercice algorithme cookies -->
-          <div style="background:#F0FDF4;border-radius:8px;padding:14px 18px;margin-bottom:18px;border-left:4px solid #15803d">
-            <div style="font-weight:700;color:#15803d;margin-bottom:8px">&#x1F36A; Phase 3a &mdash; Recette Cookies aux p&eacute;pites de chocolat</div>
-            <div style="background:#fafafa;border:1px solid var(--gb);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;line-height:1.6;color:var(--td)">
-              <strong>Ingr&eacute;dients&nbsp;:</strong> 125 g beurre mou &bull; 100 g cassonade &bull; 1 &oelig;uf &bull; 1 sachet sucre vanill&eacute; &bull; 180 g farine &bull; &frac12; c. &agrave; soupe de levure &bull; 100 g p&eacute;pites de chocolat<br>
-              <strong>Pr&eacute;paration Thermomix&nbsp;:</strong> Si le beurre ET la cassonade sont dans le bol, <strong>ALORS</strong> fouetter vitesse 2 pendant 1 min 30.
-              Si l&rsquo;&oelig;uf ET le sucre vanill&eacute; sont ajout&eacute;s, <strong>ALORS</strong> m&eacute;langer vitesse 2 pendant 30 secondes.
-              Si la farine ET la levure sont ajout&eacute;es, <strong>ALORS</strong> m&eacute;langer vitesse 3 pendant 2 min.
-              Si les p&eacute;pites de chocolat sont ajout&eacute;es, <strong>ALORS</strong> mixer vitesse 4 pendant 10 sec.
+          <!-- Les cookies passent en activité 3 (robot cuiseur à balance) ; le quiz de l'activité est sur la page P12 -->
+          <div style="background:#F0FDF4;border-radius:8px;padding:14px 18px;border-left:4px solid #15803d;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="font-size:22px">&#x1F9E0;</div>
+            <div style="flex:1;min-width:200px">
+              <div style="font-weight:700;color:#15803d;margin-bottom:3px">Auto-&eacute;valuation &mdash; Quiz de l&rsquo;activit&eacute;</div>
+              <div style="font-size:13px;color:var(--td);line-height:1.5">V&eacute;rifie ta compr&eacute;hension&nbsp;: famille, lign&eacute;e, principe technique, syst&egrave;mes non m&eacute;canis&eacute;s, m&eacute;canis&eacute;s et automatis&eacute;s, symboles de l&rsquo;algorigramme.</div>
             </div>
-            <p style="font-size:13px;color:var(--td);margin-bottom:10px"><strong>a)</strong> Surligne mentalement les &eacute;l&eacute;ments utiles &agrave; la programmation du robot (vitesses et temps).</p>
-            <p style="font-size:13px;color:var(--td);margin-bottom:10px"><strong>b)</strong> &Eacute;cris l&rsquo;algorithme du robot (4 instructions SI&hellip;ALORS + dur&eacute;e) :</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-              <div><label style="font-size:11px;font-weight:700;color:var(--td)">Instruction 1</label>
-                <input type="text" id="a2-algo1" class="p12-input" style="width:100%" placeholder=""></div>
-              <div><label style="font-size:11px;font-weight:700;color:var(--td)">Instruction 2</label>
-                <input type="text" id="a2-algo2" class="p12-input" style="width:100%" placeholder=""></div>
-              <div><label style="font-size:11px;font-weight:700;color:var(--td)">Instruction 3</label>
-                <input type="text" id="a2-algo3" class="p12-input" style="width:100%" placeholder=""></div>
-              <div><label style="font-size:11px;font-weight:700;color:var(--td)">Instruction 4</label>
-                <input type="text" id="a2-algo4" class="p12-input" style="width:100%" placeholder=""></div>
-            </div>
-          </div>
-
-          <!-- ─── AUTO-ÉVALUATION : iframe ─── -->
-          <div style="background:#F0FDF4;border-radius:8px;padding:14px 18px;border-left:4px solid #15803d">
-            <div style="font-weight:700;color:#15803d;margin-bottom:8px">&#x1F9E0; Auto-&eacute;valuation formative</div>
-            <p style="font-size:13px;color:var(--td);margin-bottom:12px">R&eacute;ponds aux questions pour v&eacute;rifier ta compr&eacute;hension de l&rsquo;activit&eacute;. Un simulateur d&rsquo;algorigramme est accessible apr&egrave;s un score parfait.</p>
-            <div style="position:relative;width:100%;border-radius:8px;overflow:hidden;border:1px solid var(--gb)">
-              <iframe src="P12%20Technologie%20et%20Alimentation/Activit%C3%A9%202/Evaluation%20formative%20P12%20Activit%C3%A9%202.html"
-                      style="width:100%;height:1400px;border:none;display:block"
-                      title="Auto-évaluation P12 Activité 2"></iframe>
-            </div>
+            <a href="https://blanchardromain-cyber.github.io/techno-p12-alimentation/quiz-evolution.html" target="_blank" rel="noopener"
+               style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#15803d;color:#fff;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">
+              &#x1F517; Ouvrir le quiz
+            </a>
           </div>
         </div>
 
@@ -3593,7 +3611,7 @@ body.est-prof .prof-only{display:block}
           <div class="card">
             <h3 style="color:var(--vt)">&#x2461; Partie 2 &mdash; Fonctionnement du r&eacute;frig&eacute;rateur</h3>
             <div class="p12-cor-item" style="background:var(--vp);border-color:var(--vt);margin-bottom:14px">
-              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (&eacute;vaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur).
+              <strong>Principe&nbsp;:</strong> Le r&eacute;frig&eacute;rateur utilise un cycle compression/d&eacute;tente d&rsquo;un fluide frigorigène qui absorbe la chaleur &agrave; l&rsquo;int&eacute;rieur (&eacute;vaporateur) et la rejette &agrave; l&rsquo;ext&eacute;rieur (condenseur). Le r&eacute;frig&eacute;rateur ne fabrique pas de froid&nbsp;: il <strong>transporte la chaleur</strong> de l&rsquo;int&eacute;rieur vers l&rsquo;ext&eacute;rieur.
             </div>
             <div style="overflow-x:auto">
               <table style="width:100%;border-collapse:collapse;font-size:13px">
@@ -3605,12 +3623,12 @@ body.est-prof .prof-only{display:block}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Condenser (liqu&eacute;fier) le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène gazeux</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Vaporiser le fluide et absorber la chaleur int&eacute;rieure</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT1</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Dissiper la chaleur vers l&rsquo;ext&eacute;rieur</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">1 &mdash; Condenseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT2</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">Comprimer le fluide frigorigène</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">2 &mdash; Compresseur</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT3</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">Absorber la chaleur &agrave; l&rsquo;int&eacute;rieur</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">3 &mdash; &Eacute;vaporateur</td></tr>
                   <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT4</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--gr)">D&eacute;clencher le compresseur selon la temp&eacute;rature</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600;background:var(--gr)">4 &mdash; Thermostat</td></tr>
-                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide et r&eacute;guler le d&eacute;bit (soupape)</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
-                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter et c&eacute;der/absorber la chaleur dans le circuit</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
+                  <tr><td style="padding:7px 10px;border-bottom:1px solid var(--gb);text-align:center;font-weight:700">FT5</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);background:var(--vp)">D&eacute;tendre le fluide</td><td style="padding:7px 10px;border-bottom:1px solid var(--gb);font-weight:600">5 &mdash; Capillaire</td></tr>
+                  <tr><td style="padding:7px 10px;text-align:center;font-weight:700">FT6</td><td style="padding:7px 10px;background:var(--gr)">Transporter la chaleur</td><td style="padding:7px 10px;font-weight:600;background:var(--gr)">6 &mdash; Fluide frigorigène</td></tr>
                 </tbody>
               </table>
             </div>
@@ -3703,7 +3721,7 @@ body.est-prof .prof-only{display:block}
             </table>
           </div>
           <div style="background:#F3F4F6;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px">
-            <strong>4 grands domaines d&rsquo;&eacute;volution&nbsp;:</strong> les mat&eacute;riaux (plus isolants, plus l&eacute;gers) &bull; les formes (plus ergonomiques) &bull; les fonctionnalit&eacute;s (capteurs, connexions) &bull; le type d&rsquo;&eacute;nergie (froid naturel &rarr; &eacute;lectricit&eacute; &rarr; domotique).
+            <strong>4 domaines d&rsquo;&eacute;volution&nbsp;:</strong> les <strong>mat&eacute;riaux</strong> (bois &rarr; t&ocirc;le d&rsquo;acier &rarr; plastiques) &bull; l&rsquo;<strong>&eacute;nergie</strong> (glace &rarr; &eacute;lectricit&eacute;) &bull; les <strong>fonctions</strong> (thermostat, cam&eacute;ras, &eacute;cran tactile) &bull; la <strong>connexion</strong> (Wi-Fi, application smartphone).
           </div>
 
           <!-- Tableau famille d'objets -->
@@ -3729,9 +3747,13 @@ body.est-prof .prof-only{display:block}
           <!-- Vocabulaire -->
           <div style="background:#F3F4F6;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px">
             <div style="font-weight:700;margin-bottom:8px">&#x1F4D6; Vocabulaire &agrave; retenir</div>
-            <p><strong>Syst&egrave;me non m&eacute;canis&eacute;&nbsp;:</strong> Syst&egrave;me &agrave; &eacute;nergie musculaire fournie par l&rsquo;homme.</p>
-            <p style="margin-top:4px"><strong>Syst&egrave;me m&eacute;canis&eacute;&nbsp;:</strong> Syst&egrave;me qui utilise une &eacute;nergie non fournie par l&rsquo;homme (&eacute;lectrique, thermique, etc.).</p>
-            <p style="margin-top:4px"><strong>Syst&egrave;me automatis&eacute;&nbsp;:</strong> Syst&egrave;me dont les op&eacute;rations sont r&eacute;alis&eacute;es par un cha&icirc;nement programm&eacute; (succession automatique d&rsquo;&eacute;tapes).</p>
+            <p><strong>Syst&egrave;me non m&eacute;canis&eacute;&nbsp;:</strong> l&rsquo;humain fournit l&rsquo;&eacute;nergie et pilote.</p>
+            <p style="margin-top:4px"><strong>Syst&egrave;me m&eacute;canis&eacute;&nbsp;:</strong> une machine fournit l&rsquo;&eacute;nergie, l&rsquo;humain pilote.</p>
+            <p style="margin-top:4px"><strong>Syst&egrave;me automatis&eacute;&nbsp;:</strong> la machine fournit l&rsquo;&eacute;nergie et se pilote seule gr&acirc;ce &agrave; un programme.</p>
+            <p style="margin-top:4px"><strong>Famille d&rsquo;objets&nbsp;:</strong> objets qui ont la m&ecirc;me fonction d&rsquo;usage (le moulin, le mixeur et le robot cuiseur servent &agrave; pr&eacute;parer des aliments).</p>
+            <p style="margin-top:4px"><strong>Lign&eacute;e d&rsquo;objets&nbsp;:</strong> objets qui ont le m&ecirc;me principe technique, qui &eacute;volue dans le temps.</p>
+            <p style="margin-top:4px"><strong>Principe technique &ne; solution technique&nbsp;:</strong> le principe technique est le ph&eacute;nom&egrave;ne utilis&eacute; (faire &eacute;vaporer un fluide pour absorber la chaleur)&nbsp;; la solution technique est l&rsquo;&eacute;l&eacute;ment qui le r&eacute;alise (l&rsquo;&eacute;vaporateur).</p>
+            <p style="margin-top:4px"><strong>Glaci&egrave;re, r&eacute;frig&eacute;rateur, r&eacute;frig&eacute;rateur connect&eacute;&nbsp;:</strong> m&ecirc;me <strong>famille</strong> (ils servent &agrave; conserver les aliments au froid). Le r&eacute;frig&eacute;rateur et le r&eacute;frig&eacute;rateur connect&eacute; sont de la m&ecirc;me <strong>lign&eacute;e</strong> (m&ecirc;me principe&nbsp;: un fluide qui s&rsquo;&eacute;vapore et transporte la chaleur). La glaci&egrave;re n&rsquo;en fait pas partie&nbsp;: elle utilise la fonte d&rsquo;un bloc de glace.</p>
           </div>
 
           <!-- FT1-FT12 -->
@@ -3750,30 +3772,19 @@ body.est-prof .prof-only{display:block}
                     <td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center">FT10</td><td style="padding:6px 8px;border:1px solid var(--gb)">Programmer une dur&eacute;e et une vitesse</td></tr>
                 <tr><td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center">FT5</td><td style="padding:6px 8px;border:1px solid var(--gb)">Cuire &agrave; temp&eacute;rature contr&ocirc;l&eacute;e</td>
                     <td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center;background:#fafafa">FT11</td><td style="padding:6px 8px;border:1px solid var(--gb);background:#fafafa">Se connecter &agrave; Internet (Wi-Fi)</td></tr>
-                <tr style="background:#fafafa"><td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center">FT6</td><td style="padding:6px 8px;border:1px solid var(--gb)">Cuire &agrave; la vapeur (&eacute;tage Varoma)</td>
+                <tr style="background:#fafafa"><td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center">FT6</td><td style="padding:6px 8px;border:1px solid var(--gb)">Cuire &agrave; la vapeur</td>
                     <td style="padding:6px 8px;border:1px solid var(--gb);font-weight:700;text-align:center">FT12</td><td style="padding:6px 8px;border:1px solid var(--gb)">S&eacute;curiser l&rsquo;utilisation (verr. couvercle)</td></tr>
               </tbody>
             </table>
           </div>
 
-          <!-- Algorithme & algorigramme -->
-          <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">&#x1F9E9; Partie 3 &mdash; Algorithme &amp; Algorigramme des cookies</div>
+          <!-- Algorithme & algorigramme (les cookies passent en activité 3) -->
+          <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px">&#x1F9E9; Partie 3 &mdash; Algorithme &amp; algorigramme</div>
           <div style="background:#F3F4F6;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px">
             <p><strong>D&eacute;finitions&nbsp;:</strong></p>
-            <p style="margin-top:4px"><strong>Algorithme&nbsp;:</strong> Suite d&rsquo;instructions sous forme de texte permettant de r&eacute;soudre un probl&egrave;me donn&eacute;.</p>
-            <p style="margin-top:4px"><strong>Algorigramme&nbsp;:</strong> Repr&eacute;sentation graphique normalis&eacute;e d&rsquo;un algorithme (symboles standards reli&eacute;s par des fl&egrave;ches).</p>
-          </div>
-          <div style="background:#E8F5E9;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:13px;font-family:monospace;line-height:1.8;color:#1a3550">
-            <strong>Algorithme corrig&eacute;&nbsp;:</strong><br>
-            D&eacute;but<br>
-            &nbsp;&nbsp;SI beurre ET cassonade ALORS fouetter vitesse 2 &mdash; attendre 1 min 30<br>
-            &nbsp;&nbsp;SI &oelig;uf ET sucre vanill&eacute; ALORS m&eacute;langer vitesse 2 &mdash; attendre 30 secondes<br>
-            &nbsp;&nbsp;SI farine ET levure ALORS m&eacute;langer vitesse 3 &mdash; attendre 2 min<br>
-            &nbsp;&nbsp;SI chocolat ALORS mixer vitesse 4 &mdash; attendre 10 secondes<br>
-            Fin
-          </div>
-          <div style="text-align:center;margin-bottom:18px">
-            <img loading="lazy" src="P12%20Technologie%20et%20Alimentation/Activit%C3%A9%202/Ressources%20images/ChatGPT%20Algorigramme%20cookies%20au%20chocolat.png" style="max-width:100%;max-height:280px;object-fit:contain;border-radius:8px;border:1px solid var(--gb)" alt="Algorigramme corrigé cookies">
+            <p style="margin-top:4px"><strong>Algorithme&nbsp;:</strong> suite ordonn&eacute;e d&rsquo;instructions qui permet de r&eacute;soudre un probl&egrave;me.</p>
+            <p style="margin-top:4px"><strong>Algorigramme&nbsp;:</strong> repr&eacute;sentation graphique normalis&eacute;e d&rsquo;un algorithme (symboles reli&eacute;s par des fl&egrave;ches).</p>
+            <p style="margin-top:8px"><strong>Les 4 symboles&nbsp;:</strong> rectangle &rarr; <em>traitement</em>&nbsp;; losange &rarr; <em>test</em>&nbsp;; ovale &rarr; <em>d&eacute;but / fin</em>&nbsp;; parall&eacute;logramme &rarr; <em>entr&eacute;e / sortie</em>.</p>
           </div>
 
           <!-- Bilan général corrigé -->
@@ -6874,9 +6885,6 @@ function goPage(pid) {
       if (copieVerrouillee(capDePage(pid)) && pg && !pg.classList.contains("h")) { goPage("pg-dash"); toast(MSG_VERROU); }
     });
   }
-  // Couper son SWF P12 si on quitte la page P12
-  var prevP12 = !document.getElementById("pg-p12").classList.contains("h");
-  if (prevP12 && pid !== "pg-p12") pauseP12Swf();
   var divs = document.querySelectorAll(".main > div");
   for (var i = 0; i < divs.length; i++) divs[i].classList.add("h");
   document.getElementById(pid).classList.remove("h");
@@ -7022,8 +7030,7 @@ function goPage(pid) {
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
-    initP12Table(); renderCtxQuiz(); initRufflePlayer();
-    if (window._p12Player) resumeP12Swf(); // remonte le son si l'élève revient
+    initP12Table(); renderCtxQuiz();
     if (user) {
       var fNom    = document.getElementById("p12-nom");
       var fPrenom = document.getElementById("p12-prenom");
@@ -13255,87 +13262,11 @@ function initP12Table() {
   tbody.innerHTML = html;
 }
 
-/* Lecteur Ruffle (Flash WASM) — aucune installation requise côté élève */
-var ruffleInitialized = false;
-function initRufflePlayer() {
-  if (ruffleInitialized) return;
-  var host = document.getElementById("swf-host");
-  if (!host) return;
-  ruffleInitialized = true;
-  // Attendre que Ruffle soit prêt (le script charge en async)
-  var tries = 0;
-  function tryLoad() {
-    if (!window.RufflePlayer || !window.RufflePlayer.newest) {
-      if (tries++ < 30) return setTimeout(tryLoad, 200);
-      return showSwfError("La librairie Ruffle n'a pas pu se charger (réseau ?).");
-    }
-    try {
-      var ruffle = window.RufflePlayer.newest();
-      var player = ruffle.createPlayer();
-      window._p12Player = player; // ← exposé pour pause/reprise (couper son sur Enregistrer/Retour)
-      player.style.cssText = "width:100%;height:100%;display:block";
-      var status = document.getElementById("swf-status");
-      if (status) status.remove();
-      host.appendChild(player);
-      // load() retourne une Promise sur les versions récentes
-      var p = player.load({
-        url: "assets/swf/conservation_aliments.swf",
-        base: "assets/swf/",          // ← résout barres.swf, frigo.swf, son.swf, etc. depuis le bon dossier
-        autoplay: "on",
-        unmuteOverlay: "hidden"
-      });
-      if (p && p.catch) p.catch(function(err){
-        console.warn("[Ruffle] load() rejected:", err);
-        showSwfError("Le SWF n'a pas pu être lu (" + (err && err.message ? err.message : err) + ").");
-      });
-      // Filet supplémentaire : si rien ne s'affiche après 8s, on montre le fallback
-      setTimeout(function(){
-        if (player.metadata && !player.metadata.width) {
-          showSwfError("L'animation n'a pas démarré (fichier peut-être incomplet).");
-        }
-      }, 8000);
-    } catch (e) {
-      console.warn("[Ruffle] init error:", e);
-      showSwfError("Erreur d'initialisation du lecteur (" + e.message + ").");
-    }
-  }
-  tryLoad();
-}
-function showSwfError(msg) {
-  var fb = document.getElementById("swf-fallback");
-  if (fb) {
-    fb.classList.remove("h");
-    fb.innerHTML = "&#x26A0;&#xFE0F; " + msg + " Tu peux continuer l'activit&eacute; ci-dessous &mdash; ton professeur reprendra ce point en classe.";
-  }
-  var status = document.getElementById("swf-status");
-  if (status) status.innerHTML = "&#x274C; Lecteur indisponible";
-}
-
-/* Pause + mute du SWF P12 (appelé sur "Enregistrer mon travail" et "Retour") */
-function pauseP12Swf() {
-  var p = window._p12Player;
-  if (!p) return;
-  try {
-    if ("volume" in p) p.volume = 0;             // coupe l'audio immédiatement
-    if (typeof p.pause === "function") p.pause(); // stoppe aussi l'animation (économise CPU)
-  } catch (e) { /* silencieux */ }
-}
-/* Reprise quand l'élève revient sur la page P12 */
-function resumeP12Swf() {
-  var p = window._p12Player;
-  if (!p) return;
-  try {
-    if ("volume" in p) p.volume = 1;
-    if (typeof p.play === "function") p.play();
-  } catch (e) { /* silencieux */ }
-}
-
 /* Soumission de l'activité P12 → sauvegarde + affichage corrigé */
 function submitP12Form() {
   var nom    = (document.getElementById("p12-nom").value    || "").trim();
   var prenom = (document.getElementById("p12-prenom").value || "").trim();
   if (!nom || !prenom) { alert("Merci d’indiquer ton nom et ton prénom avant de soumettre."); return; }
-  pauseP12Swf(); // coupe le son du SWF dès la validation
   var ts = new Date().toLocaleString("fr-FR");
   var classe = (document.getElementById("p12-classe").value || "").trim();
   var snap = { nom:nom, prenom:prenom, classe:classe, ts:ts,
@@ -15623,11 +15554,10 @@ var A2_FIELDS = ["a2-nom","a2-prenom","a2-ev1","a2-ev2","a2-ev3","a2-ev4",
   "a2-t3-moulin","a2-t3-mixeur","a2-t3-robot",
   "a2-t4-moulin","a2-t4-mixeur","a2-t4-robot",
   "a2-t5-moulin","a2-t5-mixeur","a2-t5-robot",
-  "a2-voc1","a2-voc2","a2-voc3",
+  "a2-voc1","a2-voc2","a2-voc3","a2-voc4","a2-voc5","a2-voc6","a2-lignee",
   "a2-ft1","a2-ft2","a2-ft3","a2-ft4","a2-ft5","a2-ft6",
   "a2-ft7","a2-ft8","a2-ft9","a2-ft10","a2-ft11","a2-ft12",
   "a2-bilan2","a2-def-algo","a2-def-algorigram",
-  "a2-algo1","a2-algo2","a2-algo3","a2-algo4",
   "a2-bilan-why","a2-bilan-algo","a2-symb1","a2-symb2","a2-symb3","a2-symb4"];
 function saveA2Draft() {
   if (!user) return;
