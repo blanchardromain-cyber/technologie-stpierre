@@ -4440,7 +4440,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-26a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-26b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -17368,11 +17368,12 @@ var P11_REPORT = {
 };
 /* P12 4e — Exercices n°1 et n°2 : même report que P11, vers le classeur de notes de chaque
    exercice (Apps Script techno-p12-alimentation/apps-script). Points de la grille EVALUATIONS,
-   note déjà sur 20. URL vide = report désactivé, en attendant le déploiement du script. */
+   note déjà sur 20. URL vide = report désactivé. */
 ["p12-ex1", "p12-ex2"].forEach(function (cap, i) {
   var def = EVALUATIONS[cap];
   P11_REPORT[cap] = { nom: "Exercice n°" + (i + 1) + " de P12", secret: "P12-EX" + (i + 1) + "-2026",
-    url: ["", ""][i],
+    url: ["https://script.google.com/macros/s/AKfycbxgbnV0Hlth3pl61WGLh45Vdx7margBgFWhBi7lusxN_kd4L7CrDQWlw_wMkTDpRPRs/exec",
+          "https://script.google.com/macros/s/AKfycbyPx4Ug78f23arXJ-qavigzN-lKd3DiXZ7QWrdvcKD6tmYK_ezaS_ha4qMv25Ixj2n8/exec"][i],
     pts: function (f) { return def.corriger(f).points; }, brut: function (p) { return P12X.total(def, p); },
     note: function (p) { return P12X.total(def, p); },
     appr: function (n, b, p) { return def.appreciation(p, n); } };
