@@ -2108,6 +2108,11 @@ body.est-prof .prof-only{display:block}
       </div>
       <div style="max-width:920px">
 
+        <!-- BARRE OUTILS DYS -->
+        <div class="p11x1-tools p12-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+
         <!-- EN-TÊTE IDENTITÉ -->
         <div style="background:linear-gradient(135deg,#C2185B,#7B1FA2);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px">
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
@@ -2725,6 +2730,11 @@ body.est-prof .prof-only{display:block}
       </div>
       <div style="max-width:920px">
 
+        <!-- BARRE OUTILS DYS -->
+        <div class="p11x1-tools p12-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+
         <!-- EN-TÊTE IDENTITÉ -->
         <div style="background:linear-gradient(135deg,#0277BD,#039BE5);color:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:22px 24px;margin-bottom:18px">
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap">
@@ -3138,6 +3148,11 @@ body.est-prof .prof-only{display:block}
       </div>
       <div style="max-width:860px">
 
+        <!-- BARRE OUTILS DYS -->
+        <div class="p11x1-tools p12-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+
         <!-- BANDEAU IDENTITÉ -->
         <div style="background:linear-gradient(135deg,#ea580c,#f97316);border-radius:14px;padding:22px 24px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden">
           <div style="position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:52px;opacity:.12;filter:grayscale(1) brightness(3);user-select:none">&#x1F9EA;</div>
@@ -3525,6 +3540,11 @@ body.est-prof .prof-only{display:block}
         <h2 style="font-size:17px;font-weight:700">P12 &mdash; Technologie &amp; Alimentation &mdash; Activit&eacute; 3</h2>
       </div>
       <div style="max-width:900px">
+
+        <!-- BARRE OUTILS DYS -->
+        <div class="p11x1-tools p12-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
 
         <!-- BANDEAU IDENTITÉ -->
         <div style="background:linear-gradient(135deg,#4338CA,#6366F1);border-radius:14px;padding:22px 24px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden">
@@ -4453,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-26c</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-27a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -17816,10 +17836,10 @@ restoreA2Draft = function() {
 
 </script>
 
-<!-- Aménagements dys — portée limitée à la page P11 Exercice n°1 -->
-<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2", fonts:"pp4g/fonts/" };</script>
+<!-- Aménagements dys — exercices P11 et pages élèves P12 (exercices 1-2, activités 2-3) -->
+<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", fonts:"pp4g/fonts/" };</script>
 <script src="assets/js/confort-lecture.js" defer></script>
-<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
+<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
   selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire, .p11x2-lire" };</script>
 <script src="assets/js/lecture-immersive.js" defer></script>
 <!-- Relooking de l'accueil (piste B) : three.js n'est téléchargé que si la machine sait l'afficher -->
