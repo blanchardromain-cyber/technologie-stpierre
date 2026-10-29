@@ -75,7 +75,7 @@ function testsUnitaires(E){
   egal(E.compter(E.verdictsNiveaux(bons)), 4, "copie juste : niveaux 4/4");
   egal(E.compter(E.verdictsListe(E.FAST, bons)), 4, "copie juste : FAST 4/4");
   egal(E.compter(E.verdictsListe(E.CHAINES, bons)), 6, "copie juste : chaînes 6/6 (alimenter = tuyauterie, distribuer = vanne, convertir = turbine, transmettre = fils électriques)");
-  egal(E.NIVEAUX[3].critere, "Temps d'arrêt après le retrait des mains", "FC6 : critère « temps d'arrêt », distinct du débit de FP1");
+  egal(E.NIVEAUX[3].critere, "Volume / temps", "FC6 : critère « Volume / temps », comme la fiche papier imprimée");
   egal(E.SOLUTIONS.map(function(s){ return s.v; }).join(","), "capteur,carte,vanne,turbine", "FAST : les 4 solutions de la fiche");
   egal(E.SOLUTIONS_CHAINES.map(function(s){ return s.v; }).join(","), "capteur,carte,vanne,turbine,tuyauterie,fils", "chaînes : les 4 solutions + la tuyauterie et les fils électriques");
   var m1 = E.melanger([1,2,3,4,5], 7), m2 = E.melanger([1,2,3,4,5], 7);
@@ -91,7 +91,11 @@ function testsUnitaires(E){
    ["a5-n4","immédiat",true], ["a5-n4","Immédiat (0 s)",true], ["a5-n4","0 s",true], ["a5-n4","0 seconde",true],
    ["a5-n4","instantanément",true], ["a5-n4","l'eau s'arrête tout de suite",true], ["a5-n4","aussitôt",true],
    ["a5-n4","6 s",false], ["a5-n4","10 secondes",false], ["a5-n4","pas immédiat",false], ["a5-n4","2 L/min",false],
-   ["a5-n4","elle s'arrête",false]
+   ["a5-n4","elle s'arrête",false],
+   ["a5-n1","2 L/mn",true], ["a5-n1","2l/mn",true], ["a5-n1","2,0 L/min",true], ["a5-n1","2 L.min-1",true], ["a5-n1","2 l par minute",true],
+   ["a5-n2","150 mm",true], ["a5-n2","0-15 cm",true], ["a5-n2","15 centimètres",true],
+   ["a5-n4","coupé dès le retrait des mains",true], ["a5-n4","dès que les mains s'éloignent",true],
+   ["a5-n4","ne s'arrête pas dès que les mains partent",false]
   ].forEach(function(c){
     var f = {}; f[c[0]] = c[1];
     egal(E.verdictsNiveaux(f)[+c[0].slice(-1) - 1], c[2], "niveau " + c[0] + " « " + c[1] + " »");
@@ -115,7 +119,7 @@ function testsInterface(w){
   var d = w.document;
   ok(w.formVierge(), "fiche vierge au chargement (ni identité, ni brouillon)");
   egal(w.totalFields(), 29, "29 réponses au total");
-  egal(d.getElementById("q2-r3").textContent.indexOf("Temps d'arrêt après le retrait des mains") >= 0, true, "tableau CDCF : critère FC6 « Temps d'arrêt après le retrait des mains »");
+  egal(d.getElementById("q2-r3").textContent.indexOf("Volume / temps") >= 0, true, "tableau CDCF : critère FC6 « Volume / temps »");
   ok(d.getElementById("doc-d15").textContent.indexOf("Arrêt de l'écoulement") >= 0 && d.getElementById("doc-d15").textContent.indexOf("immédiat (0 s)") >= 0,
      "document fictif : ligne « Arrêt de l'écoulement : immédiat (0 s) »");
   var optsFast = Array.prototype.map.call(d.getElementById("a6-s1").options, function(o){ return o.value; });
