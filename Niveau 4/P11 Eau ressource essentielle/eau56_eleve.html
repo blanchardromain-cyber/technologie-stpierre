@@ -657,7 +657,7 @@ var EAU56 = (function(){
       corrige:"0 à ≈ 15 cm", aide:"Cherche jusqu'à quelle distance le robinet détecte les mains : valeur ET unité." },
     { id:"a5-n3", rep:"FC… (humidité)", fonction:"Résister à l'environnement humide", critere:"Indice IP",
       corrige:"IP65", aide:"Un indice de protection s'écrit IP suivi de deux chiffres : cherche-le dans le document." },
-    { id:"a5-n4", rep:"FC6", fonction:"Limiter la consommation d'eau", critere:"Temps d'arrêt après le retrait des mains",
+    { id:"a5-n4", rep:"FC6", fonction:"Limiter la consommation d'eau", critere:"Volume / temps",
       corrige:"Immédiat (0 s)", aide:"Lis la ligne « Arrêt de l'écoulement » du document : combien de temps l'eau coule-t-elle encore une fois les mains retirées ?" }
   ];
   var SOLUTIONS = [
@@ -703,13 +703,14 @@ var EAU56 = (function(){
   /* Un niveau est juste si la valeur ET l'unité du document y sont, collées l'une à l'autre :
      « 12 L/min pendant 2 min » ne doit pas passer pour « 2 L/min ». */
   var TESTS_NIVEAUX = {
-    "a5-n1": function(v){ return /(^|[^0-9])2 ?l(itres?)?( par)? ?min/.test(norm(v)); },
-    "a5-n2": function(v){ return /(^|[^0-9])15 ?(cm|centimetres?)( |$)/.test(norm(v)); },
+    "a5-n1": function(v){ return /(^|[^0-9])2( 0)? ?l(itres?)?( par)? ?(min|mn)/.test(norm(v)); },
+    "a5-n2": function(v){ var t = norm(v); return /(^|[^0-9])15 ?(cm|centimetres?)( |$)/.test(t) || /(^|[^0-9])150 ?(mm|millimetres?)( |$)/.test(t); },
     "a5-n3": function(v){ return /(^|[^a-z0-9])ip ?65( |$)/.test(norm(v)); },
-    /* FC6 : le temps d'arrêt après le retrait des mains est nul (« immédiat », « 0 s »). */
+    /* FC6 (critère « Volume / temps », comme la fiche papier) : l'écoulement s'arrête dès le retrait
+       des mains (« immédiat », « 0 s », « dès que… »). */
     "a5-n4": function(v){
       var t = norm(v);
-      return (/(immediat|instantan|tout de suite|aussitot|sans delai)/.test(t) || /(^|[^0-9])0 ?(s|sec|secondes?)( |$)/.test(t)) &&
+      return (/(immediat|instantan|tout de suite|aussitot|sans delai|des que|des qu|des le retrait)/.test(t) || /(^|[^0-9])0 ?(s|sec|secondes?)( |$)/.test(t)) &&
              !/(^| )pas( |$)| jamais( |$)/.test(t);
     }
   };
