@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-27a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-10-29a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5026,12 +5026,13 @@ body.est-prof .prof-only{display:block}
           <table class="bat-cor-t">
             <tr><th style="width:60px">Rep.</th><th>Fonction</th><th>Critère</th><th>Niveau</th></tr>
             <tr><td class="k" style="width:60px">FP1</td><td>Distribuer de l'eau pour se laver les mains</td><td>Débit</td><td class="ok">≈ 2 L/min</td></tr>
-            <tr><td class="k" style="width:60px">FC1</td><td>Détecter la présence des mains</td><td>Distance</td><td class="ok">0 à ≈ 15 cm</td></tr>
-            <tr><td class="k" style="width:60px">FC2</td><td>Résister à l'environnement humide</td><td>Indice IP</td><td class="ok">IP65</td></tr>
-            <tr><td class="k" style="width:60px">FC3</td><td>Limiter la consommation d'eau</td><td>Temps d'arrêt après le retrait des mains</td><td class="ok">Immédiat (0 s)</td></tr>
+            <tr><td class="k" style="width:60px">FC… (mains)</td><td>Détecter la présence des mains</td><td>Distance</td><td class="ok">0 à ≈ 15 cm</td></tr>
+            <tr><td class="k" style="width:60px">FC… (humidité)</td><td>Résister à l'environnement humide</td><td>Indice IP</td><td class="ok">IP65</td></tr>
+            <tr><td class="k" style="width:60px">FC6</td><td>Limiter la consommation d'eau</td><td>Temps d'arrêt après le retrait des mains</td><td class="ok">Immédiat (0 s)</td></tr>
           </table>
           </div>
           <p class="bat-cor-p">Les niveaux se lisent dans le document fictif de la fiche : «&nbsp;Fiche technique — Robinet à détection, modèle D-15&nbsp;».</p>
+          <p class="bat-cor-p"><em>Repères : le numéro d'une FC est celui de son trait sur la pieuvre de l'élève (activité en ligne « Bureau d'études »), le même que dans son tableau d'analyse ; il suit l'ordre du tracé, deux binômes justes peuvent donc avoir des numéros différents. Seuls FP1 et FC6 sont communs : « Limiter la consommation d'eau » ne relie le robinet à aucun élément de la pieuvre et prend le numéro qui suit les cinq FC (et non FC3, déjà pris).</em></p>
 
           <h4 class="bat-cor-h">Ce que je dois retenir — activité 5</h4>
           <ul class="bat-cor-l">
@@ -8020,9 +8021,9 @@ var EAU56_FONCTIONS = [
 ];
 var EAU56_NIVEAUX = [
   ["a5-n1", "FP1 — Débit",          "≈ 2 L/min",                                 "Niveau debit"],
-  ["a5-n2", "FC1 — Distance",       "0 à ≈ 15 cm",                               "Niveau distance"],
-  ["a5-n3", "FC2 — Indice IP",      "IP65",                                      "Niveau IP"],
-  ["a5-n4", "FC3 — Temps d'arrêt après le retrait des mains", "Immédiat (0 s)", "Niveau temps arret"]
+  ["a5-n2", "FC… (mains) — Distance",       "0 à ≈ 15 cm",                               "Niveau distance"],
+  ["a5-n3", "FC… (humidité) — Indice IP",      "IP65",                                      "Niveau IP"],
+  ["a5-n4", "FC6 — Temps d'arrêt après le retrait des mains", "Immédiat (0 s)", "Niveau temps arret"]
 ];
 var EAU56_SOL_LB = { capteur:"Capteur infrarouge", carte:"Carte électronique", vanne:"Vanne (électrovanne)", turbine:"Turbine + générateur", tuyauterie:"Tuyauterie", fils:"Fils électriques" };
 var EAU56_FAST = [
