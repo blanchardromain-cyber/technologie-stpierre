@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-03a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-03b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9773,14 +9773,14 @@ var EVALUATIONS = {
     total: 40,
     manuel: true,
     sections: [
-      {"cle": "P1a", "label": "P1a — Détecter la présence des mains → capteur infrarouge", "max": 1.0, "pas": 1.0, "compact": true},
-      {"cle": "P1b", "label": "P1b — Traiter l’information → carte électronique", "max": 1.0, "pas": 1.0, "compact": true},
-      {"cle": "P1c", "label": "P1c — Ouvrir / fermer l’arrivée d’eau → électrovanne", "max": 1.0, "pas": 1.0, "compact": true},
-      {"cle": "P1d", "label": "P1d — Produire l’énergie électrique → turbine + générateur", "max": 1.0, "pas": 1.0, "compact": true},
-      {"cle": "P2a", "label": "P2a — Chaîne d’information : les 3 composants justes", "max": 1.5, "pas": 1.5, "compact": true},
+      {"cle": "P1a", "label": "P1a — Détecter la présence des mains → capteur infrarouge", "max": 1.0, "pas": 0.5, "compact": true},
+      {"cle": "P1b", "label": "P1b — Traiter l’information → carte électronique", "max": 1.0, "pas": 0.5, "compact": true},
+      {"cle": "P1c", "label": "P1c — Ouvrir / fermer l’arrivée d’eau → électrovanne", "max": 1.0, "pas": 0.5, "compact": true},
+      {"cle": "P1d", "label": "P1d — Produire l’énergie électrique → turbine + générateur", "max": 1.0, "pas": 0.5, "compact": true},
+      {"cle": "P2a", "label": "P2a — Chaîne d’information : 0,5 point par composant juste (sur 3)", "max": 1.5, "pas": 0.5, "compact": true},
       {"cle": "P2b", "label": "P2b — Chaîne d’énergie : au moins 2 composants sur 4 justes", "max": 1.0, "pas": 1.0, "compact": true},
       {"cle": "P2c", "label": "P2c — Chaîne d’énergie : les 4 composants justes (s’ajoute à P2b)", "max": 1.0, "pas": 1.0, "compact": true},
-      {"cle": "P2d", "label": "P2d — Flèches : hydraulique avant la turbine, électrique après", "max": 1.5, "pas": 1.5, "compact": true},
+      {"cle": "P2d", "label": "P2d — Énergies : hydraulique avant la turbine, électrique après (proportionnel, sur 4)", "max": 1.5, "pas": 0.375, "compact": true},
       {"cle": "P2e", "label": "P2e — Cite l’eau sous pression qui fait tourner la turbine (rédaction)", "max": 1.0, "pas": 0.5},
       {"cle": "P2f", "label": "P2f — Cite le générateur qui produit l’électricité (rédaction)", "max": 1.0, "pas": 0.5},
       {"cle": "P2g", "label": "P2g — Cite le stockage dans la micro-batterie, qui alimente les composants (rédaction)", "max": 1.0, "pas": 0.5},
@@ -10087,9 +10087,11 @@ var _evalCourante = null;
 function evalAdjStep(cle, maxPts, delta) {
   var el = document.getElementById("adj-" + cle);
   if (!el) return;
-  var v = Math.round((parseFloat(el.value) || 0) * 2) / 2;
+  /* Arrondi au pas de la section (0,5 par défaut ; 0,375 pour P2d de l'éval. 2 de P11). */
+  var pas = Math.abs(delta) || 0.5;
+  var v = Math.round((parseFloat(el.value) || 0) / pas) * pas;
   v = Math.max(0, Math.min(maxPts, v + delta));
-  el.value = Math.round(v * 2) / 2;
+  el.value = Math.round(Math.round(v / pas) * pas * 1000) / 1000;
   evalAdjTotal();
 }
 function evalAdjTotal() {
@@ -10379,6 +10381,10 @@ if (typeof module !== "undefined" && module.exports) module.exports = P11E2;
    AUCUNE réponse attendue ici : tout vient de la clé KP (= K.papier).
    Les cases de RAPPEL (13 points) sont proposées automatiquement ; les cases de
    RÉDACTION (7 points) restent à 0 et sont notées par le professeur.
+   Depuis le 03/11 : en P1, une réponse juste mais incomplète (une partie seulement des
+   groupes de mots de la clé) vaut la moitié ; P2a et P2d sont proportionnels au nombre
+   de réponses justes. Ces critères et les rédactions s'écrivent dans le classeur en
+   PART du critère (0 à 1, liste NUMERIQUE) ; les autres restent des cases à cocher.
    Source : P11/P11_evaluation_2/_sources/correction_papier.js — tests : test_papier.js
    ═══════════════════════════════════════════════════════════════════════════ */
 var P11E2P = (function () {
@@ -10386,11 +10392,20 @@ var P11E2P = (function () {
   var CASES = ["P1a", "P1b", "P1c", "P1d", "P2a", "P2b", "P2c", "P2d", "P2e", "P2f", "P2g",
                "P3a", "P3b", "P3c", "P3d", "P4a", "P4b", "P4c", "P4d"];
   var REDACTION = { P2e: "p2_r", P2f: "p2_r", P2g: "p2_r", P3c: "p3_r", P3d: "p3_r", P4c: "p4_r", P4d: "p4_r" };
+  /* Critères notés en part (0 à 1) dans le classeur : rappel à points partiels et rédactions. */
+  var NUMERIQUE = { P1a: 1, P1b: 1, P1c: 1, P1d: 1, P2a: 1, P2d: 1, P2e: 1, P2f: 1, P2g: 1, P3c: 1, P3d: 1, P4c: 1, P4d: 1 };
 
   /* Réponse reconnue : chaque groupe de mots a au moins un mot cité. */
   function reconnu(texte, groupes) {
     if (!String(texte || "").trim()) return false;
     return (groupes || []).every(function (g) { return P11E2.cite(texte, g); });
+  }
+  /* Part d'une réponse : 1 si tous les groupes sont cités, 0,5 si une partie seulement
+     (réponse juste mais incomplète, ex. « capteur » sans « infrarouge »), 0 sinon. */
+  function part(texte, groupes) {
+    if (!String(texte || "").trim() || !(groupes || []).length) return 0;
+    var n = groupes.filter(function (g) { return P11E2.cite(texte, g); }).length;
+    return n === groupes.length ? 1 : n > 0 ? 0.5 : 0;
   }
   /* Minuscules sans accents (codes 768 à 879 retirés : pas de caractère invisible dans le source). */
   function bas(v) { return String(v || "").toLowerCase().normalize("NFD").split("")
@@ -10401,31 +10416,33 @@ var P11E2P = (function () {
     CASES.forEach(function (k) { pts[k] = 0; });
     if (!KP) return { points: pts, detail: detail };
     var P = KP.poids || {}, L = KP.libelles || {};
+    /* ok : vrai/faux, ou part du critère obtenue (0 à 1). */
     function ligne(sec, rep, attendu, ok, remarque, etatForce) {
-      var max = P[sec] || 0, p = ok ? max : 0; pts[sec] = p;
+      var q = ok === true ? 1 : ok === false ? 0 : Math.max(0, Math.min(1, Number(ok) || 0));
+      var max = P[sec] || 0, p = Math.round(q * max * 1000) / 1000; pts[sec] = p;
       var vide = !String(rep || "").trim();
       detail.push({ sec: sec, label: sec + " — " + (L[sec] || ""), rep: vide ? "" : String(rep), attendu: attendu, pts: p, max: max,
-                    etat: etatForce || (vide ? "vide" : ok ? "ok" : "ko"), remarque: remarque || "" });
+                    etat: etatForce || (vide ? "vide" : q >= 1 ? "ok" : q > 0 ? "partiel" : "ko"), remarque: remarque || "" });
     }
     function bilan(liste) { return liste.map(function (x) { return x || "…"; }).join(" ; "); }
 
-    /* P1 — FAST : une case par fonction technique. */
+    /* P1 — FAST : une case par fonction technique ; réponse incomplète = moitié. */
     ["a", "b", "c", "d"].forEach(function (l) {
-      var rep = f["p1_" + l] || "";
-      ligne("P1" + l, rep, (KP.p1_attendu || {})[l] || "", reconnu(rep, (KP.p1 || {})[l]));
+      var rep = f["p1_" + l] || "", q = part(rep, (KP.p1 || {})[l]);
+      ligne("P1" + l, rep, (KP.p1_attendu || {})[l] || "", q, q === 0.5 ? "Réponse incomplète : moitié des points." : "");
     });
 
     /* P2 — chaînes du robinet. */
     var info = [1, 2, 3].map(function (i) { return f["p2_i" + i] || ""; });
     var infoOk = info.filter(function (r, i) { return reconnu(r, (KP.p2info || [])[i]); }).length;
-    ligne("P2a", bilan(info), (KP.p2info_attendu || []).join(" ; "), infoOk === 3, info.some(String) ? infoOk + "/3 composants reconnus" : "");
+    ligne("P2a", bilan(info), (KP.p2info_attendu || []).join(" ; "), infoOk / 3, info.some(String) ? infoOk + "/3 composants reconnus" : "");
     var ener = [1, 2, 3, 4].map(function (i) { return f["p2_e" + i] || ""; });
     var enerOk = ener.filter(function (r, i) { return reconnu(r, (KP.p2ener || [])[i]); }).length;
     ligne("P2b", bilan(ener), (KP.p2ener_attendu || []).join(" ; "), enerOk >= 2, ener.some(String) ? enerOk + "/4 composants reconnus" : "");
     ligne("P2c", bilan(ener), (KP.p2ener_attendu || []).join(" ; "), enerOk === 4);
     var formes = [1, 2, 3, 4].map(function (i) { return f["p2_f" + i] || ""; });
     var formesOk = formes.filter(function (r, i) { return bas(r) === (KP.p2formes || [])[i]; }).length;
-    ligne("P2d", bilan(formes), (KP.p2formes || []).join(" ; "), formesOk === 4, formes.some(String) ? formesOk + "/4 énergies justes" : "");
+    ligne("P2d", bilan(formes), (KP.p2formes || []).join(" ; "), formesOk / 4, formes.some(String) ? formesOk + "/4 énergies justes" : "");
 
     /* P3 — robot : un verbe par ligne du sujet ; P3a et P3b regroupent deux lignes chacune. */
     var verbes = [1, 2, 3, 4].map(function (i) { return f["p3_v" + i] || ""; });
@@ -10456,7 +10473,7 @@ var P11E2P = (function () {
     return { points: pts, detail: detail };
   }
 
-  return { corriger: corriger, CASES: CASES, REDACTION: REDACTION, reconnu: reconnu };
+  return { corriger: corriger, CASES: CASES, REDACTION: REDACTION, NUMERIQUE: NUMERIQUE, reconnu: reconnu, part: part };
 })();
 if (typeof module !== "undefined" && module.exports) module.exports = P11E2P;
 var P2E_CHIFFRE_URL = "Niveau%204/P11%20Eau%20ressource%20essentielle/evaluation2_corrige.chiffre.json";
