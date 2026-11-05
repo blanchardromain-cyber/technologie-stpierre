@@ -1044,7 +1044,7 @@ function envoyerMessage(){
     majTopo(null);
     e.className = "etat ko";
     if (!enService(de) || !enService(a)) e.textContent = "✖ Message impossible : " + (!enService(de) ? "PC " + (de+1) : "PC " + (a+1)) + " est en panne.";
-    else if (TOPO.type === "anneau") e.textContent = "✖ Message bloqué : l'anneau est interrompu, plus aucun message ne peut faire le tour.";
+    else if (TOPO.type === "anneau") e.textContent = "✖ Message bloqué : dans un anneau, le message tourne dans un seul sens et doit revenir à l'ordinateur qui l'a envoyé. Un seul câble coupé ou un seul ordinateur en panne suffit à tout arrêter.";
     else if (TOPO.type === "etoile") e.textContent = TOPO.pannes.hub ? "✖ Message bloqué : le switch central est en panne, plus aucun message ne passe."
                                                                     : "✖ Message bloqué : le câble qui relie l'un des deux ordinateurs au switch est coupé.";
     else e.textContent = "✖ Message bloqué : il ne reste aucun chemin en service entre ces deux ordinateurs.";
