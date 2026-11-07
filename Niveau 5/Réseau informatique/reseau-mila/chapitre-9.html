@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le réseau de Mila · Quiz</title>
+<style>
+  :root { --nuit: #0b1d3a; --nuit2: #16264d; --or: #ffc94a; --local: #2f7de1; --wifi: #6fc3ff; --donnees: #ff8a1c; --internet: #98a3b0; --secu: #e5484d; --panne: #ffcf33;
+    --vert: #2fae5a; --carte: rgba(255,255,255,.07); --bord: rgba(255,255,255,.16);
+    --police: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--nuit); }
+  body { margin: 0; min-height: 100vh; font-family: var(--police); color: #fff; background: radial-gradient(ellipse at 50% -10%, #23407a 0%, var(--nuit2) 40%, var(--nuit) 100%) fixed; }
+  header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 12px 24px; background: rgba(11,29,58,.92); border-bottom: 1px solid var(--bord); backdrop-filter: blur(6px); }
+  header a { color: #fff; text-decoration: none; font-weight: 700; padding: 6px 14px; border: 1px solid var(--bord); border-radius: 20px; }
+  header h1 { margin: 0; font-size: clamp(18px, 2.4vw, 26px); flex: 1; min-width: 0; }
+  header h1 b { color: var(--or); }
+  .avance { display: flex; align-items: center; gap: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .avance .jauge { width: min(220px, 30vw); height: 10px; border-radius: 6px; background: rgba(255,255,255,.15); overflow: hidden; }
+  .avance .jauge i { display: block; height: 100%; width: 0; background: var(--or); transition: width .3s; }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 20px 60px; }
+  .intro { font-size: 19px; line-height: 1.5; opacity: .92; margin: 6px 0 24px; }
+  .q { display: grid; grid-template-columns: 240px 1fr; gap: 20px; padding: 20px; margin: 0 0 18px; border-radius: 18px; background: var(--carte); border: 2px solid var(--bord); transition: border-color .3s, background .3s; }
+  .q > * { min-width: 0; }
+  .q.repondue { border-color: rgba(255,201,74,.45); }
+  .q.juste { border-color: var(--vert); background: rgba(47,174,90,.12); }
+  .q.partiel { border-color: var(--or); background: rgba(255,201,74,.1); }
+  .q.faux { border-color: var(--secu); background: rgba(229,72,77,.1); }
+  .illus { width: 100%; max-width: 240px; aspect-ratio: 3 / 2; border-radius: 12px; background: #0f2447; border: 1px solid var(--bord); overflow: hidden; }
+  .illus svg { width: 100%; height: 100%; display: block; }
+  .num { display: inline-block; font-size: 15px; font-weight: 800; color: var(--nuit); background: var(--or); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px; }
+  .theme { font-size: 14px; opacity: .7; margin-left: 8px; }
+  .q h2 { margin: 0 0 12px; font-size: 21px; line-height: 1.35; }
+  .choix { display: grid; gap: 8px; }
+  .choix label { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,.06); border: 2px solid transparent; cursor: pointer; font-size: 18px; line-height: 1.35; }
+  .choix label:hover { background: rgba(255,255,255,.11); }
+  .choix input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--or); }
+  .choix label.bon { border-color: var(--vert); }
+  .choix label.mauvais { border-color: var(--secu); }
+  .assoc { display: grid; gap: 8px; }
+  .assoc .ligne { display: grid; grid-template-columns: 1fr minmax(150px, 220px); gap: 10px; align-items: center; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,.06); font-size: 18px; border: 2px solid transparent; }
+  .assoc .ligne.bon { border-color: var(--vert); } .assoc .ligne.mauvais { border-color: var(--secu); }
+  select { width: 100%; font: 600 17px var(--police); padding: 8px 10px; border-radius: 10px; border: 1px solid var(--bord); background: #10264c; color: #fff; }
+  .corr { display: none; margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(0,0,0,.25); font-size: 17px; line-height: 1.45; }
+  .corr b { color: var(--or); }
+  .corr a { color: var(--wifi); font-weight: 700; }
+  .fini .corr { display: block; }
+  .actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 26px; }
+  button { font: 800 20px var(--police); padding: 14px 28px; border-radius: 40px; border: 0; cursor: pointer; }
+  .principal { background: var(--or); color: var(--nuit); }
+  .secondaire { background: rgba(255,255,255,.12); color: #fff; border: 1px solid var(--bord); }
+  .reste { font-size: 17px; opacity: .85; }
+  .resultat { display: none; margin: 10px 0 24px; padding: 24px; border-radius: 20px; background: rgba(11,29,58,.9); border: 3px solid var(--or); text-align: center; }
+  .resultat.visible { display: block; }
+  .resultat .note { font-size: clamp(44px, 8vw, 72px); font-weight: 800; color: var(--or); font-variant-numeric: tabular-nums; }
+  .resultat p { font-size: 19px; margin: 8px 0; }
+  .themes { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+  .themes span { padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,.1); font-size: 16px; font-variant-numeric: tabular-nums; }
+  footer { max-width: 980px; margin: 0 auto; padding: 0 20px 30px; font-size: 14px; opacity: .7; }
+  @media (max-width: 720px) { .q { grid-template-columns: 1fr; } .illus { max-width: 100%; } .assoc .ligne { grid-template-columns: 1fr; } main { padding: 18px 16px 50px; } header { padding: 10px 16px; } }
+  @media (prefers-reduced-motion: reduce) { .illus * { animation: none !important; } }
+  /* animations des illustrations */
+  @keyframes tourne { to { transform: rotate(360deg); } }
+  @keyframes clignote { 50% { opacity: .15; } }
+  @keyframes pulse { 50% { transform: scale(1.12); } }
+  @keyframes onde { from { r: 6; opacity: .9; } to { r: 70; opacity: 0; } }
+  @keyframes eloigne { 0%, 15% { transform: translateX(0); } 85%, 100% { transform: translateX(120px); } }
+  @keyframes balaie { 0% { transform: translateY(0); } 50% { transform: translateY(60px); } 100% { transform: translateY(0); } }
+  @keyframes pivote { 0%, 20% { transform: rotate(-30deg); } 40%, 60% { transform: rotate(0deg); } 80%, 100% { transform: rotate(30deg); } }
+  @keyframes zoom { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+  @keyframes ouvre { 0%, 20% { transform: translateY(0); } 50%, 100% { transform: translateY(-26px); } }
+  .tourne { transform-box: fill-box; transform-origin: center; animation: tourne 18s linear infinite; }
+  .clignote { animation: clignote 1s steps(2) infinite; }
+  .pulse { transform-box: fill-box; transform-origin: center; animation: pulse 1.6s ease-in-out infinite; }
+  .zoom { transform-box: fill-box; transform-origin: center; animation: zoom 3s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">☰ Chapitres</a>
+  <h1><b>Chapitre 9</b> · Quiz : as-tu compris le réseau de Mila ?</h1>
+  <div class="avance"><span id="compte">0 / 0</span><span class="jauge"><i id="jauge"></i></span></div>
+</header>
+<main>
+  <p class="intro">Réponds à toutes les questions, puis clique sur <b>« Vérifier mes réponses »</b>. Tu verras ta note, la bonne réponse expliquée et le chapitre à revoir si besoin.</p>
+  <div class="resultat" id="resultat" aria-live="polite"></div>
+  <div id="questions"></div>
+  <div class="actions">
+    <button class="principal" id="verifier">Vérifier mes réponses</button>
+    <button class="secondaire" id="recommencer">↺ Recommencer</button>
+    <span class="reste" id="reste"></span>
+  </div>
+</main>
+<footer>Romain Blanchard, professeur de Technologie</footer>
+<script>
+(function () {
+  // ---------- petites illustrations animées (SVG) ----------
+  var O = "#ff8a1c", B = "#2f7de1", G = "#98a3b0", R = "#e5484d", Y = "#ffcf33", W = "#6fc3ff";
+  function svg(contenu) { return '<svg viewBox="0 0 240 160" role="img" aria-hidden="true">' + contenu + '</svg>'; }
+  function hexa(cx, cy, r) { var p = []; for (var i = 0; i < 6; i++) { var a = -Math.PI / 2 + i * Math.PI / 3; p.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return p; }
+  function poste(x, y, c) { return '<rect x="' + (x - 9) + '" y="' + (y - 7) + '" width="18" height="13" rx="2" fill="' + (c || "#dfe8f3") + '"/><rect x="' + (x - 6) + '" y="' + (y + 7) + '" width="12" height="3" fill="#8aa"/>'; }
+  function colis(id, chemin, dur) { return '<rect width="9" height="8" x="-4.5" y="-4" rx="2" fill="' + O + '"><animateMotion dur="' + (dur || 3) + 's" repeatCount="indefinite" path="' + chemin + '"/></rect>'; }
+  var ILL = {
+    anneau: function () {
+      var p = hexa(120, 80, 55), d = "";
+      for (var i = 0; i < 6; i++) { var a = p[i], b = p[(i + 1) % 6]; d += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + (i === 2 ? Y : B) + '" stroke-width="4"' + (i === 2 ? ' class="clignote" stroke-dasharray="6 6"' : '') + '/>'; }
+      return svg('<g class="tourne">' + d + p.map(function (q) { return poste(q[0], q[1]); }).join("") + '</g><text x="120" y="152" fill="' + Y + '" font-size="13" text-anchor="middle" font-weight="700">câble coupé</text>');
+    },
+    maille: function () {
+      var p = hexa(120, 78, 58), d = "";
+      for (var i = 0; i < 6; i++) for (var j = i + 1; j < 6; j++) d += '<line x1="' + p[i][0] + '" y1="' + p[i][1] + '" x2="' + p[j][0] + '" y2="' + p[j][1] + '" stroke="' + B + '" stroke-width="2.2" opacity=".85"/>';
+      return svg('<g class="tourne">' + d + p.map(function (q) { return poste(q[0], q[1]); }).join("") + '</g><text x="120" y="154" fill="#fff" font-size="13" text-anchor="middle" font-weight="700">6 appareils, tous reliés</text>');
+    },
+    etoile: function () {
+      var p = hexa(120, 78, 58), d = "";
+      p.forEach(function (q, i) { d += '<line x1="120" y1="78" x2="' + q[0] + '" y2="' + q[1] + '" stroke="' + (i === 3 ? "#556" : B) + '" stroke-width="3.5"' + (i === 3 ? ' stroke-dasharray="4 5"' : '') + '/>'; });
+      return svg(d + '<rect x="106" y="70" width="28" height="16" rx="3" fill="' + B + '"/>' + p.map(function (q, i) { return poste(q[0], q[1], i === 3 ? "#556" : null); }).join("") +
+        '<circle cx="' + p[3][0] + '" cy="' + (p[3][1] - 16) + '" r="7" fill="' + Y + '" class="clignote"/>' + colis(1, "M" + p[0][0] + " " + p[0][1] + " L120 78 L" + p[1][0] + " " + p[1][1], 2.4));
+    },
+    wifi: function () {
+      return svg('<rect x="14" y="70" width="30" height="10" rx="5" fill="#f4f6f9"/><circle cx="29" cy="75" r="6" fill="none" stroke="' + W + '" stroke-width="2"><animate attributeName="r" values="6;90" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2.4s" repeatCount="indefinite"/></circle>' +
+        '<circle cx="29" cy="75" r="6" fill="none" stroke="' + W + '" stroke-width="2"><animate attributeName="r" values="6;90" dur="2.4s" begin="1.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2.4s" begin="1.2s" repeatCount="indefinite"/></circle>' +
+        '<rect x="96" y="40" width="12" height="80" fill="#8b8378"/><g style="animation: eloigne 5s ease-in-out infinite alternate"><rect x="80" y="62" width="22" height="30" rx="3" fill="#222a36" stroke="#cfe6ff"/></g>' +
+        '<text x="120" y="150" fill="#fff" font-size="12" text-anchor="middle">distance + mur</text>');
+    },
+    cable: function () {
+      var f = ""; var c = ["#ff8a1c", "#f6dcc4", "#2fae5a", "#d5ecd9", "#2f7de1", "#d3e3f7", "#7a4a2a", "#e6d7cb"];
+      for (var i = 0; i < 8; i++) f += '<path d="M90 ' + (60 + i * 5) + ' C120 ' + (50 + i * 6) + ', 140 ' + (70 + i * 4) + ', 175 ' + (62 + i * 5) + '" stroke="' + c[i] + '" stroke-width="3.2" fill="none"/>';
+      return svg('<g class="zoom"><rect x="20" y="58" width="72" height="44" rx="20" fill="' + B + '"/>' + f + '<rect x="172" y="52" width="46" height="56" rx="6" fill="rgba(223,234,245,.35)" stroke="#dfeaf5"/></g><text x="196" y="125" fill="#fff" font-size="12" text-anchor="middle">RJ45</text>');
+    },
+    serveur: function () {
+      return svg('<rect x="150" y="22" width="56" height="110" rx="6" fill="#1f3f73"/><rect x="158" y="40" width="40" height="20" rx="3" fill="#d9e2ec"/><rect x="158" y="66" width="40" height="20" rx="3" fill="#d9e2ec"/><rect x="158" y="92" width="40" height="20" rx="3" fill="#cfe9d6"/>' +
+        '<circle cx="164" cy="30" r="3" fill="#7dffb0" class="clignote"/>' + poste(40, 80) + colis(1, "M40 70 L100 70 L150 60", 2.6) + '<text x="46" y="112" fill="#fff" font-size="12" text-anchor="middle">identifiant</text><text x="46" y="126" fill="#fff" font-size="12" text-anchor="middle">+ mot de passe</text>');
+    },
+    switchOff: function () {
+      var p = [[40, 40], [40, 120], [200, 40], [200, 120]], d = "";
+      p.forEach(function (q) { d += '<line x1="120" y1="80" x2="' + q[0] + '" y2="' + q[1] + '" stroke="#556" stroke-width="3.5"/>' + poste(q[0], q[1]); });
+      return svg(d + '<rect x="100" y="72" width="40" height="16" rx="3" fill="#33415a" stroke="' + Y + '"/><circle cx="120" cy="58" r="8" fill="' + Y + '" class="clignote"/>');
+    },
+    modem: function () {
+      return svg('<path d="M10 80 q10 -20 20 0 t20 0 t20 0 t20 0" stroke="' + G + '" stroke-width="3" fill="none"><animate attributeName="stroke-dashoffset" values="0;-40" dur="1s" repeatCount="indefinite"/></path>' +
+        '<rect x="94" y="62" width="52" height="34" rx="6" fill="' + G + '" class="pulse"/><text x="120" y="83" font-size="10" fill="#1b2333" text-anchor="middle" font-weight="800">?</text><line x1="146" y1="79" x2="230" y2="79" stroke="' + B + '" stroke-width="4"/>' + colis(1, "M150 79 L228 79", 1.6));
+    },
+    routeur: function () {
+      return svg('<line x1="10" y1="80" x2="100" y2="80" stroke="' + G + '" stroke-width="4"/><line x1="140" y1="80" x2="225" y2="30" stroke="' + B + '" stroke-width="4"/><line x1="140" y1="80" x2="228" y2="80" stroke="' + B + '" stroke-width="4"/><line x1="140" y1="80" x2="225" y2="130" stroke="' + B + '" stroke-width="4"/>' +
+        '<rect x="96" y="64" width="48" height="32" rx="6" fill="#6f7a87"/><g style="transform-origin:120px 80px; animation: pivote 4s ease-in-out infinite"><polygon points="114,72 140,80 114,88" fill="' + Y + '"/></g>' + colis(1, "M12 80 L100 80", 1.8));
+    },
+    trajet: function () {
+      var n = ["Ordi", "Comm.", "Rout.", "Modem", "Ligne"], d = "";
+      n.forEach(function (m, i) { var x = 26 + i * 47; d += '<rect x="' + (x - 20) + '" y="64" width="40" height="30" rx="6" fill="' + (i < 2 ? B : G) + '"/><text x="' + x + '" y="83" font-size="10" fill="#fff" text-anchor="middle" font-weight="700">?</text>'; if (i < 4) d += '<line x1="' + (x + 20) + '" y1="79" x2="' + (x + 27) + '" y2="79" stroke="#fff" stroke-width="2"/>'; });
+      return svg(d + colis(1, "M26 58 L214 58", 4) + '<text x="120" y="126" fill="#fff" font-size="12" text-anchor="middle">dans quel ordre ?</text>');
+    },
+    parefeu: function () {
+      return svg('<rect x="104" y="20" width="32" height="120" rx="4" fill="rgba(229,72,77,.25)" stroke="' + R + '" stroke-width="3"/><rect x="104" y="20" width="32" height="4" fill="#ffd0d2" style="animation: balaie 2s linear infinite"/>' +
+        '<g><rect width="12" height="10" x="-6" y="-5" rx="2" fill="#5b2a86"><animateMotion dur="3s" repeatCount="indefinite" path="M10 80 L98 80 L60 80"/></rect></g>' + colis(1, "M230 60 L140 60 L10 60", 3));
+    },
+    cle: function () {
+      return svg(poste(70, 70) + '<rect x="96" y="66" width="22" height="10" rx="2" fill="' + R + '"/><g class="pulse"><circle cx="170" cy="78" r="38" fill="#c9d1da"/><circle cx="170" cy="78" r="22" fill="#7a2fbf" opacity=".85"><animate attributeName="r" values="4;26;4" dur="4s" repeatCount="indefinite"/></circle></g>');
+    },
+    intrus: function () {
+      return svg('<rect x="8" y="20" width="224" height="120" rx="8" fill="none" stroke="' + R + '" stroke-width="3" stroke-dasharray="10 6"/><rect x="104" y="14" width="32" height="12" fill="' + R + '"/><text x="120" y="42" fill="#fff" font-size="11" text-anchor="middle">entrée officielle</text>' +
+        '<rect x="140" y="92" width="40" height="14" rx="3" fill="' + B + '"/><circle cx="70" cy="100" r="12" fill="#2b2b33"/><rect x="60" y="112" width="20" height="24" rx="5" fill="#2b2b33"/><path d="M80 110 Q110 130 140 100" stroke="' + R + '" stroke-width="3" fill="none" stroke-dasharray="5 4" class="clignote"/>');
+    },
+    box: function () {
+      var m = [["C", B], ["W", W], ["M", G], ["R", "#6f7a87"], ["P", R]], d = "";
+      m.forEach(function (x, i) { d += '<g style="animation: ouvre 3s ease-in-out ' + (i * 0.15) + 's infinite alternate"><rect x="' + (52 + i * 28) + '" y="60" width="24" height="20" rx="4" fill="' + x[1] + '"/><text x="' + (64 + i * 28) + '" y="74" font-size="11" fill="#fff" text-anchor="middle" font-weight="800">' + x[0] + '</text></g>'; });
+      return svg(d + '<rect x="44" y="76" width="152" height="46" rx="10" fill="#f4f6f9"/><text x="120" y="104" font-size="15" fill="#1b2333" text-anchor="middle" font-weight="800">BOX</text>');
+    },
+    objets: function () {
+      return svg('<rect x="100" y="70" width="40" height="18" rx="5" fill="#f4f6f9"/><circle cx="120" cy="79" r="8" fill="none" stroke="' + W + '" stroke-width="2"><animate attributeName="r" values="8;80" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2.6s" repeatCount="indefinite"/></circle>' +
+        '<circle cx="40" cy="40" r="12" fill="#fff1c4" class="pulse"/><rect x="186" y="28" width="30" height="30" rx="15" fill="#f4f6f9"/><rect x="30" y="112" width="22" height="30" rx="8" fill="#30353d"/><rect x="186" y="110" width="34" height="26" fill="#7a5232"/><circle cx="120" cy="140" r="9" fill="#7ec8ff"/>');
+    },
+    internet: function () {
+      var n = [[40, 40], [200, 35], [215, 120], [30, 125], [120, 140], [120, 20]], d = "";
+      n.forEach(function (a, i) { d += '<line x1="120" y1="80" x2="' + a[0] + '" y2="' + a[1] + '" stroke="' + G + '" stroke-width="2"/>'; d += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + n[(i + 1) % 6][0] + '" y2="' + n[(i + 1) % 6][1] + '" stroke="' + G + '" stroke-width="1.5" opacity=".6"/>'; });
+      return svg('<g class="tourne">' + d + n.map(function (a) { return '<circle cx="' + a[0] + '" cy="' + a[1] + '" r="11" fill="none" stroke="' + B + '" stroke-width="3"/>'; }).join("") + '<circle cx="120" cy="80" r="9" fill="' + G + '"/></g>');
+    },
+    diag1: function () {
+      return svg(poste(40, 50) + poste(40, 110) + '<line x1="40" y1="62" x2="40" y2="98" stroke="' + B + '" stroke-width="3"/>' + colis(1, "M48 55 L48 105 L48 55", 2) + '<rect x="120" y="68" width="40" height="24" rx="5" fill="' + G + '"/><line x1="160" y1="80" x2="230" y2="80" stroke="#556" stroke-width="3" stroke-dasharray="5 5"/><circle cx="200" cy="60" r="8" fill="' + Y + '" class="clignote"/><line x1="56" y1="80" x2="120" y2="80" stroke="' + B + '" stroke-width="3"/>');
+    },
+    diag2: function () {
+      return svg('<rect x="96" y="20" width="48" height="26" rx="5" fill="#6f7a87"/><line x1="120" y1="46" x2="40" y2="110" stroke="' + B + '" stroke-width="3"/><line x1="120" y1="46" x2="120" y2="110" stroke="' + B + '" stroke-width="3"/><line x1="120" y1="46" x2="200" y2="110" stroke="' + B + '" stroke-width="3"/>' +
+        '<rect x="18" y="110" width="44" height="26" rx="4" fill="#f6dcc4"/><rect x="98" y="110" width="44" height="26" rx="4" fill="#d5ecd9"/><rect x="178" y="110" width="44" height="26" rx="4" fill="#d3e3f7"/>' +
+        '<text x="40" y="152" fill="#fff" font-size="10" text-anchor="middle">Vie scol.</text><text x="120" y="152" fill="#fff" font-size="10" text-anchor="middle">Techno</text><text x="200" y="152" fill="#fff" font-size="10" text-anchor="middle">CDI</text>' + colis(1, "M120 46 L200 110", 2) + '<circle cx="200" cy="96" r="7" fill="' + Y + '" class="clignote"/>');
+    },
+  };
+
+  // ---------- questions ----------
+  // type "un" : un seul bon choix (bon = indice) ; "vf" : vrai/faux par ligne ; "assoc" : liste déroulante par ligne ;
+  // "ordre" : positions ; "plusieurs" : cases à cocher (bons = indices). Chaque question vaut 1 point.
+  var Q = [
+    { theme: "Topologies", ch: 1, ill: "anneau", type: "un", q: "Dans ce réseau en anneau, un seul câble est coupé. Que se passe-t-il ?",
+      choix: ["Seul l'appareil voisin de la coupure est isolé.", "Le message prend un autre chemin.", "Tout le réseau est bloqué.", "Rien : l'anneau se répare tout seul."], bon: 2,
+      ex: "En anneau, le message tourne dans un seul sens et doit faire le tour : une seule coupure interrompt la boucle et <b>bloque tout le réseau</b>." },
+    { theme: "Topologies", ch: 1, ill: "maille", type: "un", q: "Combien de câbles faut-il pour relier 6 appareils en réseau maillé, chacun relié à tous les autres ?",
+      choix: ["6", "15", "12", "36"], bon: 1, ex: "Il faut <b>15 câbles</b> (contre 6 en étoile ou en anneau) : c'est pourquoi le maillé est sûr mais très coûteux." },
+    { theme: "Topologies", ch: 1, ill: "etoile", type: "un", q: "Réseau en étoile de 6 appareils : l'imprimante tombe en panne. Combien d'appareils fonctionnent encore ?",
+      choix: ["Aucun", "3", "6", "5"], bon: 3, ex: "En étoile, chaque appareil a son propre câble vers le commutateur : seul l'appareil en panne est isolé, <b>les 5 autres</b> continuent." },
+    { theme: "Matériels", ch: 2, ill: "cable", type: "vf", q: "Vrai ou faux ?",
+      lignes: [["Le réseau en étoile est le plus utilisé au collège et à la maison.", true], ["Le Wi-Fi est plus stable que le câble.", false], ["Un mur épais atténue le signal Wi-Fi.", true], ["Un câble Ethernet contient 8 fils torsadés par paires.", true]],
+      ex: "L'étoile est la plus utilisée. Le câble (RJ45, 8 fils torsadés par paires) est <b>plus stable</b> que le Wi-Fi, dont le débit varie avec la distance et les obstacles." },
+    { theme: "Matériels", ch: 2, ill: "wifi", type: "un", q: "La tablette rame puis se déconnecte quand on s'éloigne du bâtiment. Pourquoi ?",
+      choix: ["Son câble réseau s'est débranché.", "La portée de la borne Wi-Fi est limitée et les obstacles atténuent le signal.", "Le serveur s'est éteint.", "La tablette n'a plus de mot de passe."], bon: 1,
+      ex: "Le Wi-Fi est une liaison radio : <b>le débit baisse avec la distance et les obstacles</b>, jusqu'à la déconnexion." },
+    { theme: "Matériels", ch: 2, ill: "cable", type: "assoc", q: "Associe chaque caractéristique au bon matériel.", options: ["Commutateur", "Borne Wi-Fi"],
+      lignes: [["Liaison filaire par câble RJ45", 0], ["Grande liberté de déplacement", 1], ["Débit variable et sensible aux obstacles", 1], ["Il faut installer des câbles", 0]],
+      ex: "Commutateur : filaire RJ45, rapide, stable et sécurisé, mais il faut installer des câbles. Borne Wi-Fi : sans fil (ondes radio), liberté de déplacement, débit variable." },
+    { theme: "Serveur", ch: 3, ill: "serveur", type: "un", q: "Tu te connectes avec ton identifiant et ton mot de passe. Que fait le serveur ?",
+      choix: ["Il allume ton ordinateur.", "Il stocke tous les sites web.", "Il vérifie ton identité (authentification).", "Il traduit le signal de la ligne."], bon: 2,
+      ex: "Le serveur <b>vérifie ton identité</b> : il contrôle identifiant et mot de passe, puis autorise ou refuse l'accès." },
+    { theme: "Serveur", ch: 3, ill: "serveur", type: "un", q: "Pourquoi retrouves-tu ton dossier sur n'importe quel ordinateur de la salle ?",
+      choix: ["Les fichiers sont stockés de façon centralisée sur le serveur.", "Chaque ordinateur garde une copie de tous les dossiers.", "Le dossier est rangé dans la box Internet.", "Le commutateur mémorise les fichiers."], bon: 0,
+      ex: "L'espace personnel n'est pas sur le poste mais <b>sur le serveur</b>, accessible depuis tous les postes du réseau." },
+    { theme: "Pannes", ch: 4, ill: "serveur", type: "un", q: "Le serveur du collège tombe en panne pendant la séance. Que se passe-t-il ?",
+      choix: ["Les ordinateurs s'éteignent : le serveur fournit l'électricité.", "On peut encore naviguer, mais plus ouvrir sa session ni son espace personnel.", "Les tablettes ne peuvent plus s'allumer.", "Rien ne change."], bon: 1,
+      ex: "Le serveur gère l'authentification et le stockage, <b>pas l'électricité</b> : les postes restent allumés, mais sans session ni espace personnel." },
+    { theme: "Pannes", ch: 4, ill: "switchOff", type: "un", q: "Le commutateur de la salle informatique est débranché du secteur. Conséquence ?",
+      choix: ["Seul l'ordinateur du professeur s'arrête.", "Aucun impact : les ordinateurs se parlent directement.", "Les tablettes Wi-Fi s'éteignent.", "Tous les ordinateurs fixes perdent l'accès au réseau."], bon: 3,
+      ex: "Le commutateur est <b>le point central de l'étoile</b> : sans lui, plus aucune liaison filaire." },
+    { theme: "Internet", ch: 5, ill: "internet", type: "un", q: "Internet, c'est…",
+      choix: ["un très grand serveur unique.", "le réseau des réseaux.", "la box de la maison.", "un réseau réservé aux ordinateurs."], bon: 1,
+      ex: "Internet relie entre eux des millions de réseaux : c'est <b>le réseau des réseaux</b>." },
+    { theme: "Internet", ch: 5, ill: "modem", type: "un", q: "Quel matériel convertit le signal de la ligne en données numériques utilisables par le réseau ?",
+      choix: ["Le routeur", "Le commutateur", "Le modem", "Le serveur"], bon: 2, ex: "Le <b>modem</b>, le traducteur : signal de la ligne ↔ données numériques." },
+    { theme: "Internet", ch: 5, ill: "routeur", type: "un", q: "Quel matériel lit l'adresse des paquets et les oriente entre le réseau local et Internet ?",
+      choix: ["Le routeur", "Le modem", "La borne Wi-Fi", "L'antivirus"], bon: 0, ex: "Le <b>routeur</b>, l'aiguilleur : il lit l'adresse de chaque paquet et l'envoie au bon endroit." },
+    { theme: "Internet", ch: 5, ill: "trajet", type: "ordre", q: "Remets dans l'ordre le trajet d'une page web demandée depuis l'ordinateur du café (de l'ordinateur vers l'extérieur).",
+      elements: ["Ordinateur", "Commutateur", "Routeur", "Modem", "Ligne de l'opérateur"],
+      ex: "Ordinateur → commutateur → routeur → modem → ligne de l'opérateur : <b>5 étapes</b>. Un fichier local, lui, ne passe que par le commutateur (3 étapes)." },
+    { theme: "Internet", ch: 5, ill: "etoile", type: "un", q: "Un fichier envoyé de l'ordinateur à la caisse du café passe par…",
+      choix: ["le routeur et le modem.", "Internet.", "seulement le commutateur.", "le serveur de l'opérateur."], bon: 2,
+      ex: "Il reste dans le réseau local : ordinateur → <b>commutateur</b> → caisse." },
+    { theme: "Internet", ch: 5, ill: "modem", type: "vf", q: "Vrai ou faux ?",
+      lignes: [["Le modem et le routeur stockent les sites web pour les afficher plus vite.", false], ["Le routeur produit l'électricité des ordinateurs.", false], ["Sans modem, le réseau ne peut pas échanger avec la ligne de l'opérateur.", true]],
+      ex: "Pièges classiques : ni le modem ni le routeur ne <b>stockent les sites web</b> ni ne <b>produisent d'électricité</b>." },
+    { theme: "Sécurité", ch: 6, ill: "parefeu", type: "assoc", q: "Associe chaque menace à la protection qui agit.", options: ["Passerelle", "Pare-feu", "Antivirus"],
+      lignes: [["Un pirate tente d'entrer à distance par un port ouvert", 1], ["Une clé USB contient un logiciel espion", 2], ["Un inconnu branche son ordinateur directement sur le commutateur", 0]],
+      ex: "Pirate à distance → <b>pare-feu</b> (analyse le trafic selon des règles). Clé USB → <b>antivirus</b> (détecte, neutralise, supprime). Inconnu sur le commutateur → il contourne la <b>passerelle</b>, seul point d'entrée officiel." },
+    { theme: "Sécurité", ch: 6, ill: "cle", type: "un", q: "Pourquoi le pare-feu ne voit-il pas le virus d'une clé USB ?",
+      choix: ["Il est éteint la nuit.", "La clé ne passe pas par l'entrée réseau que le pare-feu surveille.", "Le virus est trop petit.", "La clé USB est protégée par la passerelle."], bon: 1,
+      ex: "Le pare-feu filtre le <b>trafic réseau</b>. La clé arrive directement sur la machine : c'est l'antivirus qui agit." },
+    { theme: "Sécurité", ch: 6, ill: "intrus", type: "un", q: "Quelle protection est une barrière physique, le point de passage unique entre le réseau interne et l'extérieur ?",
+      choix: ["L'antivirus", "Le pare-feu", "Le serveur", "La passerelle"], bon: 3, ex: "La <b>passerelle</b> est la protection physique ; pare-feu et antivirus sont des logiciels." },
+    { theme: "Sécurité", ch: 6, ill: "parefeu", type: "un", q: "Pour rester efficaces, le pare-feu et l'antivirus doivent…",
+      choix: ["être mis à jour régulièrement.", "être débranchés la nuit.", "être installés sur la box seulement.", "être désactivés pendant les téléchargements."], bon: 0,
+      ex: "De nouvelles menaces apparaissent chaque jour : règles et signatures doivent être <b>mises à jour</b>." },
+    { theme: "Maintenance", ch: 7, ill: "diag1", type: "un", q: "Les ordinateurs s'échangent des fichiers sans problème, mais rien ne sort vers Internet. Quel matériel est en panne ?",
+      choix: ["Le routeur", "Le modem", "Le commutateur", "L'imprimante"], bon: 1,
+      ex: "Le réseau local fonctionne, mais rien ne passe sur la ligne : la traduction ne se fait plus, c'est <b>le modem</b>." },
+    { theme: "Maintenance", ch: 7, ill: "diag2", type: "un", q: "La ligne fonctionne, mais la page de la vie scolaire arrive au CDI ou en salle de technologie. Quel matériel est en panne ?",
+      choix: ["Le modem", "La borne Wi-Fi", "Le routeur", "Le serveur"], bon: 2,
+      ex: "Les paquets arrivent au mauvais endroit : les adresses ne sont plus lues, l'aiguillage ne se fait plus, c'est <b>le routeur</b>." },
+    { theme: "À la maison", ch: 8, ill: "box", type: "plusieurs", q: "Coche tout ce que la box Internet regroupe.",
+      choix: ["Commutateur", "Serveur", "Borne Wi-Fi", "Modem", "Antivirus", "Routeur", "Passerelle"], bons: [0, 2, 3, 5, 6],
+      ex: "Box Internet = <b>commutateur + borne Wi-Fi + modem + routeur + passerelle</b>. L'antivirus est un logiciel installé sur chaque machine." },
+    { theme: "À la maison", ch: 8, ill: "objets", type: "un", q: "On parle de « réseau numérique » quand le réseau…",
+      choix: ["n'utilise aucun câble.", "relie aussi des objets connectés et des appareils domotiques.", "ne relie que des ordinateurs.", "n'est pas relié à Internet."], bon: 1,
+      ex: "Ampoules, thermostats, volets, enceintes, montres… le réseau devient <b>numérique</b> quand il relie aussi les objets connectés." },
+    { theme: "Pour aller plus loin", ch: 2, ill: "objets", type: "un", q: "À la maison, quel appareil a le plus intérêt à être relié à la box par un câble ?",
+      choix: ["La montre connectée", "Le smartphone", "L'ordinateur fixe, qui ne bouge pas", "L'enceinte portable"], bon: 2,
+      ex: "Un appareil qui <b>ne bouge pas</b> profite du câble : connexion plus rapide, stable et sécurisée. Le Wi-Fi sert aux appareils qu'on déplace." },
+  ];
+
+  // ---------- rendu ----------
+  var zone = document.getElementById("questions");
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  Q.forEach(function (q, i) {
+    var id = "q" + i, h = "";
+    if (q.type === "un" || q.type === "plusieurs") {
+      h = '<div class="choix">' + q.choix.map(function (c, k) {
+        return '<label><input type="' + (q.type === "un" ? "radio" : "checkbox") + '" name="' + id + '" value="' + k + '"> <span>' + esc(c) + '</span></label>';
+      }).join("") + "</div>";
+    } else if (q.type === "vf") {
+      h = '<div class="assoc">' + q.lignes.map(function (l, k) {
+        return '<div class="ligne"><span>' + esc(l[0]) + '</span><select name="' + id + '_' + k + '"><option value="">— choisir —</option><option value="v">Vrai</option><option value="f">Faux</option></select></div>';
+      }).join("") + "</div>";
+    } else if (q.type === "assoc") {
+      h = '<div class="assoc">' + q.lignes.map(function (l, k) {
+        return '<div class="ligne"><span>' + esc(l[0]) + '</span><select name="' + id + '_' + k + '"><option value="">— choisir —</option>' + q.options.map(function (o, j) { return '<option value="' + j + '">' + esc(o) + "</option>"; }).join("") + "</select></div>";
+      }).join("") + "</div>";
+    } else if (q.type === "ordre") {
+      // Les éléments sont proposés dans un ordre mélangé, toujours le même (pas de réponse visible dans l'ordre des options).
+      var melange = [3, 0, 4, 1, 2];
+      h = '<div class="assoc">' + q.elements.map(function (_, k) {
+        return '<div class="ligne"><span>Étape ' + (k + 1) + '</span><select name="' + id + '_' + k + '"><option value="">— choisir —</option>' + melange.map(function (j) { return '<option value="' + j + '">' + esc(q.elements[j]) + "</option>"; }).join("") + "</select></div>";
+      }).join("") + "</div>";
+    }
+    var art = document.createElement("article");
+    art.className = "q"; art.id = id;
+    art.innerHTML = '<div class="illus">' + ILL[q.ill]() + '</div><div><span class="num">Question ' + (i + 1) + '</span><span class="theme">' + q.theme + '</span><h2>' + esc(q.q) + '</h2>' + h + '<div class="corr"></div></div>';
+    zone.appendChild(art);
+  });
+
+  // ---------- lecture des réponses et correction ----------
+  function valeurs(i) {
+    var q = Q[i], id = "q" + i;
+    if (q.type === "un") { var c = document.querySelector('input[name="' + id + '"]:checked'); return c ? +c.value : null; }
+    if (q.type === "plusieurs") { return [].slice.call(document.querySelectorAll('input[name="' + id + '"]:checked')).map(function (x) { return +x.value; }); }
+    var n = q.type === "ordre" ? q.elements.length : q.lignes.length, r = [];
+    for (var k = 0; k < n; k++) { var s = document.querySelector('select[name="' + id + '_' + k + '"]'); r.push(s.value); }
+    return r;
+  }
+  function repondue(i) {
+    var q = Q[i], v = valeurs(i);
+    if (q.type === "un") return v !== null;
+    if (q.type === "plusieurs") return v.length > 0;
+    return v.every(function (x) { return x !== ""; });
+  }
+  // Note d'une question entre 0 et 1.
+  function noter(i) {
+    var q = Q[i], v = valeurs(i);
+    if (q.type === "un") return v === q.bon ? 1 : 0;
+    if (q.type === "plusieurs") {
+      var justes = 0; q.choix.forEach(function (_, k) { if ((v.indexOf(k) >= 0) === (q.bons.indexOf(k) >= 0)) justes++; });
+      // Tout cocher ou ne rien cocher ne rapporte rien : seuls les choix au-delà de la moitié comptent.
+      return Math.max(0, (justes - q.choix.length / 2) / (q.choix.length / 2));
+    }
+    if (q.type === "vf") return q.lignes.filter(function (l, k) { return v[k] === (l[1] ? "v" : "f"); }).length / q.lignes.length;
+    if (q.type === "assoc") return q.lignes.filter(function (l, k) { return v[k] === String(l[1]); }).length / q.lignes.length;
+    if (q.type === "ordre") return v.filter(function (x, k) { return x === String(k); }).length / v.length;
+    return 0;
+  }
+  window.__quiz = { Q: Q, noter: noter, valeurs: valeurs };
+
+  var compte = document.getElementById("compte"), jauge = document.getElementById("jauge"), reste = document.getElementById("reste");
+  function maj() {
+    var n = 0; Q.forEach(function (_, i) { var ok = repondue(i); if (ok) n++; document.getElementById("q" + i).classList.toggle("repondue", ok); });
+    compte.textContent = n + " / " + Q.length; jauge.style.width = (100 * n / Q.length) + "%";
+    reste.textContent = n < Q.length ? "Il reste " + (Q.length - n) + " question" + (Q.length - n > 1 ? "s" : "") + " sans réponse." : "Toutes les questions ont une réponse.";
+    return n;
+  }
+  zone.addEventListener("change", function () { if (!document.body.classList.contains("fini")) maj(); });
+  var fmt = function (x) { return (Math.round(x * 10) / 10).toString().replace(".", ","); };
+
+  document.getElementById("verifier").addEventListener("click", function () {
+    var n = maj();
+    if (n < Q.length && !confirm("Il reste " + (Q.length - n) + " question(s) sans réponse. Vérifier quand même ?")) return;
+    var total = 0, parTheme = {};
+    Q.forEach(function (q, i) {
+      var p = noter(i), art = document.getElementById("q" + i);
+      total += p;
+      var t = parTheme[q.theme] || (parTheme[q.theme] = [0, 0]); t[0] += p; t[1] += 1;
+      art.classList.remove("repondue", "juste", "partiel", "faux");
+      art.classList.add(p >= 0.999 ? "juste" : p > 0 ? "partiel" : "faux");
+      // Marquage des choix et des lignes
+      var v = valeurs(i);
+      if (q.type === "un" || q.type === "plusieurs") {
+        art.querySelectorAll("label").forEach(function (lab, k) {
+          var bon = q.type === "un" ? k === q.bon : q.bons.indexOf(k) >= 0;
+          var coche = q.type === "un" ? v === k : v.indexOf(k) >= 0;
+          lab.classList.toggle("bon", bon); lab.classList.toggle("mauvais", coche && !bon);
+        });
+      } else {
+        art.querySelectorAll(".ligne").forEach(function (lg, k) {
+          var attendu = q.type === "vf" ? (q.lignes[k][1] ? "v" : "f") : q.type === "ordre" ? String(k) : String(q.lignes[k][1]);
+          lg.classList.toggle("bon", v[k] === attendu); lg.classList.toggle("mauvais", v[k] !== attendu);
+        });
+      }
+      var bonne = q.type === "un" ? "Bonne réponse : <b>" + esc(q.choix[q.bon].replace(/\.$/, "")) + "</b>. " : "";
+      art.querySelector(".corr").innerHTML = (p >= 0.999 ? "✓ " : p > 0 ? "≈ " + fmt(p) + " pt. " : "✗ ") + bonne + q.ex +
+        (p < 0.999 ? ' <a href="chapitre-' + q.ch + '.html">Revoir le chapitre ' + q.ch + "</a>" : "");
+    });
+    document.body.classList.add("fini");
+    zone.querySelectorAll("input, select").forEach(function (e) { e.disabled = true; });
+    var sur20 = 20 * total / Q.length;
+    var msg = sur20 >= 16 ? "Bravo, tu maîtrises le réseau de Mila !" : sur20 >= 12 ? "Bien joué : relis les questions en orange et en rouge." : sur20 >= 8 ? "C'est un début : revois les chapitres proposés sous chaque erreur." : "Reprends les chapitres un par un, puis recommence le quiz.";
+    var r = document.getElementById("resultat");
+    r.innerHTML = '<div class="note">' + fmt(sur20) + ' / 20</div><p>' + fmt(total) + " point" + (total >= 2 ? "s" : "") + " sur " + Q.length + " questions</p><p>" + msg + '</p><div class="themes">' +
+      Object.keys(parTheme).map(function (k) { return "<span>" + k + " : " + fmt(parTheme[k][0]) + " / " + parTheme[k][1] + "</span>"; }).join("") + "</div>";
+    r.classList.add("visible");
+    document.getElementById("verifier").disabled = true;
+    r.scrollIntoView({ block: "start" });
+  });
+  document.getElementById("recommencer").addEventListener("click", function () {
+    if (!confirm("Effacer toutes tes réponses et recommencer ?")) return;
+    document.body.classList.remove("fini");
+    zone.querySelectorAll("input").forEach(function (e) { e.disabled = false; e.checked = false; });
+    zone.querySelectorAll("select").forEach(function (e) { e.disabled = false; e.value = ""; });
+    zone.querySelectorAll(".q").forEach(function (a) { a.classList.remove("juste", "partiel", "faux"); });
+    zone.querySelectorAll(".bon, .mauvais").forEach(function (e) { e.classList.remove("bon", "mauvais"); });
+    document.getElementById("resultat").classList.remove("visible");
+    document.getElementById("verifier").disabled = false;
+    maj(); window.scrollTo(0, 0);
+  });
+  maj();
+})();
+</script>
+</body>
+</html>
