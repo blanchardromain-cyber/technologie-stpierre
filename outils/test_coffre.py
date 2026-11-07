@@ -199,6 +199,26 @@ class TestCode(unittest.TestCase):
         with self.assertRaises(coffre.ErreurCoffre):
             coffre.poser_code(self.base, MDP_PROF, "s9")
 
+    def test_ligne_de_commande_code_impose(self):
+        # « code --imposer » : le code choisi arrive en empreinte dans le fichier et en clair dans le coffre seul.
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            entree, sortie = os.path.join(d, "index.html"), os.path.join(d, "sortie.html")
+            with open(entree, "w", encoding="utf-8", newline="") as f:
+                f.write(self.base)
+            os.environ["TEST_MDP_PROF"], os.environ["TEST_CODE"] = MDP_PROF, "kalimba42"
+            try:
+                r = coffre.main(["code", "--id", "s2", "--code-env", "TEST_CODE", "--mdp-env", "TEST_MDP_PROF",
+                                 "--fichier", entree, "--sortie", sortie])
+            finally:
+                del os.environ["TEST_MDP_PROF"], os.environ["TEST_CODE"]
+            self.assertEqual(r, 0)
+            with open(sortie, encoding="utf-8", newline="") as f:
+                texte = f.read()
+        self.assertEqual(champ(texte, "s2", "code"), coffre.empreinte_code("s2", "KALIMBA42"))
+        self.assertEqual(coffre.dechiffrer(lire_coffre(texte), MDP_PROF)["codes"]["s2"], "KALIMBA42")
+        self.assertNotIn("KALIMBA42", texte.upper())
+
     def test_mauvais_mot_de_passe_prof(self):
         with self.assertRaises(coffre.ErreurCoffre):
             coffre.poser_code(self.base, "pas-le-bon-mot-de-passe", "s2")

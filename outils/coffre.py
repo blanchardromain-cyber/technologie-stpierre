@@ -20,6 +20,8 @@ sont dans un coffre chiffré par le mot de passe professeur.
   python outils/coffre.py code --id eau56
       Génère le code d'accès d'une séquence : empreinte dans index.html, code dans le
       coffre (panneau « Codes d'accès »). Refuse un code qui se devine.
+  python outils/coffre.py code --id eau56 --imposer
+      Même chose avec un code choisi, saisi dans une fenêtre masquée.
 
 Le mot de passe professeur est demandé au clavier, jamais affiché ni stocké.
 Le script s'arrête sans rien écrire si une ancre attendue manque.
@@ -444,6 +446,9 @@ def main(argv=None):
             s.add_argument("--classes", default="", help="collègue : classes suivies, séparées par des virgules")
         if nom == "code":
             s.add_argument("--id", required=True, help="identifiant de la séquence dans SEQUENCES_DEF")
+            s.add_argument("--imposer", action="store_true",
+                           help="saisir soi-même le code (fenêtre masquée) au lieu d'en générer un")
+            s.add_argument("--code-env", help="TESTS SEULEMENT : variable d'environnement contenant le code imposé")
     a = p.parse_args(argv)
     sortie = a.sortie or a.fichier
     if a.mdp_env and os.path.abspath(sortie) == os.path.abspath(INDEX):
@@ -467,7 +472,13 @@ def main(argv=None):
             texte = nettoyer(texte)
             message = "Anciennes empreintes retirées."
         elif a.commande == "code":
-            texte, code = poser_code(texte, _mot_de_passe_prof(a, False), a.id)
+            # Code imposé : saisi masqué (jamais en argument, qui resterait dans l'historique du terminal).
+            impose = None
+            if a.code_env:
+                impose = os.environ[a.code_env]
+            elif a.imposer:
+                impose = _saisie_masquee("Code d'accès à imposer (6 à 16 lettres ou chiffres) :")
+            texte, code = poser_code(texte, _mot_de_passe_prof(a, False), a.id, impose)
             message = ("Code d'accès de « %s » : %s — à communiquer aux élèves. Il reste visible dans le "
                        "panneau « Codes d'accès » du professeur ; seule son empreinte est écrite dans index.html."
                        % (a.id, code))
