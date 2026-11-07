@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-03b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-07a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5641,6 +5641,20 @@ body.est-prof .prof-only{display:block}
         loading="lazy"></iframe>
     </div>
 
+    <!-- RÉSEAU DE MILA 5e — CAPSULE (animation 3D + quiz, servie depuis le dépôt reseau-mila) -->
+    <div id="pg-mila5e" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Le réseau de Mila (animation 3D et quiz)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Huit chapitres animés pour revoir la séquence, puis un <strong>quiz</strong> corrigé à la fin. Clique dans l'animation, puis avance avec <strong>&rarr;</strong>, <strong>Espace</strong> ou un clic.
+      </p>
+      <iframe id="mila5e-frame" data-src="https://blanchardromain-cyber.github.io/reseau-mila/" title="Le réseau de Mila (5e)" allow="fullscreen; autoplay" allowfullscreen
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#0b1d3a"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- REMÉDIATION HUB -->
     <div id="pg-rem" class="h">
       <div class="phdr">
@@ -6468,6 +6482,7 @@ var SEQUENCES_DEF = [
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
   {id:"maison5e", ordre:40, niveau:"5ème", titre:"P4 — Mon réseau à la maison", desc:"À faire chez soi, en autonomie : explorer son réseau familial avec PowerShell ou l'invite de commandes (ipconfig, ping, tracert).", couleur:"#2E8B4A", code:"#qyNJkF59nAZAiKv5nMr+bX+RjyQObegMQncWV/Ho2XU=", open:true},
+  {id:"mila5e", ordre:41, niveau:"5ème", titre:"P2 — Le réseau de Mila (animation 3D et quiz)", desc:"Huit chapitres animés en 3D pour revoir toute la séquence (topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, protections, la box), puis un quiz de 25 questions corrigé et expliqué.", couleur:"#2F7DE1", code:"#WQ2hZ73j0FWl5GOECAcn09Za2spvKVB0AT/DImxCbvE=", open:true},
   {id:"eau4e", ordre:110, niveau:"4ème", titre:"P11 — Activités 1 et 2 — Le voyage et le coût de l'eau", desc:"Le voyage de l'eau, puis son coût et le gaspillage. Quiz auto-corrigés, mini-tableur de la facture, dictée vocale et aménagements dys.", couleur:"#0288D1", code:"#2t9hjl8HnW+OhCpA/GigVWh9BNPo2DhNvfv0z2yPrMU=", open:true},
   {id:"eau4e-cor", ordre:111, niveau:"4ème", titre:"P11 — Corrigé Activités 1 et 2", desc:"Corrigé détaillé, aménagements dys et notes d'organisation. Code d'accès professeur.", couleur:"var(--vt)", code:"#APvtuUrfHGwYpZYAtFrZPiUMRyd0U7Z4KsAsROlM1ZQ=", open:true},
   {id:"eau34", ordre:112, niveau:"4ème", titre:"P11 — Activités 3 et 4 — Le besoin et les normes", desc:"Le robinet automatique à détection : fonction d'usage, QQOQCP, bête à cornes, contraintes, norme et indice de protection IP.", couleur:"#0288D1", code:"#q1hfdxcAx9nksmjM+vFun8O1UXWsYiP/TOXkF6m4vII=", open:true},
@@ -7102,6 +7117,10 @@ function goPage(pid) {
     var mIfr = document.getElementById("maison5e-frame");
     if (mIfr) mIfr.src = mIfr.getAttribute("data-src");
   }
+  if (pid === "pg-mila5e") {
+    var miIfr = document.getElementById("mila5e-frame");
+    if (miIfr && !miIfr.getAttribute("src")) miIfr.src = miIfr.getAttribute("data-src");
+  }
   if (pid === "pg-quiz") initQuiz();
   if (pid === "pg-cap") updCapSidebar();
   if (pid === "pg-p12") {
@@ -7509,6 +7528,7 @@ function renderDash() {
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
       else if (s.id === "maison5e") clickAction = "onclick=\"goPage('pg-maison5e')\"";
+      else if (s.id === "mila5e") clickAction = "onclick=\"goPage('pg-mila5e')\"";
       cartes += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
       cartes += '<div class="schdr" style="background:' + s.couleur + '"></div>';
       cartes += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
@@ -7589,6 +7609,7 @@ function tryUnlock() {
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
     else if (pendingSeq === "maison5e") goPage("pg-maison5e");
+    else if (pendingSeq === "mila5e") goPage("pg-mila5e");
     else goPage("pg-dash");
     renderDash();
   } else {
