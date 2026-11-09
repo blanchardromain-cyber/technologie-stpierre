@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-08a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-09a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4501,6 +4501,7 @@ body.est-prof .prof-only{display:block}
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
             <option value="eval3-5e">P1 5e &mdash; &Eacute;valuation n&deg;3</option>
             <option value="reseau5e-org">P2 5e &mdash; Organiser un r&eacute;seau num&eacute;rique</option>
+            <option value="reseau5e-ev1">P2 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -5583,6 +5584,51 @@ body.est-prof .prof-only{display:block}
       </div>
     </div>
 
+    <!-- P2 5e — ÉVALUATION N°1 (iframe : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html) -->
+    <div id="pg-reseau5e-ev1" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Évaluation n°1 (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Évaluation <strong>individuelle notée sur 15</strong>, trois exercices : l'architecture du réseau du collège, ses améliorations, puis le diagnostic de quatre pannes.
+        Lis bien chaque consigne, puis envoie ta copie au professeur : une fois envoyée, elle peut être verrouillée.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La copie part au tableau de bord <strong>pré-corrigée</strong> ; les points s'ajustent question par question dans la copie.
+        La capsule est <strong>armée par défaut</strong> (onglet Verrous) : chaque copie rendue est verrouillée dès son envoi.
+      </p>
+      <iframe id="reseau5e-ev1-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/evaluation1_eleve.html" title="P2 — Évaluation n°1 (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <div id="pg-reseau5e-ev1-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Corrigé de l'évaluation n°1</h2>
+      </div>
+      <div style="max-width:920px">
+        <div class="p11x1-tools" data-nolecture>
+          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
+        </div>
+        <div class="card" style="border-left:5px solid var(--vt)">
+          <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'évaluation n°1 &mdash; 5<sup>e</sup></h3>
+          <p id="re1-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+          <div id="re1-cor-saisie" hidden style="margin-bottom:12px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <label for="re1-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+              <input id="re1-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+                onkeydown="if(event.key==='Enter')re1CorValiderSaisie()">
+              <button onclick="re1CorValiderSaisie()" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+            </div>
+          </div>
+          <button id="re1-cor-print" hidden onclick="printReseauEv1Corrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+          <div id="re1-cor-body" style="margin-top:20px"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- RÉSEAU 5e — CAPSULE P2 (activité embarquée depuis le dépôt reseau-5e) -->
     <div id="pg-reseau5e" class="h">
       <div class="phdr">
@@ -6133,7 +6179,7 @@ body.est-prof .prof-only{display:block}
 var CFG = {
   PLOGIN: "prof.blanchard",
   ANCIENS_JUSQUAU: "2026-10-07",
-  COFFRE: {"v":1,"it":600000,"sel":"+GavPXfxHmQTNJPYN+ZYAA==","iv":"TJhmi5tY0h4z6INj","data":"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"}
+  COFFRE: {"v":1,"it":600000,"sel":"AjLhhMeHLKncPnT1oMPmYA==","iv":"I2zVltBLtr9WFlsA","data":"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"}
 };
 
 // ================================================================
@@ -6478,6 +6524,8 @@ var SEQUENCES_DEF = [
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
   {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
   {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Corrigé détaillé et barème. Code d'accès professeur.", couleur:"var(--vt)", code:"#bbTUX3H4kCYeOAy7z7rskVpdg4DmB4aSKbzg31D3RR8=", open:true},
+  {id:"reseau5e-ev1", ordre:20.5, niveau:"5ème", titre:"P2 — Évaluation n°1 — Organiser un réseau numérique", desc:"L'architecture du réseau du collège, ses améliorations, le diagnostic de quatre pannes. Notée sur 15, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#GrVZe3Utq40BR4RzOY5RzdCTJahCKVAHORZbYGO24W8=", open:true},
+  {id:"reseau5e-ev1-cor", ordre:20.6, niveau:"5ème", titre:"P2 — Corrigé de l'évaluation n°1", desc:"Corrigé détaillé. Code donné par le professeur quand toutes les classes sont passées.", couleur:"var(--vt)", code:"#wFcsdLF4NupguET1BrhUgIu7b7+I/plaSTaUqCpIhJU=", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
@@ -6818,6 +6866,7 @@ function majClasseProf() {
   try { verifierCorriges(); } catch (e) {}
   try { verifierSecrets(); } catch (e) {}
   try { roCorPrecharger(); } catch (e) {}
+  try { re1CorPrecharger(); } catch (e) {}
   try { p2eCorPrecharger(); } catch (e) {}
 }
 
@@ -7093,6 +7142,14 @@ function goPage(pid) {
     rafraichirCorrection("reseau5e-org", "reseau5e-org-correction");
   }
   if (pid === "pg-reseau5e-org-cor") roCorOuvrir();
+  if (pid === "pg-reseau5e-ev1") {
+    try {
+      if (user) localStorage.setItem("reseau5e-ev1_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var re1Ifr = document.getElementById("reseau5e-ev1-frame");
+    if (re1Ifr) re1Ifr.src = re1Ifr.getAttribute("data-src");
+  }
+  if (pid === "pg-reseau5e-ev1-cor") re1CorOuvrir();
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
     // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
@@ -7454,7 +7511,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "p11-eval2-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -7466,7 +7523,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7516,6 +7573,8 @@ function renderDash() {
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "reseau5e-org")     clickAction = "onclick=\"goPage('pg-reseau5e-org')\"";
       else if (s.id === "reseau5e-org-cor") clickAction = "onclick=\"goPage('pg-reseau5e-org-cor')\"";
+      else if (s.id === "reseau5e-ev1")     clickAction = "onclick=\"goPage('pg-reseau5e-ev1')\"";
+      else if (s.id === "reseau5e-ev1-cor") clickAction = "onclick=\"goPage('pg-reseau5e-ev1-cor')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
@@ -7598,6 +7657,8 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "reseau5e-org") goPage("pg-reseau5e-org");
     else if (pendingSeq === "reseau5e-org-cor") goPage("pg-reseau5e-org-cor");
+    else if (pendingSeq === "reseau5e-ev1") goPage("pg-reseau5e-ev1");
+    else if (pendingSeq === "reseau5e-ev1-cor") goPage("pg-reseau5e-ev1-cor");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
@@ -8669,6 +8730,193 @@ function roCorValiderSaisie(){
 }
 function printReseauOrgCorrige(){ if (RO_COR) imprimerCorrigeP11("ro-cor-body", "Corrigé P2 5e — Organiser un réseau numérique"); }
 
+/* ════════════════════════════════════════════════════════════════════
+   P2 5e — ÉVALUATION N°1 (cap "reseau5e-ev1")
+   Capsule élève : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html.
+   Le corrigé et la clé de correction sont dans corrige_evaluation1.chiffre.json
+   (AES-GCM), déchiffrés ici en session. Cette page ne contient que les points.
+   ════════════════════════════════════════════════════════════════════ */
+var RE1_CHIFFRE_URL = "Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/corrige_evaluation1.chiffre.json";
+var RE1_COR_ID = "reseau5e-ev1-cor";
+var RE1_COR = null;          /* { html, cles } une fois déchiffré, en mémoire seulement */
+function re1CodeConnu(){
+  if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[RE1_COR_ID]) return COFFRE.codes[RE1_COR_ID];
+  try { return (isProf || isCollegue) ? (localStorage.getItem("re1_cor_code") || "") : (sessionStorage.getItem("re1_cor_code") || ""); } catch(e){ return ""; }
+}
+function re1RetenirCode(code){
+  try { ((isProf || isCollegue) ? localStorage : sessionStorage).setItem("re1_cor_code", String(code).trim().toUpperCase()); } catch(e){}
+}
+function re1OublierCode(){ try { localStorage.removeItem("re1_cor_code"); sessionStorage.removeItem("re1_cor_code"); } catch(e){} }
+function re1Dechiffrer(code){
+  if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
+  return fetch(RE1_CHIFFRE_URL + "?t=" + Date.now()).then(function(r){ if (!r.ok) throw new Error("absent"); return r.json(); }).then(function(c){
+    return crypto.subtle.importKey("raw", _roOctets(String(code).trim().toUpperCase()), "PBKDF2", false, ["deriveKey"]).then(function(k){
+      return crypto.subtle.deriveKey({ name:"PBKDF2", hash:"SHA-256", salt:_roDeb64(c.sel), iterations:c.it }, k, { name:"AES-GCM", length:256 }, false, ["decrypt"]);
+    }).then(function(cle){
+      return crypto.subtle.decrypt({ name:"AES-GCM", iv:_roDeb64(c.iv) }, cle, _roDeb64(c.data));
+    }).then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
+  });
+}
+function re1CorOuvrir(codeSaisi){
+  var corps = document.getElementById("re1-cor-body"), etat = document.getElementById("re1-cor-etat");
+  if (!corps) return;
+  var code = codeSaisi || re1CodeConnu();
+  if (!(isProf || isCollegue) && !code) RE1_COR = null;
+  if (RE1_COR){ re1CorAfficher(); return; }
+  var saisie = document.getElementById("re1-cor-saisie");
+  if (!code){ corps.innerHTML = ""; if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisis le code du corrigé donné par ton professeur."; return; }
+  if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
+  re1Dechiffrer(code).then(function(p){
+    RE1_COR = p;
+    if (codeSaisi) re1RetenirCode(codeSaisi);
+    if (saisie) saisie.hidden = true;
+    re1CorAfficher();
+  }).catch(function(e){
+    if (saisie) saisie.hidden = false;
+    if (codeSaisi === undefined) re1OublierCode();
+    if (etat) etat.textContent = (e && e.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
+      (e && e.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
+  });
+}
+function re1CorAfficher(){
+  var corps = document.getElementById("re1-cor-body"), etat = document.getElementById("re1-cor-etat");
+  corps.innerHTML = RE1_COR.html;
+  var c = (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes) ? COFFRE.codes[RE1_COR_ID] : "";
+  if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code du corrigé (aux élèves quand toutes les classes sont passées) : <strong>' + roEsc(c) + '</strong></span>' : "");
+  var b = document.getElementById("re1-cor-print"); if (b) b.hidden = false;
+  try { if (window.LectureImmersive && LectureImmersive.consignes) LectureImmersive.consignes(); } catch(e){}
+}
+function re1CorPrecharger(){
+  if (RE1_COR || !(isProf || isCollegue) || !re1CodeConnu()) return;
+  re1Dechiffrer(re1CodeConnu()).then(function(p){
+    RE1_COR = p;
+    try { if (typeof renderProf === "function" && document.getElementById("pg-prof") && !document.getElementById("pg-prof").classList.contains("h")) renderProf(); } catch(e){}
+  }).catch(function(){});
+}
+function re1CorValiderSaisie(){
+  var i = document.getElementById("re1-cor-code"); if (!i || !i.value.trim()) return;
+  re1CorOuvrir(i.value);
+}
+function printReseauEv1Corrige(){ if (RE1_COR) imprimerCorrigeP11("re1-cor-body", "Corrigé P2 5e — Évaluation n°1"); }
+
+/* Correction automatique : uniquement des règles, toutes les réponses viennent de K
+   (clé déchiffrée). Sans clé, la copie s'affiche sans note. */
+var RE1 = (function () {
+  var LIB = { commutateur: "Commutateur", borne: "Borne wifi", serveur: "Serveur", cable: "Par câble", sansfil: "Sans fil" };
+  var TYPES = { sansfil: "sans fil", cable: "par câble" };
+  function arr(v) { return Math.round(v * 100) / 100; }
+  function etat(rep, p, max) { return rep ? (p >= max ? "ok" : p > 0 ? "partiel" : "ko") : "vide"; }
+  function mots(v) { return evalNorm(v).replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim().split(" "); }
+  /* Huit mots de suite repris de l'énoncé : ce n'est pas une explication. */
+  function recopie(rep, enonce) {
+    var r = " " + mots(rep).join(" ") + " ", e = mots(enonce);
+    for (var i = 0; i + 8 <= e.length; i++) if (r.indexOf(" " + e.slice(i, i + 8).join(" ") + " ") >= 0) return true;
+    return false;
+  }
+  /* Idées distinctes d'une réponse rédigée, chacune valant ptsIdee. */
+  function idees(rep, liste, ptsIdee) {
+    var p = 0, notes = [];
+    for (var i = 0; i < liste.length; i++) {
+      var m = evalMot(rep, liste[i].mots);
+      p += ptsIdee * m;
+      if (!m) notes.push("idée non repérée : " + liste[i].nom);
+      else if (m < 1) notes.push("orthographe fautive (" + liste[i].nom + ") : demi-valeur");
+    }
+    return { pts: arr(p), rq: notes.join(" · ") };
+  }
+  function nomLien(K, l) {
+    function n(x) { return x + ((K && K.nomsAppareils && K.nomsAppareils[x]) ? " (" + K.nomsAppareils[x] + ")" : ""); }
+    return n(l.de) + " → " + n(l.vers) + ", " + TYPES[l.type];
+  }
+  function lireLiens(f) {
+    var r = [];
+    for (var i = 1; i <= 3; i++) {
+      var m = /^([A-H])>([A-H]):(sansfil|cable)$/.exec(String(f["e2-l" + i] || ""));
+      if (m) r.push({ de: m[1], vers: m[2], type: m[3] });
+    }
+    return r;
+  }
+  function corriger(f, K) {
+    f = f || {};
+    var pts = { e1q1: 0, e1q2: 0, e1q3: 0, e2q1: 0, e2q2: 0, pA: 0, pB: 0, pC: 0, pD: 0 }, detail = [];
+    var sansCle = "corrigé non déchiffré";
+    function ligne(sec, label, rep, attendu, p, max, rq, sur) {
+      pts[sec] = arr(pts[sec] + p);
+      var o = { sec: sec, label: label, rep: rep, attendu: attendu, etat: K ? etat(rep, p, max) : "vide", pts: p, max: max, remarque: (rep && p < max) ? (rq || "") : "" };
+      if (sur) o.sur = true;
+      detail.push(o);
+    }
+
+    /* 1.1 Topologie */
+    var q1 = f["e1-q1"] || "", p1 = 0, r1 = "";
+    if (K) {
+      var c1 = K.topologieReseau;
+      p1 = evalMot(q1, c1.bon);
+      if (p1 && evalContient(q1, c1.autres)) { p1 = 0; r1 = "plusieurs topologies citées"; }
+      else if (p1 > 0 && p1 < 1) r1 = "orthographe fautive : demi-point";
+    }
+    ligne("e1q1", "1.1 Topologie du réseau", q1, K ? K.topologieReseau.attendu : sansCle, p1, 1, r1);
+
+    /* 1.2 Avantages */
+    var q2 = f["e1-q2"] || "", i2 = K ? idees(q2, K.avantagesTopologie.idees, 0.5) : { pts: 0, rq: "" };
+    ligne("e1q2", "1.2 Avantages de la topologie", q2, K ? K.avantagesTopologie.attendu : sansCle, i2.pts, 1, i2.rq);
+
+    /* 1.3 Tableau */
+    [["e1-m1", "Matériel n°1 : quel matériel ?"], ["e1-m2", "Matériel n°2 : quel matériel ?"],
+     ["e1-t1", "Matériel n°1 : type de liaison"], ["e1-t2", "Matériel n°2 : type de liaison"]].forEach(function (c) {
+      var v = f[c[0]] || "", bon = K ? K.tableauMateriels[c[0]] : "";
+      ligne("e1q3", "1.3 " + c[1], v ? (LIB[v] || v) : "", K ? LIB[bon] : sansCle, (K && v === bon) ? 0.5 : 0, 0.5, "", true);
+    });
+    [["e1-a1", "a1", "Matériel n°1 : avantage"], ["e1-a2", "a2", "Matériel n°2 : avantage"]].forEach(function (c) {
+      var v = f[c[0]] || "", p = 0, rq = "";
+      if (K) {
+        var ca = K.tableauMateriels[c[1]], m = evalMot(v, ca.mots);
+        if (m && evalContient(v, ca.autre)) rq = "la réponse cite aussi l'avantage de l'autre matériel : à vérifier";
+        else { p = 0.5 * m; if (m && m < 1) rq = "orthographe fautive : demi-valeur"; else if (!m) rq = "avantage non repéré : à vérifier"; }
+      }
+      ligne("e1q3", "1.3 " + c[2], v, K ? K.tableauMateriels[c[1]].attendu : sansCle, arr(p), 0.5, rq);
+    });
+
+    /* 2.1 Liaisons : sens et symbole comptent, l'ordre du tracé non */
+    var traces = lireLiens(f), restes = traces.slice(), attendus = K ? K.liaisonsAttendues : [];
+    function prendre(test) { for (var i = 0; i < restes.length; i++) if (test(restes[i])) return restes.splice(i, 1)[0]; return null; }
+    var exacts = attendus.map(function (a) { return prendre(function (l) { return l.de === a.de && l.vers === a.vers && l.type === a.type; }); });
+    attendus.forEach(function (a, i) {
+      var l = exacts[i], rq = "";
+      if (!l) {
+        l = prendre(function (x) { return x.de === a.de && x.vers === a.vers; });
+        if (l) rq = "bons appareils et bon sens, mais symbole faux";
+        else { l = prendre(function (x) { return x.de === a.vers && x.vers === a.de; }); if (l) rq = "liaison tracée dans le mauvais sens"; }
+      }
+      if (!l && restes.length) { l = restes.shift(); rq = "cette liaison n'est pas sur le chemin attendu"; }
+      ligne("e2q1", "2.1 Liaison n°" + (i + 1), l ? nomLien(K, l) : "", nomLien(K, a), exacts[i] ? 1 : 0, 1, rq);
+    });
+    if (!K) traces.forEach(function (l, i) { ligne("e2q1", "2.1 Liaison tracée n°" + (i + 1), nomLien(K, l), sansCle, 0, 1, ""); });
+
+    /* 2.2 Serveur */
+    var srv = f["e2-srv"] || "", i3 = K ? idees(srv, K.rolesServeur.idees, 0.5) : { pts: 0, rq: "" };
+    ligne("e2q2", "2.2 Rôles du serveur", srv, K ? K.rolesServeur.attendu : sansCle, i3.pts, 1, i3.rq);
+
+    /* 3 Pannes : matériel 0,5 ; chaque appareil écarté et justifié 0,5, si le matériel est juste */
+    ["A", "B", "C", "D"].forEach(function (L) {
+      var v = f["e3-" + L] || "", txt = f["e3-" + L + "-j"] || "", cp = K ? K.pannes[L] : null, sec = "p" + L;
+      var juste = !!cp && v === cp.bon, pj = 0, rq = [];
+      ligne(sec, "Panne " + L + " : matériel défectueux", v ? (LIB[v] || v) : "", cp ? LIB[cp.bon] : sansCle, juste ? 0.5 : 0, 0.5, "", true);
+      if (cp && txt) {
+        if (!juste) rq.push("le matériel choisi est faux : justification non comptée");
+        else if (recopie(txt, cp.enonce)) rq.push("recopie de l'énoncé : à vérifier");
+        else cp.exclus.forEach(function (x) {
+          if (evalContient(txt, x.dev) && evalContient(txt, x.obs)) pj += 0.5;
+          else rq.push("pourquoi pas " + x.nom + " : non repéré, à vérifier");
+        });
+      }
+      ligne(sec, "Panne " + L + " : pourquoi pas les deux autres (à confirmer)", txt, cp ? cp.attendu : sansCle, pj, 1, rq.join(" · "));
+    });
+    return { points: pts, detail: detail };
+  }
+  return { corriger: corriger };
+})();
+
 /* ── Copie de l'élève, annotée si le corrigé est déchiffré ── */
 function roVerdict(cle, v){
   if (!RO_COR || !RO_COR.cles) return null;
@@ -9111,6 +9359,36 @@ var EVALUATIONS = {
      mots-clés sont dans le corrigé chiffré (RO_COR), déchiffré en session enseignant.
      Tant qu'il ne l'est pas, la grille se comporte comme une évaluation notée à la
      main (« à noter /20 ») : jamais de 0/20 trompeur. Score du hasard mesuré : ≈ 4,5/20. */
+  /* P2 5e — Évaluation n°1 : grille sans réponse, clé lue dans le corrigé déchiffré. */
+  "reseau5e-ev1": {
+    titre: "P2 5e — Évaluation n°1",
+    total: 15,
+    get manuel() { return !(RE1_COR && RE1_COR.cles); },
+    sections: [
+      { cle: "e1q1", label: "1.1 Topologie du réseau", max: 1 },
+      { cle: "e1q2", label: "1.2 Avantages de la topologie", max: 1 },
+      { cle: "e1q3", label: "1.3 Tableau des matériels", max: 3 },
+      { cle: "e2q1", label: "2.1 Cheminement des données", max: 3 },
+      { cle: "e2q2", label: "2.2 Rôles du serveur", max: 1 },
+      { cle: "pA", label: "3 Panne A", max: 1.5 },
+      { cle: "pB", label: "3 Panne B", max: 1.5 },
+      { cle: "pC", label: "3 Panne C", max: 1.5 },
+      { cle: "pD", label: "3 Panne D", max: 1.5 }
+    ],
+    corriger: function (f) { return RE1.corriger(f || {}, RE1_COR && RE1_COR.cles); },
+    appreciation: function (pts, note) {
+      var mention = note >= 13.5 ? "Excellent travail" : note >= 11 ? "Très bon travail"
+                  : note >= 9 ? "Bon travail" : note >= 6 ? "Travail à consolider" : "Des progrès sont nécessaires";
+      var s = function (ks) { return ks.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); }, faibles = [];
+      if (s(["e1q1", "e1q2", "e1q3"]) < 3) faibles.push("la topologie et les matériels du réseau");
+      if (s(["e2q1"]) < 2) faibles.push("le cheminement des données");
+      if (s(["e2q2"]) < 0.5) faibles.push("les rôles du serveur");
+      if (s(["pA", "pB", "pC", "pD"]) < 3.5) faibles.push("le diagnostic d'une panne");
+      return mention + " — " + fmtPts(note) + "/15. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "."
+                                                                        : "L'organisation d'un réseau et le diagnostic sont maîtrisés.");
+    }
+  },
+
   "reseau5e-org": {
     titre: "P2 5e — Organiser un réseau numérique",
     total: 20,
@@ -11120,6 +11398,14 @@ function openModal(sid) {
     document.getElementById("mscore").textContent = texteNoteEval(sub)
       + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses"
       + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  } else if (sub.cap === "reseau5e-ev1") {
+    if (mh3) mh3.textContent = "P2 5e — Évaluation n°1 — copie de l'élève";
+    document.getElementById("mrep").innerHTML = buildEvalModalHTML(sub) + (EVALUATIONS["reseau5e-ev1"].manuel
+      ? '<p style="margin-top:12px;padding:10px 14px;background:#FFF8E1;border-left:4px solid #C55A11;border-radius:0 8px 8px 0;font-size:13px">Pour corriger cette copie, ouvre d\'abord la tuile « P2 — Corrigé de l\'évaluation n°1 » avec son code.</p>'
+      : buildEvalTeacherPanel(sub));
+    document.getElementById("mscore").textContent = texteNoteEval(sub)
+      + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||20) + " réponses"
+      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (EVALUATIONS[sub.cap]) {
     var evd = EVALUATIONS[sub.cap];
     if (mh3) mh3.textContent = evd.titre + " — copie de l'élève";
@@ -11271,6 +11557,7 @@ var FICHE_TITRES = {
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
   "reseau5e-org":"P2 5e — Organiser un réseau numérique",
+  "reseau5e-ev1":"P2 5e — Évaluation n°1",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
@@ -11281,7 +11568,7 @@ function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsu
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
        || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e"
-       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org" || sub.cap === "reseau5e-ev1") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
@@ -12627,7 +12914,7 @@ function basculerVerrou(sid) {
    chacune est armée si elle ne l'est pas, sauf si le professeur l'a désarmée
    lui-même sur ce poste (mémorisé, voir basculerArmement). Ajouter ici une capsule
    suffit à l'armer par défaut. */
-var CAPS_ARMEES_PAR_DEFAUT = ["p11-eval2", "p11-eval2-ratt"];
+var CAPS_ARMEES_PAR_DEFAUT = ["p11-eval2", "p11-eval2-ratt", "reseau5e-ev1"];
 function capsDesarmeesExpres() {
   try { return JSON.parse(localStorage.getItem("caps_desarmees_expres") || "{}") || {}; } catch (e) { return {}; }
 }
@@ -17876,9 +18163,9 @@ restoreA2Draft = function() {
 </script>
 
 <!-- Aménagements dys — exercices P11 et pages élèves P12 (exercices 1-2, activités 2-3) -->
-<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", fonts:"pp4g/fonts/" };</script>
+<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", fonts:"pp4g/fonts/" };</script>
 <script src="assets/js/confort-lecture.js" defer></script>
-<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
+<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
   selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire, .p11x2-lire" };</script>
 <script src="assets/js/lecture-immersive.js" defer></script>
 <!-- Relooking de l'accueil (piste B) : three.js n'est téléchargé que si la machine sait l'afficher -->
