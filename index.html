@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-09a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-08a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4501,7 +4501,6 @@ body.est-prof .prof-only{display:block}
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
             <option value="eval3-5e">P1 5e &mdash; &Eacute;valuation n&deg;3</option>
             <option value="reseau5e-org">P2 5e &mdash; Organiser un r&eacute;seau num&eacute;rique</option>
-            <option value="reseau5e-ev1">P2 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -5584,51 +5583,6 @@ body.est-prof .prof-only{display:block}
       </div>
     </div>
 
-    <!-- P2 5e — ÉVALUATION N°1 (iframe : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html) -->
-    <div id="pg-reseau5e-ev1" class="h">
-      <div class="phdr">
-        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Évaluation n°1 (5e)</h2>
-      </div>
-      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
-        Évaluation <strong>individuelle notée sur 15</strong>, trois exercices : l'architecture du réseau du collège, ses améliorations, puis le diagnostic de quatre pannes.
-        Lis bien chaque consigne, puis envoie ta copie au professeur : une fois envoyée, elle peut être verrouillée.
-      </p>
-      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
-        La copie part au tableau de bord <strong>pré-corrigée</strong> ; les points s'ajustent question par question dans la copie.
-        La capsule est <strong>armée par défaut</strong> (onglet Verrous) : chaque copie rendue est verrouillée dès son envoi.
-      </p>
-      <iframe id="reseau5e-ev1-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/evaluation1_eleve.html" title="P2 — Évaluation n°1 (5e)"
-        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
-        loading="lazy"></iframe>
-    </div>
-
-    <div id="pg-reseau5e-ev1-cor" class="h">
-      <div class="phdr">
-        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
-        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Corrigé de l'évaluation n°1</h2>
-      </div>
-      <div style="max-width:920px">
-        <div class="p11x1-tools" data-nolecture>
-          <span class="p11x1-tools-lbl">&#x267F; Aides &agrave; la lecture</span>
-        </div>
-        <div class="card" style="border-left:5px solid var(--vt)">
-          <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'évaluation n°1 &mdash; 5<sup>e</sup></h3>
-          <p id="re1-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
-          <div id="re1-cor-saisie" hidden style="margin-bottom:12px">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <label for="re1-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
-              <input id="re1-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
-                onkeydown="if(event.key==='Enter')re1CorValiderSaisie()">
-              <button onclick="re1CorValiderSaisie()" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
-            </div>
-          </div>
-          <button id="re1-cor-print" hidden onclick="printReseauEv1Corrige()" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
-          <div id="re1-cor-body" style="margin-top:20px"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- RÉSEAU 5e — CAPSULE P2 (activité embarquée depuis le dépôt reseau-5e) -->
     <div id="pg-reseau5e" class="h">
       <div class="phdr">
@@ -6524,8 +6478,6 @@ var SEQUENCES_DEF = [
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
   {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
   {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Corrigé détaillé et barème. Code d'accès professeur.", couleur:"var(--vt)", code:"#bbTUX3H4kCYeOAy7z7rskVpdg4DmB4aSKbzg31D3RR8=", open:true},
-  {id:"reseau5e-ev1", ordre:20.5, niveau:"5ème", titre:"P2 — Évaluation n°1 — Organiser un réseau numérique", desc:"L'architecture du réseau du collège, ses améliorations, le diagnostic de quatre pannes. Notée sur 15, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"", open:true},
-  {id:"reseau5e-ev1-cor", ordre:20.6, niveau:"5ème", titre:"P2 — Corrigé de l'évaluation n°1", desc:"Corrigé détaillé. Code donné par le professeur quand toutes les classes sont passées.", couleur:"var(--vt)", code:"", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
   {id:"filius5e", ordre:30, niveau:"5ème", titre:"P3 — Réseau avec Filius", desc:"Construire et simuler un réseau dans Filius : switch, IP, ping, routeur, serveur DNS/Web.", couleur:"#7C4DFF", code:"#LBW1yRfxOjtQ+Po5Qo1TUqYjPjh8xsvav8YAk9WUyCM=", open:true},
   {id:"filius5e-cor", ordre:31, niveau:"5ème", titre:"P3 — Corrigé Filius (PDF)", desc:"Corrigé téléchargeable de l'activité Filius. Code fourni par le professeur.", couleur:"var(--vt)", code:"#YgQR2PQty2W6dqEjRYa9tW3wKENfitFP1IiRmMfezAo=", open:true},
@@ -6866,7 +6818,6 @@ function majClasseProf() {
   try { verifierCorriges(); } catch (e) {}
   try { verifierSecrets(); } catch (e) {}
   try { roCorPrecharger(); } catch (e) {}
-  try { re1CorPrecharger(); } catch (e) {}
   try { p2eCorPrecharger(); } catch (e) {}
 }
 
@@ -7142,14 +7093,6 @@ function goPage(pid) {
     rafraichirCorrection("reseau5e-org", "reseau5e-org-correction");
   }
   if (pid === "pg-reseau5e-org-cor") roCorOuvrir();
-  if (pid === "pg-reseau5e-ev1") {
-    try {
-      if (user) localStorage.setItem("reseau5e-ev1_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
-    } catch (e) {}
-    var re1Ifr = document.getElementById("reseau5e-ev1-frame");
-    if (re1Ifr) re1Ifr.src = re1Ifr.getAttribute("data-src");
-  }
-  if (pid === "pg-reseau5e-ev1-cor") re1CorOuvrir();
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
     // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
@@ -7511,7 +7454,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "p11-eval2-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -7523,7 +7466,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7573,8 +7516,6 @@ function renderDash() {
       else if (s.id === "batiment5e-syn") clickAction = "onclick=\"goPage('pg-batiment5e-syn')\"";
       else if (s.id === "reseau5e-org")     clickAction = "onclick=\"goPage('pg-reseau5e-org')\"";
       else if (s.id === "reseau5e-org-cor") clickAction = "onclick=\"goPage('pg-reseau5e-org-cor')\"";
-      else if (s.id === "reseau5e-ev1")     clickAction = "onclick=\"goPage('pg-reseau5e-ev1')\"";
-      else if (s.id === "reseau5e-ev1-cor") clickAction = "onclick=\"goPage('pg-reseau5e-ev1-cor')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
@@ -7657,8 +7598,6 @@ function tryUnlock() {
     else if (pendingSeq === "batiment5e-syn") goPage("pg-batiment5e-syn");
     else if (pendingSeq === "reseau5e-org") goPage("pg-reseau5e-org");
     else if (pendingSeq === "reseau5e-org-cor") goPage("pg-reseau5e-org-cor");
-    else if (pendingSeq === "reseau5e-ev1") goPage("pg-reseau5e-ev1");
-    else if (pendingSeq === "reseau5e-ev1-cor") goPage("pg-reseau5e-ev1-cor");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
@@ -8730,193 +8669,6 @@ function roCorValiderSaisie(){
 }
 function printReseauOrgCorrige(){ if (RO_COR) imprimerCorrigeP11("ro-cor-body", "Corrigé P2 5e — Organiser un réseau numérique"); }
 
-/* ════════════════════════════════════════════════════════════════════
-   P2 5e — ÉVALUATION N°1 (cap "reseau5e-ev1")
-   Capsule élève : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html.
-   Le corrigé et la clé de correction sont dans corrige_evaluation1.chiffre.json
-   (AES-GCM), déchiffrés ici en session. Cette page ne contient que les points.
-   ════════════════════════════════════════════════════════════════════ */
-var RE1_CHIFFRE_URL = "Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/corrige_evaluation1.chiffre.json";
-var RE1_COR_ID = "reseau5e-ev1-cor";
-var RE1_COR = null;          /* { html, cles } une fois déchiffré, en mémoire seulement */
-function re1CodeConnu(){
-  if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[RE1_COR_ID]) return COFFRE.codes[RE1_COR_ID];
-  try { return (isProf || isCollegue) ? (localStorage.getItem("re1_cor_code") || "") : (sessionStorage.getItem("re1_cor_code") || ""); } catch(e){ return ""; }
-}
-function re1RetenirCode(code){
-  try { ((isProf || isCollegue) ? localStorage : sessionStorage).setItem("re1_cor_code", String(code).trim().toUpperCase()); } catch(e){}
-}
-function re1OublierCode(){ try { localStorage.removeItem("re1_cor_code"); sessionStorage.removeItem("re1_cor_code"); } catch(e){} }
-function re1Dechiffrer(code){
-  if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
-  return fetch(RE1_CHIFFRE_URL + "?t=" + Date.now()).then(function(r){ if (!r.ok) throw new Error("absent"); return r.json(); }).then(function(c){
-    return crypto.subtle.importKey("raw", _roOctets(String(code).trim().toUpperCase()), "PBKDF2", false, ["deriveKey"]).then(function(k){
-      return crypto.subtle.deriveKey({ name:"PBKDF2", hash:"SHA-256", salt:_roDeb64(c.sel), iterations:c.it }, k, { name:"AES-GCM", length:256 }, false, ["decrypt"]);
-    }).then(function(cle){
-      return crypto.subtle.decrypt({ name:"AES-GCM", iv:_roDeb64(c.iv) }, cle, _roDeb64(c.data));
-    }).then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
-  });
-}
-function re1CorOuvrir(codeSaisi){
-  var corps = document.getElementById("re1-cor-body"), etat = document.getElementById("re1-cor-etat");
-  if (!corps) return;
-  var code = codeSaisi || re1CodeConnu();
-  if (!(isProf || isCollegue) && !code) RE1_COR = null;
-  if (RE1_COR){ re1CorAfficher(); return; }
-  var saisie = document.getElementById("re1-cor-saisie");
-  if (!code){ corps.innerHTML = ""; if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisis le code du corrigé donné par ton professeur."; return; }
-  if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
-  re1Dechiffrer(code).then(function(p){
-    RE1_COR = p;
-    if (codeSaisi) re1RetenirCode(codeSaisi);
-    if (saisie) saisie.hidden = true;
-    re1CorAfficher();
-  }).catch(function(e){
-    if (saisie) saisie.hidden = false;
-    if (codeSaisi === undefined) re1OublierCode();
-    if (etat) etat.textContent = (e && e.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
-      (e && e.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
-  });
-}
-function re1CorAfficher(){
-  var corps = document.getElementById("re1-cor-body"), etat = document.getElementById("re1-cor-etat");
-  corps.innerHTML = RE1_COR.html;
-  var c = (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes) ? COFFRE.codes[RE1_COR_ID] : "";
-  if (etat) etat.innerHTML = "Corrigé déchiffré pour cette session." + (c ? ' <span class="prof-only">Code du corrigé (aux élèves quand toutes les classes sont passées) : <strong>' + roEsc(c) + '</strong></span>' : "");
-  var b = document.getElementById("re1-cor-print"); if (b) b.hidden = false;
-  try { if (window.LectureImmersive && LectureImmersive.consignes) LectureImmersive.consignes(); } catch(e){}
-}
-function re1CorPrecharger(){
-  if (RE1_COR || !(isProf || isCollegue) || !re1CodeConnu()) return;
-  re1Dechiffrer(re1CodeConnu()).then(function(p){
-    RE1_COR = p;
-    try { if (typeof renderProf === "function" && document.getElementById("pg-prof") && !document.getElementById("pg-prof").classList.contains("h")) renderProf(); } catch(e){}
-  }).catch(function(){});
-}
-function re1CorValiderSaisie(){
-  var i = document.getElementById("re1-cor-code"); if (!i || !i.value.trim()) return;
-  re1CorOuvrir(i.value);
-}
-function printReseauEv1Corrige(){ if (RE1_COR) imprimerCorrigeP11("re1-cor-body", "Corrigé P2 5e — Évaluation n°1"); }
-
-/* Correction automatique : uniquement des règles, toutes les réponses viennent de K
-   (clé déchiffrée). Sans clé, la copie s'affiche sans note. */
-var RE1 = (function () {
-  var LIB = { commutateur: "Commutateur", borne: "Borne wifi", serveur: "Serveur", cable: "Par câble", sansfil: "Sans fil" };
-  var TYPES = { sansfil: "sans fil", cable: "par câble" };
-  function arr(v) { return Math.round(v * 100) / 100; }
-  function etat(rep, p, max) { return rep ? (p >= max ? "ok" : p > 0 ? "partiel" : "ko") : "vide"; }
-  function mots(v) { return evalNorm(v).replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim().split(" "); }
-  /* Huit mots de suite repris de l'énoncé : ce n'est pas une explication. */
-  function recopie(rep, enonce) {
-    var r = " " + mots(rep).join(" ") + " ", e = mots(enonce);
-    for (var i = 0; i + 8 <= e.length; i++) if (r.indexOf(" " + e.slice(i, i + 8).join(" ") + " ") >= 0) return true;
-    return false;
-  }
-  /* Idées distinctes d'une réponse rédigée, chacune valant ptsIdee. */
-  function idees(rep, liste, ptsIdee) {
-    var p = 0, notes = [];
-    for (var i = 0; i < liste.length; i++) {
-      var m = evalMot(rep, liste[i].mots);
-      p += ptsIdee * m;
-      if (!m) notes.push("idée non repérée : " + liste[i].nom);
-      else if (m < 1) notes.push("orthographe fautive (" + liste[i].nom + ") : demi-valeur");
-    }
-    return { pts: arr(p), rq: notes.join(" · ") };
-  }
-  function nomLien(K, l) {
-    function n(x) { return x + ((K && K.nomsAppareils && K.nomsAppareils[x]) ? " (" + K.nomsAppareils[x] + ")" : ""); }
-    return n(l.de) + " → " + n(l.vers) + ", " + TYPES[l.type];
-  }
-  function lireLiens(f) {
-    var r = [];
-    for (var i = 1; i <= 3; i++) {
-      var m = /^([A-H])>([A-H]):(sansfil|cable)$/.exec(String(f["e2-l" + i] || ""));
-      if (m) r.push({ de: m[1], vers: m[2], type: m[3] });
-    }
-    return r;
-  }
-  function corriger(f, K) {
-    f = f || {};
-    var pts = { e1q1: 0, e1q2: 0, e1q3: 0, e2q1: 0, e2q2: 0, pA: 0, pB: 0, pC: 0, pD: 0 }, detail = [];
-    var sansCle = "corrigé non déchiffré";
-    function ligne(sec, label, rep, attendu, p, max, rq, sur) {
-      pts[sec] = arr(pts[sec] + p);
-      var o = { sec: sec, label: label, rep: rep, attendu: attendu, etat: K ? etat(rep, p, max) : "vide", pts: p, max: max, remarque: (rep && p < max) ? (rq || "") : "" };
-      if (sur) o.sur = true;
-      detail.push(o);
-    }
-
-    /* 1.1 Topologie */
-    var q1 = f["e1-q1"] || "", p1 = 0, r1 = "";
-    if (K) {
-      var c1 = K.topologieReseau;
-      p1 = evalMot(q1, c1.bon);
-      if (p1 && evalContient(q1, c1.autres)) { p1 = 0; r1 = "plusieurs topologies citées"; }
-      else if (p1 > 0 && p1 < 1) r1 = "orthographe fautive : demi-point";
-    }
-    ligne("e1q1", "1.1 Topologie du réseau", q1, K ? K.topologieReseau.attendu : sansCle, p1, 1, r1);
-
-    /* 1.2 Avantages */
-    var q2 = f["e1-q2"] || "", i2 = K ? idees(q2, K.avantagesTopologie.idees, 0.5) : { pts: 0, rq: "" };
-    ligne("e1q2", "1.2 Avantages de la topologie", q2, K ? K.avantagesTopologie.attendu : sansCle, i2.pts, 1, i2.rq);
-
-    /* 1.3 Tableau */
-    [["e1-m1", "Matériel n°1 : quel matériel ?"], ["e1-m2", "Matériel n°2 : quel matériel ?"],
-     ["e1-t1", "Matériel n°1 : type de liaison"], ["e1-t2", "Matériel n°2 : type de liaison"]].forEach(function (c) {
-      var v = f[c[0]] || "", bon = K ? K.tableauMateriels[c[0]] : "";
-      ligne("e1q3", "1.3 " + c[1], v ? (LIB[v] || v) : "", K ? LIB[bon] : sansCle, (K && v === bon) ? 0.5 : 0, 0.5, "", true);
-    });
-    [["e1-a1", "a1", "Matériel n°1 : avantage"], ["e1-a2", "a2", "Matériel n°2 : avantage"]].forEach(function (c) {
-      var v = f[c[0]] || "", p = 0, rq = "";
-      if (K) {
-        var ca = K.tableauMateriels[c[1]], m = evalMot(v, ca.mots);
-        if (m && evalContient(v, ca.autre)) rq = "la réponse cite aussi l'avantage de l'autre matériel : à vérifier";
-        else { p = 0.5 * m; if (m && m < 1) rq = "orthographe fautive : demi-valeur"; else if (!m) rq = "avantage non repéré : à vérifier"; }
-      }
-      ligne("e1q3", "1.3 " + c[2], v, K ? K.tableauMateriels[c[1]].attendu : sansCle, arr(p), 0.5, rq);
-    });
-
-    /* 2.1 Liaisons : sens et symbole comptent, l'ordre du tracé non */
-    var traces = lireLiens(f), restes = traces.slice(), attendus = K ? K.liaisonsAttendues : [];
-    function prendre(test) { for (var i = 0; i < restes.length; i++) if (test(restes[i])) return restes.splice(i, 1)[0]; return null; }
-    var exacts = attendus.map(function (a) { return prendre(function (l) { return l.de === a.de && l.vers === a.vers && l.type === a.type; }); });
-    attendus.forEach(function (a, i) {
-      var l = exacts[i], rq = "";
-      if (!l) {
-        l = prendre(function (x) { return x.de === a.de && x.vers === a.vers; });
-        if (l) rq = "bons appareils et bon sens, mais symbole faux";
-        else { l = prendre(function (x) { return x.de === a.vers && x.vers === a.de; }); if (l) rq = "liaison tracée dans le mauvais sens"; }
-      }
-      if (!l && restes.length) { l = restes.shift(); rq = "cette liaison n'est pas sur le chemin attendu"; }
-      ligne("e2q1", "2.1 Liaison n°" + (i + 1), l ? nomLien(K, l) : "", nomLien(K, a), exacts[i] ? 1 : 0, 1, rq);
-    });
-    if (!K) traces.forEach(function (l, i) { ligne("e2q1", "2.1 Liaison tracée n°" + (i + 1), nomLien(K, l), sansCle, 0, 1, ""); });
-
-    /* 2.2 Serveur */
-    var srv = f["e2-srv"] || "", i3 = K ? idees(srv, K.rolesServeur.idees, 0.5) : { pts: 0, rq: "" };
-    ligne("e2q2", "2.2 Rôles du serveur", srv, K ? K.rolesServeur.attendu : sansCle, i3.pts, 1, i3.rq);
-
-    /* 3 Pannes : matériel 0,5 ; chaque appareil écarté et justifié 0,5, si le matériel est juste */
-    ["A", "B", "C", "D"].forEach(function (L) {
-      var v = f["e3-" + L] || "", txt = f["e3-" + L + "-j"] || "", cp = K ? K.pannes[L] : null, sec = "p" + L;
-      var juste = !!cp && v === cp.bon, pj = 0, rq = [];
-      ligne(sec, "Panne " + L + " : matériel défectueux", v ? (LIB[v] || v) : "", cp ? LIB[cp.bon] : sansCle, juste ? 0.5 : 0, 0.5, "", true);
-      if (cp && txt) {
-        if (!juste) rq.push("le matériel choisi est faux : justification non comptée");
-        else if (recopie(txt, cp.enonce)) rq.push("recopie de l'énoncé : à vérifier");
-        else cp.exclus.forEach(function (x) {
-          if (evalContient(txt, x.dev) && evalContient(txt, x.obs)) pj += 0.5;
-          else rq.push("pourquoi pas " + x.nom + " : non repéré, à vérifier");
-        });
-      }
-      ligne(sec, "Panne " + L + " : pourquoi pas les deux autres (à confirmer)", txt, cp ? cp.attendu : sansCle, pj, 1, rq.join(" · "));
-    });
-    return { points: pts, detail: detail };
-  }
-  return { corriger: corriger };
-})();
-
 /* ── Copie de l'élève, annotée si le corrigé est déchiffré ── */
 function roVerdict(cle, v){
   if (!RO_COR || !RO_COR.cles) return null;
@@ -9359,36 +9111,6 @@ var EVALUATIONS = {
      mots-clés sont dans le corrigé chiffré (RO_COR), déchiffré en session enseignant.
      Tant qu'il ne l'est pas, la grille se comporte comme une évaluation notée à la
      main (« à noter /20 ») : jamais de 0/20 trompeur. Score du hasard mesuré : ≈ 4,5/20. */
-  /* P2 5e — Évaluation n°1 : grille sans réponse, clé lue dans le corrigé déchiffré. */
-  "reseau5e-ev1": {
-    titre: "P2 5e — Évaluation n°1",
-    total: 15,
-    get manuel() { return !(RE1_COR && RE1_COR.cles); },
-    sections: [
-      { cle: "e1q1", label: "1.1 Topologie du réseau", max: 1 },
-      { cle: "e1q2", label: "1.2 Avantages de la topologie", max: 1 },
-      { cle: "e1q3", label: "1.3 Tableau des matériels", max: 3 },
-      { cle: "e2q1", label: "2.1 Cheminement des données", max: 3 },
-      { cle: "e2q2", label: "2.2 Rôles du serveur", max: 1 },
-      { cle: "pA", label: "3 Panne A", max: 1.5 },
-      { cle: "pB", label: "3 Panne B", max: 1.5 },
-      { cle: "pC", label: "3 Panne C", max: 1.5 },
-      { cle: "pD", label: "3 Panne D", max: 1.5 }
-    ],
-    corriger: function (f) { return RE1.corriger(f || {}, RE1_COR && RE1_COR.cles); },
-    appreciation: function (pts, note) {
-      var mention = note >= 13.5 ? "Excellent travail" : note >= 11 ? "Très bon travail"
-                  : note >= 9 ? "Bon travail" : note >= 6 ? "Travail à consolider" : "Des progrès sont nécessaires";
-      var s = function (ks) { return ks.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); }, faibles = [];
-      if (s(["e1q1", "e1q2", "e1q3"]) < 3) faibles.push("la topologie et les matériels du réseau");
-      if (s(["e2q1"]) < 2) faibles.push("le cheminement des données");
-      if (s(["e2q2"]) < 0.5) faibles.push("les rôles du serveur");
-      if (s(["pA", "pB", "pC", "pD"]) < 3.5) faibles.push("le diagnostic d'une panne");
-      return mention + " — " + fmtPts(note) + "/15. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "."
-                                                                        : "L'organisation d'un réseau et le diagnostic sont maîtrisés.");
-    }
-  },
-
   "reseau5e-org": {
     titre: "P2 5e — Organiser un réseau numérique",
     total: 20,
@@ -11398,14 +11120,6 @@ function openModal(sid) {
     document.getElementById("mscore").textContent = texteNoteEval(sub)
       + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||50) + " réponses"
       + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
-  } else if (sub.cap === "reseau5e-ev1") {
-    if (mh3) mh3.textContent = "P2 5e — Évaluation n°1 — copie de l'élève";
-    document.getElementById("mrep").innerHTML = buildEvalModalHTML(sub) + (EVALUATIONS["reseau5e-ev1"].manuel
-      ? '<p style="margin-top:12px;padding:10px 14px;background:#FFF8E1;border-left:4px solid #C55A11;border-radius:0 8px 8px 0;font-size:13px">Pour corriger cette copie, ouvre d\'abord la tuile « P2 — Corrigé de l\'évaluation n°1 » avec son code.</p>'
-      : buildEvalTeacherPanel(sub));
-    document.getElementById("mscore").textContent = texteNoteEval(sub)
-      + " — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||20) + " réponses"
-      + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (EVALUATIONS[sub.cap]) {
     var evd = EVALUATIONS[sub.cap];
     if (mh3) mh3.textContent = evd.titre + " — copie de l'élève";
@@ -11557,7 +11271,6 @@ var FICHE_TITRES = {
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
   "reseau5e-org":"P2 5e — Organiser un réseau numérique",
-  "reseau5e-ev1":"P2 5e — Évaluation n°1",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
@@ -11568,7 +11281,7 @@ function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsu
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
        || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e"
-       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org" || sub.cap === "reseau5e-ev1") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
@@ -12914,7 +12627,7 @@ function basculerVerrou(sid) {
    chacune est armée si elle ne l'est pas, sauf si le professeur l'a désarmée
    lui-même sur ce poste (mémorisé, voir basculerArmement). Ajouter ici une capsule
    suffit à l'armer par défaut. */
-var CAPS_ARMEES_PAR_DEFAUT = ["p11-eval2", "p11-eval2-ratt", "reseau5e-ev1"];
+var CAPS_ARMEES_PAR_DEFAUT = ["p11-eval2", "p11-eval2-ratt"];
 function capsDesarmeesExpres() {
   try { return JSON.parse(localStorage.getItem("caps_desarmees_expres") || "{}") || {}; } catch (e) { return {}; }
 }
@@ -18163,9 +17876,9 @@ restoreA2Draft = function() {
 </script>
 
 <!-- Aménagements dys — exercices P11 et pages élèves P12 (exercices 1-2, activités 2-3) -->
-<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", fonts:"pp4g/fonts/" };</script>
+<script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", fonts:"pp4g/fonts/" };</script>
 <script src="assets/js/confort-lecture.js" defer></script>
-<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
+<script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
   selecteurs:"h1, h2, h3, h4, p, li, td, th, summary, figcaption, .p12-part-hdr, .p12-phase > div, .bac-q, .pie-liens, .p11x1-lire, .p11x2-lire" };</script>
 <script src="assets/js/lecture-immersive.js" defer></script>
 <!-- Relooking de l'accueil (piste B) : three.js n'est téléchargé que si la machine sait l'afficher -->
