@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-09a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-09b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -6905,8 +6905,9 @@ function launch() {
    classeur. Si le classeur ne l'a plus (copie supprimée par le professeur), le poste
    de l'élève la gardait pour toujours : carte « validée », consultation fermée, aucun
    renvoi possible. Une copie en attente reste, elle peut être encore en route.
-   Appelée seulement quand le classeur a répondu avec au moins une copie de l'élève :
-   une réponse vide (échec, classeur vidé) ne doit rien effacer. */
+   Appelée seulement quand le classeur a répondu avec au moins une copie de l'élève.
+   Une panne ne doit rien effacer ; une réponse vide du classeur ne retire que les
+   copies verrouillées non notées (voir checkStudentStatusChanges). */
 function copiesOrphelines(local, own, eid) {
   var auClasseur = {};
   own.forEach(function (c) { auClasseur[c.cap] = true; });
@@ -6926,8 +6927,26 @@ function checkStudentStatusChanges() {
   var seen = {};
   try { seen = JSON.parse(localStorage.getItem(seenKey) || "{}"); } catch(e) {}
 
-  cloudSync.fetchOwn(user.id, function(ownSubs) {
-    if (!ownSubs || !ownSubs.length) return;
+  cloudSync.fetchOwn(user.id, function(ownSubs, repondu) {
+    if (!ownSubs) return;
+    if (!ownSubs.length) {
+      /* Le classeur a répondu « aucune copie » : une copie verrouillée restée sur ce poste
+         a été supprimée par le professeur, sinon l'élève ne pourrait plus jamais la refaire.
+         Sur une panne (repondu absent), rien n'est retiré ; une copie notée reste. */
+      if (!repondu) return;
+      var avant = getSubs();
+      var bloquees = avant.filter(function (s) {
+        return s.eid === user.id && s.locked === true && s.status !== "validated" && s.status !== "rejected";
+      });
+      if (!bloquees.length) return;
+      localStorage.setItem("subs", JSON.stringify(avant.filter(function (s) { return bloquees.indexOf(s) < 0; })));
+      bloquees.forEach(function (s) {
+        toastQ("« " + (s.caplbl || s.cap) + " » n'est plus chez ton professeur : tu peux l'envoyer à nouveau.", 5000);
+      });
+      try { renderDash(); } catch(e) {}
+      try { updMyStatus(); } catch(e) {}
+      return;
+    }
 
     // ── (0) Copies validées ou verrouillées que le classeur n'a plus ──
     var local = getSubs();
@@ -12637,7 +12656,7 @@ var cloudSync = (function () {
       own.forEach(function(s){
         if (s.locked !== undefined) s.locked = (s.locked === true || s.locked === "TRUE" || s.locked === "true");
       });
-      if (onDone) onDone(own);
+      if (onDone) onDone(own, true);   /* true : le classeur a répondu (une liste vide est alors une vraie réponse) */
     }
     function viaList() {
       var url = base() + "?action=list&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();

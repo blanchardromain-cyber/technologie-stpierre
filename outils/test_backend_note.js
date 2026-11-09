@@ -99,12 +99,12 @@ function extraireFonction(nom) {
   }
   throw new Error("index.html : fin de " + nom + " introuvable");
 }
-function eleveFusionne(reponseOwn, localAvant) {
+function eleveFusionne(reponseOwn, localAvant, repondu) {
   var stock = { subs: JSON.stringify(localAvant || []) };
   var ctx = {
     user: { id: "test.eleve" }, isProf: false, JSON: JSON,
     localStorage: { getItem: function (k) { return stock.hasOwnProperty(k) ? stock[k] : null; }, setItem: function (k, v) { stock[k] = String(v); } },
-    cloudSync: { hasUrl: function () { return true; }, fetchOwn: function (eid, cb) { cb(reponseOwn.subs); } },
+    cloudSync: { hasUrl: function () { return true; }, fetchOwn: function (eid, cb) { cb(reponseOwn.subs, repondu); } },
     renderDash: function () {}, updMyStatus: function () {}, toastQ: function () {}
   };
   ctx.window = ctx;
@@ -163,6 +163,12 @@ var el = eleveFusionne(own, [copieEleve("eval2-5e")]);
 var vue = el.corrigee("eval2-5e");
 ok(!!vue, "estCorrigee() vrai : le bandeau de note s'affiche");
 ok(vue && vue.bareme === 20 && vue.appreciation && egal(vue.adjustedPts, PTS), "l'élève a note, barème, appréciation, détail des points");
+
+console.log("2 bis. Copie supprimée : c'était la seule de l'élève au classeur");
+var verrouillee = copieEleve("eval2-5e", { locked: true });
+ok(eleveFusionne({ subs: [] }, [verrouillee], true).subs.length === 0, "réponse vide du classeur : la copie verrouillée est retirée");
+ok(eleveFusionne({ subs: [] }, [verrouillee]).subs.length === 1, "panne (pas de réponse) : rien n'est retiré");
+ok(eleveFusionne({ subs: [] }, [copieEleve("eval2-5e", { locked: true, status: "validated" })], true).subs.length === 1, "réponse vide : une copie notée reste");
 
 console.log("3. Colonnes et verrou");
 var h = B.grille[0];
