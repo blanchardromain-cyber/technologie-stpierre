@@ -132,7 +132,9 @@
 
     var pts = {}, niveaux = {}, total = 0;
     ["ex1", "ex2", "ex3", "ex4"].forEach(function (k) {
-      pts[k] = Math.round(frac[k] * 5 * 100) / 100;
+      /* Points exacts (non arrondis) : noteEvaluation() d'index.html les additionne puis
+         arrondit au demi-point ; arrondis ici au centième, la somme divergeait de la note. */
+      pts[k] = frac[k] * 5;
       niveaux[k] = niveau(frac[k]);
       total += frac[k] * 5;
     });
