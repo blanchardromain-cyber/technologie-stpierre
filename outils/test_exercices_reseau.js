@@ -107,6 +107,13 @@ t("note au demi-point", () => {
   assert.strictEqual(r.note * 2, Math.round(r.note * 2));
 });
 
+t("Ex. 2 d6 (impression depuis n'importe quel ordinateur) : 7 ou 3 acceptés", () => {
+  assert.strictEqual(RXO.corriger(Object.assign({}, JUSTE, { e2_d6: "3" })).items.e2_d6, 1);
+  assert.strictEqual(RXO.corriger(Object.assign({}, JUSTE, { e2_d6: "7" })).items.e2_d6, 1);
+  assert.strictEqual(RXO.corriger(Object.assign({}, JUSTE, { e2_d6: "6" })).items.e2_d6, 0);
+  assert.strictEqual(RXO.corriger(Object.assign({}, JUSTE, { e2_d7: "7" })).items.e2_d7, 0); // numérisation : 3 seul
+});
+
 t("concordance : somme des points par exercice (arrondie au demi) = note de la page", () => {
   // Copie relevée par la relecture : 5,5 sur la page, 6 au tableau de bord.
   const f = Object.assign({}, JUSTE, {
