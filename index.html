@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-18a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-18b</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -9462,7 +9462,7 @@ var EVALUATIONS = {
       var n1 = RXO.ELEMENTS_EX1.length + RXO.LIAISONS_EX1.length;
       RXO.ELEMENTS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, e.rep, n1); });
       RXO.LIAISONS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, e.rep, n1); });
-      RXO.DEFINITIONS_EX2.forEach(function (e) { ligne("ex2", "e2_" + e.id, e.label, e.rep, RXO.DEFINITIONS_EX2.length); });
+      RXO.DEFINITIONS_EX2.forEach(function (e) { ligne("ex2", "e2_" + e.id, e.label, e.accepte ? e.accepte.join(" ou ") : e.rep, RXO.DEFINITIONS_EX2.length); });
       RXO.QUESTIONS_EX3.forEach(function (q) { ligne("ex3", q.id, q.label, q.rep, RXO.QUESTIONS_EX3.length); });
       ["q1", "q2"].forEach(function (q) {
         var n = q.charAt(1), ch = r.chemins[q], att = ch.attendu || RXO.CHEMINS_EX4[q].attendus[0];
