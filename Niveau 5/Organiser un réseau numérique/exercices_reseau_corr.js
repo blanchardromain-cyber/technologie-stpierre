@@ -68,11 +68,11 @@
   var APPAREILS_EX4 = [
     { id: "tablette",    label: "Tablette",            x: 15, y: 14 },
     { id: "routeur",     label: "Routeur",             x: 54, y: 15 },
-    { id: "internet",    label: "Internet",            x: 81, y: 13 },
-    { id: "portable",    label: "Portable sans fil",   x: 30, y: 44 },
-    { id: "wifi",        label: "Point d'accès Wi-Fi", x: 68, y: 44 },
+    { id: "internet",    label: "Internet",            x: 84, y: 15 },
+    { id: "portable",    label: "Portable sans fil",   x: 31, y: 45 },
+    { id: "wifi",        label: "Point d'accès Wi-Fi", x: 70, y: 45 },
     { id: "commutateur", label: "Commutateur",         x: 16, y: 77 },
-    { id: "imprimante",  label: "Imprimante",          x: 48, y: 78 },
+    { id: "imprimante",  label: "Imprimante",          x: 50, y: 78 },
     { id: "ordinateur",  label: "Ordinateur",          x: 82, y: 77 }
   ];
   var CHEMINS_EX4 = {
@@ -156,8 +156,10 @@
     var mention = r.note >= 16 ? "Très bon travail" : r.note >= 12 ? "Bon travail" : r.note >= 8 ? "Travail à consolider" : "Des notions à reprendre";
     var faibles = ["ex1", "ex2", "ex3", "ex4"].filter(function (k) { return r.niveaux[k] === "arevoir"; })
       .map(function (k) { return SITUATIONS[k].titre.toLowerCase(); });
+    var tout = ["ex1", "ex2", "ex3", "ex4"].every(function (k) { return r.niveaux[k] === "maitrise"; });
     return mention + " — " + String(r.note).replace(".", ",") + "/20. "
-      + (faibles.length ? "À revoir : " + faibles.join(", ") + "." : "Toutes les situations sont au moins en cours d'acquisition.");
+      + (faibles.length ? "À revoir : " + faibles.join(", ") + "."
+         : tout ? "Toutes les situations sont maîtrisées." : "Aucune situation à revoir entièrement : continue sur ta lancée.");
   }
 
   var RXO = {
