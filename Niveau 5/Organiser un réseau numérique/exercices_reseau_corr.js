@@ -28,7 +28,9 @@
     { id: "d3", label: "Contient les logiciels et stocke les données des ordinateurs du réseau pédagogique", rep: "4", indice: "C'est un ordinateur spécial, au service des autres." },
     { id: "d4", label: "Permet le transfert des données vers un autre réseau", rep: "1", indice: "Cet appareil fait le lien avec Internet." },
     { id: "d5", label: "Permet l'impression d'un document issu exclusivement de l'ordinateur du CDI", rep: "6", indice: "Une imprimante reliée à un seul ordinateur, pas au commutateur." },
-    { id: "d6", label: "Permet l'impression d'un document issu de n'importe quel ordinateur du réseau", rep: "7", indice: "Une imprimante reliée au commutateur." },
+    /* 3 accepté aussi (décision du professeur, 18/11) : le photocopieur-scanner est relié au
+       commutateur et imprime lui aussi depuis n'importe quel ordinateur. */
+    { id: "d6", label: "Permet l'impression d'un document issu de n'importe quel ordinateur du réseau", rep: "7", accepte: ["7", "3"], indice: "Un appareil qui imprime et qui est relié au commutateur." },
     { id: "d7", label: "Permet la numérisation d'un document", rep: "3", indice: "Numériser = transformer une feuille en fichier." }
   ];
   var NUMEROS_EX2 = [
@@ -119,7 +121,10 @@
     frac.ex1 = n1 / (ELEMENTS_EX1.length + LIAISONS_EX1.length);
 
     var n2 = 0;
-    DEFINITIONS_EX2.forEach(function (e) { var k = "e2_" + e.id; items[k] = String(f[k] || "") === e.rep ? 1 : 0; n2 += items[k]; });
+    DEFINITIONS_EX2.forEach(function (e) {
+      var k = "e2_" + e.id, v = String(f[k] || "");
+      items[k] = (e.accepte ? e.accepte.indexOf(v) >= 0 : v === e.rep) ? 1 : 0; n2 += items[k];
+    });
     frac.ex2 = n2 / DEFINITIONS_EX2.length;
 
     var n3 = 0;
