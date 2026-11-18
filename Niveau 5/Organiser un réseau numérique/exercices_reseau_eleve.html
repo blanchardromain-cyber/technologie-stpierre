@@ -385,12 +385,17 @@ function cliqueApp(id){
   if (bloque()) return;
   var ch = ETAT.chemins[ETAT.actif], i = ch.c.indexOf(id);
   if (i === 0) return;                                   /* l'appareil de départ est imposé */
-  if (i > 0){ ch.c.splice(i, 1); ch.l.splice(i - 1, 1); }
+  if (i > 0){
+    ch.c.splice(i, 1); ch.l.splice(i - 1, 1);
+    if (i - 1 < ch.l.length) ch.l[i - 1] = "";           /* nouvelle liaison (voisins rapprochés) : support à choisir */
+  }
   else { ch.c.push(id); ch.l.push(""); }
-  apresSaisie(); majTrace();
+  effacerMarqueE4(); apresSaisie(); majTrace();
 }
+function effacerMarqueE4(){ var m = $("m-e4_" + ETAT.actif); if (m) m.innerHTML = ""; }
 function majTrace(){
   var svg = $("trace"); if (!svg) return;
+  var focusId = document.activeElement && document.activeElement.id;   /* rendu le focus après reconstruction */
   var s = "";
   ["q1", "q2"].forEach(function(q){
     var ch = ETAT.chemins[q], coul = q === "q1" ? "var(--q1)" : "var(--q2)", dash = q === "q2" ? ' stroke-dasharray="10 5"' : "";
@@ -427,6 +432,7 @@ function majTrace(){
        + '</select></li>';
   }
   ul.innerHTML = h;
+  if (focusId && /^l-q[12]-/.test(focusId) && $(focusId)) $(focusId).focus();
 }
 
 /* ════════════ SAISIE, PROGRESSION, BROUILLON ════════════ */
@@ -625,7 +631,11 @@ function ouvrirAcces(){
   $("a-prenom").focus();
   $("acces-form").addEventListener("submit", function(ev){
     ev.preventDefault();
-    var p = $("a-prenom").value.trim(), n = $("a-nom").value.trim(), c = $("a-classe").value, code = $("a-code").value.replace(/\s+/g, "");
+    /* Règle 3 : un nom commençant par = + @ ou - deviendrait une formule dans le classeur.
+       Code : espaces, tirets et soulignés successifs = un tiret (« kuba gake 61 » accepté). */
+    var propre = function(s){ return s.replace(/^[\s=+@\-]+/, "").trim(); };
+    var p = propre($("a-prenom").value), n = propre($("a-nom").value), c = $("a-classe").value,
+        code = $("a-code").value.trim().replace(/[\s_\-]+/g, "-");
     var msg = $("acces-msg");
     if (!p || !n || !c || !code){ msg.textContent = "Remplis les quatre champs."; return; }
     if (!CODES_CLASSES[c]){ msg.textContent = "Cette classe n'a pas de code pour cet exercice."; return; }
@@ -671,12 +681,17 @@ document.addEventListener("change", function(ev){
     return;
   }
   if (t.hasAttribute && t.hasAttribute("data-q")){ ETAT.rep[t.getAttribute("data-q")] = t.value; var m = $("m-" + t.getAttribute("data-q")); if (m) m.innerHTML = ""; $("it-" + t.getAttribute("data-q")).classList.remove("juste", "faux"); apresSaisie(); return; }
-  if (t.hasAttribute && t.hasAttribute("data-lien")){ ETAT.chemins[ETAT.actif].l[Number(t.getAttribute("data-lien"))] = t.value; apresSaisie(); majTrace(); return; }
+  if (t.hasAttribute && t.hasAttribute("data-lien")){ ETAT.chemins[ETAT.actif].l[Number(t.getAttribute("data-lien"))] = t.value; effacerMarqueE4(); apresSaisie(); majTrace(); return; }
 });
 document.addEventListener("click", function(ev){
   var b = ev.target.closest ? ev.target.closest("button") : null; if (!b) return;
   if (b.hasAttribute("data-app")){ cliqueApp(b.getAttribute("data-app")); return; }
-  if (b.hasAttribute("data-actif")){ ETAT.actif = b.getAttribute("data-actif"); ETAT.indices.e4 = false; enregistrer(); construire(); majBoutons(); return; }
+  if (b.hasAttribute("data-actif")){
+    var qa = b.getAttribute("data-actif"); ETAT.actif = qa; ETAT.indices.e4 = false; enregistrer(); construire(); majBoutons();
+    if (ETAT.essai >= 1) afficherMarques(RXO.corriger(champs()), bloque());
+    var nb2 = document.querySelector('[data-actif="' + qa + '"]'); if (nb2) nb2.focus();
+    return;
+  }
   if (b.hasAttribute("data-indice")){ var k = b.getAttribute("data-indice"); ETAT.indices[k] = !ETAT.indices[k]; enregistrer(); var sc = window.scrollY; construire(); majBoutons(); if (ETAT.essai >= 1) afficherMarques(RXO.corriger(champs()), bloque()); window.scrollTo(0, sc); var nb = document.querySelector('[data-indice="' + k + '"]'); if (nb) nb.focus(); return; }
   if (b.id === "btn-effacer"){ if (bloque()) return; var ch = ETAT.chemins[ETAT.actif]; ch.c = ch.c.slice(0, 1); ch.l = []; apresSaisie(); majTrace(); return; }
   if (b.id === "btn-verif"){ verifier(); return; }
@@ -691,7 +706,7 @@ else ouvrirAcces();
 <!-- Aménagements dys et confort de lecture (modules partagés du site). -->
 <script>
 window.CONFORT_LECTURE = { hote:".outils-in", racine:"main", fonts:"../../pp4g/fonts/",
-  eleve: (function(){ try { var d = JSON.parse(localStorage.getItem("reseau5e-exo_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
+  eleve: (function(){ if (window.parent === window) return ""; try { var d = JSON.parse(localStorage.getItem("reseau5e-exo_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
 window.LECTURE_IMMERSIVE = { racine:"main", hote:".outils-in", sectionsFermees:"", classeFermeture:"",
   selecteurs:"h2, h3, .bandeau p, .consigne li, .consexo p, p.consexo, .item > label, .liens .txt, .indice, .marque, .bilan td, dt, dd" };
 </script>
