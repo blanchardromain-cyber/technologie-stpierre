@@ -107,4 +107,29 @@ t("note au demi-point", () => {
   assert.strictEqual(r.note * 2, Math.round(r.note * 2));
 });
 
+t("concordance : somme des points par exercice (arrondie au demi) = note de la page", () => {
+  // Copie relevée par la relecture : 5,5 sur la page, 6 au tableau de bord.
+  const f = Object.assign({}, JUSTE, {
+    e1_borne: "1", e1_imprimante: "1", e1_scanner: "1", e1_commutateur: "1", e1_fixe: "1", e1_smartphone: "1", e1_tablette: "1", e1_portable: "1", e1_l16: "cable", e1_l45: "cable",
+    e2_d1: "1", e2_d2: "1", e2_d3: "1", e2_d4: "1", e2_d5: "6", e2_d6: "1",
+    e3_q1: "allumer", e3_q3: "comptes",
+    e4_c1: "tablette,wifi,commutateur", e4_l1: "ondes,ondes", e4_c2: "portable,routeur", e4_l2: "cable"
+  });
+  const verifie = r => {
+    const somme = Object.values(r.pts).reduce((a, b) => a + b, 0);
+    assert.strictEqual(Math.round(Math.min(20, somme) * 2) / 2, r.note, JSON.stringify(r.pts) + " → " + r.note);
+  };
+  verifie(RXO.corriger(f));
+  // Balayage : chaque combinaison de niveaux de réussite par exercice.
+  for (let a = 0; a <= 10; a++) for (let b = 0; b <= 7; b++) for (let c = 0; c <= 3; c++) for (let d = 0; d <= 8; d++) {
+    const g = Object.assign({}, JUSTE);
+    RXO.ELEMENTS_EX1.concat(RXO.LIAISONS_EX1).slice(a).forEach(e => g["e1_" + e.id] = "x");
+    RXO.DEFINITIONS_EX2.slice(b).forEach(e => g["e2_" + e.id] = "x");
+    RXO.QUESTIONS_EX3.slice(c).forEach(q => g[q.id] = "x");
+    const l = ["ondes", "cable", "cable", "cable"].map((s, i) => i < Math.floor(d / 2) ? s : "x");
+    g.e4_l1 = l.join(",");
+    verifie(RXO.corriger(g));
+  }
+});
+
 console.log(ok + " tests réussis");
