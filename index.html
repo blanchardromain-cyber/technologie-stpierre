@@ -9453,22 +9453,24 @@ var EVALUATIONS = {
     corriger: function (f) {
       if (!window.RXO) return { points: {}, detail: [] };
       var r = RXO.corriger(f || {}), detail = [];
-      function ligne(sec, k, label, rep, attendu) {
-        var v = (f || {})[k];
-        detail.push({ sec: sec, label: label, pts: r.items[k] ? 1 : 0, etat: !v ? "vide" : r.items[k] ? "ok" : "ko", rep: v || "", attendu: attendu });
+      /* Chaque ligne vaut 5 / (nombre de lignes de sa section) : la somme d'une section
+         égale ses points, et max sert au widget de statistiques. */
+      function ligne(sec, k, label, attendu, n) {
+        var v = (f || {})[k], m = 5 / n;
+        detail.push({ sec: sec, label: label, pts: r.items[k] ? m : 0, max: m, etat: !v ? "vide" : r.items[k] ? "ok" : "ko", rep: v || "", attendu: attendu });
       }
-      RXO.ELEMENTS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, null, e.rep); });
-      RXO.LIAISONS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, null, e.rep); });
-      RXO.DEFINITIONS_EX2.forEach(function (e) { ligne("ex2", "e2_" + e.id, e.label, null, e.rep); });
-      RXO.QUESTIONS_EX3.forEach(function (q) { ligne("ex3", q.id, q.label, null, q.rep); });
+      var n1 = RXO.ELEMENTS_EX1.length + RXO.LIAISONS_EX1.length;
+      RXO.ELEMENTS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, e.rep, n1); });
+      RXO.LIAISONS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, e.rep, n1); });
+      RXO.DEFINITIONS_EX2.forEach(function (e) { ligne("ex2", "e2_" + e.id, e.label, e.rep, RXO.DEFINITIONS_EX2.length); });
+      RXO.QUESTIONS_EX3.forEach(function (q) { ligne("ex3", q.id, q.label, q.rep, RXO.QUESTIONS_EX3.length); });
       ["q1", "q2"].forEach(function (q) {
         var n = q.charAt(1), ch = r.chemins[q], att = ch.attendu || RXO.CHEMINS_EX4[q].attendus[0];
-        detail.push({ sec: "ex4", label: "Question " + n + " (" + Math.round(ch.frac * 100) + " % juste)", pts: ch.frac,
+        detail.push({ sec: "ex4", label: "Question " + n + " (" + Math.round(ch.frac * 100) + " % juste)", pts: ch.frac * 2.5, max: 2.5,
           etat: !(f || {})["e4_c" + n] ? "vide" : ch.frac === 1 ? "ok" : ch.frac > 0 ? "partiel" : "ko",
           rep: String((f || {})["e4_c" + n] || "").replace(/,/g, " → ") + " / " + String((f || {})["e4_l" + n] || "").replace(/,/g, ", "),
           attendu: att.c.join(" → ") + " / " + att.l.join(", ") });
       });
-      /* Les points de section sont ceux de RXO (sur 5) ; les points par ligne ne servent qu'à l'affichage. */
       return { points: r.pts, detail: detail };
     },
     appreciation: function (pts, note) {
