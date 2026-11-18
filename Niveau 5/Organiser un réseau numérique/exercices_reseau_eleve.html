@@ -289,7 +289,7 @@ function questions(){
   var q = [];
   RXO.ELEMENTS_EX1.forEach(function(e){ q.push({ id:"e1_" + e.id, ex:1, label:e.label, rep:e.rep, indice:e.indice, options:NUM8 }); });
   RXO.LIAISONS_EX1.forEach(function(e){ q.push({ id:"e1_" + e.id, ex:1, label:e.label, rep:e.rep, indice:e.indice, options:SUPPORTS }); });
-  RXO.DEFINITIONS_EX2.forEach(function(e){ q.push({ id:"e2_" + e.id, ex:2, label:e.label, rep:e.rep, indice:e.indice, options:RXO.NUMEROS_EX2 }); });
+  RXO.DEFINITIONS_EX2.forEach(function(e){ q.push({ id:"e2_" + e.id, ex:2, label:e.label, rep:e.rep, accepte:e.accepte, indice:e.indice, options:RXO.NUMEROS_EX2 }); });
   RXO.QUESTIONS_EX3.forEach(function(e){ q.push({ id:e.id, ex:3, label:e.label, rep:e.rep, indice:e.indice, options:RXO.OPTIONS_EX3[e.id], large:true }); });
   return q;
 }
@@ -480,7 +480,7 @@ function afficherMarques(r, avecSolution){
     it.classList.toggle("juste", ok); it.classList.toggle("faux", !ok);
     m.innerHTML = ok ? '<span class="ok">✅ Juste</span>'
       : '<span class="ko">❌ À revoir</span> — ' + esc(q.indice)
-        + (avecSolution ? '<br><span class="sol">Réponse attendue : ' + esc(labelOption(q, q.rep)) + '</span>' : '');
+        + (avecSolution ? '<br><span class="sol">Réponse attendue : ' + esc((q.accepte || [q.rep]).map(function(v){ return labelOption(q, v); }).join(" ou ")) + '</span>' : '');
   });
   ["q1", "q2"].forEach(function(q){
     var ch = r.chemins[q], ok = ch.frac === 1, m = $("m-e4_" + q), att = ch.attendu || RXO.CHEMINS_EX4[q].attendus[0];
