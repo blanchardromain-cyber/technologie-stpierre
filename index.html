@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-09b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-18a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4502,6 +4502,7 @@ body.est-prof .prof-only{display:block}
             <option value="eval3-5e">P1 5e &mdash; &Eacute;valuation n&deg;3</option>
             <option value="reseau5e-org">P2 5e &mdash; Organiser un r&eacute;seau num&eacute;rique</option>
             <option value="reseau5e-ev1">P2 5e &mdash; &Eacute;valuation n&deg;1</option>
+            <option value="reseau5e-exo">P2 5e &mdash; Exercices r&eacute;seau</option>
             <option value="reseau5e">R&eacute;seau 5e &mdash; Manipulation (bin&ocirc;me)</option>
             <option value="filius5e">Filius 5e &mdash; Simulation r&eacute;seau (bin&ocirc;me)</option>
             <option value="maison5e">Maison 5e &mdash; Mon r&eacute;seau &agrave; la maison</option>
@@ -5584,6 +5585,24 @@ body.est-prof .prof-only{display:block}
       </div>
     </div>
 
+    <!-- P2 5e — EXERCICES RÉSEAU (iframe : Niveau 5/Organiser un réseau numérique/exercices_reseau_eleve.html) -->
+    <div id="pg-reseau5e-exo" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Exercices : le fonctionnement d'un réseau informatique (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Quatre exercices d'<strong>entraînement corrigés immédiatement</strong>, en deux essais : ton bilan te dit ce qui est maîtrisé et ce qui reste à revoir.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Note proposée sur 20 pour information (investissement) ; la copie part au tableau de bord après le 2e essai.
+        Accès sans compte jusqu'au 25/11 par lien direct et code de classe (outils/codes_classes_exo.py).
+      </p>
+      <iframe id="reseau5e-exo-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/exercices_reseau_eleve.html" title="P2 — Exercices réseau (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- P2 5e — ÉVALUATION N°1 (iframe : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html) -->
     <div id="pg-reseau5e-ev1" class="h">
       <div class="phdr">
@@ -6524,6 +6543,7 @@ var SEQUENCES_DEF = [
   {id:"eval3-5e", ordre:15, niveau:"5ème", titre:"P1 — Évaluation n°3", desc:"Normes et contraintes, croquis et modélisation. Notée sur 10, corrigée automatiquement côté professeur.", couleur:"#5B34C7", code:"#a8VNMQB8YxBO35wzc3V81qSD062QdAhO3I5OwnbRvjs=", open:true},
   {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
   {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Corrigé détaillé et barème. Code d'accès professeur.", couleur:"var(--vt)", code:"#bbTUX3H4kCYeOAy7z7rskVpdg4DmB4aSKbzg31D3RR8=", open:true},
+  {id:"reseau5e-exo", ordre:20.2, niveau:"5ème", titre:"P2 — Exercices : le fonctionnement d'un réseau informatique", desc:"Architecture d'un réseau local, rôle des matériels du collège, travail sur son compte, cheminement de l'information. Entraînement corrigé immédiatement, en deux essais. Aides dys intégrées.", couleur:"#0EA5E9", code:"#nCm7FIo1Y3atdQ40UUhdiBGo5KRTx68Db4PoVJy6/8U=", open:true},
   {id:"reseau5e-ev1", ordre:20.5, niveau:"5ème", titre:"P2 — Évaluation n°1 — Organiser un réseau numérique", desc:"L'architecture du réseau du collège, ses améliorations, le diagnostic de quatre pannes. Notée sur 15, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#GrVZe3Utq40BR4RzOY5RzdCTJahCKVAHORZbYGO24W8=", open:true},
   {id:"reseau5e-ev1-cor", ordre:20.6, niveau:"5ème", titre:"P2 — Corrigé de l'évaluation n°1", desc:"Corrigé détaillé. Code donné par le professeur quand toutes les classes sont passées.", couleur:"var(--vt)", code:"#wFcsdLF4NupguET1BrhUgIu7b7+I/plaSTaUqCpIhJU=", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
@@ -7169,6 +7189,13 @@ function goPage(pid) {
     if (re1Ifr) re1Ifr.src = re1Ifr.getAttribute("data-src");
   }
   if (pid === "pg-reseau5e-ev1-cor") re1CorOuvrir();
+  if (pid === "pg-reseau5e-exo") {
+    try {
+      if (user) localStorage.setItem("reseau5e-exo_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var rxoIfr = document.getElementById("reseau5e-exo-frame");
+    if (rxoIfr) rxoIfr.src = rxoIfr.getAttribute("data-src");
+  }
   if (pid === "pg-reseau5e") {
     // Pré-remplit l'identité de l'élève connecté (Élève 1) dans la capsule embarquée.
     // Même origine → on passe par localStorage (pas de nom dans l'URL), puis on (re)charge l'iframe.
@@ -7546,6 +7573,8 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
+        } else if (s.id === "reseau5e-exo") {
+          badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
         } else if (s.id === "reseau5e-org") {
           badgeHtml = '<span class="badge" style="background:#E0F2FE;color:#0369A1;font-weight:700">&#x1F310; Activit&eacute; &eacute;l&egrave;ve</span>';
         } else if (s.id === "batiment5e") {
@@ -7594,6 +7623,7 @@ function renderDash() {
       else if (s.id === "reseau5e-org-cor") clickAction = "onclick=\"goPage('pg-reseau5e-org-cor')\"";
       else if (s.id === "reseau5e-ev1")     clickAction = "onclick=\"goPage('pg-reseau5e-ev1')\"";
       else if (s.id === "reseau5e-ev1-cor") clickAction = "onclick=\"goPage('pg-reseau5e-ev1-cor')\"";
+      else if (s.id === "reseau5e-exo")     clickAction = "onclick=\"goPage('pg-reseau5e-exo')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
@@ -7678,6 +7708,7 @@ function tryUnlock() {
     else if (pendingSeq === "reseau5e-org-cor") goPage("pg-reseau5e-org-cor");
     else if (pendingSeq === "reseau5e-ev1") goPage("pg-reseau5e-ev1");
     else if (pendingSeq === "reseau5e-ev1-cor") goPage("pg-reseau5e-ev1-cor");
+    else if (pendingSeq === "reseau5e-exo") goPage("pg-reseau5e-exo");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
@@ -9405,6 +9436,45 @@ var EVALUATIONS = {
       if (s(["pA", "pB", "pC", "pD"]) < 3.5) faibles.push("le diagnostic d'une panne");
       return mention + " — " + fmtPts(note) + "/15. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "."
                                                                         : "L'organisation d'un réseau et le diagnostic sont maîtrisés.");
+    }
+  },
+
+  /* P2 5e — Exercices réseau : corrigés par exercices_reseau_corr.js (RXO), source
+     unique partagée avec la page élève. Travail formatif, note pour information. */
+  "reseau5e-exo": {
+    titre: "P2 5e — Exercices réseau",
+    total: 20,
+    sections: [
+      { cle: "ex1", label: "1 Architecture d'un réseau local", max: 5, compact: true },
+      { cle: "ex2", label: "2 Rôle des constituants du réseau", max: 5, compact: true },
+      { cle: "ex3", label: "3 Utilisation du réseau du collège", max: 5, compact: true },
+      { cle: "ex4", label: "4 Cheminement de l'information", max: 5, compact: true }
+    ],
+    corriger: function (f) {
+      if (!window.RXO) return { points: {}, detail: [] };
+      var r = RXO.corriger(f || {}), detail = [];
+      function ligne(sec, k, label, rep, attendu) {
+        var v = (f || {})[k];
+        detail.push({ sec: sec, label: label, pts: r.items[k] ? 1 : 0, etat: !v ? "vide" : r.items[k] ? "ok" : "ko", rep: v || "", attendu: attendu });
+      }
+      RXO.ELEMENTS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, null, e.rep); });
+      RXO.LIAISONS_EX1.forEach(function (e) { ligne("ex1", "e1_" + e.id, e.label, null, e.rep); });
+      RXO.DEFINITIONS_EX2.forEach(function (e) { ligne("ex2", "e2_" + e.id, e.label, null, e.rep); });
+      RXO.QUESTIONS_EX3.forEach(function (q) { ligne("ex3", q.id, q.label, null, q.rep); });
+      ["q1", "q2"].forEach(function (q) {
+        var n = q.charAt(1), ch = r.chemins[q], att = ch.attendu || RXO.CHEMINS_EX4[q].attendus[0];
+        detail.push({ sec: "ex4", label: "Question " + n + " (" + Math.round(ch.frac * 100) + " % juste)", pts: ch.frac,
+          etat: !(f || {})["e4_c" + n] ? "vide" : ch.frac === 1 ? "ok" : ch.frac > 0 ? "partiel" : "ko",
+          rep: String((f || {})["e4_c" + n] || "").replace(/,/g, " → ") + " / " + String((f || {})["e4_l" + n] || "").replace(/,/g, ", "),
+          attendu: att.c.join(" → ") + " / " + att.l.join(", ") });
+      });
+      /* Les points de section sont ceux de RXO (sur 5) ; les points par ligne ne servent qu'à l'affichage. */
+      return { points: r.pts, detail: detail };
+    },
+    appreciation: function (pts, note) {
+      var niv = {}, ks = ["ex1", "ex2", "ex3", "ex4"];
+      ks.forEach(function (k) { var p = (Number(pts[k]) || 0) / 5; niv[k] = p >= 0.8 ? "maitrise" : p >= 0.5 ? "encours" : "arevoir"; });
+      return window.RXO ? RXO.appreciation({ note: note, niveaux: niv }) : fmtPts(note) + "/20";
     }
   },
 
@@ -11577,6 +11647,7 @@ var FICHE_TITRES = {
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
   "reseau5e-org":"P2 5e — Organiser un réseau numérique",
   "reseau5e-ev1":"P2 5e — Évaluation n°1",
+  "reseau5e-exo":"P2 5e — Exercices réseau",
   "batiment5e":"P1 5e — Aménager un bâtiment", "eval1-5e":"P1 5e — Évaluation n°1",
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
@@ -11587,7 +11658,7 @@ function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsu
 function ficheNiveau(sub) {
   return (sub.cap === "reseau5e" || sub.cap === "filius5e" || sub.cap === "maison5e"
        || sub.cap === "batiment5e" || sub.cap === "eval1-5e" || sub.cap === "eval2-5e"
-       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org" || sub.cap === "reseau5e-ev1") ? "5ᵉ" : "4ᵉ";
+       || sub.cap === "eval3-5e" || sub.cap === "reseau5e-org" || sub.cap === "reseau5e-ev1" || sub.cap === "reseau5e-exo") ? "5ᵉ" : "4ᵉ";
 }
 
 /* Ligne de score affichée en tête de copie. */
@@ -18182,6 +18253,7 @@ restoreA2Draft = function() {
 </script>
 
 <!-- Aménagements dys — exercices P11 et pages élèves P12 (exercices 1-2, activités 2-3) -->
+<script src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/exercices_reseau_corr.js"></script>
 <script>window.CONFORT_LECTURE  = { hote:".p11x1-tools, .p11x2-tools", racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", fonts:"pp4g/fonts/" };</script>
 <script src="assets/js/confort-lecture.js" defer></script>
 <script>window.LECTURE_IMMERSIVE = { racine:"#pg-p11-ex1, #pg-p11-ex2, #pg-p12-ex1, #pg-p12-ex2, #pg-p12-act2, #pg-p12-act3, #pg-reseau5e-ev1-cor", hote:".p11x1-tools, .p11x2-tools", sectionsFermees:"",
