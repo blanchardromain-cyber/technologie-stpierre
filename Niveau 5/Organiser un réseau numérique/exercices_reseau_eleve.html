@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 — Exercices : le fonctionnement d'un réseau informatique — 5ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --bl:#1F4E79; --bc:#2E75B6; --bp:#DEEAF1;
+    --vt:#1E6B3B; --vp:#E2EFDA;
+    --rg:#B03A2E; --rgp:#FADBD8;
+    --or:#A65400; --orp:#FFF1DE;
+    --ac:#0369A1; --acp:#E0F2FE;
+    --gr:#F4F6F8; --gb:#E2E8F0;
+    --tx:#1A202C; --td:#4A5568;
+    --q1:#1E8E3E; --q2:#1F5FD1;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.6}
+  button,select,input{font-family:inherit;font-size:inherit}
+  :focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important;scroll-behavior:auto!important} }
+  .vh{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0;padding:0}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--ac),#0C4A6E);color:#fff;padding:14px 20px;position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:1080px;margin:0 auto}
+  .hbadge{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#BAE6FD;font-weight:600}
+  header h1{font-size:18px;font-weight:700;line-height:1.25}
+  .qui{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
+  .qui b{background:rgba(255,255,255,.16);border-radius:999px;padding:4px 12px}
+  .qui button{background:rgba(255,255,255,.95);color:var(--ac);border:none;border-radius:8px;padding:6px 11px;font-weight:700;font-size:13px;cursor:pointer}
+
+  .outils{background:#fff;border-bottom:1px solid var(--gb);padding:8px 20px;position:sticky;top:var(--h-entete,62px);z-index:40}
+  .outils-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .pcount{font-size:13px;color:var(--td);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pbar{flex:1;min-width:120px;height:9px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),#38BDF8);transition:width .3s}
+
+  main{max-width:1080px;margin:0 auto;padding:20px 20px 150px}
+  .bandeau{background:linear-gradient(135deg,var(--ac),#0EA5E9);color:#fff;border-radius:var(--r);padding:18px 22px;margin-bottom:16px;box-shadow:var(--sh)}
+  .bandeau .lb{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;opacity:.9;font-weight:600}
+  .bandeau h2{font-size:19px;margin:4px 0 6px}
+  .bandeau p{font-size:14px;opacity:.97;max-width:760px}
+  .bandeau .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .bandeau .meta span{background:rgba(255,255,255,.2);border-radius:999px;padding:3px 12px;font-size:12.5px;font-weight:600}
+
+  .carte{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:16px 20px;margin-bottom:16px}
+  .consigne{background:#FFF9E6;border:2px solid #E8B84B;color:#5A4000;font-size:14px;line-height:1.7}
+  .consigne ol{margin:6px 0 0 20px}
+  fieldset.aide{border:none}
+  fieldset.aide legend{font-weight:700;font-size:15px;margin-bottom:8px}
+  .aides{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .aides label{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--gb);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:14px;line-height:1.45}
+  .aides label:has(input:checked){border-color:var(--ac);background:var(--acp)}
+  .aides input{margin-top:4px;width:18px;height:18px;flex:0 0 auto}
+  .aides small{display:block;color:var(--td);font-size:12.5px}
+  details.lexique summary{cursor:pointer;font-weight:700;color:var(--bl)}
+  details.lexique dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin-top:10px;font-size:14px}
+  details.lexique dt{font-weight:700}
+  @media (max-width:560px){ details.lexique dl{grid-template-columns:1fr} details.lexique dd{margin-bottom:6px} }
+
+  section.exo{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:18px;overflow:hidden}
+  .exhdr{display:flex;align-items:center;gap:12px;padding:13px 20px;background:var(--acp);border-left:6px solid var(--ac)}
+  .exhdr .num{width:30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto}
+  .exhdr h3{font-size:16px;color:#0C4A6E;flex:1}
+  .exhdr .pts{background:#fff;border:1.5px solid var(--ac);border-radius:999px;padding:2px 11px;font-size:12px;font-weight:700;color:var(--ac);white-space:nowrap}
+  .exbody{padding:16px 20px 20px}
+  .consexo{font-size:14.5px;margin-bottom:12px;line-height:1.7}
+  .schema{display:block;width:min(100%,600px);height:auto;margin:0 auto 14px;border:1.5px solid var(--gb);border-radius:10px;background:#fff}
+  .schema.etroit{width:min(100%,420px)}
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px 18px}
+  .item{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 10px;border:1.5px solid var(--gb);border-radius:10px;min-width:0}
+  .item > label{flex:1 1 160px;font-weight:600;font-size:14.5px;line-height:1.45;min-width:0}
+  .item select{min-height:42px;border:1.5px solid #9AA5B1;border-radius:8px;padding:6px 8px;background:#fff;color:var(--tx);max-width:100%}
+  .item select.large{flex:1 1 260px}
+  .item.juste{border-color:var(--vt);background:#F3FAF5}
+  .item.faux{border-color:var(--rg);background:#FFF7F6}
+  .marque{flex-basis:100%;font-size:13.5px;line-height:1.5}
+  .marque:empty{display:none}
+  .marque .ok{color:var(--vt);font-weight:700}
+  .marque .ko{color:var(--rg);font-weight:700}
+  .marque .sol{color:var(--bl);font-weight:600}
+  .btn-indice{border:1px solid var(--gb);background:var(--gr);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--td);cursor:pointer;min-height:36px}
+  .btn-indice:hover{background:#FFF7D6;border-color:#E8B84B;color:#5A4000}
+  .indice{flex-basis:100%;background:#FFF7D6;border-left:4px solid #E8B84B;border-radius:0 8px 8px 0;padding:6px 10px;font-size:13.5px;color:#5A4000}
+  body:not(.aide-guide):not(.aide-accompagne) .btn-indice{display:none}
+  .sous-titre{font-weight:700;font-size:15px;margin:14px 0 8px;color:#0C4A6E}
+  .tableau-def{display:grid;gap:8px}
+
+  /* ═══ EXERCICE 4 : tracé ═══ */
+  .choix-q{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .choix-q button{display:flex;align-items:center;gap:8px;border:2px solid var(--gb);border-radius:10px;background:#fff;padding:8px 13px;font-weight:700;cursor:pointer;min-height:44px}
+  .choix-q button[aria-pressed="true"]{border-color:var(--ac);background:var(--acp)}
+  .pastille-q{display:inline-block;width:26px;height:6px;border-radius:3px}
+  .sch{position:relative;width:min(100%,460px);margin:0 auto 12px;border:1.5px solid var(--gb);border-radius:10px;background:#fff;line-height:0}
+  .sch img{display:block;width:100%;height:auto;border-radius:10px}
+  .sch svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .app{position:absolute;width:24%;height:22%;transform:translate(-50%,-50%);background:transparent;border:2px dashed transparent;border-radius:12px;cursor:pointer;padding:0}
+  .app:hover,.app:focus-visible{border-color:var(--ac);background:rgba(3,105,161,.07)}
+  .app.dans{border:2.5px solid var(--ac);background:rgba(3,105,161,.08)}
+  .app.depart{border:3px solid #0C4A6E;background:rgba(12,74,110,.12);cursor:default}
+  .app .rang{position:absolute;left:4px;top:4px;min-width:24px;height:24px;border-radius:12px;background:#0C4A6E;color:#fff;display:flex;align-items:center;justify-content:center;font:700 13px/1 "DM Sans",system-ui,sans-serif;padding:0 5px}
+  .chemin-txt{font-size:14.5px;line-height:1.55;padding:9px 12px;border-radius:9px;background:var(--bp);color:var(--bl);font-weight:600;margin-bottom:10px}
+  .liens{list-style:none;display:grid;gap:6px;margin-bottom:8px}
+  .liens li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:7px 10px;border:1.5px solid var(--gb);border-radius:9px;font-size:14px}
+  .liens li .txt{flex:1 1 200px;font-weight:600}
+  .liens select{min-height:40px;border:1.5px solid #9AA5B1;border-radius:8px;padding:5px 8px;background:#fff}
+  .ligne-btns{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{border:none;border-radius:9px;padding:11px 18px;font-weight:700;cursor:pointer;min-height:44px}
+  .btn-p{background:var(--ac);color:#fff}
+  .btn-p:hover{background:#075985}
+  .btn-p:disabled{background:var(--gb);color:var(--td);cursor:not-allowed}
+  .btn-s{background:var(--gr);color:var(--td);border:1px solid var(--gb)}
+  .btn-s:hover{background:var(--bp);color:var(--bl)}
+  .legende{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--td);margin:4px 0 10px}
+  .legende span{display:inline-flex;align-items:center;gap:6px}
+
+  /* ═══ BILAN ═══ */
+  #bilan:empty{display:none}
+  .bilan h3{font-size:17px;margin-bottom:6px}
+  .bilan .note{display:inline-block;background:var(--ac);color:#fff;border-radius:10px;padding:6px 16px;font-size:22px;font-weight:700;margin:4px 0 10px}
+  .bilan table{width:100%;border-collapse:collapse;font-size:14px}
+  .bilan th,.bilan td{border:1px solid var(--gb);padding:7px 10px;text-align:left;vertical-align:top}
+  .bilan th{background:var(--bp);color:var(--bl);font-size:12.5px;text-transform:uppercase;letter-spacing:.4px}
+  .bilan .appr{margin-top:10px;background:var(--gr);border-radius:8px;padding:10px 12px}
+
+  /* ═══ BARRE D'ACTION ═══ */
+  .sendbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gb);box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:10px 20px;z-index:60}
+  .sendin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .msg{flex:1;min-width:200px;font-size:13.5px;line-height:1.5}
+  .msg.ok{color:var(--vt)} .msg.err{color:var(--rg)} .msg.wait{color:var(--td)}
+
+  /* ═══ ACCÈS SANS COMPTE ═══ */
+  #acces{position:fixed;inset:0;z-index:200;background:rgba(12,74,110,.92);display:flex;align-items:flex-start;justify-content:center;padding:20px 16px;overflow:auto}
+  #acces[hidden]{display:none}
+  .acces-carte{background:#fff;border-radius:14px;max-width:460px;width:100%;padding:22px 22px 18px;box-shadow:0 10px 40px rgba(0,0,0,.3);margin:auto 0}
+  .acces-carte h2{font-size:19px;color:#0C4A6E;margin-bottom:6px}
+  .acces-carte p{font-size:14px;color:var(--td);margin-bottom:12px}
+  .champ{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
+  .champ label{font-weight:700;font-size:14px}
+  .champ input,.champ select{min-height:44px;border:1.5px solid #9AA5B1;border-radius:9px;padding:8px 11px;background:#fff}
+  #acces-msg{min-height:1.5em;font-size:14px;margin:4px 0 10px;color:var(--rg);font-weight:600}
+  .ferme{font-size:15px;line-height:1.6;color:var(--tx)}
+  .bloque select,.bloque button.app,.bloque .liens select,.bloque .ligne-btns button{pointer-events:none;opacity:.75}
+</style>
+</head>
+<body class="aide-autonome">
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 2</div>
+      <h1>P2 — Exercices : le fonctionnement d'un réseau informatique</h1>
+    </div>
+    <div class="qui" id="qui" data-nolecture></div>
+  </div>
+</header>
+
+<div class="outils">
+  <div class="outils-in">
+    <span class="pcount" id="pcount">0 / 22 réponses</span>
+    <div class="pbar" aria-hidden="true"><span id="pbar-fill"></span></div>
+  </div>
+</div>
+
+<main>
+  <div class="bandeau">
+    <div class="lb">Exercices d'entraînement</div>
+    <h2>Comment créer un réseau de données&nbsp;?</h2>
+    <p data-secondaire>Quatre situations pour vérifier ce que tu as compris du réseau du collège : ses matériels, leur rôle, le travail sur ton compte et le trajet de l'information.</p>
+    <div class="meta"><span>4 situations</span><span>2 essais</span><span>Correction immédiate</span></div>
+  </div>
+
+  <div class="carte consigne" data-consigne>
+    <b>Comment ça marche&nbsp;?</b>
+    <ol>
+      <li>Réponds aux 4 exercices. Ton travail est enregistré automatiquement sur cet appareil.</li>
+      <li>Clique sur <b>« Vérifier »</b> : chaque réponse est marquée juste ou à revoir, avec un indice.</li>
+      <li>Corrige ce qui est à revoir, puis vérifie <b>une deuxième fois</b> : ta note et ton bilan s'affichent et sont envoyés à ton professeur.</li>
+      <li>Ensuite, tu peux t'entraîner encore autant que tu veux.</li>
+    </ol>
+  </div>
+
+  <div class="carte">
+    <fieldset class="aide">
+      <legend>Choisis ton aide (tu peux changer à tout moment, la note est la même)</legend>
+      <div class="aides">
+        <label><input type="radio" name="aide" value="autonome" checked><span><b>Autonome</b><small>Sans indice.</small></span></label>
+        <label><input type="radio" name="aide" value="guide"><span><b>Guidé</b><small>Un bouton 💡 donne un indice pour chaque question.</small></span></label>
+        <label><input type="radio" name="aide" value="accompagne"><span><b>Accompagné</b><small>Indices et seulement 3 propositions par question.</small></span></label>
+      </div>
+    </fieldset>
+  </div>
+
+  <details class="carte lexique">
+    <summary>📖 Lexique</summary>
+    <dl>
+      <dt>Réseau local</dt><dd>Ensemble d'appareils d'un même lieu (le collège) reliés pour échanger des informations.</dd>
+      <dt>Support de liaison</dt><dd>Ce qui transporte l'information entre deux appareils.</dd>
+      <dt>Câble (filaire)</dt><dd>Liaison par un fil, souvent un câble réseau avec une prise RJ45.</dd>
+      <dt>Ondes (sans fil)</dt><dd>Liaison par ondes radio, sans fil (Wi-Fi).</dd>
+      <dt>Identifiant</dt><dd>Le nom qui te désigne sur le réseau.</dd>
+      <dt>Mot de passe</dt><dd>Le code secret qui prouve que c'est bien toi.</dd>
+      <dt>Lecteur « Perso »</dt><dd>L'espace où sont rangés tes propres fichiers.</dd>
+      <dt>Cheminement</dt><dd>Les appareils traversés par l'information, dans l'ordre.</dd>
+    </dl>
+  </details>
+
+  <div id="bilan" class="carte bilan" role="status" aria-live="polite"></div>
+
+  <div id="exos"></div>
+</main>
+
+<div class="sendbar">
+  <div class="sendin">
+    <button class="btn btn-p" id="btn-verif" type="button">Vérifier mes réponses</button>
+    <button class="btn btn-s" id="btn-encore" type="button" hidden>S'entraîner encore</button>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<div id="acces" hidden>
+  <form class="acces-carte" id="acces-form" novalidate>
+    <h2>Accès à l'exercice</h2>
+    <p>Écris ton prénom, ton nom, ta classe et le code reçu par ÉcoleDirecte. Ton résultat sera envoyé à ton professeur.</p>
+    <div class="champ"><label for="a-prenom">Prénom</label><input id="a-prenom" autocomplete="off" required></div>
+    <div class="champ"><label for="a-nom">Nom</label><input id="a-nom" autocomplete="off" required></div>
+    <div class="champ"><label for="a-classe">Classe</label>
+      <select id="a-classe" required><option value="">— choisis —</option><option>5A</option><option>5B</option><option>5C</option><option>5D</option><option>5E</option><option>5F</option><option>5G</option></select></div>
+    <div class="champ"><label for="a-code">Code d'accès</label><input id="a-code" autocomplete="off" required></div>
+    <div id="acces-msg" role="alert"></div>
+    <button class="btn btn-p" type="submit" id="a-ok">Commencer</button>
+  </form>
+</div>
+
+<script src="exercices_reseau_corr.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P2 5e — EXERCICES : le fonctionnement d'un réseau informatique (cap "reseau5e-exo")
+   Travail formatif : les réponses sont dans exercices_reseau_corr.js (voulu).
+   Deux accès : dans le site (iframe, identité du compte) ou par lien direct
+   sans compte jusqu'au 25/11/2026 (prénom, nom, classe, code de la classe).
+   Envoi, file hors ligne et garde-fou local : repris de evaluation1_eleve.html.
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "reseau5e-exo";
+var CAP_LABEL   = "P2 5e — Exercices réseau";
+var PREFILL_KEY = "reseau5e-exo_prefill";
+var QUEUE_KEY   = "reseau5e_exo_offline_queue";
+var DRAFT_PFX   = "reseau5e_exo_draft_";
+var LIBRE_KEY   = "reseau5e-exo_libre";               /* identité de l'accès sans compte (sessionStorage) */
+var DATE_LIMITE = new Date(2026, 10, 25, 23, 59, 59); /* 25 novembre 2026, 23 h 59 */
+/* Empreintes des codes de classe (empreinteCode("reseau5e-exo:" + classe, code)), jamais les codes. */
+var CODES_CLASSES = {
+  "5A":"#JrdzYmkEpKnDcTa8eK+RPl/HL/StJIE/1xD4BaDdJ94=",
+  "5B":"#gK1QcWuuZZD2QrVNTDAuMz/TXWMRKwIw9yXHraid3PQ=",
+  "5C":"#II3NxesRA4x8h+myoFxTSR9S973pPerAbE12o6woYdk=",
+  "5D":"#tDN1mckD5BzPjaSUHbMODtBs+YtI5NlTLkG17/FJL4g=",
+  "5E":"#taRpLmm1o/KyX8D8n7CKvQv/JeXwL9iX1JNWBtfI43A=",
+  "5F":"#qLipDkPN9PfSXcWZ5tLU0DZIC1hjVtKFVIYkvRaqII4=",
+  "5G":"#i5MGtDMu1me10KXIIBitH83IlDdHf80PYFUqijEH3jk="
+};
+
+var USER = { id:"", p:"", n:"", c:"" };
+var MODE = "";                                         /* "site" ou "libre" */
+var ETAT = nouvelEtat();
+
+function nouvelEtat(){
+  return { rep:{}, aide:"autonome", essai:0, note1:null, noteFinale:null, envoye:false, entrainement:false,
+           chemins:{ q1:{ c:["tablette"], l:[] }, q2:{ c:["portable"], l:[] } }, actif:"q1", indices:{} };
+}
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function slug(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function fmt(n){ n = Math.round(Number(n) * 100) / 100; return String(n).replace(".", ","); }
+function flash(html, type){ var m = $("msg"); m.innerHTML = html; m.className = "msg " + (type || ""); }
+function eid(){ return USER.id || (CAP_ID + "." + (slug(USER.c) || "5x") + "." + (slug(USER.p + " " + USER.n) || "eleve")); }
+
+/* ════════════ DONNÉES DES QUESTIONS (depuis RXO) ════════════ */
+var NUM8 = ["1","2","3","4","5","6","7","8"].map(function(v){ return { v:v, label:v }; });
+var SUPPORTS = [{ v:"cable", label:"Câble (filaire)" }, { v:"ondes", label:"Ondes (sans fil)" }];
+function questions(){
+  var q = [];
+  RXO.ELEMENTS_EX1.forEach(function(e){ q.push({ id:"e1_" + e.id, ex:1, label:e.label, rep:e.rep, indice:e.indice, options:NUM8 }); });
+  RXO.LIAISONS_EX1.forEach(function(e){ q.push({ id:"e1_" + e.id, ex:1, label:e.label, rep:e.rep, indice:e.indice, options:SUPPORTS }); });
+  RXO.DEFINITIONS_EX2.forEach(function(e){ q.push({ id:"e2_" + e.id, ex:2, label:e.label, rep:e.rep, indice:e.indice, options:RXO.NUMEROS_EX2 }); });
+  RXO.QUESTIONS_EX3.forEach(function(e){ q.push({ id:e.id, ex:3, label:e.label, rep:e.rep, indice:e.indice, options:RXO.OPTIONS_EX3[e.id], large:true }); });
+  return q;
+}
+var QUESTIONS = questions();
+var TOTAL_REP = QUESTIONS.length + 2;                  /* + les deux chemins de l'exercice 4 */
+
+/* Mode accompagné : la bonne réponse et deux autres, tirées avec une graine fixe par élève. */
+function graine(s){ var h = 2166136261; for (var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function optionsAffichees(q){
+  if (ETAT.aide !== "accompagne" || q.options.length <= 3) return q.options;
+  var autres = q.options.filter(function(o){ return o.v !== q.rep; }), h = graine(eid() + q.id), garde = {};
+  garde[q.rep] = 1;
+  while (Object.keys(garde).length < 3){ garde[autres[h % autres.length].v] = 1; h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0; }
+  var choisi = ETAT.rep[q.id];
+  return q.options.filter(function(o){ return garde[o.v] || o.v === choisi; });
+}
+
+/* ════════════ CONSTRUCTION DES EXERCICES ════════════ */
+function htmlItem(q){
+  var opts = '<option value="">—</option>' + optionsAffichees(q).map(function(o){
+    return '<option value="' + esc(o.v) + '"' + (ETAT.rep[q.id] === o.v ? " selected" : "") + '>' + esc(o.label) + '</option>';
+  }).join("");
+  return '<div class="item" id="it-' + q.id + '">'
+    + '<label for="s-' + q.id + '">' + esc(q.label) + '</label>'
+    + '<select id="s-' + q.id + '" data-q="' + q.id + '"' + (q.large ? ' class="large"' : '') + '>' + opts + '</select>'
+    + '<button type="button" class="btn-indice" data-indice="' + q.id + '" aria-expanded="' + (ETAT.indices[q.id] ? "true" : "false") + '" data-nolecture>💡 Indice</button>'
+    + (ETAT.indices[q.id] ? '<div class="indice">' + esc(q.indice) + '</div>' : '')
+    + '<div class="marque" id="m-' + q.id + '"></div></div>';
+}
+function enTete(n, titre){
+  return '<div class="exhdr"><span class="num">' + n + '</span><h3>' + titre + '</h3><span class="pts">/ 5</span></div>';
+}
+function construire(){
+  var par = function(ex){ return QUESTIONS.filter(function(q){ return q.ex === ex; }); };
+  var x = "";
+  x += '<section class="exo" id="ex1">' + enTete(1, "Architecture d'un réseau local") + '<div class="exbody">'
+     + '<p class="consexo" data-consigne>Associe chaque matériel au <b>numéro</b> qui le désigne sur le schéma, puis indique le support de liaison demandé.</p>'
+     + '<img class="schema" src="img/exo-schema1.jpg" alt="Schéma d\'un réseau local : huit matériels numérotés de 1 à 8, reliés par des câbles à un boîtier central ou par des ondes à une borne sans fil.">'
+     + '<div class="grille">' + par(1).slice(0, 8).map(htmlItem).join("") + '</div>'
+     + '<div class="sous-titre">Supports de liaison</div><div class="grille">' + par(1).slice(8).map(htmlItem).join("") + '</div>'
+     + '</div></section>';
+  x += '<section class="exo" id="ex2">' + enTete(2, "Rôle des principaux constituants du réseau du collège") + '<div class="exbody">'
+     + '<p class="consexo" data-consigne>Pour chaque définition, choisis le <b>numéro</b> de l\'élément du schéma auquel elle correspond.</p>'
+     + '<img class="schema etroit" src="img/exo-schema4.jpg" alt="Schéma du réseau du collège : routeur relié à Internet (1), commutateur (2), photocopieur-scanner (3), serveur pédagogique (4), point d\'accès Wi-Fi (5), imprimante du CDI (6), imprimante (7), et les salles avec leurs ordinateurs.">'
+     + '<div class="tableau-def">' + par(2).map(htmlItem).join("") + '</div>'
+     + '</div></section>';
+  x += '<section class="exo" id="ex3">' + enTete(3, "Utilisation du réseau local du collège") + '<div class="exbody">'
+     + '<p class="consexo" data-consigne>Éva et Mattéo sont deux élèves du même collège. Ils possèdent tous les deux un compte dans le réseau de l\'établissement. Leurs identifiants leur ont été donnés en début d\'année.</p>'
+     + '<img class="schema" src="img/exo-schema3.jpg" alt="Dessin : Éva et Mattéo en salle de technologie. Leurs ordinateurs sont reliés à un commutateur, lui-même relié à un serveur de comptes, un serveur de fichiers, une imprimante et aux ordinateurs du CDI.">'
+     + '<div class="tableau-def">' + par(3).map(htmlItem).join("") + '</div>'
+     + '</div></section>';
+  x += '<section class="exo" id="ex4">' + enTete(4, "Cheminement de l'information") + '<div class="exbody">'
+     + '<div class="consexo" data-consigne><p><b>Question 1 (tracé vert)</b> : décris le cheminement de l\'information quand on consulte un site web sur Internet à partir de la <b>tablette</b>.</p>'
+     + '<p><b>Question 2 (tracé bleu)</b> : décris le cheminement de l\'information quand on lance une impression à partir de l\'<b>ordinateur portable</b>.</p>'
+     + '<p>Clique sur les appareils <b>dans l\'ordre</b> où l\'information les traverse (un nouveau clic retire un appareil), puis choisis le support de chaque liaison.</p></div>'
+     + '<div class="choix-q" role="group" aria-label="Question à tracer">'
+     + '<button type="button" data-actif="q1"><span class="pastille-q" style="background:var(--q1)"></span>Question 1 : tablette → site web</button>'
+     + '<button type="button" data-actif="q2"><span class="pastille-q" style="background:var(--q2);background-image:repeating-linear-gradient(90deg,var(--q2) 0 8px,#fff 8px 11px)"></span>Question 2 : portable → impression</button></div>'
+     + '<div class="legende" aria-hidden="true">'
+     + '<span><svg width="44" height="10"><line x1="2" y1="5" x2="42" y2="5" stroke="#4A5568" stroke-width="3"/></svg>câble</span>'
+     + '<span><svg width="44" height="10"><path d="' + vague(2,5,42,5) + '" fill="none" stroke="#4A5568" stroke-width="3"/></svg>ondes</span>'
+     + '<span><svg width="44" height="10"><line x1="2" y1="5" x2="42" y2="5" stroke="var(--q1)" stroke-width="4"/></svg>question 1</span>'
+     + '<span><svg width="44" height="10"><line x1="2" y1="5" x2="42" y2="5" stroke="var(--q2)" stroke-width="4" stroke-dasharray="8 4"/></svg>question 2</span></div>'
+     + '<div class="sch" id="sch"><img src="img/exo-schema2.jpg" alt="Huit appareils : tablette, routeur, Internet, portable sans fil, point d\'accès Wi-Fi, commutateur, imprimante, ordinateur. Aucune liaison n\'est dessinée.">'
+     + '<svg id="trace" viewBox="0 0 400 405" aria-hidden="true"></svg>'
+     + RXO.APPAREILS_EX4.map(function(a){
+         return '<button type="button" class="app" data-app="' + a.id + '" style="left:' + a.x + '%;top:' + a.y + '%"><span class="vh">' + esc(a.label) + '</span></button>';
+       }).join("")
+     + '</div>'
+     + '<div class="chemin-txt" id="chemin-txt" aria-live="polite"></div>'
+     + '<ul class="liens" id="liens"></ul>'
+     + '<div class="item" id="it-e4" style="border:none;padding:0"><button type="button" class="btn-indice" data-indice="e4" data-nolecture>💡 Indice</button>'
+     + (ETAT.indices.e4 ? '<div class="indice">' + esc(RXO.CHEMINS_EX4[ETAT.actif].indice) + '</div>' : '') + '</div>'
+     + '<div class="ligne-btns"><button type="button" class="btn btn-s" id="btn-effacer">Effacer ce tracé</button></div>'
+     + '<div class="marque" id="m-e4_q1" style="margin-top:10px"></div><div class="marque" id="m-e4_q2"></div>'
+     + '</div></section>';
+  $("exos").innerHTML = x;
+  majTrace();
+}
+
+/* ════════════ EXERCICE 4 : chemins ════════════ */
+function app(id){ for (var i = 0; i < RXO.APPAREILS_EX4.length; i++) if (RXO.APPAREILS_EX4[i].id === id) return RXO.APPAREILS_EX4[i]; return null; }
+function px(a){ return { x:a.x * 4, y:a.y * 4.05 }; }
+function vague(x1, y1, x2, y2){
+  var dx = x2 - x1, dy = y2 - y1, L = Math.sqrt(dx*dx + dy*dy) || 1, n = Math.max(2, Math.round(L / 14)), nx = -dy / L, ny = dx / L, d = "M" + x1 + " " + y1;
+  for (var i = 1; i <= n; i++){
+    var t0 = (i - 0.5) / n, t1 = i / n, s = (i % 2 ? 1 : -1) * 4;
+    d += " Q" + (x1 + dx*t0 + nx*s).toFixed(1) + " " + (y1 + dy*t0 + ny*s).toFixed(1) + " " + (x1 + dx*t1).toFixed(1) + " " + (y1 + dy*t1).toFixed(1);
+  }
+  return d;
+}
+function cliqueApp(id){
+  if (bloque()) return;
+  var ch = ETAT.chemins[ETAT.actif], i = ch.c.indexOf(id);
+  if (i === 0) return;                                   /* l'appareil de départ est imposé */
+  if (i > 0){ ch.c.splice(i, 1); ch.l.splice(i - 1, 1); }
+  else { ch.c.push(id); ch.l.push(""); }
+  apresSaisie(); majTrace();
+}
+function majTrace(){
+  var svg = $("trace"); if (!svg) return;
+  var s = "";
+  ["q1", "q2"].forEach(function(q){
+    var ch = ETAT.chemins[q], coul = q === "q1" ? "var(--q1)" : "var(--q2)", dash = q === "q2" ? ' stroke-dasharray="10 5"' : "";
+    var dec = q === "q1" ? -4 : 4;                       /* décalage pour voir les deux tracés superposés */
+    for (var i = 1; i < ch.c.length; i++){
+      var a = px(app(ch.c[i-1])), b = px(app(ch.c[i]));
+      var x1 = a.x + dec, y1 = a.y + dec, x2 = b.x + dec, y2 = b.y + dec;
+      if (ch.l[i-1] === "ondes") s += '<path d="' + vague(x1, y1, x2, y2) + '" fill="none" stroke="' + coul + '" stroke-width="4"' + (q === "q1" ? "" : dash) + ' opacity="' + (q === ETAT.actif ? 1 : .55) + '"/>';
+      else s += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + coul + '" stroke-width="' + (ch.l[i-1] ? 4 : 2.5) + '"' + dash + (ch.l[i-1] ? "" : ' stroke-opacity=".6"') + ' opacity="' + (q === ETAT.actif ? 1 : .55) + '"/>';
+    }
+  });
+  svg.innerHTML = s;
+  var ch = ETAT.chemins[ETAT.actif], noms = ch.c.map(function(id){ return app(id).label; });
+  var boutons = document.querySelectorAll("#sch .app");
+  for (var k = 0; k < boutons.length; k++){
+    var id = boutons[k].getAttribute("data-app"), r = ch.c.indexOf(id), lab = app(id).label;
+    boutons[k].classList.toggle("dans", r > 0); boutons[k].classList.toggle("depart", r === 0);
+    boutons[k].setAttribute("aria-pressed", r >= 0 ? "true" : "false");
+    boutons[k].setAttribute("aria-label", r === 0 ? lab + " : point de départ" : r > 0 ? lab + ", étape " + (r + 1) + " : cliquer pour retirer" : "Ajouter " + lab + " au chemin");
+    var old = boutons[k].querySelector(".rang"); if (old) old.remove();
+    if (r >= 0){ var b = document.createElement("span"); b.className = "rang"; b.setAttribute("aria-hidden", "true"); b.textContent = r + 1; boutons[k].appendChild(b); }
+  }
+  var qb = document.querySelectorAll(".choix-q button");
+  for (var j = 0; j < qb.length; j++) qb[j].setAttribute("aria-pressed", qb[j].getAttribute("data-actif") === ETAT.actif ? "true" : "false");
+  $("chemin-txt").textContent = (ETAT.actif === "q1" ? "Question 1 : " : "Question 2 : ") + noms.join(" → ")
+    + (ch.c.length < 2 ? " → … (clique sur l'appareil suivant)" : "");
+  var ul = $("liens"), h = "";
+  if (ch.c.length < 2) h = '<li class="vide" style="color:var(--td);font-style:italic">Aucune liaison pour l\'instant.</li>';
+  for (var m = 1; m < ch.c.length; m++){
+    var idl = "l-" + ETAT.actif + "-" + m;
+    h += '<li><label class="txt" for="' + idl + '">Liaison ' + m + ' : ' + esc(app(ch.c[m-1]).label) + ' → ' + esc(app(ch.c[m]).label) + '</label>'
+       + '<select id="' + idl + '" data-lien="' + (m - 1) + '"><option value="">— support —</option>'
+       + SUPPORTS.map(function(o){ return '<option value="' + o.v + '"' + (ch.l[m-1] === o.v ? " selected" : "") + '>' + o.label + '</option>'; }).join("")
+       + '</select></li>';
+  }
+  ul.innerHTML = h;
+}
+
+/* ════════════ SAISIE, PROGRESSION, BROUILLON ════════════ */
+function bloque(){ return ETAT.essai >= 2 && !ETAT.entrainement; }
+function champs(){
+  var f = {};
+  QUESTIONS.forEach(function(q){ if (ETAT.rep[q.id]) f[q.id] = ETAT.rep[q.id]; });
+  f.e4_c1 = ETAT.chemins.q1.c.join(","); f.e4_l1 = ETAT.chemins.q1.l.join(",");
+  f.e4_c2 = ETAT.chemins.q2.c.join(","); f.e4_l2 = ETAT.chemins.q2.l.join(",");
+  return f;
+}
+function cheminComplet(q){ var ch = ETAT.chemins[q]; return ch.c.length >= 2 && ch.l.every(function(x){ return !!x; }); }
+function nbRepondu(){
+  var n = QUESTIONS.filter(function(q){ return !!ETAT.rep[q.id]; }).length;
+  return n + (cheminComplet("q1") ? 1 : 0) + (cheminComplet("q2") ? 1 : 0);
+}
+function majProgression(){
+  var n = nbRepondu();
+  $("pcount").textContent = n + " / " + TOTAL_REP + " réponses";
+  $("pbar-fill").style.width = Math.round(n / TOTAL_REP * 100) + "%";
+}
+function cleBrouillon(){ return DRAFT_PFX + eid(); }
+function enregistrer(){ try { localStorage.setItem(cleBrouillon(), JSON.stringify(ETAT)); } catch(e){} }
+function restaurer(){
+  try {
+    var d = JSON.parse(localStorage.getItem(cleBrouillon()) || "null");
+    if (d && d.rep && d.chemins){ ETAT = Object.assign(nouvelEtat(), d); }
+  } catch(e){}
+}
+function apresSaisie(){
+  /* Une réponse modifiée efface sa marque, pour ne pas laisser croire qu'elle est vérifiée. */
+  majProgression(); enregistrer();
+}
+
+/* ════════════ VÉRIFICATION ET DEUX ESSAIS ════════════ */
+function texteChemin(c, l){
+  var out = app(c[0]).label;
+  for (var i = 1; i < c.length; i++) out += " —(" + (l[i-1] === "ondes" ? "ondes" : "câble") + ")→ " + app(c[i]).label;
+  return out;
+}
+function labelOption(q, v){ for (var i = 0; i < q.options.length; i++) if (q.options[i].v === v) return q.options[i].label; return v; }
+function afficherMarques(r, avecSolution){
+  QUESTIONS.forEach(function(q){
+    var it = $("it-" + q.id), m = $("m-" + q.id), ok = r.items[q.id] === 1;
+    it.classList.toggle("juste", ok); it.classList.toggle("faux", !ok);
+    m.innerHTML = ok ? '<span class="ok">✅ Juste</span>'
+      : '<span class="ko">❌ À revoir</span> — ' + esc(q.indice)
+        + (avecSolution ? '<br><span class="sol">Réponse attendue : ' + esc(labelOption(q, q.rep)) + '</span>' : '');
+  });
+  ["q1", "q2"].forEach(function(q){
+    var ch = r.chemins[q], ok = ch.frac === 1, m = $("m-e4_" + q), att = ch.attendu || RXO.CHEMINS_EX4[q].attendus[0];
+    m.innerHTML = '<b>Question ' + q.charAt(1) + ' :</b> ' + (ok ? '<span class="ok">✅ Juste</span>'
+      : '<span class="ko">❌ À revoir</span> (' + Math.round(ch.frac * 100) + ' % du chemin juste) — ' + esc(RXO.CHEMINS_EX4[q].indice)
+        + (avecSolution ? '<br><span class="sol">Chemin attendu : ' + esc(texteChemin(att.c, att.l)) + '</span>'
+            + (q === "q2" ? '<br><span class="sol">Autre chemin accepté : ' + esc(texteChemin(RXO.CHEMINS_EX4.q2.attendus[1].c, RXO.CHEMINS_EX4.q2.attendus[1].l)) + ' (si l\'imprimante est en Wi-Fi).</span>' : '') : ''));
+  });
+}
+function effacerMarques(){
+  var its = document.querySelectorAll(".item"); for (var i = 0; i < its.length; i++) its[i].classList.remove("juste", "faux");
+  var ms = document.querySelectorAll(".marque"); for (var j = 0; j < ms.length; j++) ms[j].innerHTML = "";
+}
+function afficherBilan(r, titre){
+  var lignes = ["ex1", "ex2", "ex3", "ex4"].map(function(k){
+    var n = RXO.NIVEAUX[r.niveaux[k]], s = RXO.SITUATIONS[k];
+    return '<tr><td>' + esc(s.titre) + '</td><td>' + n.picto + ' <b>' + n.mot + '</b></td><td style="font-variant-numeric:tabular-nums">' + fmt(r.pts[k]) + ' / 5</td><td>'
+      + (r.niveaux[k] === "maitrise" ? "—" : "Revois la " + esc(s.revoir) + " de la capsule « Organiser un réseau numérique ».") + '</td></tr>';
+  }).join("");
+  $("bilan").innerHTML = '<h3>' + titre + '</h3><div class="note">' + fmt(r.note) + ' / 20</div>'
+    + '<div style="overflow-x:auto"><table><thead><tr><th>Situation</th><th>Mon niveau</th><th>Points</th><th>Pour progresser</th></tr></thead><tbody>' + lignes + '</tbody></table></div>'
+    + '<div class="appr">' + esc(RXO.appreciation(r)) + '</div>';
+}
+function verifier(){
+  if (nbRepondu() < TOTAL_REP){
+    flash("✋ Il manque " + (TOTAL_REP - nbRepondu()) + " réponse(s). Pour l'exercice 4, trace les deux chemins et choisis le support de chaque liaison.", "err");
+    var premier = QUESTIONS.filter(function(q){ return !ETAT.rep[q.id]; })[0];
+    if (premier) $("s-" + premier.id).focus();
+    return;
+  }
+  var r = RXO.corriger(champs());
+  if (ETAT.entrainement){
+    afficherMarques(r, true); afficherBilan(r, "Entraînement — résultat (non envoyé)");
+    flash("Entraînement : " + fmt(r.note) + "/20. Ce résultat n'est pas envoyé.", "ok"); return;
+  }
+  if (ETAT.essai === 0){
+    ETAT.essai = 1; ETAT.note1 = r.note; enregistrer();
+    afficherMarques(r, false);
+    var faux = Object.keys(r.items).filter(function(k){ return r.items[k] === 0; }).length;
+    $("btn-verif").textContent = "Vérifier une 2e fois (note finale)";
+    flash(faux ? "Essai 1 : " + faux + " réponse(s) à revoir, marquée(s) ❌ avec un indice. Corrige-les, puis vérifie une 2e fois."
+               : "Essai 1 : tout est juste ! Clique encore sur « Vérifier » pour enregistrer ta note.", faux ? "wait" : "ok");
+    return;
+  }
+  ETAT.essai = 2; ETAT.noteFinale = r.note; enregistrer();
+  afficherMarques(r, true); afficherBilan(r, "Mon bilan");
+  majBoutons(); envoyer(r);
+  $("bilan").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+function majBoutons(){
+  var fini = ETAT.essai >= 2;
+  $("btn-encore").hidden = !fini || ETAT.entrainement;
+  $("btn-verif").textContent = ETAT.entrainement ? "Vérifier (entraînement)" : ETAT.essai === 1 ? "Vérifier une 2e fois (note finale)" : "Vérifier mes réponses";
+  $("btn-verif").hidden = fini && !ETAT.entrainement;
+  document.body.classList.toggle("bloque", bloque());
+  var sels = document.querySelectorAll("#exos select"); for (var i = 0; i < sels.length; i++) sels[i].disabled = bloque();
+}
+function entrainerEncore(){
+  var garde = { aide:ETAT.aide, essai:ETAT.essai, note1:ETAT.note1, noteFinale:ETAT.noteFinale, envoye:ETAT.envoye };
+  ETAT = Object.assign(nouvelEtat(), garde, { entrainement:true });
+  enregistrer(); construire(); majProgression(); majBoutons(); effacerMarques();
+  flash("Mode entraînement : refais les exercices. Ta note envoyée (" + fmt(ETAT.noteFinale) + "/20) ne change pas.", "ok");
+  window.scrollTo(0, 0);
+}
+
+/* ════════════ ENVOI AU PROFESSEUR (repris d'evaluation1_eleve.html) ════════════ */
+function mettreEnFile(sub){ try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]").filter(function(x){ return x.eid !== sub.eid; }); q.push(sub); localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e){} }
+function retirerDeLaFile(sub){ try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]").filter(function(x){ return x.eid !== sub.eid; }); localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch(e){} }
+function deposerEnLocal(sub){ try { var s = JSON.parse(localStorage.getItem("subs") || "[]").filter(function(x){ return !(x.eid === sub.eid && x.cap === sub.cap); }); s.push(sub); localStorage.setItem("subs", JSON.stringify(s)); } catch(e){} }
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production. */
+function urlEcriture(){
+  var hn = (location.hostname || "").toLowerCase();
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  try { var u = localStorage.getItem("apps_script_url_test") || ""; if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u; } catch(e){}
+  return "";
+}
+function poster(sub, fini){
+  mettreEnFile(sub);
+  var cible = urlEcriture();
+  if (!cible){ try { console.warn("[capsule] Page servie en local : envoi vers la production bloqué, copie gardée en file locale."); } catch(e){} if (fini) fini(false); return; }
+  fetch(cible, { method:"POST", mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify({ secret:SYNC_SECRET, sub:sub }) })
+    .then(function(){ retirerDeLaFile(sub); if (fini) fini(true); })
+    .catch(function(){ if (fini) fini(false); });
+}
+function viderLaFile(){ try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); if (q.length && urlEcriture()) q.forEach(function(s){ poster(s); }); } catch(e){} }
+function fabriquerEnvoi(r){
+  var f = champs();
+  f._essai = "2"; f._note1 = String(ETAT.note1); f._aide = ETAT.aide; f._acces = MODE;
+  return {
+    id: Date.now(), eid: eid(), ename: (USER.p + " " + USER.n).trim() || "Élève", ecls: USER.c,
+    cap: CAP_ID, caplbl: CAP_LABEL, score: r.note, qcmTot: 20,
+    open: "Note proposée : " + fmt(r.note) + "/20 (essai 1 : " + fmt(ETAT.note1) + "/20). Aide : " + ETAT.aide + ". Accès : " + (MODE === "site" ? "site" : "lien sans compte") + ".",
+    fields: f, date: new Date().toLocaleDateString("fr-FR"), dateISO: new Date().toISOString(), status: "pending"
+  };
+}
+function envoyer(r){
+  var sub = fabriquerEnvoi(r);
+  deposerEnLocal(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  flash("⟳ Envoi de ton résultat au professeur…", "wait");
+  poster(sub, function(ok){
+    if (ok){ ETAT.envoye = true; enregistrer(); flash("✅ Résultat envoyé au professeur le " + new Date().toLocaleString("fr-FR") + " : " + fmt(r.note) + "/20.", "ok"); }
+    else flash("⚠️ L'envoi n'a pas abouti (réseau ?). Ton résultat est gardé sur cet appareil et repartira automatiquement à la prochaine ouverture.", "err");
+  });
+}
+
+/* ════════════ IDENTITÉ : site ou accès sans compte ════════════ */
+function _octets(t){ return new TextEncoder().encode(t); }
+function _b64(buf){ var s = "", o = new Uint8Array(buf); for (var i = 0; i < o.length; i++) s += String.fromCharCode(o[i]); return btoa(s); }
+/* = empreinteCode() d'index.html (sel « stp-techno:code: », 100 000 itérations, majuscules). */
+function empreinteCode(seqId, code){
+  return crypto.subtle.importKey("raw", _octets(code.toUpperCase()), "PBKDF2", false, ["deriveBits"]).then(function(k){
+    return crypto.subtle.deriveBits({ name:"PBKDF2", hash:"SHA-256", salt:_octets("stp-techno:code:" + seqId), iterations:100000 }, k, 256);
+  }).then(function(b){ return "#" + _b64(b); });
+}
+function identiteSite(){
+  /* Le préremplissage n'est lu que dans le site (iframe) : sur un poste partagé, le lien
+     direct ne doit pas reprendre l'identité du dernier élève connecté au site. */
+  if (window.parent === window) return false;
+  try {
+    var d = JSON.parse(localStorage.getItem(PREFILL_KEY) || "null");
+    if (d && d.p && d.n){ USER = { id:d.id || "", p:d.p, n:d.n, c:d.c || "" }; MODE = "site"; return true; }
+  } catch(e){}
+  return false;
+}
+function identiteLibre(){
+  try {
+    var d = JSON.parse(sessionStorage.getItem(LIBRE_KEY) || "null");
+    if (d && d.p && d.n && d.c){ USER = { id:"", p:d.p, n:d.n, c:d.c }; MODE = "libre"; return true; }
+  } catch(e){}
+  return false;
+}
+function afficherQui(){
+  $("qui").innerHTML = '<b>' + esc(USER.p + " " + USER.n) + ' · ' + esc(USER.c) + '</b>'
+    + (MODE === "libre" ? '<button type="button" id="btn-changer">Changer d\'élève</button>' : '<span style="font-size:12px;color:#BAE6FD">🔒 identité de ton compte</span>');
+  var b = $("btn-changer"); if (b) b.addEventListener("click", function(){ try { sessionStorage.removeItem(LIBRE_KEY); } catch(e){} location.reload(); });
+}
+function ouvrirAcces(){
+  var a = $("acces"); a.hidden = false;
+  if (new Date() > DATE_LIMITE){
+    $("acces-form").innerHTML = '<h2>Dépôt fermé</h2><p class="ferme">Cet exercice était accessible sans compte jusqu\'au <b>25 novembre</b>. Tu peux encore le faire depuis le site Technologie, avec ton compte.</p>';
+    return;
+  }
+  if (!(window.crypto && crypto.subtle && window.TextEncoder)){
+    $("acces-msg").textContent = "Ouvre cette page par son adresse https:// (pas depuis un fichier sur l'ordinateur).";
+  }
+  $("a-prenom").focus();
+  $("acces-form").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var p = $("a-prenom").value.trim(), n = $("a-nom").value.trim(), c = $("a-classe").value, code = $("a-code").value.replace(/\s+/g, "");
+    var msg = $("acces-msg");
+    if (!p || !n || !c || !code){ msg.textContent = "Remplis les quatre champs."; return; }
+    if (!CODES_CLASSES[c]){ msg.textContent = "Cette classe n'a pas de code pour cet exercice."; return; }
+    $("a-ok").disabled = true; msg.textContent = "";
+    empreinteCode(CAP_ID + ":" + c, code).then(function(h){
+      $("a-ok").disabled = false;
+      if (h !== CODES_CLASSES[c]){ msg.textContent = "Code incorrect pour la classe " + c + ". Vérifie le message reçu sur ÉcoleDirecte."; $("a-code").focus(); return; }
+      var norm = function(s){ return s.charAt(0).toUpperCase() + s.slice(1); };
+      USER = { id:"", p:norm(p), n:n.toUpperCase(), c:c }; MODE = "libre";
+      try { sessionStorage.setItem(LIBRE_KEY, JSON.stringify(USER)); } catch(e){}
+      a.hidden = true; lancer();
+    }).catch(function(){ $("a-ok").disabled = false; msg.textContent = "Vérification impossible sur ce navigateur."; });
+  });
+}
+
+/* ════════════ DÉMARRAGE ════════════ */
+function lancer(){
+  afficherQui();
+  restaurer();
+  document.body.className = "aide-" + ETAT.aide;
+  var radios = document.querySelectorAll('input[name="aide"]');
+  for (var i = 0; i < radios.length; i++) radios[i].checked = radios[i].value === ETAT.aide;
+  construire(); majProgression(); majBoutons();
+  if (ETAT.essai >= 2 && !ETAT.entrainement){
+    var r = RXO.corriger(champs()); afficherMarques(r, true); afficherBilan(r, "Mon bilan");
+    flash("Ta note (" + fmt(ETAT.noteFinale) + "/20) est enregistrée. Tu peux t'entraîner encore.", "ok");
+  } else if (ETAT.essai === 1 && !ETAT.entrainement){
+    afficherMarques(RXO.corriger(champs()), false);
+    flash("Essai 1 fait : corrige les réponses ❌, puis vérifie une 2e fois.", "wait");
+  }
+  viderLaFile();
+  calerBarre();
+}
+function calerBarre(){ var h = document.querySelector("header"); if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px"); }
+
+document.addEventListener("change", function(ev){
+  var t = ev.target;
+  if (t.name === "aide"){
+    ETAT.aide = t.value; document.body.className = "aide-" + ETAT.aide; enregistrer();
+    var r = ETAT.essai >= 1 ? RXO.corriger(champs()) : null;
+    construire(); majBoutons();
+    if (r) afficherMarques(r, bloque());
+    return;
+  }
+  if (t.hasAttribute && t.hasAttribute("data-q")){ ETAT.rep[t.getAttribute("data-q")] = t.value; var m = $("m-" + t.getAttribute("data-q")); if (m) m.innerHTML = ""; $("it-" + t.getAttribute("data-q")).classList.remove("juste", "faux"); apresSaisie(); return; }
+  if (t.hasAttribute && t.hasAttribute("data-lien")){ ETAT.chemins[ETAT.actif].l[Number(t.getAttribute("data-lien"))] = t.value; apresSaisie(); majTrace(); return; }
+});
+document.addEventListener("click", function(ev){
+  var b = ev.target.closest ? ev.target.closest("button") : null; if (!b) return;
+  if (b.hasAttribute("data-app")){ cliqueApp(b.getAttribute("data-app")); return; }
+  if (b.hasAttribute("data-actif")){ ETAT.actif = b.getAttribute("data-actif"); ETAT.indices.e4 = false; enregistrer(); construire(); majBoutons(); return; }
+  if (b.hasAttribute("data-indice")){ var k = b.getAttribute("data-indice"); ETAT.indices[k] = !ETAT.indices[k]; enregistrer(); var sc = window.scrollY; construire(); majBoutons(); if (ETAT.essai >= 1) afficherMarques(RXO.corriger(champs()), bloque()); window.scrollTo(0, sc); var nb = document.querySelector('[data-indice="' + k + '"]'); if (nb) nb.focus(); return; }
+  if (b.id === "btn-effacer"){ if (bloque()) return; var ch = ETAT.chemins[ETAT.actif]; ch.c = ch.c.slice(0, 1); ch.l = []; apresSaisie(); majTrace(); return; }
+  if (b.id === "btn-verif"){ verifier(); return; }
+  if (b.id === "btn-encore"){ entrainerEncore(); return; }
+});
+window.addEventListener("resize", calerBarre);
+
+if (identiteSite() || identiteLibre()) lancer();
+else ouvrirAcces();
+</script>
+
+<!-- Aménagements dys et confort de lecture (modules partagés du site). -->
+<script>
+window.CONFORT_LECTURE = { hote:".outils-in", racine:"main", fonts:"../../pp4g/fonts/",
+  eleve: (function(){ try { var d = JSON.parse(localStorage.getItem("reseau5e-exo_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
+window.LECTURE_IMMERSIVE = { racine:"main", hote:".outils-in", sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h2, h3, .bandeau p, .consigne li, .consexo p, p.consexo, .item > label, .liens .txt, .indice, .marque, .bilan td, dt, dd" };
+</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+</body>
+</html>
