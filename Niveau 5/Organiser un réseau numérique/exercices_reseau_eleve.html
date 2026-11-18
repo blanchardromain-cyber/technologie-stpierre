@@ -562,10 +562,11 @@ function poster(sub, fini){
 function viderLaFile(){ try { var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]"); if (q.length && urlEcriture()) q.forEach(function(s){ poster(s); }); } catch(e){} }
 function fabriquerEnvoi(r){
   var f = champs();
-  f._essai = "2"; f._note1 = String(ETAT.note1); f._aide = ETAT.aide; f._acces = MODE;
+  f._essai = "2"; f._note = String(r.note); f._note1 = String(ETAT.note1); f._aide = ETAT.aide; f._acces = MODE;
+  /* score / qcmTot = réponses remplies (convention du site) ; la note vient d'EVALUATIONS. */
   return {
     id: Date.now(), eid: eid(), ename: (USER.p + " " + USER.n).trim() || "Élève", ecls: USER.c,
-    cap: CAP_ID, caplbl: CAP_LABEL, score: r.note, qcmTot: 20,
+    cap: CAP_ID, caplbl: CAP_LABEL, score: nbRepondu(), qcmTot: TOTAL_REP,
     open: "Note proposée : " + fmt(r.note) + "/20 (essai 1 : " + fmt(ETAT.note1) + "/20). Aide : " + ETAT.aide + ". Accès : " + (MODE === "site" ? "site" : "lien sans compte") + ".",
     fields: f, date: new Date().toLocaleDateString("fr-FR"), dateISO: new Date().toISOString(), status: "pending"
   };
