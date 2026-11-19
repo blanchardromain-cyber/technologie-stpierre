@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-18b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-19a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -5603,6 +5603,22 @@ body.est-prof .prof-only{display:block}
         loading="lazy"></iframe>
     </div>
 
+    <!-- P2 5e — SYNTHÈSE (iframe : Niveau 5/Organiser un réseau numérique/synthese_reseau_eleve.html) -->
+    <div id="pg-reseau5e-syn" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P2 &mdash; Synthèse : organiser un réseau numérique (5e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La synthèse de la séquence, à <strong>gagner notion par notion</strong> : un défi, puis la notion se dévoile.
+        Rien n'est noté et rien n'est à envoyer. Le bouton <strong>&laquo;&nbsp;Imprimer ma synthèse&nbsp;&raquo;</strong> sort la fiche
+        complète et correcte, identique pour tous les élèves.
+      </p>
+      <iframe id="reseau5e-syn-frame" data-src="Niveau%205/Organiser%20un%20r%C3%A9seau%20num%C3%A9rique/synthese_reseau_eleve.html" title="P2 — Synthèse : organiser un réseau numérique (5e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
     <!-- P2 5e — ÉVALUATION N°1 (iframe : Niveau 5/Organiser un réseau numérique/evaluation1_eleve.html) -->
     <div id="pg-reseau5e-ev1" class="h">
       <div class="phdr">
@@ -6544,6 +6560,7 @@ var SEQUENCES_DEF = [
   {id:"reseau5e-org", ordre:20, niveau:"5ème", titre:"P2 — Organiser un réseau numérique", desc:"Topologies, switch et Wi-Fi, serveur, pannes, modem et routeur, pare-feu et antivirus, cyberdangers. Notée sur 20, corrigée automatiquement côté professeur. Simulateur de réseau et aides dys intégrées.", couleur:"#0369A1", code:"#fokh4bEnzDBg0D6m6SYEyiMhTJ9KvVGCh2PLsH71BQk=", open:true},
   {id:"reseau5e-org-cor", ordre:20, niveau:"5ème", titre:"P2 — Corrigé Organiser un réseau numérique", desc:"Corrigé détaillé et barème. Code d'accès professeur.", couleur:"var(--vt)", code:"#bbTUX3H4kCYeOAy7z7rskVpdg4DmB4aSKbzg31D3RR8=", open:true},
   {id:"reseau5e-exo", ordre:20.2, niveau:"5ème", titre:"P2 — Exercices : le fonctionnement d'un réseau informatique", desc:"Architecture d'un réseau local, rôle des matériels du collège, travail sur son compte, cheminement de l'information. Entraînement corrigé immédiatement, en deux essais. Aides dys intégrées.", couleur:"#0EA5E9", code:"#nCm7FIo1Y3atdQ40UUhdiBGo5KRTx68Db4PoVJy6/8U=", open:true},
+  {id:"reseau5e-syn", ordre:20.3, niveau:"5ème", titre:"P2 — Synthèse Organiser un réseau numérique", desc:"La synthèse à gagner : un défi par notion, la notion se dévoile ensuite. Simulateurs, aide au choix, fiche imprimable complète.", couleur:"#0284C7", code:"#J+XTheOe19Oka3wsMbOI9Fzxqt4v+6BacD49hedHTaM=", open:true},
   {id:"reseau5e-ev1", ordre:20.5, niveau:"5ème", titre:"P2 — Évaluation n°1 — Organiser un réseau numérique", desc:"L'architecture du réseau du collège, ses améliorations, le diagnostic de quatre pannes. Notée sur 15, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#GrVZe3Utq40BR4RzOY5RzdCTJahCKVAHORZbYGO24W8=", open:true},
   {id:"reseau5e-ev1-cor", ordre:20.6, niveau:"5ème", titre:"P2 — Corrigé de l'évaluation n°1", desc:"Corrigé détaillé. Code donné par le professeur quand toutes les classes sont passées.", couleur:"var(--vt)", code:"#wFcsdLF4NupguET1BrhUgIu7b7+I/plaSTaUqCpIhJU=", open:true},
   {id:"reseau5e", ordre:20, niveau:"5ème", titre:"P2 — Réseau informatique", desc:"Manipulation en binôme : ipconfig, ping, tracert, observation du switch.", couleur:"#00C2FF", code:"#i9OO1DSSPs0sJ7R9B6ewhNMGLdzgjnO0yLbJDZ8kB4I=", open:true},
@@ -7189,6 +7206,13 @@ function goPage(pid) {
     if (re1Ifr) re1Ifr.src = re1Ifr.getAttribute("data-src");
   }
   if (pid === "pg-reseau5e-ev1-cor") re1CorOuvrir();
+  if (pid === "pg-reseau5e-syn") {
+    try {
+      if (user) localStorage.setItem("reseau5e-syn_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var rsyIfr = document.getElementById("reseau5e-syn-frame");
+    if (rsyIfr) rsyIfr.src = rsyIfr.getAttribute("data-src");
+  }
   if (pid === "pg-reseau5e-exo") {
     try {
       if (user) localStorage.setItem("reseau5e-exo_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
@@ -7571,7 +7595,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
         } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
-        } else if (s.id === "batiment5e-syn") {
+        } else if (s.id === "batiment5e-syn" || s.id === "reseau5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "reseau5e-exo") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
@@ -7624,6 +7648,7 @@ function renderDash() {
       else if (s.id === "reseau5e-ev1")     clickAction = "onclick=\"goPage('pg-reseau5e-ev1')\"";
       else if (s.id === "reseau5e-ev1-cor") clickAction = "onclick=\"goPage('pg-reseau5e-ev1-cor')\"";
       else if (s.id === "reseau5e-exo")     clickAction = "onclick=\"goPage('pg-reseau5e-exo')\"";
+      else if (s.id === "reseau5e-syn")     clickAction = "onclick=\"goPage('pg-reseau5e-syn')\"";
       else if (s.id === "eval1-5e") clickAction = "onclick=\"goPage('pg-eval1-5e')\"";
       else if (s.id === "eval2-5e") clickAction = "onclick=\"goPage('pg-eval2-5e')\"";
       else if (s.id === "eval3-5e") clickAction = "onclick=\"goPage('pg-eval3-5e')\"";
@@ -7709,6 +7734,7 @@ function tryUnlock() {
     else if (pendingSeq === "reseau5e-ev1") goPage("pg-reseau5e-ev1");
     else if (pendingSeq === "reseau5e-ev1-cor") goPage("pg-reseau5e-ev1-cor");
     else if (pendingSeq === "reseau5e-exo") goPage("pg-reseau5e-exo");
+    else if (pendingSeq === "reseau5e-syn") goPage("pg-reseau5e-syn");
     else if (pendingSeq === "eval1-5e") goPage("pg-eval1-5e");
     else if (pendingSeq === "eval2-5e") goPage("pg-eval2-5e");
     else if (pendingSeq === "eval3-5e") goPage("pg-eval3-5e");
