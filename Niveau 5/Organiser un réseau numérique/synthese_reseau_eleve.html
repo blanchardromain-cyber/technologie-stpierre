@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P2 — Synthèse : organiser un réseau numérique — 5ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --bl:#0C4A6E; --bc:#0369A1; --bp:#E0F2FE;
+    --or:#C2410C; --orl:#FFEDD5;
+    --vt:#1E6B3B; --vp:#E2EFDA;
+    --rg:#B42318; --rgp:#FDE2E0;
+    --vi:#5B34C7; --vip:#EDE7FF;
+    --gr:#F4F6F8; --gb:#D9E1EA;
+    --tx:#1A202C; --td:#4A5568;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:15px;line-height:1.65;
+    font-variant-numeric:tabular-nums}
+  button{font-family:inherit}
+  :focus-visible{outline:3px solid #F59E0B;outline-offset:2px}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--bl),#082F49);color:#fff;padding:14px 22px;
+    position:sticky;top:0;z-index:50;box-shadow:0 2px 14px rgba(0,0,0,.25)}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+  .hbadge{font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;color:#7DD3FC;font-weight:700}
+  header h1{font-size:19px;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#BAE6FD;font-weight:700}
+  .fld input{background:rgba(255,255,255,.95);border:2px solid transparent;border-radius:8px;
+    padding:7px 10px;font-size:14px;font-family:inherit;color:var(--tx);width:140px;outline:none}
+  .fld input:focus{border-color:#F59E0B}
+  .fld input[readonly]{background:rgba(255,255,255,.72);color:#2D3748;cursor:default}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;font-size:15px;color:#fff}
+  #inp-classe{width:52px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:9px 22px;position:sticky;top:var(--h-entete,58px);z-index:40}
+  .pbar-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pbar{flex:1;min-width:120px;height:10px;background:var(--gb);border-radius:9px;overflow:hidden}
+  .pbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--bc),#22C55E);transition:width .35s}
+  .pcount{font-size:13px;color:var(--td);font-weight:700;white-space:nowrap}
+  .toolbtn{background:var(--gr);border:1px solid var(--gb);border-radius:8px;padding:6px 11px;
+    font-size:12.5px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc);color:var(--bl)}
+  .toolbtn.prim{background:var(--bc);border-color:var(--bc);color:#fff}
+  .toolbtn.prim:hover{background:var(--bl);border-color:var(--bl);color:#fff}
+  .aide{display:inline-flex;border:1px solid var(--gb);border-radius:9px;overflow:hidden}
+  .aide .lb{font-size:11.5px;font-weight:700;color:var(--td);padding:6px 8px;background:#fff;align-self:center}
+  .aide button{border:none;border-left:1px solid var(--gb);background:var(--gr);padding:6px 10px;font-size:12.5px;
+    font-weight:600;color:var(--td);cursor:pointer}
+  .aide button[aria-pressed="true"]{background:var(--bl);color:#fff}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1100px;margin:0 auto;padding:22px 22px 120px}
+  .situ{background:linear-gradient(135deg,var(--bc),#0EA5E9);color:#fff;border-radius:var(--r);
+    padding:18px 22px;margin-bottom:18px;box-shadow:var(--sh)}
+  .situ .lb{font-size:10.5px;letter-spacing:1.8px;text-transform:uppercase;opacity:.9;font-weight:700}
+  .situ h2{font-size:19px;font-weight:700;margin:3px 0 4px}
+  .situ p{font-size:14px;opacity:.96}
+
+  .mode{background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:18px;
+    font-size:14px;color:#5A4000;line-height:1.7}
+  .mode ul{margin:6px 0 0 20px}
+  .mode b{color:#4A3500}
+
+  section.step{background:#fff;border-radius:var(--r);box-shadow:var(--sh);margin-bottom:18px;overflow:hidden}
+  .sthdr{display:flex;align-items:center;gap:12px;width:100%;padding:13px 18px;background:var(--bp);
+    border:none;border-left:6px solid var(--bl);cursor:pointer;text-align:left;color:inherit;font-size:inherit}
+  .sthdr .num{width:30px;height:30px;border-radius:50%;background:var(--bl);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:0 0 auto}
+  .sthdr h3{font-size:16.5px;font-weight:700;color:var(--bl);flex:1;line-height:1.3}
+  .sthdr .etat{font-size:12px;font-weight:700;color:var(--td);white-space:nowrap}
+  .sthdr .etat.ok{color:var(--vt)}
+  .sthdr .chev{color:var(--bl);font-size:13px;transition:transform .2s}
+  section.step.closed .chev{transform:rotate(-90deg)}
+  section.step.closed .stbody{display:none}
+  .stbody{padding:18px 20px 22px}
+
+  /* ═══ OUTILS DE MANIPULATION (écran) ═══ */
+  .outil{border:2px solid var(--bp);border-radius:10px;padding:13px 15px;margin-bottom:16px;background:#FBFEFF}
+  .outil .otitre{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--bc);font-weight:700;margin-bottom:4px}
+  .outil .oq{font-size:14px;margin-bottom:8px}
+  .outil svg{width:100%;height:auto;display:block;max-width:560px;margin:0 auto}
+  .obtns{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .obtn{background:#fff;border:1.5px solid var(--gb);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;
+    color:var(--td);cursor:pointer}
+  .obtn:hover{border-color:var(--bc);color:var(--bl)}
+  .obtn[aria-pressed="true"]{background:var(--bl);border-color:var(--bl);color:#fff}
+  .obilan{font-size:14px;background:var(--bp);border-radius:8px;padding:8px 12px;min-height:40px}
+  .obilan b{color:var(--bl)}
+  svg .cable{stroke:#0369A1;stroke-width:3}
+  svg .cable.coupe{stroke:#B42318;stroke-dasharray:6 5}
+  svg .cable.mort{stroke:#94A3B8}
+  svg .zone-clic{stroke:transparent;stroke-width:18;cursor:pointer}
+  svg .app rect{fill:#fff;stroke:#334155;stroke-width:2}
+  svg .app.isole rect{fill:#FDE2E0;stroke:#B42318}
+  svg .app.eteint rect{fill:#E2E8F0;stroke:#94A3B8}
+  svg text{font-family:"DM Sans",system-ui,sans-serif;fill:#1A202C}
+  svg .lien{stroke:#94A3B8;stroke-width:3;fill:none}
+  svg .lien.ondes{stroke-dasharray:3 5}
+  svg .lien.actif{stroke:#16A34A;stroke-width:5}
+  svg .noeud{cursor:pointer}
+  svg .noeud rect{fill:#fff;stroke:#334155;stroke-width:2}
+  svg .noeud.choisi rect{fill:#FEF3C7;stroke:#B45309;stroke-width:3}
+  svg .noeud.actif rect{fill:#DCFCE7;stroke:#16A34A;stroke-width:3}
+  svg .noeud:focus{outline:none}
+  svg .noeud:focus-visible rect{stroke:#F59E0B;stroke-width:4}
+
+  .boite{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .boite .stock,.boite .box{border:2px dashed var(--gb);border-radius:10px;padding:10px;min-height:120px}
+  .boite .box{border-color:var(--bc);background:linear-gradient(180deg,#F0F9FF,#E0F2FE)}
+  .boite h5{font-size:13px;color:var(--bl);margin-bottom:6px}
+  .piece{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--gb);border-radius:8px;
+    padding:5px 10px;margin:3px;font-size:13px;font-weight:600;cursor:pointer;color:var(--tx)}
+  .piece:hover{border-color:var(--bc)}
+  .piece.ok{border-color:var(--vt);background:var(--vp)}
+  .piece.ko{border-color:var(--rg);background:var(--rgp)}
+
+  /* ═══ LE DÉFI (écran seulement) ═══ */
+  .defi{background:var(--gr);border:2px dashed var(--gb);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+  .defi .dtitre{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--or);font-weight:700;margin-bottom:5px}
+  .defi .dq{font-size:15px;font-weight:600;margin-bottom:8px;display:block}
+  .ligne{padding:8px 0}
+  .ligne + .ligne{border-top:1px solid var(--gb)}
+  .lhaut{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ligne .enonce{flex:1 1 220px;font-size:14.5px}
+  .opts{display:flex;gap:6px;flex-wrap:wrap}
+  .opt{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--gb);border-radius:999px;
+    padding:6px 13px;font-size:13.5px;font-weight:600;color:var(--td);cursor:pointer;transition:.15s}
+  .opt:hover:not([disabled]){border-color:var(--bc);color:var(--bl)}
+  .opt[disabled]{cursor:default}
+  .opt.juste{background:var(--vp);border-color:var(--vt);color:var(--vt)}
+  .opt.faux{background:var(--rgp);border-color:var(--rg);color:var(--rg)}
+  .opt.montre{background:var(--vp);border-color:var(--vt);color:var(--vt);box-shadow:0 0 0 3px rgba(30,107,59,.18)}
+  .opt.retire{display:none}
+  .verdict{font-size:13px;font-weight:700;min-width:22px;white-space:nowrap}
+  .verdict.ok{color:var(--vt)} .verdict.ko{color:var(--rg)}
+  .btn-indice{background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:999px;padding:4px 10px;font-size:12.5px;
+    font-weight:700;color:#9A3412;cursor:pointer}
+  .indice{margin-top:6px;font-size:13.5px;background:#FFF7ED;border-left:4px solid #FB923C;border-radius:0 8px 8px 0;padding:6px 10px}
+  .expl{margin-top:6px;font-size:13.5px;border-radius:0 8px 8px 0;padding:6px 10px;background:#F0FDF4;border-left:4px solid var(--vt)}
+  .expl.ko{background:#FFF5F5;border-left-color:var(--rg)}
+  .dpied{margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lienrep{background:none;border:none;font-size:13px;color:var(--bc);text-decoration:underline;cursor:pointer;padding:0}
+  .dscore{font-size:13px;color:var(--td);font-weight:600}
+
+  /* ═══ LA NOTION (imprimée) ═══ */
+  .notion{display:none}
+  .notion.vue{display:block;animation:ouvre .35s ease}
+  @keyframes ouvre{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .gagne{display:inline-block;font-size:12px;font-weight:700;color:var(--vt);background:var(--vp);border-radius:999px;
+    padding:2px 10px;margin-bottom:10px}
+
+  .defbloc{border-left:5px solid var(--bc);background:var(--bp);border-radius:0 10px 10px 0;padding:11px 15px;margin-bottom:10px}
+  .defbloc p{font-size:15px;line-height:1.7}
+  .mot{font-weight:700;color:var(--bl)}
+  .apart{background:var(--orl);border-left:5px solid var(--or);border-radius:0 10px 10px 0;padding:11px 15px;margin:10px 0;font-size:14.5px}
+  .apart b{color:#7C2D12}
+  ul.puces{margin:6px 0 10px 22px}
+  ul.puces li{margin-bottom:3px;font-size:14.5px}
+
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:12px 0}
+  .carte{border:1.5px solid var(--gb);border-radius:10px;padding:11px 13px;background:#fff;display:flex;gap:11px}
+  .carte .ico{flex:0 0 auto;width:34px;height:34px;color:var(--bc)}
+  .carte .ico svg{width:34px;height:34px;display:block}
+  .carte .txt{flex:1;min-width:0}
+  .carte .nom{font-weight:700;font-size:14.5px;color:var(--bl);display:block;margin-bottom:2px}
+  .carte .det{font-size:14px;color:var(--td);line-height:1.6;display:block}
+  .carte .det i{color:#475569}
+  .famille{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--or);font-weight:700;margin:14px 0 2px}
+
+  .schema{margin:12px 0;border:1px solid var(--gb);border-radius:10px;background:#fff;padding:8px;text-align:center}
+  .schema svg{width:100%;max-width:520px;height:auto;display:inline-block}
+  .schema figcaption{font-size:12.5px;color:var(--td);font-style:italic}
+
+  .equation{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0;font-size:14.5px}
+  .equation .t{background:var(--bl);color:#fff;border-radius:8px;padding:4px 10px;font-weight:700}
+  .equation .m{background:#fff;border:1.5px solid var(--bc);border-radius:8px;padding:4px 10px;font-weight:600;color:var(--bl)}
+
+  .retenir{background:var(--vip);border:2px solid var(--vi);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:14.5px}
+  .retenir b{color:#3B1F8F}
+  .aideurgence{display:flex;gap:12px;align-items:center;background:#ECFDF5;border:2px solid #059669;border-radius:10px;padding:10px 14px;margin:12px 0;font-size:14.5px}
+  .aideurgence .num3018{font-size:26px;font-weight:800;color:#047857;letter-spacing:1px}
+
+  .motsdurs{margin-top:12px;border:1.5px dotted var(--bc);border-radius:10px;padding:10px 14px;background:#FBFDFF}
+  .motsdurs .t{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--bc);font-weight:700;margin-bottom:5px}
+  .motsdurs dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13.5px}
+  .motsdurs dt{font-weight:700;color:var(--bl)}
+  .motsdurs dd{color:var(--td)}
+
+  .retiens{background:var(--vp);border:2px solid var(--vt);border-radius:var(--r);padding:16px 20px;margin-top:22px}
+  .retiens h3{color:var(--vt);font-size:16.5px;margin-bottom:8px}
+  .retiens ol{padding-left:22px}
+  .retiens li{font-size:14.5px;line-height:1.75;margin-bottom:4px}
+  .retiens li b{color:#14522C}
+
+  .trophee{display:none;text-align:center;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:2px solid #D97706;
+    border-radius:var(--r);padding:16px 20px;margin-top:18px}
+  .trophee.vue{display:block}
+  .trophee .gros{font-size:40px;line-height:1}
+  .trophee h3{font-size:18px;color:#78350F;margin:4px 0}
+  .trophee p{font-size:14.5px;color:#78350F}
+
+  .entete-papier,.lexique-papier{display:none}
+
+  @media (max-width:640px){
+    header{padding:12px 16px;position:relative}
+    main{padding:16px 16px 100px}
+    .pbar-wrap{padding:8px 16px;position:relative;top:0}
+    .boite{grid-template-columns:1fr}
+    .fld input{width:120px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+
+  /* ═══ IMPRESSION — la synthèse complète et correcte, quel que soit l'écran ═══ */
+  @media print{
+    @page{size:A4 portrait;margin:11mm 12mm}
+    header,.pbar-wrap,.defi,.mode,.outil,.trophee,.gagne,.li-barre,.li-consigne{display:none!important}
+    body{background:#fff;font-size:10.3pt;line-height:1.5}
+    main{max-width:none;padding:0}
+    .entete-papier{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+      border-bottom:2.5pt solid #0C4A6E;padding-bottom:5pt;margin-bottom:8pt}
+    .entete-papier .sur{font-size:8pt;letter-spacing:1.2pt;text-transform:uppercase;color:#C2410C;font-weight:700}
+    .entete-papier h1{font-size:15pt;color:#0C4A6E;line-height:1.2}
+    .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
+    .entete-papier .nom{font-weight:700;color:#1A202C;font-size:10pt}
+    .situ{background:none;color:#1A202C;border:1.5pt solid #0369A1;border-radius:6pt;padding:4pt 9pt;margin-bottom:6pt;box-shadow:none}
+    .situ .lb{color:#0369A1;font-size:7.2pt}
+    .situ h2{font-size:11pt;color:#0C4A6E;margin:1pt 0}
+    .situ p{display:none}
+    .notion{display:block!important}
+    section.step{box-shadow:none;border:none;margin-bottom:6pt;break-inside:auto}
+    section.step.closed .stbody{display:block}
+    .sthdr{background:none;border-left:none;border-bottom:1.2pt solid #0C4A6E;padding:0 0 2pt;margin-bottom:5pt;break-after:avoid}
+    .sthdr .num{width:15pt;height:15pt;font-size:9pt}
+    .sthdr h3{font-size:12pt}
+    .sthdr .chev,.sthdr .etat{display:none}
+    .stbody{padding:0}
+    .defbloc{background:#F0F9FF;border-left:3pt solid #0369A1;padding:3pt 8pt;margin-bottom:3pt;break-inside:avoid}
+    .defbloc p{font-size:9.8pt;line-height:1.45}
+    .apart,.retenir,.aideurgence{padding:3pt 8pt;margin:4pt 0;font-size:9.4pt;line-height:1.45;break-inside:avoid}
+    .aideurgence .num3018{font-size:15pt}
+    ul.puces{margin:2pt 0 4pt 16pt}
+    ul.puces li{font-size:9.4pt;margin-bottom:0}
+    .grille{gap:4pt;margin:4pt 0;grid-template-columns:repeat(3,1fr)}
+    .grille.g2{grid-template-columns:repeat(2,1fr)}
+    .grille.g4{grid-template-columns:repeat(4,1fr)}
+    .carte{padding:3pt 6pt;gap:5pt;break-inside:avoid;border-color:#CBD5E0}
+    .carte .ico,.carte .ico svg{width:15pt;height:15pt}
+    .carte .nom{font-size:9.2pt}
+    .carte .det{font-size:8.6pt;line-height:1.38}
+    .famille{font-size:7.5pt;margin:4pt 0 0}
+    .schema{border:none;padding:0;margin:3pt 0;break-inside:avoid}
+    .schema svg{max-width:105mm}
+    .schema svg.etoile-papier{max-width:62mm}
+    .schema figcaption{font-size:8pt}
+    .equation{font-size:9pt;margin:3pt 0;gap:3pt}
+    .equation .t,.equation .m{padding:1pt 5pt}
+    .colonnes2{display:grid;grid-template-columns:1fr 1fr;gap:8pt}
+    .retiens{background:none;border:1.5pt solid #1E6B3B;padding:5pt 10pt;margin-top:6pt;break-inside:avoid}
+    .retiens h3{font-size:10.5pt;margin-bottom:2pt}
+    .retiens li{font-size:9pt;line-height:1.38;margin-bottom:0}
+    .motsdurs{display:none}
+    .lexique-papier{display:block;border:1.2pt dotted #0369A1;border-radius:6pt;padding:4pt 9pt;margin-top:6pt;break-inside:avoid}
+    .lexique-papier .t{font-size:8pt;letter-spacing:1.2pt;text-transform:uppercase;color:#0369A1;font-weight:700;margin-bottom:2pt}
+    .lexique-papier dl{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:1pt 9pt;font-size:8pt;line-height:1.35}
+    .lexique-papier dt{font-weight:700;color:#0C4A6E}
+    .lexique-papier dd{color:#4A5568}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 5<sup>e</sup> · Séquence 2</div>
+      <h1>P2 — Synthèse : organiser un réseau numérique</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">5</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <span class="pcount" id="pcount">0 / 7 notion</span>
+    <div class="pbar" role="progressbar" aria-label="Notions gagnées" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="pbar"><span id="pbar-fill"></span></div>
+    <div class="aide" role="group" aria-label="Niveau d'aide" data-nolecture>
+      <span class="lb">Aide&nbsp;:</span>
+      <button type="button" data-aide="autonome" aria-pressed="true" title="Les défis sans aide">Autonome</button>
+      <button type="button" data-aide="guide" aria-pressed="false" title="Un bouton Indice sous chaque question">Guidé</button>
+      <button type="button" data-aide="accompagne" aria-pressed="false" title="L'indice est affiché et il ne reste que deux propositions">Accompagné</button>
+    </div>
+    <button type="button" class="toolbtn" onclick="afficherTout()" title="Dévoile les sept notions d'un coup, pour réviser">&#x1F4D6; Tout afficher</button>
+    <button type="button" class="toolbtn" onclick="recommencer()" title="Efface ton avancement sur ce poste et repart du début">&#x21BA; Recommencer</button>
+    <button type="button" class="toolbtn prim" onclick="window.print()">&#x1F5A8;&#xFE0F; Imprimer ma synthèse</button>
+  </div>
+</div>
+
+<main>
+
+  <div class="entete-papier">
+    <div>
+      <div class="sur">Technologie · 5<sup>e</sup> · Séquence 2 · Synthèse</div>
+      <h1>Organiser un réseau numérique</h1>
+    </div>
+    <div class="droite">
+      <div class="nom" id="papier-nom">Nom :</div>
+      <div id="papier-date"></div>
+    </div>
+  </div>
+
+  <div class="situ">
+    <div class="lb">Situation problème</div>
+    <h2>Comment créer un réseau de données&nbsp;?</h2>
+    <p>Voici ce qu'il faut retenir de la séquence pour être capable d'y répondre.</p>
+  </div>
+
+  <div class="mode" data-consigne>
+    <b>Cette synthèse ne se lit pas, elle se gagne&nbsp;!</b> Elle compte sept notions. Pour chacune, un défi t'attend&nbsp;:
+    réponds d'abord, la notion se dévoile ensuite.
+    <ul>
+      <li>Rien n'est noté. Une erreur n'est pas grave : la bonne réponse s'affiche, avec son explication.</li>
+      <li>Choisis ton <b>niveau d'aide</b> dans la barre du haut : <b>Autonome</b>, <b>Guidé</b> (un indice par question) ou <b>Accompagné</b> (l'indice et deux propositions seulement). Tu peux en changer quand tu veux.</li>
+      <li>En binôme : le <b>pilote</b> clique, le <b>vérificateur</b> lit la question à voix haute et valide. Échangez vos rôles à la notion 4.</li>
+      <li>La feuille imprimée contient <b>toute</b> la synthèse, correcte et complète, quoi qu'il arrive.</li>
+    </ul>
+  </div>
+
+  <!-- ════════════════ NOTION 1 — Typologie ════════════════ -->
+  <section class="step" id="sec1">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec1')">
+      <span class="num">1</span>
+      <h3>Typologie d'un réseau informatique moderne</h3>
+      <span class="etat" id="etat1">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="outil" data-secondaire>
+        <div class="otitre">&#x1F9EA; Manipule avant de répondre &mdash; le réseau en étoile</div>
+        <p class="oq" data-consigne>Clique sur un câble (ou sur les boutons) pour le couper, puis observe qui peut encore communiquer. Essaie aussi la panne du matériel du centre, et compare avec un réseau maillé.</p>
+        <svg id="sim-etoile" viewBox="0 0 400 270" role="img" aria-label="Réseau de cinq ordinateurs reliés à un matériel central"></svg>
+        <div class="obtns" id="sim-btns"></div>
+        <div class="obtns">
+          <button type="button" class="obtn" id="sim-centre" aria-pressed="false">&#x26A1; Panne du matériel central</button>
+          <button type="button" class="obtn" id="sim-maille" aria-pressed="false">&#x1F578;&#xFE0F; Comparer avec un réseau maillé</button>
+          <button type="button" class="obtn" id="sim-reparer">&#x1F527; Tout réparer</button>
+        </div>
+        <div class="obilan" id="sim-bilan" aria-live="polite"></div>
+      </div>
+
+      <div class="defi" id="defi1">
+        <div class="dtitre">Défi 1 &mdash; le réseau en étoile</div>
+        <span class="dq" data-consigne>Utilise le simulateur au-dessus si tu hésites.</span>
+        <div class="ligne" data-aide="Dans une étoile, chaque appareil a son propre câble, qui va jusqu'au centre."
+             data-expl="1 appareil = 1 câble : 6 appareils demandent 6 câbles. Un réseau maillé en demanderait 15.">
+          <div class="lhaut"><span class="enonce">Combien de câbles faut-il pour relier 6 appareils en étoile&nbsp;?</span>
+          <span class="opts" data-bonne="b"><button type="button" class="opt" data-v="a">15</button><button type="button" class="opt" data-v="b">6</button><button type="button" class="opt" data-v="c">1</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Coupe un câble dans le simulateur et regarde la couleur des autres ordinateurs."
+             data-expl="Seul l'appareil dont le câble est coupé est isolé : le reste du réseau fonctionne toujours.">
+          <div class="lhaut"><span class="enonce">Le câble d'un ordinateur est coupé. Que se passe-t-il&nbsp;?</span>
+          <span class="opts" data-bonne="b"><button type="button" class="opt" data-v="a">Tout le réseau s'arrête</button><button type="button" class="opt" data-v="b">Seul cet ordinateur est isolé</button><button type="button" class="opt" data-v="c">Rien ne change, même pour lui</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Regarde ce qu'il y a au milieu de l'étoile."
+             data-expl="Une étoile a besoin d'un matériel supplémentaire au centre, auquel chaque câble est relié.">
+          <div class="lhaut"><span class="enonce">Pour construire un réseau en étoile, il faut ajouter&nbsp;…</span>
+          <span class="opts" data-bonne="a"><button type="button" class="opt" data-v="a">un matériel supplémentaire au centre</button><button type="button" class="opt" data-v="b">un câble entre chaque paire d'appareils</button><button type="button" class="opt" data-v="c">rien de plus</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi1">0 / 3</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi1')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion1">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p>Pour un réseau informatique moderne, on privilégie souvent la <span class="mot">structure en étoile</span>. Elle permet&nbsp;:</p></div>
+        <ul class="puces">
+          <li>de <b>réduire le nombre de câbles</b> (1 appareil = 1 câble)&nbsp;;</li>
+          <li>d'avoir un <b>réseau fonctionnel même si un appareil ou un câble est défectueux</b>.</li>
+        </ul>
+        <div class="apart">Il est cependant nécessaire d'<b>ajouter un matériel supplémentaire</b>, au centre de l'étoile.</div>
+        <figure class="schema">
+          <svg class="etoile-papier" viewBox="0 0 300 166" role="img" aria-label="Schéma d'un réseau en étoile : cinq appareils reliés chacun par un câble à un matériel central">
+            <g stroke="#0369A1" stroke-width="2.5"><line x1="150" y1="75" x2="150" y2="22"/><line x1="150" y1="75" x2="60" y2="50"/><line x1="150" y1="75" x2="240" y2="50"/><line x1="150" y1="75" x2="85" y2="128"/><line x1="150" y1="75" x2="215" y2="128"/></g>
+            <rect x="128" y="64" width="44" height="22" rx="4" fill="#0C4A6E"/><text x="150" y="79" text-anchor="middle" font-size="9" fill="#fff" style="fill:#fff">centre</text>
+            <g fill="#fff" stroke="#334155" stroke-width="1.6"><rect x="135" y="8" width="30" height="20" rx="3"/><rect x="40" y="38" width="30" height="20" rx="3"/><rect x="225" y="38" width="30" height="20" rx="3"/><rect x="68" y="120" width="30" height="20" rx="3"/><rect x="200" y="120" width="30" height="20" rx="3"/></g>
+            <text x="150" y="160" font-size="10" text-anchor="middle" fill="#475569">1 appareil = 1 câble</text>
+          </svg>
+          <figcaption>Le réseau en étoile : chaque appareil a son câble, relié au matériel central.</figcaption>
+        </figure>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Typologie</dt><dd>la forme d'un réseau, la façon dont les appareils sont reliés.</dd>
+            <dt>Défectueux</dt><dd>en panne, qui ne fonctionne plus correctement.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 2 — Réseau privé ════════════════ -->
+  <section class="step" id="sec2">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec2')">
+      <span class="num">2</span>
+      <h3>Organisation d'un réseau informatique privé</h3>
+      <span class="etat" id="etat2">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="defi" id="defi2">
+        <div class="dtitre">Défi 2 &mdash; qui fait quoi&nbsp;?</div>
+        <span class="dq" data-consigne>Trouve le matériel qui parle.</span>
+        <div class="ligne" data-aide="Les câbles Ethernet se branchent tous sur une même boîte à nombreuses prises."
+             data-expl="Le commutateur (switch) relie plusieurs appareils entre eux avec des câbles Ethernet.">
+          <div class="lhaut"><span class="enonce">«&nbsp;Je relie plusieurs appareils entre eux avec des câbles Ethernet.&nbsp;»</span>
+          <span class="opts" data-bonne="com"><button type="button" class="opt" data-v="com">Commutateur</button><button type="button" class="opt" data-v="wifi">Borne Wi-Fi</button><button type="button" class="opt" data-v="srv">Serveur</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Pas de câble : les données voyagent dans l'air."
+             data-expl="La borne Wi-Fi transmet les données entre les appareils grâce aux ondes radio.">
+          <div class="lhaut"><span class="enonce">«&nbsp;Je transmets les données entre les appareils grâce aux ondes radio.&nbsp;»</span>
+          <span class="opts" data-bonne="wifi"><button type="button" class="opt" data-v="srv">Serveur</button><button type="button" class="opt" data-v="wifi">Borne Wi-Fi</button><button type="button" class="opt" data-v="com">Commutateur</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="C'est un ordinateur allumé en permanence, qui garde les fichiers de tout le monde."
+             data-expl="Le serveur stocke et partage les données, et il gère les accès (les comptes des utilisateurs).">
+          <div class="lhaut"><span class="enonce">«&nbsp;Je stocke et partage les données, et je gère les accès.&nbsp;»</span>
+          <span class="opts" data-bonne="srv"><button type="button" class="opt" data-v="wifi">Borne Wi-Fi</button><button type="button" class="opt" data-v="com">Commutateur</button><button type="button" class="opt" data-v="srv">Serveur</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Un réseau, ce sont des matériels reliés qui se parlent."
+             data-expl="Un réseau est un ensemble de matériels connectés entre eux qui échangent des informations.">
+          <div class="lhaut"><span class="enonce">Un réseau, c'est&nbsp;…</span>
+          <span class="opts" data-bonne="b"><button type="button" class="opt" data-v="a">un seul ordinateur très puissant</button><button type="button" class="opt" data-v="b">des matériels connectés qui échangent des informations</button><button type="button" class="opt" data-v="c">un câble Ethernet</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi2">0 / 4</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi2')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion2">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p><span class="mot">Un réseau</span> est un ensemble de matériels connectés entre eux qui échangent des informations.</p></div>
+
+        <div class="outil" data-secondaire>
+          <div class="otitre">&#x1F50D; Explore le réseau</div>
+          <p class="oq" data-consigne>Clique sur chaque matériel du schéma (ou utilise la touche Tab puis Entrée) pour revoir son rôle.</p>
+          <svg id="explo" viewBox="0 0 440 270" role="group" aria-label="Schéma d'un réseau privé à explorer"></svg>
+          <div class="obilan" id="explo-bilan" aria-live="polite">Choisis un matériel.</div>
+        </div>
+
+        <div class="famille">Pour construire un réseau privé</div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6 12h.01M9 12h.01M12 12h.01M15 12h.01M18 12h.01M6 16v3M12 16v3M18 16v3"/></svg></span>
+            <span class="txt"><span class="nom">Un commutateur (en anglais <i>switch</i>)</span><span class="det">Relier plusieurs appareils entre eux à l'aide de <b>câbles Ethernet</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="15" width="14" height="5" rx="1.5"/><path d="M8 15V9M16 15V9"/><path d="M8.5 6.5a5 5 0 017 0M6.4 4.4a8 8 0 0111.2 0"/></svg></span>
+            <span class="txt"><span class="nom">Une borne Wi-Fi</span><span class="det">Transmettre des données entre appareils grâce aux <b>ondes radio</b>.</span></span></div>
+        </div>
+        <div class="famille">Pour gérer les données et les utilisateurs</div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="1.5"/><path d="M8 7h8M8 11h8M8 15h3"/><circle cx="15.5" cy="17.5" r=".9"/></svg></span>
+            <span class="txt"><span class="nom">Un serveur (ordinateur allumé en permanence)</span><span class="det"><b>Stocker et partager</b> les données. <b>Gérer les accès</b>.</span></span></div>
+        </div>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Privé</dt><dd>réservé à un lieu ou à un groupe (une maison, le collège).</dd>
+            <dt>Ethernet</dt><dd>le type de câble utilisé pour brancher les appareils d'un réseau.</dd>
+            <dt>Ondes radio</dt><dd>signal invisible qui voyage dans l'air, sans câble.</dd>
+            <dt>Gérer les accès</dt><dd>décider qui a le droit d'entrer et de voir quoi.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 3 — Internet ════════════════ -->
+  <section class="step" id="sec3">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec3')">
+      <span class="num">3</span>
+      <h3>Accéder à Internet</h3>
+      <span class="etat" id="etat3">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="outil" data-secondaire>
+        <div class="otitre">&#x1F9EA; Manipule avant de répondre &mdash; le voyage d'une donnée</div>
+        <p class="oq" data-consigne>Une page Internet arrive. Choisis l'appareil qui l'a demandée, puis envoie-la et suis son chemin.</p>
+        <svg id="routeur" viewBox="0 0 520 236" role="img" aria-label="Chemin d'une donnée entre Internet et un appareil du réseau privé"></svg>
+        <div class="obtns" id="rt-dest"></div>
+        <div class="obtns"><button type="button" class="obtn" id="rt-go">&#x1F4E8; Envoyer depuis Internet</button></div>
+        <div class="obilan" id="rt-bilan" aria-live="polite">Choisis d'abord l'appareil destinataire.</div>
+      </div>
+
+      <div class="defi" id="defi3">
+        <div class="dtitre">Défi 3 &mdash; la porte vers Internet</div>
+        <span class="dq" data-consigne>Retrouve le rôle de chaque matériel.</span>
+        <div class="ligne" data-aide="Dans le simulateur, c'est le premier matériel touché en sortant d'Internet."
+             data-expl="Le modem permet à chaque appareil d'échanger des données avec Internet.">
+          <div class="lhaut"><span class="enonce">Il permet à chaque appareil d'échanger des données avec Internet.</span>
+          <span class="opts" data-bonne="mod"><button type="button" class="opt" data-v="rou">Routeur</button><button type="button" class="opt" data-v="mod">Modem</button><button type="button" class="opt" data-v="com">Commutateur</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="C'est l'aiguilleur : il choisit la bonne direction."
+             data-expl="Le routeur oriente les données vers l'appareil concerné.">
+          <div class="lhaut"><span class="enonce">Il oriente les données vers l'appareil concerné.</span>
+          <span class="opts" data-bonne="rou"><button type="button" class="opt" data-v="mod">Modem</button><button type="button" class="opt" data-v="srv">Serveur</button><button type="button" class="opt" data-v="rou">Routeur</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Internet est ouvert à tout le monde, partout."
+             data-expl="Internet est le réseau public : le modem et le routeur relient notre réseau privé à ce réseau public.">
+          <div class="lhaut"><span class="enonce">Internet est un réseau&nbsp;…</span>
+          <span class="opts" data-bonne="pub"><button type="button" class="opt" data-v="pri">privé</button><button type="button" class="opt" data-v="pub">public</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi3">0 / 3</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi3')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion3">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p>Pour accéder à Internet et à ses services, <span class="mot">plusieurs appareils supplémentaires</span> sont nécessaires.</p></div>
+        <div class="famille">Pour relier un réseau privé au réseau public (Internet)</div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="18" height="7" rx="1.5"/><path d="M7 15.5h.01M10 15.5h.01M17 15.5h1"/><path d="M12 12V7"/><path d="M8.5 5.5a5 5 0 017 0"/></svg></span>
+            <span class="txt"><span class="nom">Un modem</span><span class="det">Permettre à chaque appareil d'<b>échanger des données avec Internet</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l5-5M17 7h-3.5M17 7v3.5M12 12l-5 5M12 12l5 5M12 12L7 7"/></svg></span>
+            <span class="txt"><span class="nom">Un routeur</span><span class="det">Permettre d'<b>orienter les données</b> vers l'appareil concerné.</span></span></div>
+        </div>
+        <figure class="schema">
+          <svg viewBox="0 0 420 90" role="img" aria-label="Chaîne : appareil, commutateur, routeur, modem, Internet">
+            <g font-size="11" text-anchor="middle">
+              <rect x="6" y="30" width="62" height="30" rx="5" fill="#fff" stroke="#334155" stroke-width="1.6"/><text x="37" y="49">Appareil</text>
+              <rect x="92" y="30" width="78" height="30" rx="5" fill="#fff" stroke="#334155" stroke-width="1.6"/><text x="131" y="49">Commutateur</text>
+              <rect x="194" y="30" width="62" height="30" rx="5" fill="#E0F2FE" stroke="#0369A1" stroke-width="2"/><text x="225" y="49" font-weight="700">Routeur</text>
+              <rect x="280" y="30" width="56" height="30" rx="5" fill="#E0F2FE" stroke="#0369A1" stroke-width="2"/><text x="308" y="49" font-weight="700">Modem</text>
+              <path d="M362 58a14 14 0 010-26 18 18 0 0132-4 13 13 0 012 30z" fill="#F1F5F9" stroke="#475569" stroke-width="1.6"/><text x="384" y="49">Internet</text>
+            </g>
+            <g stroke="#0369A1" stroke-width="2"><line x1="68" y1="45" x2="92" y2="45"/><line x1="170" y1="45" x2="194" y2="45"/><line x1="256" y1="45" x2="280" y2="45"/><line x1="336" y1="45" x2="352" y2="45"/></g>
+            <text x="110" y="82" font-size="10" fill="#475569">réseau privé</text><text x="372" y="82" font-size="10" fill="#475569" text-anchor="middle">réseau public</text>
+            <line x1="183" y1="12" x2="183" y2="78" stroke="#C2410C" stroke-dasharray="4 3" stroke-width="1.5"/>
+          </svg>
+          <figcaption>Le routeur et le modem relient le réseau privé au réseau public.</figcaption>
+        </figure>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Public</dt><dd>ouvert à tous, partout dans le monde.</dd>
+            <dt>Données</dt><dd>les informations qui circulent : textes, images, vidéos, messages…</dd>
+            <dt>Orienter</dt><dd>envoyer dans la bonne direction.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 4 — Protection ════════════════ -->
+  <section class="step" id="sec4">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec4')">
+      <span class="num">4</span>
+      <h3>Se protéger des menaces d'Internet</h3>
+      <span class="etat" id="etat4">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="defi" id="defi4">
+        <div class="dtitre">Défi 4 &mdash; les gardiens du réseau</div>
+        <span class="dq" data-consigne>Binôme : échangez vos rôles maintenant. Puis trouve le bon gardien.</span>
+        <div class="ligne" data-aide="C'est le seul des trois qui est un matériel, une vraie boîte que l'on peut toucher."
+             data-expl="La passerelle est un matériel : elle protège le réseau contre les attaques externes.">
+          <div class="lhaut"><span class="enonce">Je suis un <b>matériel</b> qui protège le réseau contre des attaques externes.</span>
+          <span class="opts" data-bonne="pas"><button type="button" class="opt" data-v="pf">Pare-feu</button><button type="button" class="opt" data-v="pas">Passerelle</button><button type="button" class="opt" data-v="av">Antivirus</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Il agit comme un mur à l'entrée : il bloque avant que ça rentre."
+             data-expl="Le pare-feu est un logiciel qui empêche les logiciels malveillants d'entrer.">
+          <div class="lhaut"><span class="enonce">J'empêche les logiciels malveillants d'<b>entrer</b>.</span>
+          <span class="opts" data-bonne="pf"><button type="button" class="opt" data-v="av">Antivirus</button><button type="button" class="opt" data-v="pas">Passerelle</button><button type="button" class="opt" data-v="pf">Pare-feu</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Il fouille l'ordinateur pour trouver ce qui est déjà entré."
+             data-expl="L'antivirus est un logiciel qui recherche et détruit les logiciels malveillants.">
+          <div class="lhaut"><span class="enonce">Je <b>recherche et détruis</b> les logiciels malveillants.</span>
+          <span class="opts" data-bonne="av"><button type="button" class="opt" data-v="av">Antivirus</button><button type="button" class="opt" data-v="pf">Pare-feu</button><button type="button" class="opt" data-v="pas">Passerelle</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="De nouveaux logiciels malveillants apparaissent chaque jour."
+             data-expl="Faux : pour rester efficaces, l'antivirus et le pare-feu doivent être mis à jour, sinon ils ne reconnaissent pas les nouvelles menaces.">
+          <div class="lhaut"><span class="enonce">Un antivirus jamais mis à jour reste efficace.</span>
+          <span class="opts" data-bonne="f"><button type="button" class="opt" data-v="v">Vrai</button><button type="button" class="opt" data-v="f">Faux</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi4">0 / 4</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi4')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="outil" data-secondaire>
+        <div class="otitre">&#x1F9F0; Atelier &mdash; assemble ta box Internet</div>
+        <p class="oq" data-consigne>La box Internet de la maison réunit cinq matériels en un seul boîtier. Range-les dans la box : clique sur un élément pour le déplacer, puis vérifie. Attention, trois intrus se cachent dans la réserve.</p>
+        <div class="boite">
+          <div class="stock"><h5>&#x1F4E6; Réserve</h5><div id="box-stock"></div></div>
+          <div class="box"><h5>&#x1F4E1; Ma box Internet</h5><div id="box-dedans"></div></div>
+        </div>
+        <div class="obtns"><button type="button" class="obtn" id="box-verif">&#x2714; Vérifier ma box</button><button type="button" class="obtn" id="box-vider">&#x21BA; Vider</button></div>
+        <div class="obilan" id="box-bilan" aria-live="polite">La box est vide.</div>
+      </div>
+
+      <div class="notion" id="notion4">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p>Pour se protéger des menaces d'Internet, <span class="mot">du matériel et des logiciels</span> sont également nécessaires.</p></div>
+        <div class="famille">Du matériel pour se protéger</div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M12 9.5l3 1.2v2c0 1.7-1.3 2.9-3 3.3-1.7-.4-3-1.6-3-3.3v-2z"/></svg></span>
+            <span class="txt"><span class="nom">Une passerelle</span><span class="det">Protéger un réseau contre des <b>attaques externes</b>.</span></span></div>
+        </div>
+        <div class="famille">Des logiciels pour se protéger</div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9.3h18M3 14.7h18M9 4v5.3M15 9.3v5.4M9 14.7V20"/></svg></span>
+            <span class="txt"><span class="nom">Un pare-feu</span><span class="det"><b>Empêcher</b> les logiciels malveillants <b>d'entrer</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/><path d="M8 8.5l5 4M13 8.5l-5 4"/></svg></span>
+            <span class="txt"><span class="nom">Un antivirus</span><span class="det"><b>Rechercher et détruire</b> les logiciels malveillants.</span></span></div>
+        </div>
+        <div class="apart">&#x1F504; Pour être efficaces, <b>l'antivirus et le pare-feu doivent être mis à jour</b>.</div>
+
+        <div class="defbloc"><p><span class="mot">Remarque&nbsp;:</span> la box Internet réunit plusieurs matériels en un seul boîtier.</p></div>
+        <div class="equation" aria-label="Box Internet égale commutateur plus borne Wi-Fi plus modem plus routeur plus passerelle">
+          <span class="t">Box Internet</span><span>=</span><span class="m">commutateur</span><span>+</span><span class="m">borne Wi-Fi</span><span>+</span><span class="m">modem</span><span>+</span><span class="m">routeur</span><span>+</span><span class="m">passerelle</span>
+        </div>
+
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Externe</dt><dd>qui vient de l'extérieur, ici d'Internet.</dd>
+            <dt>Malveillant</dt><dd>qui veut faire du mal.</dd>
+            <dt>Mise à jour</dt><dd>nouvelle version d'un logiciel qui connaît les menaces récentes.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 5 — Malwares ════════════════ -->
+  <section class="step" id="sec5">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec5')">
+      <span class="num">5</span>
+      <h3>Les logiciels malveillants</h3>
+      <span class="etat" id="etat5">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="defi" id="defi5">
+        <div class="dtitre">Défi 5 &mdash; démasque le logiciel</div>
+        <span class="dq" data-consigne>Chaque phrase décrit un logiciel malveillant. Lequel&nbsp;?</span>
+        <div class="ligne" data-aide="Rançon = argent demandé pour rendre quelque chose."
+             data-expl="Le logiciel de rançon (ransomware) bloque l'accès aux fichiers et réclame de l'argent pour les débloquer.">
+          <div class="lhaut"><span class="enonce">Il bloque tes fichiers et réclame de l'argent pour les débloquer.</span>
+          <span class="opts" data-bonne="ran"><button type="button" class="opt" data-v="vir">Virus</button><button type="button" class="opt" data-v="esp">Logiciel espion</button><button type="button" class="opt" data-v="tro">Cheval de Troie</button><button type="button" class="opt" data-v="ran">Logiciel de rançon</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Comme dans la légende grecque : un cadeau qui cache des ennemis."
+             data-expl="Le cheval de Troie se présente comme un programme inoffensif, mais cache un programme malveillant.">
+          <div class="lhaut"><span class="enonce">Il ressemble à un jeu gratuit et inoffensif, mais cache un programme malveillant.</span>
+          <span class="opts" data-bonne="tro"><button type="button" class="opt" data-v="tro">Cheval de Troie</button><button type="button" class="opt" data-v="ran">Logiciel de rançon</button><button type="button" class="opt" data-v="vir">Virus</button><button type="button" class="opt" data-v="esp">Logiciel espion</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Un espion observe en cachette."
+             data-expl="Le logiciel espion (spyware) récupère des informations personnelles sans que l'utilisateur le sache.">
+          <div class="lhaut"><span class="enonce">Il récupère tes informations personnelles sans que tu le saches.</span>
+          <span class="opts" data-bonne="esp"><button type="button" class="opt" data-v="vir">Virus</button><button type="button" class="opt" data-v="esp">Logiciel espion</button><button type="button" class="opt" data-v="tro">Cheval de Troie</button><button type="button" class="opt" data-v="ran">Logiciel de rançon</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Comme une maladie, il dérègle l'ordinateur."
+             data-expl="Le virus informatique perturbe le fonctionnement de l'ordinateur et peut endommager des fichiers.">
+          <div class="lhaut"><span class="enonce">Il perturbe le fonctionnement de l'ordinateur et peut endommager des fichiers.</span>
+          <span class="opts" data-bonne="vir"><button type="button" class="opt" data-v="ran">Logiciel de rançon</button><button type="button" class="opt" data-v="vir">Virus</button><button type="button" class="opt" data-v="esp">Logiciel espion</button><button type="button" class="opt" data-v="tro">Cheval de Troie</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi5">0 / 4</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi5')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion5">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p>Certains logiciels sont dangereux&nbsp;: ce sont les <span class="mot">logiciels malveillants</span> (en anglais <i>malwares</i>). Les plus connus sont&nbsp;:</p></div>
+        <div class="grille g2">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 2.5V7M12 17v4.5M2.5 12H7M17 12h4.5M5.3 5.3l3.2 3.2M15.5 15.5l3.2 3.2M18.7 5.3l-3.2 3.2M8.5 15.5l-3.2 3.2"/></svg></span>
+            <span class="txt"><span class="nom">Le virus informatique</span><span class="det">Perturbe le fonctionnement de l'ordinateur et peut <b>endommager des fichiers</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <span class="txt"><span class="nom">Le logiciel espion (<i>spyware</i>)</span><span class="det">Récupère des <b>informations personnelles</b> sans que l'utilisateur le sache.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21v-6l-2-3 3-4 1-5 3 3h3l2 4-1 3h-3l-1 2v6"/><path d="M4 21h14"/></svg></span>
+            <span class="txt"><span class="nom">Le cheval de Troie</span><span class="det">Se présente comme un programme <b>inoffensif</b>, mais <b>cache</b> un programme malveillant.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/><path d="M13.5 14.3a1.8 1.8 0 100 3.4M10.5 15.4h3M10.5 16.6h3"/></svg></span>
+            <span class="txt"><span class="nom">Le logiciel de rançon (<i>ransomware</i>)</span><span class="det"><b>Bloque l'accès aux fichiers</b> et réclame de l'argent pour les débloquer.</span></span></div>
+        </div>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Inoffensif</dt><dd>qui ne fait pas de mal, sans danger.</dd>
+            <dt>Endommager</dt><dd>abîmer, casser.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 6 — Cyberharcèlement ════════════════ -->
+  <section class="step" id="sec6">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec6')">
+      <span class="num">6</span>
+      <h3>Le cyberharcèlement</h3>
+      <span class="etat" id="etat6">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="defi" id="defi6">
+        <div class="dtitre">Défi 6 &mdash; les bons réflexes</div>
+        <span class="dq" data-consigne>Bon réflexe ou mauvais réflexe&nbsp;?</span>
+        <div class="ligne" data-aide="Le mot important de la définition : de façon répétée."
+             data-expl="Le cyberharcèlement, c'est harceler une personne de façon répétée sur Internet.">
+          <div class="lhaut"><span class="enonce">Le cyberharcèlement, c'est&nbsp;…</span>
+          <span class="opts" data-bonne="b"><button type="button" class="opt" data-v="a">une dispute qui arrive une seule fois</button><button type="button" class="opt" data-v="b">harceler une personne de façon répétée sur Internet</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Répondre, est-ce que ça calme le harceleur ou est-ce que ça l'encourage ?"
+             data-expl="Mauvais réflexe : ne réponds pas aux harceleurs. Bloque-les et demande de l'aide à un adulte.">
+          <div class="lhaut"><span class="enonce">Je réponds aux insultes pour me défendre.</span>
+          <span class="opts" data-bonne="mau"><button type="button" class="opt" data-v="bon">&#x1F44D; Bon réflexe</button><button type="button" class="opt" data-v="mau">&#x1F44E; Mauvais réflexe</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Pour être aidé ou porter plainte, il faudra montrer ce qui s'est passé."
+             data-expl="Bon réflexe : garder les preuves (captures d'écran, messages) permet d'être aidé et de porter plainte.">
+          <div class="lhaut"><span class="enonce">Je fais des captures d'écran des messages.</span>
+          <span class="opts" data-bonne="bon"><button type="button" class="opt" data-v="bon">&#x1F44D; Bon réflexe</button><button type="button" class="opt" data-v="mau">&#x1F44E; Mauvais réflexe</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Seul, c'est plus difficile de s'en sortir."
+             data-expl="Mauvais réflexe : il faut en parler à un adulte (parent, professeur, CPE) ou appeler le 3018.">
+          <div class="lhaut"><span class="enonce">Je garde tout pour moi, ça finira par passer.</span>
+          <span class="opts" data-bonne="mau"><button type="button" class="opt" data-v="bon">&#x1F44D; Bon réflexe</button><button type="button" class="opt" data-v="mau">&#x1F44E; Mauvais réflexe</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Les réseaux sociaux ont des boutons prévus pour ça."
+             data-expl="Bon réflexe : bloquer les harceleurs et signaler les contenus pour demander leur suppression.">
+          <div class="lhaut"><span class="enonce">Je bloque la personne et je signale le contenu.</span>
+          <span class="opts" data-bonne="bon"><button type="button" class="opt" data-v="bon">&#x1F44D; Bon réflexe</button><button type="button" class="opt" data-v="mau">&#x1F44E; Mauvais réflexe</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi6">0 / 5</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi6')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion6">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="defbloc"><p><span class="mot">Le cyberharcèlement</span> consiste à harceler une personne <b>de façon répétée</b> sur Internet.</p></div>
+        <div class="colonnes2">
+          <div>
+            <div class="famille">Quelques exemples</div>
+            <ul class="puces">
+              <li>Insultes et moqueries répétées.</li>
+              <li>Menaces par messages.</li>
+              <li>Rumeurs sur les réseaux sociaux.</li>
+              <li>Photos ou vidéos humiliantes diffusées sans accord.</li>
+              <li>Usurpation d'identité.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="famille">Les conséquences possibles</div>
+            <ul class="puces">
+              <li>Tristesse et dépression.</li>
+              <li>Difficultés scolaires.</li>
+              <li>Peur, anxiété et perte de confiance.</li>
+              <li>Violence envers soi-même ou les autres.</li>
+              <li>Risque de suicide.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="famille">Que faire en cas de cyberharcèlement&nbsp;?</div>
+        <ul class="puces">
+          <li><b>En parler à un adulte.</b></li>
+          <li>Garder les preuves (captures d'écran, messages).</li>
+          <li>Bloquer les harceleurs.</li>
+          <li>Signaler les contenus pour demander leur suppression.</li>
+          <li>Porter plainte si nécessaire.</li>
+        </ul>
+        <div class="retenir">&#x1F3AF; <b>À retenir&nbsp;:</b> ne réponds pas aux harceleurs. Demande de l'aide à un adulte.</div>
+        <div class="aideurgence">
+          <span class="num3018" aria-hidden="true">3018</span>
+          <span>Victime ou témoin&nbsp;? Appelle le <b>3018</b>&nbsp;: numéro national, <b>gratuit, anonyme et confidentiel</b>, contre le harcèlement et les violences numériques.</span>
+        </div>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Harceler</dt><dd>embêter, attaquer quelqu'un encore et encore.</dd>
+            <dt>Usurpation d'identité</dt><dd>se faire passer pour quelqu'un d'autre.</dd>
+            <dt>Porter plainte</dt><dd>signaler les faits à la police ou à la gendarmerie.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════ NOTION 7 — Lois ════════════════ -->
+  <section class="step" id="sec7">
+    <button type="button" class="sthdr" aria-expanded="true" onclick="basculerSection('sec7')">
+      <span class="num">7</span>
+      <h3>Les lois à respecter</h3>
+      <span class="etat" id="etat7">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BC;</span>
+    </button>
+    <div class="stbody">
+
+      <div class="defi" id="defi7">
+        <div class="dtitre">Défi 7 &mdash; autorisé ou interdit&nbsp;?</div>
+        <span class="dq" data-consigne>Sur Internet, la loi s'applique aussi.</span>
+        <div class="ligne" data-aide="As-tu demandé son autorisation à ton camarade ?"
+             data-expl="Interdit : c'est le droit à l'image. Personne ne peut publier la photo de quelqu'un sans son autorisation.">
+          <div class="lhaut"><span class="enonce">Publier la photo d'un camarade sans lui demander.</span>
+          <span class="opts" data-bonne="int"><button type="button" class="opt" data-v="aut">&#x2705; Autorisé</button><button type="button" class="opt" data-v="int">&#x26D4; Interdit</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Cette musique, qui l'a créée ?"
+             data-expl="Interdit : une création (photo, vidéo, musique, texte…) ne peut pas être utilisée ou diffusée sans l'autorisation de son auteur.">
+          <div class="lhaut"><span class="enonce">Diffuser la chanson d'un artiste en disant que c'est la tienne.</span>
+          <span class="opts" data-bonne="int"><button type="button" class="opt" data-v="aut">&#x2705; Autorisé</button><button type="button" class="opt" data-v="int">&#x26D4; Interdit</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="C'est ta propre création, et personne n'y apparaît."
+             data-expl="Autorisé : c'est ta création et personne n'y figure. C'est à toi de décider si tu la partages.">
+          <div class="lhaut"><span class="enonce">Publier une photo de paysage que tu as prise toi-même.</span>
+          <span class="opts" data-bonne="aut"><button type="button" class="opt" data-v="aut">&#x2705; Autorisé</button><button type="button" class="opt" data-v="int">&#x26D4; Interdit</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="ligne" data-aide="Pense à tout ce qu'on peut trouver sur toi en tapant ton nom dans un moteur de recherche."
+             data-expl="L'identité numérique est l'ensemble des informations qui te concernent sur Internet.">
+          <div class="lhaut"><span class="enonce">Ton identité numérique, c'est&nbsp;…</span>
+          <span class="opts" data-bonne="b"><button type="button" class="opt" data-v="a">seulement ton mot de passe</button><button type="button" class="opt" data-v="b">l'ensemble des informations qui te concernent sur Internet</button><button type="button" class="opt" data-v="c">ta carte d'identité</button></span>
+          <span class="verdict" aria-live="polite"></span></div>
+        </div>
+        <div class="dpied">
+          <span class="dscore" id="score-defi7">0 / 4</span>
+          <button type="button" class="lienrep" onclick="montrerReponses('defi7')">Je préfère voir les réponses</button>
+        </div>
+      </div>
+
+      <div class="notion" id="notion7">
+        <span class="gagne">&#x2714; Notion gagnée</span>
+        <div class="grille">
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2.5h5L16 6"/></svg></span>
+            <span class="txt"><span class="nom">Droit à l'image</span><span class="det">Personne ne peut publier ta photo <b>sans ton autorisation</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg></span>
+            <span class="txt"><span class="nom">Droit des biens</span><span class="det">Personne ne peut utiliser ou diffuser une de tes <b>créations</b> (photo, vidéo, musique, texte…) <b>sans ton autorisation</b>.</span></span></div>
+          <div class="carte"><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/><path d="M17 3.5l1.5 1.5M19.5 7H21"/></svg></span>
+            <span class="txt"><span class="nom">Identité numérique</span><span class="det">Ensemble des <b>informations qui te concernent</b> sur Internet.</span></span></div>
+        </div>
+        <div class="retenir">&#x1F3AF; <b>À retenir&nbsp;:</b> pour te protéger, ne partage jamais d'informations personnelles (adresse, téléphone, mots de passe…).</div>
+        <div class="motsdurs">
+          <div class="t">Les mots difficiles</div>
+          <dl>
+            <dt>Diffuser</dt><dd>montrer ou envoyer à beaucoup de personnes.</dd>
+            <dt>Une création</dt><dd>ce qu'une personne a inventé ou fabriqué elle-même.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="retiens">
+    <h3>&#x1F3AF; Je retiens en sept phrases</h3>
+    <ol>
+      <li>Un <b>réseau</b> est un ensemble de matériels connectés qui échangent des informations ; on le construit souvent <b>en étoile</b> (1 appareil = 1 câble).</li>
+      <li>Le <b>commutateur</b> relie les appareils par câbles Ethernet, la <b>borne Wi-Fi</b> par ondes radio, et le <b>serveur</b> stocke, partage les données et gère les accès.</li>
+      <li>Le <b>modem</b> permet d'échanger des données avec Internet, le <b>routeur</b> les oriente vers le bon appareil.</li>
+      <li>La <b>passerelle</b> (matériel), le <b>pare-feu</b> et l'<b>antivirus</b> (logiciels, à mettre à jour) protègent le réseau. La box Internet réunit commutateur, borne Wi-Fi, modem, routeur et passerelle.</li>
+      <li>Virus, logiciel espion, cheval de Troie et logiciel de rançon sont des <b>logiciels malveillants</b>.</li>
+      <li>Face au <b>cyberharcèlement</b> : ne pas répondre, garder les preuves, bloquer, signaler, en parler à un adulte (3018).</li>
+      <li>Le <b>droit à l'image</b> et le <b>droit des biens</b> protègent chacun ; je protège mon <b>identité numérique</b>.</li>
+    </ol>
+  </div>
+
+  <div class="trophee" id="trophee" role="status">
+    <div class="gros" aria-hidden="true">&#x1F3C6;</div>
+    <h3>Synthèse gagnée&nbsp;!</h3>
+    <p id="trophee-txt">Les sept notions sont à toi.</p>
+    <p>Imprime-la pour la coller dans ton classeur, puis teste-toi&nbsp;: relis seulement les titres et redis chaque notion à voix haute.</p>
+  </div>
+
+  <div class="lexique-papier" data-nolecture>
+    <div class="t">Les mots difficiles de la séquence</div>
+    <dl id="lexique-liste"></dl>
+  </div>
+
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P2 — SYNTHÈSE « organiser un réseau numérique » (5e)
+   La notion se gagne à l'écran ; la feuille imprimée contient toujours la
+   synthèse complète et correcte, identique pour tous. Rien n'est noté ni envoyé.
+   Mémoire de l'avancement : par élève quand le site donne son identifiant,
+   sinon pour l'onglet seulement (poste partagé : pas de reprise d'un autre élève).
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var CLE_IDENT = "reseau5e-syn_prefill";
+var CLE_AIDE  = "reseau5e-syn_aide";
+var TOTAL = 7;
+var IDENT = null;
+
+/* ── Stockage : par élève (localStorage) ou par onglet (sessionStorage) ── */
+function lireIdentiteBrute(){
+  try { return JSON.parse(localStorage.getItem(CLE_IDENT) || "null"); } catch(e){ return null; }
+}
+function cleEtat(){ return "reseau5e-syn_etat" + (IDENT && IDENT.id ? ":" + IDENT.id : ""); }
+function magasin(){
+  try { return (IDENT && IDENT.id) ? window.localStorage : window.sessionStorage; } catch(e){ return null; }
+}
+function lireEtat(){
+  try { var m = magasin(); return m ? (JSON.parse(m.getItem(cleEtat()) || "null") || { vues:[], prem:{} }) : { vues:[], prem:{} }; }
+  catch(e){ return { vues:[], prem:{} }; }
+}
+function ecrireEtat(e){ try { var m = magasin(); if (m) m.setItem(cleEtat(), JSON.stringify(e)); } catch(x){} }
+var ETAT = { vues:[], prem:{} };   /* prem : lignes réussies du premier coup, pour le trophée */
+
+/* ── Niveau d'aide (même objectif, seul l'échafaudage change) ─────────── */
+var AIDE = "autonome";
+function choisirAide(niv){
+  AIDE = niv;
+  if (IDENT && IDENT.id){ try { localStorage.setItem(CLE_AIDE + ":" + IDENT.id, niv); } catch(e){} }
+  var b = document.querySelectorAll(".aide button");
+  for (var i = 0; i < b.length; i++) b[i].setAttribute("aria-pressed", b[i].getAttribute("data-aide") === niv ? "true" : "false");
+  var lignes = document.querySelectorAll(".defi .ligne");
+  for (var j = 0; j < lignes.length; j++) appliquerAide(lignes[j]);
+}
+function appliquerAide(ligne){
+  var fige = ligne.getAttribute("data-fige") === "1";
+  var zone = ligne.querySelector(".opts");
+  var bonne = zone.getAttribute("data-bonne");
+  var opts = zone.querySelectorAll(".opt");
+  /* Accompagné : la bonne réponse et UNE autre proposition (la première fausse). */
+  var garde = null;
+  for (var i = 0; i < opts.length; i++) if (opts[i].getAttribute("data-v") !== bonne){ garde = opts[i]; break; }
+  for (var k = 0; k < opts.length; k++){
+    var retirer = AIDE === "accompagne" && !fige && opts[k].getAttribute("data-v") !== bonne && opts[k] !== garde;
+    opts[k].classList.toggle("retire", retirer);
+  }
+  var btn = ligne.querySelector(".btn-indice");
+  var ind = ligne.querySelector(".indice");
+  if (btn) btn.hidden = !(AIDE === "guide") || fige;
+  if (ind) ind.hidden = !(AIDE === "accompagne" && !fige) && !ind.hasAttribute("data-demande");
+  if (ind && fige) ind.hidden = true;
+}
+
+/* ── Défis ─────────────────────────────────────────────────────────── */
+function preparerLignes(){
+  var lignes = document.querySelectorAll(".defi .ligne");
+  for (var i = 0; i < lignes.length; i++){
+    var l = lignes[i];
+    l.setAttribute("data-n", i);
+    var aide = l.getAttribute("data-aide");
+    if (aide){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "btn-indice"; b.setAttribute("data-nolecture", "");
+      b.innerHTML = "&#x1F4A1; Indice"; b.hidden = true;
+      var ind = document.createElement("div");
+      ind.className = "indice"; ind.hidden = true;
+      ind.innerHTML = "<b>Indice&nbsp;:</b> "; ind.appendChild(document.createTextNode(aide));
+      (function(b, ind){ b.addEventListener("click", function(){ ind.setAttribute("data-demande", ""); ind.hidden = false; b.hidden = true; }); })(b, ind);
+      l.querySelector(".lhaut").appendChild(b);
+      l.appendChild(ind);
+    }
+    var ex = document.createElement("div");
+    ex.className = "expl"; ex.hidden = true; ex.setAttribute("aria-live", "polite");
+    l.appendChild(ex);
+    brancherLigne(l);
+  }
+}
+function brancherLigne(ligne){
+  var zone = ligne.querySelector(".opts");
+  var bonne = zone.getAttribute("data-bonne");
+  var opts = zone.querySelectorAll(".opt");
+  for (var i = 0; i < opts.length; i++){
+    opts[i].addEventListener("click", function(){
+      if (ligne.getAttribute("data-fige") === "1") return;
+      var juste = this.getAttribute("data-v") === bonne;
+      this.classList.add(juste ? "juste" : "faux");
+      this.setAttribute("aria-pressed", "true");
+      if (!juste) marquerBonne(zone, bonne);
+      figer(ligne, juste ? "ok" : "ko");
+      if (juste) ETAT.prem[ligne.getAttribute("data-n")] = 1;
+      ecrireEtat(ETAT);
+      majDefi(ligne.closest(".defi"));
+    });
+  }
+}
+function marquerBonne(zone, bonne){
+  var o = zone.querySelectorAll(".opt");
+  for (var i = 0; i < o.length; i++) if (o[i].getAttribute("data-v") === bonne) o[i].classList.add("montre");
+}
+/* Une ligne répondue se fige : la bonne réponse est visible, l'explication aussi. */
+function figer(ligne, issue){
+  ligne.setAttribute("data-fige", "1");
+  var o = ligne.querySelectorAll(".opt");
+  for (var i = 0; i < o.length; i++){ o[i].disabled = true; o[i].classList.remove("retire"); }
+  var v = ligne.querySelector(".verdict");
+  v.className = "verdict" + (issue === "ok" ? " ok" : issue === "ko" ? " ko" : "");
+  v.textContent = issue === "ok" ? "✓ Juste" : issue === "ko" ? "✕ Pas encore" : "";
+  var ex = ligne.querySelector(".expl");
+  ex.className = "expl" + (issue === "ko" ? " ko" : "");
+  ex.textContent = (issue === "ko" ? "Pas tout à fait. " : issue === "ok" ? "Bravo. " : "") + (ligne.getAttribute("data-expl") || "");
+  ex.hidden = false;
+  appliquerAide(ligne);
+}
+function montrerReponses(idDefi){
+  var defi = document.getElementById(idDefi);
+  var lignes = defi.querySelectorAll(".ligne");
+  for (var i = 0; i < lignes.length; i++){
+    if (lignes[i].getAttribute("data-fige") === "1") continue;
+    var zone = lignes[i].querySelector(".opts");
+    marquerBonne(zone, zone.getAttribute("data-bonne"));
+    figer(lignes[i], "vu");
+  }
+  majDefi(defi);
+}
+function majDefi(defi){
+  var lignes = defi.querySelectorAll(".ligne");
+  var faites = 0, justes = 0;
+  for (var i = 0; i < lignes.length; i++){
+    if (lignes[i].getAttribute("data-fige") === "1") faites++;
+    if (lignes[i].querySelector(".opt.juste")) justes++;
+  }
+  document.getElementById("score-" + defi.id).textContent = justes + " / " + lignes.length + " du premier coup";
+  if (faites === lignes.length) ouvrirNotion(+defi.id.replace("defi", ""), true);
+}
+function ouvrirNotion(n, defiler){
+  var bloc = document.getElementById("notion" + n);
+  if (!bloc) return;
+  if (!bloc.classList.contains("vue")){
+    bloc.classList.add("vue");
+    var e = document.getElementById("etat" + n);
+    e.textContent = "✓ gagnée"; e.classList.add("ok");
+    if (ETAT.vues.indexOf(n) < 0) ETAT.vues.push(n);
+    ecrireEtat(ETAT);
+    if (defiler){ try { bloc.scrollIntoView({ behavior: reduit() ? "auto" : "smooth", block:"nearest" }); } catch(x){} }
+  }
+  majProgression();
+}
+function reduit(){ return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function majProgression(){
+  var vues = document.querySelectorAll(".notion.vue").length;
+  document.getElementById("pcount").textContent = vues + " / " + TOTAL + " notion" + (vues > 1 ? "s" : "");
+  document.getElementById("pbar-fill").style.width = (vues / TOTAL * 100) + "%";
+  document.getElementById("pbar").setAttribute("aria-valuenow", vues);
+  var t = document.getElementById("trophee");
+  if (vues === TOTAL){
+    var nb = document.querySelectorAll(".defi .ligne").length, pc = 0;
+    for (var k in ETAT.prem) pc++;
+    document.getElementById("trophee-txt").textContent =
+      "Les sept notions sont à toi. Réponses justes du premier coup : " + pc + " sur " + nb + ".";
+    t.classList.add("vue");
+  } else t.classList.remove("vue");
+}
+function afficherTout(){
+  for (var n = 1; n <= TOTAL; n++){ montrerReponses("defi" + n); ouvrirNotion(n, false); }
+}
+function recommencer(){
+  if (!confirm("Effacer ton avancement sur ce poste et recommencer les défis ?")) return;
+  try { var m = magasin(); if (m) m.removeItem(cleEtat()); } catch(e){}
+  location.hash = ""; location.reload();
+}
+/* Retour sur ce poste : on rouvre les notions gagnées, défis montrés. */
+function restaurer(){
+  ETAT = lireEtat();
+  if (!ETAT.prem) ETAT.prem = {};
+  var vues = (ETAT.vues || []).slice();
+  for (var i = 0; i < vues.length; i++){ montrerReponses("defi" + vues[i]); ouvrirNotion(vues[i], false); }
+}
+
+/* ── Sections dépliables ───────────────────────────────────────────── */
+function basculerSection(id){
+  var s = document.getElementById(id);
+  var f = s.classList.toggle("closed");
+  s.querySelector(".sthdr").setAttribute("aria-expanded", f ? "false" : "true");
+}
+
+/* ── Outil 1 : le réseau en étoile ─────────────────────────────────── */
+var SIM = { coupes:{}, centre:false, maille:false };
+var NS = "http://www.w3.org/2000/svg";
+function el(nom, attrs, parent){
+  var e = document.createElementNS(NS, nom);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function txt(x, y, s, parent, extra){
+  var t = el("text", Object.assign({ x:x, y:y, "text-anchor":"middle", "font-size":12 }, extra || {}), parent);
+  t.textContent = s; return t;
+}
+var POSTES = [];
+function initEtoile(){
+  var svg = document.getElementById("sim-etoile");
+  var cx = 200, cy = 135, r = 105;
+  for (var i = 0; i < 5; i++){
+    var a = -Math.PI / 2 + i * 2 * Math.PI / 5;
+    POSTES.push({ x: cx + r * Math.cos(a) * 1.55, y: cy + r * Math.sin(a) * 1.05, nom: "PC " + (i + 1) });
+  }
+  var btns = document.getElementById("sim-btns");
+  for (var j = 0; j < 5; j++){
+    (function(j){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "obtn"; b.setAttribute("aria-pressed", "false");
+      b.textContent = "✂ Câble du " + POSTES[j].nom;
+      b.addEventListener("click", function(){ basculerCable(j); });
+      btns.appendChild(b);
+    })(j);
+  }
+  document.getElementById("sim-centre").addEventListener("click", function(){ SIM.centre = !SIM.centre; this.setAttribute("aria-pressed", SIM.centre); dessinerEtoile(); });
+  document.getElementById("sim-maille").addEventListener("click", function(){ SIM.maille = !SIM.maille; this.setAttribute("aria-pressed", SIM.maille); dessinerEtoile(); });
+  document.getElementById("sim-reparer").addEventListener("click", function(){
+    SIM = { coupes:{}, centre:false, maille:SIM.maille };
+    document.getElementById("sim-centre").setAttribute("aria-pressed", "false");
+    dessinerEtoile();
+  });
+  dessinerEtoile();
+}
+function basculerCable(j){ if (SIM.maille) return; SIM.coupes[j] = !SIM.coupes[j]; dessinerEtoile(); }
+function dessinerEtoile(){
+  var svg = document.getElementById("sim-etoile");
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  var cx = 200, cy = 135, nb = 0, isoles = [];
+  if (SIM.maille){
+    for (var a = 0; a < 5; a++) for (var b = a + 1; b < 5; b++){
+      el("line", { x1:POSTES[a].x, y1:POSTES[a].y, x2:POSTES[b].x, y2:POSTES[b].y, "class":"cable" }, svg); nb++;
+    }
+  } else {
+    for (var i = 0; i < 5; i++){
+      var c = SIM.coupes[i];
+      el("line", { x1:cx, y1:cy, x2:POSTES[i].x, y2:POSTES[i].y, "class":"cable" + (c ? " coupe" : SIM.centre ? " mort" : "") }, svg);
+      var z = el("line", { x1:cx, y1:cy, x2:POSTES[i].x, y2:POSTES[i].y, "class":"zone-clic" }, svg);
+      (function(i){ z.addEventListener("click", function(){ basculerCable(i); }); })(i);
+      if (c) isoles.push(POSTES[i].nom);
+      nb++;
+    }
+    var g = el("g", {}, svg);
+    el("rect", { x:cx - 46, y:cy - 16, width:92, height:32, rx:6, fill: SIM.centre ? "#FDE2E0" : "#0C4A6E", stroke: SIM.centre ? "#B42318" : "none", "stroke-width":2 }, g);
+    txt(cx, cy + 4, SIM.centre ? "en panne" : "matériel central", g, { fill: SIM.centre ? "#B42318" : "#fff", style:"fill:" + (SIM.centre ? "#B42318" : "#fff"), "font-weight":700, "font-size":11 });
+  }
+  for (var k = 0; k < 5; k++){
+    var p = POSTES[k];
+    var cl = "app" + (!SIM.maille && SIM.coupes[k] ? " isole" : (!SIM.maille && SIM.centre ? " eteint" : ""));
+    var gg = el("g", { "class":cl }, svg);
+    el("rect", { x:p.x - 30, y:p.y - 15, width:60, height:30, rx:5 }, gg);
+    txt(p.x, p.y + 4, p.nom, gg, { "font-weight":700 });
+  }
+  var btns = document.querySelectorAll("#sim-btns .obtn");
+  for (var q = 0; q < btns.length; q++){ btns[q].setAttribute("aria-pressed", SIM.coupes[q] ? "true" : "false"); btns[q].disabled = SIM.maille; }
+  var bilan = document.getElementById("sim-bilan");
+  if (SIM.maille){
+    bilan.innerHTML = "Réseau <b>maillé</b> : chaque appareil est relié à tous les autres, soit <b>" + nb + " câbles</b> pour 5 appareils. En étoile, il en faut seulement <b>5</b>.";
+  } else if (SIM.centre){
+    bilan.innerHTML = "Le matériel central est en panne : <b>plus personne ne communique</b>. C'est pour cela qu'il est indispensable au réseau en étoile.";
+  } else if (isoles.length){
+    bilan.innerHTML = "Câble coupé : <b>" + isoles.join(", ") + "</b> " + (isoles.length > 1 ? "sont isolés" : "est isolé") +
+      ". Les <b>" + (5 - isoles.length) + " autres</b> communiquent toujours. Câbles : <b>" + nb + "</b> pour 5 appareils.";
+  } else {
+    bilan.innerHTML = "Tout fonctionne. <b>5 appareils, 5 câbles</b> : 1 appareil = 1 câble, tous reliés au matériel central.";
+  }
+}
+
+/* ── Outil 2 : explorer le réseau privé ────────────────────────────── */
+var EXPLO = [
+  { id:"srv",  x:70,  y:55,  nom:"Serveur",     role:"Ordinateur allumé en permanence : il stocke et partage les données, et gère les accès (les comptes)." },
+  { id:"com",  x:220, y:135, nom:"Commutateur", role:"Il relie plusieurs appareils entre eux à l'aide de câbles Ethernet." },
+  { id:"wifi", x:360, y:55,  nom:"Borne Wi-Fi", role:"Elle transmet les données entre les appareils grâce aux ondes radio." },
+  { id:"pc1",  x:70,  y:220, nom:"Ordinateur",  role:"Un appareil du réseau, branché par câble Ethernet au commutateur." },
+  { id:"imp",  x:220, y:235, nom:"Imprimante",  role:"Un appareil partagé : tous les ordinateurs du réseau peuvent l'utiliser." },
+  { id:"tab",  x:375, y:200, nom:"Tablette",    role:"Un appareil sans câble : elle communique avec la borne Wi-Fi par ondes radio." }
+];
+var LIENS_EXPLO = [["srv","com",""],["wifi","com",""],["pc1","com",""],["imp","com",""],["tab","wifi","ondes"]];
+function initExplo(){
+  var svg = document.getElementById("explo");
+  var pos = {};
+  for (var i = 0; i < EXPLO.length; i++) pos[EXPLO[i].id] = EXPLO[i];
+  for (var j = 0; j < LIENS_EXPLO.length; j++){
+    var a = pos[LIENS_EXPLO[j][0]], b = pos[LIENS_EXPLO[j][1]];
+    el("line", { x1:a.x, y1:a.y, x2:b.x, y2:b.y, "class":"lien" + (LIENS_EXPLO[j][2] ? " ondes" : "") }, svg);
+  }
+  txt(122, 112, "câble", svg, { "font-size":10, fill:"#64748B", style:"fill:#64748B" });
+  txt(390, 135, "ondes", svg, { "font-size":10, fill:"#64748B", style:"fill:#64748B" });
+  for (var k = 0; k < EXPLO.length; k++){
+    (function(d){
+      var g = el("g", { "class":"noeud", tabindex:"0", role:"button", "aria-label":d.nom }, svg);
+      el("rect", { x:d.x - 48, y:d.y - 17, width:96, height:34, rx:7 }, g);
+      txt(d.x, d.y + 4, d.nom, g, { "font-weight":700, "font-size":12.5 });
+      function choisir(){
+        var tous = svg.querySelectorAll(".noeud");
+        for (var q = 0; q < tous.length; q++) tous[q].classList.remove("choisi");
+        g.classList.add("choisi");
+        var bl = document.getElementById("explo-bilan");
+        bl.innerHTML = ""; var b = document.createElement("b"); b.textContent = d.nom + " : ";
+        bl.appendChild(b); bl.appendChild(document.createTextNode(d.role));
+      }
+      g.addEventListener("click", choisir);
+      g.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); choisir(); } });
+    })(EXPLO[k]);
+  }
+}
+
+/* ── Outil 3 : le routeur aiguilleur ───────────────────────────────── */
+var RT = {
+  noeuds:{ net:{x:46,y:60,nom:"Internet"}, mod:{x:160,y:60,nom:"Modem"}, rou:{x:290,y:60,nom:"Routeur"}, com:{x:290,y:150,nom:"Commutateur"},
+           a:{x:150,y:205,nom:"PC de Léa",le:"le PC de Léa"}, b:{x:290,y:212,nom:"Imprimante",le:"l'imprimante"}, c:{x:445,y:150,nom:"Tablette de Tom",le:"la tablette de Tom"}, wifi:{x:445,y:60,nom:"Borne Wi-Fi"} },
+  liens:[["net","mod"],["mod","rou"],["rou","com"],["com","a"],["com","b"],["rou","wifi"],["wifi","c","ondes"]],
+  chemins:{ a:["net","mod","rou","com","a"], b:["net","mod","rou","com","b"], c:["net","mod","rou","wifi","c"] },
+  dest:null, minuteurs:[]
+};
+function initRouteur(){
+  var svg = document.getElementById("routeur");
+  for (var i = 0; i < RT.liens.length; i++){
+    var l = RT.liens[i], a = RT.noeuds[l[0]], b = RT.noeuds[l[1]];
+    el("line", { x1:a.x, y1:a.y, x2:b.x, y2:b.y, "class":"lien" + (l[2] ? " ondes" : ""), "data-l":l[0] + "-" + l[1] }, svg);
+  }
+  for (var id in RT.noeuds){
+    var n = RT.noeuds[id];
+    var g = el("g", { "class":"noeud", "data-id":id }, svg);
+    if (id === "net") el("path", { d:"M14 82a20 20 0 010-38 26 26 0 0148-6 19 19 0 012 44z", fill:"#F1F5F9", stroke:"#475569", "stroke-width":2 }, g);
+    else { var lg = Math.max(100, n.nom.length * 8 + 18); el("rect", { x:n.x - lg / 2, y:n.y - 16, width:lg, height:32, rx:7 }, g); }
+    txt(n.x, n.y + 4, n.nom, g, { "font-weight":700, "font-size":12 });
+  }
+  var zone = document.getElementById("rt-dest");
+  [["a","PC de Léa"],["b","Imprimante"],["c","Tablette de Tom"]].forEach(function(d){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "obtn"; b.setAttribute("aria-pressed", "false"); b.setAttribute("data-d", d[0]);
+    b.textContent = "Demandée par : " + d[1];
+    b.addEventListener("click", function(){
+      RT.dest = d[0]; effacerChemin();
+      var t = zone.querySelectorAll(".obtn");
+      for (var q = 0; q < t.length; q++) t[q].setAttribute("aria-pressed", t[q] === b ? "true" : "false");
+      svg.querySelector('[data-id="' + d[0] + '"]').classList.add("choisi");
+      document.getElementById("rt-bilan").textContent = "Destinataire : " + d[1] + ". Envoie maintenant la page depuis Internet.";
+    });
+    zone.appendChild(b);
+  });
+  document.getElementById("rt-go").addEventListener("click", envoyer);
+}
+function effacerChemin(){
+  var svg = document.getElementById("routeur");
+  RT.minuteurs.forEach(clearTimeout); RT.minuteurs = [];
+  var a = svg.querySelectorAll(".actif, .choisi");
+  for (var i = 0; i < a.length; i++) a[i].classList.remove("actif", "choisi");
+}
+function envoyer(){
+  var bl = document.getElementById("rt-bilan");
+  if (!RT.dest){ bl.textContent = "Choisis d'abord l'appareil qui a demandé la page."; return; }
+  var svg = document.getElementById("routeur");
+  var ch = RT.chemins[RT.dest];
+  effacerChemin();
+  var pas = reduit() ? 0 : 450;
+  ch.forEach(function(id, i){
+    RT.minuteurs.push(setTimeout(function(){
+      svg.querySelector('[data-id="' + id + '"]').classList.add("actif");
+      if (i > 0){ var l = svg.querySelector('[data-l="' + ch[i - 1] + "-" + id + '"]'); if (l) l.classList.add("actif"); }
+    }, i * pas));
+  });
+  var dn = RT.noeuds[RT.dest].le;
+  RT.minuteurs.push(setTimeout(function(){
+    bl.innerHTML = "La page entre par le <b>modem</b>, qui échange les données avec Internet. Le <b>routeur</b> l'oriente ensuite vers <b>" + dn +
+      "</b>" + (RT.dest === "c" ? ", en passant par la borne Wi-Fi (ondes radio)." : ", en passant par le commutateur (câble).") +
+      " Les autres appareils ne la reçoivent pas.";
+  }, ch.length * pas));
+}
+
+/* ── Outil 4 : assembler la box Internet ───────────────────────────── */
+var PIECES = [
+  { id:"com", nom:"Commutateur", ok:true },
+  { id:"av",  nom:"Antivirus",   ok:false, le:"L'antivirus", pq:"un logiciel, installé sur chaque ordinateur" },
+  { id:"mod", nom:"Modem",       ok:true },
+  { id:"srv", nom:"Serveur",     ok:false, le:"Le serveur", pq:"un ordinateur à part, allumé en permanence" },
+  { id:"wifi",nom:"Borne Wi-Fi", ok:true },
+  { id:"pas", nom:"Passerelle",  ok:true },
+  { id:"imp", nom:"Imprimante",  ok:false, le:"L'imprimante", pq:"un appareil du réseau, pas une partie de la box" },
+  { id:"rou", nom:"Routeur",     ok:true }
+];
+var DANS = {};
+function initBox(){
+  document.getElementById("box-verif").addEventListener("click", verifierBox);
+  document.getElementById("box-vider").addEventListener("click", function(){ DANS = {}; dessinerBox(); document.getElementById("box-bilan").textContent = "La box est vide."; });
+  dessinerBox();
+}
+function dessinerBox(){
+  var st = document.getElementById("box-stock"), bx = document.getElementById("box-dedans");
+  st.innerHTML = ""; bx.innerHTML = "";
+  PIECES.forEach(function(p){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "piece"; b.textContent = (DANS[p.id] ? "← " : "") + p.nom + (DANS[p.id] ? "" : " →");
+    b.setAttribute("aria-label", p.nom + (DANS[p.id] ? " : retirer de la box" : " : mettre dans la box"));
+    b.addEventListener("click", function(){
+      DANS[p.id] = !DANS[p.id]; dessinerBox();
+      var n = 0; for (var k in DANS) if (DANS[k]) n++;
+      document.getElementById("box-bilan").textContent = n + " élément" + (n > 1 ? "s" : "") + " dans la box. Vérifie quand tu en as cinq.";
+    });
+    (DANS[p.id] ? bx : st).appendChild(b);
+  });
+}
+function verifierBox(){
+  var bons = 0, intrus = [], oublis = 0;
+  PIECES.forEach(function(p){
+    if (DANS[p.id] && p.ok) bons++;
+    if (DANS[p.id] && !p.ok) intrus.push(p);
+    if (!DANS[p.id] && p.ok) oublis++;
+  });
+  var pieces = document.querySelectorAll("#box-dedans .piece");
+  for (var i = 0; i < pieces.length; i++){
+    var nom = pieces[i].textContent.replace("← ", "");
+    var p = PIECES.filter(function(x){ return x.nom === nom; })[0];
+    pieces[i].classList.add(p && p.ok ? "ok" : "ko");
+    pieces[i].textContent = (p && p.ok ? "✓ " : "✕ ") + nom;
+  }
+  var bl = document.getElementById("box-bilan");
+  if (bons === 5 && !intrus.length){ bl.innerHTML = "<b>Bravo&nbsp;!</b> Box = commutateur + borne Wi-Fi + modem + routeur + passerelle."; return; }
+  var t = "<b>" + bons + " sur 5</b> bien placé" + (bons > 1 ? "s" : "") + ".";
+  intrus.forEach(function(p){ t += " <b>" + p.le + "</b> n'y est pas : c'est " + p.pq + "."; });
+  if (oublis) t += " Il manque encore " + oublis + " élément" + (oublis > 1 ? "s" : "") + ".";
+  bl.innerHTML = t;
+}
+
+/* ── Identité (en-tête de la feuille imprimée seulement) ───────────── */
+function lireIdentite(){
+  var d = IDENT;
+  if (!d) return;
+  if (d.p) document.getElementById("inp-prenom").value = d.p;
+  if (d.n) document.getElementById("inp-nom").value = d.n;
+  if (d.c) document.getElementById("inp-classe").value = String(d.c).replace(/^5/, "");
+  if (d.p && d.n){
+    ["inp-prenom","inp-nom","inp-classe"].forEach(function(id){
+      var e = document.getElementById(id); e.readOnly = true; e.tabIndex = -1;
+      e.title = "Identité de ton compte — elle ne se modifie pas ici.";
+    });
+  }
+}
+function majEntetePapier(){
+  var p = document.getElementById("inp-prenom").value.trim();
+  var n = document.getElementById("inp-nom").value.trim();
+  var c = document.getElementById("inp-classe").value.trim().toUpperCase();
+  var qui = (p + " " + n).trim();
+  document.getElementById("papier-nom").textContent = qui ? (qui + (c ? "  ·  5" + c : "")) : "Nom :               Classe :";
+}
+
+/* ── Lexique regroupé pour la feuille imprimée ─────────────────────── */
+function assemblerLexique(){
+  var liste = document.getElementById("lexique-liste");
+  var src = document.querySelectorAll(".motsdurs dl > *");
+  for (var i = 0; i < src.length; i++) liste.appendChild(src[i].cloneNode(true));
+}
+function calerBarreOutils(){
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+}
+
+/* ── Démarrage ─────────────────────────────────────────────────────── */
+function demarrer(){
+  /* L'identité préremplie par le site n'est valable que dans le site (iframe) et si elle est récente. */
+  var d = lireIdentiteBrute();
+  IDENT = (d && window.parent !== window && (!d.ts || Date.now() - d.ts < 12 * 3600 * 1000)) ? d : null;
+  preparerLignes();
+  var b = document.querySelectorAll(".aide button");
+  for (var i = 0; i < b.length; i++) b[i].addEventListener("click", function(){ choisirAide(this.getAttribute("data-aide")); });
+  var niv = "autonome";
+  if (IDENT && IDENT.id){ try { niv = localStorage.getItem(CLE_AIDE + ":" + IDENT.id) || "autonome"; } catch(e){} }
+  choisirAide(niv);
+  restaurer();
+  if (location.hash === "#tout") afficherTout();
+  majProgression();
+  initEtoile(); initExplo(); initRouteur(); initBox();
+  lireIdentite(); assemblerLexique(); calerBarreOutils();
+  ["inp-prenom","inp-nom","inp-classe"].forEach(function(id){ document.getElementById(id).addEventListener("input", majEntetePapier); });
+  majEntetePapier();
+  var dt = new Date();
+  document.getElementById("papier-date").textContent = ("0" + dt.getDate()).slice(-2) + "/" + ("0" + (dt.getMonth() + 1)).slice(-2) + "/" + dt.getFullYear();
+  window.addEventListener("resize", calerBarreOutils);
+  document.addEventListener("confort-lecture", function(){ setTimeout(calerBarreOutils, 120); });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+else demarrer();
+</script>
+
+<!-- Aménagements dys et confort de lecture (module partagé du site) -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/",
+  eleve: (function(){ if (window.parent === window) return ""; try { var d = JSON.parse(localStorage.getItem("reseau5e-syn_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in",
+  sectionsFermees:"section.step.closed", classeFermeture:"closed",
+  selecteurs:"h2, h3, .dq, .enonce, .defbloc p, .apart, .retenir, .aideurgence > span:last-child, .famille, " +
+             ".carte .txt, li, figcaption, dt, dd, .oq, .obilan, .expl, .indice, .mode"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+</body>
+</html>
