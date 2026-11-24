@@ -181,6 +181,31 @@ t("versFields : champs attendus, tout en chaînes", () => {
   assert.deepStrictEqual(JSON.parse(f._niv), { n8: "acquis" });
 });
 
+t("duree en minutes entières, arrondies au-dessus", () => {
+  const e = S.etatVide(); e.debut = 1000;
+  const d = sec => S.versFields(e, 1000 + sec * 1000).duree;
+  assert.strictEqual(d(5400), "90");
+  assert.strictEqual(d(61), "2");
+  assert.strictEqual(d(1), "1");
+  assert.strictEqual(d(60), "1");
+  assert.strictEqual(d(0), "0");
+  assert.strictEqual(S.versFields(S.etatVide(), 5000).duree, "0");
+});
+
+t("essaiSuivant : 1 au départ, avance dans la série, repart à 1 après ouverture", () => {
+  let e = S.etatVide();
+  assert.strictEqual(S.essaiSuivant(e, "n8"), 1);
+  e = S.appliquer(e, "n8", false);
+  assert.strictEqual(S.essaiSuivant(e, "n8"), 2);
+  e = S.appliquer(e, "n8", false);
+  assert.strictEqual(S.essaiSuivant(e, "n8"), 3);
+  e = S.appliquer(e, "n8", false);
+  assert.strictEqual(S.essaiSuivant(e, "n8"), 1);
+  assert.strictEqual(S.essaiSuivant(e, "n9"), 1);
+  e = S.appliquer(S.appliquer(e, "n8", false), "n8", true);
+  assert.strictEqual(S.essaiSuivant(e, "n8"), 1);
+});
+
 t("aucune valeur de versFields ne commence par = + @", () => {
   const etats = [S.etatVide(), S.appliquer(S.etatVide(), "n8", false), S.appliquer(S.etatVide(), "n2", true)];
   etats[2].debut = 1; etats[2].adapte = true;
