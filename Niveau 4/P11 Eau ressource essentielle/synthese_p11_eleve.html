@@ -2513,11 +2513,16 @@ function copieLocaleVerrouillee(){
   } catch(e){}
   return false;
 }
+/* Page servie en local ? Pour http://[::1]:port, location.hostname vaut « [::1] », AVEC
+   les crochets : sans ce cas, la page se croyait en ligne et écrivait en production. */
+function hoteLocal(hn){
+  hn = String(hn || "").toLowerCase();
+  return hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "";
+}
 /* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
 function urlLecture(){
   try {
-    var hn = (location.hostname || "").toLowerCase();
-    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+    if (hoteLocal(location.hostname)){
       var u = localStorage.getItem("apps_script_url_test") || "";
       if (/^https:\/\/script\.google\.com\//.test(u)) return u;
     }
@@ -2553,9 +2558,9 @@ function verrouiller() { VERROU = true; voileVerrou(); }
 /* ── Reprise : la copie distante remplace l'état local si elle est STRICTEMENT plus avancée
    (plus de cartes ouvertes, puis plus de tentatives cumulées : P.plusAvance). ── */
 function reprendre(sub) {
-  if (!sub || !sub.fields || typeof sub.fields !== "object") return;
+  if (!sub || !sub.fields || typeof sub.fields !== "object") return false;
   var distant = P.depuisFields(sub.fields);
-  if (!P.plusAvance(distant, etat)) return;
+  if (!P.plusAvance(distant, etat)) return false;
   var adapteAvant = !!etat.adapte;
   distant.projection = !!etat.projection;          /* préférence d'affichage de ce poste */
   if (etat.graine) distant.graine = etat.graine;
@@ -2575,18 +2580,43 @@ function reprendre(sub) {
   if (toutesOuvertes()) { MEMOIRE_AUTO = true; afficherMemoire("silencieux"); }
   var d = new Date(sub.dateISO || Date.now());
   montrerEtatEnvoi("Ton avancement a été récupéré (enregistré le " + d.toLocaleDateString("fr-FR") + ").", "");
+  return true;
 }
-/* Au chargement, pour l'élève identifié par son compte uniquement : verrou, puis reprise. */
+/* Verrou, reprise, PUIS rejeu de la file — au chargement et au retour du réseau. La file
+   n'est jamais rejouée à l'aveugle pour un compte : une copie mise en file hors ligne sur ce
+   poste (X) écraserait, par l'upsert, une copie plus avancée envoyée depuis un autre poste (Y).
+   Tant que cette lecture n'a pas abouti (LECTURE.faite), envoyer() met en file sans poster. */
+var LECTURE = { faite: false, enCours: false };
 function controlerVerrou(){
-  if (!USER.id) return;
+  if (VERROU) return;
+  if (!USER.id){ flushQueue(); return; }     /* sans compte : pas de lecture possible */
   if (copieLocaleVerrouillee()){ verrouiller(); return; }
+  if (LECTURE.enCours) return;
+  LECTURE.enCours = true;
   lireEnvois(USER.id, function(liste){
-    if (!liste) return;
+    LECTURE.enCours = false;
+    if (!liste) return;                        /* lecture impossible : la file attend */
     var miens = liste.filter(function (x) { return x && x.eid === USER.id && x.cap === CAP_ID; });
     for (var i = 0; i < miens.length; i++) if (envoiVerrouille(miens[i])){ verrouiller(); return; }
     miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
-    reprendre(miens[0]);
+    var repris = reprendre(miens[0]);
+    LECTURE.faite = true;
+    ecarterFilePerimee(miens[0] || null, repris);
+    flushQueue();
   }, true);
+}
+/* Copie en file de cet élève : retirée si la copie distante est plus avancée ; après une
+   reprise, remplacée par l'état repris (makeSub). Les copies d'autres eid ne sont pas touchées. */
+function ecarterFilePerimee(distant, repris){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    var d = distant && distant.fields && typeof distant.fields === "object" ? P.depuisFields(distant.fields) : null;
+    q = q.filter(function (x) {
+      return !(x && x.eid === USER.id && d && P.plusAvance(d, P.depuisFields(x.fields)));
+    });
+    if (repris) q = q.map(function (x) { return x && x.eid === USER.id ? makeSub() : x; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
 }
 
 /* ── Envoi ── */
@@ -2599,10 +2629,12 @@ function queueSub(sub){
     localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
   } catch(e){}
 }
+/* Retire CETTE soumission seulement (eid + id) : si l'envoi A aboutit alors que B l'a déjà
+   remplacée dans la file, B doit y rester tant qu'elle n'est pas partie. */
 function unqueueSub(sub){
   try {
     var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
-    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q = q.filter(function(x){ return !(x && x.eid === sub.eid && x.id === sub.id); });
     localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
   } catch(e){}
 }
@@ -2620,8 +2652,7 @@ function storeLocalSub(sub){
    Seul un déploiement de TEST, branché sur une copie du classeur et désigné par
    localStorage.apps_script_url_test, débloque l'écriture. "" = envoi refusé. */
 function urlEcriture(){
-  var hn = (location.hostname || "").toLowerCase();
-  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  if (!hoteLocal(location.hostname)) return APPS_SCRIPT_URL;
   try {
     var u = localStorage.getItem("apps_script_url_test") || "";
     if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
@@ -2649,6 +2680,7 @@ function postSub(sub, onDone){
   } catch(e){ if (onDone) onDone(false); }
 }
 function flushQueue(){
+  if (VERROU) return;
   try {
     var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
     if (!q.length || !hasUrl() || !urlEcriture()) return;
@@ -2666,11 +2698,13 @@ function resumeOuvert() {
     + cpt.en_cours + " en cours, " + cpt.a_revoir + " à revoir.\nEntraînement éval n°2 : "
     + b.reussis.length + "/" + b.total + " critères réussis (" + b.tentes.length + " essayés).";
 }
+var DERNIER_ID = 0;
 function makeSub() {
   var s = identiteSaisie(), ename = USER.id ? ((USER.p + " " + USER.n).trim() || s.ename) : s.ename;
   var maintenant = new Date();
+  DERNIER_ID = Math.max(maintenant.getTime(), DERNIER_ID + 1);   /* id unique : unqueueSub s'y fie */
   return sanitizeForSheet({
-    id: maintenant.getTime(),
+    id: DERNIER_ID,
     eid: eidCourant(),
     ename: ename || "Élève",
     ecls: USER.id && USER.c ? String(USER.c) : s.ecls,
@@ -2694,6 +2728,13 @@ function envoyer() {
   if (!sub.eid) return;
   storeLocalSub(sub);
   try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  if (USER.id && !LECTURE.faite) {
+    /* copie distante pas encore lue : en file seulement ; controlerVerrou la rejouera après comparaison */
+    queueSub(sub);
+    montrerEtatEnvoi("Avancement gardé sur cet ordinateur : il partira tout seul dès que possible.", "attente");
+    controlerVerrou();
+    return;
+  }
   postSub(sub, function (ok) {
     var h = new Date();
     montrerEtatEnvoi(ok
@@ -2767,10 +2808,9 @@ function demarrer() {
   /* une fois les polices chargées, les mesures des schémas sont exactes */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { redessinerSchemas(true); });
 
-  /* Envoi : verrou et reprise depuis le classeur, puis rejeu de la file (au démarrage et au retour du réseau). */
+  /* Envoi : verrou, reprise depuis le classeur, puis rejeu de la file (au démarrage et au retour du réseau). */
   controlerVerrou();
-  flushQueue();
-  window.addEventListener("online", flushQueue);
+  window.addEventListener("online", controlerVerrou);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
 else demarrer();
