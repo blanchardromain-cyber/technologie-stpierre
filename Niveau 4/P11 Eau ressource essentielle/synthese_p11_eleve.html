@@ -103,11 +103,9 @@
   .cn-num{width:30px;height:30px;border-radius:50%;background:var(--gb);color:var(--tx);display:flex;
     align-items:center;justify-content:center;font-weight:700;font-size:.85em;flex:0 0 auto;font-variant-numeric:tabular-nums}
   button.cn-tete .cn-num{background:var(--eau);color:#fff}
-  .cn-nom{flex:1;font-size:1.05em}
+  .cn-nom{flex:1 1 5em;min-width:0;font-size:1.05em}
+  .cn-tete{flex-wrap:wrap;row-gap:6px}
   .cn-etat{font-size:.8em;font-weight:700;white-space:nowrap;padding:3px 9px;border-radius:999px;border:1.5px solid currentColor}
-  .cn.verrou .cn-tete{color:var(--td)}
-  .cn.verrou .cn-nom{font-weight:600}
-  .cn.verrou .cn-etat{color:var(--td)}
   .etat-gagner{color:var(--eaud)}
   .etat-acquis{color:var(--vt);background:var(--vp)}
   .etat-en_cours{color:var(--or);background:var(--orp)}
@@ -121,6 +119,7 @@
   .situ .q{font-size:1.2em;font-weight:700;margin:4px 0}
   .situ p{color:#fff}
   .situ .btn-lire{background:#fff;color:var(--eaud);border-color:#fff}
+  .situ .src{color:#D6F0FF}
 
   /* Le défi */
   .defi{background:var(--gr);border:2px dashed var(--gb);border-radius:10px;padding:14px 16px}
@@ -151,7 +150,7 @@
     justify-content:center;font-weight:700;flex:0 0 auto;font-variant-numeric:tabular-nums}
   .ordre .poignee{width:30px;min-height:44px;display:flex;align-items:center;justify-content:center;color:var(--td);cursor:grab;touch-action:none;flex:0 0 auto;font-size:1.2em}
   .ordre .pion{flex:1 1 6em;min-width:0;min-height:44px;text-align:left;background:var(--gr);border:2px solid transparent;border-radius:7px;padding:8px 10px;
-    font-weight:600;color:var(--tx);cursor:pointer}
+    font-weight:600;color:var(--tx);cursor:pointer;touch-action:none}
   .ordre .pion[aria-pressed="true"]{border-color:var(--bl);background:var(--bp)}
   .ordre .pion.fixe{cursor:default;background:var(--vp);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .ordre .pion.fixe small{color:var(--vtd);font-weight:700}
@@ -215,6 +214,38 @@
   .retiens{background:var(--vp);border:2px solid var(--vt);border-radius:var(--r);padding:12px 16px;margin-top:14px}
   .retiens .t{color:var(--vtd);font-weight:700;margin-bottom:4px}
 
+  /* Cartes de la tâche 3 : associations, rappels éclair, schémas, tableaux */
+  .cn-type{font-size:.75em;font-weight:600;color:var(--td);border:1.5px dashed currentColor;border-radius:999px;padding:2px 8px;white-space:nowrap}
+  .rappel-lb{font-size:.92em;color:var(--td);margin-bottom:12px}
+  .assoc{display:flex;flex-direction:column;gap:8px}
+  .assoc-ligne{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap}
+  .assoc-el{flex:1 1 14em;min-width:0;background:var(--eaul);border:1.5px solid var(--eau);color:var(--eaud);border-radius:8px;padding:8px 12px;font-weight:600}
+  .assoc-ligne select.menu{flex:1 1 12em;min-width:0}
+  .assoc-ligne .fl{color:var(--eaud);font-weight:700}
+  .lien-rappel{margin-top:12px}
+  .lien-rappel a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 14px;border:2px solid var(--bc);border-radius:8px;
+    color:var(--bl);font-weight:600;text-decoration:none;background:#fff}
+  .lien-rappel a:hover{background:var(--bp)}
+  figure.schema-fig{background:#fff;border:1.5px solid var(--gb);border-radius:10px;padding:12px;margin:8px 0}
+  figure.schema-fig figcaption{margin-top:8px;font-size:.92em;color:var(--td)}
+  .schema{width:100%;overflow:hidden}
+  .schema svg{display:block}
+  .schema .bloc{transition:opacity .5s ease, transform .5s ease}
+  .schema .bloc.cache{opacity:0;transform:translateY(-6px)}
+  .duo{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,18em),1fr))}
+  .duo h5{font-size:.95em;color:var(--eaud);margin-bottom:4px}
+  table.tab{border-collapse:collapse;width:100%;font-size:.95em;margin:6px 0}
+  table.tab th,table.tab td{border:1.5px solid var(--gb);padding:6px 9px;text-align:left;vertical-align:top}
+  table.tab th{background:var(--eaul);color:var(--eaud)}
+  .tab-wrap{max-width:100%;overflow-x:auto}
+  .exemples{margin:4px 0 0 1.2em}
+  .exemples li + li{margin-top:4px}
+  .methode{margin:6px 0 0 1.4em}
+  .methode li + li{margin-top:4px}
+  .intro-partie{margin:-4px 0 12px;color:var(--td)}
+  .nav-proj{display:none}
+  html.projection .nav-proj{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+
   .entete-papier{display:none}
 
   /* Barres collantes seulement sur grand écran : sur téléphone, elles mangeraient la page. */
@@ -253,14 +284,14 @@
 
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{transition:none!important;animation:none!important}
-    .fast-svg .bloc.cache{opacity:1;transform:none}
+    .fast-svg .bloc.cache,.schema .bloc.cache{opacity:1;transform:none}
   }
 
   /* ═══ IMPRESSION : la synthèse, identique pour tous ═══ */
   @media print{
     @page{size:A4 portrait;margin:11mm 12mm}
     html{font-size:11pt}
-    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,.retour,.chev,.cn-etat,.situ{display:none!important}
+    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,.retour,.chev,.cn-etat,.situ,.cn-type,.rappel-lb,.lien-rappel,.nav-proj{display:none!important}
     body{background:#fff}
     main{max-width:none;padding:0}
     html.adapte main{font-size:1rem}
@@ -278,7 +309,8 @@
     .revele,.revele[hidden]{display:block!important}
     .gloss-def[hidden]{display:block!important}
     .gloss{padding:0;margin:0}
-    figure.fast,.retiens,.mot-savant,.defbloc{break-inside:avoid}
+    .schema svg{width:100%;height:auto}
+    figure.fast,figure.schema-fig,.retiens,.mot-savant,.defbloc,table.tab{break-inside:avoid}
   }
 </style>
 <script src="synthese_p11_logique.js"></script>
@@ -341,14 +373,343 @@
     <ul>
       <li>Ce n'est pas noté, et il n'y a pas de chronomètre. Si tu te trompes, tu reçois un indice puis d'autres questions.</li>
       <li>Le bouton <b>Mode adapté</b> agrandit le texte, simplifie les consignes, propose 3 réponses au lieu de 4 et montre une question à la fois.</li>
+      <li>Tu ouvres les cartes dans l'ordre que tu veux. De haut en bas, elles suivent les activités 1 à 7.</li>
     </ul>
   </div>
 
-  <h2 class="partie">I - LES ÉTAPES DE CONCEPTION D’UN OBJET TECHNIQUE</h2>
-  <div class="cartes" id="cartes-I"></div>
+  <nav class="nav-proj" aria-label="Changer de carte">
+    <button type="button" class="btn" id="proj-prec">← Carte précédente</button>
+    <button type="button" class="btn prim" id="proj-suiv">Carte suivante →</button>
+  </nav>
 
-  <h2 class="partie">II – ANALYSE DU FONCTIONNEMENT D’UN OBJET TECHNIQUE</h2>
-  <div class="cartes" id="cartes-II"></div>
+  <h2 class="partie">I - LES ÉTAPES DE CONCEPTION D’UN OBJET TECHNIQUE</h2>
+  <div class="cartes" id="cartes-I">
+
+  <!-- ════════════════ CARTE 0 — LA FRISE DU CONCEPTEUR (S11) ════════════════ -->
+  <article class="cn" id="carte-n0" data-notion="n0">
+    <h3><button type="button" class="cn-tete" id="tete-n0" aria-expanded="false" aria-controls="corps-n0">
+      <span class="cn-num" aria-hidden="true">0</span>
+      <span class="cn-nom">Les étapes de conception d’un objet technique</span>
+      <span class="cn-etat etat-gagner" id="etat-n0">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n0" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Le robinet coule pendant qu’on se savonne les mains… »</p>
+          <p>Lors des séances précédentes, nous avons vu que l’eau potable est une ressource précieuse et que nous la gaspillons facilement — notamment au robinet, où l’eau continue de couler pendant qu’on se savonne les mains. Pour répondre à ce problème, on installe des robinets automatiques à détection.</p>
+          <p>Avant d’installer ce robinet, par quelles étapes son concepteur est-il passé ?</p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n0" aria-labelledby="defi-n0-titre" hidden></section>
+      <div class="revele" id="revele-n0" hidden>
+        <h4 id="revele-n0-titre" tabindex="-1">La notion</h4>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n0" data-schema="frise"></div>
+          <div class="vh"><p>Frise du concepteur, en quatre étapes :</p>
+            <ol>
+              <li data-s11>Concepteur</li>
+              <li data-s11>1 - Analyse le besoin</li>
+              <li data-s11>2 - Définit les contraintes</li>
+              <li data-s11>3 - Établit le cahier des charges</li>
+              <li data-s11>4 - Conçoit l'objet</li>
+            </ol></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>Concepteur :</b> 1 - Analyse le besoin → 2 - Définit les contraintes → 3 - Établit le cahier des charges → 4 - Conçoit l’objet.</div></figcaption>
+        </figure>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n0">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n0"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 1 — ANALYSE DU BESOIN (A1, A2, A3) ════════════════ -->
+  <article class="cn" id="carte-n1" data-notion="n1">
+    <h3><button type="button" class="cn-tete" id="tete-n1" aria-expanded="false" aria-controls="corps-n1">
+      <span class="cn-num" aria-hidden="true">1</span>
+      <span class="cn-nom">Analyse du besoin</span>
+      <span class="cn-etat etat-gagner" id="etat-n1">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n1" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Chez Léa, la facture d’eau a doublé… »</p>
+          <p>Au robinet, l’eau coule souvent pour rien (pendant le savonnage, robinet mal fermé…).</p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n1" aria-labelledby="defi-n1-titre" hidden></section>
+      <div class="revele" id="revele-n1" hidden>
+        <h4 id="revele-n1-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Les êtres humains ont des besoins essentiels (comme se nourrir) et des besoins secondaires (comme le confort ou le loisir).</p>
+            <p data-s11>Lorsqu’un besoin n’est pas satisfait, on peut décider de créer un nouvel objet technique pour répondre à ce besoin.</p>
+          </div>
+        </div>
+        <div class="mot-savant avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p class="lb">Le mot savant</p>
+            <p class="mot">Le besoin</p>
+            <p>Ce qui pousse à créer un objet technique ; un besoin non satisfait fait naître un nouvel objet. <span class="src">(fiche A3)</span></p>
+          </div>
+        </div>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p class="exemple">Pour le robinet : « On a besoin d’un robinet automatique à détection, qui ne laisse couler l’eau que lorsqu’on en a besoin (présence des mains). » <span class="src">(activité 2)</span></p>
+          </div>
+        </div>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n1">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n1"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 2 — BÊTE À CORNES (rappel éclair, A3) ════════════════ -->
+  <article class="cn" id="carte-n2" data-notion="n2">
+    <h3><button type="button" class="cn-tete" id="tete-n2" aria-expanded="false" aria-controls="corps-n2">
+      <span class="cn-num" aria-hidden="true">2</span>
+      <span class="cn-nom">Bête à cornes</span>
+      <span class="cn-type">rappel éclair</span>
+      <span class="cn-etat etat-gagner" id="etat-n2">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n2" hidden>
+      <p class="rappel-lb">Rappel éclair : tu as déjà travaillé cet outil. Un défi rapide, puis la phrase de la synthèse.</p>
+      <section class="defi" id="defi-n2" aria-labelledby="defi-n2-titre" hidden></section>
+      <div class="revele" id="revele-n2" hidden>
+        <h4 id="revele-n2-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11><b>Bête à cornes ou graphe de prestations</b></p>
+            <p>Exemple de la synthèse, le GPS : « <span data-s11>Permettre de déterminer avec précision une position géographique afin de se repérer</span> ».</p>
+          </div>
+        </div>
+        <div class="duo">
+          <figure class="schema-fig">
+            <h5>Le GPS (synthèse)</h5>
+            <div class="schema" id="schema-n2-gps" data-schema="bete-gps"></div>
+            <div class="vh"><p>Bête à cornes du GPS. Dans quel but le produit existe-t-il ? Permettre de déterminer avec précision une position géographique afin de se repérer.</p></div>
+          </figure>
+          <figure class="schema-fig">
+            <h5>En miroir : le robinet (activité 3)</h5>
+            <div class="schema" id="schema-n2-robinet" data-schema="bete-robinet"></div>
+            <div class="vh"><table>
+              <caption>Bête à cornes du robinet automatique à détection</caption>
+              <tr><th>À qui le produit rend-il service ?</th><td>Aux utilisateurs (et au gestionnaire de l’établissement)</td></tr>
+              <tr><th>Sur quoi le produit agit-il ?</th><td>Sur l’eau (le débit / l’écoulement)</td></tr>
+              <tr><th>Dans quel but le produit existe-t-il ?</th><td>Économiser l’eau en évitant le gaspillage</td></tr>
+            </table></div>
+          </figure>
+        </div>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p class="exemple">« L’objet technique nommé ROBINET AUTOMATIQUE À DÉTECTION rend service AUX UTILISATEURS en agissant sur L’EAU pour satisfaire le besoin : ÉCONOMISER L’EAU AU ROBINET. » <span class="src">(activité 3)</span></p>
+          </div>
+        </div>
+        <p class="lien-rappel"><a href="synthese_eleve.html#sec1" target="_blank" rel="noopener">Revoir dans la synthèse intermédiaire<span class="vh"> (s’ouvre dans un nouvel onglet)</span> <span aria-hidden="true" data-nolecture>&#x2197;</span></a></p>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n2">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n2"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 3 — CONTRAINTES (A4) ════════════════ -->
+  <article class="cn" id="carte-n3" data-notion="n3">
+    <h3><button type="button" class="cn-tete" id="tete-n3" aria-expanded="false" aria-controls="corps-n3">
+      <span class="cn-num" aria-hidden="true">3</span>
+      <span class="cn-nom">Contraintes</span>
+      <span class="cn-etat etat-gagner" id="etat-n3">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n3" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Le robinet automatique est installé dans des sanitaires. »</p>
+          <p>Un robinet est placé près d’un point d’eau (projections fréquentes).</p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n3" aria-labelledby="defi-n3-titre" hidden></section>
+      <div class="revele" id="revele-n3" hidden>
+        <h4 id="revele-n3-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Un objet technique doit respecter certaines contraintes. Il s’agit des exigences fixées par l’utilisateur ou par des règles et normes officielles (comme des recommandations de sécurité, par exemple).</p>
+          </div>
+        </div>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p><b>Les contraintes du robinet</b> <span class="src">(activité 4)</span> :</p>
+            <ul class="exemples">
+              <li>résister à un environnement humide et aux projections d’eau ;</li>
+              <li>assurer la sécurité électrique (très basse tension) ;</li>
+              <li>être fiable et facile à entretenir ;</li>
+              <li>respecter un budget ;</li>
+              <li>être esthétique ;</li>
+              <li>limiter l’impact environnemental.</li>
+            </ul>
+            <p class="attention">Exemple de norme officielle : l’indice de protection IP. Près d’un point d’eau, le robinet doit avoir un 2ᵉ chiffre élevé, par exemple IP65 (activité 4).</p>
+          </div>
+        </div>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n3">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n3"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 4 — LES NORMES (rappel éclair, A4) ════════════════ -->
+  <article class="cn" id="carte-n4" data-notion="n4">
+    <h3><button type="button" class="cn-tete" id="tete-n4" aria-expanded="false" aria-controls="corps-n4">
+      <span class="cn-num" aria-hidden="true">4</span>
+      <span class="cn-nom">Les normes</span>
+      <span class="cn-type">rappel éclair</span>
+      <span class="cn-etat etat-gagner" id="etat-n4">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n4" hidden>
+      <p class="rappel-lb">Rappel éclair : tu as déjà travaillé cette notion. Un défi rapide, puis la phrase à retenir.</p>
+      <section class="defi" id="defi-n4" aria-labelledby="defi-n4-titre" hidden></section>
+      <div class="revele" id="revele-n4" hidden>
+        <h4 id="revele-n4-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p><b>Norme :</b> règle officielle que l’on doit respecter (sécurité, qualité…). <span class="src">(fiche A4)</span></p>
+          </div>
+        </div>
+        <p class="lien-rappel"><a href="synthese_eleve.html#sec4" target="_blank" rel="noopener">Revoir dans la synthèse intermédiaire<span class="vh"> (s’ouvre dans un nouvel onglet)</span> <span aria-hidden="true" data-nolecture>&#x2197;</span></a></p>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n4">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n4"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 5 — CAHIER DES CHARGES TEXTUEL (rappel éclair, A5) ════════════════ -->
+  <article class="cn" id="carte-n5" data-notion="n5">
+    <h3><button type="button" class="cn-tete" id="tete-n5" aria-expanded="false" aria-controls="corps-n5">
+      <span class="cn-num" aria-hidden="true">5</span>
+      <span class="cn-nom">Cahier des charges (Textuel)</span>
+      <span class="cn-type">rappel éclair</span>
+      <span class="cn-etat etat-gagner" id="etat-n5">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n5" hidden>
+      <p class="rappel-lb">Rappel éclair : tu as déjà travaillé cet outil. Un défi rapide, puis le texte de la synthèse.</p>
+      <section class="defi" id="defi-n5" aria-labelledby="defi-n5-titre" hidden></section>
+      <div class="revele" id="revele-n5" hidden>
+        <h4 id="revele-n5-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>C’est un document utilisé dans le cadre d’un développement d’un projet. Le cahier des charges est un document important qui décrit les besoins à satisfaire et les contraintes à respecter.</p>
+            <p data-s11>Le concepteur doit s’y référer tout au long du projet. L’objet doit aussi respecter des performances précises, qu’on peut mesurer ou observer, tout en respectant les normes établies.</p>
+          </div>
+        </div>
+        <p class="lien-rappel"><a href="synthese_eleve.html#sec3" target="_blank" rel="noopener">Revoir dans la synthèse intermédiaire<span class="vh"> (s’ouvre dans un nouvel onglet)</span> <span aria-hidden="true" data-nolecture>&#x2197;</span></a></p>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n5">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n5"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 6 — PIEUVRE (rappel éclair, A5) ════════════════ -->
+  <article class="cn" id="carte-n6" data-notion="n6">
+    <h3><button type="button" class="cn-tete" id="tete-n6" aria-expanded="false" aria-controls="corps-n6">
+      <span class="cn-num" aria-hidden="true">6</span>
+      <span class="cn-nom">Pieuvre</span>
+      <span class="cn-type">rappel éclair</span>
+      <span class="cn-etat etat-gagner" id="etat-n6">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n6" hidden>
+      <p class="rappel-lb">Rappel éclair : tu as déjà travaillé cet outil. Un défi rapide, puis le texte de la synthèse.</p>
+      <section class="defi" id="defi-n6" aria-labelledby="defi-n6-titre" hidden></section>
+      <div class="revele" id="revele-n6" hidden>
+        <h4 id="revele-n6-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>On peut distinguer 2 types de fonctions qui s’expriment par un ou plusieurs nom(s) et adjectif(s) :</p>
+            <ul class="exemples">
+              <li data-s11>Principale(s) FP : C’est la ou les raisons pour laquelle ou lesquelles le produit a été créé.</li>
+              <li data-s11>Contrainte(s) FC : Ce sont les limites que le produit doit respecter pour être bien accepté sur le marché.</li>
+            </ul>
+          </div>
+        </div>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n6" data-schema="pieuvre"></div>
+          <div class="tab-wrap"><table class="tab">
+            <caption class="vh">Pieuvre du robinet automatique : type de chaque fonction</caption>
+            <thead><tr><th scope="col">Type</th><th scope="col">Fonction</th></tr></thead>
+            <tbody>
+              <tr><td>FP</td><td>Permettre à l’utilisateur de se laver les mains avec de l’eau</td></tr>
+              <tr><td>FC</td><td>Détecter la présence des mains</td></tr>
+              <tr><td>FC</td><td>Résister à l’environnement humide</td></tr>
+              <tr><td>FC</td><td>Être alimenté en énergie</td></tr>
+              <tr><td>FC</td><td>Se fixer sur le lavabo</td></tr>
+              <tr><td>FC</td><td>Respecter le budget</td></tr>
+            </tbody>
+          </table></div>
+          <figcaption>La pieuvre du robinet <span class="src">(activité 5)</span> : la FP relie deux éléments du milieu extérieur, chaque FC relie le robinet à un seul.</figcaption>
+        </figure>
+        <p class="lien-rappel"><a href="synthese_eleve.html#sec2" target="_blank" rel="noopener">Revoir dans la synthèse intermédiaire<span class="vh"> (s’ouvre dans un nouvel onglet)</span> <span aria-hidden="true" data-nolecture>&#x2197;</span></a></p>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n6">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n6"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 7 — CAHIER DES CHARGES TECHNIQUE (rappel éclair, A5) ════════════════ -->
+  <article class="cn" id="carte-n7" data-notion="n7">
+    <h3><button type="button" class="cn-tete" id="tete-n7" aria-expanded="false" aria-controls="corps-n7">
+      <span class="cn-num" aria-hidden="true">7</span>
+      <span class="cn-nom">Cahier des Charges Technique ou Fonctionnel (Tableau des fonctions)</span>
+      <span class="cn-type">rappel éclair</span>
+      <span class="cn-etat etat-gagner" id="etat-n7">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n7" hidden>
+      <p class="rappel-lb">Rappel éclair : tu as déjà travaillé cet outil. Un défi rapide, puis le texte de la synthèse.</p>
+      <section class="defi" id="defi-n7" aria-labelledby="defi-n7-titre" hidden></section>
+      <div class="revele" id="revele-n7" hidden>
+        <h4 id="revele-n7-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Les fonctions principales et contraintes s'expriment toujours par verbe suivi d’ un complément.</p>
+            <p data-s11>Les critères d’appréciation sont associés à des niveaux (ou des valeurs à obtenir).</p>
+          </div>
+        </div>
+        <div class="tab-wrap"><table class="tab">
+          <caption class="vh">Tableau des fonctions du robinet automatique (extrait)</caption>
+          <thead><tr><th scope="col">Fonction</th><th scope="col">Critère</th><th scope="col">Niveau</th></tr></thead>
+          <tbody>
+            <tr><td>Distribuer de l’eau pour se laver les mains</td><td>Débit</td><td>≈ 2 L/min</td></tr>
+            <tr><td>Détecter la présence des mains</td><td>Distance</td><td>0 à ≈ 15 cm</td></tr>
+            <tr><td>Résister à l’environnement humide</td><td>Indice IP</td><td>IP65</td></tr>
+          </tbody>
+        </table></div>
+        <p class="src">Extrait du cahier des charges du robinet (activité 5).</p>
+        <p class="lien-rappel"><a href="synthese_eleve.html#sec3" target="_blank" rel="noopener">Revoir dans la synthèse intermédiaire<span class="vh"> (s’ouvre dans un nouvel onglet)</span> <span aria-hidden="true" data-nolecture>&#x2197;</span></a></p>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n7">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n7"></div>
+    </div>
+  </article>
 
   <!-- ════════════════ CARTE 8 — CONCEPTION DE L'OBJET (FAST du robinet, activité 6) ════════════════ -->
   <article class="cn" id="carte-n8" data-notion="n8">
@@ -390,7 +751,7 @@
 
         <h4>Le FAST du robinet automatique</h4>
         <figure class="fast">
-          <div class="fast-svg" id="fast-n8"></div>
+          <div class="fast-svg schema" id="fast-n8" data-schema="fast"></div>
           <div class="vh"><table>
             <caption>FAST du robinet automatique</caption>
             <thead><tr><th>Fonction d’usage</th><th>Fonction technique</th><th>Solution technique</th></tr></thead>
@@ -434,6 +795,206 @@
     </div>
   </article>
 
+  </div>
+
+  <h2 class="partie">II – ANALYSE DU FONCTIONNEMENT D’UN OBJET TECHNIQUE</h2>
+  <p class="intro-partie" data-s11>Un objet est constitué de plusieurs composants techniques qui transforment l’énergie, l’information ou la matière pour faire fonctionner l’objet dans son ensemble.</p>
+  <div class="cartes" id="cartes-II">
+
+  <!-- ════════════════ CARTE 9 — CHAÎNE D'INFORMATION (A7) ════════════════ -->
+  <article class="cn" id="carte-n9" data-notion="n9">
+    <h3><button type="button" class="cn-tete" id="tete-n9" aria-expanded="false" aria-controls="corps-n9">
+      <span class="cn-num" aria-hidden="true">9</span>
+      <span class="cn-nom">Chaîne d’information</span>
+      <span class="cn-etat etat-gagner" id="etat-n9">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n9" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Les mains approchent… »</p>
+          <p>Le robinet D-15 étudié à l’activité 6 coule tout seul quand on approche les mains.</p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n9" aria-labelledby="defi-n9-titre" hidden></section>
+      <div class="revele" id="revele-n9" hidden>
+        <h4 id="revele-n9-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Les objets fonctionnent en utilisant de l'information (comme des données ou des signaux). Cette information passe par différents composants de l’objet, et chaque composant la transforme d’une manière spécifique.</p>
+            <p data-s11>Ces transformations sont représentées dans ce qu’on appelle une chaîne d’information.</p>
+          </div>
+        </div>
+        <h4>La chaîne d’information du robinet</h4>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n9" data-schema="info"></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>Chaîne d’information :</b> ACQUÉRIR (capteur infrarouge) → TRAITER (carte électronique) → COMMUNIQUER (voyant) <span class="src">(activité 7)</span></div></figcaption>
+        </figure>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11><b>Méthode pour placer les composants :</b></p>
+            <ol class="methode">
+              <li data-s11>Identifier le chemin parcouru par l'information dans l'objet</li>
+              <li data-s11>Repérer la forme de l'information en entrée et en sortie de chaque composant</li>
+              <li data-s11>Représenter la chaîne d'information du début (signal initial) à la fin (signal final)</li>
+            </ol>
+          </div>
+        </div>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n9">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n9"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 10 — CHAÎNE D'ÉNERGIE (A7) ════════════════ -->
+  <article class="cn" id="carte-n10" data-notion="n10">
+    <h3><button type="button" class="cn-tete" id="tete-n10" aria-expanded="false" aria-controls="corps-n10">
+      <span class="cn-num" aria-hidden="true">10</span>
+      <span class="cn-nom">Chaîne d’énergie</span>
+      <span class="cn-etat etat-gagner" id="etat-n10">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n10" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Ni pile ni prise… »</p>
+          <p>Le robinet D-15 étudié à l’activité 6 coule tout seul quand on approche les mains. Son capteur et sa carte électronique ont besoin d’électricité pour fonctionner… et pourtant, il n’a ni pile à changer, ni prise électrique.</p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n10" aria-labelledby="defi-n10-titre" hidden></section>
+      <div class="revele" id="revele-n10" hidden>
+        <h4 id="revele-n10-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Les objets techniques utilisent une énergie pour fonctionner (comme l’électricité ou la chaleur). L’énergie passe par différents composants de l’objet qui peuvent la transformer.</p>
+            <p data-s11>Ces transformations sont résumées dans la chaîne d’énergie.</p>
+          </div>
+        </div>
+        <h4>La chaîne d’énergie du robinet</h4>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n10" data-schema="energie"></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>Chaîne d’énergie :</b> ALIMENTER (tuyauterie) → énergie hydraulique → DISTRIBUER (électrovanne) → énergie hydraulique → CONVERTIR (turbine / générateur) → énergie électrique → TRANSMETTRE (fils électriques) → énergie électrique <span class="src">(activité 7)</span></div></figcaption>
+        </figure>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11><b>Méthode pour placer les composants :</b></p>
+            <ol class="methode">
+              <li data-s11>Identifier la source d'énergie de l'objet</li>
+              <li data-s11>Repérer le chemin de l'énergie à travers les composants</li>
+              <li data-s11>Décrire la forme de l'énergie en entrée et en sortie de chaque composant</li>
+              <li data-s11>Représenter la chaîne d’énergie de la source jusqu’à son utilisation finale</li>
+            </ol>
+            <p class="attention"><b>ALIMENTER n’est pas la micro-batterie.</b> L’énergie entre dans le robinet avec l’eau sous pression, par la tuyauterie. La micro-batterie stocke l’énergie produite ; elle n’est un bloc d’aucune chaîne. <span class="src">(activité 7)</span></p>
+          </div>
+        </div>
+        <h4>À côté des chaînes : la boucle de recharge</h4>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n10-boucle" data-schema="boucle"></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>La boucle de recharge :</b> l’eau qui coule fait tourner la turbine ; le générateur produit de l’énergie électrique, stockée dans la micro-batterie, qui alimente la chaîne d’information et l’électrovanne. Le robinet n’a besoin ni de pile ni de prise : son énergie vient de la pression de l’eau du réseau. <span class="src">(activité 7)</span></div></figcaption>
+        </figure>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n10">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n10"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 11 — LE FONCTIONNEMENT D'UN OBJET (A7) ════════════════ -->
+  <article class="cn" id="carte-n11" data-notion="n11">
+    <h3><button type="button" class="cn-tete" id="tete-n11" aria-expanded="false" aria-controls="corps-n11">
+      <span class="cn-num" aria-hidden="true">11</span>
+      <span class="cn-nom">Le fonctionnement d’un objet</span>
+      <span class="cn-etat etat-gagner" id="etat-n11">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n11" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Qui donne l’ordre à l’électrovanne de s’ouvrir ? »</p>
+          <p>Qui donne l’ordre ? Qui donne la force ? <span class="src">(diaporama de l’activité 7)</span></p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n11" aria-labelledby="defi-n11-titre" hidden></section>
+      <div class="revele" id="revele-n11" hidden>
+        <h4 id="revele-n11-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Il est assuré par la réunification des 2 chaînes qui sont liées entre elles par des ordres envoyés depuis la chaîne d'information vers la chaîne d'énergie.</p>
+          </div>
+        </div>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n11" data-schema="lien"></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>Exemple :</b> la carte électronique commande l’électrovanne. <span class="src">(activité 7)</span></div></figcaption>
+        </figure>
+        <h4>À côté : la micro-batterie</h4>
+        <figure class="schema-fig">
+          <div class="schema" id="schema-n11-boucle" data-schema="boucle"></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc">La micro-batterie : rechargée par la chaîne d’énergie, elle alimente la chaîne d’information (capteur, carte, voyant) et l’électrovanne. C’est la boucle de recharge. <span class="src">(activité 7)</span></div></figcaption>
+        </figure>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n11">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n11"></div>
+    </div>
+  </article>
+
+  <!-- ════════════════ CARTE 12 — LE CHOIX DES MATÉRIAUX (A7, question 6) ════════════════ -->
+  <article class="cn" id="carte-n12" data-notion="n12">
+    <h3><button type="button" class="cn-tete" id="tete-n12" aria-expanded="false" aria-controls="corps-n12">
+      <span class="cn-num" aria-hidden="true">12</span>
+      <span class="cn-nom">Le choix des matériaux</span>
+      <span class="cn-etat etat-gagner" id="etat-n12">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n12" hidden>
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« La turbine tourne dans l’eau des milliers de fois par an. »</p>
+          <p>À chaque lavage de mains, la turbine tourne dans l’eau : des milliers de fois par an ! <span class="src">(activité 7)</span></p>
+        </div>
+      </div>
+      <section class="defi" id="defi-n12" aria-labelledby="defi-n12-titre" hidden></section>
+      <div class="revele" id="revele-n12" hidden>
+        <h4 id="revele-n12-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Les matériaux utilisés pour fabriquer un objet sont choisis en fonction de plusieurs critères :</p>
+            <ul class="exemples">
+              <li data-s11>Leur capacité à être transformés pour obtenir la forme désirée</li>
+              <li data-s11>Leur résistance aux efforts qu’ils devront supporter pendant la durée de vie de l’objet</li>
+              <li data-s11>Leur qualité esthétique (ce qui les rend beaux à voir) ou leur faculté à être agréable au toucher.</li>
+            </ul>
+            <p data-s11>Le choix des matériaux doit aussi prendre en compte le respect de l’environnement (matériaux recyclables, faible énergie grise) et le prix.</p>
+            <p data-s11>Il est important de choisir les matériaux qui regroupent pour le mieux tous ces critères.</p>
+          </div>
+        </div>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p><b>Exemple : ce que subit la turbine</b> <span class="src">(activité 7, question 6)</span></p>
+            <ul class="exemples">
+              <li>elle est en permanence dans l’eau (humidité, corrosion, calcaire) ;</li>
+              <li>elle tourne vite et reçoit la poussée de l’eau sous pression (usure, efforts).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n12">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+      <div class="retour" id="retour-n12"></div>
+    </div>
+  </article>
+
+  </div>
+
   <!-- Zone de rétroaction unique lue par les lecteurs d’écran, hors des cartes : rien ne se perd quand
        une carte se replie. Le même message s’affiche dans la carte active (.retour), sans recouvrir la page. -->
   <div id="vivant" class="vh" role="status" aria-live="polite"></div>
@@ -445,17 +1006,26 @@
    P11 — SYNTHÈSE FINALE « la synthèse se gagne » (4e) — page élève.
    Logique pure dans synthese_p11_logique.js (window.P11SYN) ; ici :
    affichage, défis, révélation, modes adapté et projection, voix.
-   Maquette : seule la carte 8 (Conception de l'objet, FAST) est jouable.
+   Les 13 cartes sont jouables, dans l'ordre choisi par l'élève.
    Aucun envoi au classeur dans cette version.
    ════════════════════════════════════════════════════════════════════ */
 "use strict";
 
 var P = window.P11SYN;
 var CLE_IDENT = "p11-syn_prefill";
-var JOUABLES = { n8: true };
+var JOUABLES = {};
+P.NOTIONS.forEach(function (n) { JOUABLES[n.id] = true; });
 var JALONS = ["Besoin", "Contraintes", "Cahier des charges", "Analyse fonctionnelle", "Chaînes"];
 var NIVEAUX = { acquis: "✓ acquis", en_cours: "◐ en cours", a_revoir: "↻ à revoir" };
-var RENVOIS = { A6: "l'activité 6 (le diagramme FAST)" };
+var NIVEAUX_MOTS = { acquis: "acquis", en_cours: "en cours", a_revoir: "à revoir" };
+var RANG_NIV = { a_revoir: 1, en_cours: 2, acquis: 3 };
+var RENVOIS = {
+  A1: "l'activité 1 (le voyage de l'eau)", A2: "l'activité 2 (la facture et le gaspillage)",
+  A3: "l'activité 3 (le besoin et la bête à cornes)", A4: "l'activité 4 (les contraintes et l'indice IP)",
+  A5: "l'activité 5 (la pieuvre et le cahier des charges)", A6: "l'activité 6 (le diagramme FAST)",
+  A7: "l'activité 7 (les flux d'énergie et d'information)", "A3-A6": "les activités 3 à 6",
+  SI: "la synthèse intermédiaire"
+};
 var MOUV_REDUIT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 var FAST = {
@@ -475,7 +1045,6 @@ function el(tag, attrs, texte) {
   if (texte != null) e.textContent = texte;
   return e;
 }
-function typo(s) { return String(s).replace(/'/g, "’"); }
 
 /* ── Identité et stockage (un état par élève ; sans identifiant : session seulement) ── */
 var ident = null;
@@ -592,20 +1161,9 @@ function annoncer(texte, ton) {
   setTimeout(function () { v.textContent = texte; }, 30);
 }
 
-/* ── Cartes verrouillées (maquette : seule n8 est jouable) ── */
+/* ── Cartes : toutes écrites dans la page (textes de la synthèse vérifiés hors ligne) ;
+   ici, seulement la frise des jalons. Aucune carte n'attend une autre : ordre au choix. ── */
 function construireCartes() {
-  P.NOTIONS.forEach(function (n, i) {
-    var zone = $(n.partie === "I" ? "cartes-I" : "cartes-II");
-    if (n.id === "n8") { zone.appendChild($("carte-n8")); return; }
-    var a = el("article", { class: "cn verrou", id: "carte-" + n.id, "data-notion": n.id });
-    var h = el("h3"), t = el("div", { class: "cn-tete" });
-    t.appendChild(el("span", { class: "cn-num", "aria-hidden": "true" }, String(i)));
-    t.appendChild(el("span", { class: "cn-nom" }, typo(n.titre)));
-    var s = el("span", { class: "cn-etat" });
-    s.innerHTML = '<span aria-hidden="true" data-nolecture>\u{1F512} </span>bientôt';
-    t.appendChild(s);
-    h.appendChild(t); a.appendChild(h); zone.appendChild(a);
-  });
   var ol = $("jalons");
   JALONS.forEach(function (nom, i) {
     var li = el("li", { id: "jalon-" + (i + 1) });
@@ -639,9 +1197,12 @@ function majProgression(anime) {
     li.querySelector(".jn").textContent = fait ? "✓" : String(j);
     li.querySelector(".jetat").textContent = fait ? " : fait" : " : à venir";
   }
-  var c = etat.cartes.n8, e = $("etat-n8");
-  if (c && c.niv) { e.textContent = NIVEAUX[c.niv]; e.className = "cn-etat etat-" + c.niv; }
-  else { e.textContent = "à gagner"; e.className = "cn-etat etat-gagner"; }
+  P.NOTIONS.forEach(function (n) {
+    var c = etat.cartes[n.id], e = $("etat-" + n.id);
+    if (!e) return;
+    if (c && c.niv) { e.textContent = NIVEAUX[c.niv]; e.className = "cn-etat etat-" + c.niv; }
+    else { e.textContent = "à gagner"; e.className = "cn-etat etat-gagner"; }
+  });
 }
 
 /* ── Ouvrir une carte ── */
@@ -678,7 +1239,18 @@ function rendreDefi(id) {
   dessinerDefi();
   lireItemAuto(DEFI.items[0]);   /* mode adapté seulement (test dans lireItemAuto) */
 }
-function repondu(it) { var r = DEFI.reponses[it.id]; return Array.isArray(r) ? r.length === it.options.length : !!r; }
+function repondu(it) {
+  var r = DEFI.reponses[it.id];
+  if (it.type === "assoc") return !!r && it.elements.every(function (e) { return !!r[e]; });
+  return Array.isArray(r) ? r.length === it.options.length : !!r;
+}
+/* Texte lu à voix haute pour un item : consigne, puis ce qu'il faut manipuler. */
+function texteItem(it) {
+  var t = consigneDe(it);
+  if (it.type === "ordre") return t + " Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
+  if (it.type === "assoc") return t + " À associer : " + it.elements.join(" ; ") + ". Propositions : " + it.options.join(", ") + ".";
+  return t + " Propositions : " + it.options.join(", ") + ".";
+}
 function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneSimple : it.consigne; }
 
 function dessinerDefi(focusSur) {
@@ -717,7 +1289,9 @@ function dessinerDefi(focusSur) {
   var c = etat.cartes[DEFI.id];
   if (c && c.ouverte) {
     var rv = el("button", { type: "button", class: "btn", id: "btn-revoir" }, "Revenir à la notion");
-    rv.addEventListener("click", function () { DEFI = null; annoncer(""); reveler("n8", false); $("revele-n8-titre").focus(); });
+    rv.addEventListener("click", function () {
+      var id = DEFI.id; DEFI = null; annoncer(""); reveler(id, false); $("revele-" + id + "-titre").focus();
+    });
     pied.appendChild(rv);
   }
   z.appendChild(pied);
@@ -741,10 +1315,7 @@ function lireItemAuto(it) {
   if (!etat.adapte || !it) return;
   /* jamais sans geste de l'élève : le navigateur refuserait la parole (projection ouverte au chargement) */
   if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
-  var t = consigneDe(it);
-  if (it.type === "ordre") t += " " + "Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
-  else t += " Propositions : " + it.options.join(", ") + ".";
-  lire(t);
+  lire(texteItem(it));
 }
 
 function dessinerItem(it, i) {
@@ -752,14 +1323,12 @@ function dessinerItem(it, i) {
   var tete = el("div", { class: "avec-lire" });
   var cons = el("p", { class: "consigne", id: "cons-" + it.id, tabindex: "-1" }, consigneDe(it));
   var cb = el("div", { class: "corps-bloc" }); cb.appendChild(cons); tete.appendChild(cb);
-  boutonLire(tete, function () {
-    var t = consigneDe(it);
-    return it.type === "ordre" ? t + " Les étiquettes : " + DEFI.reponses[it.id].join(", ") + "." : t + " Propositions : " + it.options.join(", ") + ".";
-  });
+  boutonLire(tete, function () { return texteItem(it); });
   bloc.appendChild(tete);
   if (it.type === "menu") bloc.appendChild(dessinerMenu(it));
   else if (it.type === "choix") bloc.appendChild(dessinerChoix(it));
   else if (it.type === "ordre") bloc.appendChild(dessinerOrdre(it));
+  else if (it.type === "assoc") bloc.appendChild(dessinerAssoc(it));
   /* En mode adapté, l'indice se consulte avant de répondre. */
   if (etat.adapte && !DEFI.fini && it.indice) {
     var zi = el("div", { class: "indice-zone" });
@@ -789,7 +1358,7 @@ function dessinerMenu(it) {
     l.appendChild(el("span", { class: "fl", "aria-hidden": "true" }, "→"));
   }
   var s = el("select", { class: "menu", id: "sel-" + it.id, "aria-labelledby": "cons-" + it.id });
-  s.appendChild(el("option", { value: "" }, "— choisis la solution —"));
+  s.appendChild(el("option", { value: "" }, it.id.indexOf("n8_") === 0 ? "— choisis la solution —" : "— choisis —"));
   it.options.forEach(function (o) {
     var op = el("option", { value: o }, o);
     if (DEFI.reponses[it.id] === o) op.selected = true;
@@ -799,6 +1368,30 @@ function dessinerMenu(it) {
   s.addEventListener("change", function () { DEFI.reponses[it.id] = s.value; });
   l.appendChild(s);
   return l;
+}
+
+/* Association : une ligne par élément, une vraie liste déroulante pour lui choisir sa réponse.
+   La réponse est rangée par élément ({ élément: choix }) : la correction se fait paire par paire. */
+function dessinerAssoc(it) {
+  var box = el("div", { class: "assoc", role: "group", "aria-labelledby": "cons-" + it.id });
+  var rep = DEFI.reponses[it.id] || (DEFI.reponses[it.id] = {});
+  it.elements.forEach(function (e, k) {
+    var ligne = el("div", { class: "assoc-ligne" }), lid = "ae-" + it.id + "-" + k;
+    ligne.appendChild(el("span", { class: "assoc-el", id: lid }, e));
+    ligne.appendChild(el("span", { class: "fl", "aria-hidden": "true" }, "→"));
+    var s = el("select", { class: "menu", id: "sel-" + it.id + "-" + k, "aria-labelledby": lid });
+    s.appendChild(el("option", { value: "" }, "— choisis —"));
+    it.options.forEach(function (o) {
+      var op = el("option", { value: o }, o);
+      if (rep[e] === o) op.selected = true;
+      s.appendChild(op);
+    });
+    s.disabled = DEFI.fini;
+    s.addEventListener("change", function () { rep[e] = s.value; });
+    ligne.appendChild(s);
+    box.appendChild(ligne);
+  });
+  return box;
 }
 
 function dessinerChoix(it) {
@@ -943,38 +1536,58 @@ function verifier() {
     if (!repondu(DEFI.items[k])) {
       annoncer("Il te reste une réponse à choisir avant de vérifier.", "ko");
       if (etat.adapte) { DEFI.pas = k; dessinerDefi(); }
-      var it = DEFI.items[k];
-      focaliser(it.type === "menu" ? "#sel-" + it.id : '[data-item="' + it.id + '"] .opt');
+      var it = DEFI.items[k], sel = '[data-item="' + it.id + '"] .opt';
+      if (it.type === "menu") sel = "#sel-" + it.id;
+      else if (it.type === "assoc") {
+        var rep = DEFI.reponses[it.id] || {}, km = 0;
+        while (km < it.elements.length - 1 && rep[it.elements[km]]) km++;
+        sel = "#sel-" + it.id + "-" + km;
+      }
+      focaliser(sel);
       return;
     }
   }
   var r = P.corriger(DEFI.items, DEFI.reponses);
   if (!etat.debut) etat.debut = Date.now();
+  var avant = etat.cartes[id] && etat.cartes[id].niv;
   etat = P.appliquer(etat, id, r.juste);
   sauver();
   var c = etat.cartes[id], seriefinie = c.serie === 0;
   DEFI.fini = true;
   DEFI.verdicts = {};
   DEFI.items.forEach(function (it) { DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0; });
+  /* Rejeu : le meilleur niveau est gardé ; le message le dit au lieu d'annoncer un niveau plus bas. */
+  var garde = avant && seriefinie && RANG_NIV[avant] > RANG_NIV[c.dernier]
+    ? "Tu gardes ton niveau « " + NIVEAUX_MOTS[avant] + " » ; cette fois : " + NIVEAUX_MOTS[c.dernier] + ". " : "";
+  var schema = !MOUV_REDUIT && $("revele-" + id).querySelector(".schema") ? " : regarde le schéma se construire." : ".";
   if (r.juste) {
-    var nivTentative = c.dernier;
-    annoncer(nivTentative === "acquis"
-      ? "Bravo, tout est juste du premier coup ! La notion s'ouvre : regarde le FAST du robinet se construire."
-      : "C'est juste ! Tu as trouvé après un indice : la carte est « en cours ». Tu pourras rejouer le défi pour la passer en « acquis ».", "ok");
+    annoncer(garde
+      ? "C'est juste ! " + garde + "Rejoue quand tu veux pour faire encore mieux."
+      : c.dernier === "acquis"
+        ? "Bravo, tout est juste du premier coup ! La notion s'ouvre" + schema
+        : "C'est juste ! Tu as trouvé après un indice : la carte est « en cours ». Tu pourras rejouer le défi pour la passer en « acquis ».", "ok");
     reveler(id, true);
   } else if (seriefinie) {
-    annoncer("Ce n'est pas encore ça, et ce n'est pas grave : la carte s'ouvre pour que tu lises la notion. "
-      + "Elle est notée « à revoir » ; relis " + renvoiDe(DEFI.items) + ", puis rejoue le défi quand tu veux.", "ko");
+    annoncer(garde
+      ? "Ce n'est pas encore ça, et ce n'est pas grave. " + garde + "Relis " + renvoiNotion(id) + ", puis rejoue quand tu veux."
+      : "Ce n'est pas encore ça, et ce n'est pas grave : la carte s'ouvre pour que tu lises la notion. "
+        + "Elle est notée « à revoir » ; relis " + renvoiNotion(id) + ", puis rejoue le défi quand tu veux.", "ko");
     reveler(id, true);
   } else {
     var nf = r.fautes.length;
     DEFI.suite = true;
     dessinerDefi("#btn-suite");
+    /* l'indice renvoie déjà à l'activité ; sinon (banque n8) on ajoute le renvoi */
+    var ajout = /activité|synthèse/.test(r.indice) ? "" : " Tu peux revoir " + (RENVOIS[r.renvoi] || "l'activité") + ".";
     annoncer((nf === 1 ? "Presque : une réponse n'est pas encore juste." : nf + " réponses ne sont pas encore justes.")
-      + " Indice : " + r.indice + " Tu peux revoir " + renvoiDe(DEFI.items) + ". Le nouvel essai te pose d'autres questions.", "ko");
+      + " Indice : " + r.indice + ajout + " Le nouvel essai te pose d'autres questions.", "ko");
   }
 }
-function renvoiDe(items) { var r = items[0] && items[0].renvoi; return RENVOIS[r] || "l'activité " + (r || ""); }
+function renvoiNotion(id) {
+  var n = P.NOTIONS.filter(function (x) { return x.id === id; })[0], a = n ? n.activites : [];
+  if (!a.length) return "les activités 3 à 6";
+  return a.map(function (x) { return RENVOIS[x] || x; }).join(", ");
+}
 
 /* ── La révélation ── */
 function reveler(id, anime) {
@@ -982,7 +1595,7 @@ function reveler(id, anime) {
   var rv = $("revele-" + id);
   rv.hidden = false;
   majProgression(anime);
-  dessinerFAST($("fast-" + id), anime);
+  Array.prototype.forEach.call(rv.querySelectorAll(".schema"), function (c) { dessinerSchema(c, anime); });
   if (anime) { var h = $("revele-" + id + "-titre"); if (h) h.focus(); }
 }
 
@@ -1014,22 +1627,24 @@ function sv(tag, a, parent) {
   if (parent) parent.appendChild(e);
   return e;
 }
-var FAST_LARGEUR = 0, POLICES_ESSAYEES = {};
+var POLICES_ESSAYEES = {};
+/* Police pas encore chargée (Luciole du mode adapté) : on la charge, puis on redessine une fois. */
+function chargerPolices(pG, pN) {
+  if (!document.fonts || !document.fonts.load || POLICES_ESSAYEES[pG + pN]) return;
+  POLICES_ESSAYEES[pG + pN] = true;
+  try {
+    if (!document.fonts.check(pG) || !document.fonts.check(pN))
+      Promise.all([document.fonts.load(pG), document.fonts.load(pN)]).then(function () { redessinerSchemas(true); }, function () {});
+  } catch (x) {}
+}
 function dessinerFAST(conteneur, anime, largeurForcee) {
   if (!conteneur) return;
   var W = largeurForcee || conteneur.clientWidth;
   if (!W) return;
-  FAST_LARGEUR = W;
+  conteneur._larg = W;
   var cs = getComputedStyle(conteneur), fs = Math.max(14, parseFloat(cs.fontSize) * 0.95), fam = cs.fontFamily;
   var pN = "400 " + fs + "px " + fam, pG = "700 " + fs + "px " + fam;
-  /* Police pas encore chargée (Luciole du mode adapté) : on la charge, puis on redessine une fois. */
-  if (document.fonts && document.fonts.load && !POLICES_ESSAYEES[pG + pN]) {
-    POLICES_ESSAYEES[pG + pN] = true;
-    try {
-      if (!document.fonts.check(pG) || !document.fonts.check(pN))
-        Promise.all([document.fonts.load(pG), document.fonts.load(pN)]).then(function () { FAST_LARGEUR = 0; redessinerFAST(); }, function () {});
-    } catch (x) {}
-  }
+  chargerPolices(pG, pN);
   var lh = fs * 1.3, pad = fs * 0.6, gapR = fs * 0.7, large = W >= fs * 40;
   var svg = sv("svg", { role: "img", "aria-label": "Diagramme FAST du robinet automatique, détaillé dans le tableau qui suit.", width: W }),
       blocs = [];
@@ -1135,6 +1750,10 @@ function dessinerFAST(conteneur, anime, largeurForcee) {
       }
     });
   }
+  finirSchema(conteneur, svg, W, H, blocs, anime);
+}
+/* Pose le SVG dans son conteneur ; construit bloc par bloc, sauf mouvement réduit. */
+function finirSchema(conteneur, svg, W, H, blocs, anime) {
   svg.setAttribute("height", Math.ceil(H));
   svg.setAttribute("viewBox", "0 0 " + W + " " + Math.ceil(H));
   conteneur.innerHTML = "";
@@ -1144,9 +1763,283 @@ function dessinerFAST(conteneur, anime, largeurForcee) {
     blocs.forEach(function (b, i) { setTimeout(function () { b.classList.remove("cache"); }, 350 + i * 420); });
   }
 }
-function redessinerFAST() {
-  var c = $("fast-n8");
-  if (c && !$("revele-n8").hidden && c.clientWidth && c.clientWidth !== FAST_LARGEUR) dessinerFAST(c, false);
+
+/* ── Les autres schémas, mis en page à la largeur réelle comme le FAST ── */
+function mesurer(conteneur, largeurForcee) {
+  var W = largeurForcee || conteneur.clientWidth;
+  if (!W) return null;
+  conteneur._larg = W;
+  var cs = getComputedStyle(conteneur), fs = Math.max(14, parseFloat(cs.fontSize) * 0.95), fam = cs.fontFamily;
+  var m = { W: W, fs: fs, fam: fam, pN: "400 " + fs + "px " + fam, pG: "700 " + fs + "px " + fam, lh: fs * 1.3, pad: fs * 0.6 };
+  m.fp = fs * 0.88; m.pP = "600 " + m.fp + "px " + fam; m.lhP = m.fp * 1.25;
+  chargerPolices(m.pG, m.pN);
+  return m;
+}
+function nouveauSvg(W) { return sv("svg", { "aria-hidden": "true", focusable: "false", width: W }); }
+function ecrire(g, x, y, lignes, m, o) {
+  var taille = o.taille || m.fs, lh = o.lh || m.lh;
+  lignes.forEach(function (l, i) {
+    var t = sv("text", { x: x, y: y + lh * i + taille * 0.98, fill: o.fill || "#1A202C", "font-size": taille,
+      "font-weight": o.poids || 400, "font-family": m.fam, "text-anchor": o.ancre || "start" }, g);
+    t.textContent = l;
+  });
+}
+function pointe(g, x, y, dir) {   /* tête de flèche : d droite, g gauche, b bas, h haut */
+  var p = { d: [-9, -5, 0, 0, -9, 5], g: [9, -5, 0, 0, 9, 5], b: [-5, -9, 0, 0, 5, -9], h: [-5, 9, 0, 0, 5, 9] }[dir];
+  sv("path", { d: "M" + (x + p[0]) + " " + (y + p[1]) + " L" + (x + p[2]) + " " + (y + p[3]) + " L" + (x + p[4]) + " " + (y + p[5]) + "Z", fill: "#01579B" }, g);
+}
+function ligne(g, pts, tirets) {
+  var a = { points: pts.join(" "), fill: "none", stroke: "#01579B", "stroke-width": 2 };
+  if (tirets) a["stroke-dasharray"] = "6 4";
+  sv("polyline", a, g);
+}
+function etiquette(g, x, y, texte, m) {   /* petit mot sur fond blanc, centré en (x, y) */
+  var w = largeurTexte(texte, m.pP) + 8, h = m.lhP + 4;
+  sv("rect", { x: x - w / 2, y: y - h / 2, width: w, height: h, rx: 4, fill: "#fff" }, g);
+  ecrire(g, x, y - h / 2 + 2, [texte], m, { taille: m.fp, lh: m.lhP, poids: 700, fill: "#01476E", ancre: "middle" });
+}
+/* Bloc à deux étages : bandeau (verbe ou numéro, blanc sur bleu foncé) et contenu. */
+function lignesBloc(w, b, m) {
+  return { h: b.haut ? couper(b.haut, w - 2 * m.pad, m.pG) : [], b: b.bas ? couper(b.bas, w - 2 * m.pad, b.haut ? m.pN : m.pG) : [] };
+}
+function hauteurBloc(w, b, m) {
+  var L = lignesBloc(w, b, m);
+  return (L.h.length ? L.h.length * m.lh + m.pad * 1.2 : 0) + (L.b.length ? L.b.length * m.lh + m.pad * 1.6 : 0);
+}
+function dessinerBloc(g, x, y, w, h, b, m) {
+  var L = lignesBloc(w, b, m), hH = L.h.length ? L.h.length * m.lh + m.pad * 1.2 : 0;
+  sv("rect", { x: x, y: y, width: w, height: h, rx: 8, fill: "#E1F5FE", stroke: "#0277BD", "stroke-width": 2 }, g);
+  if (hH) {
+    sv("rect", { x: x, y: y, width: w, height: hH, rx: 8, fill: "#01579B" }, g);
+    sv("rect", { x: x, y: y + hH - 8, width: w, height: 8, fill: "#01579B" }, g);
+    ecrire(g, x + w / 2, y + m.pad * 0.6, L.h, m, { fill: "#fff", poids: 700, ancre: "middle" });
+  }
+  var hB = L.b.length * m.lh;
+  ecrire(g, x + w / 2, y + hH + (h - hH - hB) / 2 - m.fs * 0.08, L.b, m, { fill: "#01476E", poids: hH ? 400 : 700, ancre: "middle" });
+}
+/* Chaîne de blocs reliés par des flèches (étiquettes facultatives) : en ligne si la largeur le
+   permet, sinon en colonne. `fin` : flèche de sortie après le dernier bloc ; `boucle` : retour en tirets. */
+function dessinerChaine(conteneur, d, anime, largeurForcee) {
+  var m = mesurer(conteneur, largeurForcee);
+  if (!m) return;
+  var W = m.W, n = d.blocs.length, lab = d.fleches || [], nf = d.fin ? n : n - 1, textes = [], labMax = 0;
+  d.blocs.forEach(function (b) { if (b.haut) textes.push(b.haut); if (b.bas) textes.push(b.bas); });
+  lab.forEach(function (t) { if (t) labMax = Math.max(labMax, motLePlusLong([t], m.pP)); });
+  var a = Math.max(m.fs * 2.4, labMax + m.fs * 0.9);
+  var bw = (W - 2 - nf * a) / n, motMax = motLePlusLong(textes, m.pG) + 2 * m.pad + 4;
+  var svg = nouveauSvg(W), blocs = [], H;
+  if (bw >= motMax && bw >= m.fs * 6.5) {
+    var h = 0;
+    d.blocs.forEach(function (b) { h = Math.max(h, hauteurBloc(bw, b, m)); });
+    var labL = lab.map(function (t) { return t ? couper(t, a - m.fs * 0.5, m.pP) : []; }), nl = 0;
+    labL.forEach(function (l) { nl = Math.max(nl, l.length); });
+    var y0 = Math.max(2, nl * m.lhP + 8 - h / 2), mid = y0 + h / 2;
+    var fl = function (g, x1, x2, L) {
+      ligne(g, [x1, mid, x2 - 2, mid]); pointe(g, x2, mid, "d");
+      if (L.length) ecrire(g, (x1 + x2) / 2, mid - 6 - L.length * m.lhP, L, m, { taille: m.fp, lh: m.lhP, poids: 600, fill: "#01476E", ancre: "middle" });
+    };
+    d.blocs.forEach(function (b, i) {
+      var g = sv("g", { class: "bloc" }, svg), x = 1 + i * (bw + a);
+      blocs.push(g);
+      if (i > 0) fl(g, x - a + 3, x - 2, labL[i - 1] || []);
+      dessinerBloc(g, x, y0, bw, h, b, m);
+      if (d.fin && i === n - 1) fl(g, x + bw + 3, x + bw + a - 2, labL[i] || []);
+    });
+    H = y0 + h + 4;
+    if (d.boucle) {
+      var gb = blocs[n - 1], yb = y0 + h + m.fs * 1.5, xl = 1 + (n - 1) * (bw + a) + bw / 2, xf = 1 + bw / 2;
+      ligne(gb, [xl, y0 + h, xl, yb, xf, yb, xf, y0 + h + 9], true); pointe(gb, xf, y0 + h + 1, "h");
+      H = yb + 4;
+    }
+  } else {
+    /* en colonne, des blocs de largeur raisonnable, centrés ; la voie de droite porte la boucle */
+    var voie = d.boucle ? m.fs * 2 : 0, w = Math.min(W - 2 - voie, Math.max(motMax, m.fs * 22));
+    var x0 = 1 + (W - 2 - voie - w) / 2, xA = x0 + w / 2, labW = W - 2 - voie - xA - m.fs, y = 2, milieux = [];
+    var flv = function (g, y1, L) {
+      var hA = Math.max(m.fs * 2.2, L.length * m.lhP + 12);
+      ligne(g, [xA, y1 + 1, xA, y1 + hA - 3]); pointe(g, xA, y1 + hA - 1, "b");
+      if (L.length) ecrire(g, xA + 10, y1 + hA / 2 - L.length * m.lhP / 2, L, m, { taille: m.fp, lh: m.lhP, poids: 600, fill: "#01476E" });
+      return hA;
+    };
+    d.blocs.forEach(function (b, i) {
+      var g = sv("g", { class: "bloc" }, svg);
+      blocs.push(g);
+      if (i > 0) y += flv(g, y, lab[i - 1] ? couper(lab[i - 1], labW, m.pP) : []);
+      var h2 = hauteurBloc(w, b, m);
+      dessinerBloc(g, x0, y, w, h2, b, m);
+      milieux.push(y + h2 / 2);
+      y += h2;
+      if (d.fin && i === n - 1) y += flv(g, y, lab[i] ? couper(lab[i], labW, m.pP) : []);
+    });
+    H = y + 4;
+    if (d.boucle) {
+      var gv = blocs[n - 1], xv = x0 + w + voie / 2;
+      ligne(gv, [x0 + w, milieux[n - 1], xv, milieux[n - 1], xv, milieux[0], x0 + w + 10, milieux[0]], true);
+      pointe(gv, x0 + w + 1, milieux[0], "g");
+    }
+  }
+  finirSchema(conteneur, svg, W, H, blocs, anime);
+}
+
+/* Bête à cornes : deux cases en haut (à qui ? sur quoi ?), le produit au centre, le but en bas. */
+function dessinerBete(conteneur, d, anime, largeurForcee) {
+  var m = mesurer(conteneur, largeurForcee);
+  if (!m) return;
+  var W = m.W, gap = m.fs, cw = (W - 2 - gap) / 2, svg = nouveauSvg(W), blocs = [];
+  function cas(w, c) {
+    var q = couper(c.q, w - 2 * m.pad, m.pP), r = c.r ? couper(c.r, w - 2 * m.pad, m.pG) : [];
+    return { q: q, r: r, h: q.length * m.lhP + r.length * m.lh + 2 * m.pad + (r.length ? 4 : 0) };
+  }
+  function caseSvg(g, x, y, w, h, c) {
+    sv("rect", { x: x, y: y, width: w, height: h, rx: 8, fill: "#fff", stroke: "#0277BD", "stroke-width": 2 }, g);
+    ecrire(g, x + m.pad, y + m.pad, c.q, m, { taille: m.fp, lh: m.lhP, poids: 600, fill: "#4A5568" });
+    ecrire(g, x + m.pad, y + m.pad + c.q.length * m.lhP + 4, c.r, m, { poids: 700, fill: "#01476E" });
+  }
+  /* trop étroit pour deux cases côte à côte (un mot plus long que la case) : on les empile */
+  var empile = motLePlusLong([d.qui.q, d.qui.r, d.quoi.q, d.quoi.r].filter(Boolean), m.pG) + 2 * m.pad + 4 > cw;
+  if (empile) cw = W - 2;
+  var A = cas(cw, d.qui), B = cas(cw, d.quoi), hT = empile ? A.h + gap * 0.6 + B.h : Math.max(A.h, B.h);
+  var g1 = sv("g", { class: "bloc" }, svg); blocs.push(g1);
+  if (empile) { caseSvg(g1, 1, 1, cw, A.h, A); caseSvg(g1, 1, 1 + A.h + gap * 0.6, cw, B.h, B); }
+  else { caseSvg(g1, 1, 1, cw, hT, A); caseSvg(g1, 1 + cw + gap, 1, cw, hT, B); }
+  var lp = couper(d.produit, W * 0.5 - 2 * m.pad, m.pG), lpw = 0;
+  lp.forEach(function (l) { lpw = Math.max(lpw, largeurTexte(l, m.pG)); });
+  /* une ellipse n'a sa pleine largeur qu'en son milieu : marge plus large que pour un rectangle */
+  var ew = Math.min(W - 2, lpw * 1.3 + m.pad * 3), eh = lp.length * m.lh + m.pad * 2.6, ey = hT + gap * 2.6, cx = W / 2;
+  var g2 = sv("g", { class: "bloc" }, svg); blocs.push(g2);
+  var departs = empile ? [W * 0.25, W * 0.75] : [1 + cw / 2, 1 + cw + gap + cw / 2];
+  [[departs[0], cx - ew * 0.32], [departs[1], cx + ew * 0.32]].forEach(function (p) {
+    sv("path", { d: "M" + p[0] + " " + (hT + 1) + " Q" + p[0] + " " + (ey + eh * 0.2) + " " + p[1] + " " + (ey + eh * 0.12), fill: "none", stroke: "#01579B", "stroke-width": 2.5 }, g2);
+  });
+  sv("ellipse", { cx: cx, cy: ey + eh / 2, rx: ew / 2, ry: eh / 2, fill: "#01579B" }, g2);
+  ecrire(g2, cx, ey + (eh - lp.length * m.lh) / 2, lp, m, { poids: 700, fill: "#fff", ancre: "middle" });
+  var C = cas(W - 2, d.but), by = ey + eh + gap * 2.2;
+  var g3 = sv("g", { class: "bloc" }, svg); blocs.push(g3);
+  ligne(g3, [cx, ey + eh, cx, by - 3]); pointe(g3, cx, by - 1, "b");
+  caseSvg(g3, 1, by, W - 2, C.h, C);
+  finirSchema(conteneur, svg, W, by + C.h + 2, blocs, anime);
+}
+
+/* Pieuvre : le robinet au centre ; la FP relie deux éléments en passant par lui (en haut),
+   chaque FC le relie à un seul élément (en bas, sur une ligne ou en deux colonnes). */
+function dessinerPieuvre(conteneur, d, anime, largeurForcee) {
+  var m = mesurer(conteneur, largeurForcee);
+  if (!m) return;
+  var W = m.W, svg = nouveauSvg(W), blocs = [], gap = m.fs * 1.2;
+  var tous = d.fp.concat(d.fc), bw = 0, bh = m.lh + m.pad * 1.6;
+  tous.forEach(function (t) { bw = Math.max(bw, largeurTexte(t, m.pG) + 2 * m.pad); });
+  function lg(t) { return largeurTexte(t, m.pG) + 2 * m.pad; }
+  function eme(g, xc, y, t, w) {
+    w = w || bw;
+    sv("rect", { x: xc - w / 2, y: y, width: w, height: bh, rx: 8, fill: "#E2EFDA", stroke: "#1E6B3B", "stroke-width": 2 }, g);
+    ecrire(g, xc, y + m.pad * 0.8, [t], m, { poids: 700, fill: "#14522C", ancre: "middle" });
+  }
+  var cx = W / 2, lc = couper(d.centre, Math.max(W * 0.3, motLePlusLong([d.centre], m.pG)), m.pG), lcw = 0;
+  lc.forEach(function (l) { lcw = Math.max(lcw, largeurTexte(l, m.pG)); });
+  var ew = lcw * 1.3 + m.pad * 3, eh = lc.length * m.lh + m.pad * 2.6, ey = bh + gap * 2.2;
+  var g0 = sv("g", { class: "bloc" }, svg); blocs.push(g0);
+  sv("ellipse", { cx: cx, cy: ey + eh / 2, rx: ew / 2, ry: eh / 2, fill: "#01579B" }, g0);
+  ecrire(g0, cx, ey + (eh - lc.length * m.lh) / 2, lc, m, { poids: 700, fill: "#fff", ancre: "middle" });
+  /* FP : utilisateur → robinet → eau */
+  var gF = sv("g", { class: "bloc" }, svg); blocs.push(gF);
+  svg.insertBefore(gF, g0);
+  var n = d.fc.length;
+  if (W / 2 - bw - 2 > ew / 2 + m.fs * 2.5) {
+    /* Assez large : la vraie pieuvre, éléments en anneau autour du robinet. */
+    var H = Math.max(m.fs * 17, W * 0.42), cy = H / 2, Rx = W / 2 - bw / 2 - 2, Ry = H / 2 - bh / 2 - 2;
+    g0.setAttribute("transform", "translate(0 " + (cy - ey - eh / 2) + ")");
+    var pos = function (deg) { var a = deg * Math.PI / 180; return [cx + Rx * Math.cos(a), cy + Ry * Math.sin(a)]; };
+    var A = pos(-145), B = pos(-35);
+    /* point de contrôle choisi pour que la courbe passe par le centre du robinet */
+    sv("path", { d: "M" + A[0] + " " + A[1] + " Q" + cx + " " + (2 * cy - A[1]) + " " + B[0] + " " + B[1], fill: "none", stroke: "#01579B", "stroke-width": 2.5 }, gF);
+    eme(gF, A[0], A[1] - bh / 2, d.fp[0]); eme(gF, B[0], B[1] - bh / 2, d.fp[1]);
+    etiquette(gF, 0.5625 * A[0] + 0.375 * cx + 0.0625 * B[0], 0.25 * A[1] + 0.75 * cy, "FP", m);   /* point de la courbe à t = 0,25 */
+    var angles = [180, 0, 145, 90, 35];
+    d.fc.forEach(function (t, i) {
+      var g = sv("g", { class: "bloc" }, svg); blocs.push(g);
+      svg.insertBefore(g, g0);
+      var p = pos(angles[i % angles.length]);
+      ligne(g, [cx, cy, p[0], p[1]]);
+      eme(g, p[0], p[1] - bh / 2, t);
+      etiquette(g, cx + (p[0] - cx) * 0.62, cy + (p[1] - cy) * 0.62, "FC", m);
+    });
+    finirSchema(conteneur, svg, W, H + 2, blocs, anime);
+    return;
+  }
+  /* Étroit : FP en haut, FC en deux colonnes sous le robinet (un tronc, une branche par élément).
+     Chaque case a la largeur de son mot, collée au bord : le milieu reste libre pour les traits. */
+  var wg = lg(d.fp[0]), wd = lg(d.fp[1]), xg = 1 + wg / 2, xd = W - 1 - wd / 2;
+  ligne(gF, [xg, bh + 1, xg, ey + eh / 2, cx - ew / 2, ey + eh / 2]);
+  ligne(gF, [cx + ew / 2, ey + eh / 2, xd, ey + eh / 2, xd, bh + 1]);
+  eme(gF, xg, 1, d.fp[0], wg); eme(gF, xd, 1, d.fp[1], wd);
+  etiquette(gF, xg, (bh + ey + eh / 2) / 2, "FP", m);
+  var yTronc = ey + eh, y0 = yTronc + gap * 1.6;
+  d.fc.forEach(function (t, i) {
+    var g = sv("g", { class: "bloc" }, svg); blocs.push(g);
+    svg.insertBefore(g, g0);
+    var w = lg(t), col = i % 2, rang = Math.floor(i / 2), yb = y0 + rang * (bh + gap), xe = col ? W - 1 - w / 2 : 1 + w / 2;
+    var xBord = col ? W - 1 - w : 1 + w;
+    ligne(g, [cx, yTronc, cx, yb + bh / 2, xBord, yb + bh / 2]);
+    eme(g, xe, yb, t, w);
+    etiquette(g, (cx + xBord) / 2, yb + bh / 2, "FC", m);
+  });
+  var rangs = Math.ceil(n / 2);
+  finirSchema(conteneur, svg, W, y0 + rangs * bh + (rangs - 1) * gap + 2, blocs, anime);
+}
+
+var BOUCLE = { blocs: [
+  { haut: "Turbine / générateur", bas: "l’eau qui coule la fait tourner : énergie électrique" },
+  { haut: "Micro-batterie", bas: "stocke l’énergie" },
+  { haut: "Capteur, carte, voyant, électrovanne", bas: "alimentés par la micro-batterie" }
+], boucle: true };
+var SCHEMAS = {
+  fast: dessinerFAST,
+  frise: function (c, a, w) {
+    dessinerChaine(c, { blocs: [{ haut: "1", bas: "Analyse le besoin" }, { haut: "2", bas: "Définit les contraintes" },
+      { haut: "3", bas: "Établit le cahier des charges" }, { haut: "4", bas: "Conçoit l’objet" }] }, a, w);
+  },
+  info: function (c, a, w) {
+    dessinerChaine(c, { blocs: [{ haut: "ACQUÉRIR", bas: "Capteur infrarouge" }, { haut: "TRAITER", bas: "Carte électronique" },
+      { haut: "COMMUNIQUER", bas: "Voyant" }] }, a, w);
+  },
+  energie: function (c, a, w) {
+    dessinerChaine(c, { blocs: [{ haut: "ALIMENTER", bas: "Tuyauterie" }, { haut: "DISTRIBUER", bas: "Électrovanne" },
+      { haut: "CONVERTIR", bas: "Turbine / générateur" }, { haut: "TRANSMETTRE", bas: "Fils électriques" }],
+      fleches: ["énergie hydraulique", "énergie hydraulique", "énergie électrique", "énergie électrique"], fin: true }, a, w);
+  },
+  boucle: function (c, a, w) { dessinerChaine(c, BOUCLE, a, w); },
+  lien: function (c, a, w) {
+    dessinerChaine(c, { blocs: [{ haut: "TRAITER (chaîne d’information)", bas: "Carte électronique" },
+      { haut: "DISTRIBUER (chaîne d’énergie)", bas: "Électrovanne" }], fleches: ["ordre"] }, a, w);
+  },
+  "bete-gps": function (c, a, w) {
+    dessinerBete(c, { produit: "GPS", qui: { q: "À qui le produit rend-il service ?" }, quoi: { q: "Sur quoi le produit agit-il ?" },
+      but: { q: "Dans quel but le produit existe-t-il ?", r: "Permettre de déterminer avec précision une position géographique afin de se repérer" } }, a, w);
+  },
+  "bete-robinet": function (c, a, w) {
+    dessinerBete(c, { produit: "Robinet automatique à détection",
+      qui: { q: "À qui le produit rend-il service ?", r: "Aux utilisateurs (et au gestionnaire de l’établissement)" },
+      quoi: { q: "Sur quoi le produit agit-il ?", r: "Sur l’eau (le débit / l’écoulement)" },
+      but: { q: "Dans quel but le produit existe-t-il ?", r: "Économiser l’eau en évitant le gaspillage" } }, a, w);
+  },
+  pieuvre: function (c, a, w) {
+    dessinerPieuvre(c, { centre: "Robinet automatique", fp: ["Utilisateur", "Eau"], fc: ["Mains", "Humidité", "Énergie", "Lavabo", "Budget"] }, a, w);
+  }
+};
+function dessinerSchema(c, anime, largeurForcee) {
+  var f = SCHEMAS[c.getAttribute("data-schema")];
+  if (f) f(c, anime, largeurForcee);
+}
+/* Redessine les schémas visibles dont la largeur a changé (ou tous, après un changement de police). */
+function redessinerSchemas(force) {
+  Array.prototype.forEach.call(document.querySelectorAll(".schema"), function (c) {
+    var rv = c.closest(".revele");
+    if (rv && rv.hidden) return;
+    if (c.clientWidth && (force || c.clientWidth !== c._larg)) dessinerSchema(c, false);
+  });
+}
+function dessinerPourImpression() {
+  Array.prototype.forEach.call(document.querySelectorAll(".schema"), function (c) { dessinerSchema(c, false, 680); });
 }
 
 /* ── Modes ── */
@@ -1159,7 +2052,7 @@ function basculerAdapte(on) {
     rendreDefi(DEFI.id);
     annoncer(etat.adapte ? "Mode adapté : une question à la fois, 3 propositions, indice disponible." : "Mode standard : toutes les questions sur un écran.");
   }
-  calerBarres(); FAST_LARGEUR = 0; redessinerFAST();
+  calerBarres(); redessinerSchemas(true);
 }
 function basculerProjection(on) {
   etat.projection = !!on;
@@ -1168,8 +2061,15 @@ function basculerProjection(on) {
   document.documentElement.classList.toggle("projection", actif);
   $("btn-projection").setAttribute("aria-pressed", String(actif));
   sauver();
-  if (actif && !CARTE_ACTIVE) ouvrirCarte("n8");
-  calerBarres(); FAST_LARGEUR = 0; redessinerFAST();
+  if (actif && !CARTE_ACTIVE) ouvrirCarte(P.NOTIONS[0].id);
+  calerBarres(); redessinerSchemas(true);
+}
+/* Projection : une carte par écran, on passe à la voisine (dans l'ordre de la page). */
+function carteVoisine(sens) {
+  var ids = P.NOTIONS.map(function (n) { return n.id; }), i = ids.indexOf(CARTE_ACTIVE);
+  var cible = ids[(i < 0 ? 0 : i + sens + ids.length) % ids.length];
+  ouvrirCarte(cible);
+  $("tete-" + cible).focus();
 }
 function calerBarres() {
   var h = document.querySelector("header");
@@ -1197,8 +2097,12 @@ function demarrer() {
     });
   });
 
-  $("tete-n8").addEventListener("click", function () { ouvrirCarte("n8", true); });
-  $("rejouer-n8").addEventListener("click", function () { rendreDefi("n8"); focaliser(".consigne"); annoncer(""); });
+  P.NOTIONS.forEach(function (n) {
+    $("tete-" + n.id).addEventListener("click", function () { ouvrirCarte(n.id, true); });
+    $("rejouer-" + n.id).addEventListener("click", function () { rendreDefi(n.id); focaliser(".consigne"); annoncer(""); });
+  });
+  $("proj-prec").addEventListener("click", function () { carteVoisine(-1); });
+  $("proj-suiv").addEventListener("click", function () { carteVoisine(1); });
   $("btn-adapte").addEventListener("click", function () { basculerAdapte(!etat.adapte); });
   $("btn-projection").addEventListener("click", function () {
     basculerProjection(!(etat.projection || PROJECTION_URL));
@@ -1210,21 +2114,21 @@ function demarrer() {
   var proj = etat.projection || PROJECTION_URL;
   document.documentElement.classList.toggle("projection", proj);
   $("btn-projection").setAttribute("aria-pressed", String(proj));
-  if (proj) ouvrirCarte("n8");
+  if (proj) ouvrirCarte(P.NOTIONS[0].id);
 
   majProgression(false);
-  /* La feuille imprimée contient la notion complète, FAST compris, même non gagnée. */
-  dessinerFAST($("fast-n8"), false, 680);
-  window.addEventListener("beforeprint", function () { dessinerFAST($("fast-n8"), false, 680); });
-  window.addEventListener("afterprint", function () { FAST_LARGEUR = 0; redessinerFAST(); });
+  /* La feuille imprimée contient toute la synthèse, schémas compris, même les cartes non gagnées. */
+  dessinerPourImpression();
+  window.addEventListener("beforeprint", dessinerPourImpression);
+  window.addEventListener("afterprint", function () { redessinerSchemas(true); });
 
   var minuteur = null;
-  window.addEventListener("resize", function () { clearTimeout(minuteur); minuteur = setTimeout(function () { calerBarres(); redessinerFAST(); }, 150); });
-  document.addEventListener("confort-lecture", function () { setTimeout(function () { calerBarres(); FAST_LARGEUR = 0; redessinerFAST(); }, 120); });
+  window.addEventListener("resize", function () { clearTimeout(minuteur); minuteur = setTimeout(function () { calerBarres(); redessinerSchemas(false); }, 150); });
+  document.addEventListener("confort-lecture", function () { setTimeout(function () { calerBarres(); redessinerSchemas(true); }, 120); });
   calerBarres();
   window.addEventListener("load", calerBarres);   /* après l'ajout des boutons des modules dys */
-  /* une fois les polices chargées, les mesures du FAST sont exactes */
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { FAST_LARGEUR = 0; redessinerFAST(); });
+  /* une fois les polices chargées, les mesures des schémas sont exactes */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { redessinerSchemas(true); });
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
 else demarrer();
@@ -1237,7 +2141,7 @@ else demarrer();
 window.LECTURE_IMMERSIVE = {
   racine:"main", hote:".pbar-in",
   sectionsFermees:"", classeFermeture:"closed",
-  selecteurs:"h2, h3, h4, p, li, figcaption, .consigne, .opt, .pion, .ft-boite, .cn-nom"
+  selecteurs:"h2, h3, h4, h5, p, li, figcaption, .consigne, .opt, .pion, .ft-boite, .assoc-el, .cn-nom"
 };
 </script>
 <script src="../../assets/js/lecture-immersive.js" defer></script>
