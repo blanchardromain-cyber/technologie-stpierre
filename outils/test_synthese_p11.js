@@ -383,4 +383,160 @@ t("chaque défi tiré contient au moins un item cœur (toutes notions, g0 à g49
   }))));
 });
 
+/* ── Tâche 5 : module « Cap sur l'évaluation n°2 » (entraînement) ── */
+const MODULE_IDS = ["m_p1", "m_p2", "m_p3", "m_p4", "m_i1", "m_i2", "m_i3"];
+const modItems = () => S.MODULE.reduce((a, m) => a.concat(m.items.map(i => [m.id, i])), []);
+const toutOuvert = () => { let e = S.etatVide(); S.NOTIONS.forEach(n => { e = S.appliquer(e, n.id, true); }); return e; };
+
+t("MODULE : 7 défis m_p1 … m_i3, chacun avec critere, ceQuiFaitGagner, items", () => {
+  assert.deepStrictEqual(S.MODULE.map(m => m.id), MODULE_IDS);
+  S.MODULE.forEach(m => {
+    assert.ok(typeof m.critere === "string" && m.critere.length > 5, m.id + " : critere");
+    assert.ok(Array.isArray(m.ceQuiFaitGagner) && m.ceQuiFaitGagner.length >= 2, m.id + " : ceQuiFaitGagner");
+    assert.ok(m.titre && m.support && m.situation, m.id);
+    assert.ok(m.items.length >= 1 && m.items.length <= 6, m.id + " : items");
+  });
+});
+
+t("aucun texte de MODULE ne contient « RS-1 », « robot », « coque »", () => {
+  assert.ok(!/RS-1|robot|coque/i.test(JSON.stringify(S.MODULE)), JSON.stringify(S.MODULE).match(/.{30}(RS-1|robot|coque).{30}/i));
+});
+
+t("module verrouillé tant qu'une carte reste fermée, ouvert quand les 13 le sont", () => {
+  assert.strictEqual(S.moduleOuvert(S.etatVide()), false);
+  let e = S.etatVide();
+  S.NOTIONS.slice(0, 12).forEach(n => { e = S.appliquer(e, n.id, true); });
+  assert.strictEqual(S.moduleOuvert(e), false, "12 cartes");
+  let f = e; for (let i = 0; i < 2; i++) f = S.appliquer(f, "n12", false);
+  assert.strictEqual(S.moduleOuvert(f), false, "n12 : deux échecs, pas encore ouverte");
+  f = S.appliquer(f, "n12", false);
+  assert.strictEqual(S.moduleOuvert(f), true, "n12 ouverte « à revoir » après 3 échecs");
+  assert.strictEqual(S.moduleOuvert(toutOuvert()), true);
+});
+
+t("items du module : id préfixé, consignes, indice sans la réponse, renvoi, réponses cohérentes", () => {
+  const ids = {};
+  modItems().forEach(([mid, i]) => {
+    assert.ok(i.id.indexOf(mid + "_") === 0 && !ids[i.id], i.id); ids[i.id] = 1;
+    assert.ok(i.consigne && i.consigneSimple && i.indice && i.renvoi, i.id);
+    assert.ok(/activité|Matériauthèque|diaporama/.test(i.indice), i.id + " : indice sans renvoi");
+    if (i.type === "choix" || i.type === "menu") {
+      assert.ok(i.options.indexOf(i.bonne) >= 0, i.id);
+      assert.ok(norm(i.indice).indexOf(norm(i.bonne)) < 0, i.id + " : l'indice contient la réponse");
+    } else if (i.type === "assoc") {
+      assert.strictEqual(i.elements.length, i.bonne.length, i.id);
+      i.bonne.forEach(b => assert.ok(i.options.indexOf(b) >= 0, i.id + " : " + b));
+      assert.ok(new Set(i.bonne).size >= 2, i.id + " : une même réponse partout serait juste");
+    } else if (i.type === "ordre") {
+      assert.deepStrictEqual(i.options.slice().sort(), i.bonne.slice().sort(), i.id);
+    } else assert.strictEqual(i.type, "tableur", i.id);
+    if (i.options) assert.strictEqual(new Set(i.options).size, i.options.length, i.id);
+  });
+});
+
+t("tirerModule : déterministe, mode adapté à 3 options dont la bonne, toutes les réponses d'une assoc gardées", () => {
+  MODULE_IDS.forEach(mid => graines.forEach(g => [1, 2].forEach(essai => {
+    const d = S.tirerModule(mid, essai, g, true);
+    assert.deepStrictEqual(d, S.tirerModule(mid, essai, g, true));
+    const m = S.MODULE.find(x => x.id === mid);
+    assert.deepStrictEqual(d.map(i => i.id), m.items.map(i => i.id));
+    d.forEach(i => {
+      const b = m.items.find(x => x.id === i.id);
+      if (i.type === "choix" || i.type === "menu") { assert.strictEqual(i.options.length, Math.min(3, b.options.length), i.id); assert.ok(i.options.indexOf(i.bonne) >= 0); }
+      if (i.type === "assoc") new Set(b.bonne).forEach(a => assert.ok(i.options.indexOf(a) >= 0, i.id));
+      if (i.type === "ordre") assert.strictEqual(i.options[0], i.bonne[0]);
+    });
+  })));
+});
+
+t("défis à choix : « tout juste » réussit, « tout faux » et « même réponse partout » échouent", () => {
+  S.MODULE.filter(m => m.items.every(i => i.type !== "tableur")).forEach(m => graines.slice(0, 10).forEach(g => {
+    const d = S.tirerModule(m.id, 1, g, false);
+    assert.strictEqual(S.corriger(d, reponsesJustes(d)).juste, true, m.id + " juste");
+    const faux = {};
+    d.forEach(i => {
+      if (i.type === "assoc") { const r = {}; i.elements.forEach((e, k) => { r[e] = i.options.find(o => o !== i.bonne[k]); }); faux[i.id] = r; }
+      else if (i.type === "ordre") faux[i.id] = i.bonne.slice().reverse();
+      else faux[i.id] = i.options.find(o => o !== i.bonne);
+    });
+    const rf = S.corriger(d, faux);
+    assert.strictEqual(rf.juste, false, m.id + " tout faux");
+    assert.strictEqual(rf.fautes.length, d.length, m.id + " tout faux : chaque item compte faux");
+    d.filter(i => i.type === "assoc").forEach(i => i.options.forEach(o => {
+      const r = {}; i.elements.forEach(e => { r[e] = o; });
+      assert.strictEqual(S.corriger([i], { [i.id]: r }).juste, false, i.id + " : « " + o + " » partout");
+    }));
+  }));
+});
+
+t("corrigerTableur : références = 1, nombres recopiés = 0,5, résultat tapé ou sans « = » = 0", () => {
+  assert.strictEqual(S.corrigerTableur("B4", "=B2*B3").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=B3*B2").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "= b2 * b3").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=PRODUIT(B2;B3)").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=produit(b3; b2)").pts, 1);
+  const n = S.corrigerTableur("B4", "=24*1,04");
+  assert.strictEqual(n.pts, 0.5); assert.ok(/recopi/.test(n.raison), n.raison);
+  assert.strictEqual(S.corrigerTableur("B4", "=B2*1,04").pts, 0.5);
+  const tape = S.corrigerTableur("B4", "24,96");
+  assert.strictEqual(tape.pts, 0); assert.ok(/tapé/.test(tape.raison), tape.raison);
+  const sans = S.corrigerTableur("B4", "B2*B3");
+  assert.strictEqual(sans.pts, 0); assert.ok(/=/.test(sans.raison), sans.raison);
+  assert.strictEqual(S.corrigerTableur("B4", "=B2*B5").pts, 0);
+  assert.strictEqual(S.corrigerTableur("B4", "=24,96").pts, 0);
+  assert.strictEqual(S.corrigerTableur("B4", "").pts, 0);
+  assert.strictEqual(S.corrigerTableur("B6", "=B4*B5").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C4", "=C2*C3").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C4", "=B2*B3").pts, 0, "colonne recopiée sans changer les cases");
+  assert.strictEqual(S.corrigerTableur("C6", "=C4*C5").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C7", "=C6/B6").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C7", "=B6/C6").pts, 0, "rapport inversé");
+  assert.strictEqual(S.corrigerTableur("C7", "=11376/2371,2").pts, 0.5);
+});
+
+t("corrigerTableur : données à la virgule décimale ; le point est refusé avec sa raison", () => {
+  assert.strictEqual(S.corrigerTableur("B3", "1,04").pts, 1);
+  const pt = S.corrigerTableur("B3", "1.04");
+  assert.strictEqual(pt.pts, 0); assert.ok(/virgule décimale/.test(pt.raison), pt.raison);
+  assert.strictEqual(S.corrigerTableur("C3", "7,9").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C3", "7.9").pts, 0);
+  assert.strictEqual(S.corrigerTableur("B5", "95").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C5", "60").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B3", "1,4").pts, 0);
+  ["B2", "C2"].forEach(c => assert.ok(S.TABLEUR.cases[c].fourni, c + " : volume fourni 🔒"));
+});
+
+t("tableur : valeurs lues dans la Matériauthèque (ABS, inox) et volume de 24 cm³", () => {
+  const T = S.TABLEUR.cases;
+  assert.strictEqual(T.B2.valeur, 24); assert.strictEqual(T.C2.valeur, 24);
+  const fs = require("fs"), chemin = require("path").join(__dirname, "../../materiautheque/data/materiaux.json");
+  if (!fs.existsSync(chemin)) { console.log("  (materiaux.json absent : contrôle des valeurs sauté)"); return; }
+  const M = JSON.parse(fs.readFileSync(chemin, "utf8")), mat = id => M.find(x => x.id === id);
+  assert.strictEqual(T.B3.valeur, mat("abs").masseVolumique); assert.strictEqual(T.B5.valeur, mat("abs").energieGrise);
+  assert.strictEqual(T.C3.valeur, mat("inox").masseVolumique); assert.strictEqual(T.C5.valeur, mat("inox").energieGrise);
+});
+
+t("corriger, item tableur : juste seulement si toutes les cases ont tous les points", () => {
+  const it = S.MODULE.find(m => m.id === "m_i2").items.find(i => i.type === "tableur");
+  const bon = { B3: "1,04", C3: "7,9", B5: "95", C5: "60", B4: "=B2*B3", C4: "=C2*C3", B6: "=B4*B5", C6: "=C4*C5", C7: "=C6/B6" };
+  assert.deepStrictEqual(Object.keys(bon).sort(), it.cases.slice().sort());
+  assert.strictEqual(S.corriger([it], { [it.id]: bon }).juste, true);
+  assert.strictEqual(S.corriger([it], { [it.id]: Object.assign({}, bon, { B4: "=24*1,04" }) }).juste, false);
+  assert.strictEqual(S.corriger([it], { [it.id]: Object.assign({}, bon, { B3: "1.04" }) }).juste, false);
+  assert.strictEqual(S.corriger([it], { [it.id]: {} }).juste, false);
+});
+
+t("appliquerModule : essais cumulés, réussite gardée, pur ; aller-retour par versFields", () => {
+  const e0 = toutOuvert(), copie = JSON.stringify(e0);
+  let e = S.appliquerModule(e0, "m_i2", false);
+  assert.strictEqual(JSON.stringify(e0), copie);
+  assert.deepStrictEqual(e.module.m_i2, { essais: 1, reussi: false, dernier: false });
+  e = S.appliquerModule(e, "m_i2", true);
+  e = S.appliquerModule(e, "m_i2", false);
+  assert.deepStrictEqual(e.module.m_i2, { essais: 3, reussi: true, dernier: false });
+  e.debut = 1700000000000;
+  assert.deepStrictEqual(S.depuisFields(S.versFields(e, 1700000060000)).module, e.module);
+  assert.deepStrictEqual(S.bilanModule(e), { reussis: ["m_i2"], tentes: ["m_i2"], total: 7 });
+});
+
 console.log(ok + " tests réussis");
