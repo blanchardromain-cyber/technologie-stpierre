@@ -4473,7 +4473,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-19a</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-24a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4493,6 +4493,7 @@ body.est-prof .prof-only{display:block}
             <option value="eau4e">P11 4e &mdash; Activit&eacute;s 1 et 2</option>
             <option value="eau34">P11 4e &mdash; Activit&eacute;s 3 et 4</option>
             <option value="eau56">P11 4e &mdash; Activit&eacute;s 5 et 6</option>
+            <option value="p11-syn">P11 4e &mdash; Synth&egrave;se finale</option>
             <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="p11-eval2">P11 4e &mdash; &Eacute;valuation n&deg;2 (ordinateur)</option>
             <option value="p11-eval2-ratt">P11 4e &mdash; &Eacute;valuation n&deg;2 (rattrapage)</option>
@@ -4949,6 +4950,22 @@ body.est-prof .prof-only{display:block}
         compl&egrave;te et correcte, avec ses sch&eacute;mas, identique pour tous les &eacute;l&egrave;ves.
       </p>
       <iframe id="eau4e-syn-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/synthese_eleve.html" title="Synthèse intermédiaire : concevoir un objet technique (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
+        loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — SYNTHÈSE FINALE (iframe : Niveau 4/P11 Eau ressource essentielle/synthese_p11_eleve.html) -->
+    <div id="pg-p11-syn" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Synth&egrave;se : l'eau, ressource essentielle (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        La synth&egrave;se de la s&eacute;quence, &agrave; <strong>gagner notion par notion</strong> : un d&eacute;fi, puis la notion se d&eacute;voile.
+        Ta carte m&eacute;moire montre tes niveaux, et l'entra&icirc;nement pr&eacute;pare l'&eacute;valuation n&deg;2.
+        Rien n'est not&eacute; : ton avancement part &agrave; ton professeur, pour qu'il voie o&ugrave; t'aider.
+      </p>
+      <iframe id="p11-syn-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/synthese_p11_eleve.html" title="P11 — Synthèse : l'eau, ressource essentielle (4e)"
         style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8"
         loading="lazy"></iframe>
     </div>
@@ -6575,6 +6592,7 @@ var SEQUENCES_DEF = [
   {id:"eau56", ordre:114, niveau:"4ème", titre:"P11 — Activités 5 et 6 — Pieuvre, cahier des charges et FAST", desc:"Le robinet automatique : pieuvre et type des fonctions, cahier des charges complété à partir d'une fiche technique, diagramme FAST, chaînes d'information et d'énergie. Vérification en deux essais, aides dys intégrées.", couleur:"#0288D1", code:"#akXuhxSL2qagwK+YEC9t17NOlfkuqh1oS1iprygySNQ=", open:true},
   {id:"eau56-cor", ordre:115, niveau:"4ème", titre:"P11 — Corrigé Activités 5 et 6", desc:"Corrigé détaillé des activités 5 et 6. Code d'accès professeur.", couleur:"var(--vt)", code:"#ljI4tRYBHYEctKhxkqUkNa/3+boMnfWYAlNgQRBJx+c=", open:true},
   {id:"eau4e-syn", ordre:116, niveau:"4ème", titre:"P11 — Synthèse intermédiaire — Concevoir un objet technique", desc:"La synthèse à conquérir : bête à cornes, pieuvre, cahier des charges et normes, un défi par notion, la définition se dévoile ensuite. Fiche imprimable complète avec ses schémas.", couleur:"#2E75B6", code:"#OcS3j3v3aYWmIvECda9NwiaoZYMk3IgvhWQwqK264V4=", open:true},
+  {id:"p11-syn", ordre:116.2, niveau:"4ème", titre:"P11 — Synthèse — L'eau, ressource essentielle", desc:"La synthèse à gagner : un défi par notion, la notion se dévoile ensuite. Carte mémoire de tes niveaux, entraînement à l'évaluation n°2. Aides dys intégrées.", couleur:"#1F4E79", code:"#5xE4MSzl/PJJG9XMUMvAzoX27wLK+lLDh2HF/u3yDjQ=", open:true},
   {id:"p11-entr-tab", ordre:116, niveau:"4ème", titre:"P11 — Entraînement tableur — La facture du club photo", desc:"Avant l'évaluation : lire une feuille de calcul, passer de la phrase à la formule, trouver l'erreur, recopier. Non noté, vérification immédiate. Aides dys intégrées.", couleur:"#0288D1", code:"", open:true},
   {id:"p11-eval1", ordre:117, niveau:"4ème", titre:"P11 — Évaluation n°1 — Le robot explorateur", desc:"Le besoin, le cahier des charges et le coût d'une fuite au tableur. Notée sur 20, corrigée automatiquement côté professeur. Aides dys intégrées.", couleur:"#5B34C7", code:"#sdsFTOAdPjNmd1yUlzBiMttqCiL2pA3BcTLlEyhPKzM=", open:true},
   {id:"p11-eval2", ordre:118, niveau:"4ème", titre:"P11 — Évaluation n°2 — Le matériau de la coque", desc:"Choisir le matériau de la coque du robot, son énergie grise au tableur, le cycle de vie. Partie sur ordinateur, 18 min, notée sur 20. Confort de lecture intégré.", couleur:"#5B34C7", code:"#8a+Gn1x039LzdajIWtoXSFwvJZNKqlTmLr6QTm0puA8=", open:true},
@@ -7105,6 +7123,14 @@ function goPage(pid) {
     var synIfr = document.getElementById("eau4e-syn-frame");
     if (synIfr) synIfr.src = synIfr.getAttribute("data-src");
   }
+  if (pid === "pg-p11-syn") {
+    // Identité de l'élève : envoi de son avancement au professeur et réglages dys.
+    try {
+      if (user) localStorage.setItem("p11-syn_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
+    } catch (e) {}
+    var p11sIfr = document.getElementById("p11-syn-frame");
+    if (p11sIfr) p11sIfr.src = p11sIfr.getAttribute("data-src");
+  }
   if (pid === "pg-eau34") {
     try {
       if (user) localStorage.setItem("eau34_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
@@ -7585,7 +7611,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
-        } else if (s.id === "eau4e-syn") {
+        } else if (s.id === "eau4e-syn" || s.id === "p11-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
         } else if (s.id === "eau34") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F6B0; Activit&eacute;s 3 et 4</span>';
@@ -7636,6 +7662,7 @@ function renderDash() {
       else if (s.id === "eau4e")     clickAction = "onclick=\"goPage('pg-eau4e')\"";
       else if (s.id === "eau4e-cor") clickAction = "onclick=\"goPage('pg-eau4e-cor')\"";
       else if (s.id === "eau4e-syn") clickAction = "onclick=\"goPage('pg-eau4e-syn')\"";
+      else if (s.id === "p11-syn")   clickAction = "onclick=\"goPage('pg-p11-syn')\"";
       else if (s.id === "eau34")     clickAction = "onclick=\"goPage('pg-eau34')\"";
       else if (s.id === "eau34-cor") clickAction = "onclick=\"goPage('pg-eau34-cor')\"";
       else if (s.id === "eau56")     clickAction = "onclick=\"goPage('pg-eau56')\"";
@@ -7722,6 +7749,7 @@ function tryUnlock() {
     else if (pendingSeq === "eau4e") goPage("pg-eau4e");
     else if (pendingSeq === "eau4e-cor") goPage("pg-eau4e-cor");
     else if (pendingSeq === "eau4e-syn") goPage("pg-eau4e-syn");
+    else if (pendingSeq === "p11-syn") goPage("pg-p11-syn");
     else if (pendingSeq === "eau34") goPage("pg-eau34");
     else if (pendingSeq === "eau34-cor") goPage("pg-eau34-cor");
     else if (pendingSeq === "eau56") goPage("pg-eau56");
@@ -8160,6 +8188,119 @@ function eau34Contient(texte, mots){
   if (!t) return false;
   for (var i=0;i<mots.length;i++) if (t.indexOf(mots[i]) >= 0) return true;
   return false;
+}
+
+/* ════ P11 4e — SYNTHÈSE FINALE (cap p11-syn) ════
+   Capsule non notée. La page élève envoie dans fields, en chaînes JSON : le meilleur niveau
+   de chaque notion (_niv), le dernier (_dernier), les tentatives (_essais), l'entraînement à
+   l'évaluation n°2 (_module.module[id].reussi) ; et en clair duree (minutes) et adapte
+   (« oui » / « non »). Ici, on ne fait qu'afficher. Une clé manquante ou illisible se lit
+   « absent » ; un objet vide veut dire « rien de fait », ce n'est pas la même chose. */
+/* aligné sur NOTIONS de synthese_p11_logique.js (identifiant, titre, même ordre) */
+var P11SYN_TITRES = [
+  ["n0",  "Les étapes de conception d'un objet technique"],
+  ["n1",  "Analyse du besoin"],
+  ["n2",  "Bête à cornes"],
+  ["n3",  "Contraintes"],
+  ["n4",  "Les normes"],
+  ["n5",  "Cahier des charges (Textuel)"],
+  ["n6",  "Pieuvre"],
+  ["n7",  "Cahier des Charges Technique ou Fonctionnel"],
+  ["n8",  "Conception de l'objet"],
+  ["n9",  "Chaîne d'information"],
+  ["n10", "Chaîne d'énergie"],
+  ["n11", "Le fonctionnement d'un objet"],
+  ["n12", "Le choix des matériaux"]
+];
+/* aligné sur MODULE de synthese_p11_logique.js (critère de chaque défi d'entraînement) */
+var P11SYN_CRITERES = [
+  ["m_p1", "P1 · Compléter un diagramme FAST"],
+  ["m_p2", "P2 · Compléter les deux chaînes et nommer les énergies"],
+  ["m_p3", "P3 · La chaîne d’énergie d’un objet qui se déplace"],
+  ["m_p4", "P4 · Des exigences aux critères du matériau"],
+  ["m_i1", "I1 · Choisir un matériau"],
+  ["m_i2", "I2 · Calculer avec un tableur"],
+  ["m_i3", "I3 · Énergie grise et cycle de vie"]
+];
+/* Pictogramme ET mot : le niveau ne repose jamais sur la couleur seule. */
+var P11SYN_NIVEAUX = {
+  acquis:   { picto: "✓", mot: "acquis",   coul: "#1E6B3B" },
+  en_cours: { picto: "◐", mot: "en cours", coul: "#C55A11" },
+  a_revoir: { picto: "↻", mot: "à revoir", coul: "#C0392B" }
+};
+var P11SYN_PAS_FAIT = { picto: "○", mot: "pas encore fait", coul: "#555" };
+
+function p11SynLire(sub) {
+  var f = sub && sub.fields && typeof sub.fields === "object" ? sub.fields : null;
+  function a(o, k) { return !!o && Object.prototype.hasOwnProperty.call(o, k); }
+  function objet(k) {
+    if (!a(f, k) || f[k] === null || f[k] === "") return null;
+    try { var v = JSON.parse(f[k]); return v && typeof v === "object" && !Array.isArray(v) ? v : null; } catch (e) { return null; }
+  }
+  var m = objet("_module");
+  return {
+    present: !!f,
+    niv: objet("_niv"), essais: objet("_essais"),
+    module: m && m.module && typeof m.module === "object" ? m.module : null,
+    duree: a(f, "duree") && f.duree !== null && String(f.duree) !== "" ? String(f.duree) : null,
+    adapte: a(f, "adapte") && (f.adapte === "oui" || f.adapte === "non") ? f.adapte : null
+  };
+}
+/* Niveau d'une notion, seulement s'il est l'un des trois connus (« constructor » ne passe pas). */
+function p11SynNiveau(lu, id) {
+  if (!lu.niv || !Object.prototype.hasOwnProperty.call(lu.niv, id)) return null;
+  var v = lu.niv[id];
+  return Object.prototype.hasOwnProperty.call(P11SYN_NIVEAUX, v) ? v : null;
+}
+/* « 8 acquis · 3 en cours · 2 à revoir » (+ « · n pas encore fait ») ; « niveaux absents » sinon. */
+function p11SynResume(lu) {
+  if (!lu.niv) return "niveaux absents";
+  var n = { acquis: 0, en_cours: 0, a_revoir: 0 }, i;
+  for (i = 0; i < P11SYN_TITRES.length; i++) { var v = p11SynNiveau(lu, P11SYN_TITRES[i][0]); if (v) n[v]++; }
+  var reste = P11SYN_TITRES.length - n.acquis - n.en_cours - n.a_revoir;
+  return n.acquis + " acquis · " + n.en_cours + " en cours · " + n.a_revoir + " à revoir"
+    + (reste ? " · " + reste + " pas encore fait" : "");
+}
+function buildP11SynModalHTML(sub) {
+  var esc = _ficheEsc, lu = p11SynLire(sub), i;
+  var html = '<div style="background:#DEEAF1;border:1px solid #9DC3E6;border-radius:6px;padding:8px 12px;font-size:13px;margin-bottom:10px">'
+    + '<strong>&#x1F9E9; ' + esc(sub && sub.ename || '') + '</strong> — Classe ' + esc(sub && sub.ecls || '')
+    + ' — <span style="color:#555">synthèse non notée</span></div>';
+  if (!lu.present) return html + '<em>Aucune donnée enregistrée (champs absents de la copie).</em>';
+  html += '<div style="font-size:13px;font-weight:700;color:#1F4E79;margin:4px 0 6px">Carte mémoire : ' + esc(p11SynResume(lu)) + '</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px">'
+    + '<thead><tr style="background:#1F4E79;color:#fff"><th style="padding:6px 9px;text-align:left">Notion</th>'
+    + '<th style="padding:6px 9px;text-align:left;width:150px">Niveau</th>'
+    + '<th style="padding:6px 9px;text-align:center;width:90px">Tentatives</th></tr></thead><tbody>';
+  for (i = 0; i < P11SYN_TITRES.length; i++) {
+    var id = P11SYN_TITRES[i][0], v = p11SynNiveau(lu, id);
+    var d = v ? P11SYN_NIVEAUX[v] : P11SYN_PAS_FAIT;
+    var niveau = lu.niv ? '<span style="color:' + d.coul + ';font-weight:700">' + esc(d.picto) + ' ' + esc(d.mot) + '</span>'
+                        : '<span style="color:#555;font-style:italic">absent</span>';
+    var essais = !lu.essais ? '<span style="color:#555;font-style:italic">absent</span>'
+               : Object.prototype.hasOwnProperty.call(lu.essais, id) ? esc(Number(lu.essais[id]) || 0) : "0";
+    html += '<tr style="background:' + (i % 2 ? "#fff" : "#f7f9fb") + ';border-bottom:1px solid #e3e8ee">'
+      + '<td style="padding:5px 9px">' + esc(P11SYN_TITRES[i][1]) + '</td>'
+      + '<td style="padding:5px 9px">' + niveau + '</td>'
+      + '<td style="padding:5px 9px;text-align:center;font-variant-numeric:tabular-nums">' + essais + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  html += '<div style="font-size:12.5px;margin-bottom:10px;line-height:1.7">'
+    + '<strong>Durée :</strong> ' + (lu.duree === null ? '<em>absente</em>' : esc(lu.duree) + ' min')
+    + ' &nbsp;·&nbsp; <strong>Mode adapté :</strong> ' + (lu.adapte === null ? '<em>absent</em>' : esc(lu.adapte)) + '</div>';
+  html += '<div style="font-weight:700;color:#1F4E79;font-size:12px;margin:8px 0 4px">ENTRAÎNEMENT À L\'ÉVALUATION N°2</div>';
+  if (!lu.module) return html + '<div style="font-size:12.5px"><em>absent</em></div>';
+  var reussis = 0, lignes = "";
+  for (i = 0; i < P11SYN_CRITERES.length; i++) {
+    var mid = P11SYN_CRITERES[i][0];
+    var m = Object.prototype.hasOwnProperty.call(lu.module, mid) && lu.module[mid] && typeof lu.module[mid] === "object" ? lu.module[mid] : null;
+    var etat = !m || !(Number(m.essais) > 0) ? "○ pas encore essayé" : m.reussi === true ? "✓ réussi" : "✗ essayé, pas encore réussi";
+    if (m && m.reussi === true) reussis++;
+    lignes += '<li>' + esc(P11SYN_CRITERES[i][1]) + ' — ' + esc(etat) + (m && Number(m.essais) > 0 ? ' (' + esc(Number(m.essais)) + ' essai' + (Number(m.essais) > 1 ? 's' : '') + ')' : '') + '</li>';
+  }
+  html += '<div style="font-size:12.5px">' + reussis + '/' + P11SYN_CRITERES.length + ' critères réussis</div>'
+    + '<ul style="font-size:12.5px;margin:4px 0 0 18px;padding:0;line-height:1.6">' + lignes + '</ul>';
+  return html;
 }
 
 /* ════ P11 4e — ACTIVITÉS 5 ET 6 (cap eau56) ════
@@ -11087,6 +11228,9 @@ function renderSubs() {
       } else if (s.cap === "eau34") {
         var e3Done = (s.score !== undefined ? s.score : 0), e3Tot = (s.qcmTot || 26);
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F6B0; ' + e3Done + '/' + e3Tot + ' réponses</span>';
+      } else if (s.cap === "p11-syn") {
+        /* Non notée : ni score ni total, le résumé des niveaux de la carte mémoire. */
+        sc = '<span style="background:#DEEAF1;color:#1F4E79;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F9E9; ' + _ficheEsc(p11SynResume(p11SynLire(s))) + '</span>';
       } else if (s.cap === "eau56") {
         var e5Done = Number(s.score !== undefined ? s.score : 0) || 0, e5Tot = Number(s.qcmTot || 28) || 0;
         sc = '<span style="background:#D8F0FB;color:#0277BD;border-radius:6px;padding:3px 8px;font-size:12px;font-weight:700">&#x1F419; ' + e5Done + '/' + e5Tot + ' réponses</span>';
@@ -11494,6 +11638,10 @@ function openModal(sid) {
     if (mh3) mh3.textContent = "P11 4e — Activités 3 et 4";
     document.getElementById("mrep").innerHTML = buildEau34ModalHTML(sub);
     document.getElementById("mscore").textContent = "Activités 3 et 4 — " + (sub.score!==undefined?sub.score:0) + "/" + (sub.qcmTot||26) + " réponses — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
+  } else if (sub.cap === "p11-syn") {
+    if (mh3) mh3.textContent = "P11 4e — Synthèse finale";
+    document.getElementById("mrep").innerHTML = buildP11SynModalHTML(sub);
+    document.getElementById("mscore").textContent = "Synthèse non notée — " + p11SynResume(p11SynLire(sub)) + " — Statut : " + (FICHE_STATUTS[sub.status] || sub.status);
   } else if (sub.cap === "eau56") {
     if (mh3) mh3.textContent = "P11 4e — Activités 5 et 6";
     document.getElementById("mrep").innerHTML = buildEau56ModalHTML(sub);
@@ -11580,6 +11728,7 @@ function printModalSub() {
   else if (sub.cap === "eau4e") answersHTML = buildEauModalHTML(sub);
   else if (sub.cap === "eau34") answersHTML = buildEau34ModalHTML(sub);
   else if (sub.cap === "eau56") answersHTML = buildEau56ModalHTML(sub);
+  else if (sub.cap === "p11-syn") answersHTML = buildP11SynModalHTML(sub);
   else if (sub.cap === "batiment5e") answersHTML = buildBatimentModalHTML(sub);
   else if (sub.cap === "reseau5e-org") answersHTML = buildReseauOrgModalHTML(sub);
   else if (sub.cap === "reseau5e") answersHTML = buildReseauModalHTML(sub);
@@ -11673,6 +11822,7 @@ var FICHE_TITRES = {
   "p12-cor-a2":"P12 — Corrigé A2", "reseau5e":"Réseau 5e — Manipulation (binôme)",
   "filius5e":"Filius 5e — Simulation réseau (binôme)", "maison5e":"Maison 5e — Mon réseau à la maison",
   "eau4e":"P11 4e — Activités 1 et 2", "eau34":"P11 4e — Activités 3 et 4", "eau56":"P11 4e — Activités 5 et 6",
+  "p11-syn":"P11 4e — Synthèse finale",
   "reseau5e-org":"P2 5e — Organiser un réseau numérique",
   "reseau5e-ev1":"P2 5e — Évaluation n°1",
   "reseau5e-exo":"P2 5e — Exercices réseau",
@@ -11727,6 +11877,7 @@ function ficheScoreTexte(sub) {
     var q3 = sub.fields && String(sub.fields["ex2-q3"]||"").trim() === "54";
     return n2.done + "/" + n2.total + " champs" + (q3 ? " (Q3 ✓)" : "") + st;
   }
+  if (sub.cap === "p11-syn") return "Synthèse non notée — " + p11SynResume(p11SynLire(sub)) + st;
   var totaux = { eau4e:49, eau34:26, eau56:29, reseau5e:24, filius5e:21, maison5e:16 };
   if (totaux[sub.cap]) return (sub.score !== undefined ? sub.score : 0) + "/" + (sub.qcmTot || totaux[sub.cap]) + " réponses" + st;
   if (sub.adjustedScore !== undefined) return "Note : " + p11x1Fmt(sub.adjustedScore) + "/" + (sub.bareme || sub.qcmTot || 20) + st;
@@ -11745,6 +11896,7 @@ function ficheReponsesHTML(sub) {
   if (sub.cap === "eau4e")           return buildEauModalHTML(sub);
   if (sub.cap === "eau34")           return buildEau34ModalHTML(sub);
   if (sub.cap === "eau56")           return buildEau56ModalHTML(sub);
+  if (sub.cap === "p11-syn")         return buildP11SynModalHTML(sub);
   if (sub.cap === "batiment5e")      return buildBatimentModalHTML(sub);
   /* Copie imprimée (remise à l'élève) : ✅ / ❌ mais jamais la réponse attendue. */
   if (sub.cap === "reseau5e-org")    return buildReseauOrgModalHTML(sub, true);
@@ -12186,6 +12338,17 @@ function _buildCapsuleCSV(cap, filtered) {
         var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
         var exCols = exKeys.map(function(k){ return f[k] || "—"; });
         return base.concat(exCols).concat([f.bilan || "", f.hypothese || "", f.retiens || ""]);
+      })
+    };
+  }
+  if (cap === "p11-syn") {
+    /* Non notée : le résumé des niveaux, la durée et le mode adapté. */
+    return {
+      headers: ["Eleve","Classe","Date","Statut","niveaux","Duree (min)","Adapte"],
+      rows: filtered.map(function (x) {
+        var lu = p11SynLire(x);
+        return [x.ename, x.ecls, dateOf(x), x.status, p11SynResume(lu),
+                lu.duree === null ? "absent" : lu.duree, lu.adapte === null ? "absent" : lu.adapte];
       })
     };
   }
