@@ -51,6 +51,8 @@
   .hbadge{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#B3E5FC;font-weight:600}
   header h1{font-size:1.2rem;font-weight:700;line-height:1.25}
   .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .envoi-etat{flex-basis:100%;max-width:34rem;margin:0;font-size:.78rem;line-height:1.4;color:#D6E6F4}
+  .envoi-etat.attente{color:#FFE082}
   .fld{display:flex;flex-direction:column;gap:3px}
   .fld label{font-size:.7rem;text-transform:uppercase;letter-spacing:1.2px;color:#D6E6F4;font-weight:600}
   .fld input{background:#fff;border:2px solid transparent;border-radius:8px;
@@ -406,6 +408,7 @@
       <div class="fld"><label for="inp-classe">Classe</label>
         <div class="classe-row"><span class="classe-pfx">4</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
       </div>
+      <p class="envoi-etat" id="envoi-etat" hidden></p>
     </div>
   </div>
 </header>
@@ -1124,12 +1127,20 @@
    Logique pure dans synthese_p11_logique.js (window.P11SYN) ; ici :
    affichage, défis, révélation, modes adapté et projection, voix.
    Les 13 cartes sont jouables, dans l'ordre choisi par l'élève.
-   Aucun envoi au classeur dans cette version.
+   Envoi au classeur (upsert) à chaque carte terminée, à chaque défi
+   d'entraînement et à l'ouverture de la carte mémoire ; reprise au
+   chargement depuis la copie distante si elle est plus avancée.
    ════════════════════════════════════════════════════════════════════ */
 "use strict";
 
 var P = window.P11SYN;
-var CLE_IDENT = "p11-syn_prefill";
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var CAP_ID      = "p11-syn";
+var CAP_LABEL   = "P11 4e — Synthèse finale (la synthèse se gagne)";
+var PREFILL_KEY = "p11-syn_prefill";
+var QUEUE_KEY   = "p11-syn_offline_queue";
+var CLE_IDENT = PREFILL_KEY;
 var JOUABLES = {};
 P.NOTIONS.forEach(function (n) { JOUABLES[n.id] = true; });
 var JALONS = ["Besoin", "Contraintes", "Cahier des charges", "Analyse fonctionnelle", "Chaînes"];
@@ -1755,6 +1766,7 @@ function verifier() {
   etat = P.appliquer(etat, id, r.juste);
   sauver();
   var c = etat.cartes[id], seriefinie = c.serie === 0;
+  if (seriefinie) envoyer();   /* carte terminée : réussite ou 3e échec */
   DEFI.fini = true;
   DEFI.verdicts = {};
   DEFI.items.forEach(function (it) { DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0; });
@@ -1791,6 +1803,7 @@ function verifierModule(r) {
   var id = DEFI.id, avant = etat.module[id] && etat.module[id].reussi, total = null, max = 0;
   etat = P.appliquerModule(etat, id, r.juste);
   sauver();
+  envoyer();
   DEFI.fini = true; DEFI.verdicts = {};
   DEFI.items.forEach(function (it) {
     DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0;
@@ -1963,6 +1976,7 @@ function afficherMemoire(mode) {
   $("memoire").hidden = false;
   majMemoire();
   if (mode === "silencieux") return;
+  envoyer();
   $("memoire-titre").focus();
   if (mode === "auto") {
     direVivant((DERNIER_MSG.t ? DERNIER_MSG.t + " " : "") + "Les 13 cartes sont ouvertes : ta carte mémoire s'affiche en bas de la page. " + resumeMemoire()
@@ -2449,6 +2463,248 @@ function calerBarres() {
   if (h && b) document.documentElement.style.setProperty("--h-barres", (h.offsetHeight + b.offsetHeight) + "px");
 }
 
+/* ════════════ ENVOI AU PROFESSEUR, VERROU, REPRISE ════════════
+   Socle repris d'eau56_eleve.html, mêmes noms : urlEcriture, postSub, queueSub /
+   unqueueSub, flushQueue (rejeu de la file), copieLocaleVerrouillee, envoiVerrouille,
+   voileVerrou, lecture « own ». Le classeur ne garde que les colonnes de COLUMNS et,
+   de la copie, seulement `fields` (fields_json) : tout l'état y va (P.versFields).
+   Jamais d'envoi sans identifiant d'élève (eid vide). */
+var USER = { id: idEleve, p: ident && ident.p || "", n: ident && ident.n || "", c: ident && ident.c || "" };
+var VERROU = false;
+function slug(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+function identiteSaisie() {
+  var p = $("inp-prenom").value.trim(), n = $("inp-nom").value.trim(), c = $("inp-classe").value.trim().toUpperCase();
+  return { ename: (p + " " + n).trim(), ecls: c ? "4" + c : (USER.c || ""), complete: !!(p && n && c) };
+}
+/* Compte du site : son identifiant. Sinon prénom + nom + classe saisis, comme eau56 ; sinon "". */
+function eidCourant() {
+  if (USER.id) return USER.id;
+  var s = identiteSaisie();
+  if (!s.complete) return "";
+  return CAP_ID + "." + (slug(s.ecls) || "4x") + "." + (slug(s.ename) || "eleve");
+}
+/* Règle 3 : une cellule qui commence par = + @ deviendrait une formule. */
+function sanitizeForSheet(sub) {
+  try {
+    var c = JSON.parse(JSON.stringify(sub));
+    ["open", "caplbl", "ename", "ecls"].forEach(function (k) {
+      if (typeof c[k] === "string" && /^[=+@]/.test(c[k])) c[k] = " " + c[k];
+    });
+    return c;
+  } catch (e) { return sub; }
+}
+function montrerEtatEnvoi(texte, ton) {
+  var z = $("envoi-etat");
+  z.textContent = texte; z.className = "envoi-etat" + (ton ? " " + ton : ""); z.hidden = !texte;
+}
+
+/* ── Verrou de consultation (champ « locked », posé par le professeur) ── */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked === true || sub.locked === "TRUE" || sub.locked === "true"); }
+function copieLocaleVerrouillee(){
+  if (!USER.id) return false;
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    for (var i = 0; i < subs.length; i++)
+      if (subs[i] && subs[i].eid === USER.id && subs[i].cap === CAP_ID && envoiVerrouille(subs[i])) return true;
+  } catch(e){}
+  return false;
+}
+/* Page servie en local : lecture sur le déploiement de TEST s'il est désigné. */
+function urlLecture(){
+  try {
+    var hn = (location.hostname || "").toLowerCase();
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+      var u = localStorage.getItem("apps_script_url_test") || "";
+      if (/^https:\/\/script\.google\.com\//.test(u)) return u;
+    }
+  } catch(e){}
+  return APPS_SCRIPT_URL;
+}
+/* Copies d'un élève : action « own » (une copie verrouillée revient sans son contenu),
+   repli sur « list » tant que le serveur n'est pas à jour, sauf si sansRepli. */
+function lireEnvois(eid, onDone, sansRepli){
+  if (!eid){ onDone(null); return; }
+  var base = urlLecture(), q = "&secret=" + encodeURIComponent(SYNC_SECRET) + "&t=" + Date.now();
+  function lire(url, suite){ fetch(url).then(function(r){ return r.json(); }).then(suite).catch(function(){ onDone(null); }); }
+  lire(base + "?action=own&eid=" + encodeURIComponent(eid) + q, function(d){
+    if (d && d.ok && d.subs){ onDone(d.subs); return; }
+    if (d && d.error === "unknown_action" && !sansRepli){
+      lire(base + "?action=list" + q, function(d2){ onDone(d2 && d2.ok && d2.subs ? d2.subs : null); });
+      return;
+    }
+    onDone(null);
+  });
+}
+function voileVerrou(){
+  if (document.getElementById("voile-verrou")) return;
+  var v = document.createElement("div");
+  v.id = "voile-verrou";
+  v.setAttribute("role", "alert");
+  v.style.cssText = "position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent = MSG_VERROU;
+  document.body.appendChild(v);
+}
+function verrouiller() { VERROU = true; voileVerrou(); }
+
+/* ── Reprise : la copie distante remplace l'état local si elle est STRICTEMENT plus avancée
+   (plus de cartes ouvertes, puis plus de tentatives cumulées : P.plusAvance). ── */
+function reprendre(sub) {
+  if (!sub || !sub.fields || typeof sub.fields !== "object") return;
+  var distant = P.depuisFields(sub.fields);
+  if (!P.plusAvance(distant, etat)) return;
+  var adapteAvant = !!etat.adapte;
+  distant.projection = !!etat.projection;          /* préférence d'affichage de ce poste */
+  if (etat.graine) distant.graine = etat.graine;
+  etat = distant;
+  sauver();
+  if (adapteAvant !== !!etat.adapte) {
+    document.documentElement.classList.toggle("adapte", !!etat.adapte);
+    $("btn-adapte").setAttribute("aria-pressed", String(!!etat.adapte));
+    calerBarres(); redessinerSchemas(true);
+  }
+  if (CARTE_ACTIVE && !estModule(CARTE_ACTIVE)) {
+    var c = etat.cartes[CARTE_ACTIVE];
+    if (c && c.ouverte) reveler(CARTE_ACTIVE, false);
+    else if (DEFI && DEFI.id === CARTE_ACTIVE && !DEFI.fini) rendreDefi(CARTE_ACTIVE);
+  }
+  majProgression(false);
+  if (toutesOuvertes()) { MEMOIRE_AUTO = true; afficherMemoire("silencieux"); }
+  var d = new Date(sub.dateISO || Date.now());
+  montrerEtatEnvoi("Ton avancement a été récupéré (enregistré le " + d.toLocaleDateString("fr-FR") + ").", "");
+}
+/* Au chargement, pour l'élève identifié par son compte uniquement : verrou, puis reprise. */
+function controlerVerrou(){
+  if (!USER.id) return;
+  if (copieLocaleVerrouillee()){ verrouiller(); return; }
+  lireEnvois(USER.id, function(liste){
+    if (!liste) return;
+    var miens = liste.filter(function (x) { return x && x.eid === USER.id && x.cap === CAP_ID; });
+    for (var i = 0; i < miens.length; i++) if (envoiVerrouille(miens[i])){ verrouiller(); return; }
+    miens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    reprendre(miens[0]);
+  }, true);
+}
+
+/* ── Envoi ── */
+function hasUrl(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf("VOTRE_URL") < 0; }
+function queueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    q.push(sub);
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function unqueueSub(sub){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    q = q.filter(function(x){ return x.eid !== sub.eid; });
+    localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+  } catch(e){}
+}
+function storeLocalSub(sub){
+  try {
+    var subs = JSON.parse(localStorage.getItem("subs") || "[]");
+    subs = subs.filter(function(s){ return !(s.eid === sub.eid && s.cap === sub.cap); });
+    subs.push(sub);
+    localStorage.setItem("subs", JSON.stringify(subs));
+  } catch(e){}
+}
+/* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production.
+   Le backend fait un upsert sur (eid + cap) : une soumission de test faite en local
+   sous le nom d'un élève réel écraserait sa vraie copie, sans aucun signal (no-cors).
+   Seul un déploiement de TEST, branché sur une copie du classeur et désigné par
+   localStorage.apps_script_url_test, débloque l'écriture. "" = envoi refusé. */
+function urlEcriture(){
+  var hn = (location.hostname || "").toLowerCase();
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  try {
+    var u = localStorage.getItem("apps_script_url_test") || "";
+    if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
+  } catch(e){}
+  return "";
+}
+function refuserEcritureLocale(){
+  try {
+    console.warn("[capsule] Page servie en local (" + (location.hostname || "fichier") +
+      ") : l'envoi vers le classeur de production a été bloqué. Le travail reste en file locale.");
+  } catch(e){}
+}
+function postSub(sub, onDone){
+  queueSub(sub);
+  var cible = urlEcriture();
+  if (!cible){ refuserEcritureLocale(); if (onDone) onDone(false); return; }
+  if (!hasUrl()){ if (onDone) onDone(false); return; }
+  try {
+    fetch(cible, {
+      method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body: JSON.stringify({ secret: SYNC_SECRET, sub: sub })
+    }).then(function(){ unqueueSub(sub); if (onDone) onDone(true); })
+      .catch(function(){ if (onDone) onDone(false); });
+  } catch(e){ if (onDone) onDone(false); }
+}
+function flushQueue(){
+  try {
+    var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+    if (!q.length || !hasUrl() || !urlEcriture()) return;
+    q.forEach(function(sub){ postSub(sub); });
+  } catch(e){}
+}
+/* Résumé lisible pour la page professeur ; il commence par « — » (règle 3). */
+function resumeOuvert() {
+  var m = P.memoire(etat), cpt = { acquis: 0, en_cours: 0, a_revoir: 0 }, ouvertes = 0, b = P.bilanModule(etat);
+  P.NOTIONS.forEach(function (n) {
+    if (m.niveaux[n.id]) cpt[m.niveaux[n.id]]++;
+    if (etat.cartes[n.id] && etat.cartes[n.id].ouverte) ouvertes++;
+  });
+  return "— Synthèse P11 —\n" + ouvertes + "/" + P.NOTIONS.length + " cartes ouvertes : " + cpt.acquis + " acquis, "
+    + cpt.en_cours + " en cours, " + cpt.a_revoir + " à revoir.\nEntraînement éval n°2 : "
+    + b.reussis.length + "/" + b.total + " critères réussis (" + b.tentes.length + " essayés).";
+}
+function makeSub() {
+  var s = identiteSaisie(), ename = USER.id ? ((USER.p + " " + USER.n).trim() || s.ename) : s.ename;
+  var maintenant = new Date();
+  return sanitizeForSheet({
+    id: maintenant.getTime(),
+    eid: eidCourant(),
+    ename: ename || "Élève",
+    ecls: USER.id && USER.c ? String(USER.c) : s.ecls,
+    cap: CAP_ID,
+    caplbl: CAP_LABEL,
+    open: resumeOuvert(),
+    fields: P.versFields(etat, maintenant.getTime()),
+    date: maintenant.toLocaleDateString("fr-FR"),
+    dateISO: maintenant.toISOString(),
+    status: "pending"
+  });
+}
+/* Upsert silencieux : aucun message bloquant, le travail reste en file si le réseau manque. */
+function envoyer() {
+  if (VERROU || copieLocaleVerrouillee()) return;
+  if (!eidCourant()) {
+    montrerEtatEnvoi("Écris ton prénom, ton nom et ta classe en haut de la page : ton avancement pourra alors partir à ton professeur.", "attente");
+    return;
+  }
+  var sub = makeSub();
+  if (!sub.eid) return;
+  storeLocalSub(sub);
+  try { if (window.parent && window.parent !== window && window.parent.renderDash) window.parent.renderDash(); } catch(e){}
+  postSub(sub, function (ok) {
+    var h = new Date();
+    montrerEtatEnvoi(ok
+      ? "Avancement transmis à ton professeur à " + h.getHours() + " h " + ("0" + h.getMinutes()).slice(-2) + "."
+      : "Avancement gardé sur cet ordinateur : il partira tout seul dès que possible.", ok ? "" : "attente");
+  });
+}
+function avanceeEnCours() {
+  return Object.keys(etat.cartes).length > 0 || Object.keys(etat.module || {}).length > 0;
+}
+
 /* ── Démarrage ── */
 function demarrer() {
   construireCartes();
@@ -2458,7 +2714,11 @@ function demarrer() {
   var d = new Date();
   $("papier-date").textContent = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
   $("mp-date").textContent = $("papier-date").textContent;
-  ["inp-prenom", "inp-nom", "inp-classe"].forEach(function (i) { $(i).addEventListener("input", majEntetePapier); });
+  ["inp-prenom", "inp-nom", "inp-classe"].forEach(function (i) {
+    $(i).addEventListener("input", majEntetePapier);
+    /* identité saisie après coup (capsule ouverte hors du site) : l'avancement part dès qu'elle est complète */
+    if (!USER.id) $(i).addEventListener("change", function () { if (eidCourant() && avanceeEnCours()) envoyer(); });
+  });
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-lire]"), function (b) { boutonLire(b); });
   initVoix();
@@ -2506,6 +2766,11 @@ function demarrer() {
   window.addEventListener("load", calerBarres);   /* après l'ajout des boutons des modules dys */
   /* une fois les polices chargées, les mesures des schémas sont exactes */
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { redessinerSchemas(true); });
+
+  /* Envoi : verrou et reprise depuis le classeur, puis rejeu de la file (au démarrage et au retour du réseau). */
+  controlerVerrou();
+  flushQueue();
+  window.addEventListener("online", flushQueue);
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
 else demarrer();
