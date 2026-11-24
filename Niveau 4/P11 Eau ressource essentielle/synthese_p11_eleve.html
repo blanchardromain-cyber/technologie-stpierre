@@ -248,6 +248,28 @@
 
   .entete-papier{display:none}
 
+  /* ═══ CARTE MÉMOIRE : bilan de fin de synthèse ═══ */
+  .memoire{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:2px solid var(--eau);padding:18px 20px 22px;margin-top:30px}
+  .memoire h2.partie{margin-top:0}
+  .memoire h2:focus{outline:none}
+  .memoire h2:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+  .memoire h3{font-size:1.05em;color:var(--eaud);margin:22px 0 8px}
+  .memoire .bilan{font-weight:600;margin:8px 0 12px}
+  .memoire table.tab th[scope="row"]{background:#fff;color:var(--tx);font-weight:600}
+  .niv{display:inline-block;font-size:.85em;font-weight:700;white-space:nowrap;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor}
+  .retrav{list-style:none;display:grid;gap:10px}
+  .retrav li{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;background:var(--gr);border-radius:10px;padding:10px 14px}
+  .retrav .rt-txt{flex:1 1 16em;min-width:0}
+  .retrav .rt-renvoi{display:block;color:var(--td);font-size:.92em}
+  .memoire .legende{margin-top:14px}
+  html.projection .memoire{border:3px solid #000;box-shadow:none}
+  .rv-mob{display:none}
+  @media (max-width:600px){
+    .memoire{padding:14px 12px 18px}
+    .memoire .col-renvoi{display:none}
+    .memoire .rv-mob{display:block;font-weight:400;color:var(--td);font-size:.9em}
+  }
+
   /* Barres collantes seulement sur grand écran : sur téléphone, elles mangeraient la page. */
   @media (min-width:1200px) and (min-height:820px){
     html:not(.projection) header{position:sticky;top:0}
@@ -298,7 +320,7 @@
     .entete-papier{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
       border-bottom:2.5pt solid #01579B;padding-bottom:5pt;margin-bottom:8pt}
     .entete-papier .sur{font-size:8pt;letter-spacing:1.4pt;text-transform:uppercase;color:#0277BD;font-weight:700}
-    .entete-papier h1{font-size:15pt;color:#01579B;line-height:1.2}
+    .entete-papier h1,.entete-papier .titre{font-size:15pt;font-weight:700;color:#01579B;line-height:1.2}
     .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
     .entete-papier .nom{font-weight:700;color:#1A202C;font-size:10pt}
     .cn{box-shadow:none;border:none;break-inside:auto}
@@ -311,6 +333,23 @@
     .gloss{padding:0;margin:0}
     .schema svg{width:100%;height:auto}
     figure.fast,figure.schema-fig,.retiens,.mot-savant,.defbloc,table.tab{break-inside:avoid}
+    /* La carte mémoire de l'élève : toujours imprimée, sur sa propre page, avec son en-tête nom / classe / date */
+    .memoire,.memoire[hidden]{display:block!important;break-before:page;border:none;box-shadow:none;padding:0;margin:0}
+    .memoire h2.partie{display:none}
+    .memoire .btn{display:none!important}
+    .memoire h3,.cn h3,.revele h4,h2.partie{break-after:avoid}
+    .cn-tete{break-after:avoid}
+    .memoire{font-size:9.5pt;line-height:1.35}
+    .memoire table.tab{margin:4pt 0}
+    .memoire table.tab th,.memoire table.tab td{padding:2.5pt 6pt}
+    .memoire h3{margin:10pt 0 4pt}
+    .memoire .bilan{margin:4pt 0 6pt}
+    .retrav{gap:4pt}
+    .retrav li{break-inside:avoid;background:none;border:1pt solid #999;padding:3pt 8pt;gap:2pt 10pt}
+    .memoire .entete-papier{margin-bottom:12pt}
+    .niv{padding:1pt 6pt}
+    .memoire .col-renvoi{display:table-cell!important}
+    .memoire .rv-mob{display:none!important}
   }
 </style>
 <script src="synthese_p11_logique.js"></script>
@@ -351,6 +390,7 @@
     <ol class="jalons" id="jalons" aria-label="Progression en 5 jalons"></ol>
     <button type="button" class="toolbtn" id="btn-adapte" aria-pressed="false">Mode adapté</button>
     <button type="button" class="toolbtn" id="btn-projection" aria-pressed="false">Projection</button>
+    <button type="button" class="toolbtn" id="btn-memoire" aria-controls="memoire">Ma carte mémoire</button>
     <button type="button" class="toolbtn" id="btn-imprimer"><span aria-hidden="true" data-nolecture>&#x1F5A8;&#xFE0F; </span>Imprimer</button>
   </div>
 </div>
@@ -995,6 +1035,33 @@
 
   </div>
 
+  <!-- ════════════════ CARTE MÉMOIRE : niveau par notion et ce qu'il reste à retravailler ════════════════ -->
+  <section class="memoire" id="memoire" aria-labelledby="memoire-titre" hidden>
+    <div class="entete-papier">
+      <div>
+        <div class="sur">Technologie · 4<sup>e</sup> · P11 · Synthèse</div>
+        <div class="titre">Ma carte mémoire</div>
+      </div>
+      <div class="droite">
+        <div class="nom" id="mp-nom">Nom :</div>
+        <div id="mp-date"></div>
+      </div>
+    </div>
+    <h2 class="partie" id="memoire-titre" tabindex="-1">Ma carte mémoire</h2>
+    <p id="memoire-bilan" class="bilan"></p>
+    <div class="tab-wrap"><table class="tab">
+      <caption class="vh">Mon niveau pour chacune des 13 notions de la synthèse</caption>
+      <thead><tr><th scope="col">Notion</th><th scope="col">Mon niveau</th><th scope="col" class="col-renvoi">Où la revoir</th></tr></thead>
+      <tbody id="memoire-corps"></tbody>
+    </table></div>
+    <h3 id="memoire-retravailler-titre">Ce que je dois retravailler</h3>
+    <div id="memoire-retravailler"></div>
+    <p class="src legende"><b>Acquis</b> : juste du premier coup. <b>En cours</b> : juste après un indice. <b>À revoir</b> : la notion s'est ouverte après trois essais. Tu peux rejouer un défi à tout moment pour progresser.</p>
+    <div class="actions-carte">
+      <button type="button" class="btn" id="memoire-masquer">Masquer ma carte mémoire</button>
+    </div>
+  </section>
+
   <!-- Zone de rétroaction unique lue par les lecteurs d’écran, hors des cartes : rien ne se perd quand
        une carte se replie. Le même message s’affiche dans la carte active (.retour), sans recouvrir la page. -->
   <div id="vivant" class="vh" role="status" aria-live="polite"></div>
@@ -1089,6 +1156,7 @@ function majEntetePapier() {
   var p = $("inp-prenom").value.trim(), n = $("inp-nom").value.trim(), c = $("inp-classe").value.trim().toUpperCase();
   var qui = (p + " " + n).trim();
   $("papier-nom").textContent = qui ? qui + (c ? "  ·  4" + c : "") : "Nom :               Classe :";
+  $("mp-nom").textContent = $("papier-nom").textContent;
 }
 
 /* ── Voix (Web Speech API, voix française seulement) ── */
@@ -1153,12 +1221,18 @@ function boutonLire(bloc, texte) {
 }
 
 /* ── Rétroaction : une seule zone aria-live ── */
-function annoncer(texte, ton) {
-  var v = $("vivant"), r = CARTE_ACTIVE ? $("retour-" + CARTE_ACTIVE) : null;
-  if (r) { r.className = "retour" + (ton ? " " + ton : ""); r.textContent = texte; }
+var DERNIER_MSG = { t: "", ton: "" };
+function direVivant(texte) {
+  var v = $("vivant");
   v.textContent = "";
   /* vider puis écrire : le lecteur d'écran annonce même un message identique */
   setTimeout(function () { v.textContent = texte; }, 30);
+}
+function annoncer(texte, ton) {
+  var r = CARTE_ACTIVE ? $("retour-" + CARTE_ACTIVE) : null;
+  DERNIER_MSG = { t: texte, ton: ton || "" };
+  if (r) { r.className = "retour" + (ton ? " " + ton : ""); r.textContent = texte; }
+  direVivant(texte);
 }
 
 /* ── Cartes : toutes écrites dans la page (textes de la synthèse vérifiés hors ligne) ;
@@ -1189,6 +1263,7 @@ function majProgression(anime) {
     svg.style.setProperty("--gx", pt.x + "px"); svg.style.setProperty("--gy", pt.y + "px");
   } catch (e) {}
   svg.style.setProperty("--niv", String(ouvertes / total));
+  majMemoire();
   for (var j = 1; j <= 5; j++) {
     var ids = P.NOTIONS.filter(function (n) { return n.jalon === j; });
     var fait = ids.every(function (n) { return etat.cartes[n.id] && etat.cartes[n.id].ouverte; });
@@ -1597,6 +1672,84 @@ function reveler(id, anime) {
   majProgression(anime);
   Array.prototype.forEach.call(rv.querySelectorAll(".schema"), function (c) { dessinerSchema(c, anime); });
   if (anime) { var h = $("revele-" + id + "-titre"); if (h) h.focus(); }
+  /* Treizième carte ouverte : la carte mémoire apparaît (une seule fois par visite). */
+  if (anime && !MEMOIRE_AUTO && toutesOuvertes()) { MEMOIRE_AUTO = true; afficherMemoire("auto"); }
+}
+
+/* ── Carte mémoire : un niveau par notion (texte + pictogramme), puis ce qu'il faut retravailler ── */
+var MEMOIRE_AUTO = false;
+var PICTOS = { acquis: "✓", en_cours: "◐", a_revoir: "↻" };
+function toutesOuvertes() {
+  return P.NOTIONS.every(function (n) { return etat.cartes[n.id] && etat.cartes[n.id].ouverte; });
+}
+/* « l'activité 6 (le diagramme FAST) » devient « Activité 6 — le diagramme FAST » */
+function renvoiCourt(code) {
+  var r = RENVOIS[code];
+  return r ? r.replace(/^l['’]a/, "A").replace(" (", " — ").replace(/\)$/, "") : code;
+}
+function renvoiActivites(n) { return n.activites.length ? n.activites.map(renvoiCourt).join(" ; ") : "Toutes les activités"; }
+function pastilleNiveau(niv) {
+  var s = el("span", { class: "niv etat-" + (niv || "gagner") });
+  s.appendChild(el("span", { "aria-hidden": "true", "data-nolecture": "" }, (niv ? PICTOS[niv] : "○") + " "));
+  s.appendChild(document.createTextNode(niv ? NIVEAUX_MOTS[niv] : "pas encore fait"));
+  return s;
+}
+function rejouerCarte(id) {
+  ouvrirCarte(id); rendreDefi(id); focaliser(".consigne"); annoncer("");
+}
+function resumeMemoire() {
+  var m = P.memoire(etat), cpt = { acquis: 0, en_cours: 0, a_revoir: 0, rien: 0 };
+  P.NOTIONS.forEach(function (n) { var v = m.niveaux[n.id]; cpt[v || "rien"]++; });
+  return cpt.acquis + " acquis, " + cpt.en_cours + " en cours, " + cpt.a_revoir + " à revoir, " + cpt.rien + " pas encore fait.";
+}
+function majMemoire() {
+  var m = P.memoire(etat), corps = $("memoire-corps");
+  corps.innerHTML = "";
+  P.NOTIONS.forEach(function (n) {
+    var tr = el("tr"), td = el("td");
+    var th = el("th", { scope: "row" }, n.id.slice(1) + ". " + n.titre);
+    th.appendChild(el("span", { class: "rv-mob" }, "À revoir : " + renvoiActivites(n)));
+    tr.appendChild(th);
+    td.appendChild(pastilleNiveau(m.niveaux[n.id]));
+    tr.appendChild(td);
+    tr.appendChild(el("td", { class: "col-renvoi" }, renvoiActivites(n)));
+    corps.appendChild(tr);
+  });
+  $("memoire-bilan").textContent = "Bilan : " + resumeMemoire();
+  var z = $("memoire-retravailler"), tout = toutesOuvertes();
+  z.innerHTML = "";
+  if (!m.aRetravailler.length) {
+    var restant = P.NOTIONS.filter(function (n) { return !m.niveaux[n.id]; }).length;
+    z.appendChild(el("p", null, restant
+      ? "Rien à retravailler pour l'instant. Il te reste " + restant + (restant > 1 ? " cartes" : " carte") + " à ouvrir."
+      : "Bravo : toutes tes notions sont acquises, rien à retravailler."));
+  } else {
+    var ul = el("ul", { class: "retrav" });
+    m.aRetravailler.forEach(function (a) {
+      var n = P.NOTIONS.filter(function (x) { return x.id === a.id; })[0], li = el("li"), t = el("span", { class: "rt-txt" });
+      t.appendChild(el("b", null, a.titre + " "));
+      t.appendChild(pastilleNiveau(m.niveaux[a.id]));
+      t.appendChild(el("span", { class: "rt-renvoi" }, "À revoir : " + renvoiActivites(n)));
+      li.appendChild(t);
+      var b = el("button", { type: "button", class: "btn", "aria-label": "Rejouer le défi : " + a.titre }, "Rejouer le défi");
+      b.addEventListener("click", function () { rejouerCarte(a.id); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    z.appendChild(ul);
+  }
+  /* Une fois les 13 cartes ouvertes, le bilan reste affiché ; avant, on peut le masquer. */
+  $("memoire-masquer").hidden = tout;
+}
+/* mode : « auto » (13e carte ouverte), « bouton » (barre d'outils) ou « silencieux » (chargement) */
+function afficherMemoire(mode) {
+  $("memoire").hidden = false;
+  majMemoire();
+  if (mode === "silencieux") return;
+  $("memoire-titre").focus();
+  if (mode === "auto") {
+    direVivant((DERNIER_MSG.t ? DERNIER_MSG.t + " " : "") + "Les 13 cartes sont ouvertes : ta carte mémoire s'affiche en bas de la page. " + resumeMemoire());
+  } else direVivant("Ma carte mémoire. " + resumeMemoire());
 }
 
 /* FAST en SVG, mis en page à la largeur réelle (texte à sa vraie taille, jamais réduit) :
@@ -2085,6 +2238,7 @@ function demarrer() {
   majEntetePapier();
   var d = new Date();
   $("papier-date").textContent = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+  $("mp-date").textContent = $("papier-date").textContent;
   ["inp-prenom", "inp-nom", "inp-classe"].forEach(function (i) { $(i).addEventListener("input", majEntetePapier); });
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-lire]"), function (b) { boutonLire(b); });
@@ -2108,6 +2262,8 @@ function demarrer() {
     basculerProjection(!(etat.projection || PROJECTION_URL));
   });
   $("btn-imprimer").addEventListener("click", function () { window.print(); });
+  $("btn-memoire").addEventListener("click", function () { afficherMemoire("bouton"); });
+  $("memoire-masquer").addEventListener("click", function () { $("memoire").hidden = true; $("btn-memoire").focus(); });
 
   document.documentElement.classList.toggle("adapte", !!etat.adapte);
   $("btn-adapte").setAttribute("aria-pressed", String(!!etat.adapte));
@@ -2117,6 +2273,8 @@ function demarrer() {
   if (proj) ouvrirCarte(P.NOTIONS[0].id);
 
   majProgression(false);
+  /* Les 13 cartes déjà ouvertes lors d'une visite précédente : la carte mémoire est là, sans voler le focus. */
+  if (toutesOuvertes()) { MEMOIRE_AUTO = true; afficherMemoire("silencieux"); }
   /* La feuille imprimée contient toute la synthèse, schémas compris, même les cartes non gagnées. */
   dessinerPourImpression();
   window.addEventListener("beforeprint", dessinerPourImpression);
