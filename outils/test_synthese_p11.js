@@ -239,4 +239,120 @@ t("cleEtat : distincte par élève, null sans identifiant", () => {
   assert.strictEqual(S.cleEtat(null), null);
 });
 
+/* ── Tâche 3 : les 13 cartes ── */
+const tousItems = () => S.NOTIONS.reduce((a, n) => a.concat((S.BANQUE[n.id] || []).map(i => [n.id, i])), []);
+const norm = s => String(s).toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, " ").trim();
+
+t("chaque notion : défis de 2 à 4 items, essais 1, 2, 3 sans item commun (g0 à g49)", () => {
+  S.NOTIONS.forEach(n => {
+    assert.ok((S.BANQUE[n.id] || []).length >= 4, n.id + " : banque trop courte");
+    graines.forEach(g => [false, true].forEach(ad => {
+      const vus = [];
+      [1, 2, 3].forEach(essai => {
+        const d = S.tirerDefi(n.id, essai, g, ad);
+        assert.ok(d.length >= 2 && d.length <= 4, n.id + " " + g + " essai " + essai + " : " + d.length + " items");
+        d.forEach(i => { assert.ok(vus.indexOf(i.id) < 0, n.id + " " + g + " : " + i.id + " revient"); vus.push(i.id); });
+      });
+    }));
+  });
+});
+
+t("chaque item : id unique préfixé par sa notion, consigne, consigneSimple, indice, renvoi", () => {
+  const ids = {};
+  tousItems().forEach(([nid, i]) => {
+    assert.ok(i.id && i.id.indexOf(nid + "_") === 0, i.id);
+    assert.ok(!ids[i.id], "doublon " + i.id); ids[i.id] = 1;
+    assert.ok(i.consigne && i.consigneSimple, i.id);
+    assert.ok(typeof i.indice === "string" && i.indice.length > 10, i.id + " : indice");
+    assert.ok(/^(A[1-7](-A[1-7])?|SI)$/.test(i.renvoi), i.id + " : renvoi " + i.renvoi);
+    assert.ok(["choix", "menu", "ordre", "assoc"].indexOf(i.type) >= 0, i.id);
+  });
+});
+
+t("aucun texte de BANQUE ne contient « RS-1 », « coque », « robot »", () => {
+  assert.ok(!/RS-1|coque|robot/i.test(JSON.stringify(S.BANQUE)));
+});
+
+t("la carte n8 garde son ordre vertical « Quand ? »", () => {
+  const o = S.BANQUE.n8.find(i => i.type === "ordre");
+  assert.ok(/« Quand \? »/.test(o.consigne) && /pas par importance/.test(o.consigne));
+  assert.deepStrictEqual(o.bonne, ["Détecter la présence des mains", "Traiter l'information et commander", "Ouvrir / fermer l'arrivée d'eau", "Produire l'énergie électrique (sans pile)"]);
+});
+
+t("réponses cohérentes : bonne dans les options, assoc alignée, ordre complet", () => {
+  tousItems().forEach(([, i]) => {
+    if (i.type === "choix" || i.type === "menu") {
+      assert.strictEqual(typeof i.bonne, "string", i.id);
+      assert.ok(i.options.indexOf(i.bonne) >= 0, i.id);
+      assert.ok(i.options.length >= 2, i.id);
+    } else if (i.type === "assoc") {
+      assert.ok(Array.isArray(i.elements) && i.elements.length >= 2 && i.elements.length === i.bonne.length, i.id);
+      i.bonne.forEach(b => assert.ok(i.options.indexOf(b) >= 0, i.id + " : " + b));
+    } else {
+      assert.deepStrictEqual(i.options.slice().sort(), i.bonne.slice().sort(), i.id);
+    }
+    assert.strictEqual(new Set(i.options).size, i.options.length, i.id + " : option en double");
+  });
+});
+
+t("mode adapté, toutes notions : choix et menu à min(3, n) options dont la bonne ; ordre au premier pré-placé", () => {
+  S.NOTIONS.forEach(n => graines.forEach(g => [1, 2, 3].forEach(essai => {
+    S.tirerDefi(n.id, essai, g, true).forEach(i => {
+      const b = S.BANQUE[n.id].find(x => x.id === i.id);
+      if (i.type === "choix" || i.type === "menu") {
+        assert.strictEqual(i.options.length, Math.min(3, b.options.length), i.id);
+        assert.ok(i.options.indexOf(i.bonne) >= 0, i.id);
+      } else if (i.type === "ordre") {
+        assert.strictEqual(i.fixe, 0, i.id);
+        assert.strictEqual(i.options[0], i.bonne[0], i.id);
+      }
+    });
+  })));
+});
+
+t("mode adapté, assoc : toutes les réponses attendues restent, 3 options quand c'est possible", () => {
+  let vus = 0;
+  S.NOTIONS.forEach(n => graines.forEach(g => [1, 2, 3].forEach(essai => {
+    S.tirerDefi(n.id, essai, g, true).forEach(i => {
+      if (i.type !== "assoc") return;
+      vus++;
+      const b = S.BANQUE[n.id].find(x => x.id === i.id), attendus = Array.from(new Set(b.bonne));
+      attendus.forEach(a => assert.ok(i.options.indexOf(a) >= 0, i.id + " : " + a));
+      assert.strictEqual(i.options.length, b.options.length > 3 ? Math.max(3, attendus.length) : b.options.length, i.id);
+      i.elements.forEach((e, k) => assert.strictEqual(i.bonne[k], b.bonne[b.elements.indexOf(e)], i.id + " : paire déplacée"));
+    });
+  })));
+  assert.ok(vus > 0);
+});
+
+t("corriger, assoc : comparaison par paire, quel que soit l'ordre d'affichage", () => {
+  const b = tousItems().map(x => x[1]).find(i => i.type === "assoc" && new Set(i.bonne).size > 1);
+  const melange = Object.assign({}, b, { elements: b.elements.slice().reverse(), bonne: b.bonne.slice().reverse() });
+  const parObjet = {}; b.elements.forEach((e, k) => { parObjet[e] = b.bonne[k]; });
+  assert.strictEqual(S.corriger([melange], { [b.id]: parObjet }).juste, true, "objet élément → réponse");
+  assert.strictEqual(S.corriger([melange], { [b.id]: melange.bonne.slice() }).juste, true, "tableau aligné sur l'affichage");
+  assert.strictEqual(S.corriger([melange], { [b.id]: b.bonne.slice() }).juste, false, "tableau dans l'ordre de la banque, pas de l'affichage");
+  const faux = Object.assign({}, parObjet); const k0 = b.elements[0], k1 = b.elements.find(e => parObjet[e] !== parObjet[k0]);
+  faux[k0] = parObjet[k1]; faux[k1] = parObjet[k0];
+  assert.strictEqual(S.corriger([melange], { [b.id]: faux }).juste, false, "paires échangées");
+  const incomplet = Object.assign({}, parObjet); delete incomplet[k0];
+  assert.strictEqual(S.corriger([melange], { [b.id]: incomplet }).juste, false, "paire manquante");
+});
+
+t("corriger : le renvoi est celui du premier item faux", () => {
+  const items = [S.BANQUE.n3[0], S.BANQUE.n10[0]];
+  const r = S.corriger(items, { [items[0].id]: items[0].bonne });
+  assert.strictEqual(r.renvoi, items[1].renvoi);
+  assert.strictEqual(r.indice, items[1].indice);
+  assert.strictEqual(S.corriger([], {}).renvoi, "");
+});
+
+t("indices : jamais la bonne réponse (choix, menu) ; un renvoi à une activité ou à la synthèse (hors n8 déjà validée)", () => {
+  tousItems().forEach(([nid, i]) => {
+    if (i.type === "choix" || i.type === "menu")
+      assert.ok(norm(i.indice).indexOf(norm(i.bonne)) < 0, i.id + " : l'indice contient la réponse");
+    if (nid !== "n8") assert.ok(/activité|synthèse/.test(i.indice), i.id + " : indice sans renvoi");
+  });
+});
+
 console.log(ok + " tests réussis");
