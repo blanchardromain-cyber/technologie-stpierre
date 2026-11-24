@@ -460,7 +460,9 @@
     var fautes = [], indice = "", renvoi = "";
     items.forEach(function (it) {
       var r = reponses[it.id];
-      var bon = it.type === "assoc" ? assocJuste(it, r) : Array.isArray(it.bonne) ? memeListe(r, it.bonne) : r === it.bonne;
+      var bon = it.type === "assoc" ? assocJuste(it, r)
+        : it.type === "tableur" ? !!r && it.cases.every(function (k) { return corrigerTableur(k, r[k], r).pts === 1; })
+        : Array.isArray(it.bonne) ? memeListe(r, it.bonne) : r === it.bonne;
       if (!bon) { fautes.push(it.id); if (!indice) { indice = it.indice; renvoi = it.renvoi || ""; } }
     });
     return { juste: fautes.length === 0, fautes: fautes, indice: indice, renvoi: renvoi };
@@ -556,7 +558,351 @@
     return s ? "p11-syn_etat:" + s : null;
   }
 
+  /* ══ Module « Cap sur l'évaluation n°2 » : entraînement facultatif, non noté ══
+     Un défi par critère de la grille, sur d'autres systèmes que celui de l'évaluation :
+     la trottinette électrique du diaporama de l'activité 7 (P1 à P3) et le boîtier du
+     capteur infrarouge du robinet (Matériauthèque : P4, I1 à I3). Après chaque défi, l'élève
+     lit « ce qui fait gagner les points » pour ce critère. Les items suivent le format de
+     BANQUE ; un item « tableur » liste ses cases (`cases`), corrigées par corrigerTableur. */
+  var ENERGIES_M = ["Énergie électrique", "Énergie mécanique", "Énergie hydraulique"];
+  var CLASSEMENT = ["Indispensable", "Souhaitable", "Inutile"];
+  var C_EAU = "Résister à l’eau et à l’humidité", C_ISOLANT = "Ne pas conduire l’électricité (isolant)",
+      C_CHOCS = "Résister aux chocs (4/5 au moins)", C_RIGIDE = "Être rigide (3/5 au moins)",
+      C_COUT = "Coûter très peu (€)", C_200 = "Résister à plus de 200 °C",
+      C_AIMANT = "Ne pas être attiré par un aimant", C_CONDUIT = "Conduire l’électricité";
+  var DEF_EG = "Toute l’énergie nécessaire pour extraire la matière, fabriquer la pièce, la transporter et la traiter en fin de vie (son utilisation n’est pas comptée)";
+  /* Valeurs de la Matériauthèque (materiaux.json), affichées dans les défis I1 et I2 */
+  var FICHES = {
+    titre: "Fiches de la Matériauthèque (notes sur 5 : résistance à l’eau, rigidité, résistance aux chocs)",
+    colonnes: ["Matériau", "Électricité", "Eau", "Rigidité", "Chocs", "Coût"],
+    lignes: [
+      ["ABS", "isolant", "3/5", "3/5", "4/5", "€"],
+      ["PE-HD", "isolant", "5/5", "2/5", "4/5", "€"],
+      ["POM", "isolant", "4/5", "4/5", "3/5", "€€"],
+      ["PLA", "isolant", "2/5", "3/5", "2/5", "€"],
+      ["Inox", "conducteur", "5/5", "5/5", "4/5", "€€€"]
+    ]
+  };
+  var FICHES_EG = {
+    titre: "Fiches de la Matériauthèque",
+    colonnes: ["Matériau", "Masse volumique", "Énergie grise"],
+    lignes: [["ABS", "1,04 g/cm³", "95 kJ/g"], ["Inox", "7,9 g/cm³", "60 kJ/g"]]
+  };
+
+  /* La feuille du défi I2 : volume fourni (🔒), données saisies, calculs par formule.
+     `ref` : les deux cases de la formule attendue ; `op` : * (ordre libre) ou / (ordre imposé). */
+  var TABLEUR = {
+    colonnes: ["A", "B", "C"],
+    entetes: { A: "", B: "Boîtier en ABS", C: "Boîtier en inox" },
+    lignes: [
+      { n: 2, libelle: "Volume de matière (cm³)", B: "B2", C: "C2" },
+      { n: 3, libelle: "Masse volumique (g/cm³)", B: "B3", C: "C3" },
+      { n: 4, libelle: "Masse du boîtier (g)", B: "B4", C: "C4" },
+      { n: 5, libelle: "Énergie grise du matériau (kJ/g)", B: "B5", C: "C5" },
+      { n: 6, libelle: "Énergie grise du boîtier (kJ)", B: "B6", C: "C6" },
+      { n: 7, libelle: "L’inox demande … fois plus d’énergie grise que l’ABS", B: null, C: "C7" }
+    ],
+    cases: {
+      B2: { fourni: true, valeur: 24 }, C2: { fourni: true, valeur: 24 },
+      B3: { donnee: true, valeur: 1.04 }, C3: { donnee: true, valeur: 7.9 },
+      B5: { donnee: true, valeur: 95 }, C5: { donnee: true, valeur: 60 },
+      B4: { ref: ["B2", "B3"], op: "*" }, C4: { ref: ["C2", "C3"], op: "*" },
+      B6: { ref: ["B4", "B5"], op: "*" }, C6: { ref: ["C4", "C5"], op: "*" },
+      C7: { ref: ["C6", "B6"], op: "/" }
+    }
+  };
+  (function calculer() {
+    var c = TABLEUR.cases;
+    ["B4", "C4", "B6", "C6", "C7"].forEach(function (k) {
+      var a = c[c[k].ref[0]].valeur, b = c[c[k].ref[1]].valeur;
+      c[k].valeur = c[k].op === "*" ? a * b : a / b;
+    });
+  })();
+  var CASES_A_REMPLIR = ["B3", "C3", "B4", "C4", "B5", "C5", "B6", "C6", "C7"];   /* ordre de lecture */
+
+  var MODULE = [
+    { id: "m_p1", critere: "P1 · Compléter un diagramme FAST", titre: "Le FAST de la trottinette électrique",
+      support: "La trottinette électrique du diaporama d’introduction de l’activité 7",
+      situation: "« J’appuie sur la gâchette… elle avance ! » Quelle pièce de la trottinette réalise chaque fonction technique ?",
+      items: [
+        Q("m_p1_m1", "menu", "FAST de la trottinette électrique : quelle solution technique réalise la fonction « Recevoir l’ordre du conducteur » ?",
+          "Quelle pièce reçoit l’ordre du doigt ?", ["Gâchette", "Roue", "Batterie", "Moteur électrique"], "Gâchette",
+          "Relis le diaporama de l’activité 7 : sur quoi le doigt appuie-t-il pour que la trottinette avance ?", "A7"),
+        Q("m_p1_c1", "choix", "Pour la fonction « Traiter l’information et commander le moteur », quelle réponse rapporte tous les points ?",
+          "Quelle réponse est complète ?", ["Carte électronique", "Carte", "Électronique"], "Carte électronique",
+          "Un seul mot ne suffit pas toujours : il faut le nom complet de la pièce. Revois le FAST du robinet de l’activité 6.", "A6"),
+        Q("m_p1_m2", "menu", "FAST de la trottinette électrique : quelle solution technique réalise la fonction « Stocker l’énergie électrique » ?",
+          "Quelle pièce garde l’énergie ?", ["Batterie", "Moteur électrique", "Gâchette", "Roue"], "Batterie",
+          "Cherche la pièce qu’on recharge quand la trottinette ne roule plus. Revois la chaîne d’énergie de l’activité 7.", "A7"),
+        Q("m_p1_m3", "menu", "FAST de la trottinette électrique : quelle solution technique réalise la fonction « Faire tourner la roue » ?",
+          "Quelle pièce fait tourner la roue ?", ["Moteur électrique", "Batterie", "Gâchette", "Carte électronique"], "Moteur électrique",
+          "Cherche la pièce qui change l’énergie électrique en mouvement. Revois la chaîne d’énergie de l’activité 7.", "A7")
+      ],
+      ceQuiFaitGagner: [
+        "Une solution technique par fonction technique : la pièce qui réalise vraiment cette fonction.",
+        "Le nom complet de la pièce : « carte » seule ou « capteur » seul ne rapporte que la moitié des points. On écrit « carte électronique », « capteur infrarouge ».",
+        "Quand il faut deux pièces pour une fonction, on nomme les deux : pour le robinet, « turbine » seule est incomplète, on écrit « turbine + générateur »."
+      ] },
+
+    { id: "m_p2", critere: "P2 · Compléter les deux chaînes et nommer les énergies", titre: "Les deux chemins de la trottinette",
+      support: "La trottinette électrique du diaporama d’introduction de l’activité 7",
+      situation: "« L’ordre = INFORMATION, la force = ÉNERGIE. » Trace les deux chemins, de la gâchette jusqu’à la roue.",
+      items: [
+        Q("m_p2_a1", "assoc", "Chaîne d’information de la trottinette : associe chaque bloc à sa pièce.", "Pour chaque bloc, choisis la pièce.",
+          ["Gâchette", "Carte électronique", "Batterie", "Roue"], ["Gâchette", "Carte électronique"],
+          "Suis le chemin de l’ordre : qui le reçoit du doigt, puis qui décide ? Revois la chaîne d’information de l’activité 7.", "A7",
+          ["ACQUÉRIR", "TRAITER"]),
+        Q("m_p2_a2", "assoc", "Chaîne d’énergie de la trottinette : associe chaque bloc à sa pièce.", "Pour chaque bloc, choisis la pièce.",
+          ["Batterie", "Moteur électrique", "Gâchette", "Roue"], ["Batterie", "Moteur électrique"],
+          "Suis le chemin de la force : d’où part l’énergie, et où change-t-elle de forme ? Revois la chaîne d’énergie de l’activité 7.", "A7",
+          ["ALIMENTER", "CONVERTIR"]),
+        Q("m_p2_f1", "menu", "Trottinette : quelle forme d’énergie circule « de la batterie au moteur » ?", "De la batterie au moteur : quelle énergie ?",
+          ENERGIES_M, "Énergie électrique",
+          "Une batterie se recharge sur une prise : quelle énergie garde-t-elle ? Revois les formes d’énergie de l’activité 7.", "A7"),
+        Q("m_p2_a3", "assoc", "À la sortie du bloc CONVERTIR, quelle forme d’énergie ? Compare la trottinette et le robinet.",
+          "Pour chaque objet, quelle énergie sort de CONVERTIR ?", ENERGIES_M, ["Énergie mécanique", "Énergie électrique"],
+          "Demande-toi ce que produit chaque bloc CONVERTIR : un mouvement, ou de l’électricité ? Revois l’activité 7, étape 5 de l’animation.", "A7",
+          ["Trottinette : moteur électrique", "Robinet : turbine + générateur"])
+      ],
+      ceQuiFaitGagner: [
+        "Chaque composant à sa place : chaque bloc juste rapporte des points, dans la chaîne d’information comme dans la chaîne d’énergie.",
+        "Chaque flèche porte la forme d’énergie qui y circule vraiment. Dans le robinet : hydraulique avant la turbine (l’eau sous pression), électrique après.",
+        "« Mécanique » à la sortie du bloc CONVERTIR du robinet ne rapporte rien : la turbine et le générateur forment un seul bloc, l’énergie mécanique reste à l’intérieur.",
+        "Pour expliquer d’où vient l’énergie du robinet, chaque idée compte : l’eau sous pression fait tourner la turbine ; le générateur produit l’électricité ; la micro-batterie la stocke et alimente les composants."
+      ] },
+
+    { id: "m_p3", critere: "P3 · La chaîne d’énergie d’un objet qui se déplace", titre: "Trottinette ou robinet : d’où vient l’énergie ?",
+      support: "La trottinette électrique (diaporama de l’activité 7), comparée au robinet automatique",
+      situation: "« Qui donne la force ? » La trottinette roule dans la rue, le robinet reste fixé au lavabo.",
+      items: [
+        Q("m_p3_o1", "ordre", "Remets dans l’ordre les quatre blocs de la chaîne d’énergie de la trottinette, de la batterie jusqu’à la roue.",
+          "Range les 4 blocs. Le premier est déjà placé.", ["ALIMENTER", "DISTRIBUER", "CONVERTIR", "TRANSMETTRE"], ["ALIMENTER", "DISTRIBUER", "CONVERTIR", "TRANSMETTRE"],
+          "Le premier bloc fournit l’énergie, le dernier l’amène jusqu’à la roue. Revois la méthode de la chaîne d’énergie dans l’activité 7.", "A7"),
+        Q("m_p3_a1", "assoc", "Quel composant réalise ALIMENTER dans chaque objet ?", "Pour chaque objet, qui réalise ALIMENTER ?",
+          ["Batterie", "Tuyauterie (eau du réseau)", "Micro-batterie", "Prise électrique"], ["Batterie", "Tuyauterie (eau du réseau)"],
+          "Pour chaque objet, cherche par où l’énergie entre. Attention : la micro-batterie du robinet garde l’énergie produite plus loin. Revois l’activité 7, question 5.", "A7",
+          ["La trottinette électrique", "Le robinet automatique"]),
+        Q("m_p3_c1", "choix", "Pourquoi la trottinette a-t-elle besoin d’une batterie, alors que le robinet n’en a pas besoin pour ALIMENTER ?",
+          "Pourquoi la trottinette a-t-elle une batterie ?",
+          ["Elle se déplace : elle emporte son énergie, stockée dans sa batterie", "Une batterie donne plus de force que l’eau du réseau",
+            "La batterie sert à traiter l’ordre de la gâchette", "Le robinet n’a pas besoin d’énergie pour fonctionner"],
+          "Elle se déplace : elle emporte son énergie, stockée dans sa batterie",
+          "Pourrais-tu rouler en restant branché à une prise ou à un tuyau ? Revois l’activité 7.", "A7")
+      ],
+      ceQuiFaitGagner: [
+        "Chaque composant dans le bon bloc : ALIMENTER, DISTRIBUER, CONVERTIR, TRANSMETTRE.",
+        "L’explication rapporte des points avec deux idées : l’objet qui se déplace ne peut pas rester relié au réseau, il emporte son énergie stockée dans sa batterie ; l’objet fixe reçoit la sienne du réseau (le robinet : l’eau sous pression, par la tuyauterie).",
+        "Piège fréquent : la micro-batterie du robinet n’est pas le bloc ALIMENTER. Elle stocke l’énergie produite par le générateur."
+      ] },
+
+    { id: "m_p4", critere: "P4 · Des exigences aux critères du matériau", titre: "Le boîtier du capteur infrarouge : ce qu’il subit",
+      support: "Le boîtier du capteur infrarouge du robinet (Matériauthèque)",
+      situation: "« Sous le bec du robinet, un petit boîtier protège le capteur infrarouge qui détecte les mains, et sa carte électronique. Quel matériau choisir pour ce boîtier ? » Fiche du vendeur : boîtier en plastique, 60 × 34 × 49 mm, indice IPX6.",
+      items: [
+        Q("m_p4_a1", "assoc", "Chaque ligne d’exigence impose un critère au matériau du boîtier. Associe-les.", "Pour chaque ligne, choisis le critère.",
+          [C_EAU, C_ISOLANT, C_CONDUIT, C_200], [C_EAU, C_ISOLANT],
+          "Pour chaque ligne, demande-toi ce qui abîmerait le boîtier ou la carte. Une carte électronique ne doit pas être mise en court-circuit. Revois la Matériauthèque (activité 8).", "A8",
+          ["Il reçoit des éclaboussures d’eau.", "Il contient une carte électronique."]),
+        Q("m_p4_a2", "assoc", "Chaque ligne d’exigence impose un critère au matériau du boîtier. Associe-les.", "Pour chaque ligne, choisis le critère.",
+          [C_CHOCS, C_RIGIDE, C_AIMANT, C_200], [C_CHOCS, C_RIGIDE],
+          "Pour chaque ligne, cherche ce qui arriverait au boîtier : se fendre, ou se déformer ? Revois la Matériauthèque (activité 8).", "A8",
+          ["Il peut recevoir des petits coups (bagues, verres, brosses).", "Il doit garder sa forme autour du capteur."]),
+        Q("m_p4_c1", "choix", "Une seule de ces phrases ne décrit pas le boîtier : elle n’impose aucun critère. Laquelle ?", "Quelle phrase est fausse pour le boîtier ?",
+          ["Il baigne en permanence dans l’eau.", "Il reçoit des éclaboussures d’eau.", "Il peut recevoir des petits coups (bagues, verres, brosses).", "Il contient une carte électronique."],
+          "Il baigne en permanence dans l’eau.",
+          "Relis la présentation : où le boîtier est-il placé, et que subit-il vraiment ? Revois la Matériauthèque (activité 8).", "A8")
+      ],
+      ceQuiFaitGagner: [
+        "Chaque ligne d’exigence avec le bon critère : pars de ce que subit la pièce, puis cherche le critère qui y répond.",
+        "Méfie-toi des mots qui attirent : « électronique » n’appelle pas « conduire l’électricité », c’est l’inverse ; un boîtier qui conduit le courant mettrait la carte en court-circuit.",
+        "Une proposition qui ne répond à aucune ligne (200 °C, aimant) est un piège : laisse-la de côté.",
+        "Pour expliquer un critère, appuie-toi sur la ligne d’exigence qui l’impose, avec ses chiffres quand elle en donne."
+      ] },
+
+    { id: "m_i1", critere: "I1 · Choisir un matériau", titre: "Quel matériau pour le boîtier ?",
+      support: "Le boîtier du capteur infrarouge (Matériauthèque, 10 000 boîtiers)",
+      situation: "Le boîtier est fabriqué à 10 000 exemplaires. Lis les fiches, puis choisis son matériau comme dans la Matériauthèque.",
+      donnees: FICHES,
+      items: [
+        Q("m_i1_a1", "assoc", "Pour le boîtier, chaque critère est-il indispensable, souhaitable ou inutile ?", "Pour chaque critère, choisis : indispensable, souhaitable ou inutile.",
+          CLASSEMENT, ["Indispensable", "Indispensable", "Souhaitable", "Souhaitable", "Inutile"],
+          "Indispensable : sans lui, le boîtier ne fait plus son travail. Souhaitable : il aide à départager. Inutile : le boîtier ne le subit pas. Revois l’activité 8.", "A8",
+          [C_ISOLANT, C_EAU, C_CHOCS, C_COUT, C_200]),
+        Q("m_i1_c1", "choix", "D’après les fiches, quel matériau choisis-tu pour le boîtier ?", "Quel matériau choisis-tu ?",
+          ["ABS", "PE-HD", "POM", "PLA", "Inox"], "ABS",
+          "Élimine d’abord avec les critères indispensables, puis départage avec les souhaitables. Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
+        Q("m_i1_a2", "assoc", "Deux matériaux sont éliminés : associe chacun à sa raison.", "Pour chaque matériau, choisis pourquoi il est éliminé.",
+          ["Il conduit l’électricité.", "Il s’abîme dans l’eau (résistance à l’eau 2/5).", "Il est trop lourd.", "Il ne supporte pas 200 °C."],
+          ["Il conduit l’électricité.", "Il s’abîme dans l’eau (résistance à l’eau 2/5)."],
+          "Pour chaque matériau, cherche dans les fiches le critère indispensable qu’il ne respecte pas. Revois l’activité 8.", "A8",
+          ["Inox", "PLA"]),
+        Q("m_i1_c2", "choix", "Le PE-HD respecte lui aussi les critères indispensables. Pourquoi l’ABS passe-t-il devant ?", "Pourquoi l’ABS plutôt que le PE-HD ?",
+          ["Le PE-HD est moins rigide (2/5) : un critère souhaitable départage", "Le PE-HD conduit l’électricité", "Le PE-HD coûte plus cher", "Le PE-HD s’abîme dans l’eau"],
+          "Le PE-HD est moins rigide (2/5) : un critère souhaitable départage",
+          "Compare les deux lignes des fiches, colonne par colonne. Revois l’activité 8.", "A8"),
+        Q("m_i1_c3", "choix", "Le boîtier est fabriqué à 10 000 exemplaires. Quel procédé choisis-tu pour l’ABS ?", "10 000 boîtiers : quel procédé ?",
+          ["Moulage par injection", "Impression 3D par dépôt de fil", "Thermoformage"], "Moulage par injection",
+          "Regarde la taille de la série : un exemplaire d’essai, ou une grande série ? Revois l’étape « Je choisis le procédé » de la Matériauthèque (activité 8).", "A8"),
+        Q("m_i1_c4", "choix", "Quelle phrase de justification rapporte tous les points ?", "Quelle phrase rapporte tous les points ?",
+          ["J’ai choisi l’ABS parce qu’il est isolant, qu’il résiste à l’eau et aux chocs, et qu’il coûte très peu.",
+            "J’ai choisi l’ABS parce qu’il résiste à l’eau.", "J’ai choisi l’ABS parce que c’est le meilleur matériau.", "J’ai choisi l’ABS parce qu’il est en plastique."],
+          "J’ai choisi l’ABS parce qu’il est isolant, qu’il résiste à l’eau et aux chocs, et qu’il coûte très peu.",
+          "Compte les arguments de chaque phrase : combien de critères du boîtier cite-t-elle ? Revois l’activité 8.", "A8")
+      ],
+      ceQuiFaitGagner: [
+        "Classer chaque critère : indispensable (sans lui, la pièce ne fait plus son travail), souhaitable (il départage), inutile (la pièce ne le subit pas : c’est un piège).",
+        "« Les critères indispensables éliminent, les critères souhaitables départagent. » (activité 8)",
+        "Le choix : un matériau qui respecte tous les critères indispensables et se place le mieux sur les souhaitables.",
+        "Chaque élimination compte avec sa raison : le matériau, et le critère qu’il ne respecte pas, chiffre à l’appui.",
+        "« Un matériau ne va jamais sans son procédé : il faut pouvoir obtenir la forme, et en assez grand nombre. » (activité 8) Le procédé dépend du nombre de pièces à fabriquer.",
+        "La phrase de justification : au moins deux arguments (deux critères) pour tous les points ; un seul argument n’en rapporte que la moitié."
+      ] },
+
+    { id: "m_i2", critere: "I2 · Calculer avec un tableur", titre: "L’énergie grise du boîtier, au tableur",
+      support: "Le boîtier du capteur infrarouge : 24 cm³ de matière (paroi de 2 mm)",
+      situation: "La fiche du vendeur cite aussi l’acier inoxydable. Compare l’énergie grise d’un boîtier en ABS et d’un boîtier en inox. Le volume de matière, 24 cm³, est déjà dans la feuille.",
+      donnees: FICHES_EG,
+      items: [
+        { id: "m_i2_t", type: "tableur", cases: CASES_A_REMPLIR.slice(),
+          consigne: "Complète la feuille : saisis les données des fiches (lignes 3 et 5), puis écris une formule dans chaque case de calcul (lignes 4, 6 et 7).",
+          consigneSimple: "Écris les nombres des fiches dans les lignes 3 et 5. Écris une formule dans les lignes 4, 6 et 7.",
+          indice: "La masse, c’est le volume × la masse volumique ; l’énergie grise du boîtier, c’est sa masse × l’énergie grise du matériau. Revois le mini-tableur de l’activité 8.",
+          renvoi: "A8" },
+        Q("m_i2_c1", "choix", "D’après ta feuille, combien de fois plus d’énergie grise le boîtier en inox demande-t-il ?", "L’inox demande combien de fois plus ?",
+          ["Environ 5 fois plus", "Environ 8 fois plus", "Environ 2 fois moins"], "Environ 5 fois plus",
+          "Lis la case C7 de ta feuille et arrondis-la à l’unité. Revois le mini-tableur de l’activité 8.", "A8")
+      ],
+      ceQuiFaitGagner: [
+        "Les données : la virgule décimale. « 1,04 » est un nombre ; « 1.04 » n’en est pas un pour le tableur, la case ne rapporte rien.",
+        "Les calculs : une formule qui commence par « = » et utilise les noms des cases (=B2*B3) rapporte tous les points ; =B3*B2 ou =PRODUIT(B2;B3) aussi.",
+        "Des nombres recopiés dans la formule (=24*1,04) ne rapportent que la moitié : si une donnée change, le résultat reste faux.",
+        "Un résultat tapé à la main, ou une formule sans « = », ne rapporte rien : le tableur ne calcule pas.",
+        "Recopier une colonne : la formule de la colonne B devient celle de la colonne C (=B2*B3 devient =C2*C3).",
+        "« Combien de fois plus » se calcule par une division, avec les noms des cases : la plus grande valeur divisée par la plus petite. La phrase « environ … fois plus » arrondit ce résultat."
+      ] },
+
+    { id: "m_i3", critere: "I3 · Énergie grise et cycle de vie", titre: "L’énergie grise du boîtier",
+      support: "Le boîtier du capteur infrarouge (ABS et inox, Matériauthèque)",
+      situation: "Le boîtier ne consomme presque rien quand il sert. Pourtant, il a déjà coûté de l’énergie avant d’arriver sous le robinet.",
+      items: [
+        Q("m_i3_c1", "choix", "Quelle est la bonne définition de l’énergie grise du boîtier ?", "Qu’est-ce que l’énergie grise ?",
+          [DEF_EG, "L’énergie électrique que consomme le capteur pendant qu’il fonctionne", "L’énergie de l’eau qui fait tourner la turbine",
+            "L’énergie qu’il faut pour recycler le boîtier, et elle seule"], DEF_EG,
+          "Pense à toute la vie du boîtier, avant et après le moment où il sert. Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
+        Q("m_i3_a1", "assoc", "Pour l’énergie grise du boîtier, chaque étape est-elle comptée ?", "Pour chaque étape, choisis : comptée ou pas comptée.",
+          ["Comptée", "Pas comptée"], ["Comptée", "Comptée", "Comptée", "Pas comptée", "Comptée"],
+          "Relis la définition de l’énergie grise : une étape de la vie du boîtier est mise à part. Revois l’activité 8.", "A8",
+          ["Extraire la matière", "Fabriquer le boîtier", "Transporter le boîtier", "Utiliser le robinet pendant des années", "Traiter le boîtier en fin de vie"]),
+        Q("m_i3_c2", "choix", "Un camarade dit : « L’ABS se recycle, donc l’énergie grise du boîtier n’a plus d’importance. » Qu’en penses-tu ?",
+          "« Il se recycle, donc ça ne compte plus » : juste ou faux ?",
+          ["C’est faux : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé", "C’est juste : recyclable veut dire qu’il sera recyclé",
+            "C’est juste : l’énergie grise ne compte que la fin de vie"],
+          "C’est faux : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé",
+          "Un boîtier jeté avec les ordures ménagères est-il recyclé ? Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
+        Q("m_i3_c3", "choix", "Par gramme, l’inox demande moins d’énergie grise que l’ABS (60 kJ/g contre 95 kJ/g). Pourquoi le boîtier en inox en demande-t-il pourtant plus ?",
+          "Pourquoi le boîtier en inox demande-t-il plus d’énergie ?",
+          ["Il est bien plus lourd : on compare pour la pièce, énergie grise × masse", "L’inox ne se recycle pas", "On compte aussi l’énergie de son utilisation", "L’inox conduit l’électricité"],
+          "Il est bien plus lourd : on compare pour la pièce, énergie grise × masse",
+          "Revois ta feuille de calcul : quelle ligne change le plus d’un boîtier à l’autre ? Revois l’activité 8.", "A8")
+      ],
+      ceQuiFaitGagner: [
+        "La définition complète : « Énergie grise : toute l’énergie nécessaire pour extraire la matière, fabriquer la pièce, la transporter et la traiter en fin de vie (son utilisation n’est pas comptée). » (activité 8)",
+        "Les étapes : chaque étape bien traitée rapporte, cochée si elle est comptée, laissée vide si c’est l’utilisation. Tout cocher ne marche pas : l’utilisation est le piège.",
+        "« Recyclable ≠ recyclé : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé (l’aluminium recyclé demande environ 10 fois moins d’énergie que l’aluminium neuf). » (activité 8)",
+        "« On la compare pour la pièce : énergie grise du matériau × masse de la pièce. » (activité 8)"
+      ] }
+  ];
+  MODULE.forEach(function (m) { m.items.forEach(function (it) { it.coeur = true; }); });
+
+  /* Le module s'ouvre quand les 13 cartes sont ouvertes (même condition que la carte mémoire). */
+  function moduleOuvert(etat) {
+    return NOTIONS.every(function (n) { return etat.cartes[n.id] && etat.cartes[n.id].ouverte; });
+  }
+  /* Tous les items du défi, propositions mélangées (et réduites à 3 en mode adapté). */
+  function tirerModule(id, essai, graine, adapte) {
+    var m = MODULE.filter(function (x) { return x.id === id; })[0];
+    if (!m) return [];
+    var rnd = generateur(hachage(graine + "|" + id + "|" + (Math.floor(essai) || 1)));
+    return m.items.map(function (it) { return it.type === "tableur" ? copie(it) : preparer(it, !!adapte, rnd); });
+  }
+  /* Une tentative du défi : essais cumulés, réussite gardée, résultat de la dernière tentative. */
+  function appliquerModule(etat, id, juste) {
+    var e = copie(etat), m = e.module[id] || { essais: 0, reussi: false, dernier: false };
+    m.essais += 1; m.reussi = m.reussi || !!juste; m.dernier = !!juste;
+    e.module[id] = m;
+    return e;
+  }
+  function bilanModule(etat) {
+    var ids = MODULE.map(function (m) { return m.id; }), mod = etat.module || {};
+    return {
+      reussis: ids.filter(function (id) { return mod[id] && mod[id].reussi; }),
+      tentes: ids.filter(function (id) { return mod[id] && mod[id].essais > 0; }),
+      total: ids.length
+    };
+  }
+
+  /* ── Correction d'une case du tableur ──
+     Donnée : la valeur de la fiche, virgule décimale (le point est refusé).
+     Calcul : formule à références = 1 ; nombres recopiés (même en partie) = 0,5 ;
+     résultat tapé, formule sans « = » ou mauvaises cases = 0. `feuille` (facultatif) : les
+     saisies de l'élève, pour accepter des nombres recopiés de sa propre feuille. */
+  function nombreFr(s) {
+    return /^-?\d+(,\d+)?$/.test(s) ? parseFloat(s.replace(",", ".")) : NaN;
+  }
+  function proche(a, b) { return Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(b)); }
+  function corrigerTableur(cellule, saisie, feuille) {
+    var c = TABLEUR.cases[cellule];
+    if (!c || c.fourni) return { pts: 0, raison: "case inconnue ou déjà remplie" };
+    var s = String(saisie == null ? "" : saisie).replace(/\s+/g, "");
+    if (!s) return { pts: 0, raison: "case vide" };
+    if (c.donnee) {
+      if (/^-?\d+\.\d+$/.test(s)) return { pts: 0, raison: "virgule décimale : le tableur attend « " + String(c.valeur).replace(".", ",") + " », pas un point" };
+      var v = nombreFr(s.replace(/^=/, ""));
+      if (isNaN(v)) return { pts: 0, raison: "ce n’est pas un nombre" };
+      return proche(v, c.valeur) ? { pts: 1, raison: "donnée juste" } : { pts: 0, raison: "ce n’est pas la valeur de la fiche" };
+    }
+    if (s.charAt(0) !== "=") {
+      if (!isNaN(nombreFr(s)) || /^-?\d+\.\d+$/.test(s)) return { pts: 0, raison: "résultat tapé à la main : le tableur ne calcule rien" };
+      return { pts: 0, raison: "il manque le « = » au début : sans lui, le tableur n’y voit que du texte" };
+    }
+    var corps = s.slice(1).toUpperCase(), a, b, op;
+    while (/^\(.*\)$/.test(corps)) corps = corps.slice(1, -1);
+    var p = /^PRODUIT\(([^;]+);([^;]+)\)$/.exec(corps);
+    if (p) { a = p[1]; b = p[2]; op = "*"; }
+    else {
+      var o = /^([^*/]+)([*/])([^*/]+)$/.exec(corps);
+      if (!o) {
+        if (!isNaN(nombreFr(corps))) return { pts: 0, raison: "résultat tapé après le « = » : le tableur ne calcule rien" };
+        if (/[X×]/.test(corps)) return { pts: 0, raison: "la multiplication s’écrit avec * dans un tableur" };
+        return { pts: 0, raison: "formule non reconnue" };
+      }
+      a = o[1]; op = o[2]; b = o[3];
+    }
+    if (op !== c.op) return { pts: 0, raison: op === "*" ? "ici, il faut une division (/)" : "ici, il faut une multiplication (*)" };
+    var refs = [a, b], att = c.ref;
+    var estRef = function (x) { return /^[A-Z]\d+$/.test(x); };
+    var memeOrdre = refs[0] === att[0] && refs[1] === att[1], inverse = refs[0] === att[1] && refs[1] === att[0];
+    if (memeOrdre || (op === "*" && inverse)) return { pts: 1, raison: "formule avec les noms des cases" };
+    if (op === "/" && inverse) return { pts: 0, raison: "rapport inversé : la plus grande valeur se divise par la plus petite" };
+    /* nombres recopiés : chaque nombre doit valoir la case attendue (fiche ou feuille de l'élève) */
+    function vaut(x, ref) {
+      if (estRef(x)) return x === ref;
+      if (/^\d+\.\d+$/.test(x)) return false;
+      var n = nombreFr(x);
+      if (isNaN(n)) return false;
+      var lu = feuille && feuille[ref] != null ? nombreFr(String(feuille[ref]).replace(/\s+/g, "")) : NaN;
+      return proche(n, TABLEUR.cases[ref].valeur) || (!isNaN(lu) && proche(n, lu));
+    }
+    var avecNombre = !estRef(refs[0]) || !estRef(refs[1]);
+    var okNombres = (vaut(refs[0], att[0]) && vaut(refs[1], att[1])) || (op === "*" && vaut(refs[0], att[1]) && vaut(refs[1], att[0]));
+    if (avecNombre && okNombres) return { pts: 0.5, raison: "nombres recopiés : le calcul est juste, mais il ne suit plus si une donnée change" };
+    if (/\d\.\d/.test(corps)) return { pts: 0, raison: "virgule décimale : un nombre s’écrit avec une virgule dans le tableur" };
+    return { pts: 0, raison: "ce ne sont pas les bonnes cases" };
+  }
+
   var API = {
+    MODULE: MODULE, TABLEUR: TABLEUR, moduleOuvert: moduleOuvert, tirerModule: tirerModule,
+    appliquerModule: appliquerModule, bilanModule: bilanModule, corrigerTableur: corrigerTableur,
     NOTIONS: NOTIONS, BANQUE: BANQUE,
     tirerDefi: tirerDefi, corriger: corriger, appliquer: appliquer, essaiSuivant: essaiSuivant,
     etatVide: etatVide, versFields: versFields, depuisFields: depuisFields,
