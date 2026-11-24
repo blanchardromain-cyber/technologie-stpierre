@@ -170,10 +170,11 @@
   .verdict.ko{color:var(--rg)}
   .dpied{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px}
   .pas{font-size:.9em;color:var(--td);font-variant-numeric:tabular-nums}
-  #vivant{margin-top:12px;border-radius:10px;font-weight:500}
-  #vivant:not(:empty){padding:11px 14px;background:#fff;border:2px solid var(--gb)}
-  #vivant.ok{border-color:var(--vt)!important;background:var(--vp)!important;color:var(--vtd)}
-  #vivant.ko{border-color:#C98A00!important;background:var(--orp)!important;color:#4A3500}
+  /* Copie visible du message, dans la carte active ; la zone lue par les lecteurs d’écran est #vivant. */
+  .retour{margin-top:12px;border-radius:10px;font-weight:500}
+  .retour:not(:empty){padding:11px 14px;background:#fff;border:2px solid var(--gb)}
+  .retour.ok{border-color:var(--vt)!important;background:var(--vp)!important;color:var(--vtd)}
+  .retour.ko{border-color:#C98A00!important;background:var(--orp)!important;color:#4A3500}
   .actions-carte{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 
   /* Lecture à voix haute */
@@ -259,7 +260,7 @@
   @media print{
     @page{size:A4 portrait;margin:11mm 12mm}
     html{font-size:11pt}
-    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,#vivant,.chev,.cn-etat,.situ{display:none!important}
+    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,.retour,.chev,.cn-etat,.situ{display:none!important}
     body{background:#fff}
     main{max-width:none;padding:0}
     html.adapte main{font-size:1rem}
@@ -343,7 +344,7 @@
     </ul>
   </div>
 
-  <h2 class="partie">I – LES ÉTAPES DE CONCEPTION D’UN OBJET TECHNIQUE</h2>
+  <h2 class="partie">I - LES ÉTAPES DE CONCEPTION D’UN OBJET TECHNIQUE</h2>
   <div class="cartes" id="cartes-I"></div>
 
   <h2 class="partie">II – ANALYSE DU FONCTIONNEMENT D’UN OBJET TECHNIQUE</h2>
@@ -363,7 +364,7 @@
         <div class="corps-bloc">
           <p class="lb">La situation</p>
           <p class="q">« Comment le robinet sait-il qu'il y a des mains ? »</p>
-          <p>Tu tends les mains : l'eau coule, sans poignée ni bouton. Puis elle s'arrête toute seule. Chaque chose que fait le robinet est réalisée par une pièce précise.</p>
+          <p>Il sert à distribuer de l’eau automatiquement et sans contact, uniquement lorsqu’il détecte la présence des mains, afin d’éviter de gaspiller l’eau.</p>
         </div>
       </div>
 
@@ -428,9 +429,14 @@
         </div>
       </div>
 
-      <div id="vivant" role="status" aria-live="polite"></div>
+      <div class="retour" id="retour-n8"></div>
+
     </div>
   </article>
+
+  <!-- Zone de rétroaction unique lue par les lecteurs d’écran, hors des cartes : rien ne se perd quand
+       une carte se replie. Le même message s’affiche dans la carte active (.retour), sans recouvrir la page. -->
+  <div id="vivant" class="vh" role="status" aria-live="polite"></div>
 
 </main>
 
@@ -556,7 +562,8 @@ function lire(texte) {
   try {
     s.cancel();
     var u = new SpeechSynthesisUtterance(sansEmoji(texte));
-    u.lang = "fr-FR"; u.voice = VOIX.voix; u.rate = 0.95;
+    u.lang = "fr-FR"; u.rate = 0.95;
+    try { u.voice = VOIX.voix; } catch (x) {}   /* voix refusée : la langue fr-FR suffit */
     s.speak(u);
     return true;
   } catch (e) { return false; }
@@ -578,8 +585,8 @@ function boutonLire(bloc, texte) {
 
 /* ── Rétroaction : une seule zone aria-live ── */
 function annoncer(texte, ton) {
-  var v = $("vivant");
-  v.className = ton || "";
+  var v = $("vivant"), r = CARTE_ACTIVE ? $("retour-" + CARTE_ACTIVE) : null;
+  if (r) { r.className = "retour" + (ton ? " " + ton : ""); r.textContent = texte; }
   v.textContent = "";
   /* vider puis écrire : le lecteur d'écran annonce même un message identique */
   setTimeout(function () { v.textContent = texte; }, 30);
@@ -669,6 +676,7 @@ function rendreDefi(id) {
   $("revele-" + id).hidden = true;
   $("defi-" + id).hidden = false;
   dessinerDefi();
+  lireItemAuto(DEFI.items[0]);   /* mode adapté seulement (test dans lireItemAuto) */
 }
 function repondu(it) { var r = DEFI.reponses[it.id]; return Array.isArray(r) ? r.length === it.options.length : !!r; }
 function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneSimple : it.consigne; }
@@ -689,7 +697,7 @@ function dessinerDefi(focusSur) {
   if (DEFI.fini) {
     if (DEFI.suite) {
       var b = el("button", { type: "button", class: "btn prim", id: "btn-suite" }, "Nouvel essai, avec d'autres questions");
-      b.addEventListener("click", function () { annoncer(""); rendreDefi(DEFI.id); focaliser(".consigne"); lireItemAuto(DEFI.items[0]); });
+      b.addEventListener("click", function () { annoncer(""); rendreDefi(DEFI.id); focaliser(".consigne"); });
       pied.appendChild(b);
     }
   } else if (etat.adapte) {
@@ -731,6 +739,8 @@ function allerA(i) {
 }
 function lireItemAuto(it) {
   if (!etat.adapte || !it) return;
+  /* jamais sans geste de l'élève : le navigateur refuserait la parole (projection ouverte au chargement) */
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
   var t = consigneDe(it);
   if (it.type === "ordre") t += " " + "Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
   else t += " Propositions : " + it.options.join(", ") + ".";
