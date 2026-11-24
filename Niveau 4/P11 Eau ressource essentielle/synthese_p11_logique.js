@@ -101,7 +101,10 @@
         "Revois l’activité 1, question 4 : la fonction d’usage de cet élément y est demandée.", "A1"),
       Q("n1_c5", "choix", "Qu’est-ce qui pousse à créer un nouvel objet technique ?", "Pourquoi crée-t-on un nouvel objet ?",
         ["Un besoin non satisfait", "Une facture payée", "Une norme officielle", "Un matériau recyclable"], "Un besoin non satisfait",
-        "Revois « Ce que je dois retenir » de l’activité 3, à la ligne « Besoin ».", "A3")
+        "Revois « Ce que je dois retenir » de l’activité 3, à la ligne « Besoin ».", "A3"),
+      Q("n1_c6", "choix", "Lequel de ces besoins est un besoin essentiel ?", "Quel besoin est essentiel ?",
+        ["Se nourrir", "Le confort", "Le loisir"], "Se nourrir",
+        "Pour chacun, demande-toi si l’on peut vivre sans. Revois l’activité 3 sur le besoin.", "A3")
     ],
     /* Carte 2 : bête à cornes (rappel, A3 ; GPS de S11) */
     n2: [
@@ -138,7 +141,11 @@
         ["La protection contre les corps solides", "La protection contre les liquides", "La sécurité électrique", "Le prix du robinet"], "La protection contre les corps solides", IND_IP, "A4"),
       Q("n3_c4", "choix", "Le robinet est installé dans un milieu humide. Quel indice IP lui convient ?", "Milieu humide : quel indice IP ?",
         ["IP65", "IP20", "IP31", "IP10"], "IP65",
-        "Revois « Ce que je dois retenir » de l’activité 4 : en milieu humide, regarde surtout le 2ᵉ chiffre.", "A4")
+        "Revois « Ce que je dois retenir » de l’activité 4 : en milieu humide, regarde surtout le 2ᵉ chiffre.", "A4"),
+      Q("n3_c5", "choix", "« Respecter un budget » : qui fixe cette contrainte du robinet ?", "« Respecter un budget » : qui le fixe ?", ORIGINE, ORIGINE[0],
+        "Demande-toi si un texte officiel l’impose à tous les robinets, ou si c’est le choix de celui qui l’achète. Revois l’activité 4, partie 1.", "A4"),
+      Q("n3_c6", "choix", "« Assurer la sécurité électrique (très basse tension) » : qui fixe cette contrainte du robinet ?", "« Sécurité électrique » : qui la fixe ?", ORIGINE, ORIGINE[1],
+        "Demande-toi si un texte officiel l’impose à tous les robinets, ou si c’est le choix de celui qui l’achète. Revois l’activité 4, parties 1 et 2.", "A4")
     ],
     /* Carte 4 : les normes (rappel, A4 ; symboles CE et NF de la synthèse intermédiaire) */
     n4: [
@@ -152,21 +159,22 @@
     ],
     /* Carte 5 : cahier des charges textuel (rappel, A5) — repérer l'erreur */
     n5: [
-      Q("n5_e1", "choix", "Une erreur s’est glissée dans cette phrase : « Le cahier des charges du robinet décrit les besoins à satisfaire et les solutions techniques à respecter. » Quel groupe de mots est faux ?",
-        "Trouve le groupe de mots faux.", ["Le cahier des charges du robinet", "décrit les besoins à satisfaire", "les solutions techniques à respecter"], "les solutions techniques à respecter",
+      /* l'erreur est tantôt au début, au milieu ou à la fin de la phrase */
+      Q("n5_e1", "choix", "Une erreur s’est glissée dans cette phrase : « Le cahier des charges du robinet décrit les solutions techniques à choisir et les contraintes à respecter. » Quel groupe de mots est faux ?",
+        "Trouve le groupe de mots faux.", ["Le cahier des charges du robinet décrit", "les solutions techniques à choisir", "et les contraintes à respecter"], "les solutions techniques à choisir",
         "Revois l’activité 5 : le cahier des charges dit ce qu’on exige du robinet, pas encore comment on le fabrique.", "A5"),
       Q("n5_e2", "choix", "Une erreur s’est glissée dans cette phrase : « Le concepteur du robinet consulte le cahier des charges seulement au début du projet. » Quel groupe de mots est faux ?",
         "Trouve le groupe de mots faux.", ["Le concepteur du robinet", "consulte le cahier des charges", "seulement au début du projet"], "seulement au début du projet",
         "Revois « Ce que je dois retenir » de l’activité 5 : le cahier des charges est le document que le concepteur doit respecter. Peut-il l’oublier en route ?", "A5"),
-      Q("n5_e3", "choix", "Une erreur s’est glissée dans cette phrase : « Le robinet doit atteindre des performances précises, qu’on ne peut ni mesurer ni observer. » Quel groupe de mots est faux ?",
-        "Trouve le groupe de mots faux.", ["Le robinet doit atteindre", "des performances précises", "qu’on ne peut ni mesurer ni observer"], "qu’on ne peut ni mesurer ni observer",
+      Q("n5_e3", "choix", "Une erreur s’est glissée dans cette phrase : « Seul le client doit se référer au cahier des charges tout au long du projet. » Quel groupe de mots est faux ?",
+        "Trouve le groupe de mots faux.", ["Seul le client", "doit se référer au cahier des charges", "tout au long du projet"], "Seul le client",
+        "Revois « Ce que je dois retenir » de l’activité 5 : qui doit respecter ce document pendant tout le projet ?", "A5"),
+      Q("n5_e4", "choix", "Une erreur s’est glissée dans cette phrase : « Le robinet doit respecter des performances impossibles à mesurer, tout en respectant les normes établies. » Quel groupe de mots est faux ?",
+        "Trouve le groupe de mots faux.", ["Le robinet doit respecter", "des performances impossibles à mesurer", "tout en respectant les normes établies"], "des performances impossibles à mesurer",
         "Revois le tableau de l’activité 5 : « ≈ 2 L/min », « 0 à ≈ 15 cm »… ces niveaux se vérifient-ils ?", "A5"),
-      Q("n5_e4", "choix", "Une erreur s’est glissée dans cette phrase : « Le robinet doit respecter des performances précises, sans tenir compte des normes établies. » Quel groupe de mots est faux ?",
-        "Trouve le groupe de mots faux.", ["Le robinet doit respecter", "des performances précises", "sans tenir compte des normes établies"], "sans tenir compte des normes établies",
-        "Revois l’activité 4 : une norme peut-elle être mise de côté ?", "A4"),
-      Q("n5_e5", "choix", "Une erreur s’est glissée dans cette phrase : « Le cahier des charges du robinet est écrit une fois l’objet fabriqué. » Quel groupe de mots est faux ?",
-        "Trouve le groupe de mots faux.", ["Le cahier des charges du robinet", "est écrit", "une fois l’objet fabriqué"], "une fois l’objet fabriqué",
-        "Revois l’ordre des activités 5 et 6 : le cahier des charges vient-il avant ou après la conception ?", "A5"),
+      Q("n5_e5", "choix", "Une erreur s’est glissée dans cette phrase : « Le FAST du robinet décrit les besoins à satisfaire et les contraintes à respecter. » Quel groupe de mots est faux ?",
+        "Trouve le groupe de mots faux.", ["Le FAST du robinet", "décrit les besoins à satisfaire", "et les contraintes à respecter"], "Le FAST du robinet",
+        "Revois les activités 5 et 6 : quel document dit ce qu’on exige du robinet, et lequel montre comment il est fait ?", "A5"),
       Q("n5_e6", "choix", "Une erreur s’est glissée dans cette phrase : « Dans le cahier des charges du robinet, débit ≈ 2 L/min est une solution technique. » Quel groupe de mots est faux ?",
         "Trouve le groupe de mots faux.", ["Dans le cahier des charges du robinet", "débit ≈ 2 L/min", "une solution technique"], "une solution technique",
         "Revois le tableau de l’activité 5 : dans quelle colonne trouve-t-on « ≈ 2 L/min » ?", "A5")
@@ -340,6 +348,13 @@
         "Un budget, c’est une somme d’argent à ne pas dépasser. Revois l’activité 4.", "A4")
     ]
   };
+  /* Items « contexte » : utiles (facture, voyage de l'eau, indice IP…) mais ils ne font pas
+     travailler la notion du texte révélé. Tous les autres sont « cœur » ; chaque défi en
+     contient au moins un (voir tirerDefi). */
+  var CONTEXTE = ["n1_c2", "n1_o1", "n1_c3", "n1_c4", "n3_c1", "n3_c2", "n3_c3", "n3_c4", "n12_a1", "n12_c3", "n12_c4"];
+  Object.keys(BANQUE).forEach(function (nid) {
+    BANQUE[nid].forEach(function (it) { it.coeur = CONTEXTE.indexOf(it.id) < 0; });
+  });
 
   /* ── Tirage déterministe : hachage de la graine, puis petit générateur ── */
   function hachage(s) {
@@ -407,7 +422,10 @@
 
   /* tirerDefi : la banque est battue une seule fois par graine (indépendamment de l'essai) ;
      l'essai n prend la tranche n suivante, donc aucun item ne revient d'un essai à l'autre
-     tant que la banque est assez grande. */
+     tant que la banque est assez grande.
+     Notion avec des items « contexte » : chaque essai prend un item cœur différent (essai n →
+     n-ième cœur), complété par les items contexte puis les cœurs restants ; la taille du défi
+     est bornée pour que les 3 essais restent disjoints. */
   function tirerDefi(notionId, essai, graine, adapte) {
     var banque = BANQUE[notionId] || [];
     if (!banque.length) return [];
@@ -415,8 +433,16 @@
     var ordre = melanger(banque, rnd);
     var k = Math.max(2, Math.min(4, Math.floor(banque.length / 3)));
     k = Math.min(k, ordre.length);
-    var e = Math.max(1, Math.floor(essai) || 1), items = [];
-    for (var i = 0; i < k; i++) items.push(ordre[((e - 1) * k + i) % ordre.length]);
+    var e = Math.max(1, Math.floor(essai) || 1), items = [], i;
+    var coeur = ordre.filter(function (it) { return it.coeur; }), autres = ordre.filter(function (it) { return !it.coeur; });
+    if (autres.length && coeur.length) {
+      var reste = autres.concat(coeur.slice(3));
+      k = Math.max(2, Math.min(k, 1 + Math.floor(reste.length / 3)));
+      items.push(coeur[(e - 1) % coeur.length]);
+      for (i = 0; i < k - 1; i++) items.push(reste[((e - 1) * (k - 1) + i) % reste.length]);
+    } else {
+      for (i = 0; i < k; i++) items.push(ordre[((e - 1) * k + i) % ordre.length]);
+    }
     var rndEssai = generateur(hachage(graine + "|" + notionId + "|" + e));
     return items.map(function (it) { return preparer(it, !!adapte, rndEssai); });
   }
