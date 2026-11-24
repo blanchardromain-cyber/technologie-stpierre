@@ -355,4 +355,32 @@ t("indices : jamais la bonne réponse (choix, menu) ; un renvoi à une activité
   });
 });
 
+/* ── Correctif 1 de la tâche 3 ── */
+t("n5 : le groupe de mots faux n'est pas toujours au même endroit de la phrase (au moins 3 positions)", () => {
+  const positions = new Set();
+  S.BANQUE.n5.forEach(i => {
+    const phrase = /«\s*(.+?)\s*»/.exec(i.consigne)[1];
+    let depuis = 0;
+    i.options.forEach(o => { const p = phrase.indexOf(o, depuis); assert.ok(p >= depuis, i.id + " : « " + o + " » pas dans l'ordre de la phrase"); depuis = p + o.length; });
+    positions.add(i.options.indexOf(i.bonne));
+  });
+  assert.ok(positions.size >= 3, "positions : " + Array.from(positions).join(","));
+});
+
+t("chaque item est marqué cœur ou contexte ; une notion avec contexte a au moins 3 items cœur", () => {
+  S.NOTIONS.forEach(n => {
+    const b = S.BANQUE[n.id];
+    b.forEach(i => assert.strictEqual(typeof i.coeur, "boolean", i.id));
+    if (b.some(i => !i.coeur)) assert.ok(b.filter(i => i.coeur).length >= 3, n.id);
+  });
+  ["n1", "n3", "n12"].forEach(id => assert.ok(S.BANQUE[id].some(i => !i.coeur), id + " : pas de contexte"));
+});
+
+t("chaque défi tiré contient au moins un item cœur (toutes notions, g0 à g49, essais 1 à 3, standard et adapté)", () => {
+  S.NOTIONS.forEach(n => graines.forEach(g => [false, true].forEach(ad => [1, 2, 3].forEach(essai => {
+    const d = S.tirerDefi(n.id, essai, g, ad);
+    assert.ok(d.some(i => i.coeur), n.id + " " + g + " essai " + essai + " : aucun item cœur");
+  }))));
+});
+
 console.log(ok + " tests réussis");
