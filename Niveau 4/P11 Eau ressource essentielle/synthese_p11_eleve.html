@@ -248,6 +248,44 @@
 
   .entete-papier{display:none}
 
+  /* ═══ MODULE « CAP SUR L'ÉVALUATION N°2 » : entraînement facultatif ═══ */
+  .module{margin-top:30px}
+  .module .verrou{background:#fff;border:2px dashed var(--gb);border-radius:var(--r);padding:12px 16px;color:var(--td);font-weight:600}
+  .module .bilan{font-weight:600;margin:4px 0 12px}
+  .module h2:focus{outline:none}
+  .module h2:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+  .m-support{font-size:.9em;color:var(--td);margin-bottom:10px}
+  table.tab.donnees{font-size:.9em;font-variant-numeric:tabular-nums}
+  table.tab.donnees th,table.tab.donnees td{padding:5px 6px}
+  .gagner{border-left:5px solid var(--vt);background:var(--vp);border-radius:0 10px 10px 0;padding:12px 16px;margin-top:4px}
+  .gagner ul{margin:.3em 0 0 1.2em}
+  .gagner li + li{margin-top:6px}
+  .feuille{border-collapse:collapse;font-size:.95em;font-variant-numeric:tabular-nums;margin:6px 0;min-width:100%}
+  .feuille th,.feuille td{border:1.5px solid var(--gb);padding:4px 6px;vertical-align:middle}
+  .feuille thead th,.feuille .num{background:#E8EEF4;color:var(--td);font-weight:700;text-align:center}
+  .feuille .num{width:2em}
+  .feuille .lib{min-width:8em}
+  .feuille .ent{background:var(--eaul);color:var(--eaud);font-weight:700}
+  .feuille .fourni{background:#EDF2F7;font-weight:700;white-space:nowrap}
+  .feuille input{width:6.5em;max-width:100%;min-height:44px;border:2px solid var(--bc);border-radius:6px;padding:6px 8px;color:var(--tx);background:#fff}
+  .feuille input:disabled{background:#fff;color:var(--tx);opacity:1}
+  .feuille .pts{display:block;font-size:.85em;font-weight:700;margin-top:2px}
+  .feuille .pts.ok{color:var(--vt)} .feuille .pts.mi{color:var(--or)} .feuille .pts.ko{color:var(--rg)}
+  .rappel-formule{background:var(--orp);border-left:4px solid #C98A00;padding:8px 12px;border-radius:0 8px 8px 0;color:#4A3500;margin-bottom:8px}
+  .detail-tab{margin:8px 0 0 1.2em}
+  html.adapte .feuille input{width:7.5em;font-size:1.1em;min-height:52px}
+  html.adapte .feuille{font-size:1em}
+  @media (max-width:600px){
+    .feuille{font-size:.85em}
+    .feuille th,.feuille td{padding:3px 4px}
+    .feuille .num{width:1.6em}
+    .feuille .lib{min-width:0;hyphens:auto}
+    .feuille input,html.adapte .feuille input{width:5.4em;padding:6px 5px}
+    html.adapte .feuille{font-size:.85em}
+    table.tab.donnees{font-size:.82em}
+    table.tab.donnees th,table.tab.donnees td{padding:4px 4px}
+  }
+
   /* ═══ CARTE MÉMOIRE : bilan de fin de synthèse ═══ */
   .memoire{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:2px solid var(--eau);padding:18px 20px 22px;margin-top:30px}
   .memoire h2.partie{margin-top:0}
@@ -313,7 +351,7 @@
   @media print{
     @page{size:A4 portrait;margin:11mm 12mm}
     html{font-size:11pt}
-    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,.retour,.chev,.cn-etat,.situ,.cn-type,.rappel-lb,.lien-rappel,.nav-proj{display:none!important}
+    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,.retour,.chev,.cn-etat,.situ,.cn-type,.rappel-lb,.lien-rappel,.nav-proj,.module{display:none!important}
     body{background:#fff}
     main{max-width:none;padding:0}
     html.adapte main{font-size:1rem}
@@ -1062,6 +1100,18 @@
     </div>
   </section>
 
+  <!-- ════════════════ MODULE « CAP SUR L'ÉVALUATION N°2 » : entraînement facultatif, non noté ════════════════
+       Un défi par critère de la grille, sur la trottinette et le boîtier du capteur ; construit par construireModule(). -->
+  <section class="module" id="module" aria-labelledby="module-titre">
+    <h2 class="partie" id="module-titre" tabindex="-1">Cap sur l’évaluation n°2</h2>
+    <p class="verrou" id="module-verrou"></p>
+    <div id="module-corps" hidden>
+      <p class="intro-partie">Entraînement facultatif, sans note : un défi par critère de l’évaluation, sur d’autres objets que ceux du sujet. Après chaque défi, tu lis ce qui fait gagner les points. Recommence autant que tu veux.</p>
+      <p class="bilan" id="module-bilan"></p>
+      <div class="cartes" id="cartes-module"></div>
+    </div>
+  </section>
+
   <!-- Zone de rétroaction unique lue par les lecteurs d’écran, hors des cartes : rien ne se perd quand
        une carte se replie. Le même message s’affiche dans la carte active (.retour), sans recouvrir la page. -->
   <div id="vivant" class="vh" role="status" aria-live="polite"></div>
@@ -1091,8 +1141,11 @@ var RENVOIS = {
   A3: "l'activité 3 (le besoin et la bête à cornes)", A4: "l'activité 4 (les contraintes et l'indice IP)",
   A5: "l'activité 5 (la pieuvre et le cahier des charges)", A6: "l'activité 6 (le diagramme FAST)",
   A7: "l'activité 7 (les flux d'énergie et d'information)", "A3-A6": "les activités 3 à 6",
-  SI: "la synthèse intermédiaire"
+  SI: "la synthèse intermédiaire", A8: "l'activité 8 (matériaux et énergie grise)"
 };
+var MODULE_IDS = {};
+P.MODULE.forEach(function (m) { MODULE_IDS[m.id] = m; });
+function estModule(id) { return !!MODULE_IDS[id]; }
 var MOUV_REDUIT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 var FAST = {
@@ -1264,6 +1317,7 @@ function majProgression(anime) {
   } catch (e) {}
   svg.style.setProperty("--niv", String(ouvertes / total));
   majMemoire();
+  majModule();
   for (var j = 1; j <= 5; j++) {
     var ids = P.NOTIONS.filter(function (n) { return n.jalon === j; });
     var fait = ids.every(function (n) { return etat.cartes[n.id] && etat.cartes[n.id].ouverte; });
@@ -1283,7 +1337,7 @@ function majProgression(anime) {
 /* ── Ouvrir une carte ── */
 var CARTE_ACTIVE = null;
 function ouvrirCarte(id, fermerSiOuverte) {
-  if (!JOUABLES[id]) return;
+  if (!JOUABLES[id] && !(estModule(id) && P.moduleOuvert(etat))) return;
   var tete = $("tete-" + id), corps = $("corps-" + id);
   if (fermerSiOuverte && tete.getAttribute("aria-expanded") === "true") {
     tete.setAttribute("aria-expanded", "false"); corps.hidden = true; return;
@@ -1301,14 +1355,20 @@ function ouvrirCarte(id, fermerSiOuverte) {
 /* ── Le défi ── */
 var DEFI = null;
 function graineDe(id) {
+  if (estModule(id)) return (idEleve || etat.graine) + ":" + id;
   var c = etat.cartes[id] || { essais: 0, serie: 0 };
   /* nouvelle série = nouveau tirage ; dans une série, l'essai fait varier les items */
   return (idEleve || etat.graine) + ":" + (c.essais - c.serie);
 }
 function rendreDefi(id) {
-  var essai = P.essaiSuivant(etat, id);
-  DEFI = { id: id, essai: essai, items: P.tirerDefi(id, essai, graineDe(id), !!etat.adapte), reponses: {}, pas: 0, fini: false, sel: null };
-  DEFI.items.forEach(function (it) { if (it.type === "ordre") DEFI.reponses[it.id] = it.options.slice(); });
+  var mod = estModule(id);
+  var essai = mod ? ((etat.module[id] && etat.module[id].essais) || 0) + 1 : P.essaiSuivant(etat, id);
+  var items = mod ? P.tirerModule(id, essai, graineDe(id), !!etat.adapte) : P.tirerDefi(id, essai, graineDe(id), !!etat.adapte);
+  DEFI = { id: id, essai: essai, items: items, reponses: {}, pas: 0, fini: false, sel: null, module: mod };
+  DEFI.items.forEach(function (it) {
+    if (it.type === "ordre") DEFI.reponses[it.id] = it.options.slice();
+    if (it.type === "tableur") DEFI.reponses[it.id] = {};
+  });
   $("revele-" + id).hidden = true;
   $("defi-" + id).hidden = false;
   dessinerDefi();
@@ -1317,6 +1377,7 @@ function rendreDefi(id) {
 function repondu(it) {
   var r = DEFI.reponses[it.id];
   if (it.type === "assoc") return !!r && it.elements.every(function (e) { return !!r[e]; });
+  if (it.type === "tableur") return !!r && it.cases.every(function (k) { return !!String(r[k] || "").trim(); });
   return Array.isArray(r) ? r.length === it.options.length : !!r;
 }
 /* Texte lu à voix haute pour un item : consigne, puis ce qu'il faut manipuler. */
@@ -1324,6 +1385,7 @@ function texteItem(it) {
   var t = consigneDe(it);
   if (it.type === "ordre") return t + " Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
   if (it.type === "assoc") return t + " À associer : " + it.elements.join(" ; ") + ". Propositions : " + it.options.join(", ") + ".";
+  if (it.type === "tableur") return t + (etat.adapte ? " " + RAPPEL_FORMULE : "") + " Cases à remplir : " + it.cases.join(", ") + ".";
   return t + " Propositions : " + it.options.join(", ") + ".";
 }
 function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneSimple : it.consigne; }
@@ -1331,8 +1393,9 @@ function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneS
 function dessinerDefi(focusSur) {
   var z = $("defi-" + DEFI.id);
   z.innerHTML = "";
-  z.appendChild(el("h4", { class: "dtitre", id: "defi-" + DEFI.id + "-titre" },
-    "Défi · essai " + DEFI.essai + (DEFI.essai > 1 ? " (nouvelles questions)" : "")));
+  z.appendChild(el("h4", { class: "dtitre", id: "defi-" + DEFI.id + "-titre" }, DEFI.module
+    ? "Entraînement · tentative " + DEFI.essai
+    : "Défi · essai " + DEFI.essai + (DEFI.essai > 1 ? " (nouvelles questions)" : "")));
   z.appendChild(el("p", { class: "daide" }, etat.adapte
     ? "Une question à la fois. Le bouton « Un indice ? » t'aide avant de répondre."
     : (DEFI.items.length > 1 ? "Réponds aux " + DEFI.items.length + " questions" : "Réponds à la question") + ", puis clique sur « Vérifier mes réponses »."));
@@ -1404,6 +1467,7 @@ function dessinerItem(it, i) {
   else if (it.type === "choix") bloc.appendChild(dessinerChoix(it));
   else if (it.type === "ordre") bloc.appendChild(dessinerOrdre(it));
   else if (it.type === "assoc") bloc.appendChild(dessinerAssoc(it));
+  else if (it.type === "tableur") bloc.appendChild(dessinerTableur(it));
   /* En mode adapté, l'indice se consulte avant de répondre. */
   if (etat.adapte && !DEFI.fini && it.indice) {
     var zi = el("div", { class: "indice-zone" });
@@ -1466,6 +1530,64 @@ function dessinerAssoc(it) {
     ligne.appendChild(s);
     box.appendChild(ligne);
   });
+  return box;
+}
+
+/* Tableur du module (I2) : mêmes cases en mode adapté, plus grandes, avec un rappel.
+   Volume fourni et verrouillé ; après vérification, chaque case montre ses points et leur raison. */
+var RAPPEL_FORMULE = "Une formule commence par = et utilise les noms des cases (B2, B3…).";
+function ptsTexte(p) { return p === 1 ? "1 pt" : p === 0.5 ? "0,5 pt" : "0 pt"; }
+function dessinerTableur(it) {
+  var T = P.TABLEUR, rep = DEFI.reponses[it.id] || (DEFI.reponses[it.id] = {}), box = el("div");
+  if (etat.adapte) box.appendChild(el("p", { class: "rappel-formule" }, RAPPEL_FORMULE));
+  var wrap = el("div", { class: "tab-wrap" }), tab = el("table", { class: "feuille" });
+  tab.appendChild(el("caption", { class: "vh" }, "Feuille de calcul : énergie grise du boîtier"));
+  var th = el("thead"), tr0 = el("tr");
+  tr0.appendChild(el("th", { scope: "col", class: "num" }, ""));
+  T.colonnes.forEach(function (c) { tr0.appendChild(el("th", { scope: "col" }, c)); });
+  th.appendChild(tr0); tab.appendChild(th);
+  var tb = el("tbody"), tr1 = el("tr");
+  tr1.appendChild(el("th", { scope: "row", class: "num" }, "1"));
+  T.colonnes.forEach(function (c) { tr1.appendChild(el("td", { class: "ent" }, T.entetes[c])); });
+  tb.appendChild(tr1);
+  T.lignes.forEach(function (l) {
+    var tr = el("tr");
+    tr.appendChild(el("th", { scope: "row", class: "num" }, String(l.n)));
+    tr.appendChild(el("td", { class: "lib", id: "lib-" + l.n }, l.libelle));
+    ["B", "C"].forEach(function (col) {
+      var k = l[col], td = el("td");
+      if (!k) { tr.appendChild(td); return; }
+      var cs = T.cases[k];
+      if (cs.fourni) {
+        td.className = "fourni";
+        td.appendChild(document.createTextNode(String(cs.valeur).replace(".", ",") + " "));
+        td.appendChild(el("span", { "aria-hidden": "true", "data-nolecture": "" }, "\u{1F512}"));
+        td.appendChild(el("span", { class: "vh" }, " (case " + k + " fournie, verrouillée)"));
+      } else {
+        var inp = el("input", { type: "text", id: "tab-" + k, autocomplete: "off", spellcheck: "false",
+          "aria-label": "Case " + k + " : " + l.libelle + ", " + T.entetes[col].toLowerCase() });
+        inp.value = rep[k] || "";
+        inp.disabled = DEFI.fini;
+        inp.addEventListener("input", function () { rep[k] = inp.value; });
+        td.appendChild(inp);
+        if (DEFI.fini && DEFI.detail && DEFI.detail[k]) {
+          var d = DEFI.detail[k];
+          td.appendChild(el("span", { class: "pts " + (d.pts === 1 ? "ok" : d.pts ? "mi" : "ko") }, (d.pts === 1 ? "✓ " : d.pts ? "◐ " : "✕ ") + ptsTexte(d.pts)));
+        }
+      }
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  tab.appendChild(tb); wrap.appendChild(tab); box.appendChild(wrap);
+  if (DEFI.fini && DEFI.detail) {
+    var ul = el("ul", { class: "detail-tab" });
+    it.cases.forEach(function (k) {
+      var d = DEFI.detail[k];
+      if (d.pts < 1) ul.appendChild(el("li", null, k + " (" + ptsTexte(d.pts) + ") : " + d.raison + "."));
+    });
+    if (ul.children.length) box.appendChild(ul);
+  }
   return box;
 }
 
@@ -1609,10 +1731,14 @@ function verifier() {
   var id = DEFI.id;
   for (var k = 0; k < DEFI.items.length; k++) {
     if (!repondu(DEFI.items[k])) {
-      annoncer("Il te reste une réponse à choisir avant de vérifier.", "ko");
-      if (etat.adapte) { DEFI.pas = k; dessinerDefi(); }
       var it = DEFI.items[k], sel = '[data-item="' + it.id + '"] .opt';
+      annoncer(it.type === "tableur" ? "Il reste une case vide dans la feuille avant de vérifier." : "Il te reste une réponse à choisir avant de vérifier.", "ko");
+      if (etat.adapte) { DEFI.pas = k; dessinerDefi(); }
       if (it.type === "menu") sel = "#sel-" + it.id;
+      else if (it.type === "tableur") {
+        var vide = it.cases.filter(function (c) { return !String(DEFI.reponses[it.id][c] || "").trim(); })[0];
+        sel = "#tab-" + vide;
+      }
       else if (it.type === "assoc") {
         var rep = DEFI.reponses[it.id] || {}, km = 0;
         while (km < it.elements.length - 1 && rep[it.elements[km]]) km++;
@@ -1624,6 +1750,7 @@ function verifier() {
   }
   var r = P.corriger(DEFI.items, DEFI.reponses);
   if (!etat.debut) etat.debut = Date.now();
+  if (DEFI.module) { verifierModule(r); return; }
   var avant = etat.cartes[id] && etat.cartes[id].niv;
   etat = P.appliquer(etat, id, r.juste);
   sauver();
@@ -1657,6 +1784,96 @@ function verifier() {
     annoncer((nf === 1 ? "Presque : une réponse n'est pas encore juste." : nf + " réponses ne sont pas encore justes.")
       + " Indice : " + r.indice + ajout + " Le nouvel essai te pose d'autres questions.", "ko");
   }
+}
+/* Module « Cap sur l'évaluation n°2 » : pas de niveau, pas de notion à révéler. Après chaque
+   tentative, juste ou non, l'élève voit ses réponses corrigées et « ce qui fait gagner les points ». */
+function verifierModule(r) {
+  var id = DEFI.id, avant = etat.module[id] && etat.module[id].reussi, total = null, max = 0;
+  etat = P.appliquerModule(etat, id, r.juste);
+  sauver();
+  DEFI.fini = true; DEFI.verdicts = {};
+  DEFI.items.forEach(function (it) {
+    DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0;
+    if (it.type === "tableur") {
+      var rep = DEFI.reponses[it.id]; DEFI.detail = {}; total = 0;
+      it.cases.forEach(function (k) { var d = P.corrigerTableur(k, rep[k], rep); DEFI.detail[k] = d; total += d.pts; max++; });
+    }
+  });
+  dessinerDefi();
+  $("revele-" + id).hidden = false;
+  majModule();
+  var nf = r.fautes.length;
+  var feuille = total === null ? "" : " Ta feuille rapporte " + String(total).replace(".", ",") + " point" + (total > 1 ? "s" : "") + " sur " + max + ".";
+  annoncer(r.juste
+    ? "Critère réussi : tout est juste !" + feuille + " Lis ce qui fait gagner les points, pour le jour de l'évaluation."
+    : (nf === 1 ? "Une réponse n'est pas encore juste" : nf + " réponses ne sont pas encore justes")
+      + (avant ? " (tu avais déjà réussi ce critère : il reste réussi)" : "") + "." + feuille
+      + " Indice : " + r.indice + " Lis ce qui fait gagner les points, puis recommence quand tu veux.", r.juste ? "ok" : "ko");
+  $("revele-" + id + "-titre").focus();
+}
+function construireModule() {
+  var z = $("cartes-module");
+  P.MODULE.forEach(function (m) {
+    var art = el("article", { class: "cn", id: "carte-" + m.id, "data-module": m.id });
+    var h3 = el("h3"), b = el("button", { type: "button", class: "cn-tete", id: "tete-" + m.id, "aria-expanded": "false", "aria-controls": "corps-" + m.id });
+    b.appendChild(el("span", { class: "cn-num", "aria-hidden": "true" }, m.critere.split(" ")[0]));
+    b.appendChild(el("span", { class: "vh" }, m.critere.split(" ")[0] + " : "));
+    b.appendChild(el("span", { class: "cn-nom" }, m.critere.replace(/^\S+ · /, "")));
+    b.appendChild(el("span", { class: "cn-etat etat-gagner", id: "etat-" + m.id }, "à essayer"));
+    b.appendChild(el("span", { class: "chev", "aria-hidden": "true" }, "▾"));
+    h3.appendChild(b); art.appendChild(h3);
+    var corps = el("div", { class: "cn-corps", id: "corps-" + m.id, hidden: true });
+    var situ = el("div", { class: "situ avec-lire", "data-lire": "" }), cb = el("div", { class: "corps-bloc" });
+    cb.appendChild(el("p", { class: "lb" }, "Le défi d’entraînement"));
+    cb.appendChild(el("p", { class: "q" }, m.titre));
+    cb.appendChild(el("p", null, m.situation));
+    cb.appendChild(el("p", { class: "src" }, "Support : " + m.support));
+    situ.appendChild(cb); corps.appendChild(situ);
+    if (m.donnees) {
+      /* zone défilante nommée : sur un écran étroit, le tableau se fait défiler au clavier */
+      var w = el("div", { class: "tab-wrap", role: "region", tabindex: "0", "aria-label": m.donnees.titre }),
+          t = el("table", { class: "tab donnees" }), tr = el("tr"), tb = el("tbody");
+      t.appendChild(el("caption", { class: "src", style: "text-align:left;caption-side:top" }, m.donnees.titre));
+      m.donnees.colonnes.forEach(function (c) { tr.appendChild(el("th", { scope: "col" }, c)); });
+      var th = el("thead"); th.appendChild(tr); t.appendChild(th);
+      m.donnees.lignes.forEach(function (l) {
+        var r = el("tr");
+        l.forEach(function (v, k) { r.appendChild(el(k ? "td" : "th", k ? null : { scope: "row" }, v)); });
+        tb.appendChild(r);
+      });
+      t.appendChild(tb); w.appendChild(t); corps.appendChild(w);
+    }
+    corps.appendChild(el("section", { class: "defi", id: "defi-" + m.id, "aria-labelledby": "defi-" + m.id + "-titre", hidden: true }));
+    var rv = el("div", { class: "revele", id: "revele-" + m.id, hidden: true });
+    rv.appendChild(el("h4", { id: "revele-" + m.id + "-titre", tabindex: "-1" }, "Ce qui fait gagner les points"));
+    var g = el("div", { class: "gagner avec-lire", "data-lire": "" }), gb = el("div", { class: "corps-bloc" }), ul = el("ul");
+    m.ceQuiFaitGagner.forEach(function (x) { ul.appendChild(el("li", null, x)); });
+    gb.appendChild(ul); g.appendChild(gb); rv.appendChild(g);
+    var act = el("div", { class: "actions-carte" }), rj = el("button", { type: "button", class: "btn", id: "rejouer-" + m.id }, "Recommencer ce défi");
+    rj.addEventListener("click", function () { rendreDefi(m.id); focaliser(".consigne"); annoncer(""); });
+    act.appendChild(rj); rv.appendChild(act); corps.appendChild(rv);
+    corps.appendChild(el("div", { class: "retour", id: "retour-" + m.id }));
+    art.appendChild(corps); z.appendChild(art);
+    b.addEventListener("click", function () { ouvrirCarte(m.id, true); });
+  });
+}
+function majModule() {
+  var ouvert = P.moduleOuvert(etat), v = $("module-verrou");
+  $("module-corps").hidden = !ouvert; v.hidden = ouvert;
+  if (!ouvert) {
+    var reste = P.NOTIONS.filter(function (n) { return !(etat.cartes[n.id] && etat.cartes[n.id].ouverte); }).length;
+    v.innerHTML = "";
+    v.appendChild(el("span", { "aria-hidden": "true", "data-nolecture": "" }, "\u{1F512} "));
+    v.appendChild(document.createTextNode("Ce module d’entraînement s’ouvre quand tes 13 cartes sont ouvertes : encore " + reste + (reste > 1 ? " cartes." : " carte.")));
+  }
+  var b = P.bilanModule(etat);
+  $("module-bilan").textContent = "Critères réussis : " + b.reussis.length + " sur " + b.total + ".";
+  P.MODULE.forEach(function (m) {
+    var s = $("etat-" + m.id), x = etat.module[m.id];
+    if (x && x.reussi) { s.textContent = "✓ réussi"; s.className = "cn-etat etat-acquis"; }
+    else if (x && x.essais) { s.textContent = "◐ à retravailler"; s.className = "cn-etat etat-en_cours"; }
+    else { s.textContent = "à essayer"; s.className = "cn-etat etat-gagner"; }
+  });
 }
 function renvoiNotion(id) {
   var n = P.NOTIONS.filter(function (x) { return x.id === id; })[0], a = n ? n.activites : [];
@@ -1748,7 +1965,8 @@ function afficherMemoire(mode) {
   if (mode === "silencieux") return;
   $("memoire-titre").focus();
   if (mode === "auto") {
-    direVivant((DERNIER_MSG.t ? DERNIER_MSG.t + " " : "") + "Les 13 cartes sont ouvertes : ta carte mémoire s'affiche en bas de la page. " + resumeMemoire());
+    direVivant((DERNIER_MSG.t ? DERNIER_MSG.t + " " : "") + "Les 13 cartes sont ouvertes : ta carte mémoire s'affiche en bas de la page. " + resumeMemoire()
+      + " Juste en dessous, le module « Cap sur l'évaluation n°2 » est ouvert.");
   } else direVivant("Ma carte mémoire. " + resumeMemoire());
 }
 
@@ -2234,6 +2452,7 @@ function calerBarres() {
 /* ── Démarrage ── */
 function demarrer() {
   construireCartes();
+  construireModule();
   lireIdentite();
   majEntetePapier();
   var d = new Date();
