@@ -539,4 +539,19 @@ t("appliquerModule : essais cumulés, réussite gardée, pur ; aller-retour par 
   assert.deepStrictEqual(S.bilanModule(e), { reussis: ["m_i2"], tentes: ["m_i2"], total: 7 });
 });
 
+t("plusAvance : cartes ouvertes d'abord, puis tentatives cumulées ; égalité = non", () => {
+  const vide = S.etatVide();
+  const un = S.appliquer(vide, "n8", true);                       // 1 ouverte, 1 essai
+  const deuxEssais = S.appliquer(S.appliquer(vide, "n3", false), "n3", false); // 0 ouverte, 2 essais
+  assert.ok(S.plusAvance(un, vide));
+  assert.ok(!S.plusAvance(vide, un));
+  assert.ok(S.plusAvance(un, deuxEssais), "une carte ouverte l'emporte sur plus d'essais");
+  assert.ok(S.plusAvance(deuxEssais, vide));
+  assert.ok(!S.plusAvance(un, JSON.parse(JSON.stringify(un))), "égalité : on garde le local");
+  const plusMod = S.appliquerModule(un, "m_i2", false);
+  assert.ok(S.plusAvance(plusMod, un), "les défis d'entraînement comptent comme tentatives");
+  assert.ok(S.plusAvance(S.depuisFields(S.versFields(plusMod, 0)), un), "après passage par fields");
+  assert.ok(!S.plusAvance(null, vide) && S.plusAvance(un, null));
+});
+
 console.log(ok + " tests réussis");
