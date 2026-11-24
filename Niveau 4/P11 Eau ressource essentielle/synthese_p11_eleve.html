@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Synthèse : l'eau, ressource essentielle — 4ème</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<script>
+/* Avant tout affichage : modes mémorisés (adapté, projection) et crochet de test ?nospeech.
+   La même lecture de l'état est refaite proprement par le script principal. */
+(function () {
+  var q = location.search, html = document.documentElement;
+  if (/[?&]nospeech\b/.test(q)) {
+    try { delete window.speechSynthesis; } catch (e) {}
+    try { Object.defineProperty(window, "speechSynthesis", { value: undefined, configurable: true }); } catch (e) {}
+  }
+  try {
+    var id = (JSON.parse(localStorage.getItem("p11-syn_prefill") || "null") || {}).id;
+    var brut = id ? localStorage.getItem("p11-syn_etat:" + String(id).trim()) : sessionStorage.getItem("p11-syn_etat:session");
+    var e = brut ? JSON.parse(brut) : null;
+    if (e && e.adapte) html.classList.add("adapte");
+    if (e && e.projection) html.classList.add("projection");
+  } catch (x) {}
+  if (/[?&]projection\b/.test(q)) html.classList.add("projection");
+})();
+</script>
+<style>
+  :root{
+    --eau:#0277BD; --eaul:#E1F5FE; --eaud:#01579B; --nuit:#022B4A;
+    --bl:#1F4E79; --bc:#2E75B6; --bp:#DEEAF1;
+    --vt:#1E6B3B; --vp:#E2EFDA; --vtd:#14522C;
+    --or:#8A5A00; --orp:#FFF4D6;
+    --rg:#A93226; --rgp:#FADBD8;
+    --gr:#F4F6F8; --gb:#CBD5E0;
+    --tx:#1A202C; --td:#4A5568;
+    --r:12px; --sh:0 4px 20px rgba(0,0,0,.07);
+    --focus:#0B3D91; --focus2:#FFD54F;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:16px}
+  body{font-family:"DM Sans",system-ui,sans-serif;background:var(--gr);color:var(--tx);font-size:1rem;line-height:1.6}
+  button,select,input{font-family:inherit;font-size:inherit}
+  /* Focus bien visible, sur fond clair comme sur l'en-tête sombre */
+  :focus-visible{outline:3px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 6px var(--focus2)}
+  .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  [hidden]{display:none!important}
+
+  /* ═══ EN-TÊTE ═══ */
+  header{background:linear-gradient(135deg,var(--eaud),var(--nuit));color:#fff;padding:14px 22px;z-index:50}
+  .hrow{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:1100px;margin:0 auto}
+  .hbadge{font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#B3E5FC;font-weight:600}
+  header h1{font-size:1.2rem;font-weight:700;line-height:1.25}
+  .ident{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .fld{display:flex;flex-direction:column;gap:3px}
+  .fld label{font-size:.7rem;text-transform:uppercase;letter-spacing:1.2px;color:#D6E6F4;font-weight:600}
+  .fld input{background:#fff;border:2px solid transparent;border-radius:8px;
+    padding:9px 10px;font-size:.9rem;color:var(--tx);width:140px;min-height:44px}
+  .fld input[readonly]{background:#E8EEF4;color:#2D3748;cursor:default}
+  .classe-row{display:flex;align-items:stretch}
+  .classe-pfx{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.18);
+    border-radius:8px 0 0 8px;padding:0 11px;font-weight:700;color:#fff}
+  #inp-classe{width:56px;border-radius:0 8px 8px 0;text-align:center;text-transform:uppercase;font-weight:700}
+
+  /* ═══ BARRE D'OUTILS : le voyage de l'eau ═══ */
+  .pbar-wrap{background:#fff;border-bottom:1px solid var(--gb);padding:8px 22px;z-index:40}
+  .pbar-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .voyage{width:170px;height:48px;flex:0 0 auto}
+  .voyage .goutte{transform:translate(var(--gx,8px),var(--gy,30px))}
+  .voyage .niveau{transform-origin:0 44px;transform:scaleY(var(--niv,0))}
+  .voyage.anime .goutte{transition:transform 1.2s cubic-bezier(.3,.7,.3,1)}
+  .voyage.anime .niveau{transition:transform 1.2s ease .5s}
+  .pcount{font-size:.85rem;color:var(--td);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .jalons{list-style:none;display:flex;gap:4px;flex-wrap:wrap;flex:1 1 300px;counter-reset:j}
+  .jalons li{display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--td);background:var(--gr);
+    border:1px solid var(--gb);border-radius:999px;padding:3px 9px 3px 4px;line-height:1.2}
+  .jalons .jn{width:22px;height:22px;border-radius:50%;background:#fff;border:1.5px solid var(--td);display:flex;
+    align-items:center;justify-content:center;font-weight:700;font-size:.75rem;color:var(--td);flex:0 0 auto}
+  .jalons li.fait{background:var(--vp);border-color:var(--vt);color:var(--vtd)}
+  .jalons li.fait .jn{background:var(--vt);border-color:var(--vt);color:#fff}
+  .toolbtn,.pbar-in .cl-btn,.pbar-in .li-btn,.pbar-in .li-sel{min-height:44px}
+  .toolbtn{background:var(--gr);border:1.5px solid var(--gb);border-radius:8px;padding:8px 13px;
+    font-size:.85rem;font-weight:600;color:var(--tx);cursor:pointer}
+  .toolbtn:hover{background:var(--bp);border-color:var(--bc)}
+  .toolbtn[aria-pressed="true"]{background:var(--bl);border-color:var(--bl);color:#fff}
+  .toolbtn[aria-pressed="true"]::before{content:"✓ "}
+
+  /* ═══ CORPS ═══ */
+  main{max-width:1100px;margin:0 auto;padding:22px 22px 120px;font-size:1rem}
+  .intro{background:#FFF9E6;border:2px solid #E8B84B;border-radius:var(--r);padding:13px 17px;margin-bottom:22px;color:#5A4000;font-size:.95em}
+  .intro b{color:#4A3500}
+  .intro ul{margin:.4em 0 0 1.2em}
+  h2.partie{font-size:1.1em;letter-spacing:.5px;color:var(--eaud);border-bottom:3px solid var(--eau);
+    padding-bottom:6px;margin:26px 0 12px}
+  .cartes{display:flex;flex-direction:column;gap:10px}
+
+  /* Cartes-notions */
+  .cn{background:#fff;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;border:1.5px solid transparent}
+  .cn h3{font-size:1em;margin:0}
+  .cn-tete{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 16px;background:#fff;border:none;
+    text-align:left;color:var(--tx);font-weight:700;cursor:default}
+  button.cn-tete{background:var(--eaul);border-left:6px solid var(--eau);cursor:pointer;color:var(--eaud)}
+  button.cn-tete:hover{background:#CFEAF8}
+  .cn-num{width:30px;height:30px;border-radius:50%;background:var(--gb);color:var(--tx);display:flex;
+    align-items:center;justify-content:center;font-weight:700;font-size:.85em;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  button.cn-tete .cn-num{background:var(--eau);color:#fff}
+  .cn-nom{flex:1;font-size:1.05em}
+  .cn-etat{font-size:.8em;font-weight:700;white-space:nowrap;padding:3px 9px;border-radius:999px;border:1.5px solid currentColor}
+  .cn.verrou .cn-tete{color:var(--td)}
+  .cn.verrou .cn-nom{font-weight:600}
+  .cn.verrou .cn-etat{color:var(--td)}
+  .etat-gagner{color:var(--eaud)}
+  .etat-acquis{color:var(--vt);background:var(--vp)}
+  .etat-en_cours{color:var(--or);background:var(--orp)}
+  .etat-a_revoir{color:var(--rg);background:var(--rgp)}
+  .chev{font-size:.9em;transition:transform .2s}
+  button.cn-tete[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .cn-corps{padding:16px 18px 20px}
+
+  .situ{background:linear-gradient(135deg,var(--eaud),#015F73);color:#fff;border-radius:10px;padding:14px 18px;margin-bottom:16px}
+  .situ .lb{font-size:.75em;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:#D6F0FF}
+  .situ .q{font-size:1.2em;font-weight:700;margin:4px 0}
+  .situ p{color:#fff}
+  .situ .btn-lire{background:#fff;color:var(--eaud);border-color:#fff}
+
+  /* Le défi */
+  .defi{background:var(--gr);border:2px dashed var(--gb);border-radius:10px;padding:14px 16px}
+  .defi .dtitre{font-size:.78em;letter-spacing:1.4px;text-transform:uppercase;color:var(--eaud);font-weight:700;margin-bottom:4px}
+  .defi .daide{font-size:.9em;color:var(--td);margin-bottom:10px}
+  .item{background:#fff;border:1.5px solid var(--gb);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+  .item.juste{border-color:var(--vt)}
+  .item.faux{border-color:var(--rg)}
+  .consigne{font-weight:600;margin-bottom:10px;font-size:1.02em}
+  .consigne:focus{outline:none}
+  .consigne:focus-visible{outline:3px solid var(--focus)}
+  .ligne-fast{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ft-boite{background:var(--eaul);border:1.5px solid var(--eau);color:var(--eaud);border-radius:8px;padding:8px 12px;font-weight:600}
+  .ligne-fast .fl{color:var(--eaud);font-weight:700}
+  select.menu{min-height:44px;padding:8px 10px;border:2px solid var(--bc);border-radius:8px;background:#fff;color:var(--tx);
+    max-width:100%;font-size:1em}
+  .choix{display:flex;gap:8px;flex-wrap:wrap}
+  .opt{min-height:44px;min-width:44px;background:#fff;border:2px solid var(--gb);border-radius:999px;padding:8px 16px;
+    font-weight:600;color:var(--tx);cursor:pointer}
+  .opt:hover{border-color:var(--bc)}
+  .opt[aria-pressed="true"]{background:var(--bl);border-color:var(--bl);color:#fff}
+  .opt[aria-pressed="true"]::before{content:"● "}
+  .ordre{list-style:none;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--eau);padding-left:8px}
+  .ordre li{display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--gb);border-radius:9px;padding:4px;position:relative}
+  .ordre li.glisse{z-index:2;box-shadow:0 8px 20px rgba(0,0,0,.18);border-color:var(--bc)}
+  .ordre li.cible{border-color:var(--eau);border-style:dashed}
+  .ordre .rang{width:30px;height:30px;border-radius:50%;background:var(--eaud);color:#fff;display:flex;align-items:center;
+    justify-content:center;font-weight:700;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .ordre .poignee{width:30px;min-height:44px;display:flex;align-items:center;justify-content:center;color:var(--td);cursor:grab;touch-action:none;flex:0 0 auto;font-size:1.2em}
+  .ordre .pion{flex:1 1 6em;min-width:0;min-height:44px;text-align:left;background:var(--gr);border:2px solid transparent;border-radius:7px;padding:8px 10px;
+    font-weight:600;color:var(--tx);cursor:pointer}
+  .ordre .pion[aria-pressed="true"]{border-color:var(--bl);background:var(--bp)}
+  .ordre .pion.fixe{cursor:default;background:var(--vp);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .ordre .pion.fixe small{color:var(--vtd);font-weight:700}
+  .mvs{display:flex;gap:6px;margin-left:auto}
+  .mv{width:44px;height:44px;flex:0 0 auto;background:#fff;border:1.5px solid var(--gb);border-radius:8px;color:var(--eaud);font-size:1em;cursor:pointer}
+  .mv:disabled{opacity:.45;cursor:default}
+  .mv:not(:disabled):hover{background:var(--bp)}
+  .indice-zone{margin-top:10px}
+  .btn-indice,.btn{min-height:44px;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;border:2px solid var(--bc);background:#fff;color:var(--bl)}
+  .btn.prim{background:var(--eaud);border-color:var(--eaud);color:#fff}
+  .btn.prim:hover{background:var(--nuit)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .indice-txt{margin-top:8px;background:var(--orp);border-left:4px solid #C98A00;padding:8px 12px;border-radius:0 8px 8px 0;color:#4A3500}
+  .verdict{margin-top:8px;font-weight:700}
+  .verdict.ok{color:var(--vt)}
+  .verdict.ko{color:var(--rg)}
+  .dpied{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px}
+  .pas{font-size:.9em;color:var(--td);font-variant-numeric:tabular-nums}
+  #vivant{margin-top:12px;border-radius:10px;font-weight:500}
+  #vivant:not(:empty){padding:11px 14px;background:#fff;border:2px solid var(--gb)}
+  #vivant.ok{border-color:var(--vt)!important;background:var(--vp)!important;color:var(--vtd)}
+  #vivant.ko{border-color:#C98A00!important;background:var(--orp)!important;color:#4A3500}
+  .actions-carte{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+  /* Lecture à voix haute */
+  .btn-lire{min-height:44px;min-width:44px;border:1.5px solid var(--gb);background:#fff;color:var(--eaud);border-radius:8px;
+    padding:6px 10px;font-weight:600;cursor:pointer;font-size:.85em;flex:0 0 auto}
+  .btn-lire:hover{background:var(--bp)}
+  .avec-lire{display:flex;gap:10px;align-items:flex-start}
+  .avec-lire > .corps-bloc{flex:1}
+
+  /* La notion révélée */
+  .revele h4{font-size:1em;color:var(--eaud);margin:18px 0 8px;text-transform:uppercase;letter-spacing:1px}
+  .revele h4:first-child{margin-top:4px}
+  .revele h4:focus{outline:none}
+  .defbloc{border-left:5px solid var(--eau);background:var(--eaul);border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px}
+  .defbloc p + p{margin-top:8px}
+  /* Mot du glossaire : cible de 44 px par le remplissage, sans décaler les lignes du texte */
+  .gloss{background:none;border:none;color:var(--bl);font-weight:700;cursor:pointer;
+    text-decoration:underline dotted 2px;text-underline-offset:3px;
+    padding:12px 6px;margin:-12px -6px;line-height:inherit;font-size:inherit}
+  .gloss[aria-expanded="true"]{text-decoration-style:solid}
+  .gloss-def{background:#fff;border:1.5px solid var(--bc);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:.95em}
+  .src{color:var(--td);font-size:.88em}
+  .mot-savant{border:3px solid var(--eaud);border-radius:12px;padding:12px 16px;background:#fff;margin:12px 0}
+  .mot-savant .lb{font-size:.75em;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:var(--eaud)}
+  .mot-savant .mot{font-size:1.35em;font-weight:700;color:var(--eaud);line-height:1.25}
+  .mot-savant .mot small{font-size:.6em;font-weight:500;color:var(--td);font-style:italic}
+  figure.fast{position:relative;background:#fff;border:1.5px solid var(--gb);border-radius:10px;padding:12px;margin:8px 0}
+  .fast-svg{width:100%;overflow:hidden}
+  .fast-svg svg{display:block}
+  .fast-svg .bloc{transition:opacity .5s ease, transform .5s ease}
+  .fast-svg .bloc.cache{opacity:0;transform:translateX(-8px)}
+  figure.fast figcaption{margin-top:8px;font-size:.92em;color:var(--td)}
+  .lecture{list-style:none;display:grid;gap:8px}
+  .lecture li{display:flex;gap:10px;align-items:center;background:var(--gr);border-radius:8px;padding:8px 12px}
+  .lecture .sens{font-weight:700;color:var(--eaud);min-width:2.6em;text-align:center;font-size:1.1em}
+  .attention{background:var(--orp);border-left:5px solid #C98A00;border-radius:0 10px 10px 0;padding:10px 14px;margin-top:10px;color:#4A3500}
+  .exemple{font-style:italic;color:#24476B}
+  .retiens{background:var(--vp);border:2px solid var(--vt);border-radius:var(--r);padding:12px 16px;margin-top:14px}
+  .retiens .t{color:var(--vtd);font-weight:700;margin-bottom:4px}
+
+  .entete-papier{display:none}
+
+  /* Barres collantes seulement sur grand écran : sur téléphone, elles mangeraient la page. */
+  @media (min-width:1200px) and (min-height:820px){
+    html:not(.projection) header{position:sticky;top:0}
+    html:not(.projection) .pbar-wrap{position:sticky;top:var(--h-entete,64px)}
+    /* un élément qui reçoit le focus ne se cache pas sous les barres collantes */
+    html:not(.projection){scroll-padding-top:calc(var(--h-barres,200px) + 12px)}
+  }
+  @media (max-width:600px){
+    header,.pbar-wrap{padding-left:16px;padding-right:16px}
+    main{padding:16px 16px 100px}
+    .cn-corps{padding:12px 12px 16px}
+    .defi{padding:12px 10px}
+    .item{padding:10px}
+    .fld input{width:120px}
+    .avec-lire{flex-direction:column}
+    .avec-lire > .btn-lire{align-self:flex-end}
+  }
+
+  /* ═══ MODE ADAPTÉ (choisi par l'élève) ═══ */
+  html.adapte main{font-size:1.25rem;line-height:1.8}
+  html.adapte main, html.adapte main *{font-family:"LucioleCL","DM Sans",system-ui,sans-serif}
+  html.adapte .consigne{font-size:1.05em}
+
+  /* ═══ MODE PROJECTION (lisible au fond de la classe) ═══ */
+  html.projection{font-size:28px}
+  html.projection body{background:#fff;color:#000}
+  html.projection{--td:#1A202C;--gb:#4A5568;--eaul:#fff;--gr:#fff}
+  html.projection .cn{box-shadow:none;border:3px solid #000}
+  html.projection .cn:not(.active){display:none}
+  html.projection .cn.active{min-height:calc(100vh - 40px)}
+  html.projection .intro{display:none}
+  html.projection .voyage{width:200px;height:56px}
+  html.projection .fld input{width:200px}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none!important;animation:none!important}
+    .fast-svg .bloc.cache{opacity:1;transform:none}
+  }
+
+  /* ═══ IMPRESSION : la synthèse, identique pour tous ═══ */
+  @media print{
+    @page{size:A4 portrait;margin:11mm 12mm}
+    html{font-size:11pt}
+    header,.pbar-wrap,.defi,.intro,.btn-lire,.actions-carte,#vivant,.chev,.cn-etat,.situ{display:none!important}
+    body{background:#fff}
+    main{max-width:none;padding:0}
+    html.adapte main{font-size:1rem}
+    .entete-papier{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+      border-bottom:2.5pt solid #01579B;padding-bottom:5pt;margin-bottom:8pt}
+    .entete-papier .sur{font-size:8pt;letter-spacing:1.4pt;text-transform:uppercase;color:#0277BD;font-weight:700}
+    .entete-papier h1{font-size:15pt;color:#01579B;line-height:1.2}
+    .entete-papier .droite{font-size:9pt;color:#4A5568;text-align:right;white-space:nowrap}
+    .entete-papier .nom{font-weight:700;color:#1A202C;font-size:10pt}
+    .cn{box-shadow:none;border:none;break-inside:auto}
+    html.projection .cn:not(.active){display:block}
+    .cn-tete,button.cn-tete{background:none;border-left:none;border-bottom:1pt solid #01579B;padding:0 0 3pt;min-height:0}
+    .cn-corps{display:block!important;padding:4pt 0}
+    .cn-corps[hidden]{display:block!important}
+    .revele,.revele[hidden]{display:block!important}
+    .gloss-def[hidden]{display:block!important}
+    .gloss{padding:0;margin:0}
+    figure.fast,.retiens,.mot-savant,.defbloc{break-inside:avoid}
+  }
+</style>
+<script src="synthese_p11_logique.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div>
+      <div class="hbadge">Technologie · Cycle 4 · 4<sup>e</sup> · P11</div>
+      <h1>Synthèse : l'eau, ressource essentielle</h1>
+    </div>
+    <div class="ident">
+      <div class="fld"><label for="inp-prenom">Prénom</label><input id="inp-prenom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-nom">Nom</label><input id="inp-nom" type="text" autocomplete="off"></div>
+      <div class="fld"><label for="inp-classe">Classe</label>
+        <div class="classe-row"><span class="classe-pfx">4</span><input id="inp-classe" type="text" maxlength="2" autocomplete="off"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="pbar-wrap">
+  <div class="pbar-in">
+    <!-- Le voyage de l'eau : la goutte avance (captage → potabilisation → stockage → robinet)
+         et le réservoir se remplit à chaque carte ouverte. Purement décoratif. -->
+    <svg class="voyage" id="voyage" viewBox="0 0 170 48" aria-hidden="true" focusable="false" data-nolecture>
+      <path id="trajet" d="M8 30 C26 12, 44 42, 66 26 S 104 14, 126 30" fill="none" stroke="#81D4FA" stroke-width="4" stroke-linecap="round"/>
+      <g fill="#fff" stroke="#0277BD" stroke-width="1.6">
+        <circle cx="8" cy="30" r="3.2"/><circle cx="46" cy="30" r="3.2"/><circle cx="88" cy="20" r="3.2"/><circle cx="126" cy="30" r="3.2"/>
+      </g>
+      <g class="goutte"><path d="M0,-8 C3,-3 5.5,0 5.5,3 A5.5,5.5 0 1 1 -5.5,3 C-5.5,0 -3,-3 0,-8Z" fill="#0277BD" stroke="#01579B" stroke-width="1"/></g>
+      <clipPath id="cuve"><rect x="138" y="8" width="26" height="36" rx="4"/></clipPath>
+      <g clip-path="url(#cuve)"><rect class="niveau" x="138" y="8" width="26" height="36" fill="#4FC3F7"/></g>
+      <rect x="138" y="8" width="26" height="36" rx="4" fill="none" stroke="#01579B" stroke-width="2"/>
+    </svg>
+    <span class="pcount" id="pcount">0 / 13 cartes</span>
+    <ol class="jalons" id="jalons" aria-label="Progression en 5 jalons"></ol>
+    <button type="button" class="toolbtn" id="btn-adapte" aria-pressed="false">Mode adapté</button>
+    <button type="button" class="toolbtn" id="btn-projection" aria-pressed="false">Projection</button>
+    <button type="button" class="toolbtn" id="btn-imprimer"><span aria-hidden="true" data-nolecture>&#x1F5A8;&#xFE0F; </span>Imprimer</button>
+  </div>
+</div>
+
+<main id="principal">
+
+  <div class="entete-papier">
+    <div>
+      <div class="sur">Technologie · 4<sup>e</sup> · P11 · Synthèse</div>
+      <h1>L’eau, ressource essentielle</h1>
+    </div>
+    <div class="droite">
+      <div class="nom" id="papier-nom">Nom :</div>
+      <div id="papier-date"></div>
+    </div>
+  </div>
+
+  <div class="intro">
+    <p><b>Cette synthèse se gagne.</b> Chaque carte s'ouvre après un petit défi : réponds d'abord, la notion apparaît ensuite.</p>
+    <ul>
+      <li>Ce n'est pas noté, et il n'y a pas de chronomètre. Si tu te trompes, tu reçois un indice puis d'autres questions.</li>
+      <li>Le bouton <b>Mode adapté</b> agrandit le texte, simplifie les consignes, propose 3 réponses au lieu de 4 et montre une question à la fois.</li>
+    </ul>
+  </div>
+
+  <h2 class="partie">I – LES ÉTAPES DE CONCEPTION D’UN OBJET TECHNIQUE</h2>
+  <div class="cartes" id="cartes-I"></div>
+
+  <h2 class="partie">II – ANALYSE DU FONCTIONNEMENT D’UN OBJET TECHNIQUE</h2>
+  <div class="cartes" id="cartes-II"></div>
+
+  <!-- ════════════════ CARTE 8 — CONCEPTION DE L'OBJET (FAST du robinet, activité 6) ════════════════ -->
+  <article class="cn" id="carte-n8" data-notion="n8">
+    <h3><button type="button" class="cn-tete" id="tete-n8" aria-expanded="false" aria-controls="corps-n8">
+      <span class="cn-num" aria-hidden="true">8</span>
+      <span class="cn-nom">Conception de l’objet</span>
+      <span class="cn-etat etat-gagner" id="etat-n8">à gagner</span>
+      <span class="chev" aria-hidden="true">&#x25BE;</span>
+    </button></h3>
+    <div class="cn-corps" id="corps-n8" hidden>
+
+      <div class="situ avec-lire" data-lire>
+        <div class="corps-bloc">
+          <p class="lb">La situation</p>
+          <p class="q">« Comment le robinet sait-il qu'il y a des mains ? »</p>
+          <p>Tu tends les mains : l'eau coule, sans poignée ni bouton. Puis elle s'arrête toute seule. Chaque chose que fait le robinet est réalisée par une pièce précise.</p>
+        </div>
+      </div>
+
+      <section class="defi" id="defi-n8" aria-labelledby="defi-n8-titre" hidden></section>
+
+      <div class="revele" id="revele-n8" hidden>
+        <h4 id="revele-n8-titre" tabindex="-1">La notion</h4>
+        <div class="defbloc avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p data-s11>Pour chaque fonction technique d’un produit, les concepteurs doivent trouver des solutions techniques qui respectent le <button type="button" class="gloss" aria-expanded="false" aria-controls="def-cdc">cahier des charges</button>.</p>
+            <div class="gloss-def" id="def-cdc" hidden><b>Cahier des charges</b> : <span data-s11>Le cahier des charges est un document important qui décrit les besoins à satisfaire et les contraintes à respecter.</span> <span class="src">(synthèse, « Cahier des charges »)</span></div>
+            <p data-s11>Des outils comme la Conception Assistée par Ordinateur (CAO), la réalité virtuelle, ou encore l’impression 3D sont utilisés pour valider les solutions et visualiser l’objet avant sa fabrication..</p>
+          </div>
+        </div>
+
+        <div class="mot-savant avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p class="lb">Le mot savant</p>
+            <p class="mot">Le diagramme FAST <small>(Function Analysis System Technique)</small></p>
+            <p>C’est un outil visuel qui représente les relations logiques entre les fonctions d'un système, d'un produit ou d'un service. <span class="src">(fiche A6)</span></p>
+          </div>
+        </div>
+
+        <h4>Le FAST du robinet automatique</h4>
+        <figure class="fast">
+          <div class="fast-svg" id="fast-n8"></div>
+          <div class="vh"><table>
+            <caption>FAST du robinet automatique</caption>
+            <thead><tr><th>Fonction d’usage</th><th>Fonction technique</th><th>Solution technique</th></tr></thead>
+            <tbody>
+              <tr><td rowspan="4">Distribuer de l’eau sans contact pour économiser l’eau</td><td>1. Détecter la présence des mains</td><td>Capteur infrarouge</td></tr>
+              <tr><td>2. Traiter l’information et commander</td><td>Carte électronique (microcontrôleur)</td></tr>
+              <tr><td>3. Ouvrir / fermer l’arrivée d’eau</td><td>Électrovanne</td></tr>
+              <tr><td>4. Produire l’énergie électrique (sans pile)</td><td>Turbine + générateur (entraînés par l’eau)</td></tr>
+            </tbody>
+          </table></div>
+          <figcaption class="avec-lire" data-lire><div class="corps-bloc"><b>Fonction d’usage → Fonctions techniques → Solutions techniques.</b> Les numéros 1 à 4 donnent l'ordre dans lequel les fonctions se déroulent quand on tend les mains.</div></figcaption>
+        </figure>
+
+        <h4>Lire un FAST</h4>
+        <div class="avec-lire" data-lire>
+          <div class="corps-bloc">
+            <ul class="lecture">
+              <li><span class="sens" aria-hidden="true" data-nolecture>&#x2190;</span><span>De droite à gauche, il répond à la question <b>« Pourquoi ? »</b></span></li>
+              <li><span class="sens" aria-hidden="true" data-nolecture>&#x2192;</span><span>De gauche à droite, il répond à la question <b>« Comment ? »</b></span></li>
+              <li><span class="sens" aria-hidden="true" data-nolecture>&#x2193;</span><span>À la verticale, il indique les fonctions simultanées ou complémentaires (<b>« Quand ? »</b>)</span></li>
+            </ul>
+            <p class="attention">Les fonctions sont rangées de haut en bas dans l'ordre où elles se passent : on détecte, on décide, l'eau coule. Ce n'est pas « la plus importante en haut ».</p>
+            <p class="exemple" style="margin-top:10px">Lecture : « Comment détecter la présence ? → grâce au capteur infrarouge. » / « Pourquoi une électrovanne ? → pour ouvrir et fermer l’arrivée d’eau. »</p>
+          </div>
+        </div>
+
+        <div class="retiens avec-lire" data-lire>
+          <div class="corps-bloc">
+            <p class="t"><span aria-hidden="true" data-nolecture>&#x2605; </span>Ce que je dois retenir</p>
+            <p><b>Diagramme FAST :</b> il relie la <b>fonction d’usage</b> aux <b>fonctions techniques</b> puis aux <b>solutions techniques</b> (les composants réels). Une fonction commence par un verbe à l’infinitif.</p>
+          </div>
+        </div>
+
+        <div class="actions-carte">
+          <button type="button" class="btn" id="rejouer-n8">Rejouer le défi pour progresser</button>
+        </div>
+      </div>
+
+      <div id="vivant" role="status" aria-live="polite"></div>
+    </div>
+  </article>
+
+</main>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   P11 — SYNTHÈSE FINALE « la synthèse se gagne » (4e) — page élève.
+   Logique pure dans synthese_p11_logique.js (window.P11SYN) ; ici :
+   affichage, défis, révélation, modes adapté et projection, voix.
+   Maquette : seule la carte 8 (Conception de l'objet, FAST) est jouable.
+   Aucun envoi au classeur dans cette version.
+   ════════════════════════════════════════════════════════════════════ */
+"use strict";
+
+var P = window.P11SYN;
+var CLE_IDENT = "p11-syn_prefill";
+var JOUABLES = { n8: true };
+var JALONS = ["Besoin", "Contraintes", "Cahier des charges", "Analyse fonctionnelle", "Chaînes"];
+var NIVEAUX = { acquis: "✓ acquis", en_cours: "◐ en cours", a_revoir: "↻ à revoir" };
+var RENVOIS = { A6: "l'activité 6 (le diagramme FAST)" };
+var MOUV_REDUIT = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+var FAST = {
+  fu: "Distribuer de l’eau sans contact pour économiser l’eau",
+  ft: ["Détecter la présence des mains", "Traiter l’information et commander", "Ouvrir / fermer l’arrivée d’eau", "Produire l’énergie électrique (sans pile)"],
+  st: ["Capteur infrarouge", "Carte électronique (microcontrôleur)", "Électrovanne", "Turbine + générateur (entraînés par l’eau)"]
+};
+
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs, texte) {
+  var e = document.createElement(tag);
+  if (attrs) for (var k in attrs) if (attrs.hasOwnProperty(k)) {
+    if (k === "class") e.className = attrs[k];
+    else if (k === "hidden") e.hidden = !!attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  if (texte != null) e.textContent = texte;
+  return e;
+}
+function typo(s) { return String(s).replace(/'/g, "’"); }
+
+/* ── Identité et stockage (un état par élève ; sans identifiant : session seulement) ── */
+var ident = null;
+try { ident = JSON.parse(localStorage.getItem(CLE_IDENT) || "null"); } catch (e) { ident = null; }
+var idEleve = ident && ident.id ? String(ident.id).trim() : "";
+var STOCK = { cle: P.cleEtat(idEleve) || "p11-syn_etat:session", local: !!idEleve };
+function magasin() { try { return STOCK.local ? window.localStorage : window.sessionStorage; } catch (e) { return null; } }
+function chargerEtat() {
+  var e = P.etatVide(), m = magasin();
+  try {
+    var brut = m && m.getItem(STOCK.cle), o = brut ? JSON.parse(brut) : null;
+    if (o && typeof o === "object") for (var k in o) if (o.hasOwnProperty(k)) e[k] = o[k];
+  } catch (x) {}
+  if (!e.cartes || typeof e.cartes !== "object") e.cartes = {};
+  if (!idEleve && !e.graine) e.graine = "s" + Math.floor(Math.random() * 1e9);
+  e.projection = !!e.projection;
+  return e;
+}
+function sauver() {
+  var m = magasin();
+  try { if (m) m.setItem(STOCK.cle, JSON.stringify(etat)); } catch (x) {}
+}
+var etat = chargerEtat();
+var PROJECTION_URL = /[?&]projection\b/.test(location.search);
+
+function lireIdentite() {
+  if (!ident) return;
+  if (ident.p) $("inp-prenom").value = ident.p;
+  if (ident.n) $("inp-nom").value = ident.n;
+  if (ident.c) $("inp-classe").value = String(ident.c).replace(/^4/, "");
+  if (ident.p && ident.n) {
+    ["inp-prenom", "inp-nom", "inp-classe"].forEach(function (i) {
+      var e = $(i); e.readOnly = true; e.tabIndex = -1;
+      e.title = "Identité de ton compte : elle ne se modifie pas ici.";
+    });
+    var n = el("div", { id: "ident-compte", "data-nolecture": "" }, "\u{1F512} identité de ton compte");
+    n.style.cssText = "flex-basis:100%;font-size:.7rem;color:#D6E6F4";
+    document.querySelector(".ident").appendChild(n);
+  }
+}
+function majEntetePapier() {
+  var p = $("inp-prenom").value.trim(), n = $("inp-nom").value.trim(), c = $("inp-classe").value.trim().toUpperCase();
+  var qui = (p + " " + n).trim();
+  $("papier-nom").textContent = qui ? qui + (c ? "  ·  4" + c : "") : "Nom :               Classe :";
+}
+
+/* ── Voix (Web Speech API, voix française seulement) ── */
+var VOIX = { etat: "attente", voix: null };
+function synthese() { try { return window.speechSynthesis || null; } catch (e) { return null; } }
+function chercherVoix() {
+  var s = synthese(); if (!s || !window.SpeechSynthesisUtterance) return null;
+  var v = [];
+  try { v = s.getVoices() || []; } catch (e) { v = []; }
+  for (var i = 0; i < v.length; i++) if (/^fr[-_]FR$/i.test(v[i].lang)) return v[i];
+  for (i = 0; i < v.length; i++) if (/^fr\b/i.test(v[i].lang)) return v[i];
+  return null;
+}
+function voixPrete(v) {
+  if (VOIX.etat !== "attente") return;
+  VOIX.voix = v; VOIX.etat = "ok";
+  Array.prototype.forEach.call(document.querySelectorAll(".btn-lire"), function (b) { b.hidden = false; });
+}
+function voixAbsente() {
+  if (VOIX.etat !== "attente") return;
+  VOIX.etat = "non";
+  Array.prototype.forEach.call(document.querySelectorAll(".btn-lire"), function (b) { b.parentNode.removeChild(b); });
+}
+function initVoix() {
+  var s = synthese();
+  if (!s || !window.SpeechSynthesisUtterance) { voixAbsente(); return; }
+  var v = chercherVoix();
+  if (v) { voixPrete(v); return; }
+  try { s.addEventListener("voiceschanged", function () { var w = chercherVoix(); if (w) voixPrete(w); }); } catch (e) {}
+  setTimeout(function () { var w = chercherVoix(); if (w) voixPrete(w); else voixAbsente(); }, 1000);
+}
+/* Le texte prononcé ne contient ni emoji ni flèche. */
+function sansEmoji(t) {
+  return String(t).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2460}-\u{27BF}\u{2B00}-\u{2BFF}️‍]/gu, " ")
+    .replace(/\s+/g, " ").trim();
+}
+function lire(texte) {
+  var s = synthese();
+  if (VOIX.etat !== "ok" || !s) return false;
+  try {
+    s.cancel();
+    var u = new SpeechSynthesisUtterance(sansEmoji(texte));
+    u.lang = "fr-FR"; u.voice = VOIX.voix; u.rate = 0.95;
+    s.speak(u);
+    return true;
+  } catch (e) { return false; }
+}
+function texteLisible(bloc) {
+  var c = bloc.cloneNode(true);
+  Array.prototype.forEach.call(c.querySelectorAll("[data-nolecture], .gloss-def, .btn-lire"), function (x) { x.parentNode.removeChild(x); });
+  return c.textContent;
+}
+function boutonLire(bloc, texte) {
+  if (VOIX.etat === "non") return null;
+  var b = el("button", { type: "button", class: "btn-lire", "data-nolecture": "", "aria-label": "Écouter ce passage" });
+  b.innerHTML = '<span aria-hidden="true">\u{1F50A}</span> Écouter';
+  b.hidden = VOIX.etat !== "ok";
+  b.addEventListener("click", function () { lire(typeof texte === "function" ? texte() : texteLisible(bloc)); });
+  bloc.appendChild(b);
+  return b;
+}
+
+/* ── Rétroaction : une seule zone aria-live ── */
+function annoncer(texte, ton) {
+  var v = $("vivant");
+  v.className = ton || "";
+  v.textContent = "";
+  /* vider puis écrire : le lecteur d'écran annonce même un message identique */
+  setTimeout(function () { v.textContent = texte; }, 30);
+}
+
+/* ── Cartes verrouillées (maquette : seule n8 est jouable) ── */
+function construireCartes() {
+  P.NOTIONS.forEach(function (n, i) {
+    var zone = $(n.partie === "I" ? "cartes-I" : "cartes-II");
+    if (n.id === "n8") { zone.appendChild($("carte-n8")); return; }
+    var a = el("article", { class: "cn verrou", id: "carte-" + n.id, "data-notion": n.id });
+    var h = el("h3"), t = el("div", { class: "cn-tete" });
+    t.appendChild(el("span", { class: "cn-num", "aria-hidden": "true" }, String(i)));
+    t.appendChild(el("span", { class: "cn-nom" }, typo(n.titre)));
+    var s = el("span", { class: "cn-etat" });
+    s.innerHTML = '<span aria-hidden="true" data-nolecture>\u{1F512} </span>bientôt';
+    t.appendChild(s);
+    h.appendChild(t); a.appendChild(h); zone.appendChild(a);
+  });
+  var ol = $("jalons");
+  JALONS.forEach(function (nom, i) {
+    var li = el("li", { id: "jalon-" + (i + 1) });
+    li.appendChild(el("span", { class: "jn", "aria-hidden": "true" }, String(i + 1)));
+    li.appendChild(el("span", { class: "jnom" }, nom));
+    li.appendChild(el("span", { class: "vh jetat" }, " : à venir"));
+    ol.appendChild(li);
+  });
+}
+
+/* ── Progression : goutte, réservoir, jalons ── */
+function majProgression(anime) {
+  var total = P.NOTIONS.length, ouvertes = 0;
+  P.NOTIONS.forEach(function (n) { if (etat.cartes[n.id] && etat.cartes[n.id].ouverte) ouvertes++; });
+  $("pcount").textContent = ouvertes + " / " + total + (ouvertes > 1 ? " cartes ouvertes" : " carte ouverte");
+  var svg = $("voyage"), chemin = $("trajet");
+  if (anime && !MOUV_REDUIT) {
+    svg.classList.add("anime");
+    setTimeout(function () { svg.classList.remove("anime"); }, 1900);
+  }
+  try {
+    var L = chemin.getTotalLength(), pt = chemin.getPointAtLength(L * ouvertes / total);
+    svg.style.setProperty("--gx", pt.x + "px"); svg.style.setProperty("--gy", pt.y + "px");
+  } catch (e) {}
+  svg.style.setProperty("--niv", String(ouvertes / total));
+  for (var j = 1; j <= 5; j++) {
+    var ids = P.NOTIONS.filter(function (n) { return n.jalon === j; });
+    var fait = ids.every(function (n) { return etat.cartes[n.id] && etat.cartes[n.id].ouverte; });
+    var li = $("jalon-" + j);
+    li.classList.toggle("fait", fait);
+    li.querySelector(".jn").textContent = fait ? "✓" : String(j);
+    li.querySelector(".jetat").textContent = fait ? " : fait" : " : à venir";
+  }
+  var c = etat.cartes.n8, e = $("etat-n8");
+  if (c && c.niv) { e.textContent = NIVEAUX[c.niv]; e.className = "cn-etat etat-" + c.niv; }
+  else { e.textContent = "à gagner"; e.className = "cn-etat etat-gagner"; }
+}
+
+/* ── Ouvrir une carte ── */
+var CARTE_ACTIVE = null;
+function ouvrirCarte(id, fermerSiOuverte) {
+  if (!JOUABLES[id]) return;
+  var tete = $("tete-" + id), corps = $("corps-" + id);
+  if (fermerSiOuverte && tete.getAttribute("aria-expanded") === "true") {
+    tete.setAttribute("aria-expanded", "false"); corps.hidden = true; return;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".cn.active"), function (a) { a.classList.remove("active"); });
+  $("carte-" + id).classList.add("active");
+  CARTE_ACTIVE = id;
+  tete.setAttribute("aria-expanded", "true"); corps.hidden = false;
+  var c = etat.cartes[id];
+  if (c && c.ouverte) reveler(id, false);
+  else if (!DEFI || DEFI.id !== id) rendreDefi(id);
+  else { $("defi-" + id).hidden = false; }
+}
+
+/* ── Le défi ── */
+var DEFI = null;
+function graineDe(id) {
+  var c = etat.cartes[id] || { essais: 0, serie: 0 };
+  /* nouvelle série = nouveau tirage ; dans une série, l'essai fait varier les items */
+  return (idEleve || etat.graine) + ":" + (c.essais - c.serie);
+}
+function rendreDefi(id) {
+  var essai = P.essaiSuivant(etat, id);
+  DEFI = { id: id, essai: essai, items: P.tirerDefi(id, essai, graineDe(id), !!etat.adapte), reponses: {}, pas: 0, fini: false, sel: null };
+  DEFI.items.forEach(function (it) { if (it.type === "ordre") DEFI.reponses[it.id] = it.options.slice(); });
+  $("revele-" + id).hidden = true;
+  $("defi-" + id).hidden = false;
+  dessinerDefi();
+}
+function repondu(it) { var r = DEFI.reponses[it.id]; return Array.isArray(r) ? r.length === it.options.length : !!r; }
+function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneSimple : it.consigne; }
+
+function dessinerDefi(focusSur) {
+  var z = $("defi-" + DEFI.id);
+  z.innerHTML = "";
+  z.appendChild(el("h4", { class: "dtitre", id: "defi-" + DEFI.id + "-titre" },
+    "Défi · essai " + DEFI.essai + (DEFI.essai > 1 ? " (nouvelles questions)" : "")));
+  z.appendChild(el("p", { class: "daide" }, etat.adapte
+    ? "Une question à la fois. Le bouton « Un indice ? » t'aide avant de répondre."
+    : (DEFI.items.length > 1 ? "Réponds aux " + DEFI.items.length + " questions" : "Réponds à la question") + ", puis clique sur « Vérifier mes réponses »."));
+  DEFI.items.forEach(function (it, i) {
+    if (etat.adapte && !DEFI.fini && i !== DEFI.pas) return;
+    z.appendChild(dessinerItem(it, i));
+  });
+  var pied = el("div", { class: "dpied" });
+  if (DEFI.fini) {
+    if (DEFI.suite) {
+      var b = el("button", { type: "button", class: "btn prim", id: "btn-suite" }, "Nouvel essai, avec d'autres questions");
+      b.addEventListener("click", function () { annoncer(""); rendreDefi(DEFI.id); focaliser(".consigne"); lireItemAuto(DEFI.items[0]); });
+      pied.appendChild(b);
+    }
+  } else if (etat.adapte) {
+    var n = DEFI.items.length;
+    pied.appendChild(el("span", { class: "pas" }, "Question " + (DEFI.pas + 1) + " sur " + n));
+    if (DEFI.pas > 0) {
+      var pr = el("button", { type: "button", class: "btn", id: "btn-prec" }, "← Précédente");
+      pr.addEventListener("click", function () { allerA(DEFI.pas - 1); });
+      pied.appendChild(pr);
+    }
+    if (DEFI.pas < n - 1) {
+      var sv = el("button", { type: "button", class: "btn prim", id: "btn-suiv" }, "Suivante →");
+      sv.addEventListener("click", function () { allerA(DEFI.pas + 1); });
+      pied.appendChild(sv);
+    } else pied.appendChild(boutonVerifier());
+  } else pied.appendChild(boutonVerifier());
+  var c = etat.cartes[DEFI.id];
+  if (c && c.ouverte) {
+    var rv = el("button", { type: "button", class: "btn", id: "btn-revoir" }, "Revenir à la notion");
+    rv.addEventListener("click", function () { DEFI = null; annoncer(""); reveler("n8", false); $("revele-n8-titre").focus(); });
+    pied.appendChild(rv);
+  }
+  z.appendChild(pied);
+  if (focusSur) focaliser(focusSur);
+}
+function boutonVerifier() {
+  var b = el("button", { type: "button", class: "btn prim", id: "btn-verifier" }, "Vérifier mes réponses");
+  b.addEventListener("click", verifier);
+  return b;
+}
+function focaliser(sel) {
+  var z = $("defi-" + DEFI.id), e = typeof sel === "string" ? z.querySelector(sel) : sel;
+  if (e) { try { e.focus({ preventScroll: false }); } catch (x) { e.focus(); } }
+}
+function allerA(i) {
+  DEFI.pas = Math.max(0, Math.min(DEFI.items.length - 1, i));
+  dessinerDefi(".consigne");
+  lireItemAuto(DEFI.items[DEFI.pas]);
+}
+function lireItemAuto(it) {
+  if (!etat.adapte || !it) return;
+  var t = consigneDe(it);
+  if (it.type === "ordre") t += " " + "Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
+  else t += " Propositions : " + it.options.join(", ") + ".";
+  lire(t);
+}
+
+function dessinerItem(it, i) {
+  var bloc = el("div", { class: "item", "data-item": it.id });
+  var tete = el("div", { class: "avec-lire" });
+  var cons = el("p", { class: "consigne", id: "cons-" + it.id, tabindex: "-1" }, consigneDe(it));
+  var cb = el("div", { class: "corps-bloc" }); cb.appendChild(cons); tete.appendChild(cb);
+  boutonLire(tete, function () {
+    var t = consigneDe(it);
+    return it.type === "ordre" ? t + " Les étiquettes : " + DEFI.reponses[it.id].join(", ") + "." : t + " Propositions : " + it.options.join(", ") + ".";
+  });
+  bloc.appendChild(tete);
+  if (it.type === "menu") bloc.appendChild(dessinerMenu(it));
+  else if (it.type === "choix") bloc.appendChild(dessinerChoix(it));
+  else if (it.type === "ordre") bloc.appendChild(dessinerOrdre(it));
+  /* En mode adapté, l'indice se consulte avant de répondre. */
+  if (etat.adapte && !DEFI.fini && it.indice) {
+    var zi = el("div", { class: "indice-zone" });
+    var bi = el("button", { type: "button", class: "btn-indice", "aria-expanded": "false", "aria-controls": "ind-" + it.id });
+    bi.innerHTML = '<span aria-hidden="true" data-nolecture>\u{1F4A1} </span>Un indice ?';
+    var ti = el("p", { class: "indice-txt", id: "ind-" + it.id, hidden: true }, it.indice);
+    bi.addEventListener("click", function () {
+      var ouvert = bi.getAttribute("aria-expanded") === "true";
+      bi.setAttribute("aria-expanded", String(!ouvert)); ti.hidden = ouvert;
+      if (!ouvert) lire(it.indice);
+    });
+    zi.appendChild(bi); zi.appendChild(ti); bloc.appendChild(zi);
+  }
+  if (DEFI.fini && DEFI.verdicts) {
+    var ok = DEFI.verdicts[it.id];
+    bloc.classList.add(ok ? "juste" : "faux");
+    bloc.appendChild(el("p", { class: "verdict " + (ok ? "ok" : "ko") }, ok ? "✓ Juste" : "✕ Pas encore juste"));
+  }
+  return bloc;
+}
+
+function dessinerMenu(it) {
+  var l = el("div", { class: "ligne-fast" });
+  var m = /«\s*([^»]+?)\s*»/.exec(it.consigne);
+  if (m) {
+    l.appendChild(el("span", { class: "ft-boite" }, m[1]));
+    l.appendChild(el("span", { class: "fl", "aria-hidden": "true" }, "→"));
+  }
+  var s = el("select", { class: "menu", id: "sel-" + it.id, "aria-labelledby": "cons-" + it.id });
+  s.appendChild(el("option", { value: "" }, "— choisis la solution —"));
+  it.options.forEach(function (o) {
+    var op = el("option", { value: o }, o);
+    if (DEFI.reponses[it.id] === o) op.selected = true;
+    s.appendChild(op);
+  });
+  s.disabled = DEFI.fini;
+  s.addEventListener("change", function () { DEFI.reponses[it.id] = s.value; });
+  l.appendChild(s);
+  return l;
+}
+
+function dessinerChoix(it) {
+  var g = el("div", { class: "choix", role: "group", "aria-labelledby": "cons-" + it.id });
+  it.options.forEach(function (o) {
+    var b = el("button", { type: "button", class: "opt", "aria-pressed": String(DEFI.reponses[it.id] === o) }, o);
+    b.disabled = DEFI.fini;
+    b.addEventListener("click", function () {
+      DEFI.reponses[it.id] = o;
+      Array.prototype.forEach.call(g.children, function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    });
+    g.appendChild(b);
+  });
+  /* Flèches : passer d'une proposition à l'autre */
+  g.addEventListener("keydown", function (e) {
+    var t = Array.prototype.slice.call(g.children), i = t.indexOf(document.activeElement);
+    if (i < 0) return;
+    var d = (e.key === "ArrowRight" || e.key === "ArrowDown") ? 1 : (e.key === "ArrowLeft" || e.key === "ArrowUp") ? -1 : 0;
+    if (!d) return;
+    e.preventDefault();
+    t[(i + d + t.length) % t.length].focus();
+  });
+  return g;
+}
+
+/* Ordre vertical : glisser-déposer, OU choisir une étiquette puis sa place (clic, Entrée),
+   OU boutons ▲ ▼, OU flèches haut / bas sur l'étiquette. */
+function dessinerOrdre(it) {
+  var box = el("div");
+  var aideId = "aide-" + it.id;
+  box.appendChild(el("p", { class: "daide", id: aideId },
+    "Pour déplacer une étiquette : glisse-la, ou clique dessus puis sur la place voulue, ou utilise les boutons ▲ ▼ (au clavier : flèches haut et bas)."));
+  var ol = el("ol", { class: "ordre", "aria-labelledby": "cons-" + it.id });
+  var liste = DEFI.reponses[it.id], min = it.fixe === 0 ? 1 : 0;
+  liste.forEach(function (txt, i) {
+    var li = el("li", { "data-i": String(i) });
+    li.appendChild(el("span", { class: "rang", "aria-hidden": "true" }, String(i + 1)));
+    if (i < min) {
+      var f = el("span", { class: "pion fixe" });
+      f.appendChild(el("span", null, txt));
+      f.appendChild(el("small", null, "✓ déjà placée"));
+      li.appendChild(f); ol.appendChild(li); return;
+    }
+    var poi = el("span", { class: "poignee", "aria-hidden": "true", "data-nolecture": "" }, "⠇");
+    var p = el("button", { type: "button", class: "pion", "aria-pressed": String(DEFI.sel === i), "aria-describedby": aideId,
+      "aria-label": "Position " + (i + 1) + " : " + txt }, txt);
+    var up = el("button", { type: "button", class: "mv", "aria-label": "Monter « " + txt + " »" }, "▲");
+    var dn = el("button", { type: "button", class: "mv", "aria-label": "Descendre « " + txt + " »" }, "▼");
+    up.disabled = DEFI.fini || i <= min; dn.disabled = DEFI.fini || i >= liste.length - 1; p.disabled = DEFI.fini;
+    up.addEventListener("click", function () { deplacer(it, i, i - 1, ".mv"); });
+    dn.addEventListener("click", function () { deplacer(it, i, i + 1, ".mv"); });
+    p.addEventListener("click", function () {
+      if (glisseVientDeFinir) return;
+      if (DEFI.sel === null || DEFI.sel === undefined) {
+        DEFI.sel = i; majSel(ol);
+        annoncer("« " + txt + " » choisie. Choisis maintenant l'étiquette dont elle doit prendre la place.");
+      } else if (DEFI.sel === i) {
+        DEFI.sel = null; majSel(ol); annoncer("Choix annulé.");
+      } else { var de = DEFI.sel; DEFI.sel = null; deplacer(it, de, i, ".pion"); }
+    });
+    p.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowUp" && i > min) { e.preventDefault(); DEFI.sel = null; deplacer(it, i, i - 1, ".pion"); }
+      else if (e.key === "ArrowDown" && i < liste.length - 1) { e.preventDefault(); DEFI.sel = null; deplacer(it, i, i + 1, ".pion"); }
+      else if (e.key === "Escape" && DEFI.sel !== null) { DEFI.sel = null; majSel(ol); }
+    });
+    var mvs = el("span", { class: "mvs" }); mvs.appendChild(up); mvs.appendChild(dn);
+    li.appendChild(poi); li.appendChild(p); li.appendChild(mvs);
+    if (!DEFI.fini) brancherGlisser(li, ol, it, i, min);
+    ol.appendChild(li);
+  });
+  box.appendChild(ol);
+  return box;
+}
+function majSel(ol) {
+  Array.prototype.forEach.call(ol.querySelectorAll(".pion[aria-pressed]"), function (b) {
+    var i = +b.parentNode.getAttribute("data-i");
+    b.setAttribute("aria-pressed", String(DEFI.sel === i));
+  });
+}
+function deplacer(it, de, vers, focusSel) {
+  var l = DEFI.reponses[it.id], min = it.fixe === 0 ? 1 : 0;
+  vers = Math.max(min, Math.min(l.length - 1, vers));
+  if (de === vers) return;
+  var x = l.splice(de, 1)[0];
+  l.splice(vers, 0, x);
+  dessinerDefi();
+  var li = document.querySelector('[data-item="' + it.id + '"] .ordre li[data-i="' + vers + '"]');
+  if (li) {
+    var cible = li.querySelector(focusSel === ".mv" ? (vers > de ? ".mv:last-child" : ".mv:first-child") : ".pion");
+    if (!cible || cible.disabled) cible = li.querySelector(".pion");
+    if (cible) cible.focus();
+  }
+  annoncer("« " + x + " » est maintenant en position " + (vers + 1) + " sur " + l.length + ".");
+}
+var glisseVientDeFinir = false;
+function brancherGlisser(li, ol, it, i, min) {
+  /* Le suivi se fait sur le document : un mouvement rapide quitte l'étiquette avant
+     d'avoir franchi le seuil, et ses événements arriveraient sinon sur une autre ligne. */
+  var depart = null, glisse = false, cible = i;
+  function bouge(e) {
+    if (!depart || e.pointerId !== depart.id) return;
+    var dy = e.clientY - depart.y;
+    if (!glisse && Math.abs(dy) < 8) return;
+    if (!glisse) { glisse = true; li.classList.add("glisse"); }
+    e.preventDefault();
+    li.style.transform = "translateY(" + dy + "px)";
+    var rangs = ol.children; cible = i;
+    for (var k = 0; k < rangs.length; k++) {
+      if (rangs[k] === li) continue;
+      var r = rangs[k].getBoundingClientRect(), mil = r.top + r.height / 2;
+      if (k > i && e.clientY > mil) cible = k;
+      if (k < i && e.clientY < mil && cible >= i) cible = Math.min(cible, k);
+      rangs[k].classList.remove("cible");
+    }
+    cible = Math.max(min, cible);
+    if (cible !== i && rangs[cible]) rangs[cible].classList.add("cible");
+  }
+  function fin(e) {
+    if (!depart || e.pointerId !== depart.id) return;
+    depart = null;
+    document.removeEventListener("pointermove", bouge);
+    document.removeEventListener("pointerup", fin);
+    document.removeEventListener("pointercancel", fin);
+    if (!glisse) return;
+    glisse = false; li.classList.remove("glisse"); li.style.transform = "";
+    glisseVientDeFinir = true; setTimeout(function () { glisseVientDeFinir = false; }, 50);
+    DEFI.sel = null;
+    if (cible !== i && e.type === "pointerup") deplacer(it, i, cible, ".pion"); else dessinerDefi();
+  }
+  li.addEventListener("pointerdown", function (e) {
+    if (e.button !== 0 || e.target.closest(".mv")) return;
+    depart = { y: e.clientY, id: e.pointerId }; glisse = false; cible = i;
+    document.addEventListener("pointermove", bouge);
+    document.addEventListener("pointerup", fin);
+    document.addEventListener("pointercancel", fin);
+  });
+}
+
+function verifier() {
+  var id = DEFI.id;
+  for (var k = 0; k < DEFI.items.length; k++) {
+    if (!repondu(DEFI.items[k])) {
+      annoncer("Il te reste une réponse à choisir avant de vérifier.", "ko");
+      if (etat.adapte) { DEFI.pas = k; dessinerDefi(); }
+      var it = DEFI.items[k];
+      focaliser(it.type === "menu" ? "#sel-" + it.id : '[data-item="' + it.id + '"] .opt');
+      return;
+    }
+  }
+  var r = P.corriger(DEFI.items, DEFI.reponses);
+  if (!etat.debut) etat.debut = Date.now();
+  etat = P.appliquer(etat, id, r.juste);
+  sauver();
+  var c = etat.cartes[id], seriefinie = c.serie === 0;
+  DEFI.fini = true;
+  DEFI.verdicts = {};
+  DEFI.items.forEach(function (it) { DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0; });
+  if (r.juste) {
+    var nivTentative = c.dernier;
+    annoncer(nivTentative === "acquis"
+      ? "Bravo, tout est juste du premier coup ! La notion s'ouvre : regarde le FAST du robinet se construire."
+      : "C'est juste ! Tu as trouvé après un indice : la carte est « en cours ». Tu pourras rejouer le défi pour la passer en « acquis ».", "ok");
+    reveler(id, true);
+  } else if (seriefinie) {
+    annoncer("Ce n'est pas encore ça, et ce n'est pas grave : la carte s'ouvre pour que tu lises la notion. "
+      + "Elle est notée « à revoir » ; relis " + renvoiDe(DEFI.items) + ", puis rejoue le défi quand tu veux.", "ko");
+    reveler(id, true);
+  } else {
+    var nf = r.fautes.length;
+    DEFI.suite = true;
+    dessinerDefi("#btn-suite");
+    annoncer((nf === 1 ? "Presque : une réponse n'est pas encore juste." : nf + " réponses ne sont pas encore justes.")
+      + " Indice : " + r.indice + " Tu peux revoir " + renvoiDe(DEFI.items) + ". Le nouvel essai te pose d'autres questions.", "ko");
+  }
+}
+function renvoiDe(items) { var r = items[0] && items[0].renvoi; return RENVOIS[r] || "l'activité " + (r || ""); }
+
+/* ── La révélation ── */
+function reveler(id, anime) {
+  $("defi-" + id).hidden = true;
+  var rv = $("revele-" + id);
+  rv.hidden = false;
+  majProgression(anime);
+  dessinerFAST($("fast-" + id), anime);
+  if (anime) { var h = $("revele-" + id + "-titre"); if (h) h.focus(); }
+}
+
+/* FAST en SVG, mis en page à la largeur réelle (texte à sa vraie taille, jamais réduit) :
+   trois colonnes sur grand écran, empilé sur téléphone. Construit bloc par bloc. */
+var NS = "http://www.w3.org/2000/svg", MESURE = null;
+function largeurTexte(t, police) {
+  MESURE = MESURE || document.createElement("canvas").getContext("2d");
+  /* marge de 8 % : la police de la page peut différer un peu de celle mesurée */
+  MESURE.font = police; return MESURE.measureText(t).width * 1.08;
+}
+function motLePlusLong(textes, police) {
+  var m = 0;
+  textes.forEach(function (t) { t.split(" ").forEach(function (w) { m = Math.max(m, largeurTexte(w, police)); }); });
+  return m;
+}
+function couper(t, larg, police) {
+  var mots = t.split(" "), lignes = [], cour = "";
+  mots.forEach(function (m) {
+    var essai = cour ? cour + " " + m : m;
+    if (cour && largeurTexte(essai, police) > larg) { lignes.push(cour); cour = m; } else cour = essai;
+  });
+  if (cour) lignes.push(cour);
+  return lignes;
+}
+function sv(tag, a, parent) {
+  var e = document.createElementNS(NS, tag);
+  for (var k in a) if (a.hasOwnProperty(k)) e.setAttribute(k, a[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+var FAST_LARGEUR = 0, POLICES_ESSAYEES = {};
+function dessinerFAST(conteneur, anime, largeurForcee) {
+  if (!conteneur) return;
+  var W = largeurForcee || conteneur.clientWidth;
+  if (!W) return;
+  FAST_LARGEUR = W;
+  var cs = getComputedStyle(conteneur), fs = Math.max(14, parseFloat(cs.fontSize) * 0.95), fam = cs.fontFamily;
+  var pN = "400 " + fs + "px " + fam, pG = "700 " + fs + "px " + fam;
+  /* Police pas encore chargée (Luciole du mode adapté) : on la charge, puis on redessine une fois. */
+  if (document.fonts && document.fonts.load && !POLICES_ESSAYEES[pG + pN]) {
+    POLICES_ESSAYEES[pG + pN] = true;
+    try {
+      if (!document.fonts.check(pG) || !document.fonts.check(pN))
+        Promise.all([document.fonts.load(pG), document.fonts.load(pN)]).then(function () { FAST_LARGEUR = 0; redessinerFAST(); }, function () {});
+    } catch (x) {}
+  }
+  var lh = fs * 1.3, pad = fs * 0.6, gapR = fs * 0.7, large = W >= fs * 40;
+  var svg = sv("svg", { role: "img", "aria-label": "Diagramme FAST du robinet automatique, détaillé dans le tableau qui suit.", width: W }),
+      blocs = [];
+  var titre = sv("title", {}, svg); titre.textContent = "FAST du robinet automatique";
+  function boite(g, x, y, w, lignes, style) {
+    var h = lignes.length * lh + 2 * pad;
+    sv("rect", { x: x, y: y, width: w, height: h, rx: 8, fill: style.fond, stroke: style.trait, "stroke-width": 2 }, g);
+    lignes.forEach(function (l, i) {
+      var t = sv("text", { x: x + pad, y: y + pad + lh * i + fs * 0.98, fill: style.texte, "font-size": fs, "font-weight": style.gras ? 700 : 400, "font-family": fam }, g);
+      t.textContent = l;
+    });
+    return h;
+  }
+  function trait(g, pts) { sv("polyline", { points: pts.join(" "), fill: "none", stroke: "#01579B", "stroke-width": 2 }, g); }
+  function fleche(g, x, y) { sv("path", { d: "M" + (x - 8) + " " + (y - 5) + " L" + x + " " + y + " L" + (x - 8) + " " + (y + 5) + "Z", fill: "#01579B" }, g); }
+  function pastille(g, x, y, n) {
+    sv("circle", { cx: x, cy: y, r: fs * 0.72, fill: "#01579B" }, g);
+    var t = sv("text", { x: x, y: y + fs * 0.35, "text-anchor": "middle", fill: "#fff", "font-size": fs * 0.9, "font-weight": 700, "font-family": fam }, g);
+    t.textContent = n;
+  }
+  var S_FU = { fond: "#01579B", trait: "#01579B", texte: "#fff", gras: true },
+      S_FT = { fond: "#E1F5FE", trait: "#0277BD", texte: "#01476E", gras: true },
+      S_ST = { fond: "#E2EFDA", trait: "#1E6B3B", texte: "#14522C", gras: false };
+  var y0 = lh * 1.6, H;
+  var tetes = sv("g", {}, svg);
+  function entete(x, t) { var e = sv("text", { x: x, y: fs * 1.1, fill: "#4A5568", "font-size": fs * 0.85, "font-weight": 700, "font-family": fam }, tetes); e.textContent = t; return e; }
+
+  if (large) {
+    var g = W * 0.05, c1 = W * 0.24, rond = fs * 1.8, c2 = W * 0.33, c3 = W - c1 - c2 - 2 * g - rond;
+    var x2 = c1 + g + rond, x3 = x2 + c2 + g;
+    entete(0, "Fonction d’usage"); entete(x2, "Fonctions techniques"); entete(x3, "Solutions techniques");
+    var rangs = FAST.ft.map(function (t, i) {
+      var a = couper(t, c2 - 2 * pad, pG), b = couper(FAST.st[i], c3 - 2 * pad, pN);
+      return { a: a, b: b, h: Math.max(a.length, b.length) * lh + 2 * pad };
+    });
+    var y = y0, mids = [];
+    rangs.forEach(function (r) { r.y = y; mids.push(y + r.h / 2); y += r.h + gapR; });
+    H = y - gapR + 4;
+    var fuL = couper(FAST.fu, c1 - 2 * pad, pG), fuH = fuL.length * lh + 2 * pad, fuY = y0 + (H - y0 - fuH) / 2;
+    var gFU = sv("g", { class: "bloc" }, svg); blocs.push(gFU);
+    boite(gFU, 1, fuY, c1 - 2, fuL, S_FU);
+    var xs = c1 + g * 0.5;
+    rangs.forEach(function (r, i) {
+      var gF = sv("g", { class: "bloc" }, svg); blocs.push(gF);
+      trait(gF, i === 0 ? [c1, fuY + fuH / 2, xs, fuY + fuH / 2, xs, mids[0], x2 - 2, mids[0]] : [xs, mids[i - 1], xs, mids[i], x2 - 2, mids[i]]);
+      fleche(gF, x2 - 1, mids[i]);
+      pastille(gF, x2 - rond * 0.45, r.y + fs * 0.1, i + 1);
+      boite(gF, x2, r.y, c2, r.a, S_FT);
+    });
+    rangs.forEach(function (r, i) {
+      var gS = sv("g", { class: "bloc" }, svg); blocs.push(gS);
+      trait(gS, [x2 + c2, mids[i], x3 - 2, mids[i]]); fleche(gS, x3 - 1, mids[i]);
+      boite(gS, x3, r.y, c3 - 2, r.b, S_ST);
+    });
+  } else {
+    /* Empilé : fonction d'usage en haut, puis chaque fonction technique et sa solution côte à côte. */
+    /* chaque colonne garde au moins la largeur de son plus long mot (« (microcontrôleur) ») */
+    var ind = fs * 1.9, cw = W - ind - 2, gg = fs * 1.2;
+    var wB = Math.max(cw * 0.42, motLePlusLong(FAST.st, pN) + 2 * pad + 4), wA = cw - wB - gg;
+    var fuL2 = couper(FAST.fu, W - 2 - 2 * pad, pG), fuH2 = fuL2.length * lh + 2 * pad;
+    entete(0, "Fonction d’usage");
+    var gFU2 = sv("g", { class: "bloc" }, svg); blocs.push(gFU2);
+    boite(gFU2, 1, y0, W - 2, fuL2, S_FU);
+    var yt = y0 + fuH2 + lh * 1.5;
+    entete(ind, "Fonctions techniques").setAttribute("y", yt - lh * 0.45);
+    /* Trop étroit pour deux colonnes (téléphone en mode adapté, projection) :
+       la solution passe sous sa fonction technique, décalée. */
+    var pile = wA < motLePlusLong(FAST.ft, pG) + 2 * pad + fs * 1.2 + 4;
+    var yy = yt, rr = [], dec = fs * 1.3;
+    FAST.ft.forEach(function (t, i) {
+      var a, b, hA, hB, r;
+      if (pile) {
+        a = couper(t, cw - 2 * pad - fs * 1.2, pG); b = couper(FAST.st[i], cw - dec - 2 * pad, pN);
+        hA = a.length * lh + 2 * pad; hB = b.length * lh + 2 * pad;
+        r = { a: a, b: b, y: yy, hA: hA, yB: yy + hA + gapR * 0.6, hB: hB, m: yy + hA / 2 };
+        yy = r.yB + hB + gapR * 1.4;
+      } else {
+        a = couper(t, wA - 2 * pad - fs * 1.2, pG); b = couper(FAST.st[i], wB - 2 * pad, pN);
+        hA = Math.max(a.length, b.length) * lh + 2 * pad;
+        r = { a: a, b: b, y: yy, hA: hA, m: yy + hA / 2 };
+        yy += hA + gapR;
+      }
+      rr.push(r);
+    });
+    H = yy - (pile ? gapR * 1.4 : gapR) + 4;
+    var xs2 = ind * 0.35, wFT = pile ? cw : wA;
+    rr.forEach(function (r, i) {
+      var gF2 = sv("g", { class: "bloc" }, svg); blocs.push(gF2);
+      trait(gF2, i === 0 ? [xs2, y0 + fuH2, xs2, r.m, ind - 2, r.m] : [xs2, rr[i - 1].m, xs2, r.m, ind - 2, r.m]);
+      fleche(gF2, ind - 1, r.m);
+      boite(gF2, ind, r.y, wFT, r.a, S_FT);
+      pastille(gF2, ind + wFT - fs * 0.95, r.y + fs * 0.1, i + 1);
+    });
+    rr.forEach(function (r) {
+      var gS2 = sv("g", { class: "bloc" }, svg); blocs.push(gS2);
+      if (pile) {
+        var xl = ind + dec * 0.5, mB = r.yB + r.hB / 2;
+        trait(gS2, [xl, r.y + r.hA, xl, mB, ind + dec - 2, mB]); fleche(gS2, ind + dec - 1, mB);
+        boite(gS2, ind + dec, r.yB, cw - dec - 1, r.b, S_ST);
+      } else {
+        trait(gS2, [ind + wA, r.m, ind + wA + gg - 2, r.m]); fleche(gS2, ind + wA + gg - 1, r.m);
+        boite(gS2, ind + wA + gg, r.y, wB - 1, r.b, S_ST);
+      }
+    });
+  }
+  svg.setAttribute("height", Math.ceil(H));
+  svg.setAttribute("viewBox", "0 0 " + W + " " + Math.ceil(H));
+  conteneur.innerHTML = "";
+  conteneur.appendChild(svg);
+  if (anime && !MOUV_REDUIT) {
+    blocs.forEach(function (b) { b.classList.add("cache"); });
+    blocs.forEach(function (b, i) { setTimeout(function () { b.classList.remove("cache"); }, 350 + i * 420); });
+  }
+}
+function redessinerFAST() {
+  var c = $("fast-n8");
+  if (c && !$("revele-n8").hidden && c.clientWidth && c.clientWidth !== FAST_LARGEUR) dessinerFAST(c, false);
+}
+
+/* ── Modes ── */
+function basculerAdapte(on) {
+  etat.adapte = !!on;
+  document.documentElement.classList.toggle("adapte", etat.adapte);
+  $("btn-adapte").setAttribute("aria-pressed", String(etat.adapte));
+  sauver();
+  if (DEFI && !DEFI.fini && !$("defi-" + DEFI.id).hidden) {
+    rendreDefi(DEFI.id);
+    annoncer(etat.adapte ? "Mode adapté : une question à la fois, 3 propositions, indice disponible." : "Mode standard : toutes les questions sur un écran.");
+  }
+  calerBarres(); FAST_LARGEUR = 0; redessinerFAST();
+}
+function basculerProjection(on) {
+  etat.projection = !!on;
+  if (!on) PROJECTION_URL = false;
+  var actif = etat.projection || PROJECTION_URL;
+  document.documentElement.classList.toggle("projection", actif);
+  $("btn-projection").setAttribute("aria-pressed", String(actif));
+  sauver();
+  if (actif && !CARTE_ACTIVE) ouvrirCarte("n8");
+  calerBarres(); FAST_LARGEUR = 0; redessinerFAST();
+}
+function calerBarres() {
+  var h = document.querySelector("header");
+  if (h) document.documentElement.style.setProperty("--h-entete", h.offsetHeight + "px");
+  var b = document.querySelector(".pbar-wrap");
+  if (h && b) document.documentElement.style.setProperty("--h-barres", (h.offsetHeight + b.offsetHeight) + "px");
+}
+
+/* ── Démarrage ── */
+function demarrer() {
+  construireCartes();
+  lireIdentite();
+  majEntetePapier();
+  var d = new Date();
+  $("papier-date").textContent = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+  ["inp-prenom", "inp-nom", "inp-classe"].forEach(function (i) { $(i).addEventListener("input", majEntetePapier); });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-lire]"), function (b) { boutonLire(b); });
+  initVoix();
+
+  Array.prototype.forEach.call(document.querySelectorAll(".gloss"), function (b) {
+    b.addEventListener("click", function () {
+      var d = $(b.getAttribute("aria-controls")), ouvert = b.getAttribute("aria-expanded") === "true";
+      b.setAttribute("aria-expanded", String(!ouvert)); d.hidden = ouvert;
+    });
+  });
+
+  $("tete-n8").addEventListener("click", function () { ouvrirCarte("n8", true); });
+  $("rejouer-n8").addEventListener("click", function () { rendreDefi("n8"); focaliser(".consigne"); annoncer(""); });
+  $("btn-adapte").addEventListener("click", function () { basculerAdapte(!etat.adapte); });
+  $("btn-projection").addEventListener("click", function () {
+    basculerProjection(!(etat.projection || PROJECTION_URL));
+  });
+  $("btn-imprimer").addEventListener("click", function () { window.print(); });
+
+  document.documentElement.classList.toggle("adapte", !!etat.adapte);
+  $("btn-adapte").setAttribute("aria-pressed", String(!!etat.adapte));
+  var proj = etat.projection || PROJECTION_URL;
+  document.documentElement.classList.toggle("projection", proj);
+  $("btn-projection").setAttribute("aria-pressed", String(proj));
+  if (proj) ouvrirCarte("n8");
+
+  majProgression(false);
+  /* La feuille imprimée contient la notion complète, FAST compris, même non gagnée. */
+  dessinerFAST($("fast-n8"), false, 680);
+  window.addEventListener("beforeprint", function () { dessinerFAST($("fast-n8"), false, 680); });
+  window.addEventListener("afterprint", function () { FAST_LARGEUR = 0; redessinerFAST(); });
+
+  var minuteur = null;
+  window.addEventListener("resize", function () { clearTimeout(minuteur); minuteur = setTimeout(function () { calerBarres(); redessinerFAST(); }, 150); });
+  document.addEventListener("confort-lecture", function () { setTimeout(function () { calerBarres(); FAST_LARGEUR = 0; redessinerFAST(); }, 120); });
+  calerBarres();
+  window.addEventListener("load", calerBarres);   /* après l'ajout des boutons des modules dys */
+  /* une fois les polices chargées, les mesures du FAST sont exactes */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { FAST_LARGEUR = 0; redessinerFAST(); });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+else demarrer();
+</script>
+
+<!-- Aménagements dys et confort de lecture : modules partagés du site. -->
+<script>window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/", eleve: (function(){ try { return (JSON.parse(localStorage.getItem("p11-syn_prefill")||"null")||{}).id || ""; } catch(e){ return ""; } })() };</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>
+window.LECTURE_IMMERSIVE = {
+  racine:"main", hote:".pbar-in",
+  sectionsFermees:"", classeFermeture:"closed",
+  selecteurs:"h2, h3, h4, p, li, figcaption, .consigne, .opt, .pion, .ft-boite, .cn-nom"
+};
+</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+
+</body>
+</html>
