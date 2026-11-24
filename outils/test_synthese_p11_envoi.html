@@ -334,6 +334,82 @@ cas("5. Page locale sans apps_script_url_test : aucun POST", async function (L) 
   verif(L, posts().length === p0, "rejeu de la file : toujours aucun POST");
 });
 
+/* fields fabriqués à la main : `ouvertes` cartes ouvertes, une tentative chacune */
+function champs(ouvertes) {
+  var niv = {}, ess = {};
+  ouvertes.forEach(function (id) { niv[id] = "acquis"; ess[id] = 1; });
+  return { _niv: JSON.stringify(niv), _dernier: JSON.stringify(niv), _essais: JSON.stringify(ess), duree: "3", adapte: "non",
+           _module: JSON.stringify({ v: 1, module: {}, ouvertes: ouvertes, series: {}, debut: 1 }) };
+}
+function ligneDe(eid) { return FAUX.lignes.map(ligneVersObjet).filter(function (o) { return o.eid === eid; })[0]; }
+
+cas("6. File d'un autre jour + copie distante plus avancée : aucun POST, le classeur garde Y ; idem verrouillée", async function (L) {
+  /* a) poste A : X (1 carte) en file ; poste B a envoyé Y (3 cartes) */
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var ID = "test.p11syn.file-perimee";
+  prefill(ID);
+  var Y = { eid: ID, cap: "p11-syn", ename: "Test Faux-Serveur", ecls: "4Z", status: "pending",
+            dateISO: new Date().toISOString(), id: 2, fields: champs(["n0", "n1", "n2"]) };
+  upsert(Y, false);
+  var X = { eid: ID, cap: "p11-syn", ename: "Test Faux-Serveur", ecls: "4Z", status: "pending",
+            dateISO: new Date(Date.now() - 86400000).toISOString(), id: 1, fields: champs(["n0"]) };
+  localStorage.setItem("p11-syn_offline_queue", JSON.stringify([X]));
+  var p0 = posts().length;
+  var w = await charger();
+  w.dispatchEvent(new w.Event("online"));
+  await attendre(200);
+  verif(L, posts().length === p0, "aucun POST au chargement ni au retour du réseau (" + (posts().length - p0) + ")");
+  verif(L, JSON.stringify(ligneDe(ID).fields) === JSON.stringify(Y.fields), "le classeur garde Y (3 cartes)");
+  verif(L, file(w).length === 0, "X retirée de la file");
+  verif(L, w.$("pcount").textContent.indexOf("3 / 13") === 0, "poste A repris sur Y : " + w.$("pcount").textContent);
+  /* la suite part normalement, depuis Y */
+  jouer(w, "n8", true);
+  await attendre(200);
+  verif(L, posts().length === p0 + 1 && /"n2"/.test(ligneDe(ID).fields._module) && /"n8"/.test(ligneDe(ID).fields._module),
+        "carte suivante : un envoi qui contient Y + n8");
+
+  /* b) même situation, copie distante verrouillée */
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var IDV = "test.p11syn.file-verrou";
+  prefill(IDV);
+  var Yv = JSON.parse(JSON.stringify(Y)); Yv.eid = IDV;
+  upsert(Yv, false); verrouillerLigne(IDV, "p11-syn");
+  var Xv = JSON.parse(JSON.stringify(X)); Xv.eid = IDV;
+  localStorage.setItem("p11-syn_offline_queue", JSON.stringify([Xv]));
+  var avantLigne = JSON.stringify(FAUX.lignes.filter(function (l) { return l[COLUMNS.indexOf("eid")] === IDV; }));
+  p0 = posts().length;
+  var g0 = FAUX.journal.length;
+  w = await charger();
+  w.dispatchEvent(new w.Event("online"));
+  w.flushQueue();
+  await attendre(200);
+  verif(L, !!w.document.getElementById("voile-verrou") && w.VERROU === true, "voile « Travail rendu… »");
+  verif(L, posts().length === p0, "aucun POST (" + (posts().length - p0) + ")");
+  verif(L, FAUX.journal.slice(g0).every(function (j) { return j.m === "GET"; }), "seulement des lectures après le chargement");
+  verif(L, JSON.stringify(FAUX.lignes.filter(function (l) { return l[COLUMNS.indexOf("eid")] === IDV; })) === avantLigne, "ligne verrouillée intacte");
+
+  /* c) unqueueSub ne retire que la soumission envoyée (eid + id) */
+  localStorage.setItem("p11-syn_offline_queue", "[]");
+  var A = { eid: "e", id: 10 }, B = { eid: "e", id: 11 };
+  w.queueSub(A); w.queueSub(B); w.unqueueSub(A);
+  verif(L, JSON.stringify(file(w)) === JSON.stringify([B]), "A réussie après que B l'a remplacée : B reste en file");
+  w.unqueueSub(B);
+  verif(L, file(w).length === 0, "B réussie : file vide");
+});
+
+cas("7. Hôte local reconnu, y compris « [::1] » (location.hostname avec crochets)", async function (L) {
+  localStorage.clear();
+  var w = await charger();
+  ["localhost", "LOCALHOST", "127.0.0.1", "::1", "[::1]", ""].forEach(function (h) {
+    verif(L, w.hoteLocal(h) === true, "hoteLocal(" + JSON.stringify(h) + ") = vrai");
+  });
+  ["roblanchard.github.io", "127.0.0.2", "[::2]", "localhost.example.org"].forEach(function (h) {
+    verif(L, w.hoteLocal(h) === false, "hoteLocal(" + JSON.stringify(h) + ") = faux");
+  });
+  var u = new URL("http://[::1]:8137/x.html");
+  verif(L, u.hostname === "[::1]" && w.hoteLocal(u.hostname), "le navigateur donne bien « " + u.hostname + " » pour http://[::1]:8137, reconnu local");
+});
+
 async function lancer() {
   var zone = document.getElementById("resultats"), verts = 0;
   for (var i = 0; i < CAS.length; i++) {
