@@ -185,12 +185,13 @@
       if (c.ouverte) ouvertes.push(id);
       if (c.serie) series[id] = c.serie;
     });
-    var secondes = etat.debut ? Math.max(0, Math.round(((maintenant == null ? Date.now() : maintenant) - etat.debut) / 1000)) : 0;
+    /* durée en minutes entières, arrondie au-dessus : une session courte donne « 1 », pas « 0 » */
+    var minutes = etat.debut ? Math.max(0, Math.ceil(((maintenant == null ? Date.now() : maintenant) - etat.debut) / 60000)) : 0;
     return {
       _niv: JSON.stringify(niv),
       _dernier: JSON.stringify(dernier),
       _essais: JSON.stringify(essais),
-      duree: String(secondes),
+      duree: String(minutes),
       adapte: etat.adapte ? "oui" : "non",
       _module: JSON.stringify({ v: etat.v, module: etat.module, ouvertes: ouvertes, series: series, debut: etat.debut })
     };
