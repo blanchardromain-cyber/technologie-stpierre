@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Test — Synthèse P11 : envoi, verrou, reprise</title>
+<style>
+  body{font:14px/1.5 system-ui,sans-serif;margin:16px;color:#1F2D3D}
+  h1{font-size:1.2rem}
+  .cas{border:2px solid #CBD5E0;border-radius:8px;padding:8px 12px;margin:8px 0}
+  .cas.ok{border-color:#2E7D32;background:#E8F5E9}
+  .cas.ko{border-color:#C62828;background:#FFEBEE}
+  .cas b{display:block}
+  .cas ul{margin:4px 0 0;padding-left:20px}
+  .cas li.ko{color:#B71C1C;font-weight:600}
+  pre{background:#F4F6F8;border:1px solid #CBD5E0;border-radius:8px;padding:8px;white-space:pre-wrap;font-size:12px}
+  iframe{width:100%;height:420px;border:1px solid #CBD5E0;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>Synthèse P11 — envoi au professeur, verrou, reprise (faux serveur)</h1>
+<p>À servir en local (<code>http://127.0.0.1:8137/outils/test_synthese_p11_envoi.html</code>). La capsule tourne
+dans un cadre dont <code>fetch</code> est remplacé par un faux serveur écrit d'après <code>apps-script-backend.gs</code> :
+il ne garde que les colonnes de <code>COLUMNS</code> (et <code>fields</code> sérialisé dans <code>fields_json</code>),
+répond à l'action <code>own</code> comme le vrai (copie verrouillée renvoyée sans son contenu) et
+<b>refuse et journalise</b> toute URL Apps Script autre que le faux déploiement de test.
+Le <code>localStorage</code> est sauvegardé avant les tests puis restauré.</p>
+<div id="resultats"></div>
+<h2>Journal du faux serveur</h2>
+<pre id="journal"></pre>
+<div id="hote"></div>
+
+<script>
+"use strict";
+var CAPSULE = "../Niveau%204/P11%20Eau%20ressource%20essentielle/synthese_p11_eleve.html";
+var BASE = new URL("../Niveau%204/P11%20Eau%20ressource%20essentielle/", location.href).href;
+/* Faux déploiement de TEST : la capsule n'accepte qu'une URL script.google.com (urlEcriture) ;
+   celle-ci n'existe pas et ne sort jamais du faux serveur. */
+var URL_TEST = "https://script.google.com/macros/s/FAUX-DEPLOIEMENT-DE-TEST/exec";
+
+/* ════ Faux serveur, d'après apps-script-backend.gs ════ */
+var COLUMNS = [
+  'dateISO', 'date', 'eid', 'ename', 'ename2', 'ecls',
+  'cap', 'caplbl', 'score', 'qcmTot',
+  'scoreDT', 'scorePR', 'scorePG',
+  'open', 'fields_json', 'status', 'id',
+  'locked', 'lockedAt', 'lockedBy',
+  'appreciation', 'bareme', 'adjustedScore', 'adjustedPts_json', 'scoreBrut'
+];
+var NOTE_PROF = ['appreciation', 'bareme', 'adjustedScore', 'adjustedPts', 'scoreBrut'];
+var META_ELEVE = [
+  'id', 'eid', 'ename', 'ename2', 'ecls', 'cap', 'caplbl', 'date', 'dateISO', 'status',
+  'score', 'qcmTot', 'scoreDT', 'scorePR', 'scorePG', 'scoreBrut',
+  'adjustedScore', 'adjustedPts', 'bareme', 'appreciation'
+];
+var FAUX = {
+  lignes: [],          /* la feuille : un tableau par ligne, dans l'ordre de COLUMNS */
+  journal: [],         /* { m, url, verdict } */
+  reseau: true,
+  secret: null,        /* lu dans la capsule au premier chargement */
+  bouchons: { alert: 0, confirm: 0, prompt: 0 },
+  derniersPosts: []    /* subs reçus (tels que postés) */
+};
+function caviarder(u) { return String(u).replace(/secret=[^&]*/, "secret=…"); }
+function noter(m, url, verdict) { FAUX.journal.push({ m: m, url: caviarder(url), verdict: verdict }); majJournal(); }
+function majJournal() {
+  document.getElementById("journal").textContent = FAUX.journal.map(function (j) {
+    return j.m + " " + j.url + "  →  " + j.verdict;
+  }).join("\n");
+}
+function reponse(obj) {
+  var texte = JSON.stringify(obj);
+  return Promise.resolve({ ok: true, status: 200, type: "basic", json: function () { return Promise.resolve(JSON.parse(texte)); }, text: function () { return Promise.resolve(texte); } });
+}
+function opaque() { return Promise.resolve({ ok: false, status: 0, type: "opaque" }); }
+function ligneVersObjet(l) {   /* _toutesLesSubs */
+  var o = {};
+  COLUMNS.forEach(function (c, j) { o[c] = l[j]; });
+  if (o.fields_json) { try { o.fields = JSON.parse(o.fields_json); } catch (e) { o.fields = {}; } }
+  delete o.fields_json;
+  if (o.adjustedPts_json) { try { o.adjustedPts = JSON.parse(o.adjustedPts_json); } catch (e) {} }
+  delete o.adjustedPts_json;
+  NOTE_PROF.forEach(function (k) { if (o[k] === '') delete o[k]; });
+  return o;
+}
+function upsert(sub, parProf) {   /* doPost + _upsert */
+  var row = COLUMNS.map(function (col) {
+    if (col === 'fields_json') return sub.fields ? JSON.stringify(sub.fields) : '';
+    if (col === 'locked' || col === 'lockedAt' || col === 'lockedBy') return '';
+    if (col === 'adjustedPts_json') return sub.adjustedPts ? JSON.stringify(sub.adjustedPts) : '';
+    var v = sub[col];
+    return (v === undefined || v === null) ? '' : v;
+  });
+  var iE = COLUMNS.indexOf('eid'), iC = COLUMNS.indexOf('cap'), iL = COLUMNS.indexOf('locked');
+  for (var i = 0; i < FAUX.lignes.length; i++) {
+    var l = FAUX.lignes[i];
+    if (String(l[iE]) === String(sub.eid) && String(l[iC]) === String(sub.cap)) {
+      var verrouillee = l[iL] === true || String(l[iL]).toUpperCase() === 'TRUE';
+      if (verrouillee && !parProf) return 'locked';
+      ['locked', 'lockedAt', 'lockedBy'].forEach(function (c) { var k = COLUMNS.indexOf(c); row[k] = l[k]; });
+      FAUX.lignes[i] = row;
+      return false;
+    }
+  }
+  FAUX.lignes.push(row);
+  return true;
+}
+function verrouillerLigne(eid, cap) {   /* action « lock » du professeur */
+  var iE = COLUMNS.indexOf('eid'), iC = COLUMNS.indexOf('cap'), iL = COLUMNS.indexOf('locked');
+  FAUX.lignes.forEach(function (l) {
+    if (l[iE] === eid && l[iC] === cap) { l[iL] = true; l[iL + 1] = new Date().toISOString(); l[iL + 2] = "prof"; }
+  });
+}
+FAUX.fetch = function (entree, init) {
+  var url = String(entree && entree.url ? entree.url : entree), m = (init && init.method) || "GET";
+  if (/^https:\/\/script\.google\.com\//.test(url) && url.indexOf(URL_TEST) !== 0) {
+    noter(m, url, "REFUSÉ : URL de production");
+    return Promise.reject(new TypeError("faux serveur : URL de production refusée"));
+  }
+  if (url.indexOf(URL_TEST) !== 0) return window.fetch(entree, init);   /* fichiers du site */
+  if (!FAUX.reseau) { noter(m, url, "réseau coupé"); return Promise.reject(new TypeError("Failed to fetch")); }
+  if (m === "POST") {
+    var body = {};
+    try { body = JSON.parse(init.body || "{}"); } catch (e) {}
+    if (body.secret !== FAUX.secret) { noter(m, url, "bad_secret"); return opaque(); }
+    var sub = body.sub;
+    FAUX.derniersPosts.push(JSON.parse(JSON.stringify(sub || null)));
+    if (!sub || !sub.cap || !sub.eid) { noter(m, url, "invalid_payload (eid=" + JSON.stringify(sub && sub.eid) + ")"); return opaque(); }
+    var r = upsert(sub, sub._parProf === true);
+    noter(m, url, r === 'locked' ? "locked (refusé)" : "ok, eid=" + sub.eid + (r ? " (nouvelle ligne)" : " (ligne remplacée)"));
+    return opaque();   /* no-cors : réponse opaque, comme en vrai */
+  }
+  var p = new URL(url).searchParams;
+  if (p.get("secret") !== FAUX.secret) { noter(m, url, "bad_secret"); return reponse({ ok: false, error: "bad_secret" }); }
+  if (p.get("action") === "own") {
+    if (!p.get("eid")) return reponse({ ok: false, error: "eid_required" });
+    var siennes = FAUX.lignes.map(ligneVersObjet).filter(function (o) { return String(o.eid) === String(p.get("eid")); });
+    noter(m, url, "own : " + siennes.length + " copie(s)");
+    return reponse({ ok: true, subs: siennes.map(function (o) {
+      var verrouille = o.locked === true || String(o.locked).toUpperCase() === 'TRUE';
+      if (!verrouille) { delete o.lockedAt; delete o.lockedBy; return o; }
+      var mm = { locked: true };
+      META_ELEVE.forEach(function (k) { if (o[k] !== undefined) mm[k] = o[k]; });
+      return mm;
+    }) });
+  }
+  noter(m, url, "unknown_action");
+  return reponse({ ok: false, error: "unknown_action" });
+};
+FAUX.alerte = function () { FAUX.bouchons.alert++; };
+FAUX.confirmer = function () { FAUX.bouchons.confirm++; return true; };
+FAUX.demander = function () { FAUX.bouchons.prompt++; return null; };
+
+/* ════ Sauvegarde / restauration du localStorage de ce navigateur ════ */
+var sauvegarde = {};
+for (var k = 0; k < localStorage.length; k++) { var cle = localStorage.key(k); sauvegarde[cle] = localStorage.getItem(cle); }
+function restaurer() {
+  localStorage.clear();
+  Object.keys(sauvegarde).forEach(function (c) { localStorage.setItem(c, sauvegarde[c]); });
+  try { sessionStorage.removeItem("p11-syn_etat:session"); } catch (e) {}
+}
+
+/* ════ Chargement de la capsule avec le faux fetch installé AVANT ses scripts ════
+   Le source est relu puis écrit dans un cadre de même origine (127.0.0.1) : un script injecté
+   en tête remplace fetch, alert, confirm, prompt et la synthèse vocale. */
+var SOURCE = null, cadre = null;
+function attendre(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+async function charger() {
+  if (!SOURCE) {
+    SOURCE = await (await window.fetch(CAPSULE, { cache: "no-cache" })).text();
+    var s = /var SYNC_SECRET = "([^"]*)"/.exec(SOURCE);   /* le secret partagé, comme le vrai serveur */
+    FAUX.secret = s ? s[1] : null;
+  }
+  if (cadre) cadre.remove();
+  cadre = document.createElement("iframe");
+  cadre.title = "capsule testée";
+  document.getElementById("hote").appendChild(cadre);
+  var tete = '<base href="' + BASE + '"><script>(function(){var F=parent.FAUX;window.fetch=F.fetch;' +
+    'window.alert=F.alerte;window.confirm=F.confirmer;window.prompt=F.demander;' +
+    'try{Object.defineProperty(window,"speechSynthesis",{value:undefined,configurable:true});}catch(e){}})();<\/script>';
+  var html = SOURCE.replace(/<head>/i, "<head>" + tete);
+  var d = cadre.contentDocument;
+  d.open(); d.write(html); d.close();
+  var w = cadre.contentWindow;
+  for (var i = 0; i < 100 && !(w.etat && w.document.readyState === "complete" && w.$ && w.$("pcount")); i++) await attendre(50);
+  await attendre(250);   /* lecture « own » et rejeu de la file */
+  return w;
+}
+
+/* Jouer une tentative complète d'un défi (cartes ou module), juste ou fausse. */
+function reponsesDe(w, juste) {
+  var r = {};
+  /* association : un objet { élément: choix }, comme la page le remplit */
+  function assoc(it, bonnes) { var o = {}; it.elements.forEach(function (e, k) { o[e] = bonnes[k]; }); return o; }
+  w.DEFI.items.forEach(function (it, i) {
+    var bon = Array.isArray(it.bonne) ? it.bonne.slice() : it.bonne;
+    var faux = !juste && i === 0;
+    if (it.type === "assoc") {
+      var autre = it.options.filter(function (o) { return o !== bon[0]; })[0];
+      r[it.id] = assoc(it, faux ? [autre].concat(bon.slice(1)) : bon);
+    }
+    else if (!faux) r[it.id] = bon;
+    else if (it.type === "ordre") r[it.id] = bon.slice().reverse();
+    else r[it.id] = it.options.filter(function (o) { return o !== it.bonne; })[0];
+  });
+  return r;
+}
+function jouer(w, id, juste) {
+  if (w.estModule(id)) w.rendreDefi(id); else { w.ouvrirCarte(id); if (!w.DEFI || w.DEFI.id !== id || w.DEFI.fini) w.rendreDefi(id); }
+  w.DEFI.reponses = reponsesDe(w, juste);
+  var avant = JSON.stringify([w.etat.cartes, w.etat.module]);
+  w.verifier();
+  if (JSON.stringify([w.etat.cartes, w.etat.module]) === avant) throw new Error("tentative non comptée sur " + id + " (réponse incomplète ?)");
+}
+function posts() { return FAUX.journal.filter(function (j) { return j.m === "POST"; }); }
+function file(w) { try { return JSON.parse(w.localStorage.getItem("p11-syn_offline_queue") || "[]"); } catch (e) { return null; } }
+function prefill(id) { localStorage.setItem("p11-syn_prefill", JSON.stringify({ id: id, p: "Test", n: "Faux-Serveur", c: "4Z", ts: Date.now() })); }
+
+/* ════ Les cas ════ */
+var CAS = [];
+function cas(nom, f) { CAS.push({ nom: nom, f: f }); }
+function verif(liste, cond, texte) { liste.push({ ok: !!cond, t: texte }); }
+
+cas("1. Aller-retour : envoyer → vider le stockage → recharger → état identique", async function (L) {
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var ID = "test.p11syn.aller-retour";
+  prefill(ID);
+  var w = await charger();
+  w.basculerAdapte(true);
+  jouer(w, "n8", true);                                    /* acquis du premier coup → envoi */
+  jouer(w, "n3", false); jouer(w, "n3", false); jouer(w, "n3", false);  /* 3e échec → à revoir, envoi */
+  jouer(w, "m_i1", false);                                 /* défi d'entraînement → envoi */
+  jouer(w, "n5", false);                                   /* série en cours (1 essai), pas d'envoi */
+  jouer(w, "m_i1", true);                                  /* nouvel envoi : contient la série de n5 */
+  await attendre(200);
+  var avant = JSON.parse(JSON.stringify({ cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, debut: w.etat.debut }));
+  var envoye = FAUX.derniersPosts.filter(function (s) { return s && s.eid === ID; }).pop();
+  verif(L, envoye, "un envoi a été reçu pour " + ID);
+  verif(L, posts().length === 4, "4 envois (n8, n3 au 3e échec, m_i1 ×2) ; obtenu " + posts().length);
+  verif(L, file(w).length === 0, "file vide après envois réussis");
+  var ligne = FAUX.lignes.map(ligneVersObjet).filter(function (o) { return o.eid === ID; })[0];
+  verif(L, ligne && ligne.cap === "p11-syn" && ligne.status === "pending", "ligne du classeur : cap p11-syn, statut pending");
+  verif(L, ligne && JSON.stringify(ligne.fields) === JSON.stringify(envoye.fields), "fields du classeur = fields envoyés");
+  /* autre poste : stockage vidé, seuls restent l'identité déposée par le site et le déploiement de test */
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST); prefill(ID);
+  w = await charger();
+  var apres = { cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, debut: w.etat.debut };
+  Object.keys(avant).forEach(function (cle) {
+    verif(L, JSON.stringify(apres[cle]) === JSON.stringify(avant[cle]), "état." + cle + " identique : " + JSON.stringify(apres[cle]).slice(0, 160));
+  });
+  var relu = w.P11SYN.versFields(w.etat, Date.parse(envoye.dateISO));
+  Object.keys(envoye.fields).forEach(function (cle) {
+    verif(L, relu[cle] === envoye.fields[cle], "fields." + cle + " : envoyé " + envoye.fields[cle].slice(0, 80) + " / relu " + String(relu[cle]).slice(0, 80));
+  });
+  verif(L, w.document.documentElement.classList.contains("adapte"), "mode adapté rétabli à l'écran");
+  verif(L, w.$("pcount").textContent.indexOf("2 / 13") === 0, "progression affichée : " + w.$("pcount").textContent);
+  verif(L, posts().length === 4, "aucun envoi au rechargement");
+});
+
+cas("2. Réseau coupé : file non vide, aucun message bloquant ; réseau rétabli : file vidée", async function (L) {
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var ID = "test.p11syn.reseau";
+  prefill(ID);
+  FAUX.reseau = false;
+  var b0 = JSON.stringify(FAUX.bouchons), n0 = FAUX.lignes.length;
+  var w = await charger();
+  jouer(w, "n8", true);
+  await attendre(200);
+  verif(L, file(w).length === 1 && file(w)[0].eid === ID, "file locale : 1 envoi en attente (" + file(w).length + ")");
+  verif(L, JSON.stringify(FAUX.bouchons) === b0, "aucun alert / confirm / prompt");
+  verif(L, !w.document.getElementById("voile-verrou"), "aucun voile");
+  verif(L, /partira tout seul/.test(w.$("envoi-etat").textContent), "message discret : " + w.$("envoi-etat").textContent);
+  verif(L, FAUX.lignes.length === n0, "rien d'écrit dans le classeur");
+  FAUX.reseau = true;
+  w.dispatchEvent(new w.Event("online"));
+  await attendre(200);
+  verif(L, file(w).length === 0, "réseau rétabli : file vidée");
+  verif(L, FAUX.lignes.some(function (l) { return l[COLUMNS.indexOf("eid")] === ID; }), "la copie est arrivée au classeur");
+});
+
+cas("3. Copie verrouillée : voile « Travail rendu… », aucun POST", async function (L) {
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var ID = "test.p11syn.verrou";
+  prefill(ID);
+  upsert({ eid: ID, cap: "p11-syn", ename: "Test Faux-Serveur", ecls: "4Z", status: "pending", dateISO: new Date().toISOString(),
+           fields: { _niv: '{"n0":"acquis"}', _dernier: '{"n0":"acquis"}', _essais: '{"n0":1}', duree: "1", adapte: "non",
+                     _module: '{"v":1,"module":{},"ouvertes":["n0"],"series":{},"debut":1}' } }, false);
+  verrouillerLigne(ID, "p11-syn");
+  var p0 = posts().length;
+  var w = await charger();
+  var v = w.document.getElementById("voile-verrou");
+  verif(L, v && v.textContent === "Travail rendu — consultation temporairement indisponible.", "voile affiché : " + (v ? v.textContent : "absent"));
+  verif(L, w.VERROU === true, "capsule verrouillée");
+  verif(L, !w.etat.cartes.n0, "le contenu de la copie verrouillée n'est pas revenu (own sans fields)");
+  jouer(w, "n8", true);
+  w.afficherMemoire("bouton");
+  await attendre(200);
+  verif(L, posts().length === p0, "aucun POST (" + (posts().length - p0) + ")");
+  verif(L, file(w).length === 0, "rien en file non plus");
+});
+
+cas("4. Sans identité : formulaire d'identité, aucun POST", async function (L) {
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var p0 = posts().length, g0 = FAUX.journal.length;
+  var w = await charger();
+  verif(L, !w.$("inp-prenom").readOnly && !w.$("inp-nom").readOnly && !w.$("inp-classe").readOnly, "prénom, nom, classe à saisir");
+  verif(L, !w.document.getElementById("ident-compte"), "pas de mention « identité de ton compte »");
+  jouer(w, "n8", true);
+  jouer(w, "m_i1", true);
+  await attendre(200);
+  verif(L, posts().length === p0, "aucun POST (" + (posts().length - p0) + ")");
+  verif(L, FAUX.journal.length === g0, "aucune requête du tout (pas de lecture own sans compte)");
+  verif(L, /prénom, ton nom et ta classe/.test(w.$("envoi-etat").textContent) && !w.$("envoi-etat").hidden, "invitation à remplir l'identité : " + w.$("envoi-etat").textContent);
+  verif(L, w.eidCourant() === "", "eid vide");
+  w.$("inp-prenom").value = "Test"; w.$("inp-nom").value = "Faux-Serveur";   /* classe manquante */
+  w.$("inp-nom").dispatchEvent(new w.Event("change"));
+  await attendre(100);
+  verif(L, posts().length === p0, "identité incomplète (sans classe) : toujours aucun POST");
+});
+
+cas("5. Page locale sans apps_script_url_test : aucun POST", async function (L) {
+  localStorage.clear();
+  var ID = "test.p11syn.local";
+  prefill(ID);
+  var p0 = posts().length;
+  var w = await charger();
+  verif(L, w.urlEcriture() === "", "urlEcriture() = \"\" sur " + w.location.hostname);
+  jouer(w, "n8", true);
+  w.afficherMemoire("bouton");
+  await attendre(200);
+  verif(L, posts().length === p0, "aucun POST (" + (posts().length - p0) + ")");
+  verif(L, file(w).length === 1, "le travail reste en file locale");
+  w.dispatchEvent(new w.Event("online"));
+  await attendre(100);
+  verif(L, posts().length === p0, "rejeu de la file : toujours aucun POST");
+});
+
+async function lancer() {
+  var zone = document.getElementById("resultats"), verts = 0;
+  for (var i = 0; i < CAS.length; i++) {
+    var L = [];
+    try { await CAS[i].f(L); } catch (e) { L.push({ ok: false, t: "exception : " + e.message }); }
+    var ok = L.length > 0 && L.every(function (x) { return x.ok; });
+    if (ok) verts++;
+    var div = document.createElement("div");
+    div.className = "cas " + (ok ? "ok" : "ko");
+    div.innerHTML = "<b></b><ul></ul>";
+    div.querySelector("b").textContent = (ok ? "✓ " : "✗ ") + CAS[i].nom;
+    L.forEach(function (x) { var li = document.createElement("li"); li.className = x.ok ? "" : "ko"; li.textContent = (x.ok ? "ok — " : "ÉCHEC — ") + x.t; div.querySelector("ul").appendChild(li); });
+    zone.appendChild(div);
+  }
+  var prod = FAUX.journal.filter(function (j) { return /production/.test(j.verdict); });
+  var prodPost = prod.filter(function (j) { return j.m === "POST"; });
+  var vides = FAUX.derniersPosts.filter(function (s) { return !s || !s.eid; }).length;
+  var bilan = document.createElement("div");
+  var okBilan = prodPost.length === 0 && vides === 0;
+  bilan.className = "cas " + (okBilan ? "ok" : "ko");
+  bilan.innerHTML = "<b></b>";
+  bilan.querySelector("b").textContent = (okBilan ? "✓ " : "✗ ") + "Bilan : " + verts + "/" + CAS.length + " cas verts ; URL de production tentées : "
+    + prod.length + " (dont POST : " + prodPost.length + ") ; envois à eid vide : " + vides;
+  zone.insertBefore(bilan, zone.firstChild);
+  if (cadre) cadre.remove();
+  restaurer();
+  document.title = (verts === CAS.length && okBilan ? "TESTS OK " : "TESTS ÉCHEC ") + verts + "/" + CAS.length;
+}
+lancer();
+</script>
+</body>
+</html>
