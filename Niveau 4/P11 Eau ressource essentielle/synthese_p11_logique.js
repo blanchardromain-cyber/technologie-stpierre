@@ -553,6 +553,21 @@
     return { niveaux: niveaux, aRetravailler: aRetravailler };
   }
 
+  /* Reprise depuis le classeur : `a` est-il STRICTEMENT plus avancé que `b` ?
+     D'abord le nombre de cartes ouvertes, puis, à égalité, le total des tentatives
+     (cartes, rejeux compris, et défis d'entraînement). À égalité complète : non. */
+  function avancement(e) {
+    var ouvertes = 0, essais = 0, k;
+    var cartes = e && e.cartes || {}, mod = e && e.module || {};
+    for (k in cartes) if (cartes.hasOwnProperty(k) && cartes[k]) { if (cartes[k].ouverte) ouvertes++; essais += cartes[k].essais || 0; }
+    for (k in mod) if (mod.hasOwnProperty(k) && mod[k]) essais += mod[k].essais || 0;
+    return [ouvertes, essais];
+  }
+  function plusAvance(a, b) {
+    var x = avancement(a), y = avancement(b);
+    return x[0] !== y[0] ? x[0] > y[0] : x[1] > y[1];
+  }
+
   function cleEtat(idEleve) {
     var s = idEleve == null ? "" : String(idEleve).trim();
     return s ? "p11-syn_etat:" + s : null;
@@ -906,7 +921,7 @@
     NOTIONS: NOTIONS, BANQUE: BANQUE,
     tirerDefi: tirerDefi, corriger: corriger, appliquer: appliquer, essaiSuivant: essaiSuivant,
     etatVide: etatVide, versFields: versFields, depuisFields: depuisFields,
-    memoire: memoire, cleEtat: cleEtat
+    memoire: memoire, cleEtat: cleEtat, plusAvance: plusAvance
   };
   if (typeof module !== "undefined" && module.exports) module.exports = API;
   else racine.P11SYN = API;
