@@ -553,7 +553,7 @@ function deposerEnLocal(sub){ try { var s = JSON.parse(localStorage.getItem("sub
 /* Règle 4 : une page servie en local n'écrit jamais dans le classeur de production. */
 function urlEcriture(){
   var hn = (location.hostname || "").toLowerCase();
-  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "")) return APPS_SCRIPT_URL;
   try { var u = localStorage.getItem("apps_script_url_test") || ""; if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u; } catch(e){}
   return "";
 }

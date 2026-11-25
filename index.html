@@ -50,6 +50,8 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .hucls{font-size:11px;opacity:.7}
 .btnout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:"DM Sans",sans-serif;font-size:12px;font-weight:500;transition:all .2s}
 .btnout:hover{background:rgba(255,255,255,.25)}
+/* Téléphone : l'en-tête tenait 4 px de trop à 375 px (aspect classique) ; un nom long se coupe au lieu de pousser « Déconnexion ». */
+@media (max-width:400px){.hdr{padding:0 12px}.hright,.huser{min-width:0}.huname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 .main{flex:1;padding:24px;max-width:1100px;margin:0 auto;width:100%}
 
 /* DASHBOARD */
@@ -66,6 +68,7 @@ html,body{height:100%;font-family:"DM Sans",sans-serif;background:var(--gr);colo
 .scard{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--gb);overflow:hidden;transition:all .2s;cursor:pointer}
 .scard:hover{transform:translateY(-2px);box-shadow:var(--shf)}
 .scard.locked{cursor:default;opacity:.75}
+.scard[role="button"]:focus-visible{outline:3px solid #0B3D91;outline-offset:3px}
 .schdr{height:6px}
 .scbody{padding:18px}
 .scbody h3{font-size:14px;font-weight:700;margin-bottom:3px}
@@ -7512,6 +7515,12 @@ function dossierHTML(niv, dossier, cartes, stats, nbDossiers) {
 // ================================================================
 // DASHBOARD — classement par niveau
 // ================================================================
+/* Tuiles au clavier : Entrée ou Espace sur une tuile focalisée déclenche son clic. */
+document.addEventListener("keydown", function tuileAuClavier(e) {
+  var t = e.target;
+  if (!t || !t.classList || !t.classList.contains("scard") || t.getAttribute("role") !== "button") return;
+  if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") { e.preventDefault(); t.click(); }
+});
 function renderDash() {
   var codes = getCodes();
   var unlocked = getUnlocked();
@@ -7689,7 +7698,8 @@ function renderDash() {
       else if (s.id === "filius5e-cor") clickAction = "onclick=\"goPage('pg-filius5e-cor')\"";
       else if (s.id === "maison5e") clickAction = "onclick=\"goPage('pg-maison5e')\"";
       else if (s.id === "mila5e") clickAction = "onclick=\"goPage('pg-mila5e')\"";
-      cartes += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + '>';
+      /* Une tuile cliquable s'ouvre aussi au clavier : Tab pour l'atteindre, Entrée ou Espace (tuileAuClavier). */
+      cartes += '<div class="scard' + (!isOpen ? ' locked" style="cursor:default' : '') + '" ' + clickAction + (clickAction ? ' tabindex="0" role="button"' : '') + '>';
       cartes += '<div class="schdr" style="background:' + s.couleur + '"></div>';
       cartes += '<div class="scbody"><h3>' + s.titre + '</h3><p>' + s.desc + '</p>';
       cartes += '<div class="scmeta">' + badgeHtml + '<span style="font-size:11px;color:var(--td)">' + s.niveau + '</span></div>';
@@ -10720,7 +10730,7 @@ function noteReportEval1(sub) {
 }
 function reporterP11Eval1(sub) {
   var hn = (location.hostname || "").toLowerCase();
-  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "" || location.protocol === "file:") {
     try { console.warn("[p11-eval1] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return;
   }
@@ -11116,7 +11126,7 @@ var P11_EVAL2_REPORT_URL = "https://script.google.com/macros/s/AKfycbxndRw9ncrM6
 var P11_EVAL2_REPORT_SECRET = "P11-EVAL2-2026";
 function reporterP11Eval2(sub) {
   var hn = (location.hostname || "").toLowerCase();
-  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "" || location.protocol === "file:") {
     try { console.warn("[p11-eval2] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return;
   }
@@ -12191,6 +12201,8 @@ function deleteSub(sid) {
 /* ── Helpers CSV (2e) ─────────────────────────────────────────────────
    _csvEscape : protège valeurs contenant ; " ou \n
    _downloadCSV : déclenche le téléchargement (avec BOM UTF-8 pour Excel) */
+/* Statut lisible dans les exports (règle 7 : jamais « validated »). */
+function statutFr(st) { return FICHE_STATUTS[st] || st || ""; }
 function _csvEscape(v) {
   if (v === undefined || v === null) return "";
   v = String(v);
@@ -12214,7 +12226,7 @@ function _buildCapsuleCSV(cap, filtered) {
     var headers = ["Eleve","Classe","Date","Statut","Objet","Fonction","Q1c-1","Q1c-2","Q2a","Principe","FT1","FT2","ST2","FT3","ST4","FT5","FT6","ST6","FT7","ST7","FT8","ST8","Contextes","Bilan"];
     var rows = filtered.map(function(x){
       var f = x.fields || {};
-      return [x.ename, x.ecls, dateOf(x), x.status,
+      return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
         f["1a-objet"], f["1a-fonction"], f["1c-q1"], f["1c-q2"], f["2a"], f["2b-principe"],
         f.ft1, f.ft2, f.st2, f.ft3, f.st4, f.ft5, f.ft6, f.st6, f.ft7, f.st7, f.ft8, f.st8,
         f["3-contexte"], f.bilan];
@@ -12227,7 +12239,7 @@ function _buildCapsuleCSV(cap, filtered) {
     hdrX2.push("Appreciation");
     var rowsX2 = filtered.map(function(x){
       var f = x.fields || {};
-      var r = [x.ename, x.ecls, dateOf(x), x.status, (x.bareme||20),
+      var r = [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.bareme||20),
                p11x2TotalBrut(scoreP11Ex2BySection(f)),
                (x.adjustedScore !== undefined ? x.adjustedScore : "")];
       /* on exporte le libellé lisible, pas la clé interne du menu */
@@ -12260,7 +12272,7 @@ function _buildCapsuleCSV(cap, filtered) {
     var rowsP11 = filtered.map(function(x){
       var f = x.fields || {};
       var auto = p11x1TotalBrut(scoreP11Ex1BySection(f));
-      return [x.ename, x.ecls, dateOf(x), x.status, (x.bareme||20), auto,
+      return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.bareme||20), auto,
         (x.adjustedScore !== undefined ? x.adjustedScore : ""),
         f["p11x1-cap1"], f["p11x1-cap2"], f["p11x1-cap3"],
         f["p11x1-int1"], f["p11x1-int2"], f["p11x1-int3"],
@@ -12283,7 +12295,7 @@ function _buildCapsuleCSV(cap, filtered) {
       "E-Decision1","E-Decision2","E-Action1","E-Action2","E-Action3","E-Action4","E-QuestionFinale(ancienne)"];
     var rowsEx1 = filtered.map(function(x){
       var f = x.fields || {};
-      return [x.ename, x.ecls, dateOf(x), x.status,
+      return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
         f["ex1-a1"], f["ex1-a2"], f["ex1-a3"], f["ex1-a4"], f["ex1-a5"],
         f["ex1-b-qui"], f["ex1-b-quoi"], f["ex1-b-but"],
         f["ex1-c-chats"], f["ex1-c-jours"], f["ex1-c-min"], f["ex1-c-max"], f["ex1-c-eau"], f["ex1-c-dureeEau"], f["ex1-c-norme"],
@@ -12299,7 +12311,7 @@ function _buildCapsuleCSV(cap, filtered) {
     var rowsEx2 = filtered.map(function(x){
       var f = x.fields || {};
       var q3v = String(f["ex2-q3"]||"").trim();
-      return [x.ename, x.ecls, dateOf(x), x.status,
+      return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
         f["ex2-q1"], f["ex2-q2"], q3v, (q3v === "54" ? "OUI" : (q3v ? "NON" : "")),
         f["ex2-q4-c1"], f["ex2-q4-c2"], f["ex2-q4-c3"], f["ex2-q5-cond"], f["ex2-q5-act"]];
     });
@@ -12313,7 +12325,7 @@ function _buildCapsuleCSV(cap, filtered) {
     var hdr = ["Eleve","Classe","Date","Statut","Note auto","Note ajustee","Appreciation"].concat(sortedKeys);
     var dcRows = filtered.map(function(x){
       var f = x.fields || {};
-      var base = [x.ename, x.ecls, dateOf(x), x.status,
+      var base = [x.ename, x.ecls, dateOf(x), statutFr(x.status),
         (x.score !== undefined ? x.score + "/30" : ""),
         (x.adjustedScore !== undefined ? x.adjustedScore + "/30" : ""),
         x.appreciation || ""];
@@ -12325,7 +12337,7 @@ function _buildCapsuleCSV(cap, filtered) {
     return {
       headers: ["Eleve","Classe","Date","Statut","Score total","Domaine DT","Domaine PR","Domaine PG"],
       rows: filtered.map(function(x){
-        return [x.ename, x.ecls, dateOf(x), x.status,
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
           (x.score||0) + "/40", x.scoreDT||0, x.scorePR||0, x.scorePG||0];
       })
     };
@@ -12334,7 +12346,7 @@ function _buildCapsuleCSV(cap, filtered) {
     return {
       headers: ["Eleve","Classe","Date","Statut","Score","Reponse ouverte"],
       rows: filtered.map(function(x){
-        return [x.ename, x.ecls, dateOf(x), x.status,
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
           (x.score||0) + "/" + (x.qcmTot||0), x.open || ""];
       })
     };
@@ -12346,7 +12358,7 @@ function _buildCapsuleCSV(cap, filtered) {
       headers: ["Eleve","Classe","Date","Statut","Score"].concat(exLabels).concat(["Bilan","Hypothese","Je retiens"]),
       rows: filtered.map(function(x){
         var f = x.fields || {};
-        var base = [x.ename, x.ecls, dateOf(x), x.status, f.score || ""];
+        var base = [x.ename, x.ecls, dateOf(x), statutFr(x.status), f.score || ""];
         var exCols = exKeys.map(function(k){ return f[k] || "—"; });
         return base.concat(exCols).concat([f.bilan || "", f.hypothese || "", f.retiens || ""]);
       })
@@ -12377,7 +12389,7 @@ function _buildCapsuleCSV(cap, filtered) {
                 .concat(e56Cols.map(function (c) { return c[1]; })),
       rows: filtered.map(function (x) {
         var f = x.fields || {}, s = eau56Suivi(f);
-        return [x.ename, x.ecls, dateOf(x), x.status, (x.score || 0) + "/" + (x.qcmTot || 0)]
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.score || 0) + "/" + (x.qcmTot || 0)]
           .concat(EAU56_PARTIES.map(function (p) {
             var sc = s.scores[p[0]];
             return (sc !== undefined && sc !== null && sc !== "") ? Number(sc) : eau56Score(s, p[0], eau56Max(s, p[0], p[2]));
@@ -12406,7 +12418,7 @@ function _buildCapsuleCSV(cap, filtered) {
         if (f["ip-solide"] === "solides") okIP++;
         if (f["ip-liquide"] === "eau") okIP++;
         if (parseInt(f["ip-min"], 10) >= 4) okIP++;
-        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0),
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.score||0) + "/" + (x.qcmTot||0),
                 okQQ, okBac, okIP, "IP" + (f["ip-a"] || "?") + (f["ip-b"] || "?"), okQZ]
           .concat(e34Ids.map(function(it){
             var v = f[it[0]] || "";
@@ -12438,7 +12450,7 @@ function _buildCapsuleCSV(cap, filtered) {
         }
         var cycL = String(f["ordre-cycle"] || "").split(","), okCyc = 0;
         for (var c = 0; c < EAU_CYCLE.length; c++) if (cycL[c] === EAU_CYCLE[c][0]) okCyc++;
-        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0),
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.score||0) + "/" + (x.qcmTot||0),
                 okVF, okPot, okSol, okCyc, okAS, ss.nb + "/" + ss.sur,
                 isNaN(ss.total) ? "" : ss.total.toFixed(2).replace(".", ",")]
           .concat(eauIds.map(function(it){ return f[it[0]] || ""; }));
@@ -12453,7 +12465,7 @@ function _buildCapsuleCSV(cap, filtered) {
       headers: ["Eleve","Classe","Date","Statut","Reponses"].concat(roIds),
       rows: filtered.map(function(x){
         var f = x.fields || {};
-        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0)].concat(roIds.map(function(k){ return f[k] || ""; }));
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.score||0) + "/" + (x.qcmTot||0)].concat(roIds.map(function(k){ return f[k] || ""; }));
       })
     };
   }
@@ -12467,7 +12479,7 @@ function _buildCapsuleCSV(cap, filtered) {
         var f = x.fields || {};
         var nbPlan = 0;
         try { nbPlan = (JSON.parse(f["b6-plan"] || "[]") || []).length; } catch(e) {}
-        return [x.ename, x.ecls, dateOf(x), x.status, (x.score||0) + "/" + (x.qcmTot||0)]
+        return [x.ename, x.ecls, dateOf(x), statutFr(x.status), (x.score||0) + "/" + (x.qcmTot||0)]
           .concat(batIds.map(function(it){ return f[it[0]] || ""; }))
           .concat([nbPlan]);
       })
@@ -12477,7 +12489,7 @@ function _buildCapsuleCSV(cap, filtered) {
   return {
     headers: ["Eleve","Classe","Date","Statut","Score","Reponse"],
     rows: filtered.map(function(x){
-      return [x.ename, x.ecls, dateOf(x), x.status,
+      return [x.ename, x.ecls, dateOf(x), statutFr(x.status),
         (x.score||0) + "/" + (x.qcmTot||0), x.open || ""];
     })
   };
@@ -12488,7 +12500,7 @@ function exportCSV() {
   if (!s.length) { toast("Aucune donnée à exporter"); return; }
   var rows = ["Élève;Classe;Score /9;Date;Statut;Réponse ouverte"];
   for (var i = 0; i < s.length; i++) {
-    rows.push([s[i].ename, s[i].ecls, s[i].score+"/"+s[i].qcmTot, s[i].date, s[i].status, '"'+(s[i].open||"").replace(/"/g,'""')+'"'].join(";"));
+    rows.push([s[i].ename, s[i].ecls, s[i].score+"/"+s[i].qcmTot, s[i].date, statutFr(s[i].status), '"'+(s[i].open||"").replace(/"/g,'""')+'"'].join(";"));
   }
   var a = document.createElement("a");
   a.href = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(rows.join("\n"));
@@ -12563,7 +12575,7 @@ function exportCSVAll() {
         _csvEscape(x.ename), _csvEscape(x.ecls), _csvEscape(x.caplbl || x.cap),
         _csvEscape((x.score||0) + "/" + (x.qcmTot||0)),
         _csvEscape(fmtDateTime(x.dateISO || x.date)),
-        _csvEscape(x.status),
+        _csvEscape(statutFr(x.status)),
         _csvEscape(baremeDe(x)), _csvEscape(noteAutoDe(x)),
         _csvEscape(x.adjustedScore !== undefined && x.adjustedScore !== "" ? x.adjustedScore : ""),
         _csvEscape(x.appreciation || ""),
@@ -12722,7 +12734,7 @@ var cloudSync = (function () {
      purement et simplement sa vraie copie. La lecture (pull) reste autorisée. */
   var enLocal = (function () {
     var hn = (location.hostname || "").toLowerCase();
-    return hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "";
+    return hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "";
   })();
   function refuseEcritureLocale(quoi) {
     try {
@@ -18048,7 +18060,7 @@ function envoyerP11(sub) {
   var c = P11_REPORT[sub.cap];
   if (!c || !c.url) return Promise.resolve({ ok: false, erreur: "URL absente" });
   var hn = (location.hostname || "").toLowerCase();
-  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "" || location.protocol === "file:") {
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "" || location.protocol === "file:") {
     try { console.warn("[" + sub.cap + "] page locale : report au classeur de notes non envoyé."); } catch (e) {}
     return Promise.resolve({ ok: false, erreur: "page locale" });
   }
