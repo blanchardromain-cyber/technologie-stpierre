@@ -470,7 +470,20 @@
 
   /* ── État de l'élève ── */
   var RANG = { a_revoir: 1, en_cours: 2, acquis: 3 };
-  function etatVide() { return { v: 1, cartes: {}, module: {}, adapte: false, debut: null }; }
+  /* adapte : mode adapté actif ; adapteUtilise : activé au moins une fois (null = inconnu,
+     copie ancienne). actifMs : temps de travail actif ; derniere : heure de la dernière action. */
+  function etatVide() { return { v: 1, cartes: {}, module: {}, adapte: false, adapteUtilise: false, debut: null, actifMs: 0, derniere: null }; }
+  /* Une action de l'élève (vérification d'un défi) : le temps écoulé depuis la précédente
+     compte comme travail, plafonné à 5 min — une pause, ou une autre semaine, n'en est pas. */
+  var PAUSE_MAX = 5 * 60000;
+  function noterActivite(etat, maintenant) {
+    var e = copie(etat), t = maintenant == null ? Date.now() : maintenant;
+    if (typeof e.derniere === "number" && t > e.derniere) e.actifMs = (e.actifMs || 0) + Math.min(t - e.derniere, PAUSE_MAX);
+    if (typeof e.actifMs !== "number") e.actifMs = 0;
+    e.derniere = t;
+    if (!e.debut) e.debut = t;
+    return e;
+  }
   function carteVide() { return { niv: null, dernier: null, essais: 0, ouverte: false, serie: 0 }; }
 
   /* appliquer : une tentative terminée (tout le défi corrigé). `serie` compte les tentatives
@@ -506,16 +519,20 @@
       if (c.ouverte) ouvertes.push(id);
       if (c.serie) series[id] = c.serie;
     });
-    /* durée en minutes entières, arrondie au-dessus : une session courte donne « 1 », pas « 0 » */
-    var minutes = etat.debut ? Math.max(0, Math.ceil(((maintenant == null ? Date.now() : maintenant) - etat.debut) / 60000)) : 0;
-    return {
+    /* durée : temps de travail ACTIF (noterActivite), en minutes entières arrondies au-dessus */
+    var minutes = Math.max(0, Math.ceil((etat.actifMs || 0) / 60000));
+    var f = {
       _niv: JSON.stringify(niv),
       _dernier: JSON.stringify(dernier),
       _essais: JSON.stringify(essais),
       duree: String(minutes),
       adapte: etat.adapte ? "oui" : "non",
-      _module: JSON.stringify({ v: etat.v, module: etat.module, ouvertes: ouvertes, series: series, debut: etat.debut })
+      _module: JSON.stringify({ v: etat.v, module: etat.module, ouvertes: ouvertes, series: series, debut: etat.debut,
+                                actifMs: etat.actifMs || 0, derniere: etat.derniere == null ? null : etat.derniere })
     };
+    /* inconnu (copie ancienne) : la clé n'est pas inventée */
+    if (typeof etat.adapteUtilise === "boolean") f._adapteUtilise = etat.adapteUtilise ? "oui" : "non";
+    return f;
   }
   function lireJSON(s, defaut) {
     try { var v = JSON.parse(s); return v && typeof v === "object" ? v : defaut; } catch (x) { return defaut; }
@@ -536,7 +553,14 @@
     });
     e.module = m.module && typeof m.module === "object" ? m.module : {};
     e.adapte = f.adapte === "oui";
+    /* _adapteUtilise absent d'une copie ancienne : « utilisé » si le mode était actif, sinon inconnu */
+    e.adapteUtilise = f._adapteUtilise === "oui" ? true : f._adapteUtilise === "non" ? false
+      : e.adapte ? true : Object.prototype.hasOwnProperty.call(f, "adapte") ? null : false;
     e.debut = typeof m.debut === "number" ? m.debut : null;
+    /* copie ancienne sans temps actif : on repart de la durée qu'elle avait envoyée */
+    var dureeAncienne = /^\d+$/.test(String(f.duree)) ? Number(f.duree) * 60000 : 0;
+    e.actifMs = typeof m.actifMs === "number" ? m.actifMs : dureeAncienne;
+    e.derniere = typeof m.derniere === "number" ? m.derniere : null;
     return e;
   }
 
@@ -699,8 +723,10 @@
           ["La trottinette électrique", "Le robinet automatique"]),
         Q("m_p3_c1", "choix", "Pourquoi la trottinette a-t-elle besoin d’une batterie, alors que le robinet n’en a pas besoin pour ALIMENTER ?",
           "Pourquoi la trottinette a-t-elle une batterie ?",
-          ["Elle se déplace : elle emporte son énergie, stockée dans sa batterie", "Une batterie donne plus de force que l’eau du réseau",
-            "La batterie sert à traiter l’ordre de la gâchette", "Le robinet n’a pas besoin d’énergie pour fonctionner"],
+          ["Elle se déplace : elle emporte son énergie, stockée dans sa batterie",
+            "Une batterie donne plus de force que l’eau du réseau : il en faut pour monter les côtes",
+            "La batterie sert à traiter l’ordre de la gâchette avant de l’envoyer au moteur électrique",
+            "Le robinet n’a pas besoin d’énergie pour fonctionner : l’eau coule toute seule dans le tuyau"],
           "Elle se déplace : elle emporte son énergie, stockée dans sa batterie",
           "Pourrais-tu rouler en restant branché à une prise ou à un tuyau ? Revois l’activité 7.", "A7")
       ],
@@ -740,9 +766,9 @@
       donnees: FICHES,
       items: [
         Q("m_i1_a1", "assoc", "Pour le boîtier, chaque critère est-il indispensable, souhaitable ou inutile ?", "Pour chaque critère, choisis : indispensable, souhaitable ou inutile.",
-          CLASSEMENT, ["Indispensable", "Indispensable", "Souhaitable", "Souhaitable", "Inutile"],
+          CLASSEMENT, ["Indispensable", "Indispensable", "Souhaitable", "Souhaitable", "Souhaitable", "Inutile"],
           "Indispensable : sans lui, le boîtier ne fait plus son travail. Souhaitable : il aide à départager. Inutile : le boîtier ne le subit pas. Revois l’activité 8.", "A8",
-          [C_ISOLANT, C_EAU, C_CHOCS, C_COUT, C_200]),
+          [C_ISOLANT, C_EAU, C_RIGIDE, C_CHOCS, C_COUT, C_200]),
         Q("m_i1_c1", "choix", "D’après les fiches, quel matériau choisis-tu pour le boîtier ?", "Quel matériau choisis-tu ?",
           ["ABS", "PE-HD", "POM", "PLA", "Inox"], "ABS",
           "Élimine d’abord avec les critères indispensables, puis départage avec les souhaitables. Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
@@ -752,7 +778,10 @@
           "Pour chaque matériau, cherche dans les fiches le critère indispensable qu’il ne respecte pas. Revois l’activité 8.", "A8",
           ["Inox", "PLA"]),
         Q("m_i1_c2", "choix", "Le PE-HD respecte lui aussi les critères indispensables. Pourquoi l’ABS passe-t-il devant ?", "Pourquoi l’ABS plutôt que le PE-HD ?",
-          ["Le PE-HD est moins rigide (2/5) : un critère souhaitable départage", "Le PE-HD conduit l’électricité", "Le PE-HD coûte plus cher", "Le PE-HD s’abîme dans l’eau"],
+          ["Le PE-HD est moins rigide (2/5) : un critère souhaitable départage",
+            "Le PE-HD conduit l’électricité : il mettrait la carte électronique en court-circuit",
+            "Le PE-HD coûte plus cher que l’ABS : le critère du coût élimine les matériaux chers",
+            "Le PE-HD s’abîme dans l’eau : il ne supporte pas les éclaboussures du lavabo"],
           "Le PE-HD est moins rigide (2/5) : un critère souhaitable départage",
           "Compare les deux lignes des fiches, colonne par colonne. Revois l’activité 8.", "A8"),
         Q("m_i1_c3", "choix", "Le boîtier est fabriqué à 10 000 exemplaires. Quel procédé choisis-tu pour l’ABS ?", "10 000 boîtiers : quel procédé ?",
@@ -781,6 +810,9 @@
         { id: "m_i2_t", type: "tableur", cases: CASES_A_REMPLIR.slice(),
           consigne: "Complète la feuille : saisis les données des fiches (lignes 3 et 5), puis écris une formule dans chaque case de calcul (lignes 4, 6 et 7).",
           consigneSimple: "Écris les nombres des fiches dans les lignes 3 et 5. Écris une formule dans les lignes 4, 6 et 7.",
+          /* rappels montrés à tous les élèves, au mot près ceux de l'évaluation n°2 (I2) */
+          rappels: ["Un nombre décimal s’écrit avec une virgule : 1,04.",
+                    "Une formule commence par = et utilise les références des cellules (B2, B3…)."],
           indice: "La masse, c’est le volume × la masse volumique ; l’énergie grise du boîtier, c’est sa masse × l’énergie grise du matériau. Revois le mini-tableur de l’activité 8.",
           renvoi: "A8" },
         Q("m_i2_c1", "choix", "D’après ta feuille, combien de fois plus d’énergie grise le boîtier en inox demande-t-il ?", "L’inox demande combien de fois plus ?",
@@ -801,22 +833,28 @@
       situation: "Le boîtier ne consomme presque rien quand il sert. Pourtant, il a déjà coûté de l’énergie avant d’arriver sous le robinet.",
       items: [
         Q("m_i3_c1", "choix", "Quelle est la bonne définition de l’énergie grise du boîtier ?", "Qu’est-ce que l’énergie grise ?",
-          [DEF_EG, "L’énergie électrique que consomme le capteur pendant qu’il fonctionne", "L’énergie de l’eau qui fait tourner la turbine",
-            "L’énergie qu’il faut pour recycler le boîtier, et elle seule"], DEF_EG,
+          [DEF_EG,
+            "Toute l’énergie électrique que consomme le capteur pendant les années où il fonctionne sous le robinet, depuis sa mise en service jusqu’au jour où on le remplace",
+            "L’énergie de l’eau sous pression qui fait tourner la turbine",
+            "L’énergie qu’il faut pour recycler le boîtier en fin de vie, et elle seule : l’extraction, la fabrication et le transport ne sont pas comptés"], DEF_EG,
           "Pense à toute la vie du boîtier, avant et après le moment où il sert. Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
         Q("m_i3_a1", "assoc", "Pour l’énergie grise du boîtier, chaque étape est-elle comptée ?", "Pour chaque étape, choisis : comptée ou pas comptée.",
           ["Comptée", "Pas comptée"], ["Comptée", "Comptée", "Comptée", "Pas comptée", "Comptée"],
           "Relis la définition de l’énergie grise : une étape de la vie du boîtier est mise à part. Revois l’activité 8.", "A8",
-          ["Extraire la matière", "Fabriquer le boîtier", "Transporter le boîtier", "Utiliser le robinet pendant des années", "Traiter le boîtier en fin de vie"]),
+          ["Extraire la matière", "Fabriquer le boîtier", "Transporter le boîtier", "Utiliser le boîtier sous le robinet pendant des années", "Traiter le boîtier en fin de vie"]),
         Q("m_i3_c2", "choix", "Un camarade dit : « L’ABS se recycle, donc l’énergie grise du boîtier n’a plus d’importance. » Qu’en penses-tu ?",
           "« Il se recycle, donc ça ne compte plus » : juste ou faux ?",
-          ["C’est faux : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé", "C’est juste : recyclable veut dire qu’il sera recyclé",
-            "C’est juste : l’énergie grise ne compte que la fin de vie"],
+          ["C’est faux : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé",
+            "C’est juste : recyclable veut dire qu’il sera forcément recyclé, donc son énergie grise est récupérée",
+            "C’est juste : l’énergie grise ne compte que la fin de vie, et le recyclage la ramène à zéro"],
           "C’est faux : un matériau recyclable n’économise de l’énergie que s’il est vraiment recyclé",
           "Un boîtier jeté avec les ordures ménagères est-il recyclé ? Revois « Ce que je dois retenir » de l’activité 8.", "A8"),
         Q("m_i3_c3", "choix", "Par gramme, l’inox demande moins d’énergie grise que l’ABS (60 kJ/g contre 95 kJ/g). Pourquoi le boîtier en inox en demande-t-il pourtant plus ?",
           "Pourquoi le boîtier en inox demande-t-il plus d’énergie ?",
-          ["Il est bien plus lourd : on compare pour la pièce, énergie grise × masse", "L’inox ne se recycle pas", "On compte aussi l’énergie de son utilisation", "L’inox conduit l’électricité"],
+          ["Il est bien plus lourd : on compare pour la pièce, énergie grise × masse",
+            "L’inox ne se recycle pas : toute son énergie grise est perdue quand on jette le boîtier",
+            "On compte aussi l’énergie de son utilisation, et le boîtier en inox sert plus longtemps",
+            "L’inox conduit l’électricité"],
           "Il est bien plus lourd : on compare pour la pièce, énergie grise × masse",
           "Revois ta feuille de calcul : quelle ligne change le plus d’un boîtier à l’autre ? Revois l’activité 8.", "A8")
       ],
@@ -865,6 +903,20 @@
     return /^-?\d+(,\d+)?$/.test(s) ? parseFloat(s.replace(",", ".")) : NaN;
   }
   function proche(a, b) { return Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(b)); }
+  /* Retire les parenthèses qui entourent TOUT le texte, seulement si elles se répondent :
+     « ((B2)*B3) » → « (B2)*B3 », mais « (B2)*(B3) » reste tel quel. */
+  function sansParentheses(x) {
+    for (;;) {
+      if (x.charAt(0) !== "(" || x.charAt(x.length - 1) !== ")") return x;
+      var niveau = 0, i;
+      for (i = 0; i < x.length; i++) {
+        if (x.charAt(i) === "(") niveau++;
+        else if (x.charAt(i) === ")" && --niveau === 0) break;
+      }
+      if (i !== x.length - 1) return x;
+      x = x.slice(1, -1);
+    }
+  }
   function corrigerTableur(cellule, saisie, feuille) {
     var c = TABLEUR.cases[cellule];
     if (!c || c.fourni) return { pts: 0, raison: "case inconnue ou déjà remplie" };
@@ -880,8 +932,9 @@
       if (!isNaN(nombreFr(s)) || /^-?\d+\.\d+$/.test(s)) return { pts: 0, raison: "résultat tapé à la main : le tableur ne calcule rien" };
       return { pts: 0, raison: "il manque le « = » au début : sans lui, le tableur n’y voit que du texte" };
     }
-    var corps = s.slice(1).toUpperCase(), a, b, op;
-    while (/^\(.*\)$/.test(corps)) corps = corps.slice(1, -1);
+    /* « $ » des références absolues ignoré (=$B$2*$B$3 vaut =B2*B3) */
+    var corps = sansParentheses(s.slice(1).toUpperCase().replace(/\$/g, "")), a, b, op;
+    var NON_RECONNUE = { pts: 0, raison: "formule non reconnue" };
     var p = /^PRODUIT\(([^;]+);([^;]+)\)$/.exec(corps);
     if (p) { a = p[1]; b = p[2]; op = "*"; }
     else {
@@ -889,13 +942,17 @@
       if (!o) {
         if (!isNaN(nombreFr(corps))) return { pts: 0, raison: "résultat tapé après le « = » : le tableur ne calcule rien" };
         if (/[X×]/.test(corps)) return { pts: 0, raison: "la multiplication s’écrit avec * dans un tableur" };
-        return { pts: 0, raison: "formule non reconnue" };
+        return NON_RECONNUE;
       }
       a = o[1]; op = o[2]; b = o[3];
     }
+    a = sansParentheses(a); b = sansParentheses(b);
+    var estRef = function (x) { return /^[A-Z]\d+$/.test(x); };
+    /* chaque terme doit être une case ou un nombre : sinon (=B2*B3+1, parenthèse orpheline…), formule non reconnue */
+    var terme = function (x) { return estRef(x) || !isNaN(nombreFr(x)) || /^\d+\.\d+$/.test(x); };
+    if (!terme(a) || !terme(b)) return NON_RECONNUE;
     if (op !== c.op) return { pts: 0, raison: op === "*" ? "ici, il faut une division (/)" : "ici, il faut une multiplication (*)" };
     var refs = [a, b], att = c.ref;
-    var estRef = function (x) { return /^[A-Z]\d+$/.test(x); };
     var memeOrdre = refs[0] === att[0] && refs[1] === att[1], inverse = refs[0] === att[1] && refs[1] === att[0];
     if (memeOrdre || (op === "*" && inverse)) return { pts: 1, raison: "formule avec les noms des cases" };
     if (op === "/" && inverse) return { pts: 0, raison: "rapport inversé : la plus grande valeur se divise par la plus petite" };
@@ -920,7 +977,7 @@
     appliquerModule: appliquerModule, bilanModule: bilanModule, corrigerTableur: corrigerTableur,
     NOTIONS: NOTIONS, BANQUE: BANQUE,
     tirerDefi: tirerDefi, corriger: corriger, appliquer: appliquer, essaiSuivant: essaiSuivant,
-    etatVide: etatVide, versFields: versFields, depuisFields: depuisFields,
+    etatVide: etatVide, noterActivite: noterActivite, versFields: versFields, depuisFields: depuisFields,
     memoire: memoire, cleEtat: cleEtat, plusAvance: plusAvance
   };
   if (typeof module !== "undefined" && module.exports) module.exports = API;
