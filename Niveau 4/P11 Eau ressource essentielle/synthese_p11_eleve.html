@@ -274,6 +274,9 @@
   .feuille .pts{display:block;font-size:.85em;font-weight:700;margin-top:2px}
   .feuille .pts.ok{color:var(--vt)} .feuille .pts.mi{color:var(--or)} .feuille .pts.ko{color:var(--rg)}
   .rappel-formule{background:var(--orp);border-left:4px solid #C98A00;padding:8px 12px;border-radius:0 8px 8px 0;color:#4A3500;margin-bottom:8px}
+  .rappel-formule summary{font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center}
+  .rappel-formule summary:focus-visible{outline:3px solid var(--eaud);outline-offset:2px}
+  .rappel-formule ul{margin:2px 0 0;padding-left:1.2em}
   .detail-tab{margin:8px 0 0 1.2em}
   html.adapte .feuille input{width:7.5em;font-size:1.1em;min-height:52px}
   html.adapte .feuille{font-size:1em}
@@ -1092,7 +1095,7 @@
     <p id="memoire-bilan" class="bilan"></p>
     <div class="tab-wrap"><table class="tab">
       <caption class="vh">Mon niveau pour chacune des 13 notions de la synthèse</caption>
-      <thead><tr><th scope="col">Notion</th><th scope="col">Mon niveau</th><th scope="col" class="col-renvoi">Où la revoir</th></tr></thead>
+      <thead><tr><th scope="col">Notion</th><th scope="col">Mon niveau</th><th scope="col" class="col-renvoi">Où la relire</th></tr></thead>
       <tbody id="memoire-corps"></tbody>
     </table></div>
     <h3 id="memoire-retravailler-titre">Ce que je dois retravailler</h3>
@@ -1127,7 +1130,7 @@
    Logique pure dans synthese_p11_logique.js (window.P11SYN) ; ici :
    affichage, défis, révélation, modes adapté et projection, voix.
    Les 13 cartes sont jouables, dans l'ordre choisi par l'élève.
-   Envoi au classeur (upsert) à chaque carte terminée, à chaque défi
+   Envoi au classeur (upsert) à chaque tentative de défi, à chaque défi
    d'entraînement et à l'ouverture de la carte mémoire ; reprise au
    chargement depuis la copie distante si elle est plus avancée.
    ════════════════════════════════════════════════════════════════════ */
@@ -1191,6 +1194,7 @@ function chargerEtat() {
   } catch (x) {}
   if (!e.cartes || typeof e.cartes !== "object") e.cartes = {};
   if (!idEleve && !e.graine) e.graine = "s" + Math.floor(Math.random() * 1e9);
+  if (e.adapte) e.adapteUtilise = true;   /* état gardé avant l'ajout de adapteUtilise */
   e.projection = !!e.projection;
   return e;
 }
@@ -1234,15 +1238,17 @@ function chercherVoix() {
   for (i = 0; i < v.length; i++) if (/^fr\b/i.test(v[i].lang)) return v[i];
   return null;
 }
+/* Une voix française arrivée tard (voiceschanged après le délai d'une seconde) rend les
+   boutons 🔊 : ils sont seulement masqués tant qu'aucune voix n'est disponible. */
 function voixPrete(v) {
-  if (VOIX.etat !== "attente") return;
+  if (VOIX.etat === "ok") return;
   VOIX.voix = v; VOIX.etat = "ok";
   Array.prototype.forEach.call(document.querySelectorAll(".btn-lire"), function (b) { b.hidden = false; });
 }
 function voixAbsente() {
   if (VOIX.etat !== "attente") return;
   VOIX.etat = "non";
-  Array.prototype.forEach.call(document.querySelectorAll(".btn-lire"), function (b) { b.parentNode.removeChild(b); });
+  Array.prototype.forEach.call(document.querySelectorAll(".btn-lire"), function (b) { b.hidden = true; });
 }
 function initVoix() {
   var s = synthese();
@@ -1275,7 +1281,6 @@ function texteLisible(bloc) {
   return c.textContent;
 }
 function boutonLire(bloc, texte) {
-  if (VOIX.etat === "non") return null;
   var b = el("button", { type: "button", class: "btn-lire", "data-nolecture": "", "aria-label": "Écouter ce passage" });
   b.innerHTML = '<span aria-hidden="true">\u{1F50A}</span> Écouter';
   b.hidden = VOIX.etat !== "ok";
@@ -1396,7 +1401,7 @@ function texteItem(it) {
   var t = consigneDe(it);
   if (it.type === "ordre") return t + " Les étiquettes : " + DEFI.reponses[it.id].join(", ") + ".";
   if (it.type === "assoc") return t + " À associer : " + it.elements.join(" ; ") + ". Propositions : " + it.options.join(", ") + ".";
-  if (it.type === "tableur") return t + (etat.adapte ? " " + RAPPEL_FORMULE : "") + " Cases à remplir : " + it.cases.join(", ") + ".";
+  if (it.type === "tableur") return t + " Rappels : " + (it.rappels || []).join(" ") + " Cases à remplir : " + it.cases.join(", ") + ".";
   return t + " Propositions : " + it.options.join(", ") + ".";
 }
 function consigneDe(it) { return etat.adapte && it.consigneSimple ? it.consigneSimple : it.consigne; }
@@ -1544,13 +1549,22 @@ function dessinerAssoc(it) {
   return box;
 }
 
-/* Tableur du module (I2) : mêmes cases en mode adapté, plus grandes, avec un rappel.
+/* Tableur du module (I2) : mêmes cases en mode adapté, plus grandes. Les deux rappels (virgule
+   décimale, formule) sont pour tous, comme dans l'évaluation n°2 : ouverts, repliables.
    Volume fourni et verrouillé ; après vérification, chaque case montre ses points et leur raison. */
-var RAPPEL_FORMULE = "Une formule commence par = et utilise les noms des cases (B2, B3…).";
+var RAPPELS_OUVERTS = true;   /* l'élève qui les replie les retrouve repliés au prochain essai */
 function ptsTexte(p) { return p === 1 ? "1 pt" : p === 0.5 ? "0,5 pt" : "0 pt"; }
 function dessinerTableur(it) {
   var T = P.TABLEUR, rep = DEFI.reponses[it.id] || (DEFI.reponses[it.id] = {}), box = el("div");
-  if (etat.adapte) box.appendChild(el("p", { class: "rappel-formule" }, RAPPEL_FORMULE));
+  if (it.rappels && it.rappels.length) {
+    var rp = el("details", { class: "rappel-formule" }), ul = el("ul");
+    rp.open = RAPPELS_OUVERTS;
+    rp.appendChild(el("summary", null, "Rappels pour le tableur"));
+    it.rappels.forEach(function (r) { ul.appendChild(el("li", null, r)); });
+    rp.appendChild(ul);
+    rp.addEventListener("toggle", function () { RAPPELS_OUVERTS = rp.open; });
+    box.appendChild(rp);
+  }
   var wrap = el("div", { class: "tab-wrap" }), tab = el("table", { class: "feuille" });
   tab.appendChild(el("caption", { class: "vh" }, "Feuille de calcul : énergie grise du boîtier"));
   var th = el("thead"), tr0 = el("tr");
@@ -1760,30 +1774,36 @@ function verifier() {
     }
   }
   var r = P.corriger(DEFI.items, DEFI.reponses);
-  if (!etat.debut) etat.debut = Date.now();
+  etat = P.noterActivite(etat, Date.now());   /* durée : temps actif, pauses plafonnées */
   if (DEFI.module) { verifierModule(r); return; }
   var avant = etat.cartes[id] && etat.cartes[id].niv;
+  var rejeu = !!(etat.cartes[id] && etat.cartes[id].ouverte);   /* la carte était déjà ouverte */
   etat = P.appliquer(etat, id, r.juste);
   sauver();
   var c = etat.cartes[id], seriefinie = c.serie === 0;
-  if (seriefinie) envoyer();   /* carte terminée : réussite ou 3e échec */
+  /* envoi après CHAQUE tentative : sur un autre poste, la série reprend où elle en était */
+  envoyer();
   DEFI.fini = true;
   DEFI.verdicts = {};
   DEFI.items.forEach(function (it) { DEFI.verdicts[it.id] = r.fautes.indexOf(it.id) < 0; });
-  /* Rejeu : le meilleur niveau est gardé ; le message le dit au lieu d'annoncer un niveau plus bas. */
-  var garde = avant && seriefinie && RANG_NIV[avant] > RANG_NIV[c.dernier]
-    ? "Tu gardes ton niveau « " + NIVEAUX_MOTS[avant] + " » ; cette fois : " + NIVEAUX_MOTS[c.dernier] + ". " : "";
+  /* Rejeu : la carte est déjà ouverte, le meilleur niveau est gardé ; le message dit ce qui
+     se passe vraiment (niveau qui monte ou niveau gardé), sans « la notion s'ouvre ». */
+  var niveauRejeu = !rejeu ? "" : RANG_NIV[c.niv] > RANG_NIV[avant]
+    ? "Ton niveau passe à « " + NIVEAUX_MOTS[c.niv] + " ». "
+    : "Tu gardes ton niveau « " + NIVEAUX_MOTS[avant] + " »" + (c.dernier !== avant ? " ; cette fois : " + NIVEAUX_MOTS[c.dernier] : "") + ". ";
   var schema = !MOUV_REDUIT && $("revele-" + id).querySelector(".schema") ? " : regarde le schéma se construire." : ".";
   if (r.juste) {
-    annoncer(garde
-      ? "C'est juste ! " + garde + "Rejoue quand tu veux pour faire encore mieux."
+    annoncer(rejeu
+      ? ((c.dernier === "acquis" ? "Bravo, tout est juste du premier coup ! " : "C'est juste, après un indice. ") + niveauRejeu
+        + (c.niv !== "acquis" ? "Rejoue quand tu veux pour passer en « acquis »." : "")).trim()
       : c.dernier === "acquis"
         ? "Bravo, tout est juste du premier coup ! La notion s'ouvre" + schema
         : "C'est juste ! Tu as trouvé après un indice : la carte est « en cours ». Tu pourras rejouer le défi pour la passer en « acquis ».", "ok");
     reveler(id, true);
   } else if (seriefinie) {
-    annoncer(garde
-      ? "Ce n'est pas encore ça, et ce n'est pas grave. " + garde + "Relis " + renvoiNotion(id) + ", puis rejoue quand tu veux."
+    annoncer(rejeu
+      ? "Ce n'est pas encore ça, et ce n'est pas grave. " + niveauRejeu + "Relis " + renvoiNotion(id)
+        + (c.niv !== "acquis" ? ", puis rejoue quand tu veux." : ".")
       : "Ce n'est pas encore ça, et ce n'est pas grave : la carte s'ouvre pour que tu lises la notion. "
         + "Elle est notée « à revoir » ; relis " + renvoiNotion(id) + ", puis rejoue le défi quand tu veux.", "ko");
     reveler(id, true);
@@ -1938,7 +1958,7 @@ function majMemoire() {
   P.NOTIONS.forEach(function (n) {
     var tr = el("tr"), td = el("td");
     var th = el("th", { scope: "row" }, n.id.slice(1) + ". " + n.titre);
-    th.appendChild(el("span", { class: "rv-mob" }, "À revoir : " + renvoiActivites(n)));
+    th.appendChild(el("span", { class: "rv-mob" }, "À relire : " + renvoiActivites(n)));
     tr.appendChild(th);
     td.appendChild(pastilleNiveau(m.niveaux[n.id]));
     tr.appendChild(td);
@@ -1959,7 +1979,7 @@ function majMemoire() {
       var n = P.NOTIONS.filter(function (x) { return x.id === a.id; })[0], li = el("li"), t = el("span", { class: "rt-txt" });
       t.appendChild(el("b", null, a.titre + " "));
       t.appendChild(pastilleNiveau(m.niveaux[a.id]));
-      t.appendChild(el("span", { class: "rt-renvoi" }, "À revoir : " + renvoiActivites(n)));
+      t.appendChild(el("span", { class: "rt-renvoi" }, "À relire : " + renvoiActivites(n)));
       li.appendChild(t);
       var b = el("button", { type: "button", class: "btn", "aria-label": "Rejouer le défi : " + a.titre }, "Rejouer le défi");
       b.addEventListener("click", function () { rejouerCarte(a.id); });
@@ -2430,6 +2450,7 @@ function dessinerPourImpression() {
 /* ── Modes ── */
 function basculerAdapte(on) {
   etat.adapte = !!on;
+  if (etat.adapte) etat.adapteUtilise = true;   /* envoyé au professeur : « utilisé au moins une fois » */
   document.documentElement.classList.toggle("adapte", etat.adapte);
   $("btn-adapte").setAttribute("aria-pressed", String(etat.adapte));
   sauver();
@@ -2564,6 +2585,7 @@ function reprendre(sub) {
   var adapteAvant = !!etat.adapte;
   distant.projection = !!etat.projection;          /* préférence d'affichage de ce poste */
   if (etat.graine) distant.graine = etat.graine;
+  if (etat.adapteUtilise === true) distant.adapteUtilise = true;   /* utilisé sur ce poste : on ne l'oublie pas */
   etat = distant;
   sauver();
   if (adapteAvant !== !!etat.adapte) {
@@ -2684,8 +2706,27 @@ function flushQueue(){
   try {
     var q = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
     if (!q.length || !hasUrl() || !urlEcriture()) return;
-    q.forEach(function(sub){ postSub(sub); });
+    var moi = USER.id || eidCourant();
+    q.forEach(function(sub){
+      if (!sub) return;
+      if (sub.eid === moi) postSub(sub); else rejouerAutre(sub);
+    });
   } catch(e){}
+}
+/* Copie en file d'un AUTRE élève (poste partagé) : elle n'est jamais rejouée à l'aveugle.
+   On lit sa copie (action « own », lecture seule) : verrouillée, ou au moins aussi avancée
+   que celle de la file → la copie en file est retirée ; sinon elle part. Lecture impossible :
+   elle reste en file. */
+function rejouerAutre(sub){
+  lireEnvois(sub.eid, function(liste){
+    if (!liste || VERROU) return;
+    var siens = liste.filter(function (x) { return x && x.eid === sub.eid && x.cap === CAP_ID; });
+    for (var i = 0; i < siens.length; i++) if (envoiVerrouille(siens[i])){ unqueueSub(sub); return; }
+    siens.sort(function(a,b){ return new Date(b.dateISO||0) - new Date(a.dateISO||0); });
+    var d = siens[0] && siens[0].fields && typeof siens[0].fields === "object" ? P.depuisFields(siens[0].fields) : null;
+    if (d && !P.plusAvance(P.depuisFields(sub.fields), d)){ unqueueSub(sub); return; }
+    postSub(sub);
+  }, true);
 }
 /* Résumé lisible pour la page professeur ; il commence par « — » (règle 3). */
 function resumeOuvert() {
