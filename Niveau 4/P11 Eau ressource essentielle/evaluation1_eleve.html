@@ -1050,7 +1050,7 @@ function copieLocaleVerrouillee(){
   }catch(e){}
   return false;
 }
-function estLocal(){ var hn=(location.hostname||"").toLowerCase(); return hn==="localhost"||hn==="127.0.0.1"||hn==="::1"||hn===""; }
+function estLocal(){ var hn=(location.hostname||"").toLowerCase(); return hn==="localhost"||hn==="127.0.0.1"||hn==="::1"||hn==="[::1]"||hn===""; }
 function urlLecture(){
   if(estLocal()){ try{ var u=localStorage.getItem("apps_script_url_test")||""; if(/^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){} }
   return APPS_SCRIPT_URL;
