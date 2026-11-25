@@ -133,6 +133,7 @@ FAUX.fetch = function (entree, init) {
   if (p.get("secret") !== FAUX.secret) { noter(m, url, "bad_secret"); return reponse({ ok: false, error: "bad_secret" }); }
   if (p.get("action") === "own") {
     if (!p.get("eid")) return reponse({ ok: false, error: "eid_required" });
+    if (FAUX.ownEchec && p.get("eid") === FAUX.ownEchec) { noter(m, url, "own : lecture en échec (simulée)"); return Promise.reject(new TypeError("Failed to fetch")); }
     var siennes = FAUX.lignes.map(ligneVersObjet).filter(function (o) { return String(o.eid) === String(p.get("eid")); });
     noter(m, url, "own : " + siennes.length + " copie(s)");
     return reponse({ ok: true, subs: siennes.map(function (o) {
@@ -150,9 +151,14 @@ FAUX.alerte = function () { FAUX.bouchons.alert++; };
 FAUX.confirmer = function () { FAUX.bouchons.confirm++; return true; };
 FAUX.demander = function () { FAUX.bouchons.prompt++; return null; };
 
+/* ════ Garde-fou : la page ne tourne que servie en local ════
+   Elle vide puis restaure le localStorage de son origine : sur le site en ligne, ce serait
+   celui des élèves et du professeur. Ailleurs qu'en local, elle n'y touche pas du tout. */
+var LOCALE = ["localhost", "127.0.0.1", "::1", "[::1]"].indexOf(String(location.hostname).toLowerCase()) >= 0;
+
 /* ════ Sauvegarde / restauration du localStorage de ce navigateur ════ */
 var sauvegarde = {};
-for (var k = 0; k < localStorage.length; k++) { var cle = localStorage.key(k); sauvegarde[cle] = localStorage.getItem(cle); }
+if (LOCALE) for (var k = 0; k < localStorage.length; k++) { var cle = localStorage.key(k); sauvegarde[cle] = localStorage.getItem(cle); }
 function restaurer() {
   localStorage.clear();
   Object.keys(sauvegarde).forEach(function (c) { localStorage.setItem(c, sauvegarde[c]); });
@@ -229,13 +235,17 @@ cas("1. Aller-retour : envoyer → vider le stockage → recharger → état ide
   jouer(w, "n8", true);                                    /* acquis du premier coup → envoi */
   jouer(w, "n3", false); jouer(w, "n3", false); jouer(w, "n3", false);  /* 3e échec → à revoir, envoi */
   jouer(w, "m_i1", false);                                 /* défi d'entraînement → envoi */
-  jouer(w, "n5", false);                                   /* série en cours (1 essai), pas d'envoi */
+  jouer(w, "n5", false);                                   /* série en cours (1 essai) : envoyée aussi */
   jouer(w, "m_i1", true);                                  /* nouvel envoi : contient la série de n5 */
   await attendre(200);
-  var avant = JSON.parse(JSON.stringify({ cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, debut: w.etat.debut }));
+  var avant = JSON.parse(JSON.stringify({ cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, adapteUtilise: w.etat.adapteUtilise,
+                                          debut: w.etat.debut, actifMs: w.etat.actifMs, derniere: w.etat.derniere }));
   var envoye = FAUX.derniersPosts.filter(function (s) { return s && s.eid === ID; }).pop();
   verif(L, envoye, "un envoi a été reçu pour " + ID);
-  verif(L, posts().length === 4, "4 envois (n8, n3 au 3e échec, m_i1 ×2) ; obtenu " + posts().length);
+  verif(L, posts().length === 7, "7 envois, un par tentative (n8, n3 ×3, m_i1, n5, m_i1) ; obtenu " + posts().length);
+  verif(L, envoye && envoye.fields._adapteUtilise === "oui", "_adapteUtilise envoyé : " + (envoye && envoye.fields._adapteUtilise));
+  var serieN5 = FAUX.derniersPosts.filter(function (s) { return s && s.eid === ID; })[5];
+  verif(L, serieN5 && JSON.parse(serieN5.fields._module).series.n5 === 1, "l'envoi après le 1er échec de n5 contient sa série en cours");
   verif(L, file(w).length === 0, "file vide après envois réussis");
   var ligne = FAUX.lignes.map(ligneVersObjet).filter(function (o) { return o.eid === ID; })[0];
   verif(L, ligne && ligne.cap === "p11-syn" && ligne.status === "pending", "ligne du classeur : cap p11-syn, statut pending");
@@ -243,7 +253,8 @@ cas("1. Aller-retour : envoyer → vider le stockage → recharger → état ide
   /* autre poste : stockage vidé, seuls restent l'identité déposée par le site et le déploiement de test */
   localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST); prefill(ID);
   w = await charger();
-  var apres = { cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, debut: w.etat.debut };
+  var apres = { cartes: w.etat.cartes, module: w.etat.module, adapte: w.etat.adapte, adapteUtilise: w.etat.adapteUtilise,
+                debut: w.etat.debut, actifMs: w.etat.actifMs, derniere: w.etat.derniere };
   Object.keys(avant).forEach(function (cle) {
     verif(L, JSON.stringify(apres[cle]) === JSON.stringify(avant[cle]), "état." + cle + " identique : " + JSON.stringify(apres[cle]).slice(0, 160));
   });
@@ -253,7 +264,7 @@ cas("1. Aller-retour : envoyer → vider le stockage → recharger → état ide
   });
   verif(L, w.document.documentElement.classList.contains("adapte"), "mode adapté rétabli à l'écran");
   verif(L, w.$("pcount").textContent.indexOf("2 / 13") === 0, "progression affichée : " + w.$("pcount").textContent);
-  verif(L, posts().length === 4, "aucun envoi au rechargement");
+  verif(L, posts().length === 7, "aucun envoi au rechargement");
 });
 
 cas("2. Réseau coupé : file non vide, aucun message bloquant ; réseau rétabli : file vidée", async function (L) {
@@ -410,6 +421,45 @@ cas("7. Hôte local reconnu, y compris « [::1] » (location.hostname avec croch
   verif(L, u.hostname === "[::1]" && w.hoteLocal(u.hostname), "le navigateur donne bien « " + u.hostname + " » pour http://[::1]:8137, reconnu local");
 });
 
+cas("8. Poste partagé : la file d'un AUTRE élève n'est rejouée qu'après lecture de sa copie", async function (L) {
+  localStorage.clear(); localStorage.setItem("apps_script_url_test", URL_TEST);
+  var MOI = "test.p11syn.poste-moi", AUTRE = "test.p11syn.poste-autre", NEUF = "test.p11syn.poste-neuf", ECHEC = "test.p11syn.poste-echec";
+  prefill(MOI);
+  function copie(eid, ouvertes, id, jours) {
+    return { eid: eid, cap: "p11-syn", ename: "Test Faux-Serveur", ecls: "4Z", status: "pending", id: id,
+             dateISO: new Date(Date.now() - (jours || 0) * 86400000).toISOString(), fields: champs(ouvertes) };
+  }
+  /* AUTRE : sa copie distante (3 cartes) est plus avancée que celle restée en file ici (1 carte) */
+  var Yautre = copie(AUTRE, ["n0", "n1", "n2"], 2);
+  upsert(Yautre, false);
+  var avantAutre = JSON.stringify(ligneDe(AUTRE));
+  /* NEUF : aucune copie distante → la copie en file part ; ECHEC : lecture impossible → elle reste */
+  localStorage.setItem("p11-syn_offline_queue", JSON.stringify([copie(AUTRE, ["n0"], 1, 1), copie(NEUF, ["n0"], 3, 1), copie(ECHEC, ["n0"], 4, 1)]));
+  FAUX.ownEchec = ECHEC;
+  var d0 = FAUX.derniersPosts.length;
+  var w = await charger();
+  await attendre(250);
+  FAUX.ownEchec = null;
+  var postes = FAUX.derniersPosts.slice(d0).map(function (s) { return s && s.eid; });
+  verif(L, postes.indexOf(AUTRE) < 0, "aucun POST pour l'autre élève (copie distante plus avancée) : " + JSON.stringify(postes));
+  verif(L, JSON.stringify(ligneDe(AUTRE)) === avantAutre, "le classeur garde sa copie (3 cartes)");
+  verif(L, postes.indexOf(NEUF) >= 0 && !!ligneDe(NEUF), "sans copie distante, la copie en file part");
+  verif(L, postes.indexOf(ECHEC) < 0, "lecture impossible : aucun POST");
+  var f = file(w).map(function (x) { return x.eid; });
+  verif(L, JSON.stringify(f) === JSON.stringify([ECHEC]), "file : seule reste la copie dont la lecture a échoué (" + JSON.stringify(f) + ")");
+  verif(L, FAUX.journal.some(function (j) { return /eid=test\.p11syn\.poste-autre/.test(j.url) && /own/.test(j.verdict); }), "la copie de l'autre élève a été lue (own)");
+  /* même situation, copie distante de l'autre élève verrouillée : retirée, pas de POST */
+  var VER = "test.p11syn.poste-verrou";
+  upsert(copie(VER, ["n0"], 5), false); verrouillerLigne(VER, "p11-syn");
+  localStorage.setItem("p11-syn_offline_queue", JSON.stringify([copie(VER, ["n0", "n1", "n2", "n3"], 6, 1)]));
+  d0 = FAUX.derniersPosts.length;
+  w.flushQueue();
+  await attendre(250);
+  verif(L, FAUX.derniersPosts.slice(d0).every(function (s) { return s.eid !== VER; }), "copie verrouillée de l'autre élève : aucun POST");
+  verif(L, file(w).length === 0, "copie verrouillée : retirée de la file");
+  verif(L, !w.VERROU && !w.document.getElementById("voile-verrou"), "le verrou d'un autre élève ne verrouille pas la page");
+});
+
 async function lancer() {
   var zone = document.getElementById("resultats"), verts = 0;
   for (var i = 0; i < CAS.length; i++) {
@@ -438,7 +488,16 @@ async function lancer() {
   restaurer();
   document.title = (verts === CAS.length && okBilan ? "TESTS OK " : "TESTS ÉCHEC ") + verts + "/" + CAS.length;
 }
-lancer();
+if (LOCALE) lancer();
+else {
+  var refus = document.createElement("div");
+  refus.className = "cas ko"; refus.setAttribute("role", "alert");
+  refus.innerHTML = "<b></b>";
+  refus.querySelector("b").textContent = "Tests refusés : cette page ne tourne que servie en local (localhost, 127.0.0.1, [::1]). "
+    + "Ici (« " + (location.hostname || "fichier local") + " »), elle effacerait le stockage du navigateur : rien n'a été lancé ni touché.";
+  document.getElementById("resultats").appendChild(refus);
+  document.title = "TESTS REFUSÉS : page non locale";
+}
 </script>
 </body>
 </html>
