@@ -658,7 +658,7 @@ function copieLocaleVerrouillee(){
 function urlLecture(){
   try {
     var hn = (location.hostname || "").toLowerCase();
-    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === ""){
+    if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === ""){
       var u = localStorage.getItem("apps_script_url_test") || "";
       if (/^https:\/\/script\.google\.com\//.test(u)) return u;
     }
@@ -735,7 +735,7 @@ function deposerEnLocal(sub){
    débloque l'écriture. "" = envoi refusé. */
 function urlEcriture(){
   var hn = (location.hostname || "").toLowerCase();
-  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "")) return APPS_SCRIPT_URL;
+  if (!(hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "")) return APPS_SCRIPT_URL;
   try {
     var u = localStorage.getItem("apps_script_url_test") || "";
     if (u && u !== APPS_SCRIPT_URL && /^https:\/\/script\.google\.com\//.test(u)) return u;
