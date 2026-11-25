@@ -8225,7 +8225,7 @@ var P11SYN_CRITERES = [
 /* Pictogramme ET mot : le niveau ne repose jamais sur la couleur seule. */
 var P11SYN_NIVEAUX = {
   acquis:   { picto: "✓", mot: "acquis",   coul: "#1E6B3B" },
-  en_cours: { picto: "◐", mot: "en cours", coul: "#C55A11" },
+  en_cours: { picto: "◐", mot: "en cours", coul: "#A4490B" },   /* 5,63:1 sur #F7F9FB (#C55A11 : 4,11:1) */
   a_revoir: { picto: "↻", mot: "à revoir", coul: "#C0392B" }
 };
 var P11SYN_PAS_FAIT = { picto: "○", mot: "pas encore fait", coul: "#555" };
@@ -8243,8 +8243,18 @@ function p11SynLire(sub) {
     niv: objet("_niv"), essais: objet("_essais"),
     module: m && m.module && typeof m.module === "object" ? m.module : null,
     duree: a(f, "duree") && f.duree !== null && String(f.duree) !== "" ? String(f.duree) : null,
-    adapte: a(f, "adapte") && (f.adapte === "oui" || f.adapte === "non") ? f.adapte : null
+    adapte: a(f, "adapte") && (f.adapte === "oui" || f.adapte === "non") ? f.adapte : null,
+    /* « utilisé au moins une fois » ; absent d'une copie ancienne : null (inconnu, pas « non ») */
+    adapteUtilise: a(f, "_adapteUtilise") && (f._adapteUtilise === "oui" || f._adapteUtilise === "non") ? f._adapteUtilise : null
   };
+}
+/* Mode adapté pour le professeur : utilisé ou non utilisé ; copie ancienne sans la clé :
+   « utilisé » si le mode était actif à l'envoi, sinon « non renseigné ». */
+function p11SynModeAdapte(lu) {
+  if (lu.adapteUtilise === "oui") return "utilisé";
+  if (lu.adapteUtilise === "non") return "non utilisé";
+  if (lu.adapte === "oui") return "utilisé";
+  return null;
 }
 /* Niveau d'une notion, seulement s'il est l'un des trois connus (« constructor » ne passe pas). */
 function p11SynNiveau(lu, id) {
@@ -8287,7 +8297,8 @@ function buildP11SynModalHTML(sub) {
   html += '</tbody></table>';
   html += '<div style="font-size:12.5px;margin-bottom:10px;line-height:1.7">'
     + '<strong>Durée :</strong> ' + (lu.duree === null ? '<em>absente</em>' : esc(lu.duree) + ' min')
-    + ' &nbsp;·&nbsp; <strong>Mode adapté :</strong> ' + (lu.adapte === null ? '<em>absent</em>' : esc(lu.adapte)) + '</div>';
+    + ' &nbsp;·&nbsp; <strong>Mode adapté :</strong> ' + (p11SynModeAdapte(lu) !== null ? esc(p11SynModeAdapte(lu))
+        : lu.adapte === null ? '<em>absent</em>' : '<em>non renseigné (copie ancienne)</em>') + '</div>';
   html += '<div style="font-weight:700;color:#1F4E79;font-size:12px;margin:8px 0 4px">ENTRAÎNEMENT À L\'ÉVALUATION N°2</div>';
   if (!lu.module) return html + '<div style="font-size:12.5px"><em>absent</em></div>';
   var reussis = 0, lignes = "";
