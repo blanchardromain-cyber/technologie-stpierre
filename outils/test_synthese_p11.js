@@ -176,14 +176,15 @@ t("versFields puis depuisFields = état identique", () => {
 
 t("versFields : champs attendus, tout en chaînes", () => {
   const f = S.versFields(S.appliquer(S.etatVide(), "n8", true), 5000);
-  assert.deepStrictEqual(Object.keys(f).sort(), ["_dernier", "_essais", "_module", "_niv", "adapte", "duree"]);
+  assert.deepStrictEqual(Object.keys(f).sort(), ["_adapteUtilise", "_dernier", "_essais", "_module", "_niv", "adapte", "duree"]);
   Object.keys(f).forEach(k => assert.strictEqual(typeof f[k], "string", k));
   assert.deepStrictEqual(JSON.parse(f._niv), { n8: "acquis" });
 });
 
-t("duree en minutes entières, arrondies au-dessus", () => {
+t("duree en minutes entières, arrondies au-dessus, depuis le temps actif (pas depuis le début)", () => {
   const e = S.etatVide(); e.debut = 1000;
-  const d = sec => S.versFields(e, 1000 + sec * 1000).duree;
+  assert.strictEqual(S.versFields(e, 1000 + 5400 * 1000).duree, "0", "le temps écoulé depuis le début ne compte plus");
+  const d = sec => { const x = S.etatVide(); x.actifMs = sec * 1000; return S.versFields(x).duree; };
   assert.strictEqual(d(5400), "90");
   assert.strictEqual(d(61), "2");
   assert.strictEqual(d(1), "1");
@@ -552,6 +553,106 @@ t("plusAvance : cartes ouvertes d'abord, puis tentatives cumulées ; égalité =
   assert.ok(S.plusAvance(plusMod, un), "les défis d'entraînement comptent comme tentatives");
   assert.ok(S.plusAvance(S.depuisFields(S.versFields(plusMod, 0)), un), "après passage par fields");
   assert.ok(!S.plusAvance(null, vide) && S.plusAvance(un, null));
+});
+
+/* ── Vague de correctifs après la revue finale ── */
+const modItem = id => S.MODULE.reduce((a, m) => a.concat(m.items), []).find(i => i.id === id);
+
+t("I4 : m_i1_a1 fait classer « Être rigide (3/5 au moins) » en Souhaitable", () => {
+  const it = modItem("m_i1_a1"), k = it.elements.indexOf("Être rigide (3/5 au moins)");
+  assert.ok(k >= 0, "critère de rigidité absent");
+  assert.strictEqual(it.bonne[k], "Souhaitable");
+});
+
+t("I4 : m_i1_a1 suit la Matériauthèque (boitier-capteur : seuils et classement de référence)", () => {
+  const fs = require("fs"), path = require("path"), dir = path.join(__dirname, "../../materiautheque/data");
+  if (!fs.existsSync(path.join(dir, "composants.json"))) { console.log("  (composants.json absent : contrôle sauté)"); return; }
+  const C = JSON.parse(fs.readFileSync(path.join(dir, "criteres.json"), "utf8"));
+  const B = JSON.parse(fs.readFileSync(path.join(dir, "composants.json"), "utf8")).find(x => x.id === "boitier-capteur");
+  const ref = B.reference["4"], mots = { indispensable: "Indispensable", souhaitable: "Souhaitable", sans: "Inutile" };
+  const apo = s => s.replace(/'/g, "’");
+  const it = modItem("m_i1_a1");
+  B.criteres.filter(c => ["isolant", "eau", "rigide", "chocs", "cout", "chaleur200"].indexOf(c.ref) >= 0).forEach(c => {
+    const def = C.find(x => x.id === c.ref);
+    const texte = apo(((c.carte && c.carte["4"]) || def.carte["4"]).replace("{s}", c.seuil != null ? c.seuil : def.regle.valeur));
+    const k = it.elements.indexOf(texte);
+    assert.ok(k >= 0, "m_i1_a1 sans « " + texte + " »");
+    assert.strictEqual(it.bonne[k], mots[ref[c.ref]], texte);
+  });
+});
+
+t("I1 : durée = temps de travail actif (pauses plafonnées à 5 min), aller-retour", () => {
+  const T0 = 1700000000000, MIN = 60000;
+  let e = S.noterActivite(S.etatVide(), T0);
+  assert.strictEqual(S.versFields(e).duree, "0", "une seule action");
+  e = S.noterActivite(e, T0 + 3 * MIN);
+  assert.strictEqual(S.versFields(e).duree, "3", "deux actions à 3 min d'écart");
+  const semaine = S.noterActivite(S.noterActivite(S.etatVide(), T0), T0 + 7 * 24 * 60 * MIN);
+  assert.strictEqual(S.versFields(semaine).duree, "5", "deux actions à une semaine d'écart : plafonné");
+  const e2 = S.noterActivite(e, T0 + 3 * MIN + 30000);
+  assert.strictEqual(S.versFields(e2).duree, "4", "arrondi au-dessus (3 min 30 s → 4)");
+  assert.deepStrictEqual(S.depuisFields(S.versFields(e2)), e2, "aller-retour");
+  assert.strictEqual(S.versFields(S.depuisFields(S.versFields(e2))).duree, "4");
+  const avant = JSON.stringify(e); S.noterActivite(e, T0 + 9 * MIN);
+  assert.strictEqual(JSON.stringify(e), avant, "noterActivite est pure");
+});
+
+t("I1 : copie ancienne (sans temps actif) : la durée envoyée est gardée", () => {
+  const f = { _niv: "{}", _dernier: "{}", _essais: "{}", duree: "12", adapte: "non", _module: JSON.stringify({ v: 1, module: {}, ouvertes: [], series: {}, debut: 5 }) };
+  assert.strictEqual(S.versFields(S.depuisFields(f)).duree, "12");
+});
+
+t("M2 : _adapteUtilise envoyé ; absent d'une copie ancienne ≠ « non »", () => {
+  let e = S.etatVide();
+  assert.strictEqual(S.versFields(e)._adapteUtilise, "non");
+  e.adapteUtilise = true; e.adapte = false;
+  const f = S.versFields(e);
+  assert.strictEqual(f._adapteUtilise, "oui"); assert.strictEqual(f.adapte, "non");
+  assert.strictEqual(S.depuisFields(f).adapteUtilise, true);
+  const ancien = Object.assign({}, f); delete ancien._adapteUtilise;
+  assert.strictEqual(S.depuisFields(ancien).adapteUtilise, null, "copie ancienne, mode non actif : inconnu");
+  assert.strictEqual(S.depuisFields(Object.assign({}, ancien, { adapte: "oui" })).adapteUtilise, true, "copie ancienne, mode actif : utilisé");
+  assert.ok(!("_adapteUtilise" in S.versFields(S.depuisFields(ancien))), "inconnu : la clé n'est pas inventée");
+});
+
+t("M3 : la bonne réponse n'est pas toujours la plus longue (module, hors m_p1_c1 et m_i1_c4)", () => {
+  const plusLongue = i => i.options.every(o => o === i.bonne || o.length < i.bonne.length);
+  const choix = modItems().map(x => x[1]).filter(i => (i.type === "choix" || i.type === "menu") && ["m_p1_c1", "m_i1_c4"].indexOf(i.id) < 0);
+  ["m_p3_c1", "m_i1_c2", "m_i3_c1", "m_i3_c2", "m_i3_c3"].forEach(id => assert.ok(!plusLongue(modItem(id)), id + " : la bonne réponse est la plus longue"));
+  const n = choix.filter(plusLongue).length;
+  assert.ok(n <= choix.length / 2, n + "/" + choix.length + " items où la bonne réponse est la plus longue");
+});
+
+t("tableur : références absolues $ et parenthèses redondantes acceptées ; formule inconnue nommée", () => {
+  assert.strictEqual(S.corrigerTableur("B4", "=$B$2*$B$3").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=$B2*B$3").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=(B2)*(B3)").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=(B2*B3)").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=((B2)*B3)").pts, 1);
+  assert.strictEqual(S.corrigerTableur("C7", "=($C$6)/(B6)").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=PRODUIT($B$2;(B3))").pts, 1);
+  assert.strictEqual(S.corrigerTableur("B4", "=(24)*(1,04)").pts, 0.5);
+  ["=B2*B3+1", "=(B2*B3", "=B2)*(B3", "=SOMME(B2;B3)", "=B2*B3*2"].forEach(s => {
+    const r = S.corrigerTableur("B4", s);
+    assert.strictEqual(r.pts, 0, s); assert.strictEqual(r.raison, "formule non reconnue", s + " : " + r.raison);
+  });
+  assert.strictEqual(S.corrigerTableur("B4", "=B2*B5").raison, "ce ne sont pas les bonnes cases");
+});
+
+t("m_i3_a1 : l'étape d'utilisation parle du boîtier", () => {
+  const it = modItem("m_i3_a1");
+  assert.ok(it.elements.indexOf("Utiliser le boîtier sous le robinet pendant des années") >= 0);
+  assert.ok(it.elements.indexOf("Utiliser le robinet pendant des années") < 0);
+});
+
+t("I5 : l'item tableur porte les deux rappels (virgule décimale, formule), formulés comme l'évaluation n°2", () => {
+  const it = modItem("m_i2_t");
+  assert.deepStrictEqual(it.rappels, [
+    "Un nombre décimal s’écrit avec une virgule : 1,04.",
+    "Une formule commence par = et utilise les références des cellules (B2, B3…)."
+  ]);
+  /* tirerModule les garde, en mode standard comme en mode adapté */
+  [false, true].forEach(ad => assert.deepStrictEqual(S.tirerModule("m_i2", 1, "g0", ad).find(i => i.id === "m_i2_t").rappels, it.rappels));
 });
 
 console.log(ok + " tests réussis");
