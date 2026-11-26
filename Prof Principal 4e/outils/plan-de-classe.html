@@ -49,10 +49,6 @@
     .barre, #lateral, .rgpd, .info, #chargeur, h1 { display: none !important; }
     #entetePrint { display: block; font-size: 13px; margin-bottom: 6px; }
     #entetePrint b { font-size: 16px; }
-    #entetePrint .legende-dys { font-size: 12px; font-weight: 600; color: #1d2530; margin-top: 3px; }
-    #entetePrint .pastille-dys { display: inline-block; width: 12px; height: 12px; margin-right: 6px;
-      vertical-align: -2px; border: 3px solid #2c8a5f; border-radius: 3px;
-      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     /* Le cadre vert « dys » est CONSERVÉ à l'impression : un collègue qui prend la salle doit
        pouvoir repérer où sont assis les élèves à aménagements, déjà connus de l'établissement.
        Le repère rouge « conflit », lui, est un outil de travail à l'écran : il disparaît. */
@@ -427,27 +423,28 @@ function afficher() {
   // cote) et le bandeau d'en-tete (~34 px en hauteur). Marges ramenees de 8 a 6 mm : c'est
   // autant de place rendue aux vignettes, tout en restant dans la zone imprimable des
   // imprimantes courantes.
-  // La légende « dys » ajoute une ligne au bandeau d'en-tête : autant de hauteur utile en
-  // moins pour le plan, sinon la dernière rangée déborderait de la page.
-  const nbDysPlaces = Object.keys(affectation).filter(id =>
-    affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
-  const hLegende = nbDysPlaces ? 16 : 0;
+  // Hauteur utile : page moins marges (748 px en paysage, 1077 en portrait), moins le bandeau
+  // d'en-tête (~27 px) et une petite marge de sécurité pour l'arrondi des pilotes d'impression.
   const PAGES = [
-    { orientation: "landscape", L: 1075, H: 715 - hLegende },
-    { orientation: "portrait", L: 745, H: 1044 - hLegende }
+    { orientation: "landscape", L: 1070, H: 710 },
+    { orientation: "portrait", L: 740, H: 1040 }
   ];
   // Une salle large et basse (sans photos) tient mieux en paysage ; avec les photos les
   // cases deviennent hautes et c'est la hauteur qui bride tout — le portrait laisse alors
   // une echelle bien superieure. On calcule les deux et on garde la plus grande echelle :
   // c'est elle qui fixe la taille des vignettes imprimees.
+  // reserveBarre n'est PAS mise à l'échelle (cf. salle.style.height) : on la retire de la
+  // hauteur utile avant de calculer k et l'étirement, sinon la salle dépassait de la page.
+  const hBase = hauteurSalle - reserveBarre;
   let meilleur = null;
   PAGES.forEach(function (pg) {
+    var hUtile = pg.H - reserveBarre;
     var k = pg.L / largeurSalle, ey = 1, ex = 1;
-    if (k * hauteurSalle >= pg.H) {
-      k = Math.min(k, pg.H / hauteurSalle);
+    if (k * hBase >= hUtile) {
+      k = Math.min(k, hUtile / hBase);
       ex = Math.min(2.5, (pg.L / k - MXp * 2 - L) / Math.max(1, maxX * (L + GXp)));
     } else {
-      ey = Math.min(2.5, (pg.H / k - MYp - MBp - H - decalBase) / Math.max(1, maxRang * (H + GYp)));
+      ey = Math.min(2.5, (hUtile / k - MYp - MBp - H - decalBase) / Math.max(1, maxRang * (H + GYp)));
     }
     if (!meilleur || k > meilleur.k) meilleur = { k: k, ey: ey, ex: ex, orientation: pg.orientation };
   });
@@ -622,17 +619,11 @@ function majEntetePrint() {
   const g = document.getElementById("gabarit");
   const nomSalle = g.options[g.selectedIndex].text;
   const d = dateGeneration ? new Date(dateGeneration) : null;
-  // Légende « dys » sur le papier : un collègue qui récupère la salle voit d'un coup d'œil
-  // OÙ sont assis les élèves à aménagements, sans avoir à croiser le plan avec une liste.
-  const nbDys = Object.keys(affectation).filter(id =>
-    affectation[id] !== undefined && eleves[affectation[id]] && eleves[affectation[id]].tags.includes("dys")).length;
   document.getElementById("entetePrint").innerHTML =
     "<b>Plan de classe " + (classeActive || "") + "</b> — " + nomSalle +
     (d ? " — généré le " + d.toLocaleDateString("fr-FR") + " à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "") +
     " — imprimé le " + new Date().toLocaleDateString("fr-FR") +
-    (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof") +
-    (nbDys ? '<div class="legende-dys"><span class="pastille-dys"></span>Cadre vert : ' + nbDys +
-             " élève(s) à aménagements (dys) — repère de placement.</div>" : "");
+    (document.getElementById("pointDeVue").value === "eleve" ? " — vue élève" : " — vue prof");
 }
 
 window.addEventListener("beforeprint", majEntetePrint); // rafraîchit la date d'impression ; l'échelle, elle, est en CSS pur
