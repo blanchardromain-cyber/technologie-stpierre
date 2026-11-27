@@ -171,6 +171,14 @@ function deconnecter() {
 function isoDe(v) {
   const s = String(v);
   if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  // Le backend peut renvoyer « Mon Nov 23 » (texte anglais tronqué, sans l'année) : new Date() en ferait
+  // le 23/11/2001, rangé en T1. On reprend l'année scolaire : août-décembre = année de finT1, sinon la suivante.
+  const tronque = s.match(/^[A-Za-z]{3} ([A-Za-z]{3}) (\d{1,2})$/);
+  if (tronque) {
+    const mois = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(tronque[1]) / 3 + 1;
+    const debut = Number(String(donnees.config.finT1).slice(0, 4)) || new Date().getFullYear();
+    if (mois >= 1) return (mois >= 8 ? debut : debut + 1) + "-" + String(mois).padStart(2, "0") + "-" + tronque[2].padStart(2, "0");
+  }
   const d = new Date(v);
   return isNaN(d) ? s.slice(0, 10) : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
@@ -182,13 +190,13 @@ function dateCourte(iso) {
 async function rafraichir() {
   const rep = await api("liste");
   if (rep.ok) {
+    // Sheets peut stocker finT1/finT2 en date : le backend renvoie alors « Fri Nov 20 2026… »,
+    // et « 2026-… » <= « Fri… » classait tout en T1. Config d'abord : isoDe() en tire l'année scolaire.
+    if (rep.config) donnees.config = { finT1: isoDe(rep.config.finT1), finT2: isoDe(rep.config.finT2) };
     // normalise la date (Sheets peut la renvoyer en objet Date -> texte anglais) et recalcule
     // le trimestre côté page à partir de cette date normalisée (on ne dépend pas du backend).
     donnees.remarques = (rep.remarques || []).map(r => { const date = isoDe(r.date); return { ...r, date, trimestre: trimestreDe(date) }; });
     donnees.rdvs = rep.rdvs || [];
-    // Sheets peut stocker finT1/finT2 en date : le backend renvoie alors « Fri Nov 20 2026… »,
-    // et « 2026-… » <= « Fri… » classait tout en T1. On normalise avant toute comparaison.
-    if (rep.config) donnees.config = { finT1: isoDe(rep.config.finT1), finT2: isoDe(rep.config.finT2) };
   }
   if (!trimestreActif) trimestreActif = trimestreCourant();
   dessiner();
