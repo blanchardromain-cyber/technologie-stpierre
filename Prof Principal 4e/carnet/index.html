@@ -186,7 +186,9 @@ async function rafraichir() {
     // le trimestre côté page à partir de cette date normalisée (on ne dépend pas du backend).
     donnees.remarques = (rep.remarques || []).map(r => { const date = isoDe(r.date); return { ...r, date, trimestre: trimestreDe(date) }; });
     donnees.rdvs = rep.rdvs || [];
-    if (rep.config) donnees.config = rep.config;
+    // Sheets peut stocker finT1/finT2 en date : le backend renvoie alors « Fri Nov 20 2026… »,
+    // et « 2026-… » <= « Fri… » classait tout en T1. On normalise avant toute comparaison.
+    if (rep.config) donnees.config = { finT1: isoDe(rep.config.finT1), finT2: isoDe(rep.config.finT2) };
   }
   if (!trimestreActif) trimestreActif = trimestreCourant();
   dessiner();
