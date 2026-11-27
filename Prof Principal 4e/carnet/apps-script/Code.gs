@@ -76,7 +76,10 @@ function config(cle) {
   var f = feuille(F_CONFIG);
   if (!f) return "";
   var lignes = f.getDataRange().getValues();
-  for (var i = 1; i < lignes.length; i++) if (lignes[i][0] === cle) return String(lignes[i][1]);
+  // jour() : une date saisie dans Config devient un objet Date, String() donnerait « Fri Nov 20 2026… »
+  // et toutes les comparaisons de trimestre basculeraient en T1.
+  for (var i = 1; i < lignes.length; i++)
+    if (lignes[i][0] === cle) return lignes[i][1] instanceof Date ? jour(lignes[i][1]) : String(lignes[i][1]);
   return "";
 }
 
