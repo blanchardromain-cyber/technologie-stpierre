@@ -58,8 +58,12 @@ function doPost(e) {
 }
 
 // Sheets peut renvoyer une date en objet Date : on la reformate en "yyyy-MM-dd".
+// Pas de « instanceof Date » : en V8, les dates lues dans Sheets viennent d'un autre contexte et le test
+// échoue ; le backend renvoyait alors « Mon Nov 23 » (sans l'année) et la page rangeait tout en T1.
+function estDate(v) { return Object.prototype.toString.call(v) === "[object Date]"; }
+
 function jour(v) {
-  if (v instanceof Date) return Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd");
+  if (estDate(v)) return Utilities.formatDate(v, "Europe/Paris", "yyyy-MM-dd");
   return String(v).slice(0, 10);
 }
 
@@ -79,7 +83,7 @@ function config(cle) {
   // jour() : une date saisie dans Config devient un objet Date, String() donnerait « Fri Nov 20 2026… »
   // et toutes les comparaisons de trimestre basculeraient en T1.
   for (var i = 1; i < lignes.length; i++)
-    if (lignes[i][0] === cle) return lignes[i][1] instanceof Date ? jour(lignes[i][1]) : String(lignes[i][1]);
+    if (lignes[i][0] === cle) return estDate(lignes[i][1]) ? jour(lignes[i][1]) : String(lignes[i][1]);
   return "";
 }
 
