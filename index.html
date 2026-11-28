@@ -4476,7 +4476,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-25b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-28a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4500,6 +4500,8 @@ body.est-prof .prof-only{display:block}
             <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="p11-eval2">P11 4e &mdash; &Eacute;valuation n&deg;2 (ordinateur)</option>
             <option value="p11-eval2-ratt">P11 4e &mdash; &Eacute;valuation n&deg;2 (rattrapage)</option>
+            <option value="p11-ex4">P11 4e &mdash; Exercice n&deg;4 (Choix Mat&eacute;riaux)</option>
+            <option value="p11-ex5">P11 4e &mdash; Exercice n&deg;5 (&Eacute;nergie Grise)</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
@@ -5437,6 +5439,86 @@ body.est-prof .prof-only{display:block}
         loading="lazy"></iframe>
     </div>
 
+    <!-- P11 4e — EXERCICES N°4 ET N°5 (générés par P11/P11_exercices_4_5/_sources) -->
+    <div id="pg-p11-ex4" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n°4 : déterminer le matériau d'une pièce (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Exercice <strong>individuel</strong>, 15 à 20 minutes : ta pièce, ses critères, le relevé dans la Matériauthèque, ton choix et sa justification. Noté sur 20.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Chaque élève a sa pièce (onglet « Attributions » du classeur de l'exercice n°4, modifiable à la main, avec une colonne « Aides imposées »).
+        La copie est corrigée par le script du classeur à la réception ; elle arrive pré-corrigée au tableau de bord dès que le corrigé chiffré est déchiffré.
+        Pense à <strong>armer la capsule</strong> (onglet Verrous) avant la séance, et à <strong>verrouiller l'exercice n°4 avant d'ouvrir le n°5</strong> (son énoncé donne le matériau).
+      </p>
+      <div id="p11-ex4-correction"></div>
+      <iframe id="p11-ex4-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/exercice4-materiau.html" title="P11 — Exercice n°4 (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8" loading="lazy"></iframe>
+    </div>
+    <div id="pg-p11-ex5" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n°5 : calculer l'énergie grise d'une pièce (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Exercice <strong>individuel</strong> : l'énergie grise de ta pièce, comme dans le mini-tableur de l'activité 8. Noté sur 20.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Même pièce que l'exercice n°4, mais aucun lien avec ses réponses : le matériau est donné. Volume et quantité sont propres à chaque élève.
+        L'exercice n°4 doit être <strong>verrouillé</strong> avant l'ouverture de celui-ci.
+      </p>
+      <div id="p11-ex5-correction"></div>
+      <iframe id="p11-ex5-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/exercice5-energie-grise.html" title="P11 — Exercice n°5 (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8" loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — EXERCICE N°4 — CORRIGÉ CHIFFRÉ ET PERSONNALISÉ (voir p45CorOuvrir) -->
+    <div id="pg-p11-ex4-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé de l'exercice n°4</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'exercice n°4 &mdash; 4<sup>e</sup></h3>
+        <p id="p11-ex4-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+        <div id="p11-ex4-cor-saisie" hidden style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <label for="p11-ex4-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+            <input id="p11-ex4-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+              onkeydown="if(event.key==='Enter')p45CorValiderSaisie(4)">
+            <button onclick="p45CorValiderSaisie(4)" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+          </div>
+        </div>
+        <select id="p11-ex4-cor-sujet" hidden onchange="p45CorOuvrir(4)" aria-label="Sujet affiché" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px;margin-bottom:10px"></select>
+        <button id="p11-ex4-cor-print" hidden onclick="imprimerCorrigeP11('p11-ex4-cor-body', 'Corrigé P11 4e — Exercice n°4')" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+        <div id="p11-ex4-cor-body" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+    <!-- P11 4e — EXERCICE N°5 — CORRIGÉ CHIFFRÉ ET PERSONNALISÉ (voir p45CorOuvrir) -->
+    <div id="pg-p11-ex5-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé de l'exercice n°5</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'exercice n°5 &mdash; 4<sup>e</sup></h3>
+        <p id="p11-ex5-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+        <div id="p11-ex5-cor-saisie" hidden style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <label for="p11-ex5-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+            <input id="p11-ex5-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+              onkeydown="if(event.key==='Enter')p45CorValiderSaisie(5)">
+            <button onclick="p45CorValiderSaisie(5)" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+          </div>
+        </div>
+        <select id="p11-ex5-cor-sujet" hidden onchange="p45CorOuvrir(5)" aria-label="Sujet affiché" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px;margin-bottom:10px"></select>
+        <button id="p11-ex5-cor-print" hidden onclick="imprimerCorrigeP11('p11-ex5-cor-body', 'Corrigé P11 4e — Exercice n°5')" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+        <div id="p11-ex5-cor-body" style="margin-top:20px"></div>
+      </div>
+    </div>
     <!-- BÂTIMENT 5e — SYNTHÈSE P1 -->
     <div id="pg-batiment5e-syn" class="h">
       <div class="phdr">
@@ -6614,6 +6696,10 @@ var SEQUENCES_DEF = [
   {id:"p11-ex1-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Exercice n°1", desc:"Corrigé et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"#9Aw3rFPvV+zrcsxXN/XBTxAFS/Fen1ArsZFuHfFSbwo=", open:true},
   {id:"p11-ex2", ordre:114, niveau:"4ème", titre:"P11 — Exercice n°2 — Le diagramme FAST", desc:"Évalué : lire un FAST, puis associer fonctions techniques et solutions techniques sur le scooter, le feutre et le casque audio. Menus déroulants avec propositions pièges, ordre tiré au sort. Aides dys intégrées.", couleur:"#5C6BC0", code:"#28ckGZAdM448lIbA3qHJBiXFZ6ow7QZz/xxXVD9+L+Q=", open:true},
   {id:"p11-ex2-cor", ordre:115, niveau:"4ème", titre:"P11 — Corrigé Exercice n°2", desc:"Corrigé FAST, ordres de hiérarchisation justifiés et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"#AU/ps0qN0F+EIZ3HdLVVqtcAF0H+G+J2qHaEg5uL5xo=", open:true},
+  {id:"p11-ex4", ordre:115.2, niveau:"4ème", titre:"P11 — Exercice n°4 (Choix Matériaux)", desc:"Évalué : ta pièce d'un objet du quotidien, ses critères, le relevé dans la Matériauthèque, le choix du matériau et sa justification. Une pièce par élève. Aides au choix intégrées.", couleur:"#B45309", code:"", open:false},
+  {id:"p11-ex4-cor", ordre:115.3, niveau:"4ème", titre:"P11 — Exercice n°4 — Corrigé", desc:"Corrigé personnalisé : la pièce de l'élève. Code donné par le professeur.", couleur:"var(--vt)", code:"", open:false},
+  {id:"p11-ex5", ordre:115.4, niveau:"4ème", titre:"P11 — Exercice n°5 (Énergie Grise)", desc:"Évalué : l'énergie grise de ta pièce, comme dans le mini-tableur de l'activité 8, puis la comparaison avec un autre matériau. Aides au choix intégrées.", couleur:"#0F766E", code:"", open:false},
+  {id:"p11-ex5-cor", ordre:115.5, niveau:"4ème", titre:"P11 — Exercice n°5 — Corrigé", desc:"Corrigé personnalisé avec les données de l'élève. Code donné par le professeur.", couleur:"var(--vt)", code:"", open:false},
   {id:"cap1", ordre:130, niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"#DDa8mE9tVmymp3UKvUmAZFgt9EbsbSVBSEWrpEHl3GY=", open:true},
   {id:"rem1", ordre:131, niveau:"4\u00e8me", titre:"Rem&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"#+bTRhKgflIx0bm7ZIMWn4xoCD9ybefPt96MgaY9u3+I=", open:true},
   {id:"seq2", ordre:140, niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
@@ -6926,6 +7012,7 @@ function majClasseProf() {
   try { roCorPrecharger(); } catch (e) {}
   try { re1CorPrecharger(); } catch (e) {}
   try { p2eCorPrecharger(); } catch (e) {}
+  try { p45CorPrecharger(); } catch (e) {}
 }
 
 /* Lien direct vers une carte (?carte=p11-eval2), par exemple depuis le site d'une séquence :
@@ -7198,6 +7285,14 @@ function goPage(pid) {
     rafraichirCorrection("p11-eval2", "p11-eval2-correction");
   }
   if (pid === "pg-p11-eval2-cor") p2eCorOuvrir();
+  if (pid === "pg-p11-ex4" || pid === "pg-p11-ex5") {
+    var p45n = pid === "pg-p11-ex4" ? 4 : 5;
+    p45Prefill(p45n);
+    renderCorrectionEleve("p11-ex" + p45n, "p11-ex" + p45n + "-correction");
+    rafraichirCorrection("p11-ex" + p45n, "p11-ex" + p45n + "-correction");
+  }
+  if (pid === "pg-p11-ex4-cor") p45CorOuvrir(4);
+  if (pid === "pg-p11-ex5-cor") p45CorOuvrir(5);
   if (pid === "pg-p11-eval2-ratt") {
     try {
       if (user) localStorage.setItem("p11eval2r_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
@@ -7616,7 +7711,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor" || s.id === "p11-ex4-cor" || s.id === "p11-ex5-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -7628,7 +7723,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt" || s.id === "p11-ex4" || s.id === "p11-ex5") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn" || s.id === "reseau5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7692,6 +7787,10 @@ function renderDash() {
       else if (s.id === "p11-eval2") clickAction = "onclick=\"goPage('pg-p11-eval2')\"";
       else if (s.id === "p11-eval2-cor") clickAction = "onclick=\"goPage('pg-p11-eval2-cor')\"";
       else if (s.id === "p11-eval2-ratt") clickAction = "onclick=\"goPage('pg-p11-eval2-ratt')\"";
+      else if (s.id === "p11-ex4") clickAction = "onclick=\"goPage('pg-p11-ex4')\"";
+      else if (s.id === "p11-ex4-cor") clickAction = "onclick=\"goPage('pg-p11-ex4-cor')\"";
+      else if (s.id === "p11-ex5") clickAction = "onclick=\"goPage('pg-p11-ex5')\"";
+      else if (s.id === "p11-ex5-cor") clickAction = "onclick=\"goPage('pg-p11-ex5-cor')\"";
       else if (s.id === "p11-entr-tab") clickAction = "onclick=\"goPage('pg-p11-entr-tab')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
@@ -7739,6 +7838,8 @@ function tryUnlock() {
        session afin que l'élève n'ait pas à le saisir une seconde fois. */
     if (pendingSeq === RO_COR_ID) roRetenirCode(entered);
     if (pendingSeq === P2E_COR_ID) p2eRetenirCode(entered);
+    if (pendingSeq === "p11-ex4-cor") p45RetenirCode(4, entered);
+    if (pendingSeq === "p11-ex5-cor") p45RetenirCode(5, entered);
     toast("Séquence déverrouillée !");
     if (pendingSeq === "dc")   goPage("pg-dc");
     else if (pendingSeq === "p12")  goPage("pg-p12");
@@ -7780,6 +7881,10 @@ function tryUnlock() {
     else if (pendingSeq === "p11-eval2") goPage("pg-p11-eval2");
     else if (pendingSeq === "p11-eval2-cor") goPage("pg-p11-eval2-cor");
     else if (pendingSeq === "p11-eval2-ratt") goPage("pg-p11-eval2-ratt");
+    else if (pendingSeq === "p11-ex4") goPage("pg-p11-ex4");
+    else if (pendingSeq === "p11-ex4-cor") goPage("pg-p11-ex4-cor");
+    else if (pendingSeq === "p11-ex5") goPage("pg-p11-ex5");
+    else if (pendingSeq === "p11-ex5-cor") goPage("pg-p11-ex5-cor");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -10308,6 +10413,49 @@ var EVALUATIONS = {
     }
   },
 
+  /* P11 4e — Exercices n°4 et n°5 (sur 20). Les POINTS sont publics ; les RÉPONSES sont dans les
+     corrigés chiffrés (P45.ex[4|5].data). Tant qu'ils ne sont pas déchiffrés : « à noter /20 ».
+     Le sujet de chaque copie est dans ses champs (_sujet, _v, _q). Hasard mesuré : ex. 4 ≈ 4,9/20, ex. 5 ≈ 3,2/20.
+     Exercice n°4 : la ligne « Bonus » (champ libre facultatif) se note à la main, total plafonné à 20. */
+  "p11-ex4": {
+    titre: "P11 4e — Exercice n°4 (choix du matériau)",
+    total: 20,
+    get manuel() { return !p45Cle(4); },
+    sections: [
+      { cle: "Q1", label: "Q1 — Fonction d'usage du système (1.2)", max: 1.5, compact: true },
+      { cle: "Q2", label: "Q2 — Fonction technique de la pièce (1.2)", max: 1.5, compact: true },
+      { cle: "Q3", label: "Q3 — Position de la pièce dans le système (1.2)", max: 1.0, compact: true },
+      { cle: "Q4", label: "Q4 — Les critères du cahier des charges (1.2)", max: 4.0, compact: true },
+      { cle: "Q5", label: "Q5 — Relevé des propriétés (1.3)", max: 4.5, compact: true },
+      { cle: "Q6", label: "Q6 — Matériau retenu (1.3)", max: 3.0, compact: true },
+      { cle: "Q7", label: "Q7 — Famille et sous-famille (1.3)", max: 1.5, compact: true },
+      { cle: "Q8", label: "Q8 — Deux arguments (1.3)", max: 3.0, compact: true },
+      { cle: "B", label: "Bonus — justification libre (à noter à la main, total plafonné à 20)", max: 1.0 }
+    ],
+    corriger: function (f) { var r = p45Detail(4, f || {}, p45AttDeCopie(f || {})); r.points.B = 0; return r; },
+    appreciation: function (pts, note) { return p45Appreciation(4, pts, note); }
+  },
+  "p11-ex5": {
+    titre: "P11 4e — Exercice n°5 (énergie grise)",
+    total: 20,
+    get manuel() { return !p45Cle(5); },
+    sections: [
+      { cle: "Q1", label: "Q1 — Définition de l'énergie grise (1.3)", max: 1.5, compact: true },
+      { cle: "Q2", label: "Q2 — Étapes du cycle de vie comptées (1.2)", max: 2.0, compact: true },
+      { cle: "Q3", label: "Q3 — Masse volumique du matériau (1.3)", max: 1.0, compact: true },
+      { cle: "Q4", label: "Q4 — Énergie grise du matériau (1.3)", max: 1.0, compact: true },
+      { cle: "Q5", label: "Q5 — Masse de la pièce (1.3)", max: 2.5, compact: true },
+      { cle: "Q6", label: "Q6 — Énergie grise de la pièce (1.3)", max: 2.5, compact: true },
+      { cle: "Q7", label: "Q7 — Énergie grise de la série (MJ) (1.3)", max: 2.5, compact: true },
+      { cle: "Q8", label: "Q8 — La pièce dans le second matériau (1.3)", max: 2.0, compact: true },
+      { cle: "Q9", label: "Q9 — Combien de fois plus (ou moins) (1.3)", max: 1.0, compact: true },
+      { cle: "Q10", label: "Q10 — Conclusion pour l'environnement (1.2)", max: 2.0, compact: true },
+      { cle: "Q11", label: "Q11 — Recyclable ou recyclé (1.2)", max: 2.0, compact: true }
+    ],
+    corriger: function (f) { return p45Detail(5, f || {}, p45AttDeCopie(f || {})); },
+    appreciation: function (pts, note) { return p45Appreciation(5, pts, note); }
+  },
+
   /* P11 4e — Évaluation n°2, partie sur ordinateur (sur 20 ; la partie papier, /20,
      se note dans le classeur « P11 — Évaluation n°2 — Notes »). Les POINTS sont publics ;
      les RÉPONSES sont dans le corrigé chiffré (P2E_COR). Tant qu'il n'est pas déchiffré :
@@ -11139,6 +11287,424 @@ function reporterP11Eval2(sub) {
   }).catch(function () { toast("⚠️ Classeur de l'évaluation n°2 : report impossible (réseau ?). Revalider plus tard."); });
 }
 
+/* ════════════════════════════════════════════════════════════════
+   P11 4e — EXERCICES N°4 (choix du matériau) ET N°5 (énergie grise) : caps "p11-ex4", "p11-ex5"
+   Capsules élève : Niveau 4/P11 Eau ressource essentielle/exercice4-materiau.html et exercice5-energie-grise.html
+   Généré par P11/P11_exercices_4_5/_sources (cabler_site.py). Aucune réponse attendue ici : la clé
+   et les textes du corrigé sont dans exercice4_corrige.chiffre.json / exercice5_corrige.chiffre.json
+   (AES-GCM), déchiffrés en session professeur (code du coffre) ou par l'élève à qui le professeur
+   donne le code du corrigé. La copie est corrigée par le script du classeur à la réception ;
+   le tableau de bord recalcule la même correction avec le même module (P11X45).
+   ════════════════════════════════════════════════════════════════ */
+/* P11 4e — Exercices n°4 et n°5 : attribution des sujets (module commun).
+   Recopié tel quel par les générateurs dans le site (tableau de bord), les deux capsules
+   et les deux scripts de classeur : la même fonction donne partout la même répartition.
+   ES5, sans dépendance. Rien de secret ici : le sel est public, seul l'équilibre compte. */
+var P11X45_ATTR = (function () {
+  /* FNV-1a 32 bits : un hachage simple et identique dans Apps Script, le navigateur et Node. */
+  function hache(s) {
+    var h = 0x811c9dc5;
+    s = String(s);
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return h >>> 0;
+  }
+  function cleTri(e) {
+    return (String(e.n || "") + " " + String(e.p || "")).toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "");
+  }
+  /* eleves : [{ id, c (classe), n (nom), p (prénom) }] ; n : nombre de sujets.
+     opts : { sel, selEx5, nbVolumes, nbQuantites }.
+     Renvoie { identifiant : { s: indice de sujet, v: indice de volume, q: indice de quantité } }. */
+  function attribuer(eleves, n, opts) {
+    var sel = opts.sel, res = {}, classes = {};
+    eleves.forEach(function (e) { (classes[e.c] = classes[e.c] || []).push(e); });
+    Object.keys(classes).sort().forEach(function (c) {
+      var liste = classes[c].slice().sort(function (a, b) {
+        var x = cleTri(a), y = cleTri(b); return x < y ? -1 : x > y ? 1 : (a.id < b.id ? -1 : 1);
+      });
+      var tirage = liste.slice().sort(function (a, b) {
+        var x = hache(sel + "|" + a.id), y = hache(sel + "|" + b.id); return x - y || (a.id < b.id ? -1 : 1);
+      });
+      var dec = hache(sel + "|classe|" + c) % n, sujet = {};
+      tirage.forEach(function (e, k) { sujet[e.id] = (dec + k) % n; });
+      /* Deux voisins de la liste alphabétique n'ont pas le même sujet : échange déterministe
+         avec le premier élève plus loin dont l'échange ne crée aucun nouveau voisin identique. */
+      var s = liste.map(function (e) { return sujet[e.id]; });
+      var conflit = function (i) {
+        return (i > 0 && s[i] === s[i - 1]) || (i < s.length - 1 && s[i] === s[i + 1]);
+      };
+      for (var i = 1; i < s.length; i++) {
+        if (s[i] !== s[i - 1]) continue;
+        for (var j = 0; j < s.length; j++) {
+          if (j === i || s[j] === s[i]) continue;
+          var t = s[i]; s[i] = s[j]; s[j] = t;
+          if (!conflit(i) && !conflit(j) && !conflit(i - 1)) break;
+          t = s[i]; s[i] = s[j]; s[j] = t;
+        }
+      }
+      /* Données chiffrées de l'exercice n°5 : uniques parmi les élèves d'une classe qui ont le même sujet. */
+      var pris = {};
+      liste.forEach(function (e, i) {
+        var h = hache(opts.selEx5 + "|" + e.id), v = h % opts.nbVolumes, q = (h >>> 8) % opts.nbQuantites;
+        for (var essai = 0; pris[s[i] + ":" + v + ":" + q] && essai < opts.nbVolumes * opts.nbQuantites; essai++) {
+          q = (q + 1) % opts.nbQuantites; if (q === 0) v = (v + 1) % opts.nbVolumes;
+        }
+        pris[s[i] + ":" + v + ":" + q] = true;
+        res[e.id] = { s: s[i], v: v, q: q };
+      });
+    });
+    return res;
+  }
+  return { hache: hache, attribuer: attribuer };
+})();
+/* P11 4e — Exercices n°4 (choix du matériau) et n°5 (énergie grise) : CORRECTION (module commun).
+   Recopié tel quel par les générateurs dans index.html (tableau de bord du professeur) et dans
+   Ex4-Report.gs / Ex5-Report.gs (scripts des classeurs). Ce module ne contient QUE des règles :
+   les réponses attendues sont dans la clé (onglet masqué « Clé » du classeur, corrigé chiffré).
+   ES5, sans dépendance.
+   f   : champs envoyés par la capsule (fields) ;  cle : clé complète (voir build_cle dans contenu) ;
+   att : { s: identifiant du sujet, v: volume (cm³), q: quantité } — l'attribution qui fait foi. */
+var P11X45 = (function () {
+  function nombre(x) {
+    if (x === null || x === undefined) return NaN;
+    var t = String(x).replace(/\s| | /g, "").replace(",", ".");
+    if (!/^[-+]?\d*\.?\d+(e[-+]?\d+)?$/i.test(t)) return NaN;
+    return parseFloat(t);
+  }
+  function proche(x, attendu, tol) {
+    x = nombre(x);
+    if (isNaN(x) || !isFinite(attendu)) return false;
+    if (attendu === 0) return Math.abs(x) < 1e-9;
+    return Math.abs(x - attendu) <= Math.abs(attendu) * tol + 1e-9;
+  }
+  function liste(v) {
+    if (Array.isArray(v)) return v.map(String);
+    if (v === undefined || v === null || v === "") return [];
+    return String(v).split("|").filter(function (x) { return x !== ""; });
+  }
+  function r2(x) { return Math.round(x * 100) / 100; }
+  function somme(pts, ids) { return ids.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); }
+
+  /* ─────────────────────────── exercice n°4 ─────────────────────────── */
+  function corrigerEx4(f, cle, att) {
+    f = f || {};
+    var pts = {}, detail = {};
+    if (!cle || !cle.ex4 || !att || !cle.ex4[att.s]) return { points: null, detail: { erreur: "cle" } };
+    var K = cle.ex4[att.s], MAT = cle.materiaux;
+    var b = cle.bareme4;
+    pts.Q1 = f.q1 === K.q1 ? b.Q1 : 0;
+    pts.Q2 = f.q2 === K.q2 ? b.Q2 : 0;
+    pts.Q3 = f.q3 === K.q3 ? b.Q3 : 0;
+    var coches = liste(f.q4), vp = 0, fp = 0;
+    coches.forEach(function (id) { if (K.q4.indexOf(id) >= 0) vp++; else fp++; });
+    pts.Q4 = Math.max(0, Math.min(b.Q4, (vp - fp) * b.Q4 / K.q4.length));
+    detail.Q4 = { justes: vp, fausses: fp };
+    /* Q5 : relevé, case par case, sur les candidats que l'élève a vus (2 en mode adapté). */
+    var cand = liste(f._candidats).filter(function (id) { return K.candidats.indexOf(id) >= 0; });
+    if (!cand.length) cand = K.candidats.slice();
+    var cases = 0, bonnes = 0, rel = f.q5 || {};
+    if (typeof rel === "string") { try { rel = JSON.parse(rel); } catch (e) { rel = {}; } }
+    cand.forEach(function (id) {
+      K.proprietes.forEach(function (p) {
+        cases++;
+        var v = rel[id + "." + p], m = MAT[id];
+        var ok = p === "masseVolumique" ? proche(v, m.masseVolumique, 0.02 / m.masseVolumique + 1e-9)
+          : p === "tempMax" ? String(v) === String(m.tempMaxTexte)
+          : p === "elec" ? String(v) === String(m.elec)
+          : nombre(v) === Number(m.notes[p.replace("notes.", "")]);
+        if (ok) bonnes++;
+      });
+    });
+    pts.Q5 = r2(bonnes * b.Q5 / cases);
+    detail.Q5 = { bonnes: bonnes, cases: cases };
+    pts.Q6 = f.q6 === K.q6 ? b.Q6 : 0;
+    /* Q7 : famille et sous-famille DU MATÉRIAU CHOISI (pas de double sanction). */
+    var choisi = MAT[f.q6] || MAT[K.q6];
+    pts.Q7 = (f.q7f === choisi.famille ? 1 : 0) * (b.Q7 * 2 / 3) + (f.q7s === choisi.sousFamille ? 1 : 0) * (b.Q7 / 3);
+    var args = liste(f.q8).slice(0, 2), justes = args.filter(function (a) { return K.q8.indexOf(a) >= 0; }).length;
+    pts.Q8 = justes * b.Q8 / 2;
+    Object.keys(pts).forEach(function (k) { pts[k] = r2(pts[k]); });
+    return { points: pts, detail: detail };
+  }
+
+  /* ─────────────────────────── exercice n°5 ─────────────────────────── */
+  function attenduEx5(cle, att) {
+    var K = cle.ex5[att.s], M = cle.materiaux[K.m], N = cle.materiaux[K.n];
+    var mM = att.v * M.masseVolumique, eM = mM * M.energieGrise;
+    var mN = att.v * N.masseVolumique, eN = mN * N.energieGrise;
+    return { m: K.m, n: K.n, rhoM: M.masseVolumique, egM: M.energieGrise, rhoN: N.masseVolumique, egN: N.energieGrise,
+             masseM: mM, energieM: eM, serieMJ: eM * att.q / 1000, masseN: mN, energieN: eN,
+             rapport: eN >= eM ? eN / eM : eM / eN, sens: eN >= eM ? "plus" : "moins",
+             favorable: eN < eM ? K.n : K.m };
+  }
+  function corrigerEx5(f, cle, att) {
+    f = f || {};
+    if (!cle || !cle.ex5 || !att || !cle.ex5[att.s]) return { points: null, detail: { erreur: "cle" } };
+    var b = cle.bareme5, A = attenduEx5(cle, att), tol = cle.tolerance, tolR = cle.toleranceRapport, pts = {};
+    pts.Q1 = f.q1 === cle.ex5def ? b.Q1 : 0;
+    /* Q2 : chaque étape comptée vaut sa part ; cocher « utiliser l'objet » (l'idée fausse visée) annule tout. */
+    var et = liste(f.q2), vraies = cle.ex5etapes.filter(function (e) { return e[1]; }), vp = 0, fp = 0;
+    cle.ex5etapes.forEach(function (e) { if (et.indexOf(e[0]) >= 0) { if (e[1]) vp++; else fp++; } });
+    pts.Q2 = Math.max(0, vp * b.Q2 / vraies.length - fp * b.Q2);
+    pts.Q3 = proche(f.q3, A.rhoM, 0.02 / A.rhoM + 1e-9) ? b.Q3 : 0;
+    pts.Q4 = proche(f.q4, A.egM, 1e-9) ? b.Q4 : 0;
+    var u = b.unite;
+    /* Erreur reportée : un calcul juste fait sur la valeur fausse de l'élève garde ses points. */
+    var masse = nombre(f.q5), energie = nombre(f.q6);
+    pts.Q5 = (proche(f.q5, A.masseM, tol) ? b.Q5 - u : 0) + (f.q5u === "g" ? u : 0);
+    var eRef = isNaN(masse) ? A.energieM : masse * A.egM;
+    pts.Q6 = (proche(f.q6, A.energieM, tol) || proche(f.q6, eRef, tol) ? b.Q6 - u : 0) + (f.q6u === "kJ" ? u : 0);
+    var sRef = isNaN(energie) ? A.serieMJ : energie * att.q / 1000;
+    pts.Q7 = (proche(f.q7, A.serieMJ, tol) || proche(f.q7, sRef, tol) ? b.Q7 - u : 0) + (f.q7u === "MJ" ? u : 0);
+    var masseN = nombre(f.q8m);
+    pts.Q8 = (proche(f.q8m, A.masseN, tol) ? b.Q8 / 2 : 0)
+           + (proche(f.q8e, A.energieN, tol) || (!isNaN(masseN) && proche(f.q8e, masseN * A.egN, tol)) ? b.Q8 / 2 : 0);
+    var eNeleve = nombre(f.q8e), eMeleve = energie;
+    var rEleve = (eNeleve > 0 && eMeleve > 0) ? (eNeleve >= eMeleve ? eNeleve / eMeleve : eMeleve / eNeleve) : NaN;
+    var sensEleve = (eNeleve > 0 && eMeleve > 0) ? (eNeleve >= eMeleve ? "plus" : "moins") : A.sens;
+    var okNombre = proche(f.q9, A.rapport, tolR) || (!isNaN(rEleve) && proche(f.q9, rEleve, tolR));
+    var okSens = f.q9s === A.sens || f.q9s === sensEleve;
+    pts.Q9 = okNombre && okSens ? b.Q9 : okNombre ? b.Q9 / 2 : 0;
+    pts.Q10 = f.q10 === cle.ex5[att.s].conclusion ? b.Q10 : 0;
+    pts.Q11 = f.q11 === (cle.ex5vf ? "vrai" : "faux") ? b.Q11 : 0;
+    Object.keys(pts).forEach(function (k) { pts[k] = r2(pts[k]); });
+    return { points: pts, detail: { attendu: A } };
+  }
+
+  function total(pts) { return r2(Object.keys(pts || {}).reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0)); }
+  function parCompetence(pts, bareme) {
+    var o = {};
+    bareme.forEach(function (q) { o[q[1]] = r2((o[q[1]] || 0) + (Number(pts[q[0]]) || 0)); });
+    return o;
+  }
+  return { nombre: nombre, proche: proche, corrigerEx4: corrigerEx4, corrigerEx5: corrigerEx5,
+           attenduEx5: attenduEx5, total: total, parCompetence: parCompetence, somme: somme };
+})();
+var P45 = {
+  dossier: "Niveau%204/P11%20Eau%20ressource%20essentielle/",
+  sujets: [["trottinette", [440, 468, 495, 522, 550, 578, 605, 632, 660]], ["gardeboue", [104, 110, 117, 124, 130, 136, 143, 150, 156]], ["casquevelo", [120, 128, 135, 142, 150, 158, 165, 172, 180]], ["manette", [60, 64, 68, 71, 75, 79, 82, 86, 90]], ["smartphone", [8.8, 9.3, 9.9, 10.4, 11.0, 11.6, 12.1, 12.6, 13.2]], ["enceinte", [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0]], ["sechecheveux", [104, 110, 117, 124, 130, 136, 143, 150, 156]], ["bouilloire", [40, 42, 45, 48, 50, 52, 55, 57, 60]], ["brosseadents", [22, 23, 24, 26, 27, 28, 30, 31, 32]], ["lampe", [60, 64, 68, 71, 75, 79, 82, 86, 90]], ["skate", [1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400]], ["roller", [44, 47, 50, 52, 55, 58, 61, 63, 66]], ["gourde", [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0]], ["casqueaudio", [16, 17, 18, 19, 20, 21, 22, 23, 24]]],                  /* [id, [volumes]] dans l'ordre de l'attribution */
+  quantites: [5000, 10000, 20000, 50000], sel: "P11-ex45", selEx5: "P11-ex5-donnees",
+  ex: {
+    4: { cap: "p11-ex4", cor: "p11-ex4-cor", fichier: "exercice4_corrige.chiffre.json", url: "@@REPORT_URL_EX4@@", secret: "P11-EX4-2026", data: null },
+    5: { cap: "p11-ex5", cor: "p11-ex5-cor", fichier: "exercice5_corrige.chiffre.json", url: "@@REPORT_URL_EX5@@", secret: "P11-EX5-2026", data: null }
+  }
+};
+/* Attribution calculée sur la liste des comptes du site (même module que les scripts) ;
+   l'onglet « Attributions » du classeur reste la référence (le professeur peut y changer un sujet). */
+var _p45Att = null;
+function p45Attribution(eid) {
+  if (!_p45Att) {
+    var el = ELEVES.filter(function (e) { return /^4[A-G]$/.test(e.c || "") && !e.role; })
+                   .map(function (e) { return { id: e.id, p: e.p, n: e.n, c: e.c }; });
+    _p45Att = P11X45_ATTR.attribuer(el, P45.sujets.length, { sel: P45.sel, selEx5: P45.selEx5, nbVolumes: P45.sujets[0][1].length, nbQuantites: P45.quantites.length });
+  }
+  var a = _p45Att[eid];
+  if (!a) return null;
+  return { s: P45.sujets[a.s][0], v: P45.sujets[a.s][1][a.v], q: P45.quantites[a.q] };
+}
+function p45Ex(cap) { return cap === "p11-ex5" || cap === "p11-ex5-cor" ? 5 : 4; }
+function p45AttDeCopie(f) { return { s: String(f._sujet || ""), v: Number(f._v), q: Number(f._q) }; }
+function p45CodeConnu(ex) {
+  var id = P45.ex[ex].cor;
+  if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[id]) return COFFRE.codes[id];
+  try { return (isProf || isCollegue) ? (localStorage.getItem(id + "_code") || "") : (sessionStorage.getItem(id + "_code") || ""); } catch (e) { return ""; }
+}
+function p45RetenirCode(ex, code) { try { ((isProf || isCollegue) ? localStorage : sessionStorage).setItem(P45.ex[ex].cor + "_code", String(code).trim().toUpperCase()); } catch (e) {} }
+function p45Dechiffrer(ex, code) {
+  if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
+  return fetch(P45.dossier + P45.ex[ex].fichier + "?t=" + Date.now()).then(function (r) { if (!r.ok) throw new Error("absent"); return r.json(); }).then(function (c) {
+    return crypto.subtle.importKey("raw", _roOctets(String(code).trim().toUpperCase()), "PBKDF2", false, ["deriveKey"]).then(function (k) {
+      return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: _roDeb64(c.sel), iterations: c.it }, k, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    }).then(function (cle) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: _roDeb64(c.iv) }, cle, _roDeb64(c.data)); })
+      .then(function (b) { return JSON.parse(new TextDecoder().decode(b)); });
+  });
+}
+function p45CorPrecharger() {
+  if (!(isProf || isCollegue)) return;
+  [4, 5].forEach(function (ex) {
+    if (P45.ex[ex].data || !p45CodeConnu(ex)) return;
+    p45Dechiffrer(ex, p45CodeConnu(ex)).then(function (p) {
+      P45.ex[ex].data = p;
+      try { if (typeof renderProf === "function" && document.getElementById("pg-prof") && !document.getElementById("pg-prof").classList.contains("h")) renderProf(); } catch (e) {}
+    }).catch(function () {});
+  });
+}
+function p45Cle(ex) { var d = P45.ex[ex].data; return d && d.cles ? d.cles.cleCorrection : null; }
+function p45Pub(ex) { var d = P45.ex[ex].data; return d && d.cles ? d.cles.donneesPubliques : null; }
+
+/* ── détail d'une copie, au format des grilles EVALUATIONS (copie annotée, statistiques) ── */
+function p45Detail(ex, f, att) {
+  var cle = p45Cle(ex), pub = p45Pub(ex), bar = ex === 4 ? pub && pub.bareme4 : pub && pub.bareme5;
+  var vide = { points: {}, detail: [] };
+  if (!cle || !pub) return vide;
+  var r = ex === 4 ? P11X45.corrigerEx4(f, cle, att) : P11X45.corrigerEx5(f, cle, att);
+  if (!r.points) return vide;
+  var S = pub.sujets.filter(function (s) { return s.id === att.s; })[0];
+  var K = ex === 4 ? cle.ex4[att.s] : null, A = ex === 5 ? P11X45.attenduEx5(cle, att) : null;
+  var M = cle.materiaux, nom = function (id) { return M[id] ? M[id].nom : (id || ""); };
+  var carte = function (id) { var c = S.cartes.filter(function (x) { return x.id === id; })[0]; return c ? c.texte : id; };
+  var arg = function (id) { var a = S.arguments.filter(function (x) { return x.id === id; })[0]; return a ? a.texte : id; };
+  var liste = function (v) { return String(v || "").split("|").filter(String); };
+  var nb = function (x, d) { return isFinite(x) ? Number(x).toLocaleString("fr-FR", { maximumFractionDigits: d == null ? 2 : d }) : "?"; };
+  var rep = {}, att2 = {};
+  if (ex === 4) {
+    var q5 = f.q5 || {}; if (typeof q5 === "string") { try { q5 = JSON.parse(q5); } catch (e) { q5 = {}; } }
+    rep = { Q1: f.q1, Q2: f.q2, Q3: f.q3, Q4: liste(f.q4).map(carte).join(" · "),
+            Q5: Object.keys(q5).map(function (k) { return nom(k.split(".")[0]) + " " + k.split(".").slice(1).join(".").replace("notes.", "") + " = " + q5[k]; }).join(" ; "),
+            Q6: nom(f.q6), Q7: [f.q7f, f.q7s].filter(String).join(" / "), Q8: liste(f.q8).map(arg).join(" · ") };
+    att2 = { Q1: K.q1, Q2: K.q2, Q3: K.q3, Q4: K.q4.map(carte).join(" · "),
+             Q5: K.candidats.map(function (c) { return nom(c) + " : " + K.proprietes.map(function (p) {
+               return p === "masseVolumique" ? nb(M[c].masseVolumique) + " g/cm³" : p === "tempMax" ? M[c].tempMaxTexte + " °C" : p === "elec" ? M[c].elec : M[c].notes[p.slice(6)] + "/5"; }).join(", "); }).join(" ; "),
+             Q6: nom(K.q6), Q7: "famille et sous-famille du matériau choisi", Q8: K.q8.map(arg).join(" · ") };
+  } else {
+    rep = { Q1: f.q1, Q2: liste(f.q2).join(", "), Q3: f.q3, Q4: f.q4, Q5: [f.q5, f.q5u].join(" "), Q6: [f.q6, f.q6u].join(" "), Q7: [f.q7, f.q7u].join(" "),
+            Q8: "masse " + (f.q8m || "?") + " g ; énergie " + (f.q8e || "?") + " kJ", Q9: (f.q9 || "?") + " fois " + (f.q9s || "?"), Q10: f.q10, Q11: f.q11 };
+    att2 = { Q1: cle.ex5def, Q2: cle.ex5etapes.filter(function (e) { return e[1]; }).map(function (e) { return e[0]; }).join(", "),
+             Q3: nb(A.rhoM) + " g/cm³", Q4: nb(A.egM) + " kJ par gramme", Q5: nb(att.v, 1) + " × " + nb(A.rhoM) + " = " + nb(A.masseM, 1) + " g",
+             Q6: nb(A.masseM, 1) + " × " + nb(A.egM) + " = " + nb(A.energieM, 0) + " kJ (erreur reportée acceptée)",
+             Q7: nb(A.energieM, 0) + " × " + nb(att.q, 0) + " ÷ 1 000 = " + nb(A.serieMJ, 0) + " MJ",
+             Q8: "masse " + nb(A.masseN, 1) + " g ; énergie " + nb(A.energieN, 0) + " kJ", Q9: nb(A.rapport, 1) + " fois " + A.sens + " (± 5 %)",
+             Q10: cle.ex5[att.s].conclusion, Q11: "faux" };
+  }
+  var detail = bar.map(function (q) {
+    var p = r.points[q[0]] || 0, v = String(rep[q[0]] == null ? "" : rep[q[0]]).trim();
+    return { sec: q[0], label: q[0] + " — " + q[3], rep: v, attendu: att2[q[0]] || "", pts: p, max: q[2],
+             etat: !v || v === "?" ? "vide" : p >= q[2] - 1e-9 ? "ok" : p > 0 ? "partiel" : "ko" };
+  });
+  return { points: r.points, detail: detail };
+}
+
+/* ── corrigé personnalisé (élève : son sujet ; professeur : sélecteur des 14) ── */
+function p45CorrigeHTML(ex, att) {
+  var cle = p45Cle(ex), pub = p45Pub(ex); if (!cle || !pub) return "";
+  var S = pub.sujets.filter(function (s) { return s.id === att.s; })[0]; if (!S) return "<p>Sujet inconnu.</p>";
+  var e = roEsc, M = cle.materiaux, nb = function (x, d) { return Number(x).toLocaleString("fr-FR", { maximumFractionDigits: d == null ? 2 : d }); };
+  var h = '<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><img src="assets/p11-ex4/' + S.id + '.svg" alt="' + e(S.systeme) + '" style="width:min(360px,100%);border:1px solid var(--gb);border-radius:10px">' +
+    '<div><p style="margin:0"><strong>' + e(S.systeme) + '</strong> — pièce : <strong>' + e(S.piece) + '</strong></p>' +
+    '<p style="font-size:12.5px;color:var(--td);margin:4px 0 0">Compétences : 1.3 — ' + e(pub.comp["1.3"]) + ' · 1.2 — ' + e(pub.comp["1.2"]) + '</p></div></div>';
+  var bloc = function (titre, corps) { return '<div style="border-left:4px solid var(--vt);background:#F6FBF7;border-radius:0 8px 8px 0;padding:9px 13px;margin:10px 0"><div style="font-weight:700;color:var(--vt)">' + titre + '</div><div style="margin-top:4px">' + corps + '</div></div>'; };
+  if (ex === 4) {
+    var K = cle.ex4[S.id], nom = function (id) { return M[id].nom; };
+    var valeur = function (c, p) { return p === "masseVolumique" ? nb(M[c].masseVolumique) + " g/cm³" : p === "tempMax" ? M[c].tempMaxTexte + " °C" : p === "elec" ? M[c].elec : M[c].notes[p.slice(6)] + "/5"; };
+    h += bloc("Q1 — Fonction d'usage (1,5 pt · 1.2)", e(K.q1));
+    h += bloc("Q2 — Fonction technique (1,5 pt · 1.2)", e(K.q2));
+    h += bloc("Q3 — Position dans le système (1 pt · 1.2)", e(K.q3));
+    h += bloc("Q4 — Les critères qui concernent la pièce (4 pts · 1.2)", "<ul>" + S.cartes.map(function (c) { var ok = K.q4.indexOf(c.id) >= 0;
+      return "<li>" + (ok ? "✅ " : "✖ ") + e(c.texte) + (ok ? "" : " — <em>ne concerne pas cette pièce</em>") + "</li>"; }).join("") + "</ul><p>Chaque critère juste coché rapporte 1 point, chaque critère faux coché en retire 1 (jamais moins de 0).</p>");
+    h += bloc("Q5 — Le relevé (4,5 pts · 1.3)", '<table style="border-collapse:collapse;font-size:13.5px"><tr><th style="text-align:left;padding:4px 8px">Matériau</th>' +
+      S.proprietes.map(function (p) { return '<th style="padding:4px 8px">' + e(p.libelle) + "</th>"; }).join("") + "</tr>" +
+      K.candidats.map(function (c) { return '<tr><td style="padding:4px 8px"><strong>' + e(nom(c)) + "</strong></td>" + K.proprietes.map(function (p) { return '<td style="padding:4px 8px;text-align:center">' + e(valeur(c, p)) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>");
+    h += bloc("Q6 — Le matériau retenu (3 pts · 1.3)", "<strong>" + e(nom(K.q6)) + "</strong> : c'est le seul des trois qui respecte tous les critères indispensables.");
+    h += bloc("Q7 — Famille et sous-famille (1,5 pt · 1.3)", e(nom(K.q6)) + " : " + e((pub.familles.filter(function (x) { return x.id === M[K.q6].famille; })[0] || { nom: M[K.q6].famille }).nom) + " / " + e(M[K.q6].sousFamille) +
+      ". <em>La famille et la sous-famille sont comptées pour le matériau que tu as choisi, même si ce n'est pas le bon.</em>");
+    h += bloc("Q8 — Les deux arguments justes (3 pts · 1.3)", "<ul>" + K.q8.map(function (id) { return "<li>" + e(S.arguments.filter(function (a) { return a.id === id; })[0].texte) + "</li>"; }).join("") + "</ul>");
+  } else {
+    var A = P11X45.attenduEx5(cle, att);
+    h += '<p><strong>Tes données :</strong> volume ' + nb(att.v, 1) + ' cm³ · ' + e(M[A.m].nom) + ' · série de ' + nb(att.q, 0) + ' pièces.</p>';
+    h += bloc("Q1 — Définition (1,5 pt · 1.3)", e(cle.ex5def));
+    h += bloc("Q2 — Étapes comptées (2 pts · 1.2)", "Extraire la matière, fabriquer, transporter, traiter en fin de vie. <strong>L'utilisation n'est pas comptée.</strong>");
+    h += bloc("Q3 et Q4 — Relevé (2 pts · 1.3)", e(M[A.m].nom) + " : " + nb(A.rhoM) + " g/cm³ ; " + nb(A.egM) + " kJ par gramme.");
+    h += bloc("Q5 — Masse (2,5 pts · 1.3)", "masse = volume × masse volumique = " + nb(att.v, 1) + " × " + nb(A.rhoM) + " = <strong>" + nb(A.masseM, 1) + " g</strong>");
+    h += bloc("Q6 — Énergie grise de la pièce (2,5 pts · 1.3)", "énergie grise = masse × énergie grise du matériau = " + nb(A.masseM, 1) + " × " + nb(A.egM) + " = <strong>" + nb(A.energieM, 0) + " kJ</strong>" +
+      "<br><em>Si ta masse était fausse mais ton calcul juste avec elle, le point est gardé.</em>");
+    h += bloc("Q7 — Énergie grise de la série (2,5 pts · 1.3)", nb(A.energieM, 0) + " kJ × " + nb(att.q, 0) + " = " + nb(A.energieM * att.q, 0) + " kJ ; ÷ 1 000 = <strong>" + nb(A.serieMJ, 0) + " MJ</strong>");
+    h += bloc("Q8 — La pièce en " + e(M[A.n].nom) + " (2 pts · 1.3)", "masse = " + nb(att.v, 1) + " × " + nb(A.rhoN) + " = " + nb(A.masseN, 1) + " g ; énergie = " + nb(A.masseN, 1) + " × " + nb(A.egN) + " = <strong>" + nb(A.energieN, 0) + " kJ</strong>");
+    h += bloc("Q9 — Comparaison (1 pt · 1.3)", "La pièce en " + e(M[A.n].nom) + " demande environ <strong>" + nb(A.rapport, 1) + " fois " + A.sens + "</strong> d'énergie grise que la pièce en " + e(M[A.m].nom) + ".");
+    h += bloc("Q10 — Conclusion (2 pts · 1.2)", e(cle.ex5[S.id].conclusion) + " On compare l'énergie de la <strong>pièce entière</strong>, pas celle d'un gramme de matériau.");
+    h += bloc("Q11 — Vrai ou faux (2 pts · 1.2)", "<strong>Faux.</strong> Un matériau recyclable ne fait économiser de l'énergie que s'il est vraiment recyclé : recyclable ne veut pas dire recyclé.");
+  }
+  return h;
+}
+function p45CorOuvrir(ex, codeSaisi) {
+  var X = P45.ex[ex], corps = document.getElementById(X.cor + "-body"), etat = document.getElementById(X.cor + "-etat"), saisie = document.getElementById(X.cor + "-saisie");
+  if (!corps) return;
+  var code = codeSaisi || p45CodeConnu(ex);
+  if (!(isProf || isCollegue) && !code) X.data = null;
+  var afficher = function () {
+    if (saisie) saisie.hidden = true;
+    var sel = document.getElementById(X.cor + "-sujet");
+    if (isProf || isCollegue) {
+      var pub = p45Pub(ex);
+      sel.hidden = false;
+      if (!sel.options.length) sel.innerHTML = pub.sujets.map(function (s) { return '<option value="' + s.id + '">' + roEsc(s.systeme + " — " + s.piece) + "</option>"; }).join("");
+      var s = pub.sujets.filter(function (x) { return x.id === sel.value; })[0] || pub.sujets[0];
+      corps.innerHTML = p45CorrigeHTML(ex, { s: s.id, v: s.ex5.volumes[4], q: P45.quantites[1] });
+      if (etat) etat.innerHTML = "Corrigé déchiffré. Vue professeur : choisis un sujet (exercice n°5 : volume de référence, 10 000 pièces).";
+    } else {
+      var a = user ? p45Attribution(user.id) : null;
+      p45SujetServeur(ex, function (srv) {
+        a = srv || a;
+        corps.innerHTML = a ? p45CorrigeHTML(ex, a) : "<p>Ton sujet n'a pas été trouvé : demande à ton professeur.</p>";
+        if (etat) etat.textContent = "Corrigé de ton sujet.";
+      });
+    }
+    var b = document.getElementById(X.cor + "-print"); if (b) b.hidden = false;
+  };
+  if (X.data) { afficher(); return; }
+  if (!code) { corps.innerHTML = ""; if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisis le code du corrigé donné par ton professeur."; return; }
+  if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
+  p45Dechiffrer(ex, code).then(function (p) { X.data = p; if (codeSaisi) p45RetenirCode(ex, codeSaisi); afficher(); })
+    .catch(function (err) {
+      if (saisie) saisie.hidden = false;
+      if (etat) etat.textContent = (err && err.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
+        (err && err.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
+    });
+}
+/* Sujet lu dans l'onglet « Attributions » (référence), sinon null. */
+function p45SujetServeur(ex, fini) {
+  var u = P45.ex[ex].url;
+  if (!user || !/^https:\/\/script\.google\.com\//.test(u)) { fini(null); return; }
+  fetch(u + "?action=sujet&eid=" + encodeURIComponent(user.id) + "&t=" + Date.now()).then(function (r) { return r.json(); })
+    .then(function (d) { fini(d && d.ok ? { s: d.s, v: Number(d.v), q: Number(d.q) } : null); }).catch(function () { fini(null); });
+}
+function p45CorValiderSaisie(ex) { var i = document.getElementById(P45.ex[ex].cor + "-code"); if (i && i.value.trim()) p45CorOuvrir(ex, i.value); }
+function p45Prefill(ex) {
+  try {
+    if (user) localStorage.setItem("p11ex45_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, prof: !!(isProf || isCollegue),
+      sujet: p45Attribution(user.id), ts: Date.now() }));
+  } catch (e) {}
+  var f = document.getElementById("p11-ex" + ex + "-frame");
+  if (f) f.src = f.getAttribute("data-src");
+}
+/* La note validée (ou ajustée) part au classeur de l'exercice (script Ex4/Ex5-Report.gs).
+   Règle 4 : jamais depuis une page servie en local. */
+function reporterP11Ex45(sub) {
+  var ex = p45Ex(sub.cap), X = P45.ex[ex];
+  var hn = (location.hostname || "").toLowerCase();
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "" || location.protocol === "file:") {
+    try { console.warn("[" + sub.cap + "] page locale : report au classeur non envoyé."); } catch (e) {}
+    return;
+  }
+  if (X.url.indexOf("@@") >= 0) { toast("⚠️ Classeur de l'exercice n°" + ex + " : script de report pas encore installé"); return; }
+  var pts = sub.adjustedPts || EVALUATIONS[sub.cap].corriger(sub.fields || {}).points;
+  var corps = JSON.stringify({ secret: X.secret, source: "ajustement", classe: sub.ecls || "", eleve: sub.ename || "", eid: sub.eid || "", pts: pts,
+    bonus: Number(pts.B) || 0, note: noteEvaluation(sub), appreciation: sub.appreciation || "" });
+  fetch(X.url, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
+    if (o && o.ok) toast("📊 Note reportée au classeur de l'exercice n°" + ex);
+    else toast("⚠️ Classeur de l'exercice n°" + ex + " : report refusé (" + (o && o.erreur || "?") + ")");
+  }).catch(function () { toast("⚠️ Classeur de l'exercice n°" + ex + " : report impossible (réseau ?). Revalider plus tard."); });
+}
+function p45Appreciation(ex, pts, note) {
+  var s = function (ks) { return ks.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); };
+  var mention = note >= 18 ? "Excellent travail" : note >= 15 ? "Très bon travail" : note >= 12 ? "Bon travail" : note >= 8 ? "Travail à consolider" : "Des progrès sont nécessaires";
+  var faibles = [];
+  if (ex === 4) {
+    if (s(["Q1", "Q2", "Q3"]) < 2.5) faibles.push("les fonctions et la place de la pièce dans le système");
+    if (s(["Q4"]) < 2.5) faibles.push("le passage du cahier des charges aux critères");
+    if (s(["Q5"]) < 3) faibles.push("le relevé des propriétés dans la Matériauthèque");
+    if (s(["Q6", "Q7", "Q8"]) < 4.5) faibles.push("le choix du matériau et sa justification");
+  } else {
+    if (s(["Q1", "Q2", "Q11"]) < 3.5) faibles.push("la définition de l'énergie grise et le cycle de vie");
+    if (s(["Q3", "Q4"]) < 1.5) faibles.push("le relevé dans la Matériauthèque");
+    if (s(["Q5", "Q6", "Q7", "Q8"]) < 6) faibles.push("les calculs (masse, puis énergie grise, puis conversion en MJ)");
+    if (s(["Q9", "Q10"]) < 1.5) faibles.push("la comparaison de la pièce entière");
+  }
+  return mention + " — " + fmtPts(note) + "/20. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "." : "La démarche est maîtrisée.");
+}
+
 function saveEvalAdj(sid) {
   if (!_evalCourante) return;
   var pts = evalPointsSaisis(), tot = evalAdjTotal();
@@ -11156,6 +11722,7 @@ function saveEvalAdj(sid) {
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
   if (subs[idx].cap === "p11-eval1") reporterP11Eval1(subs[idx]);
   if (subs[idx].cap === "p11-eval2" || subs[idx].cap === "p11-eval2-ratt") reporterP11Eval2(subs[idx]);
+  if (subs[idx].cap === "p11-ex4" || subs[idx].cap === "p11-ex5") reporterP11Ex45(subs[idx]);
   if (P11_REPORT[subs[idx].cap]) reporterP11(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
@@ -11851,7 +12418,9 @@ var FICHE_TITRES = {
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
   "p11-eval2":"P11 4e — Évaluation n°2 (ordinateur)",
-  "p11-eval2-ratt":"P11 4e — Évaluation n°2 (rattrapage)"
+  "p11-eval2-ratt":"P11 4e — Évaluation n°2 (rattrapage)",
+  "p11-ex4":"P11 4e — Exercice n°4 (Choix Matériaux)",
+  "p11-ex5":"P11 4e — Exercice n°5 (Énergie Grise)"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
@@ -12144,6 +12713,7 @@ function reporterNoteSiEvaluee(sub) {
   if (P11_REPORT[sub.cap]) reporterP11(sub);
   else if (sub.cap === "p11-eval1") reporterP11Eval1(sub);
   else if (sub.cap === "p11-eval2" || sub.cap === "p11-eval2-ratt") reporterP11Eval2(sub);
+  else if (sub.cap === "p11-ex4" || sub.cap === "p11-ex5") reporterP11Ex45(sub);
 }
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;
