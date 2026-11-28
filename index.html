@@ -4476,7 +4476,7 @@ body.est-prof .prof-only{display:block}
           </button>
         </div>
         <div class="sgr" id="stats"></div>
-        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-25b</span></div>
+        <div class="stit">&#x1F4CB; Soumissions<span title="Version du fichier index.html actuellement charg&eacute;e. Si elle ne correspond pas &agrave; la derni&egrave;re mise en ligne, forcez le rechargement (Ctrl+Maj+R)." style="margin-left:10px;font-size:11px;font-weight:600;color:var(--td);background:var(--gr);border:1px solid var(--gb);border-radius:10px;padding:2px 9px;vertical-align:middle">build 2026-11-28a</span></div>
         <div class="fbar">
           <select class="fsel" id="fcap" onchange="renderSubs()">
             <option value="">Toutes les capsules</option>
@@ -4500,6 +4500,8 @@ body.est-prof .prof-only{display:block}
             <option value="p11-eval1">P11 4e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="p11-eval2">P11 4e &mdash; &Eacute;valuation n&deg;2 (ordinateur)</option>
             <option value="p11-eval2-ratt">P11 4e &mdash; &Eacute;valuation n&deg;2 (rattrapage)</option>
+            <option value="p11-ex4">P11 4e &mdash; Exercice n&deg;4 (Choix Mat&eacute;riaux)</option>
+            <option value="p11-ex5">P11 4e &mdash; Exercice n&deg;5 (&Eacute;nergie Grise)</option>
             <option value="batiment5e">P1 5e &mdash; Am&eacute;nager un b&acirc;timent</option>
             <option value="eval1-5e">P1 5e &mdash; &Eacute;valuation n&deg;1</option>
             <option value="eval2-5e">P1 5e &mdash; &Eacute;valuation n&deg;2</option>
@@ -5437,6 +5439,86 @@ body.est-prof .prof-only{display:block}
         loading="lazy"></iframe>
     </div>
 
+    <!-- P11 4e — EXERCICES N°4 ET N°5 (générés par P11/P11_exercices_4_5/_sources) -->
+    <div id="pg-p11-ex4" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n°4 : déterminer le matériau d'une pièce (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Exercice <strong>individuel</strong>, 15 à 20 minutes : ta pièce, ses critères, le relevé dans la Matériauthèque, ton choix et sa justification. Noté sur 20.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Chaque élève a sa pièce (onglet « Attributions » du classeur de l'exercice n°4, modifiable à la main, avec une colonne « Aides imposées »).
+        La copie est corrigée par le script du classeur à la réception ; elle arrive pré-corrigée au tableau de bord dès que le corrigé chiffré est déchiffré.
+        Pense à <strong>armer la capsule</strong> (onglet Verrous) avant la séance, et à <strong>verrouiller l'exercice n°4 avant d'ouvrir le n°5</strong> (son énoncé donne le matériau).
+      </p>
+      <div id="p11-ex4-correction"></div>
+      <iframe id="p11-ex4-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/exercice4-materiau.html" title="P11 — Exercice n°4 (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8" loading="lazy"></iframe>
+    </div>
+    <div id="pg-p11-ex5" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Exercice n°5 : calculer l'énergie grise d'une pièce (4e)</h2>
+      </div>
+      <p style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Exercice <strong>individuel</strong> : l'énergie grise de ta pièce, comme dans le mini-tableur de l'activité 8. Noté sur 20.
+      </p>
+      <p class="prof-only" style="font-size:13px;color:var(--td);max-width:900px;margin:0 0 12px;line-height:1.6">
+        Même pièce que l'exercice n°4, mais aucun lien avec ses réponses : le matériau est donné. Volume et quantité sont propres à chaque élève.
+        L'exercice n°4 doit être <strong>verrouillé</strong> avant l'ouverture de celui-ci.
+      </p>
+      <div id="p11-ex5-correction"></div>
+      <iframe id="p11-ex5-frame" data-src="Niveau%204/P11%20Eau%20ressource%20essentielle/exercice5-energie-grise.html" title="P11 — Exercice n°5 (4e)"
+        style="width:100%;height:calc(100vh - 165px);min-height:560px;border:1px solid var(--gb);border-radius:12px;background:#F4F6F8" loading="lazy"></iframe>
+    </div>
+
+    <!-- P11 4e — EXERCICE N°4 — CORRIGÉ CHIFFRÉ ET PERSONNALISÉ (voir p45CorOuvrir) -->
+    <div id="pg-p11-ex4-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé de l'exercice n°4</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'exercice n°4 &mdash; 4<sup>e</sup></h3>
+        <p id="p11-ex4-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+        <div id="p11-ex4-cor-saisie" hidden style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <label for="p11-ex4-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+            <input id="p11-ex4-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+              onkeydown="if(event.key==='Enter')p45CorValiderSaisie(4)">
+            <button onclick="p45CorValiderSaisie(4)" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+          </div>
+        </div>
+        <select id="p11-ex4-cor-sujet" hidden onchange="p45CorOuvrir(4)" aria-label="Sujet affiché" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px;margin-bottom:10px"></select>
+        <button id="p11-ex4-cor-print" hidden onclick="imprimerCorrigeP11('p11-ex4-cor-body', 'Corrigé P11 4e — Exercice n°4')" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+        <div id="p11-ex4-cor-body" style="margin-top:20px"></div>
+      </div>
+    </div>
+
+    <!-- P11 4e — EXERCICE N°5 — CORRIGÉ CHIFFRÉ ET PERSONNALISÉ (voir p45CorOuvrir) -->
+    <div id="pg-p11-ex5-cor" class="h">
+      <div class="phdr">
+        <button class="btnbk" onclick="goPage('pg-dash')">&#x2190; Retour</button>
+        <h2 style="font-size:17px;font-weight:700">P11 &mdash; Corrigé de l'exercice n°5</h2>
+      </div>
+      <div class="card" style="border-left:5px solid var(--vt);max-width:920px">
+        <h3 style="color:var(--vt)">&#x1F4DA; Corrigé de l'exercice n°5 &mdash; 4<sup>e</sup></h3>
+        <p id="p11-ex5-cor-etat" style="font-size:13.5px;color:var(--td);margin:8px 0 12px"></p>
+        <div id="p11-ex5-cor-saisie" hidden style="margin-bottom:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <label for="p11-ex5-cor-code" style="font-size:13px;font-weight:600">Code du corrigé</label>
+            <input id="p11-ex5-cor-code" type="password" autocomplete="off" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px"
+              onkeydown="if(event.key==='Enter')p45CorValiderSaisie(5)">
+            <button onclick="p45CorValiderSaisie(5)" style="padding:9px 16px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Ouvrir</button>
+          </div>
+        </div>
+        <select id="p11-ex5-cor-sujet" hidden onchange="p45CorOuvrir(5)" aria-label="Sujet affiché" style="padding:8px 10px;border:2px solid var(--gb);border-radius:8px;font-size:14px;margin-bottom:10px"></select>
+        <button id="p11-ex5-cor-print" hidden onclick="imprimerCorrigeP11('p11-ex5-cor-body', 'Corrigé P11 4e — Exercice n°5')" style="padding:11px 20px;background:var(--vt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">&#x1F5A8;&#xFE0F; Imprimer le corrigé</button>
+        <div id="p11-ex5-cor-body" style="margin-top:20px"></div>
+      </div>
+    </div>
     <!-- BÂTIMENT 5e — SYNTHÈSE P1 -->
     <div id="pg-batiment5e-syn" class="h">
       <div class="phdr">
@@ -6234,7 +6316,7 @@ body.est-prof .prof-only{display:block}
 var CFG = {
   PLOGIN: "prof.blanchard",
   ANCIENS_JUSQUAU: "2026-10-07",
-  COFFRE: {"v":1,"it":600000,"sel":"KnfsWC+GxLXxh0ukIumR5w==","iv":"654ZjSw3rLMhiQ96","data":"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"}
+  COFFRE: {"v":1,"it":600000,"sel":"8xG7lyv0jGr3uyZFlJaDuA==","iv":"LKCrmWJpJ+/CAyy5","data":"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"}
 };
 
 // ================================================================
@@ -6614,6 +6696,10 @@ var SEQUENCES_DEF = [
   {id:"p11-ex1-cor", ordre:113, niveau:"4ème", titre:"P11 — Corrigé Exercice n°1", desc:"Corrigé et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"#9Aw3rFPvV+zrcsxXN/XBTxAFS/Fen1ArsZFuHfFSbwo=", open:true},
   {id:"p11-ex2", ordre:114, niveau:"4ème", titre:"P11 — Exercice n°2 — Le diagramme FAST", desc:"Évalué : lire un FAST, puis associer fonctions techniques et solutions techniques sur le scooter, le feutre et le casque audio. Menus déroulants avec propositions pièges, ordre tiré au sort. Aides dys intégrées.", couleur:"#5C6BC0", code:"#28ckGZAdM448lIbA3qHJBiXFZ6ow7QZz/xxXVD9+L+Q=", open:true},
   {id:"p11-ex2-cor", ordre:115, niveau:"4ème", titre:"P11 — Corrigé Exercice n°2", desc:"Corrigé FAST, ordres de hiérarchisation justifiés et barème (30 pts, convertible /20). Code d'accès professeur.", couleur:"var(--vt)", code:"#AU/ps0qN0F+EIZ3HdLVVqtcAF0H+G+J2qHaEg5uL5xo=", open:true},
+  {id:"p11-ex4", ordre:115.2, niveau:"4ème", titre:"P11 — Exercice n°4 (Choix Matériaux)", desc:"Évalué : ta pièce d'un objet du quotidien, ses critères, le relevé dans la Matériauthèque, le choix du matériau et sa justification. Une pièce par élève. Aides au choix intégrées.", couleur:"#B45309", code:"", open:false},
+  {id:"p11-ex4-cor", ordre:115.3, niveau:"4ème", titre:"P11 — Exercice n°4 — Corrigé", desc:"Corrigé personnalisé : la pièce de l'élève. Code donné par le professeur.", couleur:"var(--vt)", code:"#FzokE0bJqVlTXvP9uu1i3MkYaV92wQFNfYOZO5XQZj8=", open:false},
+  {id:"p11-ex5", ordre:115.4, niveau:"4ème", titre:"P11 — Exercice n°5 (Énergie Grise)", desc:"Évalué : l'énergie grise de ta pièce, comme dans le mini-tableur de l'activité 8, puis la comparaison avec un autre matériau. Aides au choix intégrées.", couleur:"#0F766E", code:"", open:false},
+  {id:"p11-ex5-cor", ordre:115.5, niveau:"4ème", titre:"P11 — Exercice n°5 — Corrigé", desc:"Corrigé personnalisé avec les données de l'élève. Code donné par le professeur.", couleur:"var(--vt)", code:"#rXXq0BXrOwpFXS75Ep/UkF1QKvRpQCjZMx0k3oQ2fBk=", open:false},
   {id:"cap1", ordre:130, niveau:"4ème", titre:"P13 — Biomimétisme — Activité 1", desc:"Comment la technologie s'inspire-t-elle du vivant ?", couleur:"var(--vt)", code:"#DDa8mE9tVmymp3UKvUmAZFgt9EbsbSVBSEWrpEHl3GY=", open:true},
   {id:"rem1", ordre:131, niveau:"4\u00e8me", titre:"Rem&eacute;diation P13", desc:"Rattrapage &mdash; Dessin technique, Proc&eacute;d&eacute;s, Programmation.", couleur:"var(--or)", code:"#+bTRhKgflIx0bm7ZIMWn4xoCD9ybefPt96MgaY9u3+I=", open:true},
   {id:"seq2", ordre:140, niveau:"4ème", titre:"P14 — Prochain thème", desc:"Disponible prochainement.", couleur:"var(--gb)", code:"", open:false},
@@ -6926,6 +7012,7 @@ function majClasseProf() {
   try { roCorPrecharger(); } catch (e) {}
   try { re1CorPrecharger(); } catch (e) {}
   try { p2eCorPrecharger(); } catch (e) {}
+  try { p45CorPrecharger(); } catch (e) {}
 }
 
 /* Lien direct vers une carte (?carte=p11-eval2), par exemple depuis le site d'une séquence :
@@ -7198,6 +7285,14 @@ function goPage(pid) {
     rafraichirCorrection("p11-eval2", "p11-eval2-correction");
   }
   if (pid === "pg-p11-eval2-cor") p2eCorOuvrir();
+  if (pid === "pg-p11-ex4" || pid === "pg-p11-ex5") {
+    var p45n = pid === "pg-p11-ex4" ? 4 : 5;
+    p45Prefill(p45n);
+    renderCorrectionEleve("p11-ex" + p45n, "p11-ex" + p45n + "-correction");
+    rafraichirCorrection("p11-ex" + p45n, "p11-ex" + p45n + "-correction");
+  }
+  if (pid === "pg-p11-ex4-cor") p45CorOuvrir(4);
+  if (pid === "pg-p11-ex5-cor") p45CorOuvrir(5);
   if (pid === "pg-p11-eval2-ratt") {
     try {
       if (user) localStorage.setItem("p11eval2r_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, ts: Date.now() }));
@@ -7616,7 +7711,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#EEF2FF;color:#4338CA;font-weight:700">&#x1F4CA; Activit&eacute; n&deg;3</span>';
         } else if (s.id === "p12-cor-a1" || s.id === "p12-cor-a2") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
-        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor") {
+        } else if (s.id === "eau4e-cor" || s.id === "eau34-cor" || s.id === "eau56-cor" || s.id === "batiment5e-cor" || s.id === "reseau5e-org-cor" || s.id === "reseau5e-ev1-cor" || s.id === "p11-eval2-cor" || s.id === "p11-ex4-cor" || s.id === "p11-ex5-cor") {
           badgeHtml = '<span class="badge" style="background:#E8F5E9;color:#1E6B3B;font-weight:700">&#x1F4DA; Corrig&eacute;</span>';
         } else if (s.id === "eau4e") {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F4A7; Activit&eacute;s 1 et 2</span>';
@@ -7628,7 +7723,7 @@ function renderDash() {
           badgeHtml = '<span class="badge" style="background:#D8F0FB;color:#0277BD;font-weight:700">&#x1F419; Activit&eacute;s 5 et 6</span>';
         } else if (s.id === "p11-entr-tab") {
           badgeHtml = '<span class="badge" style="background:#E1F5FE;color:#01579B;font-weight:700">&#x270F;&#xFE0F; Entra&icirc;nement</span>';
-        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt") {
+        } else if (s.id === "eval1-5e" || s.id === "eval2-5e" || s.id === "eval3-5e" || s.id === "reseau5e-ev1" || s.id === "p11-eval1" || s.id === "p11-eval2" || s.id === "p11-eval2-ratt" || s.id === "p11-ex4" || s.id === "p11-ex5") {
           badgeHtml = '<span class="badge" style="background:#EDE7FF;color:#5B34C7;font-weight:700">&#x1F4DD; Évaluation not&eacute;e</span>';
         } else if (s.id === "batiment5e-syn" || s.id === "reseau5e-syn") {
           badgeHtml = '<span class="badge" style="background:#DEEAF1;color:#1F4E79;font-weight:700">&#x1F9E9; Synth&egrave;se</span>';
@@ -7692,6 +7787,10 @@ function renderDash() {
       else if (s.id === "p11-eval2") clickAction = "onclick=\"goPage('pg-p11-eval2')\"";
       else if (s.id === "p11-eval2-cor") clickAction = "onclick=\"goPage('pg-p11-eval2-cor')\"";
       else if (s.id === "p11-eval2-ratt") clickAction = "onclick=\"goPage('pg-p11-eval2-ratt')\"";
+      else if (s.id === "p11-ex4") clickAction = "onclick=\"goPage('pg-p11-ex4')\"";
+      else if (s.id === "p11-ex4-cor") clickAction = "onclick=\"goPage('pg-p11-ex4-cor')\"";
+      else if (s.id === "p11-ex5") clickAction = "onclick=\"goPage('pg-p11-ex5')\"";
+      else if (s.id === "p11-ex5-cor") clickAction = "onclick=\"goPage('pg-p11-ex5-cor')\"";
       else if (s.id === "p11-entr-tab") clickAction = "onclick=\"goPage('pg-p11-entr-tab')\"";
       else if (s.id === "reseau5e") clickAction = "onclick=\"goPage('pg-reseau5e')\"";
       else if (s.id === "filius5e") clickAction = "onclick=\"goPage('pg-filius5e')\"";
@@ -7739,6 +7838,8 @@ function tryUnlock() {
        session afin que l'élève n'ait pas à le saisir une seconde fois. */
     if (pendingSeq === RO_COR_ID) roRetenirCode(entered);
     if (pendingSeq === P2E_COR_ID) p2eRetenirCode(entered);
+    if (pendingSeq === "p11-ex4-cor") p45RetenirCode(4, entered);
+    if (pendingSeq === "p11-ex5-cor") p45RetenirCode(5, entered);
     toast("Séquence déverrouillée !");
     if (pendingSeq === "dc")   goPage("pg-dc");
     else if (pendingSeq === "p12")  goPage("pg-p12");
@@ -7780,6 +7881,10 @@ function tryUnlock() {
     else if (pendingSeq === "p11-eval2") goPage("pg-p11-eval2");
     else if (pendingSeq === "p11-eval2-cor") goPage("pg-p11-eval2-cor");
     else if (pendingSeq === "p11-eval2-ratt") goPage("pg-p11-eval2-ratt");
+    else if (pendingSeq === "p11-ex4") goPage("pg-p11-ex4");
+    else if (pendingSeq === "p11-ex4-cor") goPage("pg-p11-ex4-cor");
+    else if (pendingSeq === "p11-ex5") goPage("pg-p11-ex5");
+    else if (pendingSeq === "p11-ex5-cor") goPage("pg-p11-ex5-cor");
     else if (pendingSeq === "reseau5e") goPage("pg-reseau5e");
     else if (pendingSeq === "filius5e") goPage("pg-filius5e");
     else if (pendingSeq === "filius5e-cor") goPage("pg-filius5e-cor");
@@ -10308,6 +10413,49 @@ var EVALUATIONS = {
     }
   },
 
+  /* P11 4e — Exercices n°4 et n°5 (sur 20). Les POINTS sont publics ; les RÉPONSES sont dans les
+     corrigés chiffrés (P45.ex[4|5].data). Tant qu'ils ne sont pas déchiffrés : « à noter /20 ».
+     Le sujet de chaque copie est dans ses champs (_sujet, _v, _q). Hasard mesuré : ex. 4 ≈ 4,9/20, ex. 5 ≈ 3,2/20.
+     Exercice n°4 : la ligne « Bonus » (champ libre facultatif) se note à la main, total plafonné à 20. */
+  "p11-ex4": {
+    titre: "P11 4e — Exercice n°4 (choix du matériau)",
+    total: 20,
+    get manuel() { return !p45Cle(4); },
+    sections: [
+      { cle: "Q1", label: "Q1 — Fonction d'usage du système (1.2)", max: 1.5, compact: true },
+      { cle: "Q2", label: "Q2 — Fonction technique de la pièce (1.2)", max: 1.5, compact: true },
+      { cle: "Q3", label: "Q3 — Position de la pièce dans le système (1.2)", max: 1.0, compact: true },
+      { cle: "Q4", label: "Q4 — Les critères du cahier des charges (1.2)", max: 4.0, compact: true },
+      { cle: "Q5", label: "Q5 — Relevé des propriétés (1.3)", max: 4.5, compact: true },
+      { cle: "Q6", label: "Q6 — Matériau retenu (1.3)", max: 3.0, compact: true },
+      { cle: "Q7", label: "Q7 — Famille et sous-famille (1.3)", max: 1.5, compact: true },
+      { cle: "Q8", label: "Q8 — Deux arguments (1.3)", max: 3.0, compact: true },
+      { cle: "B", label: "Bonus — justification libre (à noter à la main, total plafonné à 20)", max: 1.0 }
+    ],
+    corriger: function (f) { var r = p45Detail(4, f || {}, p45AttDeCopie(f || {})); r.points.B = 0; return r; },
+    appreciation: function (pts, note) { return p45Appreciation(4, pts, note); }
+  },
+  "p11-ex5": {
+    titre: "P11 4e — Exercice n°5 (énergie grise)",
+    total: 20,
+    get manuel() { return !p45Cle(5); },
+    sections: [
+      { cle: "Q1", label: "Q1 — Définition de l'énergie grise (1.3)", max: 1.5, compact: true },
+      { cle: "Q2", label: "Q2 — Étapes du cycle de vie comptées (1.2)", max: 2.0, compact: true },
+      { cle: "Q3", label: "Q3 — Masse volumique du matériau (1.3)", max: 1.0, compact: true },
+      { cle: "Q4", label: "Q4 — Énergie grise du matériau (1.3)", max: 1.0, compact: true },
+      { cle: "Q5", label: "Q5 — Masse de la pièce (1.3)", max: 2.5, compact: true },
+      { cle: "Q6", label: "Q6 — Énergie grise de la pièce (1.3)", max: 2.5, compact: true },
+      { cle: "Q7", label: "Q7 — Énergie grise de la série (MJ) (1.3)", max: 2.5, compact: true },
+      { cle: "Q8", label: "Q8 — La pièce dans le second matériau (1.3)", max: 2.0, compact: true },
+      { cle: "Q9", label: "Q9 — Combien de fois plus (ou moins) (1.3)", max: 1.0, compact: true },
+      { cle: "Q10", label: "Q10 — Conclusion pour l'environnement (1.2)", max: 2.0, compact: true },
+      { cle: "Q11", label: "Q11 — Recyclable ou recyclé (1.2)", max: 2.0, compact: true }
+    ],
+    corriger: function (f) { return p45Detail(5, f || {}, p45AttDeCopie(f || {})); },
+    appreciation: function (pts, note) { return p45Appreciation(5, pts, note); }
+  },
+
   /* P11 4e — Évaluation n°2, partie sur ordinateur (sur 20 ; la partie papier, /20,
      se note dans le classeur « P11 — Évaluation n°2 — Notes »). Les POINTS sont publics ;
      les RÉPONSES sont dans le corrigé chiffré (P2E_COR). Tant qu'il n'est pas déchiffré :
@@ -11139,6 +11287,424 @@ function reporterP11Eval2(sub) {
   }).catch(function () { toast("⚠️ Classeur de l'évaluation n°2 : report impossible (réseau ?). Revalider plus tard."); });
 }
 
+/* ════════════════════════════════════════════════════════════════
+   P11 4e — EXERCICES N°4 (choix du matériau) ET N°5 (énergie grise) : caps "p11-ex4", "p11-ex5"
+   Capsules élève : Niveau 4/P11 Eau ressource essentielle/exercice4-materiau.html et exercice5-energie-grise.html
+   Généré par P11/P11_exercices_4_5/_sources (cabler_site.py). Aucune réponse attendue ici : la clé
+   et les textes du corrigé sont dans exercice4_corrige.chiffre.json / exercice5_corrige.chiffre.json
+   (AES-GCM), déchiffrés en session professeur (code du coffre) ou par l'élève à qui le professeur
+   donne le code du corrigé. La copie est corrigée par le script du classeur à la réception ;
+   le tableau de bord recalcule la même correction avec le même module (P11X45).
+   ════════════════════════════════════════════════════════════════ */
+/* P11 4e — Exercices n°4 et n°5 : attribution des sujets (module commun).
+   Recopié tel quel par les générateurs dans le site (tableau de bord), les deux capsules
+   et les deux scripts de classeur : la même fonction donne partout la même répartition.
+   ES5, sans dépendance. Rien de secret ici : le sel est public, seul l'équilibre compte. */
+var P11X45_ATTR = (function () {
+  /* FNV-1a 32 bits : un hachage simple et identique dans Apps Script, le navigateur et Node. */
+  function hache(s) {
+    var h = 0x811c9dc5;
+    s = String(s);
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return h >>> 0;
+  }
+  function cleTri(e) {
+    return (String(e.n || "") + " " + String(e.p || "")).toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "");
+  }
+  /* eleves : [{ id, c (classe), n (nom), p (prénom) }] ; n : nombre de sujets.
+     opts : { sel, selEx5, nbVolumes, nbQuantites }.
+     Renvoie { identifiant : { s: indice de sujet, v: indice de volume, q: indice de quantité } }. */
+  function attribuer(eleves, n, opts) {
+    var sel = opts.sel, res = {}, classes = {};
+    eleves.forEach(function (e) { (classes[e.c] = classes[e.c] || []).push(e); });
+    Object.keys(classes).sort().forEach(function (c) {
+      var liste = classes[c].slice().sort(function (a, b) {
+        var x = cleTri(a), y = cleTri(b); return x < y ? -1 : x > y ? 1 : (a.id < b.id ? -1 : 1);
+      });
+      var tirage = liste.slice().sort(function (a, b) {
+        var x = hache(sel + "|" + a.id), y = hache(sel + "|" + b.id); return x - y || (a.id < b.id ? -1 : 1);
+      });
+      var dec = hache(sel + "|classe|" + c) % n, sujet = {};
+      tirage.forEach(function (e, k) { sujet[e.id] = (dec + k) % n; });
+      /* Deux voisins de la liste alphabétique n'ont pas le même sujet : échange déterministe
+         avec le premier élève plus loin dont l'échange ne crée aucun nouveau voisin identique. */
+      var s = liste.map(function (e) { return sujet[e.id]; });
+      var conflit = function (i) {
+        return (i > 0 && s[i] === s[i - 1]) || (i < s.length - 1 && s[i] === s[i + 1]);
+      };
+      for (var i = 1; i < s.length; i++) {
+        if (s[i] !== s[i - 1]) continue;
+        for (var j = 0; j < s.length; j++) {
+          if (j === i || s[j] === s[i]) continue;
+          var t = s[i]; s[i] = s[j]; s[j] = t;
+          if (!conflit(i) && !conflit(j) && !conflit(i - 1)) break;
+          t = s[i]; s[i] = s[j]; s[j] = t;
+        }
+      }
+      /* Données chiffrées de l'exercice n°5 : uniques parmi les élèves d'une classe qui ont le même sujet. */
+      var pris = {};
+      liste.forEach(function (e, i) {
+        var h = hache(opts.selEx5 + "|" + e.id), v = h % opts.nbVolumes, q = (h >>> 8) % opts.nbQuantites;
+        for (var essai = 0; pris[s[i] + ":" + v + ":" + q] && essai < opts.nbVolumes * opts.nbQuantites; essai++) {
+          q = (q + 1) % opts.nbQuantites; if (q === 0) v = (v + 1) % opts.nbVolumes;
+        }
+        pris[s[i] + ":" + v + ":" + q] = true;
+        res[e.id] = { s: s[i], v: v, q: q };
+      });
+    });
+    return res;
+  }
+  return { hache: hache, attribuer: attribuer };
+})();
+/* P11 4e — Exercices n°4 (choix du matériau) et n°5 (énergie grise) : CORRECTION (module commun).
+   Recopié tel quel par les générateurs dans index.html (tableau de bord du professeur) et dans
+   Ex4-Report.gs / Ex5-Report.gs (scripts des classeurs). Ce module ne contient QUE des règles :
+   les réponses attendues sont dans la clé (onglet masqué « Clé » du classeur, corrigé chiffré).
+   ES5, sans dépendance.
+   f   : champs envoyés par la capsule (fields) ;  cle : clé complète (voir build_cle dans contenu) ;
+   att : { s: identifiant du sujet, v: volume (cm³), q: quantité } — l'attribution qui fait foi. */
+var P11X45 = (function () {
+  function nombre(x) {
+    if (x === null || x === undefined) return NaN;
+    var t = String(x).replace(/\s| | /g, "").replace(",", ".");
+    if (!/^[-+]?\d*\.?\d+(e[-+]?\d+)?$/i.test(t)) return NaN;
+    return parseFloat(t);
+  }
+  function proche(x, attendu, tol) {
+    x = nombre(x);
+    if (isNaN(x) || !isFinite(attendu)) return false;
+    if (attendu === 0) return Math.abs(x) < 1e-9;
+    return Math.abs(x - attendu) <= Math.abs(attendu) * tol + 1e-9;
+  }
+  function liste(v) {
+    if (Array.isArray(v)) return v.map(String);
+    if (v === undefined || v === null || v === "") return [];
+    return String(v).split("|").filter(function (x) { return x !== ""; });
+  }
+  function r2(x) { return Math.round(x * 100) / 100; }
+  function somme(pts, ids) { return ids.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); }
+
+  /* ─────────────────────────── exercice n°4 ─────────────────────────── */
+  function corrigerEx4(f, cle, att) {
+    f = f || {};
+    var pts = {}, detail = {};
+    if (!cle || !cle.ex4 || !att || !cle.ex4[att.s]) return { points: null, detail: { erreur: "cle" } };
+    var K = cle.ex4[att.s], MAT = cle.materiaux;
+    var b = cle.bareme4;
+    pts.Q1 = f.q1 === K.q1 ? b.Q1 : 0;
+    pts.Q2 = f.q2 === K.q2 ? b.Q2 : 0;
+    pts.Q3 = f.q3 === K.q3 ? b.Q3 : 0;
+    var coches = liste(f.q4), vp = 0, fp = 0;
+    coches.forEach(function (id) { if (K.q4.indexOf(id) >= 0) vp++; else fp++; });
+    pts.Q4 = Math.max(0, Math.min(b.Q4, (vp - fp) * b.Q4 / K.q4.length));
+    detail.Q4 = { justes: vp, fausses: fp };
+    /* Q5 : relevé, case par case, sur les candidats que l'élève a vus (2 en mode adapté). */
+    var cand = liste(f._candidats).filter(function (id) { return K.candidats.indexOf(id) >= 0; });
+    if (!cand.length) cand = K.candidats.slice();
+    var cases = 0, bonnes = 0, rel = f.q5 || {};
+    if (typeof rel === "string") { try { rel = JSON.parse(rel); } catch (e) { rel = {}; } }
+    cand.forEach(function (id) {
+      K.proprietes.forEach(function (p) {
+        cases++;
+        var v = rel[id + "." + p], m = MAT[id];
+        var ok = p === "masseVolumique" ? proche(v, m.masseVolumique, 0.02 / m.masseVolumique + 1e-9)
+          : p === "tempMax" ? String(v) === String(m.tempMaxTexte)
+          : p === "elec" ? String(v) === String(m.elec)
+          : nombre(v) === Number(m.notes[p.replace("notes.", "")]);
+        if (ok) bonnes++;
+      });
+    });
+    pts.Q5 = r2(bonnes * b.Q5 / cases);
+    detail.Q5 = { bonnes: bonnes, cases: cases };
+    pts.Q6 = f.q6 === K.q6 ? b.Q6 : 0;
+    /* Q7 : famille et sous-famille DU MATÉRIAU CHOISI (pas de double sanction). */
+    var choisi = MAT[f.q6] || MAT[K.q6];
+    pts.Q7 = (f.q7f === choisi.famille ? 1 : 0) * (b.Q7 * 2 / 3) + (f.q7s === choisi.sousFamille ? 1 : 0) * (b.Q7 / 3);
+    var args = liste(f.q8).slice(0, 2), justes = args.filter(function (a) { return K.q8.indexOf(a) >= 0; }).length;
+    pts.Q8 = justes * b.Q8 / 2;
+    Object.keys(pts).forEach(function (k) { pts[k] = r2(pts[k]); });
+    return { points: pts, detail: detail };
+  }
+
+  /* ─────────────────────────── exercice n°5 ─────────────────────────── */
+  function attenduEx5(cle, att) {
+    var K = cle.ex5[att.s], M = cle.materiaux[K.m], N = cle.materiaux[K.n];
+    var mM = att.v * M.masseVolumique, eM = mM * M.energieGrise;
+    var mN = att.v * N.masseVolumique, eN = mN * N.energieGrise;
+    return { m: K.m, n: K.n, rhoM: M.masseVolumique, egM: M.energieGrise, rhoN: N.masseVolumique, egN: N.energieGrise,
+             masseM: mM, energieM: eM, serieMJ: eM * att.q / 1000, masseN: mN, energieN: eN,
+             rapport: eN >= eM ? eN / eM : eM / eN, sens: eN >= eM ? "plus" : "moins",
+             favorable: eN < eM ? K.n : K.m };
+  }
+  function corrigerEx5(f, cle, att) {
+    f = f || {};
+    if (!cle || !cle.ex5 || !att || !cle.ex5[att.s]) return { points: null, detail: { erreur: "cle" } };
+    var b = cle.bareme5, A = attenduEx5(cle, att), tol = cle.tolerance, tolR = cle.toleranceRapport, pts = {};
+    pts.Q1 = f.q1 === cle.ex5def ? b.Q1 : 0;
+    /* Q2 : chaque étape comptée vaut sa part ; cocher « utiliser l'objet » (l'idée fausse visée) annule tout. */
+    var et = liste(f.q2), vraies = cle.ex5etapes.filter(function (e) { return e[1]; }), vp = 0, fp = 0;
+    cle.ex5etapes.forEach(function (e) { if (et.indexOf(e[0]) >= 0) { if (e[1]) vp++; else fp++; } });
+    pts.Q2 = Math.max(0, vp * b.Q2 / vraies.length - fp * b.Q2);
+    pts.Q3 = proche(f.q3, A.rhoM, 0.02 / A.rhoM + 1e-9) ? b.Q3 : 0;
+    pts.Q4 = proche(f.q4, A.egM, 1e-9) ? b.Q4 : 0;
+    var u = b.unite;
+    /* Erreur reportée : un calcul juste fait sur la valeur fausse de l'élève garde ses points. */
+    var masse = nombre(f.q5), energie = nombre(f.q6);
+    pts.Q5 = (proche(f.q5, A.masseM, tol) ? b.Q5 - u : 0) + (f.q5u === "g" ? u : 0);
+    var eRef = isNaN(masse) ? A.energieM : masse * A.egM;
+    pts.Q6 = (proche(f.q6, A.energieM, tol) || proche(f.q6, eRef, tol) ? b.Q6 - u : 0) + (f.q6u === "kJ" ? u : 0);
+    var sRef = isNaN(energie) ? A.serieMJ : energie * att.q / 1000;
+    pts.Q7 = (proche(f.q7, A.serieMJ, tol) || proche(f.q7, sRef, tol) ? b.Q7 - u : 0) + (f.q7u === "MJ" ? u : 0);
+    var masseN = nombre(f.q8m);
+    pts.Q8 = (proche(f.q8m, A.masseN, tol) ? b.Q8 / 2 : 0)
+           + (proche(f.q8e, A.energieN, tol) || (!isNaN(masseN) && proche(f.q8e, masseN * A.egN, tol)) ? b.Q8 / 2 : 0);
+    var eNeleve = nombre(f.q8e), eMeleve = energie;
+    var rEleve = (eNeleve > 0 && eMeleve > 0) ? (eNeleve >= eMeleve ? eNeleve / eMeleve : eMeleve / eNeleve) : NaN;
+    var sensEleve = (eNeleve > 0 && eMeleve > 0) ? (eNeleve >= eMeleve ? "plus" : "moins") : A.sens;
+    var okNombre = proche(f.q9, A.rapport, tolR) || (!isNaN(rEleve) && proche(f.q9, rEleve, tolR));
+    var okSens = f.q9s === A.sens || f.q9s === sensEleve;
+    pts.Q9 = okNombre && okSens ? b.Q9 : okNombre ? b.Q9 / 2 : 0;
+    pts.Q10 = f.q10 === cle.ex5[att.s].conclusion ? b.Q10 : 0;
+    pts.Q11 = f.q11 === (cle.ex5vf ? "vrai" : "faux") ? b.Q11 : 0;
+    Object.keys(pts).forEach(function (k) { pts[k] = r2(pts[k]); });
+    return { points: pts, detail: { attendu: A } };
+  }
+
+  function total(pts) { return r2(Object.keys(pts || {}).reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0)); }
+  function parCompetence(pts, bareme) {
+    var o = {};
+    bareme.forEach(function (q) { o[q[1]] = r2((o[q[1]] || 0) + (Number(pts[q[0]]) || 0)); });
+    return o;
+  }
+  return { nombre: nombre, proche: proche, corrigerEx4: corrigerEx4, corrigerEx5: corrigerEx5,
+           attenduEx5: attenduEx5, total: total, parCompetence: parCompetence, somme: somme };
+})();
+var P45 = {
+  dossier: "Niveau%204/P11%20Eau%20ressource%20essentielle/",
+  sujets: [["trottinette", [440, 468, 495, 522, 550, 578, 605, 632, 660]], ["gardeboue", [104, 110, 117, 124, 130, 136, 143, 150, 156]], ["casquevelo", [120, 128, 135, 142, 150, 158, 165, 172, 180]], ["manette", [60, 64, 68, 71, 75, 79, 82, 86, 90]], ["smartphone", [8.8, 9.3, 9.9, 10.4, 11.0, 11.6, 12.1, 12.6, 13.2]], ["enceinte", [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0]], ["sechecheveux", [104, 110, 117, 124, 130, 136, 143, 150, 156]], ["bouilloire", [40, 42, 45, 48, 50, 52, 55, 57, 60]], ["brosseadents", [22, 23, 24, 26, 27, 28, 30, 31, 32]], ["lampe", [60, 64, 68, 71, 75, 79, 82, 86, 90]], ["skate", [1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400]], ["roller", [44, 47, 50, 52, 55, 58, 61, 63, 66]], ["gourde", [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0]], ["casqueaudio", [16, 17, 18, 19, 20, 21, 22, 23, 24]]],                  /* [id, [volumes]] dans l'ordre de l'attribution */
+  quantites: [5000, 10000, 20000, 50000], sel: "P11-ex45", selEx5: "P11-ex5-donnees",
+  ex: {
+    4: { cap: "p11-ex4", cor: "p11-ex4-cor", fichier: "exercice4_corrige.chiffre.json", url: "https://script.google.com/macros/s/AKfycbwq5flAlckIFT5atWe1IQPV5FqR-Wnt7L4Z3eT5Yt9XKhrpUf_wpKYnXRRHhO1DtNZM/exec", secret: "P11-EX4-2026", data: null },
+    5: { cap: "p11-ex5", cor: "p11-ex5-cor", fichier: "exercice5_corrige.chiffre.json", url: "https://script.google.com/macros/s/AKfycbyhmOc5vALJLRkdLrY7LksfjnW3V4ZTAR-sfBejCpkzu8bTgVm1YqjFhJ-l-_7CJdoP6Q/exec", secret: "P11-EX5-2026", data: null }
+  }
+};
+/* Attribution calculée sur la liste des comptes du site (même module que les scripts) ;
+   l'onglet « Attributions » du classeur reste la référence (le professeur peut y changer un sujet). */
+var _p45Att = null;
+function p45Attribution(eid) {
+  if (!_p45Att) {
+    var el = ELEVES.filter(function (e) { return /^4[A-G]$/.test(e.c || "") && !e.role; })
+                   .map(function (e) { return { id: e.id, p: e.p, n: e.n, c: e.c }; });
+    _p45Att = P11X45_ATTR.attribuer(el, P45.sujets.length, { sel: P45.sel, selEx5: P45.selEx5, nbVolumes: P45.sujets[0][1].length, nbQuantites: P45.quantites.length });
+  }
+  var a = _p45Att[eid];
+  if (!a) return null;
+  return { s: P45.sujets[a.s][0], v: P45.sujets[a.s][1][a.v], q: P45.quantites[a.q] };
+}
+function p45Ex(cap) { return cap === "p11-ex5" || cap === "p11-ex5-cor" ? 5 : 4; }
+function p45AttDeCopie(f) { return { s: String(f._sujet || ""), v: Number(f._v), q: Number(f._q) }; }
+function p45CodeConnu(ex) {
+  var id = P45.ex[ex].cor;
+  if (typeof COFFRE !== "undefined" && COFFRE && COFFRE.codes && COFFRE.codes[id]) return COFFRE.codes[id];
+  try { return (isProf || isCollegue) ? (localStorage.getItem(id + "_code") || "") : (sessionStorage.getItem(id + "_code") || ""); } catch (e) { return ""; }
+}
+function p45RetenirCode(ex, code) { try { ((isProf || isCollegue) ? localStorage : sessionStorage).setItem(P45.ex[ex].cor + "_code", String(code).trim().toUpperCase()); } catch (e) {} }
+function p45Dechiffrer(ex, code) {
+  if (!window.crypto || !crypto.subtle) return Promise.reject(new Error("crypto"));
+  return fetch(P45.dossier + P45.ex[ex].fichier + "?t=" + Date.now()).then(function (r) { if (!r.ok) throw new Error("absent"); return r.json(); }).then(function (c) {
+    return crypto.subtle.importKey("raw", _roOctets(String(code).trim().toUpperCase()), "PBKDF2", false, ["deriveKey"]).then(function (k) {
+      return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: _roDeb64(c.sel), iterations: c.it }, k, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    }).then(function (cle) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: _roDeb64(c.iv) }, cle, _roDeb64(c.data)); })
+      .then(function (b) { return JSON.parse(new TextDecoder().decode(b)); });
+  });
+}
+function p45CorPrecharger() {
+  if (!(isProf || isCollegue)) return;
+  [4, 5].forEach(function (ex) {
+    if (P45.ex[ex].data || !p45CodeConnu(ex)) return;
+    p45Dechiffrer(ex, p45CodeConnu(ex)).then(function (p) {
+      P45.ex[ex].data = p;
+      try { if (typeof renderProf === "function" && document.getElementById("pg-prof") && !document.getElementById("pg-prof").classList.contains("h")) renderProf(); } catch (e) {}
+    }).catch(function () {});
+  });
+}
+function p45Cle(ex) { var d = P45.ex[ex].data; return d && d.cles ? d.cles.cleCorrection : null; }
+function p45Pub(ex) { var d = P45.ex[ex].data; return d && d.cles ? d.cles.donneesPubliques : null; }
+
+/* ── détail d'une copie, au format des grilles EVALUATIONS (copie annotée, statistiques) ── */
+function p45Detail(ex, f, att) {
+  var cle = p45Cle(ex), pub = p45Pub(ex), bar = ex === 4 ? pub && pub.bareme4 : pub && pub.bareme5;
+  var vide = { points: {}, detail: [] };
+  if (!cle || !pub) return vide;
+  var r = ex === 4 ? P11X45.corrigerEx4(f, cle, att) : P11X45.corrigerEx5(f, cle, att);
+  if (!r.points) return vide;
+  var S = pub.sujets.filter(function (s) { return s.id === att.s; })[0];
+  var K = ex === 4 ? cle.ex4[att.s] : null, A = ex === 5 ? P11X45.attenduEx5(cle, att) : null;
+  var M = cle.materiaux, nom = function (id) { return M[id] ? M[id].nom : (id || ""); };
+  var carte = function (id) { var c = S.cartes.filter(function (x) { return x.id === id; })[0]; return c ? c.texte : id; };
+  var arg = function (id) { var a = S.arguments.filter(function (x) { return x.id === id; })[0]; return a ? a.texte : id; };
+  var liste = function (v) { return String(v || "").split("|").filter(String); };
+  var nb = function (x, d) { return isFinite(x) ? Number(x).toLocaleString("fr-FR", { maximumFractionDigits: d == null ? 2 : d }) : "?"; };
+  var rep = {}, att2 = {};
+  if (ex === 4) {
+    var q5 = f.q5 || {}; if (typeof q5 === "string") { try { q5 = JSON.parse(q5); } catch (e) { q5 = {}; } }
+    rep = { Q1: f.q1, Q2: f.q2, Q3: f.q3, Q4: liste(f.q4).map(carte).join(" · "),
+            Q5: Object.keys(q5).map(function (k) { return nom(k.split(".")[0]) + " " + k.split(".").slice(1).join(".").replace("notes.", "") + " = " + q5[k]; }).join(" ; "),
+            Q6: nom(f.q6), Q7: [f.q7f, f.q7s].filter(String).join(" / "), Q8: liste(f.q8).map(arg).join(" · ") };
+    att2 = { Q1: K.q1, Q2: K.q2, Q3: K.q3, Q4: K.q4.map(carte).join(" · "),
+             Q5: K.candidats.map(function (c) { return nom(c) + " : " + K.proprietes.map(function (p) {
+               return p === "masseVolumique" ? nb(M[c].masseVolumique) + " g/cm³" : p === "tempMax" ? M[c].tempMaxTexte + " °C" : p === "elec" ? M[c].elec : M[c].notes[p.slice(6)] + "/5"; }).join(", "); }).join(" ; "),
+             Q6: nom(K.q6), Q7: "famille et sous-famille du matériau choisi", Q8: K.q8.map(arg).join(" · ") };
+  } else {
+    rep = { Q1: f.q1, Q2: liste(f.q2).join(", "), Q3: f.q3, Q4: f.q4, Q5: [f.q5, f.q5u].join(" "), Q6: [f.q6, f.q6u].join(" "), Q7: [f.q7, f.q7u].join(" "),
+            Q8: "masse " + (f.q8m || "?") + " g ; énergie " + (f.q8e || "?") + " kJ", Q9: (f.q9 || "?") + " fois " + (f.q9s || "?"), Q10: f.q10, Q11: f.q11 };
+    att2 = { Q1: cle.ex5def, Q2: cle.ex5etapes.filter(function (e) { return e[1]; }).map(function (e) { return e[0]; }).join(", "),
+             Q3: nb(A.rhoM) + " g/cm³", Q4: nb(A.egM) + " kJ par gramme", Q5: nb(att.v, 1) + " × " + nb(A.rhoM) + " = " + nb(A.masseM, 1) + " g",
+             Q6: nb(A.masseM, 1) + " × " + nb(A.egM) + " = " + nb(A.energieM, 0) + " kJ (erreur reportée acceptée)",
+             Q7: nb(A.energieM, 0) + " × " + nb(att.q, 0) + " ÷ 1 000 = " + nb(A.serieMJ, 0) + " MJ",
+             Q8: "masse " + nb(A.masseN, 1) + " g ; énergie " + nb(A.energieN, 0) + " kJ", Q9: nb(A.rapport, 1) + " fois " + A.sens + " (± 5 %)",
+             Q10: cle.ex5[att.s].conclusion, Q11: "faux" };
+  }
+  var detail = bar.map(function (q) {
+    var p = r.points[q[0]] || 0, v = String(rep[q[0]] == null ? "" : rep[q[0]]).trim();
+    return { sec: q[0], label: q[0] + " — " + q[3], rep: v, attendu: att2[q[0]] || "", pts: p, max: q[2],
+             etat: !v || v === "?" ? "vide" : p >= q[2] - 1e-9 ? "ok" : p > 0 ? "partiel" : "ko" };
+  });
+  return { points: r.points, detail: detail };
+}
+
+/* ── corrigé personnalisé (élève : son sujet ; professeur : sélecteur des 14) ── */
+function p45CorrigeHTML(ex, att) {
+  var cle = p45Cle(ex), pub = p45Pub(ex); if (!cle || !pub) return "";
+  var S = pub.sujets.filter(function (s) { return s.id === att.s; })[0]; if (!S) return "<p>Sujet inconnu.</p>";
+  var e = roEsc, M = cle.materiaux, nb = function (x, d) { return Number(x).toLocaleString("fr-FR", { maximumFractionDigits: d == null ? 2 : d }); };
+  var h = '<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><img src="assets/p11-ex4/' + S.id + '.svg" alt="' + e(S.systeme) + '" style="width:min(360px,100%);border:1px solid var(--gb);border-radius:10px">' +
+    '<div><p style="margin:0"><strong>' + e(S.systeme) + '</strong> — pièce : <strong>' + e(S.piece) + '</strong></p>' +
+    '<p style="font-size:12.5px;color:var(--td);margin:4px 0 0">Compétences : 1.3 — ' + e(pub.comp["1.3"]) + ' · 1.2 — ' + e(pub.comp["1.2"]) + '</p></div></div>';
+  var bloc = function (titre, corps) { return '<div style="border-left:4px solid var(--vt);background:#F6FBF7;border-radius:0 8px 8px 0;padding:9px 13px;margin:10px 0"><div style="font-weight:700;color:var(--vt)">' + titre + '</div><div style="margin-top:4px">' + corps + '</div></div>'; };
+  if (ex === 4) {
+    var K = cle.ex4[S.id], nom = function (id) { return M[id].nom; };
+    var valeur = function (c, p) { return p === "masseVolumique" ? nb(M[c].masseVolumique) + " g/cm³" : p === "tempMax" ? M[c].tempMaxTexte + " °C" : p === "elec" ? M[c].elec : M[c].notes[p.slice(6)] + "/5"; };
+    h += bloc("Q1 — Fonction d'usage (1,5 pt · 1.2)", e(K.q1));
+    h += bloc("Q2 — Fonction technique (1,5 pt · 1.2)", e(K.q2));
+    h += bloc("Q3 — Position dans le système (1 pt · 1.2)", e(K.q3));
+    h += bloc("Q4 — Les critères qui concernent la pièce (4 pts · 1.2)", "<ul>" + S.cartes.map(function (c) { var ok = K.q4.indexOf(c.id) >= 0;
+      return "<li>" + (ok ? "✅ " : "✖ ") + e(c.texte) + (ok ? "" : " — <em>ne concerne pas cette pièce</em>") + "</li>"; }).join("") + "</ul><p>Chaque critère juste coché rapporte 1 point, chaque critère faux coché en retire 1 (jamais moins de 0).</p>");
+    h += bloc("Q5 — Le relevé (4,5 pts · 1.3)", '<table style="border-collapse:collapse;font-size:13.5px"><tr><th style="text-align:left;padding:4px 8px">Matériau</th>' +
+      S.proprietes.map(function (p) { return '<th style="padding:4px 8px">' + e(p.libelle) + "</th>"; }).join("") + "</tr>" +
+      K.candidats.map(function (c) { return '<tr><td style="padding:4px 8px"><strong>' + e(nom(c)) + "</strong></td>" + K.proprietes.map(function (p) { return '<td style="padding:4px 8px;text-align:center">' + e(valeur(c, p)) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>");
+    h += bloc("Q6 — Le matériau retenu (3 pts · 1.3)", "<strong>" + e(nom(K.q6)) + "</strong> : c'est le seul des trois qui respecte tous les critères indispensables.");
+    h += bloc("Q7 — Famille et sous-famille (1,5 pt · 1.3)", e(nom(K.q6)) + " : " + e((pub.familles.filter(function (x) { return x.id === M[K.q6].famille; })[0] || { nom: M[K.q6].famille }).nom) + " / " + e(M[K.q6].sousFamille) +
+      ". <em>La famille et la sous-famille sont comptées pour le matériau que tu as choisi, même si ce n'est pas le bon.</em>");
+    h += bloc("Q8 — Les deux arguments justes (3 pts · 1.3)", "<ul>" + K.q8.map(function (id) { return "<li>" + e(S.arguments.filter(function (a) { return a.id === id; })[0].texte) + "</li>"; }).join("") + "</ul>");
+  } else {
+    var A = P11X45.attenduEx5(cle, att);
+    h += '<p><strong>Tes données :</strong> volume ' + nb(att.v, 1) + ' cm³ · ' + e(M[A.m].nom) + ' · série de ' + nb(att.q, 0) + ' pièces.</p>';
+    h += bloc("Q1 — Définition (1,5 pt · 1.3)", e(cle.ex5def));
+    h += bloc("Q2 — Étapes comptées (2 pts · 1.2)", "Extraire la matière, fabriquer, transporter, traiter en fin de vie. <strong>L'utilisation n'est pas comptée.</strong>");
+    h += bloc("Q3 et Q4 — Relevé (2 pts · 1.3)", e(M[A.m].nom) + " : " + nb(A.rhoM) + " g/cm³ ; " + nb(A.egM) + " kJ par gramme.");
+    h += bloc("Q5 — Masse (2,5 pts · 1.3)", "masse = volume × masse volumique = " + nb(att.v, 1) + " × " + nb(A.rhoM) + " = <strong>" + nb(A.masseM, 1) + " g</strong>");
+    h += bloc("Q6 — Énergie grise de la pièce (2,5 pts · 1.3)", "énergie grise = masse × énergie grise du matériau = " + nb(A.masseM, 1) + " × " + nb(A.egM) + " = <strong>" + nb(A.energieM, 0) + " kJ</strong>" +
+      "<br><em>Si ta masse était fausse mais ton calcul juste avec elle, le point est gardé.</em>");
+    h += bloc("Q7 — Énergie grise de la série (2,5 pts · 1.3)", nb(A.energieM, 0) + " kJ × " + nb(att.q, 0) + " = " + nb(A.energieM * att.q, 0) + " kJ ; ÷ 1 000 = <strong>" + nb(A.serieMJ, 0) + " MJ</strong>");
+    h += bloc("Q8 — La pièce en " + e(M[A.n].nom) + " (2 pts · 1.3)", "masse = " + nb(att.v, 1) + " × " + nb(A.rhoN) + " = " + nb(A.masseN, 1) + " g ; énergie = " + nb(A.masseN, 1) + " × " + nb(A.egN) + " = <strong>" + nb(A.energieN, 0) + " kJ</strong>");
+    h += bloc("Q9 — Comparaison (1 pt · 1.3)", "La pièce en " + e(M[A.n].nom) + " demande environ <strong>" + nb(A.rapport, 1) + " fois " + A.sens + "</strong> d'énergie grise que la pièce en " + e(M[A.m].nom) + ".");
+    h += bloc("Q10 — Conclusion (2 pts · 1.2)", e(cle.ex5[S.id].conclusion) + " On compare l'énergie de la <strong>pièce entière</strong>, pas celle d'un gramme de matériau.");
+    h += bloc("Q11 — Vrai ou faux (2 pts · 1.2)", "<strong>Faux.</strong> Un matériau recyclable ne fait économiser de l'énergie que s'il est vraiment recyclé : recyclable ne veut pas dire recyclé.");
+  }
+  return h;
+}
+function p45CorOuvrir(ex, codeSaisi) {
+  var X = P45.ex[ex], corps = document.getElementById(X.cor + "-body"), etat = document.getElementById(X.cor + "-etat"), saisie = document.getElementById(X.cor + "-saisie");
+  if (!corps) return;
+  var code = codeSaisi || p45CodeConnu(ex);
+  if (!(isProf || isCollegue) && !code) X.data = null;
+  var afficher = function () {
+    if (saisie) saisie.hidden = true;
+    var sel = document.getElementById(X.cor + "-sujet");
+    if (isProf || isCollegue) {
+      var pub = p45Pub(ex);
+      sel.hidden = false;
+      if (!sel.options.length) sel.innerHTML = pub.sujets.map(function (s) { return '<option value="' + s.id + '">' + roEsc(s.systeme + " — " + s.piece) + "</option>"; }).join("");
+      var s = pub.sujets.filter(function (x) { return x.id === sel.value; })[0] || pub.sujets[0];
+      corps.innerHTML = p45CorrigeHTML(ex, { s: s.id, v: s.ex5.volumes[4], q: P45.quantites[1] });
+      if (etat) etat.innerHTML = "Corrigé déchiffré. Vue professeur : choisis un sujet (exercice n°5 : volume de référence, 10 000 pièces).";
+    } else {
+      var a = user ? p45Attribution(user.id) : null;
+      p45SujetServeur(ex, function (srv) {
+        a = srv || a;
+        corps.innerHTML = a ? p45CorrigeHTML(ex, a) : "<p>Ton sujet n'a pas été trouvé : demande à ton professeur.</p>";
+        if (etat) etat.textContent = "Corrigé de ton sujet.";
+      });
+    }
+    var b = document.getElementById(X.cor + "-print"); if (b) b.hidden = false;
+  };
+  if (X.data) { afficher(); return; }
+  if (!code) { corps.innerHTML = ""; if (saisie) saisie.hidden = false; if (etat) etat.textContent = "Saisis le code du corrigé donné par ton professeur."; return; }
+  if (etat) etat.textContent = "⟳ Déchiffrement du corrigé…";
+  p45Dechiffrer(ex, code).then(function (p) { X.data = p; if (codeSaisi) p45RetenirCode(ex, codeSaisi); afficher(); })
+    .catch(function (err) {
+      if (saisie) saisie.hidden = false;
+      if (etat) etat.textContent = (err && err.message === "absent") ? "Le fichier du corrigé chiffré est introuvable." :
+        (err && err.message === "crypto") ? "Ce navigateur ne sait pas déchiffrer (page à ouvrir en https)." : "Code incorrect : le corrigé ne s'ouvre pas.";
+    });
+}
+/* Sujet lu dans l'onglet « Attributions » (référence), sinon null. */
+function p45SujetServeur(ex, fini) {
+  var u = P45.ex[ex].url;
+  if (!user || !/^https:\/\/script\.google\.com\//.test(u)) { fini(null); return; }
+  fetch(u + "?action=sujet&eid=" + encodeURIComponent(user.id) + "&t=" + Date.now()).then(function (r) { return r.json(); })
+    .then(function (d) { fini(d && d.ok ? { s: d.s, v: Number(d.v), q: Number(d.q) } : null); }).catch(function () { fini(null); });
+}
+function p45CorValiderSaisie(ex) { var i = document.getElementById(P45.ex[ex].cor + "-code"); if (i && i.value.trim()) p45CorOuvrir(ex, i.value); }
+function p45Prefill(ex) {
+  try {
+    if (user) localStorage.setItem("p11ex45_prefill", JSON.stringify({ id: user.id, p: user.p, n: user.n, c: user.c, prof: !!(isProf || isCollegue),
+      sujet: p45Attribution(user.id), ts: Date.now() }));
+  } catch (e) {}
+  var f = document.getElementById("p11-ex" + ex + "-frame");
+  if (f) f.src = f.getAttribute("data-src");
+}
+/* La note validée (ou ajustée) part au classeur de l'exercice (script Ex4/Ex5-Report.gs).
+   Règle 4 : jamais depuis une page servie en local. */
+function reporterP11Ex45(sub) {
+  var ex = p45Ex(sub.cap), X = P45.ex[ex];
+  var hn = (location.hostname || "").toLowerCase();
+  if (hn === "localhost" || hn === "127.0.0.1" || hn === "::1" || hn === "[::1]" || hn === "" || location.protocol === "file:") {
+    try { console.warn("[" + sub.cap + "] page locale : report au classeur non envoyé."); } catch (e) {}
+    return;
+  }
+  if (X.url.indexOf("@@") >= 0) { toast("⚠️ Classeur de l'exercice n°" + ex + " : script de report pas encore installé"); return; }
+  var pts = sub.adjustedPts || EVALUATIONS[sub.cap].corriger(sub.fields || {}).points;
+  var corps = JSON.stringify({ secret: X.secret, source: "ajustement", classe: sub.ecls || "", eleve: sub.ename || "", eid: sub.eid || "", pts: pts,
+    bonus: Number(pts.B) || 0, note: noteEvaluation(sub), appreciation: sub.appreciation || "" });
+  fetch(X.url, { method: "POST", body: corps }).then(function (r) { return r.json(); }).then(function (o) {
+    if (o && o.ok) toast("📊 Note reportée au classeur de l'exercice n°" + ex);
+    else toast("⚠️ Classeur de l'exercice n°" + ex + " : report refusé (" + (o && o.erreur || "?") + ")");
+  }).catch(function () { toast("⚠️ Classeur de l'exercice n°" + ex + " : report impossible (réseau ?). Revalider plus tard."); });
+}
+function p45Appreciation(ex, pts, note) {
+  var s = function (ks) { return ks.reduce(function (t, k) { return t + (Number(pts[k]) || 0); }, 0); };
+  var mention = note >= 18 ? "Excellent travail" : note >= 15 ? "Très bon travail" : note >= 12 ? "Bon travail" : note >= 8 ? "Travail à consolider" : "Des progrès sont nécessaires";
+  var faibles = [];
+  if (ex === 4) {
+    if (s(["Q1", "Q2", "Q3"]) < 2.5) faibles.push("les fonctions et la place de la pièce dans le système");
+    if (s(["Q4"]) < 2.5) faibles.push("le passage du cahier des charges aux critères");
+    if (s(["Q5"]) < 3) faibles.push("le relevé des propriétés dans la Matériauthèque");
+    if (s(["Q6", "Q7", "Q8"]) < 4.5) faibles.push("le choix du matériau et sa justification");
+  } else {
+    if (s(["Q1", "Q2", "Q11"]) < 3.5) faibles.push("la définition de l'énergie grise et le cycle de vie");
+    if (s(["Q3", "Q4"]) < 1.5) faibles.push("le relevé dans la Matériauthèque");
+    if (s(["Q5", "Q6", "Q7", "Q8"]) < 6) faibles.push("les calculs (masse, puis énergie grise, puis conversion en MJ)");
+    if (s(["Q9", "Q10"]) < 1.5) faibles.push("la comparaison de la pièce entière");
+  }
+  return mention + " — " + fmtPts(note) + "/20. " + (faibles.length ? "À revoir : " + faibles.join(", ") + "." : "La démarche est maîtrisée.");
+}
+
 function saveEvalAdj(sid) {
   if (!_evalCourante) return;
   var pts = evalPointsSaisis(), tot = evalAdjTotal();
@@ -11156,6 +11722,7 @@ function saveEvalAdj(sid) {
   try { if (window.cloudSync && cloudSync.send) cloudSync.send(subs[idx]); } catch (e) {}
   if (subs[idx].cap === "p11-eval1") reporterP11Eval1(subs[idx]);
   if (subs[idx].cap === "p11-eval2" || subs[idx].cap === "p11-eval2-ratt") reporterP11Eval2(subs[idx]);
+  if (subs[idx].cap === "p11-ex4" || subs[idx].cap === "p11-ex5") reporterP11Ex45(subs[idx]);
   if (P11_REPORT[subs[idx].cap]) reporterP11(subs[idx]);
   localStorage.setItem("subs", JSON.stringify(subs));
   renderStats(); renderSubs();
@@ -11851,7 +12418,9 @@ var FICHE_TITRES = {
   "eval2-5e":"P1 5e — Évaluation n°2", "eval3-5e":"P1 5e — Évaluation n°3",
   "p11-eval1":"P11 4e — Évaluation n°1",
   "p11-eval2":"P11 4e — Évaluation n°2 (ordinateur)",
-  "p11-eval2-ratt":"P11 4e — Évaluation n°2 (rattrapage)"
+  "p11-eval2-ratt":"P11 4e — Évaluation n°2 (rattrapage)",
+  "p11-ex4":"P11 4e — Exercice n°4 (Choix Matériaux)",
+  "p11-ex5":"P11 4e — Exercice n°5 (Énergie Grise)"
 };
 function ficheTitre(sub) { return sub.caplbl || FICHE_TITRES[sub.cap] || ("Capsule " + sub.cap); }
 function ficheNiveau(sub) {
@@ -12144,6 +12713,7 @@ function reporterNoteSiEvaluee(sub) {
   if (P11_REPORT[sub.cap]) reporterP11(sub);
   else if (sub.cap === "p11-eval1") reporterP11Eval1(sub);
   else if (sub.cap === "p11-eval2" || sub.cap === "p11-eval2-ratt") reporterP11Eval2(sub);
+  else if (sub.cap === "p11-ex4" || sub.cap === "p11-ex5") reporterP11Ex45(sub);
 }
 function updSub(sid, st) {
   var subs = getSubs(), idx = -1;

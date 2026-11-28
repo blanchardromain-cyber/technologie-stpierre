@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P11 — Exercice n°5 (Énergie Grise)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#1F3864;--blue:#2E75B6;--light:#DEEAF6;--lighter:#EAF1FA;--ok:#1E8E5A;--ko:#C0392B;--grey:#5b6472;
+        --creme:#FFF8E7;--line:#cbd6e4;--accent:#C2410C}
+  *{box-sizing:border-box}
+  body{font-family:'Inter',Arial,sans-serif;margin:0;background:#f4f7fb;color:#1f2430;line-height:1.6;font-size:16px;font-variant-numeric:tabular-nums}
+  .pbar{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid #e4ebf3;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .pbar-in{max-width:1080px;margin:0 auto;padding:8px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pbar-in .ttl{font-weight:800;color:var(--navy);font-size:14px;margin-right:auto}
+  .qui{font-size:13px;font-weight:700;color:var(--navy);background:var(--lighter);border-radius:8px;padding:3px 9px}
+  .chrono{font-size:13px;color:var(--grey);background:var(--lighter);border-radius:8px;padding:3px 9px}
+  .tbtn{background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:9px;padding:5px 11px;font:600 14px 'Inter',Arial,sans-serif;cursor:pointer}
+  .tbtn:hover{background:var(--lighter)}
+  .progres{height:8px;background:var(--light);border-radius:4px;overflow:hidden;flex-basis:100%}
+  .progres>div{height:100%;background:var(--blue);transition:width .3s}
+  .etapes-nav{display:flex;gap:6px;flex-wrap:wrap;flex-basis:100%;list-style:none;margin:0;padding:0}
+  .etapes-nav button{font:600 13px 'Inter',Arial,sans-serif;border:2px solid var(--line);background:#fff;color:var(--grey);border-radius:20px;padding:3px 11px;cursor:pointer}
+  .etapes-nav button[aria-current=step]{border-color:var(--blue);background:var(--blue);color:#fff}
+  .etapes-nav button.fait::before{content:"✓ "}
+  main{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+  header.band{background:var(--navy);color:#fff;border-radius:14px;padding:16px 22px}
+  header.band .k{font-size:12px;letter-spacing:.04em;color:#bcd2ee;font-weight:600}
+  header.band h1{margin:6px 0 0;font-size:22px;font-weight:800;line-height:1.3}
+  header.band .comps{margin:8px 0 0;font-size:13px;color:#dce8f8}
+  .card{background:#fff;border:1px solid #e4ebf3;border-radius:14px;padding:20px 22px;margin-top:18px;box-shadow:0 2px 8px rgba(31,56,100,.06)}
+  .narrow{max-width:760px;margin-left:auto;margin-right:auto}
+  h2{color:var(--navy);font-size:20px;margin:0 0 6px;border-bottom:3px solid var(--blue);padding-bottom:6px}
+  h3{color:var(--navy);font-size:17px;margin:22px 0 6px;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+  h3 .pts{color:var(--grey);font-size:13px;font-weight:600}
+  h3 .cp{font-size:12px;font-weight:700;color:var(--blue);background:var(--lighter);border-radius:6px;padding:1px 7px}
+  .consigne{margin:0 0 10px}
+  .consigne b,.consigne strong{color:var(--navy)}
+  label.lbl{display:block;font-weight:600;color:var(--navy);font-size:15px;margin:12px 0 4px}
+  input[type=text],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:16px 'Inter',Arial,sans-serif;background:#fff;color:#1f2430}
+  textarea{min-height:80px;resize:vertical}
+  input:focus,select:focus,textarea:focus,button:focus-visible,label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:180px}
+  .choix{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+  .choix label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;line-height:1.45;padding:9px 12px;border:2px solid var(--line);border-radius:10px;background:#fff}
+  .choix label:has(input:checked){border-color:var(--blue);background:var(--lighter)}
+  .choix input{width:20px;height:20px;flex:none;margin-top:2px}
+  .cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .cartes label{display:flex;gap:10px;align-items:center;padding:12px;border:2px solid var(--line);border-radius:12px;cursor:pointer;background:#fff;font-weight:600}
+  .cartes label:has(input:checked){border-color:var(--ok);background:#e7f6ee}
+  .cartes label:has(input:checked)::after{content:"✓ concerne ma pièce";font-size:12px;color:var(--ok);margin-left:auto;white-space:nowrap}
+  .cartes input{width:22px;height:22px;flex:none}
+  .visuels{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:center}
+  .visuels figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+  .visuels img{width:100%;height:auto;display:block}
+  .visuels figcaption{font-size:13px;color:var(--grey);text-align:center}
+  .cdc{background:var(--creme);border-left:5px solid #E0B65C;padding:10px 14px 10px 34px;border-radius:8px;margin:8px 0 14px}
+  .cdc li{margin:3px 0}
+  table.t{border-collapse:collapse;width:100%;font-size:15px}
+  table.t th{background:var(--blue);color:#fff;padding:8px;text-align:center;font-weight:700}
+  table.t td{border:1px solid var(--line);padding:6px 8px}
+  table.t td select,table.t td input{min-width:110px}
+  .tscroll{overflow-x:auto}
+  .rappel{background:var(--lighter);border-left:5px solid var(--blue);padding:10px 14px;border-radius:8px;margin:8px 0 12px}
+  .donnees{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+  .donnees span{background:var(--lighter);border-radius:9px;padding:6px 12px;font-weight:700;color:var(--navy)}
+  .calc{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+  .calc input[type=text]{width:170px}
+  .calc select{width:auto;min-width:96px}
+  .guide{font-size:15px;color:var(--navy);background:#F1F8E9;border:1px dashed #9CCC65;border-radius:8px;padding:6px 10px;margin:4px 0}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:12px 18px;font:700 16px 'Inter',Arial,sans-serif;cursor:pointer;margin:14px 8px 0 0}
+  .btn:hover{background:#255f96}
+  .btn.sec{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+  .btn.ok{background:var(--ok)}
+  .btn:disabled{background:#9bb6d4;cursor:not-allowed}
+  .nav{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .msg{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:15px}
+  .msg.ok{background:#e7f6ee;color:#13633d;border-left:5px solid var(--ok)}
+  .msg.ko{background:#fbeae8;color:#8e2018;border-left:5px solid var(--ko)}
+  .msg.info{background:var(--lighter);color:var(--navy);border-left:5px solid var(--blue)}
+  .pouce{margin-top:10px}
+  .pouce .ind{background:#FFF8E7;border:1px solid #F0D089;border-radius:10px;padding:9px 13px;margin-top:8px;color:#6B4A00}
+  .gl{border-bottom:2px dotted var(--blue);cursor:help;position:relative}
+  .gl:hover::after,.gl:focus::after{content:attr(data-def);position:absolute;left:0;top:1.6em;z-index:30;width:min(300px,80vw);background:var(--navy);color:#fff;font-size:13px;font-weight:400;line-height:1.4;padding:8px 10px;border-radius:8px}
+  .adapt label{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+  .adapt input{width:20px;height:20px;flex:none}
+  .adapt .impose{font-size:12px;color:var(--accent);font-weight:700}
+  .calculette{position:fixed;right:12px;bottom:12px;z-index:60;background:#fff;border:2px solid var(--blue);border-radius:12px;padding:10px;width:260px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+  .calculette input{font-size:18px}
+  .calculette .res{font-size:20px;font-weight:800;color:var(--navy);min-height:30px;margin-top:6px}
+  .recap td:first-child{font-weight:700;color:var(--navy);white-space:nowrap}
+  .cache{display:none!important}
+  .footer{color:var(--grey);font-size:11px;text-align:center;margin-top:26px}
+  @media (max-width:700px){.pbar{position:static}.visuels{grid-template-columns:1fr}.pbar-in .ttl{display:none}main{padding:12px 10px 50px}.card{padding:16px 14px}header.band h1{font-size:19px}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pbar-in">
+  <span class="ttl">P11 · Exercice n°5 · Énergie grise</span>
+  <span class="qui cache" id="qui"></span>
+  <span class="chrono cache" id="chrono" aria-live="off" title="Temps passé, à titre indicatif : il n'arrête rien"></span>
+  <button type="button" class="tbtn cache" id="btnChrono" data-nolecture>⏱ Masquer le temps</button>
+  <button type="button" class="tbtn cache" id="btnCalc" data-nolecture aria-expanded="false">🧮 Calculatrice</button>
+  <div class="progres cache" id="progres" role="progressbar" aria-label="Progression" aria-valuemin="0" aria-valuemax="100"><div id="progresBarre" style="width:0"></div></div>
+  <ol class="etapes-nav cache" id="etapesNav" aria-label="Étapes"></ol>
+</div></div>
+
+<main>
+  <header class="band">
+    <div class="k">TECHNOLOGIE · Cycle 4 · 4ᵉ &nbsp;|&nbsp; P11 — L'eau, ressource essentielle</div>
+    <h1>Exercice n°5 — Calculer l'énergie grise d'une pièce</h1>
+    <p class="comps" id="comps"></p>
+  </header>
+
+  <section class="card narrow cache" id="ident">
+    <h2>Qui es-tu ?</h2>
+    <div class="row">
+      <div><label class="lbl" for="nom">Nom</label><input type="text" id="nom" autocomplete="off"></div>
+      <div><label class="lbl" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off"></div>
+      <div style="max-width:170px"><label class="lbl" for="classe">Classe</label>
+        <select id="classe"><option value="" selected disabled>Choisir…</option>
+        <option>4A</option><option>4B</option><option>4C</option><option>4D</option><option>4E</option><option>4F</option><option>4G</option></select></div>
+    </div>
+    <button type="button" class="btn" id="btnIdent">Continuer</button>
+    <div class="msg ko cache" id="identMsg"></div>
+  </section>
+
+  <section class="card narrow cache" id="depart">
+    <h2>Avant de commencer</h2>
+    <p class="consigne" id="quiDepart"></p>
+    <div id="choixSujetProf" class="cache"><label class="lbl" for="sujetProf">Vue professeur : afficher le sujet…</label><select id="sujetProf"></select></div>
+    <div id="introDepart"></div>
+    <div class="adapt" id="adapt">
+      <h3>Mes aides <span class="pts">(au choix, elles ne changent pas la note)</span></h3>
+      <div id="adaptListe"></div>
+    </div>
+    <button type="button" class="btn ok" id="btnStart">▶ Commencer</button>
+  </section>
+
+  <div id="parcours" class="cache"></div>
+
+  <div class="footer">Collège Saint-Pierre – Les Essarts · P11 · Romain Blanchard, professeur de Technologie · <span id="build">build 2026-11-28a</span></div>
+</main>
+
+<div class="calculette cache" id="calculette" role="dialog" aria-label="Calculatrice">
+  <label class="lbl" for="calcIn" style="margin-top:0">Calcul (ex. : 550 × 2,7)</label>
+  <input type="text" id="calcIn" inputmode="decimal" autocomplete="off">
+  <div class="res" id="calcRes" aria-live="polite"></div>
+  <button type="button" class="tbtn" id="calcFermer" data-nolecture>Fermer</button>
+</div>
+
+<script>
+window.CONFORT_LECTURE = { hote:".pbar-in", racine:"main", fonts:"../../pp4g/fonts/",
+  eleve: (function(){ try { var d = JSON.parse(localStorage.getItem("p11ex45_prefill") || "null"); return d && d.id ? d.id : ""; } catch(e){ return ""; } })() };
+</script>
+<script src="../../assets/js/confort-lecture.js" defer></script>
+<script>window.LECTURE_IMMERSIVE = { racine:"main", hote:".pbar-in", sectionsFermees:"", classeFermeture:"",
+  selecteurs:"h1, h2, h3, .consigne, .rappel, .cdc li, .choix label, .cartes label, th, .guide, .ind" };</script>
+<script src="../../assets/js/lecture-immersive.js" defer></script>
+<script>
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   P11 — Exercice n°5 (Énergie Grise) — capsule élève
+   Fichier GÉNÉRÉ par P11/P11_exercices_4_5/_sources/build_capsules.py : ne pas modifier à la main.
+   Cette page ne contient AUCUNE réponse attendue et ne corrige rien : la copie brute part
+   (1) au tableau de bord du site, (2) au script du classeur, qui la corrige avec sa clé.
+   ═══════════════════════════════════════════════════════════════════════════ */
+"use strict";
+var EXERCICE = 5;
+var DONNEES = {"sujets": [{"id": "trottinette", "systeme": "Trottinette électrique", "piece": "Plateau", "le": "le plateau", "du": "du plateau", "f": false, "cdc": ["Le plateau porte une personne de 100 kg debout : il ne doit pas plier.", "La trottinette se porte à la main dans le bus : il doit rester léger.", "On roule sous la pluie et dans les flaques.", "Il serait bien qu'il se recycle en fin de vie."], "fu": ["Permettre à une personne de se déplacer en ville", "Faire du sport en salle", "Transporter des colis lourds"], "ft": ["Freiner la roue arrière", "Supporter le poids de l'utilisateur debout", "Stocker l'énergie électrique"], "pos": ["En haut du guidon, sous les mains", "À l'intérieur de la roue avant, autour du moteur", "Entre les deux roues, sous les pieds, relié à la colonne de direction"], "cartes": [{"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "leger", "texte": "Être léger (3 g/cm³ au plus)"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "rigide", "texte": "Être rigide (4/5 au moins)"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}], "candidats": [{"id": "acier", "nom": "Acier"}, {"id": "alu", "nom": "Aluminium"}, {"id": "pp", "nom": "PP (polypropylène)"}], "candidatsAdaptes": ["alu", "pp"], "proprietes": [{"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}, {"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}], "arguments": [{"id": "a99233005", "texte": "Le PP est écarté : il est trop lourd, or le plateau doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "ac2cee91a", "texte": "L'acier est écarté : il n'est pas assez rigide, or le plateau doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "aa6f2fe41", "texte": "Le PP est écarté : il n'est pas assez rigide, or le plateau doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "aae05f983", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or le plateau doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a6c43b2f2", "texte": "Le PP est écarté : il est attiré par un aimant, or le plateau doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a24152a79", "texte": "L'acier est écarté : il est trop lourd, or le plateau doit respecter le critère « Être léger (3 g/cm³ au plus) »."}], "ex5": {"m": "alu", "mNom": "Aluminium", "mArt": "l'aluminium", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [440, 468, 495, 522, 550, 578, 605, 632, 660], "conclusions": ["Acier : le plateau entier demande moins d'énergie grise.", "Aluminium : le plateau entier demande moins d'énergie grise.", "Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "gardeboue", "systeme": "Vélo de ville", "piece": "Garde-boue arrière", "le": "le garde-boue", "du": "du garde-boue", "f": false, "cdc": ["Le garde-boue reçoit l'eau et la boue projetées par la roue.", "Il reçoit des petits coups (graviers, vélo couché au sol) : il ne doit pas casser.", "Il ne doit pas alourdir le vélo.", "Il doit coûter peu."], "fu": ["Transporter des passagers", "Permettre à une personne de se déplacer à la force des jambes", "Produire de l'électricité"], "ft": ["Guider la chaîne", "Protéger le cycliste des projections d'eau et de boue", "Soutenir la selle"], "pos": ["Sous le pédalier, autour de la chaîne", "Sur le guidon, devant le cycliste", "Au-dessus de la roue arrière, fixé au cadre"], "cartes": [{"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "cout", "texte": "Coûter peu (€ ou €€)"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "leger", "texte": "Être léger (2 g/cm³ au plus)"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "elec", "texte": "Conduire l'électricité"}], "candidats": [{"id": "pmma", "nom": "PMMA (plexiglas)"}, {"id": "pp", "nom": "PP (polypropylène)"}, {"id": "acier", "nom": "Acier"}], "candidatsAdaptes": ["pmma", "pp"], "proprietes": [{"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "afe25f3ed", "texte": "Le PMMA est écarté : il est attiré par un aimant, or le garde-boue doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a13652310", "texte": "L'acier est écarté : il s'abîme dans l'eau, or le garde-boue doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a469bf6ff", "texte": "Le PMMA est écarté : il s'abîme dans l'eau, or le garde-boue doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a190fb136", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or le garde-boue doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "ae6a54e6f", "texte": "Le PMMA est écarté : il résiste mal aux chocs, or le garde-boue doit respecter le critère « Résister aux chocs (3/5 au moins) »."}, {"id": "a99f52129", "texte": "L'acier est écarté : il résiste mal aux chocs, or le garde-boue doit respecter le critère « Résister aux chocs (3/5 au moins) »."}], "ex5": {"m": "pp", "mNom": "PP (polypropylène)", "mArt": "le PP", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [104, 110, 117, 124, 130, 136, 143, 150, 156], "conclusions": ["PP (polypropylène) : le garde-boue entier demande moins d'énergie grise.", "Acier : le garde-boue entier demande moins d'énergie grise.", "Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "casquevelo", "systeme": "Casque de vélo", "piece": "Calotte extérieure", "le": "la calotte", "du": "de la calotte", "f": true, "cdc": ["En cas de chute, la calotte reçoit un choc violent : elle ne doit pas éclater.", "Le casque se porte sur la tête pendant tout le trajet : il doit être léger.", "On roule sous la pluie.", "Il serait bien qu'elle se recycle en fin de vie."], "fu": ["Éclairer la route la nuit", "Protéger la tête du cycliste en cas de chute", "Garder la tête au chaud"], "ft": ["Répartir le choc sur toute la mousse intérieure", "Retenir le casque sous le menton", "Régler la taille du casque"], "pos": ["À l'extérieur, collée sur la mousse qui entoure la tête", "Sous le menton, sur la sangle", "À l'intérieur, contre les cheveux"], "cartes": [{"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "elec", "texte": "Conduire l'électricité"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "leger", "texte": "Être léger (2 g/cm³ au plus)"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "usure", "texte": "Résister à l'usure"}, {"id": "chocs", "texte": "Résister aux chocs (4/5 au moins)"}], "candidats": [{"id": "alu", "nom": "Aluminium"}, {"id": "abs", "nom": "ABS"}, {"id": "pmma", "nom": "PMMA (plexiglas)"}], "candidatsAdaptes": ["abs", "pmma"], "proprietes": [{"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}, {"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}], "arguments": [{"id": "a781e602b", "texte": "L'aluminium est écarté : il ne conduit pas la chaleur, or la calotte doit respecter le critère « Conduire la chaleur »."}, {"id": "afcc91528", "texte": "Le PMMA est écarté : il ne résiste pas à plus de 200 °C, or la calotte doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a87907fab", "texte": "Le PMMA est écarté : il est trop lourd, or la calotte doit respecter le critère « Être léger (2 g/cm³ au plus) »."}, {"id": "a1e267077", "texte": "L'aluminium est écarté : il résiste mal aux chocs, or la calotte doit respecter le critère « Résister aux chocs (4/5 au moins) »."}, {"id": "a67dd473d", "texte": "Le PMMA est écarté : il résiste mal aux chocs, or la calotte doit respecter le critère « Résister aux chocs (4/5 au moins) »."}, {"id": "a48eb3033", "texte": "L'aluminium est écarté : il s'abîme dans l'eau, or la calotte doit respecter le critère « Résister à l'eau et à l'humidité »."}], "ex5": {"m": "abs", "mNom": "ABS", "mArt": "l'ABS", "n": "alu", "nNom": "Aluminium", "nArt": "l'aluminium", "volumes": [120, 128, 135, 142, 150, 158, 165, 172, 180], "conclusions": ["Aluminium : la calotte entière demande moins d'énergie grise.", "ABS : la calotte entière demande moins d'énergie grise.", "ABS : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "manette", "systeme": "Manette de console de jeu", "piece": "Boîtier", "le": "le boîtier", "du": "du boîtier", "f": false, "cdc": ["Le boîtier enferme une carte électronique et une batterie.", "La manette tombe souvent par terre : le boîtier ne doit pas se fendre.", "On la tient en main pendant des heures : elle doit être légère.", "Elle doit coûter peu."], "fu": ["Recharger la console", "Permettre au joueur de commander un jeu vidéo", "Afficher l'image du jeu"], "ft": ["Protéger la carte électronique et se tenir en main", "Convertir l'énergie électrique en son", "Transmettre l'image à l'écran"], "pos": ["Dans la console, sous le lecteur de disque", "Autour de la carte électronique, des boutons et de la batterie", "Au bout du câble de recharge"], "cartes": [{"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "chocs", "texte": "Résister aux chocs (4/5 au moins)"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "leger", "texte": "Être léger (2 g/cm³ au plus)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "cout", "texte": "Coûter peu (€ ou €€)"}], "candidats": [{"id": "pla", "nom": "PLA"}, {"id": "abs", "nom": "ABS"}, {"id": "alu", "nom": "Aluminium"}], "candidatsAdaptes": ["abs", "pla"], "proprietes": [{"champ": "elec", "libelle": "Électricité", "unite": ""}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "a63f8463f", "texte": "Le PLA est écarté : il résiste mal aux chocs, or le boîtier doit respecter le critère « Résister aux chocs (4/5 au moins) »."}, {"id": "a766c7f19", "texte": "L'aluminium est écarté : il conduit l'électricité, or le boîtier doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}, {"id": "a9e390677", "texte": "Le PLA est écarté : il conduit l'électricité, or le boîtier doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}, {"id": "accc02f8c", "texte": "Le PLA est écarté : il est attiré par un aimant, or le boîtier doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a27b3e24b", "texte": "L'aluminium est écarté : il s'abîme dans l'eau, or le boîtier doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a20dade9b", "texte": "L'aluminium est écarté : il ne résiste pas à plus de 200 °C, or le boîtier doit respecter le critère « Résister à plus de 200 °C »."}], "ex5": {"m": "abs", "mNom": "ABS", "mArt": "l'ABS", "n": "pla", "nNom": "PLA", "nArt": "le PLA", "volumes": [60, 64, 68, 71, 75, 79, 82, 86, 90], "conclusions": ["ABS : le boîtier entier demande moins d'énergie grise.", "PLA : le boîtier entier demande moins d'énergie grise.", "PLA : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "smartphone", "systeme": "Smartphone", "piece": "Cadre (châssis)", "le": "le cadre", "du": "du cadre", "f": false, "cdc": ["Le cadre ne doit pas se tordre dans une poche ou un sac.", "Le téléphone se porte sur soi toute la journée : il doit rester léger.", "Il doit résister à une chute sur le sol.", "Il serait bien qu'il se recycle en fin de vie."], "fu": ["Permettre à une personne de communiquer et de s'informer", "Chauffer une pièce", "Imprimer des documents"], "ft": ["Capter le son de la voix", "Rigidifier le téléphone et tenir l'écran et le dos", "Stocker l'énergie électrique"], "pos": ["Tout autour du téléphone, entre l'écran et le dos", "Dans le chargeur branché au mur", "Derrière l'écran, collé à la batterie"], "cartes": [{"id": "tient80", "texte": "Supporter 80 °C"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "rigide", "texte": "Être rigide (4/5 au moins)"}, {"id": "leger", "texte": "Être léger (3 g/cm³ au plus)"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}], "candidats": [{"id": "pp", "nom": "PP (polypropylène)"}, {"id": "acier", "nom": "Acier"}, {"id": "alu", "nom": "Aluminium"}], "candidatsAdaptes": ["acier", "alu"], "proprietes": [{"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}], "arguments": [{"id": "aa80c3b7d", "texte": "Le PP est écarté : il est attiré par un aimant, or le cadre doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a10c9e2b1", "texte": "L'acier est écarté : il est trop lourd, or le cadre doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "af159e7da", "texte": "Le PP est écarté : il n'est pas assez rigide, or le cadre doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "a2f8c0cb3", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or le cadre doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "ab1372fee", "texte": "Le PP est écarté : il est trop lourd, or le cadre doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "ac9c6a492", "texte": "L'acier est écarté : il n'est pas assez rigide, or le cadre doit respecter le critère « Être rigide (4/5 au moins) »."}], "ex5": {"m": "alu", "mNom": "Aluminium", "mArt": "l'aluminium", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [8.8, 9.3, 9.9, 10.4, 11.0, 11.6, 12.1, 12.6, 13.2], "conclusions": ["Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "Aluminium : le cadre entier demande moins d'énergie grise.", "Acier : le cadre entier demande moins d'énergie grise."]}}, {"id": "enceinte", "systeme": "Enceinte Bluetooth étanche", "piece": "Grille avant", "le": "la grille", "du": "de la grille", "f": true, "cdc": ["L'enceinte s'utilise au bord de la piscine : la grille reçoit de l'eau.", "La grille est très fine et percée de trous : elle ne doit pas se déformer.", "L'enceinte se transporte dans un sac : elle doit rester légère.", "Il serait bien qu'elle se recycle en fin de vie."], "fu": ["Éclairer une pièce", "Permettre d'écouter de la musique sans fil, même dehors", "Enregistrer des vidéos"], "ft": ["Capter le signal Bluetooth", "Recharger la batterie", "Protéger le haut-parleur tout en laissant passer le son"], "pos": ["Devant le haut-parleur, sur la face avant", "Sous l'enceinte, contre la table", "Dans la prise de recharge"], "cartes": [{"id": "rigide", "texte": "Être rigide (4/5 au moins)"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "tient80", "texte": "Supporter 80 °C"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "leger", "texte": "Être léger (3 g/cm³ au plus)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}], "candidats": [{"id": "alu", "nom": "Aluminium"}, {"id": "bois", "nom": "Bois"}, {"id": "acier", "nom": "Acier"}], "candidatsAdaptes": ["acier", "alu"], "proprietes": [{"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}, {"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "a54bef512", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or la grille doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "acc18ce0b", "texte": "Le bois est écarté : il s'abîme dans l'eau, or la grille doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a5e1489b7", "texte": "Le bois est écarté : il est attiré par un aimant, or la grille doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "aca6fb39a", "texte": "Le bois est écarté : il est trop lourd, or la grille doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "a16289fe0", "texte": "L'acier est écarté : il s'abîme dans l'eau, or la grille doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "aa4bbdf2b", "texte": "L'acier est écarté : il n'est pas assez rigide, or la grille doit respecter le critère « Être rigide (4/5 au moins) »."}], "ex5": {"m": "alu", "mNom": "Aluminium", "mArt": "l'aluminium", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0], "conclusions": ["Aluminium : la grille entière demande moins d'énergie grise.", "Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "Acier : la grille entière demande moins d'énergie grise."]}}, {"id": "sechecheveux", "systeme": "Sèche-cheveux", "piece": "Carter (coque)", "le": "le carter", "du": "du carter", "f": false, "cdc": ["L'air chaud qui sort près du carter atteint 90 °C.", "Le carter enferme des fils et une résistance branchés sur le secteur (230 V).", "Le sèche-cheveux tombe parfois sur le carrelage : le carter ne doit pas se fendre.", "Il doit coûter peu."], "fu": ["Chauffer l'eau de la douche", "Permettre de sécher et coiffer les cheveux", "Aspirer la poussière"], "ft": ["Produire la chaleur", "Guider l'air chaud et protéger la main de la résistance", "Faire tourner le ventilateur"], "pos": ["Au bout du câble, dans la prise", "À l'intérieur du moteur, sur l'axe", "Tout autour du moteur, du ventilateur et de la résistance chauffante"], "cartes": [{"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "cout", "texte": "Coûter peu (€ ou €€)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "usure", "texte": "Résister à l'usure"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "chocs", "texte": "Résister aux chocs (4/5 au moins)"}, {"id": "tient80", "texte": "Supporter 90 °C"}], "candidats": [{"id": "pa6", "nom": "PA (nylon)"}, {"id": "abs", "nom": "ABS"}, {"id": "alu", "nom": "Aluminium"}], "candidatsAdaptes": ["abs", "pa6"], "proprietes": [{"champ": "tempMax", "libelle": "Temp. max (°C)", "unite": ""}, {"champ": "elec", "libelle": "Électricité", "unite": ""}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}], "arguments": [{"id": "a810113da", "texte": "L'ABS est écarté : il conduit l'électricité, or le carter doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}, {"id": "a2f9a3c9a", "texte": "L'aluminium est écarté : il ne supporte pas 90 °C, or le carter doit respecter le critère « Supporter 90 °C »."}, {"id": "af387b13c", "texte": "L'aluminium est écarté : il est attiré par un aimant, or le carter doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "af2583831", "texte": "L'ABS est écarté : il ne résiste pas à plus de 200 °C, or le carter doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a14f9d7a3", "texte": "L'aluminium est écarté : il conduit l'électricité, or le carter doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}, {"id": "ad65a1b56", "texte": "L'ABS est écarté : il ne supporte pas 90 °C, or le carter doit respecter le critère « Supporter 90 °C »."}], "ex5": {"m": "pa6", "mNom": "PA (nylon)", "mArt": "le PA (nylon)", "n": "alu", "nNom": "Aluminium", "nArt": "l'aluminium", "volumes": [104, 110, 117, 124, 130, 136, 143, 150, 156], "conclusions": ["Aluminium : le carter entier demande moins d'énergie grise.", "PA (nylon) : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "PA (nylon) : le carter entier demande moins d'énergie grise."]}}, {"id": "bouilloire", "systeme": "Bouilloire électrique", "piece": "Cuve", "le": "la cuve", "du": "de la cuve", "f": true, "cdc": ["La cuve contient de l'eau bouillante : 100 °C.", "Elle est remplie d'eau plusieurs fois par jour pendant des années.", "On la pose parfois brusquement sur l'évier : elle ne doit pas casser.", "Il serait bien qu'elle se recycle en fin de vie."], "fu": ["Garder les aliments au frais", "Filtrer l'eau du robinet", "Permettre de faire chauffer de l'eau rapidement"], "ft": ["Contenir l'eau pendant qu'elle chauffe", "Verser l'eau sans éclabousser", "Couper le courant quand l'eau bout"], "pos": ["Dans la prise murale", "Au-dessus du socle chauffant, sous le couvercle", "Sous le socle, contre le plan de travail"], "cartes": [{"id": "tient80", "texte": "Supporter 100 °C"}, {"id": "elec", "texte": "Conduire l'électricité"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "usure", "texte": "Résister à l'usure"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}], "candidats": [{"id": "pmma", "nom": "PMMA (plexiglas)"}, {"id": "inox", "nom": "Inox"}, {"id": "acier", "nom": "Acier"}], "candidatsAdaptes": ["acier", "inox"], "proprietes": [{"champ": "tempMax", "libelle": "Temp. max (°C)", "unite": ""}, {"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}], "arguments": [{"id": "abb5c742a", "texte": "L'acier est écarté : il s'abîme dans l'eau, or la cuve doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "ab03c9ffd", "texte": "Le PMMA est écarté : il s'abîme dans l'eau, or la cuve doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a1d9751e3", "texte": "Le PMMA est écarté : il ne supporte pas 100 °C, or la cuve doit respecter le critère « Supporter 100 °C »."}, {"id": "a79abaea2", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or la cuve doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a21bf1816", "texte": "L'acier est écarté : il ne supporte pas 100 °C, or la cuve doit respecter le critère « Supporter 100 °C »."}, {"id": "a4d9fc8fa", "texte": "Le PMMA est écarté : il est attiré par un aimant, or la cuve doit respecter le critère « Ne pas être attiré par un aimant »."}], "ex5": {"m": "inox", "mNom": "Inox", "mArt": "l'inox", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [40, 42, 45, 48, 50, 52, 55, 57, 60], "conclusions": ["Inox : la cuve entière demande moins d'énergie grise.", "Acier : la cuve entière demande moins d'énergie grise.", "Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "brosseadents", "systeme": "Brosse à dents électrique", "piece": "Manche", "le": "le manche", "du": "du manche", "f": false, "cdc": ["Le manche est mouillé à chaque brossage.", "Il enferme un moteur et une batterie : l'électricité ne doit pas atteindre la main mouillée.", "On le tient en main deux minutes : il doit être léger.", "Il doit coûter peu."], "fu": ["Sécher les cheveux", "Permettre de se brosser les dents efficacement", "Mesurer la température du corps"], "ft": ["Faire vibrer la tête de brosse", "Recharger la batterie", "Enfermer le moteur et la batterie et se tenir en main"], "pos": ["Sous la tête de brosse, autour du moteur et de la batterie", "Dans le socle de recharge", "Au bout des poils"], "cartes": [{"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "leger", "texte": "Être léger (2 g/cm³ au plus)"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "usure", "texte": "Résister à l'usure"}, {"id": "cout", "texte": "Coûter peu (€ ou €€)"}], "candidats": [{"id": "bois", "nom": "Bois"}, {"id": "pp", "nom": "PP (polypropylène)"}, {"id": "acier", "nom": "Acier"}], "candidatsAdaptes": ["bois", "pp"], "proprietes": [{"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}, {"champ": "elec", "libelle": "Électricité", "unite": ""}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "a5d32095d", "texte": "Le bois est écarté : il est attiré par un aimant, or le manche doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "ac03b1862", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or le manche doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "aa6cd9a72", "texte": "L'acier est écarté : il s'abîme dans l'eau, or le manche doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a1ac3284c", "texte": "Le bois est écarté : il s'abîme dans l'eau, or le manche doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a853765fd", "texte": "Le bois est écarté : il conduit l'électricité, or le manche doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}, {"id": "aaf4b6e34", "texte": "L'acier est écarté : il ne conduit pas la chaleur, or le manche doit respecter le critère « Conduire la chaleur »."}], "ex5": {"m": "pp", "mNom": "PP (polypropylène)", "mArt": "le PP", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [22, 23, 24, 26, 27, 28, 30, 31, 32], "conclusions": ["Acier : le manche entier demande moins d'énergie grise.", "PP (polypropylène) : le manche entier demande moins d'énergie grise.", "Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "lampe", "systeme": "Lampe de bureau LED", "piece": "Bras articulé", "le": "le bras", "du": "du bras", "f": false, "cdc": ["Le bras porte la tête lumineuse à bout de bras : il ne doit pas fléchir.", "La lampe se déplace souvent d'une table à l'autre : elle doit rester légère.", "On la fait parfois tomber du bureau.", "Il serait bien qu'il se recycle en fin de vie."], "fu": ["Chauffer le bureau", "Ventiler la pièce", "Permettre d'éclairer un plan de travail"], "ft": ["Transformer la tension du secteur", "Produire la lumière", "Porter la tête lumineuse et la garder orientée"], "pos": ["Dans la tête, derrière les LED", "Entre le socle posé sur le bureau et la tête lumineuse", "Sous le socle, contre le bureau"], "cartes": [{"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "rigide", "texte": "Être rigide (4/5 au moins)"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "leger", "texte": "Être léger (3 g/cm³ au plus)"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}], "candidats": [{"id": "pla", "nom": "PLA"}, {"id": "alu", "nom": "Aluminium"}, {"id": "verre", "nom": "Verre"}], "candidatsAdaptes": ["alu", "verre"], "proprietes": [{"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}], "arguments": [{"id": "a0ef4c4a2", "texte": "Le PLA est écarté : il est trop lourd, or le bras doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "a480e7e74", "texte": "Le verre est écarté : il est attiré par un aimant, or le bras doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "ae7c01916", "texte": "Le PLA est écarté : il ne résiste pas à plus de 200 °C, or le bras doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "ab5ba0c14", "texte": "Le verre est écarté : il n'est pas assez rigide, or le bras doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "ab25119c2", "texte": "Le PLA est écarté : il n'est pas assez rigide, or le bras doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "a8ab1eb33", "texte": "Le verre est écarté : il résiste mal aux chocs, or le bras doit respecter le critère « Résister aux chocs (3/5 au moins) »."}], "ex5": {"m": "alu", "mNom": "Aluminium", "mArt": "l'aluminium", "n": "verre", "nNom": "Verre", "nArt": "le verre", "volumes": [60, 64, 68, 71, 75, 79, 82, 86, 90], "conclusions": ["Verre : le bras entier demande moins d'énergie grise.", "Aluminium : le bras entier demande moins d'énergie grise.", "Verre : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "skate", "systeme": "Skateboard", "piece": "Planche", "le": "la planche", "du": "de la planche", "f": true, "cdc": ["La planche reçoit des chocs à chaque saut et à chaque chute.", "Elle supporte le skateur sans se tordre.", "Le skateur la soulève avec ses pieds pendant les figures : elle doit être très légère.", "Elle doit coûter peu."], "fu": ["Permettre de rouler et de faire des figures", "Transporter des courses", "Ranger des affaires"], "ft": ["Fixer les roues à l'axe", "Supporter le skateur et fléchir sans casser", "Faire tourner les roues"], "pos": ["Entre la roue et l'axe", "Sous le truck, contre le sol", "Sous les pieds, vissée sur les deux trucks"], "cartes": [{"id": "cout", "texte": "Coûter peu (€ ou €€)"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "rigide", "texte": "Être rigide (3/5 au moins)"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "leger", "texte": "Être léger (1 g/cm³ au plus)"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}], "candidats": [{"id": "acier", "nom": "Acier"}, {"id": "verre", "nom": "Verre"}, {"id": "bois", "nom": "Bois"}], "candidatsAdaptes": ["acier", "bois"], "proprietes": [{"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "a2f217c74", "texte": "L'acier est écarté : il est trop lourd, or la planche doit respecter le critère « Être léger (1 g/cm³ au plus) »."}, {"id": "ad398663b", "texte": "Le verre est écarté : il n'est pas assez rigide, or la planche doit respecter le critère « Être rigide (3/5 au moins) »."}, {"id": "a43e76e60", "texte": "L'acier est écarté : il résiste mal aux chocs, or la planche doit respecter le critère « Résister aux chocs (3/5 au moins) »."}, {"id": "af076a87e", "texte": "Le verre est écarté : il ne résiste pas à plus de 200 °C, or la planche doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a36760bce", "texte": "L'acier est écarté : il est attiré par un aimant, or la planche doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "add6319cc", "texte": "Le verre est écarté : il résiste mal aux chocs, or la planche doit respecter le critère « Résister aux chocs (3/5 au moins) »."}], "ex5": {"m": "bois", "mNom": "Bois", "mArt": "le bois", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400], "conclusions": ["Acier : la planche entière demande moins d'énergie grise.", "Bois : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "Bois : la planche entière demande moins d'énergie grise."]}}, {"id": "roller", "systeme": "Roller en ligne", "piece": "Platine", "le": "la platine", "du": "de la platine", "f": true, "cdc": ["La platine garde les quatre roues parfaitement alignées : elle ne doit pas se tordre.", "Elle reçoit les chocs des trottoirs et des sauts.", "Le patineur la soulève à chaque poussée : elle doit rester légère.", "Il serait bien qu'elle se recycle en fin de vie."], "fu": ["Permettre de patiner sur le bitume", "Marcher sur la neige", "Nager plus vite"], "ft": ["Relier la chaussure aux roues et garder les roues alignées", "Freiner le roller", "Amortir le pied"], "pos": ["À l'intérieur de la chaussure, sous le pied", "Sous la chaussure, entre la semelle et les roues", "Au centre de chaque roue"], "cartes": [{"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "rigide", "texte": "Être rigide (4/5 au moins)"}, {"id": "leger", "texte": "Être léger (3 g/cm³ au plus)"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "tient80", "texte": "Supporter 80 °C"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "chocs", "texte": "Résister aux chocs (3/5 au moins)"}], "candidats": [{"id": "bois", "nom": "Bois"}, {"id": "alu", "nom": "Aluminium"}, {"id": "pmma", "nom": "PMMA (plexiglas)"}], "candidatsAdaptes": ["alu", "bois"], "proprietes": [{"champ": "notes.rigidite", "libelle": "Rigidité", "unite": "/5"}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}], "arguments": [{"id": "aa7ccad58", "texte": "Le bois est écarté : il résiste mal aux chocs, or la platine doit respecter le critère « Résister aux chocs (3/5 au moins) »."}, {"id": "a61b91503", "texte": "Le PMMA est écarté : il est attiré par un aimant, or la platine doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a52f26d00", "texte": "Le PMMA est écarté : il est trop lourd, or la platine doit respecter le critère « Être léger (3 g/cm³ au plus) »."}, {"id": "a7cbf8c72", "texte": "Le bois est écarté : il ne résiste pas à plus de 200 °C, or la platine doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a3959e60d", "texte": "Le bois est écarté : il n'est pas assez rigide, or la platine doit respecter le critère « Être rigide (4/5 au moins) »."}, {"id": "a018c6464", "texte": "Le PMMA est écarté : il n'est pas assez rigide, or la platine doit respecter le critère « Être rigide (4/5 au moins) »."}], "ex5": {"m": "alu", "mNom": "Aluminium", "mArt": "l'aluminium", "n": "pmma", "nNom": "PMMA (plexiglas)", "nArt": "le PMMA", "volumes": [44, 47, 50, 52, 55, 58, 61, 63, 66], "conclusions": ["PMMA (plexiglas) : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "PMMA (plexiglas) : la platine entière demande moins d'énergie grise.", "Aluminium : la platine entière demande moins d'énergie grise."]}}, {"id": "gourde", "systeme": "Gourde isotherme", "piece": "Paroi intérieure", "le": "la paroi intérieure", "du": "de la paroi intérieure", "f": true, "cdc": ["La paroi est en contact permanent avec l'eau, le thé ou le jus.", "On y verse des boissons chaudes, jusqu'à 80 °C.", "La gourde tombe souvent du sac : la paroi ne doit pas se briser.", "Il serait bien qu'elle se recycle en fin de vie."], "fu": ["Faire bouillir de l'eau", "Permettre de transporter une boisson en la gardant chaude ou froide", "Filtrer l'eau d'une rivière"], "ft": ["Contenir la boisson sans la laisser fuir", "Isoler la gourde du soleil", "Visser le bouchon"], "pos": ["À l'intérieur, en contact avec la boisson, entourée de la paroi extérieure", "Sur le bouchon, au-dessus du filetage", "Sous la gourde, contre la table"], "cartes": [{"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "chocs", "texte": "Résister aux chocs (4/5 au moins)"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "elec", "texte": "Conduire l'électricité"}, {"id": "recyclable", "texte": "Se recycler en fin de vie"}, {"id": "tient80", "texte": "Supporter 80 °C"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}], "candidats": [{"id": "verre", "nom": "Verre"}, {"id": "inox", "nom": "Inox"}, {"id": "acier", "nom": "Acier"}], "candidatsAdaptes": ["acier", "inox"], "proprietes": [{"champ": "notes.eau", "libelle": "Résistance à l'eau", "unite": "/5"}, {"champ": "tempMax", "libelle": "Temp. max (°C)", "unite": ""}, {"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}], "arguments": [{"id": "a0c36c468", "texte": "L'acier est écarté : il s'abîme dans l'eau, or la paroi intérieure doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a20e10c24", "texte": "L'acier est écarté : il ne supporte pas 80 °C, or la paroi intérieure doit respecter le critère « Supporter 80 °C »."}, {"id": "a96eb9eff", "texte": "Le verre est écarté : il est attiré par un aimant, or la paroi intérieure doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a7c47de76", "texte": "L'acier est écarté : il ne résiste pas à plus de 200 °C, or la paroi intérieure doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a86d104f9", "texte": "Le verre est écarté : il s'abîme dans l'eau, or la paroi intérieure doit respecter le critère « Résister à l'eau et à l'humidité »."}, {"id": "a6bbb8e0a", "texte": "Le verre est écarté : il résiste mal aux chocs, or la paroi intérieure doit respecter le critère « Résister aux chocs (4/5 au moins) »."}], "ex5": {"m": "inox", "mNom": "Inox", "mArt": "l'inox", "n": "verre", "nNom": "Verre", "nArt": "le verre", "volumes": [12.0, 12.8, 13.5, 14.2, 15.0, 15.8, 16.5, 17.2, 18.0], "conclusions": ["Inox : la paroi intérieure entière demande moins d'énergie grise.", "Verre : la paroi intérieure entière demande moins d'énergie grise.", "Verre : son énergie grise par gramme est la plus faible, c'est ce qui compte."]}}, {"id": "casqueaudio", "systeme": "Casque audio", "piece": "Coque d'écouteur", "le": "la coque", "du": "de la coque", "f": true, "cdc": ["La coque enferme le haut-parleur et ses fils électriques.", "Le casque tombe parfois par terre : la coque ne doit pas se fendre.", "On le porte des heures sur la tête : il doit être léger.", "Il doit coûter peu."], "fu": ["Protéger la tête en cas de chute", "Permettre d'écouter de la musique sans déranger les autres", "Enregistrer la voix"], "ft": ["Régler la taille du casque", "Loger le haut-parleur et ses fils", "Transformer le signal électrique en son"], "pos": ["Au sommet de la tête, sous l'arceau", "Sur le côté de la tête, autour de chaque haut-parleur, au bout de l'arceau", "Dans la prise jack du téléphone"], "cartes": [{"id": "chocs", "texte": "Résister aux chocs (4/5 au moins)"}, {"id": "chaleur200", "texte": "Résister à plus de 200 °C"}, {"id": "cout", "texte": "Coûter peu (€ ou €€)"}, {"id": "leger", "texte": "Être léger (2 g/cm³ au plus)"}, {"id": "isolant", "texte": "Ne pas conduire l'électricité (isolant)"}, {"id": "conduitChaleur", "texte": "Conduire la chaleur"}, {"id": "eau", "texte": "Résister à l'eau et à l'humidité"}, {"id": "amagnetique", "texte": "Ne pas être attiré par un aimant"}], "candidats": [{"id": "acier", "nom": "Acier"}, {"id": "abs", "nom": "ABS"}, {"id": "porcelaine", "nom": "Porcelaine"}], "candidatsAdaptes": ["abs", "acier"], "proprietes": [{"champ": "notes.chocs", "libelle": "Résistance aux chocs", "unite": "/5"}, {"champ": "masseVolumique", "libelle": "Masse volumique", "unite": "g/cm³"}, {"champ": "elec", "libelle": "Électricité", "unite": ""}], "arguments": [{"id": "af2d2c179", "texte": "La porcelaine est écartée : elle résiste mal aux chocs, or la coque doit respecter le critère « Résister aux chocs (4/5 au moins) »."}, {"id": "a005ad5b2", "texte": "L'acier est écarté : il est attiré par un aimant, or la coque doit respecter le critère « Ne pas être attiré par un aimant »."}, {"id": "a06603e1f", "texte": "L'acier est écarté : il résiste mal aux chocs, or la coque doit respecter le critère « Résister aux chocs (4/5 au moins) »."}, {"id": "a51ea65e6", "texte": "La porcelaine est écartée : elle ne résiste pas à plus de 200 °C, or la coque doit respecter le critère « Résister à plus de 200 °C »."}, {"id": "a093fa046", "texte": "L'acier est écarté : il est trop lourd, or la coque doit respecter le critère « Être léger (2 g/cm³ au plus) »."}, {"id": "a3f4dc3ce", "texte": "La porcelaine est écartée : elle conduit l'électricité, or la coque doit respecter le critère « Ne pas conduire l'électricité (isolant) »."}], "ex5": {"m": "abs", "mNom": "ABS", "mArt": "l'ABS", "n": "acier", "nNom": "Acier", "nArt": "l'acier", "volumes": [16, 17, 18, 19, 20, 21, 22, 23, 24], "conclusions": ["Acier : son énergie grise par gramme est la plus faible, c'est ce qui compte.", "Acier : la coque entière demande moins d'énergie grise.", "ABS : la coque entière demande moins d'énergie grise."]}}], "familles": [{"id": "metal", "nom": "Matériaux métalliques", "sous": ["Ferreux", "Non ferreux"]}, {"id": "organique", "nom": "Matériaux organiques", "sous": ["Naturels (bois, carton, liège)", "Synthétiques (plastiques, caoutchoucs)"]}, {"id": "ceramique", "nom": "Céramiques et minéraux", "sous": ["Verres", "Céramiques", "Pierres et bétons"]}, {"id": "composite", "nom": "Composites", "sous": ["Renfort + matrice"]}], "tempMax": ["≈ 50", "70", "100", "≈ 150 (noircit au-delà)", "> 200", "> 300", "> 400", "> 1000"], "quantites": [5000, 10000, 20000, 50000], "definitions": ["L’énergie électrique stockée dans la batterie de l’objet", "Toute l’énergie nécessaire pour extraire la matière, fabriquer la pièce, la transporter et la traiter en fin de vie", "L’énergie que la pièce consomme pendant qu’on utilise l’objet"], "etapes": [["extraction", "Extraire la matière première"], ["fabrication", "Fabriquer la pièce"], ["transport", "Transporter la pièce"], ["utilisation", "Utiliser l'objet"], ["fin", "Traiter la pièce en fin de vie"]], "vf": "Un matériau recyclable fait toujours économiser de l’énergie.", "comp": {"1.3": "Caractériser et choisir un objet ou un système technique selon différents critères", "1.2": "Décrire les interactions entre un objet ou un système technique, son environnement et les utilisateurs"}, "bareme4": [["Q1", "1.2", 1.5, "Fonction d'usage du système"], ["Q2", "1.2", 1.5, "Fonction technique de la pièce"], ["Q3", "1.2", 1.0, "Position de la pièce dans le système"], ["Q4", "1.2", 4.0, "Les critères du cahier des charges"], ["Q5", "1.3", 4.5, "Relevé des propriétés"], ["Q6", "1.3", 3.0, "Matériau retenu"], ["Q7", "1.3", 1.5, "Famille et sous-famille"], ["Q8", "1.3", 3.0, "Deux arguments"]], "bareme5": [["Q1", "1.3", 1.5, "Définition de l'énergie grise"], ["Q2", "1.2", 2.0, "Étapes du cycle de vie comptées"], ["Q3", "1.3", 1.0, "Masse volumique du matériau"], ["Q4", "1.3", 1.0, "Énergie grise du matériau"], ["Q5", "1.3", 2.5, "Masse de la pièce"], ["Q6", "1.3", 2.5, "Énergie grise de la pièce"], ["Q7", "1.3", 2.5, "Énergie grise de la série (MJ)"], ["Q8", "1.3", 2.0, "La pièce dans le second matériau"], ["Q9", "1.3", 1.0, "Combien de fois plus (ou moins)"], ["Q10", "1.2", 2.0, "Conclusion pour l'environnement"], ["Q11", "1.2", 2.0, "Recyclable ou recyclé"]], "bonus4": 1.0, "urlMateriautheque": "https://blanchardromain-cyber.github.io/materiautheque/?niveau=4&catalogue"};
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvUMmHHkm6Ia0tKIos-yt7NABmGeudS6CgYItDdtQNy5lmjSHX9MhZZLvI8_9xMu3-/exec";
+var SYNC_SECRET = "TECHNO-RB-2026-12MAI";
+var REPORT_URL = "https://script.google.com/macros/s/AKfycbyhmOc5vALJLRkdLrY7LksfjnW3V4ZTAR-sfBejCpkzu8bTgVm1YqjFhJ-l-_7CJdoP6Q/exec";
+var REPORT_SECRET = "P11-EX5-2026";
+var CAP_ID = "p11-ex5", CAP_LABEL = "P11 — Exercice n°5 (Énergie Grise)";
+var PREFILL_KEY = "p11ex45_prefill", QUEUE_KEY = CAP_ID + "_offline_queue", DRAFT_PFX = CAP_ID + "_draft_";
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+function fr(x,dec){ if(x==null||isNaN(x)) return "?"; return Number(x).toLocaleString("fr-FR",{maximumFractionDigits:dec==null?2:dec}); }
+function flash(id,html,type){ var b=$(id); if(!b) return; b.className="msg "+(type||"info"); b.innerHTML=html; }
+function val(id){ var e=$(id); return e?String(e.value||"").trim():""; }
+function slug(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+function maj(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function nombre(x){ var t=String(x==null?"":x).replace(/[\s  ]/g,"").replace(",","."); return /^[-+]?\d*\.?\d+$/.test(t)?parseFloat(t):NaN; }
+
+var ETAT = { rep:{}, debut:0, actif:0, envoye:false, etape:0, vus:{}, pouces:0, adapt:{}, chronoMasque:false };
+var USER = { id:"", p:"", n:"", c:"", prof:false };
+var SUJET = null, ATT = null;   /* sujet public et attribution { s, v, q } */
+
+/* ═══ glossaire (survol ou focus clavier) ═══ */
+var GLOSSAIRE = {
+  "fonction d'usage": "À quoi sert l'objet pour son utilisateur (le besoin auquel il répond).",
+  "fonction technique": "Ce que fait une pièce, à l'intérieur de l'objet, pour que l'objet remplisse sa fonction d'usage.",
+  "cahier des charges": "La liste de ce que la pièce doit respecter : ce qu'elle subit et ce qu'on attend d'elle.",
+  "critère": "Une exigence qu'on peut vérifier sur un matériau (par exemple : résister à l'eau).",
+  "masse volumique": "La masse d'un centimètre cube du matériau, en g/cm³ : plus elle est petite, plus le matériau est léger.",
+  "énergie grise": "Toute l'énergie qu'il faut pour qu'une pièce existe : extraire la matière, la transformer, fabriquer la pièce, la transporter, la traiter en fin de vie.",
+  "kJ": "Kilojoule : une unité d'énergie. 1 kJ = 1 000 joules.",
+  "MJ": "Mégajoule : 1 MJ = 1 000 kJ.",
+  "famille": "Grand groupe de matériaux selon leur origine : métalliques, organiques, céramiques, composites."
+};
+function gl(mot, texte){ return '<span class="gl" tabindex="0" data-def="'+esc(GLOSSAIRE[mot])+'">'+esc(texte||mot)+'</span>'; }
+
+/* ═══ aides (module d'adaptations) ═══ */
+var AIDES = EXERCICE===4
+  ? [["deux","Comparer 2 matériaux au lieu de 3 (le relevé est plus court, la note reste sur 20)"],
+     ["pouce","Afficher les coups de pouce à chaque étape (des indices, jamais la réponse)"]]
+  : [["guide","Calculs guidés : les opérations sont posées, il reste à les faire"],
+     ["pouce","Afficher les coups de pouce à chaque étape (des indices, jamais la réponse)"]];
+function aidesImposees(){ var t=String((ATT&&ATT.a)||"").toLowerCase(), o={};
+  if(/2 candidats|deux/.test(t)) o.deux=true; if(/guid/.test(t)) o.guide=true; if(/pouce/.test(t)) o.pouce=true; return o; }
+function construireAides(){
+  var imp=aidesImposees();
+  $("adaptListe").innerHTML=AIDES.map(function(a){
+    var ch=ETAT.adapt[a[0]]||imp[a[0]];
+    return '<label><input type="checkbox" data-aide="'+a[0]+'"'+(ch?" checked":"")+(imp[a[0]]?" disabled":"")+'> <span>'+esc(a[1])+
+      (imp[a[0]]?' <span class="impose">(prévue par ton professeur)</span>':"")+'</span></label>'; }).join("")+
+    '<p class="consigne" style="font-size:14px;color:var(--grey)">Toujours disponibles : 🔊 lecture des consignes, Confort de lecture (police, taille), '+(EXERCICE===5?"🧮 calculatrice, ":"")+'mots soulignés en pointillés à survoler.</p>';
+}
+function lireAides(){ var imp=aidesImposees(); AIDES.forEach(function(a){ var c=document.querySelector('[data-aide="'+a[0]+'"]'); ETAT.adapt[a[0]]=!!(imp[a[0]]||(c&&c.checked)); }); }
+function texteAdaptations(){
+  var l=[]; if(ETAT.adapt.deux) l.push("2 candidats"); if(ETAT.adapt.guide) l.push("calculs guidés");
+  if(ETAT.adapt.pouce) l.push("coups de pouce affichés"); if(ETAT.pouces) l.push(ETAT.pouces+" coup(s) de pouce lu(s)");
+  return l.join(", ")||"aucune";
+}
+
+/* ═══ construction des étapes ═══ */
+function radios(nom, liste){ return '<div class="choix" role="radiogroup">'+liste.map(function(t){
+  return '<label><input type="radio" name="'+nom+'" value="'+esc(t)+'"> <span>'+esc(t)+'</span></label>'; }).join("")+'</div>'; }
+function q(id, titre, pts, comp){ return '<h3><span>'+titre+'</span><span class="pts">'+fr(pts)+' pt'+(pts>1?"s":"")+'</span><span class="cp">'+comp+'</span></h3>'; }
+function pts(id){ var b=EXERCICE===4?DONNEES.bareme4:DONNEES.bareme5; for(var i=0;i<b.length;i++) if(b[i][0]===id) return b[i]; return [id,"",0]; }
+function Q(id, titre){ var b=pts(id); return q(id, titre, b[2], b[1]); }
+function pouce(ind){ return '<div class="pouce"><button type="button" class="tbtn" data-pouce data-nolecture>💡 Coup de pouce</button><div class="pouce-liste" data-ind="'+esc(JSON.stringify(ind))+'"></div></div>'; }
+function visuels(){
+  var s=SUJET;
+  return '<div class="visuels"><figure><img src="../../assets/p11-ex4/'+s.id+'.svg" alt="'+esc(s.systeme+" : "+s.le+" est en orange, hachuré, montré par la flèche « ta pièce »")+'"><figcaption>'+esc(s.systeme)+' — ta pièce en orange hachuré</figcaption></figure>'+
+    '<figure><img src="../../assets/p11-ex4/'+s.id+'-piece.svg" alt="'+esc(maj(s.le)+" seul, vue isolée")+'"><figcaption>'+esc(maj(s.le))+' seul'+(s.f?"e":"")+'</figcaption></figure></div>';
+}
+function lienCatalogue(){ return '<p><a class="btn sec" href="'+esc(DONNEES.urlMateriautheque)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">📚 Ouvrir le catalogue de la Matériauthèque (nouvel onglet)</a></p>'; }
+
+function etapesEx4(){
+  var s=SUJET, cand=candidatsVus();
+  var opts=function(p){
+    if(p.champ==="masseVolumique") return null;
+    var l=p.champ==="tempMax"?DONNEES.tempMax:p.champ==="elec"?["isolant","conducteur"]:["1","2","3","4","5"];
+    return '<option value="">…</option>'+l.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+(p.unite==="/5"?"/5":"")+'</option>'; }).join("");
+  };
+  return [
+    { titre:"1 · J'observe", html:
+      '<p class="consigne" data-consigne>Tu es technicien·ne au bureau d\'études. On te confie <b>'+esc(s.le)+'</b> de ce système : <b>'+esc(s.systeme)+'</b>. '+
+      '<b>Observe</b> le système, puis la pièce seule.</p>'+visuels()+
+      Q("Q1","Quelle est la "+gl("fonction d'usage")+" du système ?")+radios("q1",s.fu)+
+      Q("Q2","Quelle est la "+gl("fonction technique")+" "+esc(s.du)+" ?")+radios("q2",s.ft)+
+      Q("Q3","Où se trouve "+esc(s.le)+" dans le système ?")+radios("q3",s.pos)+
+      pouce(["Pour la fonction d'usage, demande-toi : à quoi sert l'objet entier pour la personne qui l'utilise ?",
+             "La fonction technique est ce que fait la pièce elle-même, à l'intérieur de l'objet. Regarde à quoi elle est reliée sur le dessin."]) },
+    { titre:"2 · Je définis mes critères", html:
+      '<p class="consigne" data-consigne><b>Lis</b> le '+gl("cahier des charges")+' '+esc(s.du)+'.</p><ul class="cdc">'+s.cdc.map(function(l){ return "<li>"+esc(l)+"</li>"; }).join("")+"</ul>"+
+      Q("Q4","Coche les critères qui concernent ta pièce")+
+      '<p class="consigne" data-consigne><b>Coche</b> seulement les critères que tu peux justifier par le cahier des charges : « parce que '+esc(s.le)+'… ». Attention, certains ne la concernent pas.</p>'+
+      '<div class="cartes">'+s.cartes.map(function(c){ return '<label><input type="checkbox" name="q4" value="'+esc(c.id)+'"> <span>'+esc(c.texte)+'</span></label>'; }).join("")+'</div>'+
+      pouce(["Pour chaque critère, cherche une phrase du cahier des charges qui l'exige. Pas de phrase : il ne concerne pas ta pièce.",
+             "Le cahier des charges a 4 phrases : chacune mène à un critère."]) },
+    { titre:"3 · Je relève", html:
+      '<p class="consigne" data-consigne><b>Ouvre</b> le catalogue de la Matériauthèque, <b>repère</b> la ligne de chaque matériau et <b>relève</b> ses propriétés dans le tableau.</p>'+lienCatalogue()+
+      Q("Q5","Les propriétés de "+cand.length+" matériaux candidats")+
+      '<div class="tscroll"><table class="t"><thead><tr><th>Matériau</th>'+s.proprietes.map(function(p){ return "<th>"+esc(p.libelle)+(p.unite&&p.unite!=="/5"?" ("+esc(p.unite)+")":p.unite==="/5"?" (note /5)":"")+"</th>"; }).join("")+'</tr></thead><tbody>'+
+      cand.map(function(c){ return "<tr><td><b>"+esc(c.nom)+"</b></td>"+s.proprietes.map(function(p){ var o=opts(p), id="q5_"+c.id+"."+p.champ;
+        return "<td>"+(o?'<select id="'+id+'" aria-label="'+esc(p.libelle+" : "+c.nom)+'">'+o+"</select>":'<input type="text" id="'+id+'" inputmode="decimal" autocomplete="off" aria-label="'+esc(p.libelle+" : "+c.nom)+'" placeholder="ex. 1,5">')+"</td>"; }).join("")+"</tr>"; }).join("")+
+      "</tbody></table></div>"+
+      pouce(["Dans le catalogue, la colonne « Matériau » est à gauche : cherche le nom avec la case « Chercher un matériau ».",
+             "Les notes sont écrites en chiffres à côté de chaque jauge (par exemple 4/5). La masse volumique s'écrit avec une virgule."]) },
+    { titre:"4 · Je choisis", html:
+      Q("Q6","Quel matériau retiens-tu pour "+esc(s.le)+" ?")+
+      '<p class="consigne" data-consigne><b>Compare</b> ton relevé avec tes critères : un matériau qui ne respecte pas un critère est écarté.</p>'+
+      '<div class="choix" role="radiogroup">'+cand.map(function(c){ return '<label><input type="radio" name="q6" value="'+esc(c.id)+'"> <span>'+esc(c.nom)+'</span></label>'; }).join("")+'</div>'+
+      Q("Q7","À quelle "+gl("famille")+" et à quelle sous-famille appartient le matériau que tu as choisi ?")+
+      '<div class="row"><div><label class="lbl" for="q7f">Famille</label><select id="q7f"><option value="">Choisir…</option>'+DONNEES.familles.map(function(f){ return '<option value="'+f.id+'">'+esc(f.nom)+'</option>'; }).join("")+'</select></div>'+
+      '<div><label class="lbl" for="q7s">Sous-famille</label><select id="q7s"><option value="">Choisis d\'abord la famille</option></select></div></div>'+
+      pouce(["Reprends chaque matériau et chaque critère : dès qu'une case du tableau ne convient pas, le matériau est écarté.",
+             "D'où vient la matière ? Un minerai (métal), un être vivant ou le pétrole (organique), une roche ou du sable (céramique), un assemblage (composite). Puis : contient-il du fer ?"]) },
+    { titre:"5 · Je justifie", html:
+      Q("Q8","Choisis les deux arguments justes")+
+      '<p class="consigne" data-consigne><b>Coche exactement deux</b> arguments qui justifient ton choix en écartant les autres matériaux. Vérifie chacun avec ton relevé et tes critères.</p>'+
+      '<div class="choix">'+s.arguments.map(function(a){ return '<label><input type="checkbox" name="q8" value="'+a.id+'"> <span>'+esc(a.texte)+'</span></label>'; }).join("")+'</div>'+
+      '<p class="msg info cache" id="q8max"></p>'+
+      '<h3><span>Facultatif : ta justification avec tes mots</span><span class="pts">bonus jusqu\'à '+fr(DONNEES.bonus4)+' pt, lu par ton professeur</span></h3>'+
+      '<label class="lbl" for="libre">Je retiens ce matériau parce que…</label><textarea id="libre"></textarea>'+
+      pouce(["Un argument est juste si le matériau écarté rate vraiment ce critère ET si ce critère concerne ta pièce.",
+             "Méfie-toi des critères qui ne sont pas dans le cahier des charges : ils ne peuvent pas justifier un choix."]) }
+  ];
+}
+
+function etapesEx5(){
+  var s=SUJET, e=s.ex5, V=ATT.v, Qn=ATT.q, g=ETAT.adapt.guide, N=e.nArt, M=e.mArt;
+  var unite=function(id,l){ return '<select id="'+id+'" aria-label="unité"><option value="">unité…</option>'+l.map(function(u){ return '<option>'+u+'</option>'; }).join("")+'</select>'; };
+  var champ=function(id,lbl){ return '<input type="text" id="'+id+'" inputmode="decimal" autocomplete="off" aria-label="'+esc(lbl)+'">'; };
+  return [
+    { titre:"1 · Ma pièce", html:
+      '<p class="consigne" data-consigne>Le bureau d\'études a retenu <b>'+esc(M)+'</b> pour <b>'+esc(s.le)+'</b> (système : '+esc(s.systeme)+').</p>'+visuels()+
+      '<div class="donnees"><span>Volume de matière : '+fr(V,1)+' cm³</span><span>Matériau : '+esc(e.mNom)+'</span><span>Série : '+fr(Qn,0)+' pièces</span></div>'+
+      Q("Q1","Qu'est-ce que l'"+gl("énergie grise")+" d'une pièce ?")+radios("q1",DONNEES.definitions)+
+      Q("Q2","Quelles étapes du cycle de vie l'énergie grise compte-t-elle ?")+
+      '<div class="choix">'+DONNEES.etapes.map(function(x){ return '<label><input type="checkbox" name="q2" value="'+x[0]+'"> <span>'+esc(x[1])+'</span></label>'; }).join("")+'</div>'+
+      pouce(["Une pièce a déjà demandé de l'énergie avant même d'être utilisée.","Que se passe-t-il pour la pièce avant que tu reçoives l'objet ? Et quand tu le jettes ?"]) },
+    { titre:"2 · Je relève", html:
+      '<p class="consigne" data-consigne><b>Ouvre</b> le catalogue de la Matériauthèque et <b>relève</b> deux valeurs pour '+esc(M)+'.</p>'+lienCatalogue()+
+      Q("Q3","Masse volumique de "+esc(e.mNom))+'<div class="calc">'+champ("q3","masse volumique")+' <span>g/cm³</span></div>'+
+      Q("Q4","Énergie grise de "+esc(e.mNom))+'<div class="calc">'+champ("q4","énergie grise du matériau")+' <span>kJ par gramme</span></div>'+
+      pouce(["La masse volumique est dans la colonne « Masse volumique », l'énergie grise dans la dernière colonne.","Recopie le nombre tel qu'il est écrit, avec sa virgule."]) },
+    { titre:"3 · Je calcule", html:
+      '<p class="consigne" data-consigne>Comme dans le mini-tableur de l\'activité 8 : <b>d\'abord la masse</b> de la pièce, <b>ensuite son énergie grise</b>.</p>'+
+      Q("Q5","Masse "+esc(s.du))+(g?'<p class="guide">masse = volume × masse volumique = '+fr(V,1)+' × <span data-reprend="q3">…</span> = ?</p>':"")+
+      '<div class="calc">'+champ("q5","masse de la pièce")+unite("q5u",["g","kg","cm³"])+'</div>'+
+      Q("Q6","Énergie grise "+esc(s.du))+(g?'<p class="guide">énergie grise = masse × énergie grise du matériau = <span data-reprend="q5">…</span> × <span data-reprend="q4">…</span> = ?</p>':"")+
+      '<div class="calc">'+champ("q6","énergie grise de la pièce")+unite("q6u",["g","kJ","MJ"])+'</div>'+
+      Q("Q7","Énergie grise de toute la série ("+fr(Qn,0)+" pièces), en "+gl("MJ"))+(g?'<p class="guide">énergie de la série = <span data-reprend="q6">…</span> × '+fr(Qn,0)+' = ? kJ, puis ÷ 1 000 pour l\'avoir en MJ</p>':"")+
+      '<div class="calc">'+champ("q7","énergie grise de la série")+unite("q7u",["kJ","MJ"])+'</div>'+
+      pouce(["La masse d'une pièce, c'est son volume multiplié par la masse d'un centimètre cube de son matériau.",
+             "Chaque gramme de matériau a demandé une certaine énergie : pour toute la pièce, on la compte autant de fois qu'il y a de grammes. Pour passer des kJ aux MJ, on divise par 1 000."]) },
+    { titre:"4 · Je compare", html:
+      '<p class="consigne" data-consigne>Le bureau d\'études hésitait avec <b>'+esc(N)+'</b>. <b>Calcule</b> l\'énergie grise de la même pièce ('+fr(V,1)+' cm³) en '+esc(e.nNom)+' : relève ses valeurs dans le catalogue.</p>'+
+      Q("Q8","La pièce en "+esc(e.nNom))+
+      '<div class="calc"><label for="q8m">Masse</label>'+champ("q8m","masse de la pièce dans le second matériau")+'<span>g</span></div>'+
+      '<div class="calc"><label for="q8e">Énergie grise</label>'+champ("q8e","énergie grise de la pièce dans le second matériau")+'<span>kJ</span></div>'+
+      Q("Q9","Compare les deux pièces")+
+      '<p class="consigne">La pièce en '+esc(e.nNom)+' demande environ</p><div class="calc">'+champ("q9","combien de fois")+'<span>fois</span>'+
+      '<select id="q9s" aria-label="plus ou moins"><option value="">…</option><option value="plus">plus</option><option value="moins">moins</option></select><span>d\'énergie grise que la pièce en '+esc(e.mNom)+'.</span></div>'+
+      Q("Q10","Ta conclusion pour l'environnement")+radios("q10",e.conclusions)+
+      Q("Q11","Vrai ou faux ?")+'<p class="consigne">« '+esc(DONNEES.vf)+' »</p>'+radios("q11",["vrai","faux"])+
+      pouce(["Pour « combien de fois », divise la plus grande énergie par la plus petite.","Compare l'énergie de la pièce entière, pas celle d'un gramme de matériau."]) }
+  ];
+}
+
+function candidatsVus(){
+  var c=SUJET.candidats;
+  if(EXERCICE===4 && ETAT.adapt.deux) c=c.filter(function(x){ return SUJET.candidatsAdaptes.indexOf(x.id)>=0; });
+  return c;
+}
+var ETAPES=[];
+function construireParcours(){
+  ETAPES = EXERCICE===4 ? etapesEx4() : etapesEx5();
+  var html=ETAPES.map(function(e,i){ return '<section class="card etape cache" id="etape'+i+'" aria-labelledby="h'+i+'"><h2 id="h'+i+'" tabindex="-1">'+esc(e.titre)+'</h2>'+e.html+
+    '<div class="nav">'+(i>0?'<button type="button" class="btn sec" data-aller="'+(i-1)+'">← Étape précédente</button>':'<span></span>')+
+    '<button type="button" class="btn" data-aller="'+(i+1)+'">'+(i<ETAPES.length-1?"Étape suivante →":"Relire et envoyer →")+'</button></div></section>'; }).join("");
+  html+='<section class="card etape cache" id="etape'+ETAPES.length+'"><h2 id="h'+ETAPES.length+'" tabindex="-1">Je relis et j\'envoie</h2><div id="recap"></div>'+
+    '<div id="bloc-correction"></div><p class="consigne" data-consigne>Relis tes réponses (tu peux revenir à une étape en cliquant sur son nom en haut), puis clique sur « Valider ma copie ».</p>'+
+    '<button type="button" class="btn sec" data-aller="'+(ETAPES.length-1)+'">← Étape précédente</button><button type="button" class="btn ok" id="btnEnvoyer">📤 Valider ma copie</button>'+
+    '<div class="msg info cache" id="msg"></div><p style="font-size:12px;color:var(--grey)">🔒 Ta copie part au tableau de bord de ton professeur et à son classeur de notes. La note et le corrigé arrivent plus tard.</p></section>';
+  $("parcours").innerHTML=html;
+  $("etapesNav").innerHTML=ETAPES.map(function(e,i){ return '<li><button type="button" data-aller="'+i+'">'+esc(e.titre)+'</button></li>'; }).join("")+
+    '<li><button type="button" data-aller="'+ETAPES.length+'">Envoi</button></li>';
+  try{ if(window.LectureImmersive) LectureImmersive.consignes(); }catch(e){}
+}
+function aller(i){
+  i=Math.max(0,Math.min(ETAPES.length,i)); lireChamps(); ETAT.vus[ETAT.etape]=true; ETAT.etape=i;
+  document.querySelectorAll("#parcours .etape").forEach(function(s,k){ s.classList.toggle("cache",k!==i); });
+  document.querySelectorAll("#etapesNav button").forEach(function(b,k){ if(k===i) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current"); b.classList.toggle("fait",!!ETAT.vus[k]&&k!==i); });
+  $("progresBarre").style.width=Math.round(i/ETAPES.length*100)+"%"; $("progres").setAttribute("aria-valuenow",Math.round(i/ETAPES.length*100));
+  if(i===ETAPES.length) recap();
+  majGuides(); enregistrerBrouillon();
+  var h=$("h"+i); if(h){ try{ h.focus({preventScroll:true}); }catch(e){} window.scrollTo(0,0); }
+  try{ if(window.LectureImmersive) LectureImmersive.placer(); }catch(e){}
+}
+
+/* ═══ champs et brouillon ═══ */
+function champs(){ return document.querySelectorAll("#parcours input, #parcours select, #parcours textarea"); }
+function lireChamps(){
+  var R={};
+  champs().forEach(function(el){
+    if(el.type==="radio"){ if(el.checked) R[el.name]=el.value; return; }
+    if(el.type==="checkbox"){ if(el.checked) R[el.name]=(R[el.name]?R[el.name]+"|":"")+el.value; return; }
+    if(el.id) R[el.id]=el.value;
+  });
+  ETAT.rep=R;
+}
+function ecrireChamps(){
+  var R=ETAT.rep;
+  if(R.q7f) majSousFamilles();
+  champs().forEach(function(el){
+    if(el.type==="radio"){ el.checked=R[el.name]===el.value; return; }
+    if(el.type==="checkbox"){ el.checked=String(R[el.name]||"").split("|").indexOf(el.value)>=0; return; }
+    if(el.id && R[el.id]!=null) el.value=R[el.id];
+  });
+  majGuides();
+}
+function majSousFamilles(){
+  var f=DONNEES.familles.filter(function(x){ return x.id===(val("q7f")||ETAT.rep.q7f); })[0], s=$("q7s"); if(!s) return;
+  var avant=s.value||ETAT.rep.q7s||"";
+  s.innerHTML='<option value="">'+(f?"Choisir…":"Choisis d'abord la famille")+'</option>'+(f?f.sous.map(function(x){ return '<option>'+esc(x)+'</option>'; }).join(""):"");
+  s.value=avant;
+}
+function majGuides(){ document.querySelectorAll("[data-reprend]").forEach(function(sp){ var v=ETAT.rep[sp.getAttribute("data-reprend")]; sp.textContent=v?v:"…"; }); }
+function cleBrouillon(){ return DRAFT_PFX+(USER.id || slug(val("prenom")+" "+val("nom")) || "anon"); }
+function enregistrerBrouillon(){
+  try{ localStorage.setItem(cleBrouillon(), JSON.stringify({rep:ETAT.rep, debut:ETAT.debut, actif:ETAT.actif, envoye:ETAT.envoye, etape:ETAT.etape, vus:ETAT.vus,
+    pouces:ETAT.pouces, adapt:ETAT.adapt, chronoMasque:ETAT.chronoMasque, sujet:ATT, ts:Date.now()})); }catch(e){}
+}
+function restaurerBrouillon(){
+  try{ var d=JSON.parse(localStorage.getItem(cleBrouillon())||"null"); if(!d) return;
+    ["rep","debut","actif","envoye","etape","vus","pouces","adapt","chronoMasque"].forEach(function(k){ if(d[k]!==undefined) ETAT[k]=d[k]; });
+    if(d.sujet && !ATT) ATT=d.sujet; }catch(e){}
+}
+
+/* ═══ chronomètre indicatif (jamais bloquant) : temps actif, page visible ═══ */
+var dernier=0;
+function tic(){
+  var now=Date.now(); if(!document.hidden && dernier) ETAT.actif+=Math.min(now-dernier,5000); dernier=now;
+  var m=Math.floor(ETAT.actif/60000), c=$("chrono");
+  c.textContent="⏱ "+m+" min"; c.classList.toggle("cache",!!ETAT.chronoMasque);
+  $("btnChrono").textContent=ETAT.chronoMasque?"⏱ Afficher le temps":"⏱ Masquer le temps";
+}
+
+/* ═══ calculatrice : + − × ÷, parenthèses, virgule ═══ */
+function calculer(t){
+  var e=String(t||"").replace(/×|x|X|\*/g,"*").replace(/÷|:/g,"/").replace(/−/g,"-").replace(/(\d),(\d)/g,"$1.$2").replace(/\s/g,"");
+  if(!e) return ""; if(!/^[-+*/().0-9]+$/.test(e)) return "?";
+  try{ var r=Function('"use strict";return ('+e+")")(); return (typeof r==="number"&&isFinite(r))?"= "+fr(r,4):"?"; }catch(err){ return "…"; }
+}
+
+/* ═══ récapitulatif avant envoi ═══ */
+function recap(){
+  lireChamps(); var R=ETAT.rep, l=[];
+  var nomArg=function(id){ var a=(SUJET.arguments||[]).filter(function(x){ return x.id===id; })[0]; return a?a.texte:id; };
+  var nomCand=function(id){ var c=SUJET.candidats.filter(function(x){ return x.id===id; })[0]; return c?c.nom:id; };
+  if(EXERCICE===4){
+    l=[["Q1",R.q1],["Q2",R.q2],["Q3",R.q3],["Q4",String(R.q4||"").split("|").filter(String).map(function(id){ var c=SUJET.cartes.filter(function(x){ return x.id===id; })[0]; return c?c.texte:id; }).join(" · ")],
+       ["Q5",candidatsVus().length*SUJET.proprietes.length+" cases, "+champsRemplis("q5_")+" remplies"],["Q6",R.q6?nomCand(R.q6):""],
+       ["Q7",[R.q7f?DONNEES.familles.filter(function(f){ return f.id===R.q7f; })[0].nom:"",R.q7s].filter(String).join(" / ")],
+       ["Q8",String(R.q8||"").split("|").filter(String).map(nomArg).join(" · ")],["Justification",R.libre]];
+  } else {
+    l=[["Q1",R.q1],["Q2",String(R.q2||"").split("|").filter(String).map(function(id){ return DONNEES.etapes.filter(function(e){ return e[0]===id; })[0][1]; }).join(" · ")],
+       ["Q3",R.q3&&R.q3+" g/cm³"],["Q4",R.q4&&R.q4+" kJ par gramme"],["Q5",[R.q5,R.q5u].filter(Boolean).join(" ")],["Q6",[R.q6,R.q6u].filter(Boolean).join(" ")],
+       ["Q7",[R.q7,R.q7u].filter(Boolean).join(" ")],["Q8",(R.q8m||R.q8e)?"masse "+(R.q8m||"?")+" g · énergie "+(R.q8e||"?")+" kJ":""],
+       ["Q9",R.q9?R.q9+" fois "+(R.q9s||"?"):""],["Q10",R.q10],["Q11",R.q11]];
+  }
+  var vides=l.filter(function(x){ return x[0]!=="Justification" && !String(x[1]||"").trim(); }).length;
+  $("recap").innerHTML='<table class="t recap"><tbody>'+l.map(function(x){ return "<tr><td>"+esc(x[0])+"</td><td>"+(String(x[1]||"").trim()?esc(x[1]):'<span style="color:var(--ko)">— pas encore répondu</span>')+"</td></tr>"; }).join("")+"</tbody></table>"+
+    (vides?'<p class="msg info">Il reste '+vides+' réponse(s) vide(s). Tu peux quand même envoyer, ou revenir les compléter.</p>':'<p class="msg ok">Toutes les questions ont une réponse. Bravo pour ce travail de bureau d\'études !</p>');
+}
+function champsRemplis(pfx){ var n=0; Object.keys(ETAT.rep).forEach(function(k){ if(k.indexOf(pfx)===0 && String(ETAT.rep[k]).trim()) n++; }); return n; }
+
+/* ═══ identité, sujet, départ ═══ */
+function lireIdentite(){
+  try{ var d=JSON.parse(localStorage.getItem(PREFILL_KEY)||"null"); if(!d||!d.p||!d.n) return false;
+    USER={ id:d.id||"", p:d.p, n:d.n, c:d.c||"", prof:!!d.prof, sujet:d.sujet||null };
+    $("prenom").value=USER.p; $("nom").value=USER.n; if(USER.c) $("classe").value=String(USER.c).toUpperCase();
+    if(!/^4[A-GT]$/i.test(String(USER.c||"")) && !USER.prof){ USER.c=""; return false; }
+    return true; }catch(e){ return false; }
+}
+function sujetParId(id){ return DONNEES.sujets.filter(function(s){ return s.id===id; })[0]||null; }
+function trouverSujet(fini){
+  /* 1) brouillon déjà commencé (le sujet ne change plus) ; 2) script du classeur (onglet Attributions, qui fait foi) ;
+     3) calcul du site (même module d'attribution) ; 4) compte de test : premier sujet. */
+  if(ATT && sujetParId(ATT.s)) return fini();
+  var secours=function(){
+    if(USER.sujet && sujetParId(USER.sujet.s)) ATT=USER.sujet;
+    else ATT={ s:DONNEES.sujets[0].id, v:DONNEES.sujets[0].ex5.volumes[4], q:DONNEES.quantites[1] };
+    fini();
+  };
+  if(!/^https:\/\/script\.google\.com\//.test(REPORT_URL) || !USER.id){ secours(); return; }
+  fetch(REPORT_URL+"?action=sujet&eid="+encodeURIComponent(USER.id)+"&t="+Date.now()).then(function(r){ return r.json(); }).then(function(d){
+    if(d && d.ok && sujetParId(d.s)){ ATT={ s:d.s, v:Number(d.v), q:Number(d.q), a:d.a||"" }; fini(); } else secours();
+  }).catch(secours);
+}
+function afficherQui(){
+  var c=USER.c||val("classe"), nom=(val("prenom")+" "+val("nom")).trim();
+  $("qui").textContent="👤 "+nom+(c?" · "+c:""); $("qui").classList.remove("cache");
+}
+function apresIdentite(){
+  $("ident").classList.add("cache"); afficherQui(); restaurerBrouillon();
+  trouverSujet(function(){
+    SUJET=sujetParId(ATT.s);
+    if(USER.prof){
+      $("choixSujetProf").classList.remove("cache");
+      $("sujetProf").innerHTML=DONNEES.sujets.map(function(s){ return '<option value="'+s.id+'">'+esc(s.systeme+" — "+s.piece)+'</option>'; }).join("");
+      $("sujetProf").value=SUJET.id;
+      $("sujetProf").onchange=function(){ var s=sujetParId(this.value); ATT={ s:s.id, v:s.ex5.volumes[4], q:DONNEES.quantites[1] }; SUJET=s; intro(); };
+    }
+    intro();
+    if(ETAT.debut){ ouvrirParcours(); return; }
+    $("depart").classList.remove("cache"); construireAides();
+    try{ if(window.LectureImmersive) LectureImmersive.consignes(); }catch(e){}
+  });
+}
+function intro(){
+  var s=SUJET, nom=(val("prenom")+" "+val("nom")).trim(), c=USER.c||val("classe");
+  $("quiDepart").innerHTML="Copie de <b>"+esc(nom)+"</b>"+(c?", classe <b>"+esc(c)+"</b>":"")+". Ta pièce : <b>"+esc(s.le)+"</b> — "+esc(s.systeme)+".";
+  $("introDepart").innerHTML = EXERCICE===4
+    ? '<p class="consigne" data-consigne>Tu vas refaire, seul·e, la démarche de la Matériauthèque (activité 8) sur <b>ta pièce</b> : observer, définir les critères, relever les propriétés, choisir et justifier. <b>5 étapes</b>, environ 15 à 20 minutes. Le temps est affiché à titre indicatif : il n\'arrête rien.</p>'
+    : '<p class="consigne" data-consigne>Tu vas calculer l\'énergie grise de <b>ta pièce</b>, comme dans le mini-tableur de l\'activité 8. Tout ce qu\'il faut est dans l\'énoncé et dans le catalogue de la Matériauthèque. <b>4 étapes</b>. Le temps est affiché à titre indicatif : il n\'arrête rien.</p>';
+}
+function ouvrirParcours(){
+  lireAides(); if(!ETAT.debut) ETAT.debut=Date.now();
+  $("depart").classList.add("cache"); $("parcours").classList.remove("cache");
+  ["progres","etapesNav","btnChrono","chrono"].forEach(function(id){ $(id).classList.remove("cache"); });
+  if(EXERCICE===5) $("btnCalc").classList.remove("cache");
+  construireParcours(); ecrireChamps();
+  if(ETAT.adapt.pouce) document.querySelectorAll("[data-pouce]").forEach(function(b){ montrerPouce(b,false); montrerPouce(b,false); });
+  aller(ETAT.etape||0); dernier=Date.now(); setInterval(tic,1000); tic();
+  controlerVerrou(); afficherCorrectionProf(); viderLaFile();
+  if(ETAT.envoye) flash("msg","✅ Ta copie a déjà été envoyée. C'est la première copie reçue qui compte pour le classeur de notes.","ok");
+}
+function montrerPouce(b, compter){
+  var liste=b.parentNode.querySelector(".pouce-liste"), ind=JSON.parse(liste.getAttribute("data-ind")), n=liste.children.length;
+  if(n>=ind.length){ b.disabled=true; return; }
+  var d=document.createElement("div"); d.className="ind"; d.textContent="💡 "+ind[n]; liste.appendChild(d);
+  if(compter!==false) ETAT.pouces++;
+  if(n+1>=ind.length){ b.disabled=true; b.textContent="💡 Plus de coup de pouce ici"; }
+}
+
+/* ═══ verrou (repris de l'évaluation n°2) ═══ */
+var MSG_VERROU = "Travail rendu — consultation temporairement indisponible.";
+function envoiVerrouille(sub){ return !!sub && (sub.locked===true || sub.locked==="TRUE" || sub.locked==="true"); }
+function copieLocaleVerrouillee(){
+  if(!USER.id) return false;
+  try{ var subs=JSON.parse(localStorage.getItem("subs")||"[]");
+    for(var i=0;i<subs.length;i++) if(subs[i] && subs[i].eid===USER.id && subs[i].cap===CAP_ID && envoiVerrouille(subs[i])) return true; }catch(e){}
+  return false;
+}
+function estLocal(){ var hn=(location.hostname||"").toLowerCase(); return hn==="localhost"||hn==="127.0.0.1"||hn==="::1"||hn==="[::1]"||hn===""; }
+function urlLecture(){
+  if(estLocal()){ try{ var u=localStorage.getItem("apps_script_url_test")||""; if(/^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){} }
+  return APPS_SCRIPT_URL;
+}
+function voileVerrou(){
+  if($("voile-verrou")) return;
+  var v=document.createElement("div"); v.id="voile-verrou"; v.setAttribute("role","alert");
+  v.style.cssText="position:fixed;inset:0;z-index:99999;background:#F4F6F8;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font:600 17px/1.5 system-ui,sans-serif;color:#1F2D3D";
+  v.textContent=MSG_VERROU; document.body.appendChild(v);
+}
+function controlerVerrou(){
+  if(!USER.id || USER.prof) return;
+  if(copieLocaleVerrouillee()){ voileVerrou(); return; }
+  fetch(urlLecture()+"?action=own&eid="+encodeURIComponent(USER.id)+"&secret="+encodeURIComponent(SYNC_SECRET)+"&t="+Date.now()).then(function(r){ return r.json(); }).then(function(d){
+    var liste=d&&d.ok&&d.subs?d.subs:[];
+    for(var i=0;i<liste.length;i++) if(liste[i] && liste[i].eid===USER.id && liste[i].cap===CAP_ID && envoiVerrouille(liste[i])){ voileVerrou(); return; }
+  }).catch(function(){});
+}
+
+/* ═══ envoi : tableau de bord du site + classeur de l'exercice (règle 4 : jamais depuis une page locale) ═══ */
+function urlPrete(u){ return !!u && u.indexOf("@@")<0 && /^https:\/\/script\.google\.com\//.test(u); }
+function urlEcriture(prod){
+  if(!estLocal()) return prod;
+  try{ var u=localStorage.getItem("apps_script_url_test")||""; if(prod===APPS_SCRIPT_URL && u && u!==prod && /^https:\/\/script\.google\.com\//.test(u)) return u; }catch(e){}
+  return "";
+}
+function mettreEnFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); q=q.filter(function(x){ return x.eid!==sub.eid; }); q.push(sub); localStorage.setItem(QUEUE_KEY,JSON.stringify(q)); }catch(e){} }
+function retirerDeLaFile(sub){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); localStorage.setItem(QUEUE_KEY,JSON.stringify(q.filter(function(x){ return x.eid!==sub.eid; }))); }catch(e){} }
+function deposerEnLocal(sub){ try{ var s=JSON.parse(localStorage.getItem("subs")||"[]"); s=s.filter(function(x){ return !(x.eid===sub.eid && x.cap===sub.cap); }); s.push(sub); localStorage.setItem("subs",JSON.stringify(s)); }catch(e){} }
+function poster(sub, fini){
+  mettreEnFile(sub);
+  var cible=urlEcriture(APPS_SCRIPT_URL);
+  if(!cible){ try{ console.warn("["+CAP_ID+"] page servie en local : envoi vers la production bloqué, copie gardée en file locale."); }catch(e){} if(fini) fini(false); return; }
+  fetch(cible,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({secret:SYNC_SECRET,sub:sub})})
+    .then(function(){ retirerDeLaFile(sub); if(fini) fini(true); }).catch(function(){ if(fini) fini(false); });
+}
+function viderLaFile(){ try{ var q=JSON.parse(localStorage.getItem(QUEUE_KEY)||"[]"); if(!q.length||!urlEcriture(APPS_SCRIPT_URL)) return; q.forEach(function(s){ poster(s); reporter(s); }); }catch(e){} }
+function reporter(sub){
+  var cible=urlPrete(REPORT_URL)?urlEcriture(REPORT_URL):"";
+  if(!cible){ try{ console.warn("["+CAP_ID+"] report au classeur non envoyé (page locale ou URL non installée)."); }catch(e){} return; }
+  fetch(cible,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify({secret:REPORT_SECRET,source:"eleve",classe:sub.ecls,eleve:sub.ename,eid:sub.eid,fields:sub.fields,
+      duree:Number(sub.fields._duree)||0,adaptations:sub.fields._adaptations||""})}).catch(function(){});
+}
+function fabriquerEnvoi(){
+  lireChamps();
+  var fields={}, R=ETAT.rep;
+  Object.keys(R).forEach(function(k){ if(k.indexOf("q5_")===0 && EXERCICE===4) return; fields[k]=String(R[k]==null?"":R[k]); });
+  if(EXERCICE===4){ var q5={}; Object.keys(R).forEach(function(k){ if(k.indexOf("q5_")===0) q5[k.slice(3)]=R[k]; }); fields.q5=JSON.stringify(q5);
+    fields._candidats=candidatsVus().map(function(c){ return c.id; }).join("|"); }
+  fields._sujet=ATT.s; fields._v=String(ATT.v); fields._q=String(ATT.q);
+  fields._duree=String(Math.round(ETAT.actif)); fields._adaptations=texteAdaptations();
+  var ename=(val("prenom")+" "+val("nom")).trim(), classe=USER.c||val("classe");
+  var rep=Object.keys(R).filter(function(k){ return String(R[k]).trim(); }).length;
+  return { id:Date.now(), eid:USER.id||(CAP_ID+"."+(slug(classe)||"4x")+"."+(slug(ename)||"eleve")), ename:ename||"Élève", ecls:classe,
+    cap:CAP_ID, caplbl:CAP_LABEL, score:rep, qcmTot:rep, open:"Sujet : "+SUJET.systeme+" — "+SUJET.piece+" · aides : "+texteAdaptations(), fields:fields,
+    date:new Date().toLocaleDateString("fr-FR"), dateISO:new Date().toISOString(), status:"pending" };
+}
+function envoyer(){
+  if(copieLocaleVerrouillee()){ flash("msg",MSG_VERROU,"ko"); return; }
+  if(USER.prof){ flash("msg","Vue professeur : rien n'est envoyé.","info"); return; }
+  if(!window.confirm("Valider ta copie et l'envoyer au professeur ?\n\nC'est la première copie reçue qui compte.")) return;
+  var btn=$("btnEnvoyer"); btn.disabled=true; flash("msg","⟳ Envoi en cours…","info");
+  ETAT.envoye=true; enregistrerBrouillon();
+  var sub=fabriquerEnvoi(); deposerEnLocal(sub); reporter(sub);
+  try{ if(window.parent && window.parent!==window && window.parent.renderDash) window.parent.renderDash(); }catch(e){}
+  poster(sub, function(ok){
+    btn.disabled=false;
+    if(ok) flash("msg","✅ <b>Copie envoyée</b> le "+new Date().toLocaleString("fr-FR")+". Bravo ! Ta note arrivera quand ton professeur l'aura validée.","ok");
+    else flash("msg","⚠️ L'envoi n'a pas abouti (réseau ?). Ta copie est <b>gardée sur cet ordinateur</b> et repartira toute seule. Préviens ton professeur.","ko");
+  });
+}
+function afficherCorrectionProf(){
+  var hote=$("bloc-correction"), s=null; if(!hote) return;
+  try{ JSON.parse(localStorage.getItem("subs")||"[]").forEach(function(x){ if(USER.id && x.eid===USER.id && x.cap===CAP_ID) s=x; }); }catch(e){}
+  if(!s || s.status!=="validated" || s.adjustedScore===undefined || s.adjustedScore===""){ hote.innerHTML=""; return; }
+  hote.innerHTML='<div class="rappel" style="border-left-color:#1E8E5A;background:#e7f6ee"><b>✅ Note du professeur</b> : <span style="font-size:22px;font-weight:800">'+
+    fr(Number(s.adjustedScore))+' / '+(s.bareme||20)+'</span>'+(s.appreciation?'<div style="margin-top:8px"><b>💬</b> '+esc(s.appreciation)+'</div>':'')+'</div>';
+}
+
+/* ═══ démarrage ═══ */
+document.addEventListener("DOMContentLoaded",function(){
+  $("comps").textContent="Compétences : 1.3 — "+DONNEES.comp["1.3"]+" · 1.2 — "+DONNEES.comp["1.2"];
+  $("btnIdent").addEventListener("click",function(){
+    if(!val("nom")||!val("prenom")||!val("classe")){ flash("identMsg","Écris ton nom, ton prénom et choisis ta classe.","ko"); return; }
+    $("nom").value=val("nom").toUpperCase(); apresIdentite();
+  });
+  $("btnStart").addEventListener("click",ouvrirParcours);
+  $("btnChrono").addEventListener("click",function(){ ETAT.chronoMasque=!ETAT.chronoMasque; tic(); enregistrerBrouillon(); });
+  $("btnCalc").addEventListener("click",function(){ var c=$("calculette"), o=c.classList.toggle("cache"); this.setAttribute("aria-expanded",String(!o)); if(!o) $("calcIn").focus(); });
+  $("calcFermer").addEventListener("click",function(){ $("calculette").classList.add("cache"); $("btnCalc").setAttribute("aria-expanded","false"); $("btnCalc").focus(); });
+  $("calcIn").addEventListener("input",function(){ $("calcRes").textContent=calculer(this.value); });
+  document.addEventListener("click",function(e){
+    var a=e.target.closest("[data-aller]"); if(a){ aller(Number(a.getAttribute("data-aller"))); return; }
+    var p=e.target.closest("[data-pouce]"); if(p){ montrerPouce(p); enregistrerBrouillon(); return; }
+    if(e.target.id==="btnEnvoyer") envoyer();
+  });
+  $("parcours").addEventListener("change",function(e){
+    if(e.target.id==="q7f"){ majSousFamilles(); }
+    if(e.target.name==="q8"){ var n=document.querySelectorAll('input[name="q8"]:checked').length;
+      if(n>2){ e.target.checked=false; flash("q8max","Deux arguments seulement : décoche-en un avant d'en choisir un autre.","info"); }
+      else $("q8max").classList.add("cache"); }
+    lireChamps(); majGuides(); enregistrerBrouillon();
+  });
+  $("parcours").addEventListener("input",function(){ lireChamps(); majGuides(); });
+  setInterval(function(){ if(!$("parcours").classList.contains("cache")) enregistrerBrouillon(); },15000);
+  window.addEventListener("beforeunload",function(){ if(!$("parcours").classList.contains("cache")) enregistrerBrouillon(); });
+  if(lireIdentite()) apresIdentite(); else $("ident").classList.remove("cache");
+});
+</script>
+</body>
+</html>
