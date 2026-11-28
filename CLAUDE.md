@@ -263,3 +263,27 @@ renouvelés le 30 septembre 2026 (valables jusqu'au 7 octobre). La vérification
 serveur (étape 3) reste à faire : la clé du backend est publique.
 Ouvert en `file://`, le site ne connecte plus personne : `crypto.subtle` exige
 https ou localhost.
+
+## 9. Capsules à sujet personnalisé corrigées par le serveur (P11 exercices n°4 et n°5)
+
+`p11-ex4` (choix du matériau) et `p11-ex5` (énergie grise) : une pièce d'objet du quotidien
+par élève, la même pour les deux exercices. Tout est **généré** par
+`P11/P11_exercices_4_5/_sources` (hors dépôt : il contient la clé) ; ne pas modifier à la main
+`exercice4-materiau.html`, `exercice5-energie-grise.html`, `assets/p11-ex4/*.svg` ni le bloc P45 d'`index.html`.
+
+- **Attribution** : `P11X45_ATTR.attribuer` (même module dans le site, les capsules et les scripts),
+  équilibrée par classe, deux voisins de liste jamais sur le même sujet. La référence est l'onglet
+  **« Attributions »** du classeur de l'exercice n°4 (le professeur y change un sujet ou impose une
+  aide : colonne « Aides imposées ») ; le calcul du site ne sert que de secours.
+- **Correction côté serveur** : la capsule n'envoie que les réponses brutes ; `Ex4-Report.gs` /
+  `Ex5-Report.gs` (dépôt `techno-p11-eau`) corrigent avec l'onglet masqué « Clé » du classeur de
+  l'exercice n°4, écrivent la ligne de l'élève et **ne renvoient jamais les points** (le script n'est
+  pas un oracle). La première copie fait foi. Le tableau de bord recalcule la même correction
+  (`P11X45`) avec la clé du corrigé chiffré.
+- **Corrigés chiffrés personnalisés** : `exercice4_corrige.chiffre.json`, `exercice5_corrige.chiffre.json`
+  contiennent `{cleCorrection, donneesPubliques}` ; `p45CorrigeHTML` affiche le sujet de l'élève
+  (le professeur choisit un des 14). Clés du paquet volontairement longues : le garde-fou de
+  `chiffrer_corrige.py` cherche les noms de clés en clair dans le base64 (« cle » y apparaît par hasard).
+- **Énergie grise** : lue dans la Matériauthèque (`?niveau=4&catalogue`), en kJ par gramme comme le
+  mini-tableur d'A8. Changer une valeur dans `materiaux.json` impose de régénérer et de réécrire la
+  clé du classeur (`exporter.py`, puis onglet « Clé »).
